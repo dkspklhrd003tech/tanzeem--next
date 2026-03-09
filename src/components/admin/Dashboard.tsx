@@ -1,0 +1,262 @@
+"use client";
+
+import useSWR from "swr";
+
+import { motion } from "framer-motion";
+import {
+  FileText,
+  Headphones,
+  Video,
+  BookOpen,
+  Users,
+  Eye,
+  TrendingUp,
+  Calendar,
+  ArrowDownRight,
+  Activity
+} from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+
+const fetcher = (url: string) => fetch(url).then(res => res.json());
+
+const upcomingEvents = [
+  { title: "Weekly Study Circle", date: "Tomorrow, 8:00 PM", attendees: 45 },
+  { title: "Quran Tafseer Session", date: "Friday, 7:00 PM", attendees: 120 },
+  { title: "Youth Workshop", date: "Saturday, 10:00 AM", attendees: 35 },
+];
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.05 },
+  },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0 },
+};
+
+export function Dashboard() {
+  const { data, error, isLoading } = useSWR('/api/admin/stats', fetcher, {
+    refreshInterval: 10000, // Poll every 10 seconds for real-time feel
+    revalidateOnFocus: true
+  });
+
+  const stats = [
+    {
+      title: "Total Pages",
+      value: data?.stats?.pages || 0,
+      icon: FileText,
+      color: "bg-blue-500",
+    },
+    {
+      title: "Audio Lectures",
+      value: data?.stats?.audio || 0,
+      icon: Headphones,
+      color: "bg-purple-500",
+    },
+    {
+      title: "Videos",
+      value: data?.stats?.videos || 0,
+      icon: Video,
+      color: "bg-red-500",
+    },
+    {
+      title: "Books",
+      value: data?.stats?.books || 0,
+      icon: BookOpen,
+      color: "bg-amber-500",
+    },
+    {
+      title: "Team Members",
+      value: data?.stats?.team || 0,
+      icon: Users,
+      color: "bg-green-500",
+    },
+    {
+      title: "Total Media Views",
+      value: data?.stats?.views || "0",
+      icon: Eye,
+      color: "bg-cyan-500",
+    },
+  ];
+
+  return (
+    <motion.div
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      className="space-y-6"
+    >
+      {/* Page Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
+          <p className="text-foreground-muted">Welcome back! Here&apos;s what&apos;s happening.</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button variant="outline">
+            <Calendar className="h-4 w-4 mr-2" />
+            Last 30 Days
+          </Button>
+          <Button className="bg-primary hover:bg-primary-dark text-primary-foreground">
+            Add Content
+          </Button>
+        </div>
+      </div>
+
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+        {stats.map((stat, index) => (
+          <motion.div key={stat.title} variants={itemVariants}>
+            <Card className="hover:shadow-md transition-shadow">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between mb-2">
+                  <div className={cn("w-10 h-10 rounded-lg flex items-center justify-center text-white", stat.color)}>
+                    <stat.icon className="h-5 w-5" />
+                  </div>
+                  <span className={cn(
+                    "text-xs font-medium flex items-center text-green-500"
+                  )}>
+                    <Activity className="h-3 w-3 mr-1" />
+                    Live
+                  </span>
+                </div>
+                <p className="text-2xl font-bold text-foreground">{stat.value}</p>
+                <p className="text-xs text-foreground-muted">{stat.title}</p>
+              </CardContent>
+            </Card>
+          </motion.div>
+        ))}
+      </div>
+
+      {/* Charts and Activity */}
+      <div className="grid lg:grid-cols-3 gap-6">
+        {/* Activity Chart Placeholder */}
+        <motion.div variants={itemVariants} className="lg:col-span-2">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <TrendingUp className="h-5 w-5 text-primary" />
+                Traffic Overview
+              </CardTitle>
+              <CardDescription>Website visits over the last 7 days</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="h-64 flex items-center justify-center bg-muted/30 rounded-lg">
+                <div className="text-center">
+                  <TrendingUp className="h-12 w-12 text-muted-foreground mx-auto mb-2" />
+                  <p className="text-foreground-muted">Chart visualization</p>
+                  <p className="text-xs text-foreground-light">Integration with Recharts available</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Recent Activity */}
+        <motion.div variants={itemVariants}>
+          <Card>
+            <CardHeader>
+              <CardTitle>Recent Activity</CardTitle>
+              <CardDescription>Latest changes in the system</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {isLoading ? (
+                <p className="text-sm text-foreground-muted animate-pulse">Loading live activity...</p>
+              ) : (
+                <ul className="space-y-4">
+                  {data?.recentActivity?.map((activity: any, index: number) => (
+                    <li key={index} className="flex items-start gap-3">
+                      <div className={cn(
+                        "w-2 h-2 rounded-full mt-2",
+                        activity.type === "audio" && "bg-purple-500",
+                        activity.type === "video" && "bg-red-500",
+                        activity.type === "book" && "bg-amber-500",
+                        activity.type === "page" && "bg-blue-500",
+                        activity.type === "event" && "bg-green-500",
+                        !["audio", "video", "book", "page", "event"].includes(activity.type) && "bg-primary"
+                      )} />
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm text-foreground">{activity.action}</p>
+                        <p className="text-xs text-foreground-muted truncate">{activity.item}</p>
+                        <p className="text-xs text-foreground-light border border-border/50 bg-background/50 rounded-md px-1 py-0.5 inline-block mt-1">
+                          {new Date(activity.time).toLocaleString()}
+                        </p>
+                      </div>
+                    </li>
+                  ))}
+                  {(!data?.recentActivity || data.recentActivity.length === 0) && (
+                    <p className="text-sm text-foreground-muted">No recent activity detected.</p>
+                  )}
+                </ul>
+              )}
+            </CardContent>
+          </Card>
+        </motion.div>
+      </div>
+
+      {/* Upcoming Events */}
+      <motion.div variants={itemVariants}>
+        <Card>
+          <CardHeader>
+            <CardTitle>Upcoming Events</CardTitle>
+            <CardDescription>Scheduled events and gatherings</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid md:grid-cols-3 gap-4">
+              {upcomingEvents.map((event, index) => (
+                <div
+                  key={index}
+                  className="p-4 bg-muted/30 rounded-lg border border-border hover:border-primary/30 transition-colors"
+                >
+                  <h4 className="font-medium text-foreground mb-1">{event.title}</h4>
+                  <p className="text-sm text-foreground-muted mb-2">{event.date}</p>
+                  <p className="text-xs text-foreground-light">{event.attendees} attendees</p>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+
+      {/* Quick Actions */}
+      <motion.div variants={itemVariants}>
+        <Card>
+          <CardHeader>
+            <CardTitle>Quick Actions</CardTitle>
+            <CardDescription>Common tasks you can perform</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-wrap gap-3">
+              <Button variant="outline">
+                <FileText className="h-4 w-4 mr-2" />
+                New Page
+              </Button>
+              <Button variant="outline">
+                <Headphones className="h-4 w-4 mr-2" />
+                Upload Audio
+              </Button>
+              <Button variant="outline">
+                <Video className="h-4 w-4 mr-2" />
+                Add Video
+              </Button>
+              <Button variant="outline">
+                <BookOpen className="h-4 w-4 mr-2" />
+                Add Book
+              </Button>
+              <Button variant="outline">
+                <Calendar className="h-4 w-4 mr-2" />
+                Create Event
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
+    </motion.div>
+  );
+}

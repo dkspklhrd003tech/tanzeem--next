@@ -1,0 +1,122 @@
+﻿.next/dev/types/validator.ts(135,31): error TS2344: Type 'typeof import("E:/WordPress Plugins/DKS Projects/Tanzeem.org/tanzeem--next/src/app/api/books/[id]/route")' does not satisfy the constraint 'RouteHandlerConfig<"/api/books/[id]">'.
+  Types of property 'PUT' are incompatible.
+    Type '(req: NextRequest, { params }: { params: { id: string; }; }) => Promise<NextResponse<{ success: boolean; }> | NextResponse<{ error: string; }>>' is not assignable to type '(request: NextRequest, context: { params: Promise<{ id: string; }>; }) => void | Response | Promise<void | Response>'.
+      Types of parameters '__1' and 'context' are incompatible.
+        Type '{ params: Promise<{ id: string; }>; }' is not assignable to type '{ params: { id: string; }; }'.
+          Types of property 'params' are incompatible.
+            Property 'id' is missing in type 'Promise<{ id: string; }>' but required in type '{ id: string; }'.
+.next/dev/types/validator.ts(171,31): error TS2344: Type 'typeof import("E:/WordPress Plugins/DKS Projects/Tanzeem.org/tanzeem--next/src/app/api/magazines/[id]/route")' does not satisfy the constraint 'RouteHandlerConfig<"/api/magazines/[id]">'.
+  Types of property 'PUT' are incompatible.
+    Type '(req: NextRequest, { params }: { params: { id: string; }; }) => Promise<NextResponse<{ success: boolean; }> | NextResponse<{ error: string; }>>' is not assignable to type '(request: NextRequest, context: { params: Promise<{ id: string; }>; }) => void | Response | Promise<void | Response>'.
+      Types of parameters '__1' and 'context' are incompatible.
+        Type '{ params: Promise<{ id: string; }>; }' is not assignable to type '{ params: { id: string; }; }'.
+          Types of property 'params' are incompatible.
+            Property 'id' is missing in type 'Promise<{ id: string; }>' but required in type '{ id: string; }'.
+.next/dev/types/validator.ts(189,31): error TS2344: Type 'typeof import("E:/WordPress Plugins/DKS Projects/Tanzeem.org/tanzeem--next/src/app/api/menus/[id]/route")' does not satisfy the constraint 'RouteHandlerConfig<"/api/menus/[id]">'.
+  Types of property 'PUT' are incompatible.
+    Type '(request: NextRequest, { params }: { params: { id: string; }; }) => Promise<NextResponse<{ error: string; }> | NextResponse<{ menu: { id: string; createdAt: Date; updatedAt: Date; ... 6 more ...; menuType: string; } | undefined; }>>' is not assignable to type '(request: NextRequest, context: { params: Promise<{ id: string; }>; }) => void | Response | Promise<void | Response>'.
+      Types of parameters '__1' and 'context' are incompatible.
+        Type '{ params: Promise<{ id: string; }>; }' is not assignable to type '{ params: { id: string; }; }'.
+          Types of property 'params' are incompatible.
+            Property 'id' is missing in type 'Promise<{ id: string; }>' but required in type '{ id: string; }'.
+.next/dev/types/validator.ts(243,31): error TS2344: Type 'typeof import("E:/WordPress Plugins/DKS Projects/Tanzeem.org/tanzeem--next/src/app/api/sliders/[id]/route")' does not satisfy the constraint 'RouteHandlerConfig<"/api/sliders/[id]">'.
+  Types of property 'PUT' are incompatible.
+    Type '(req: NextRequest, { params }: { params: { id: string; }; }) => Promise<NextResponse<{ error: string; }> | NextResponse<{ createdAt: Date; updatedAt: Date; id: string; title: string; imageUrl: string; linkUrl: string | null; order: number; isActive: boolean; }>>' is not assignable to type '(request: NextRequest, context: { params: Promise<{ id: string; }>; }) => void | Response | Promise<void | Response>'.
+      Types of parameters '__1' and 'context' are incompatible.
+        Type '{ params: Promise<{ id: string; }>; }' is not assignable to type '{ params: { id: string; }; }'.
+          Types of property 'params' are incompatible.
+            Property 'id' is missing in type 'Promise<{ id: string; }>' but required in type '{ id: string; }'.
+.next/dev/types/validator.ts(270,31): error TS2344: Type 'typeof import("E:/WordPress Plugins/DKS Projects/Tanzeem.org/tanzeem--next/src/app/api/users/[id]/route")' does not satisfy the constraint 'RouteHandlerConfig<"/api/users/[id]">'.
+  Types of property 'PUT' are incompatible.
+    Type '(req: Request, { params }: { params: { id: string; }; }) => Promise<NextResponse<{ error: string; }> | NextResponse<{ message: string; }>>' is not assignable to type '(request: NextRequest, context: { params: Promise<{ id: string; }>; }) => void | Response | Promise<void | Response>'.
+      Types of parameters '__1' and 'context' are incompatible.
+        Type '{ params: Promise<{ id: string; }>; }' is not assignable to type '{ params: { id: string; }; }'.
+          Types of property 'params' are incompatible.
+            Property 'id' is missing in type 'Promise<{ id: string; }>' but required in type '{ id: string; }'.
+.next/types/validator.ts(135,31): error TS2344: Type 'typeof import("E:/WordPress Plugins/DKS Projects/Tanzeem.org/tanzeem--next/src/app/api/books/[id]/route")' does not satisfy the constraint 'RouteHandlerConfig<"/api/books/[id]">'.
+  Types of property 'PUT' are incompatible.
+    Type '(req: NextRequest, { params }: { params: { id: string; }; }) => Promise<NextResponse<{ success: boolean; }> | NextResponse<{ error: string; }>>' is not assignable to type '(request: NextRequest, context: { params: Promise<{ id: string; }>; }) => void | Response | Promise<void | Response>'.
+      Types of parameters '__1' and 'context' are incompatible.
+        Type '{ params: Promise<{ id: string; }>; }' is not assignable to type '{ params: { id: string; }; }'.
+          Types of property 'params' are incompatible.
+            Property 'id' is missing in type 'Promise<{ id: string; }>' but required in type '{ id: string; }'.
+.next/types/validator.ts(171,31): error TS2344: Type 'typeof import("E:/WordPress Plugins/DKS Projects/Tanzeem.org/tanzeem--next/src/app/api/magazines/[id]/route")' does not satisfy the constraint 'RouteHandlerConfig<"/api/magazines/[id]">'.
+  Types of property 'PUT' are incompatible.
+    Type '(req: NextRequest, { params }: { params: { id: string; }; }) => Promise<NextResponse<{ success: boolean; }> | NextResponse<{ error: string; }>>' is not assignable to type '(request: NextRequest, context: { params: Promise<{ id: string; }>; }) => void | Response | Promise<void | Response>'.
+      Types of parameters '__1' and 'context' are incompatible.
+        Type '{ params: Promise<{ id: string; }>; }' is not assignable to type '{ params: { id: string; }; }'.
+          Types of property 'params' are incompatible.
+            Property 'id' is missing in type 'Promise<{ id: string; }>' but required in type '{ id: string; }'.
+.next/types/validator.ts(189,31): error TS2344: Type 'typeof import("E:/WordPress Plugins/DKS Projects/Tanzeem.org/tanzeem--next/src/app/api/menus/[id]/route")' does not satisfy the constraint 'RouteHandlerConfig<"/api/menus/[id]">'.
+  Types of property 'PUT' are incompatible.
+    Type '(request: NextRequest, { params }: { params: { id: string; }; }) => Promise<NextResponse<{ error: string; }> | NextResponse<{ menu: { id: string; createdAt: Date; updatedAt: Date; ... 6 more ...; menuType: string; } | undefined; }>>' is not assignable to type '(request: NextRequest, context: { params: Promise<{ id: string; }>; }) => void | Response | Promise<void | Response>'.
+      Types of parameters '__1' and 'context' are incompatible.
+        Type '{ params: Promise<{ id: string; }>; }' is not assignable to type '{ params: { id: string; }; }'.
+          Types of property 'params' are incompatible.
+            Property 'id' is missing in type 'Promise<{ id: string; }>' but required in type '{ id: string; }'.
+.next/types/validator.ts(243,31): error TS2344: Type 'typeof import("E:/WordPress Plugins/DKS Projects/Tanzeem.org/tanzeem--next/src/app/api/sliders/[id]/route")' does not satisfy the constraint 'RouteHandlerConfig<"/api/sliders/[id]">'.
+  Types of property 'PUT' are incompatible.
+    Type '(req: NextRequest, { params }: { params: { id: string; }; }) => Promise<NextResponse<{ error: string; }> | NextResponse<{ createdAt: Date; updatedAt: Date; id: string; title: string; imageUrl: string; linkUrl: string | null; order: number; isActive: boolean; }>>' is not assignable to type '(request: NextRequest, context: { params: Promise<{ id: string; }>; }) => void | Response | Promise<void | Response>'.
+      Types of parameters '__1' and 'context' are incompatible.
+        Type '{ params: Promise<{ id: string; }>; }' is not assignable to type '{ params: { id: string; }; }'.
+          Types of property 'params' are incompatible.
+            Property 'id' is missing in type 'Promise<{ id: string; }>' but required in type '{ id: string; }'.
+.next/types/validator.ts(270,31): error TS2344: Type 'typeof import("E:/WordPress Plugins/DKS Projects/Tanzeem.org/tanzeem--next/src/app/api/users/[id]/route")' does not satisfy the constraint 'RouteHandlerConfig<"/api/users/[id]">'.
+  Types of property 'PUT' are incompatible.
+    Type '(req: Request, { params }: { params: { id: string; }; }) => Promise<NextResponse<{ error: string; }> | NextResponse<{ message: string; }>>' is not assignable to type '(request: NextRequest, context: { params: Promise<{ id: string; }>; }) => void | Response | Promise<void | Response>'.
+      Types of parameters '__1' and 'context' are incompatible.
+        Type '{ params: Promise<{ id: string; }>; }' is not assignable to type '{ params: { id: string; }; }'.
+          Types of property 'params' are incompatible.
+            Property 'id' is missing in type 'Promise<{ id: string; }>' but required in type '{ id: string; }'.
+examples/websocket/frontend.tsx(4,20): error TS2307: Cannot find module 'socket.io-client' or its corresponding type declarations.
+examples/websocket/server.ts(2,24): error TS2307: Cannot find module 'socket.io' or its corresponding type declarations.
+skills/frontend-design/examples/typescript/sample-components.tsx(107,11): error TS2430: Interface 'InputProps' incorrectly extends interface 'InputHTMLAttributes<HTMLInputElement>'.
+  Types of property 'size' are incompatible.
+    Type '"lg" | "md" | "sm" | undefined' is not assignable to type 'number | undefined'.
+      Type 'string' is not assignable to type 'number'.
+skills/frontend-design/examples/typescript/theme-provider.tsx(237,54): error TS2503: Cannot find namespace 'JSX'.
+src/app/api/audio/route.ts(21,47): error TS2345: Argument of type 'SQL<unknown>' is not assignable to parameter of type 'never'.
+src/app/api/audio/route.ts(22,53): error TS2345: Argument of type 'SQL<unknown>' is not assignable to parameter of type 'never'.
+src/app/api/audio/route.ts(24,37): error TS2345: Argument of type 'SQL<unknown>' is not assignable to parameter of type 'never'.
+src/app/api/audio/route.ts(25,36): error TS2345: Argument of type 'SQL<unknown>' is not assignable to parameter of type 'never'.
+src/app/api/audio/route.ts(26,46): error TS2345: Argument of type 'SQL<unknown>' is not assignable to parameter of type 'never'.
+src/app/api/audio/route.ts(30,9): error TS2345: Argument of type 'SQL<unknown> | undefined' is not assignable to parameter of type 'never'.
+  Type 'undefined' is not assignable to type 'never'.
+src/app/api/books/route.ts(21,47): error TS2345: Argument of type 'SQL<unknown>' is not assignable to parameter of type 'never'.
+src/app/api/books/route.ts(22,48): error TS2345: Argument of type 'SQL<unknown>' is not assignable to parameter of type 'never'.
+src/app/api/books/route.ts(23,37): error TS2345: Argument of type 'SQL<unknown>' is not assignable to parameter of type 'never'.
+src/app/api/books/route.ts(24,35): error TS2345: Argument of type 'SQL<unknown>' is not assignable to parameter of type 'never'.
+src/app/api/books/route.ts(25,46): error TS2345: Argument of type 'SQL<unknown>' is not assignable to parameter of type 'never'.
+src/app/api/books/route.ts(28,9): error TS2345: Argument of type 'SQL<unknown> | undefined' is not assignable to parameter of type 'never'.
+  Type 'undefined' is not assignable to type 'never'.
+src/app/api/contact/route.ts(17,35): error TS2345: Argument of type 'SQL<unknown>' is not assignable to parameter of type 'never'.
+src/app/api/contact/route.ts(18,44): error TS2345: Argument of type 'SQL<unknown>' is not assignable to parameter of type 'never'.
+src/app/api/contact/route.ts(19,45): error TS2345: Argument of type 'SQL<unknown>' is not assignable to parameter of type 'never'.
+src/app/api/events/route.ts(19,47): error TS2345: Argument of type 'SQL<unknown>' is not assignable to parameter of type 'never'.
+src/app/api/events/route.ts(20,48): error TS2345: Argument of type 'SQL<unknown>' is not assignable to parameter of type 'never'.
+src/app/api/events/route.ts(21,46): error TS2345: Argument of type 'SQL<unknown>' is not assignable to parameter of type 'never'.
+src/app/api/events/route.ts(25,9): error TS2345: Argument of type 'SQL<unknown> | undefined' is not assignable to parameter of type 'never'.
+  Type 'undefined' is not assignable to type 'never'.
+src/app/api/pages/route.ts(22,47): error TS2345: Argument of type 'SQL<unknown>' is not assignable to parameter of type 'never'.
+src/app/api/pages/route.ts(23,53): error TS2345: Argument of type 'SQL<unknown>' is not assignable to parameter of type 'never'.
+src/app/api/pages/route.ts(27,9): error TS2345: Argument of type 'SQL<unknown> | undefined' is not assignable to parameter of type 'never'.
+  Type 'undefined' is not assignable to type 'never'.
+src/app/api/settings/route.ts(63,47): error TS2345: Argument of type '{ createdAt: Date; updatedAt: Date; id: string; key: string; value: string; type: string; group: string; }' is not assignable to parameter of type 'never'.
+src/app/api/users/[id]/route.ts(12,29): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/users/[id]/route.ts(51,29): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/users/route.ts(10,28): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/users/route.ts(34,29): error TS2554: Expected 1 arguments, but got 0.
+src/app/api/videos/route.ts(21,47): error TS2345: Argument of type 'SQL<unknown>' is not assignable to parameter of type 'never'.
+src/app/api/videos/route.ts(22,48): error TS2345: Argument of type 'SQL<unknown>' is not assignable to parameter of type 'never'.
+src/app/api/videos/route.ts(23,37): error TS2345: Argument of type 'SQL<unknown>' is not assignable to parameter of type 'never'.
+src/app/api/videos/route.ts(24,36): error TS2345: Argument of type 'SQL<unknown>' is not assignable to parameter of type 'never'.
+src/app/api/videos/route.ts(25,46): error TS2345: Argument of type 'SQL<unknown>' is not assignable to parameter of type 'never'.
+src/app/api/videos/route.ts(28,9): error TS2345: Argument of type 'SQL<unknown> | undefined' is not assignable to parameter of type 'never'.
+  Type 'undefined' is not assignable to type 'never'.
+src/components/admin/HomepageManager.tsx(39,52): error TS2322: Type '{ hideHeader: boolean; }' is not assignable to type 'IntrinsicAttributes'.
+  Property 'hideHeader' does not exist on type 'IntrinsicAttributes'.
+src/db/schema.ts(88,32): error TS2353: Object literal may only specify known properties, and 'mode' does not exist in type 'MySqlTextConfig<readonly [string, ...string[]] | [string, ...string[]]>'.
+src/db/schema.ts(118,32): error TS2353: Object literal may only specify known properties, and 'mode' does not exist in type 'MySqlTextConfig<readonly [string, ...string[]] | [string, ...string[]]>'.
+src/db/schema.ts(349,32): error TS2353: Object literal may only specify known properties, and 'mode' does not exist in type 'MySqlTextConfig<readonly [string, ...string[]] | [string, ...string[]]>'.
+src/db/schema.ts(414,32): error TS2353: Object literal may only specify known properties, and 'mode' does not exist in type 'MySqlTextConfig<readonly [string, ...string[]] | [string, ...string[]]>'.
+src/db/schema.ts(453,32): error TS2353: Object literal may only specify known properties, and 'mode' does not exist in type 'MySqlTextConfig<readonly [string, ...string[]] | [string, ...string[]]>'.

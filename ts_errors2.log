@@ -1,0 +1,22 @@
+﻿examples/websocket/frontend.tsx(4,20): error TS2307: Cannot find module 'socket.io-client' or its corresponding type declarations.
+examples/websocket/server.ts(2,24): error TS2307: Cannot find module 'socket.io' or its corresponding type declarations.
+skills/frontend-design/examples/typescript/sample-components.tsx(107,11): error TS2430: Interface 'InputProps' incorrectly extends interface 'InputHTMLAttributes<HTMLInputElement>'.
+  Types of property 'size' are incompatible.
+    Type '"lg" | "md" | "sm" | undefined' is not assignable to type 'number | undefined'.
+      Type 'string' is not assignable to type 'number'.
+skills/frontend-design/examples/typescript/theme-provider.tsx(237,54): error TS2503: Cannot find namespace 'JSX'.
+src/app/api/menus/[id]/route.ts(22,44): error TS2339: Property 'id' does not exist on type 'Promise<{ id: string; }>'.
+src/app/api/menus/[id]/route.ts(39,44): error TS2339: Property 'id' does not exist on type 'Promise<{ id: string; }>'.
+src/app/api/menus/[id]/route.ts(42,44): error TS2339: Property 'id' does not exist on type 'Promise<{ id: string; }>'.
+src/app/api/menus/[id]/route.ts(51,30): error TS2339: Property 'id' does not exist on type 'Promise<{ id: string; }>'.
+src/app/api/menus/[id]/route.ts(78,44): error TS2339: Property 'id' does not exist on type 'Promise<{ id: string; }>'.
+src/app/api/menus/[id]/route.ts(86,66): error TS2339: Property 'id' does not exist on type 'Promise<{ id: string; }>'.
+src/app/api/menus/[id]/route.ts(94,30): error TS2339: Property 'id' does not exist on type 'Promise<{ id: string; }>'.
+src/app/api/settings/route.ts(63,47): error TS2345: Argument of type '{ createdAt: Date; updatedAt: Date; id: string; key: string; value: string; type: string; group: string; }' is not assignable to parameter of type 'never'.
+src/app/api/users/[id]/route.ts(12,44): error TS2345: Argument of type 'Request' is not assignable to parameter of type 'NextRequest'.
+  Type 'Request' is missing the following properties from type 'NextRequest': cookies, nextUrl, page, ua
+src/app/api/users/[id]/route.ts(51,44): error TS2345: Argument of type 'Request' is not assignable to parameter of type 'NextRequest'.
+  Type 'Request' is missing the following properties from type 'NextRequest': cookies, nextUrl, page, ua
+src/app/api/users/route.ts(10,43): error TS2304: Cannot find name 'req'.
+src/app/api/users/route.ts(34,44): error TS2345: Argument of type 'Request' is not assignable to parameter of type 'NextRequest'.
+  Type 'Request' is missing the following properties from type 'NextRequest': cookies, nextUrl, page, ua
