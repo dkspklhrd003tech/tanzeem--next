@@ -106,7 +106,7 @@ export function UserManagement() {
             if (!res.ok) throw new Error(data.error || "Failed to save user");
 
             toast({
-                title: "Success! 🎉",
+                title: "Success!",
                 description: `User successfully ${isEditing ? "updated" : "added"}.`,
             });
 

@@ -114,7 +114,7 @@ export function HomeSlidersManagement() {
                     description: "Slider image securely uploaded to server.",
                 });
             } else {
-                throw new Error(data.error || "Upload failed");
+                throw new Error(data.error || "Upload Failed");
             }
         } catch (err: any) {
             toast({
@@ -153,8 +153,8 @@ export function HomeSlidersManagement() {
             if (!res.ok) throw new Error(data.error || "Failed to save slider");
 
             toast({
-                title: "Success! 🎉",
-                description: `Slider successfully ${isEditing ? "updated" : "added"}.`,
+                title: "Success!",
+                description: `Slider Successfully ${isEditing ? "Updated" : "Added"}.`,
             });
 
             closeModal();
@@ -171,17 +171,17 @@ export function HomeSlidersManagement() {
     };
 
     const handleDelete = async (id: string, title: string) => {
-        if (!confirm(`Are you sure you want to delete slider "${title}"?`)) return;
+        if (!confirm(`Are you sure you want to Delete Slider?"${title}"?`)) return;
 
         try {
             const res = await fetch(`/api/sliders/${id}`, { method: "DELETE" });
             const data = await res.json();
 
-            if (!res.ok) throw new Error(data.error || "Failed to delete slider");
+            if (!res.ok) throw new Error(data.error || "Failed to Delete Slider");
 
             toast({
                 title: "Slider Deleted",
-                description: "The slider has been permanently removed.",
+                description: "The Slider has been Permanently Removed.",
             });
 
             fetchSliders();
@@ -196,17 +196,17 @@ export function HomeSlidersManagement() {
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center pb-4 border-b border-border mb-6">
                 <div>
-                    <h1 className="text-3xl font-bold text-foreground">Home Sliders</h1>
-                    <p className="text-foreground-muted">Manage the large carousel images running on the homepage</p>
+                    <h1 className="text-3xl font-bold text-foreground tracking-tight">Home Sliders</h1>
+                    <p className="text-sm text-foreground-muted mt-1">Manage the Large Carousel Images running on the Homepage</p>
                 </div>
                 <button
                     onClick={() => handleOpenModal()}
-                    className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary-dark transition-colors"
+                    className="flex items-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 rounded-xl font-semibold shadow-sm hover:shadow-md transition-all hover:bg-primary-dark active:scale-95"
                 >
                     <Plus className="w-4 h-4" />
-                    Add Slider
+                    Add New Slider
                 </button>
             </div>
 
@@ -314,24 +314,27 @@ export function HomeSlidersManagement() {
                             className="relative w-full max-w-lg bg-card border border-border rounded-2xl shadow-2xl overflow-hidden"
                         >
                             <div className="flex justify-between items-center p-6 border-b border-border bg-muted/30">
-                                <h2 className="text-xl font-bold text-foreground">
-                                    {editingSlider ? "Edit Slider" : "Add New Slider"}
-                                </h2>
+                                <h1 className="text-2xl font-bold text-foreground tracking-tight">
+                                    {editingSlider ? "Edit Slider Details" : "Add New Slider"}
+                                </h1>
                                 <button
                                     onClick={closeModal}
-                                    className="text-foreground-muted hover:text-foreground transition-colors p-2 hover:bg-muted rounded-full"
+                                    className="text-foreground-muted hover:text-foreground transition-all p-2 hover:bg-muted rounded-full"
                                 >
-                                    <X className="w-5 h-5" />
+                                    <X className="w-6 h-6" />
                                 </button>
                             </div>
 
                             <form onSubmit={handleSave} className="p-6 space-y-5">
 
                                 {/* Image Uploader */}
-                                <div className="space-y-2">
-                                    <label className="text-sm font-medium text-foreground flex justify-between">
-                                        Slider Image
-                                        <span className="text-xs text-foreground-muted font-normal">(Ratio: 1351x374 highly recommended)</span>
+                                <div className="space-y-3">
+                                    <label className="text-sm font-semibold text-foreground flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <ImageIcon className="w-4 h-4 text-primary" />
+                                            <span>Slider Image</span>
+                                        </div>
+                                        <span className="text-xs text-foreground-muted font-normal">(Ratio: 1351x374 recommended)</span>
                                     </label>
 
                                     <div
@@ -355,25 +358,25 @@ export function HomeSlidersManagement() {
                                     <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleFileUpload} />
                                 </div>
 
-                                <div className="space-y-1">
-                                    <label className="text-sm font-medium text-foreground">Admin Reference Title</label>
+                                <div className="space-y-2">
+                                    <label className="text-sm font-semibold text-foreground">Admin Reference Title</label>
                                     <input
                                         type="text"
                                         required
                                         value={formData.title}
                                         onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                        className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                                        className="w-full px-4 py-2.5 bg-background border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
                                         placeholder="e.g. Ramadan Special 2026"
                                     />
                                 </div>
 
-                                <div className="space-y-1">
-                                    <label className="text-sm font-medium text-foreground">Target Link URL (Optional)</label>
+                                <div className="space-y-2">
+                                    <label className="text-sm font-semibold text-foreground">Target Link URL (Optional)</label>
                                     <input
                                         type="text"
                                         value={formData.linkUrl}
                                         onChange={(e) => setFormData({ ...formData, linkUrl: e.target.value })}
-                                        className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
+                                        className="w-full px-4 py-2.5 bg-background border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
                                         placeholder="/program/ramadan OR https://youtube.com/..."
                                     />
                                 </div>
@@ -406,14 +409,14 @@ export function HomeSlidersManagement() {
                                     <button
                                         type="button"
                                         onClick={closeModal}
-                                        className="px-4 py-2 hover:bg-muted text-foreground-muted hover:text-foreground rounded-lg transition-colors font-medium text-sm"
+                                        className="px-6 py-2.5 bg-muted text-foreground rounded-xl font-medium hover:bg-muted/80 transition-all active:scale-95"
                                     >
                                         Cancel
                                     </button>
                                     <button
                                         type="submit"
                                         disabled={isLoading || isUploading}
-                                        className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary-dark transition-colors font-medium text-sm disabled:opacity-50"
+                                        className="px-8 py-2.5 bg-[#0d5844] text-[#fefefc] rounded-xl font-semibold shadow-md active:scale-95 transition-all disabled:opacity-50"
                                     >
                                         {isLoading ? "Saving..." : editingSlider ? "Update Slider" : "Create Slider"}
                                     </button>

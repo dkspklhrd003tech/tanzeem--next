@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import {
   Upload,
@@ -12,6 +12,7 @@ import {
   Trash2,
   Copy,
   ExternalLink,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,23 +24,167 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
 
-// Mock media data
-const mockMedia = [
-  { id: "1", filename: "lecture-thumbnail.jpg", originalName: "Lecture Thumbnail.jpg", mimeType: "image/jpeg", size: 245000, url: "/media/lecture.jpg", createdAt: "2024-01-15" },
-  { id: "2", filename: "book-cover.png", originalName: "Book Cover.png", mimeType: "image/png", size: 512000, url: "/media/book.png", createdAt: "2024-01-14" },
-  { id: "3", filename: "document.pdf", originalName: "Islamic Guide.pdf", mimeType: "application/pdf", size: 1200000, url: "/media/guide.pdf", createdAt: "2024-01-13" },
-  { id: "4", filename: "audio-thumb.jpg", originalName: "Audio Thumbnail.jpg", mimeType: "image/jpeg", size: 180000, url: "/media/audio.jpg", createdAt: "2024-01-12" },
-  { id: "5", filename: "event-banner.jpg", originalName: "Event Banner.jpg", mimeType: "image/jpeg", size: 890000, url: "/media/event.jpg", createdAt: "2024-01-11" },
-  { id: "6", filename: "team-photo.jpg", originalName: "Team Photo.jpg", mimeType: "image/jpeg", size: 456000, url: "/media/team.jpg", createdAt: "2024-01-10" },
-];
+type MediaItem = {
+  id: string;
+  filename: string;
+  originalName: string;
+  mimeType: string;
+  size: number;
+  url: string;
+  createdAt: string;
+};
 
 export function MediaLibrary() {
+  const [media, setMedia] = useState<MediaItem[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isUploading, setIsUploading] = useState(false);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedItems, setSelectedItems] = useState<string[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
 
-  const filteredMedia = mockMedia.filter(
+  useEffect(() => {
+    fetchMedia();
+  }, []);
+
+  const fetchMedia = async () => {
+    try {
+      setIsLoading(true);
+      const res = await fetch("/api/media");
+      if (!res.ok) throw new Error("Failed to fetch media");
+      const data = await res.json();
+      setMedia(data.media || []);
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Could not load media library.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) return;
+    const files = Array.from(e.target.files);
+    setIsUploading(true);
+
+    let successCount = 0;
+    let failCount = 0;
+
+    for (const file of files) {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("type", "media");
+
+      try {
+        // 1. Upload file to storage
+        const uploadRes = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
+        const uploadData = await uploadRes.json();
+        if (!uploadRes.ok || !uploadData.success) throw new Error(uploadData.error || "Upload failed");
+
+        // 2. Create database record
+        const mediaRes = await fetch("/api/media", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            filename: uploadData.url.split("/").pop(),
+            originalName: file.name,
+            mimeType: file.type || "application/octet-stream",
+            size: file.size,
+            url: uploadData.url,
+          }),
+        });
+
+        if (!mediaRes.ok) throw new Error("Failed to register media in database");
+        successCount++;
+      } catch (err: any) {
+        console.error(`Upload failed for ${file.name}:`, err);
+        failCount++;
+      }
+    }
+
+    if (successCount > 0) {
+      toast({
+        title: "Upload Complete",
+        description: `Successfully uploaded ${successCount} file(s).${failCount > 0 ? ` ${failCount} failed.` : ""}`,
+      });
+      fetchMedia();
+    } else if (failCount > 0) {
+      toast({
+        title: "Upload Failed",
+        description: `Failed to upload ${failCount} file(s).`,
+        variant: "destructive",
+      });
+    }
+
+    setIsUploading(false);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const handleDelete = async (id: string, name: string) => {
+    if (!confirm(`Are you sure you want to permanently delete "${name}"?`)) return;
+
+    try {
+      const res = await fetch(`/api/media/${id}`, { method: "DELETE" });
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.error || "Failed to delete file");
+      }
+
+      toast({
+        title: "File Deleted",
+        description: `"${name}" has been removed from the library.`,
+      });
+      
+      setMedia(prev => prev.filter(item => item.id !== id));
+      setSelectedItems(prev => prev.filter(item => item !== id));
+    } catch (error: any) {
+      toast({
+        title: "Delete Failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (!confirm(`Delete ${selectedItems.length} items?`)) return;
+    
+    let successCount = 0;
+    for (const id of selectedItems) {
+      try {
+        const res = await fetch(`/api/media/${id}`, { method: "DELETE" });
+        if (res.ok) successCount++;
+      } catch (e) {}
+    }
+
+    toast({
+      title: "Bulk Deletion",
+      description: `Successfully deleted ${successCount} items.`,
+    });
+    
+    fetchMedia();
+    setSelectedItems([]);
+  };
+
+  const copyToClipboard = (url: string) => {
+    const fullUrl = `${window.location.origin}${url}`;
+    navigator.clipboard.writeText(fullUrl);
+    toast({
+      title: "URL Copied",
+      description: "Direct link copied to clipboard.",
+    });
+  };
+
+  const filteredMedia = media.filter(
     (item) =>
       item.filename.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.originalName.toLowerCase().includes(searchQuery.toLowerCase())
@@ -69,10 +214,27 @@ export function MediaLibrary() {
           <h1 className="text-3xl font-bold text-foreground">Media Library</h1>
           <p className="text-foreground-muted">Manage your uploaded files</p>
         </div>
-        <Button className="bg-primary hover:bg-primary-dark text-primary-foreground">
-          <Upload className="h-4 w-4 mr-2" />
-          Upload Files
-        </Button>
+        <div>
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileUpload}
+            multiple
+            className="hidden"
+          />
+          <Button 
+            disabled={isUploading}
+            onClick={() => fileInputRef.current?.click()}
+            className="bg-primary hover:bg-primary-dark text-primary-foreground"
+          >
+            {isUploading ? (
+              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+            ) : (
+              <Upload className="h-4 w-4 mr-2" />
+            )}
+            {isUploading ? "Uploading..." : "Upload Files"}
+          </Button>
+        </div>
       </div>
 
       {/* Toolbar */}
@@ -111,18 +273,22 @@ export function MediaLibrary() {
             {selectedItems.length} item(s) selected
           </span>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm">
-              Download
-            </Button>
-            <Button variant="destructive" size="sm">
-              Delete
+            <Button variant="destructive" size="sm" onClick={handleBulkDelete}>
+              Delete Selected
             </Button>
           </div>
         </div>
       )}
 
-      {/* Media Grid/List */}
-      {viewMode === "grid" ? (
+      {isLoading ? (
+        <div className="flex justify-center p-12">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      ) : filteredMedia.length === 0 ? (
+        <div className="text-center py-20 border-2 border-dashed border-border rounded-xl">
+          <p className="text-foreground-muted">No media files found.</p>
+        </div>
+      ) : viewMode === "grid" ? (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
           {filteredMedia.map((item) => (
             <motion.div
@@ -136,15 +302,22 @@ export function MediaLibrary() {
               onClick={() => toggleSelect(item.id)}
             >
               {/* Thumbnail */}
-              <div className="aspect-square bg-muted flex items-center justify-center">
+              <div className="aspect-square bg-muted flex items-center justify-center relative">
                 {item.mimeType.startsWith("image/") ? (
-                  <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
-                    <span className="text-4xl">🖼️</span>
-                  </div>
+                  <img src={item.url} alt={item.originalName} className="w-full h-full object-cover" />
                 ) : item.mimeType === "application/pdf" ? (
                   <span className="text-4xl">📄</span>
                 ) : (
                   <span className="text-4xl">📁</span>
+                )}
+                
+                {/* Selection Checkbox Overlay */}
+                {selectedItems.includes(item.id) && (
+                   <div className="absolute top-2 left-2 bg-primary text-white rounded-full p-0.5 shadow-md">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                      </svg>
+                   </div>
                 )}
               </div>
 
@@ -153,34 +326,43 @@ export function MediaLibrary() {
                 <p className="text-sm font-medium text-foreground truncate">
                   {item.originalName}
                 </p>
-                <p className="text-xs text-foreground-muted">
-                  {formatFileSize(item.size)}
-                </p>
+                <div className="flex justify-between items-center mt-1">
+                  <p className="text-[10px] text-foreground-muted uppercase font-bold tracking-tight">
+                    {formatFileSize(item.size)}
+                  </p>
+                  <p className="text-[10px] text-foreground-muted">
+                    {new Date(item.createdAt).toLocaleDateString()}
+                  </p>
+                </div>
               </div>
 
               {/* Actions */}
-              <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity" onClick={(e) => e.stopPropagation()}>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="secondary" size="icon" className="h-8 w-8">
+                    <Button variant="secondary" size="icon" className="h-8 w-8 shadow-sm">
                       <MoreHorizontal className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => copyToClipboard(item.url)}>
                       <Copy className="h-4 w-4 mr-2" />
                       Copy URL
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <ExternalLink className="h-4 w-4 mr-2" />
-                      Open
+                    <DropdownMenuItem asChild>
+                      <a href={item.url} target="_blank" rel="noopener noreferrer">
+                        <ExternalLink className="h-4 w-4 mr-2" />
+                        Open Original
+                      </a>
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <Download className="h-4 w-4 mr-2" />
-                      Download
+                    <DropdownMenuItem asChild>
+                       <a href={item.url} download={item.originalName}>
+                        <Download className="h-4 w-4 mr-2" />
+                        Download
+                      </a>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem className="text-red-500">
+                    <DropdownMenuItem className="text-red-500" onClick={() => handleDelete(item.id, item.originalName)}>
                       <Trash2 className="h-4 w-4 mr-2" />
                       Delete
                     </DropdownMenuItem>
@@ -191,76 +373,80 @@ export function MediaLibrary() {
           ))}
         </div>
       ) : (
-        <div className="bg-card rounded-xl border border-border overflow-hidden">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-border">
-                <th className="text-left p-4 font-medium">Name</th>
-                <th className="text-left p-4 font-medium">Type</th>
-                <th className="text-left p-4 font-medium">Size</th>
-                <th className="text-left p-4 font-medium">Date</th>
-                <th className="w-[80px]"></th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredMedia.map((item) => (
-                <tr
-                  key={item.id}
-                  className="border-b border-border hover:bg-muted/50 cursor-pointer"
-                  onClick={() => toggleSelect(item.id)}
-                >
-                  <td className="p-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-muted rounded-lg flex items-center justify-center">
-                        {item.mimeType.startsWith("image/") ? "🖼️" : "📄"}
-                      </div>
-                      <div>
-                        <p className="font-medium text-foreground">
-                          {item.originalName}
-                        </p>
-                        <p className="text-xs text-foreground-muted">
-                          {item.filename}
-                        </p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="p-4 text-foreground-muted text-sm">
-                    {item.mimeType}
-                  </td>
-                  <td className="p-4 text-foreground-muted text-sm">
-                    {formatFileSize(item.size)}
-                  </td>
-                  <td className="p-4 text-foreground-muted text-sm">
-                    {item.createdAt}
-                  </td>
-                  <td className="p-4">
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem>
-                          <Copy className="h-4 w-4 mr-2" />
-                          Copy URL
-                        </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <Download className="h-4 w-4 mr-2" />
-                          Download
-                        </DropdownMenuItem>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem className="text-red-500">
-                          <Trash2 className="h-4 w-4 mr-2" />
-                          Delete
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </td>
+        <div className="bg-card rounded-xl border border-border overflow-hidden shadow-sm">
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-muted/50 border-b border-border">
+                <tr>
+                  <th className="text-left p-4 font-semibold text-xs uppercase tracking-wider">Name</th>
+                  <th className="text-left p-4 font-semibold text-xs uppercase tracking-wider">Type</th>
+                  <th className="text-left p-4 font-semibold text-xs uppercase tracking-wider">Size</th>
+                  <th className="text-left p-4 font-semibold text-xs uppercase tracking-wider">Date</th>
+                  <th className="w-[80px]"></th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-border text-sm">
+                {filteredMedia.map((item) => (
+                  <tr
+                    key={item.id}
+                    className={cn(
+                      "hover:bg-muted/30 cursor-pointer transition-colors",
+                      selectedItems.includes(item.id) && "bg-primary/5"
+                    )}
+                    onClick={() => toggleSelect(item.id)}
+                  >
+                    <td className="p-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-muted rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0">
+                          {item.mimeType.startsWith("image/") ? (
+                            <img src={item.url} className="w-full h-full object-cover" />
+                          ) : (
+                             <span className="text-xl">📄</span>
+                          )}
+                        </div>
+                        <div className="min-w-0">
+                          <p className="font-bold text-foreground truncate">
+                            {item.originalName}
+                          </p>
+                          <p className="text-xs text-foreground-muted truncate">
+                            {item.filename}
+                          </p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="p-4 text-foreground-muted">
+                      {item.mimeType}
+                    </td>
+                    <td className="p-4 text-foreground-muted">
+                      {formatFileSize(item.size)}
+                    </td>
+                    <td className="p-4 text-foreground-muted">
+                      {new Date(item.createdAt).toLocaleDateString()}
+                    </td>
+                    <td className="p-4" onClick={(e) => e.stopPropagation()}>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem onClick={() => copyToClipboard(item.url)}>
+                            <Copy className="h-4 w-4 mr-2" />
+                            Copy URL
+                          </DropdownMenuItem>
+                          <DropdownMenuItem className="text-red-500" onClick={() => handleDelete(item.id, item.originalName)}>
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Delete
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </motion.div>

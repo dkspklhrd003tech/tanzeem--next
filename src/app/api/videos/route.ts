@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
           speaker: true,
           author: { columns: { id: true, name: true } },
         },
-        orderBy: [desc(videos.createdAt)],
+        orderBy: [videos.order, desc(videos.createdAt)],
         limit,
         offset,
       }),
@@ -63,8 +63,8 @@ export async function POST(request: NextRequest) {
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const data = await request.json();
-    if (!data.title || !data.slug || !data.videoUrl) {
-      return NextResponse.json({ error: "Title, slug, and video URL are required" }, { status: 400 });
+    if (!data.title || !data.slug) {
+      return NextResponse.json({ error: "Title and slug are required" }, { status: 400 });
     }
 
     const videoId = crypto.randomUUID();
@@ -107,4 +107,29 @@ export async function POST(request: NextRequest) {
     console.error("Create video error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
+}
+export async function PATCH(request: NextRequest) {
+    try {
+        const user = await getCurrentUser(request);
+        if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+        const body = await request.json();
+        const { orders } = body; // Expected: [{ id: string, order: number }, ...]
+
+        if (!orders || !Array.isArray(orders)) {
+            return NextResponse.json({ error: "Invalid orders data" }, { status: 400 });
+        }
+
+        // Multiple updates in a transaction
+        await db.transaction(async (tx) => {
+            for (const item of orders) {
+                await tx.update(videos).set({ order: item.order }).where(eq(videos.id, item.id));
+            }
+        });
+
+        return NextResponse.json({ success: true, message: "Videos reordered successfully" });
+    } catch (error) {
+        console.error("Patch videos error:", error);
+        return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    }
 }

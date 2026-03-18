@@ -137,7 +137,7 @@ export function LeaderProfiles() {
             if (!res.ok) throw new Error(data.error || "Failed to save profile");
 
             toast({
-                title: "Success! 🎉",
+                title: "Success!",
                 description: `Profile successfully ${isEditing ? "updated" : "added"}.`,
             });
 
@@ -165,17 +165,17 @@ export function LeaderProfiles() {
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex justify-between items-center pb-4 border-b border-border mb-8">
                 <div>
-                    <h2 className="text-2xl font-bold text-foreground">Leader Profiles</h2>
-                    <p className="text-foreground-muted text-sm mt-1">Manage Founder, Ameer, and other prominent figures.</p>
+                    <h2 className="text-3xl font-bold text-foreground tracking-tight">Leadership Profiles</h2>
+                    <p className="text-sm text-foreground-muted mt-1">Manage Founder, Ameer, and Other Prominent Organizational Figures.</p>
                 </div>
                 <button
                     onClick={() => handleOpenModal()}
-                    className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary-dark transition-colors text-sm font-medium"
+                    className="flex items-center gap-2 bg-primary text-primary-foreground px-6 py-2.5 rounded-xl font-semibold shadow-sm hover:shadow-md transition-all hover:bg-primary-dark active:scale-95"
                 >
                     <Plus className="w-4 h-4" />
-                    Add Profile
+                    Add Global Leader
                 </button>
             </div>
 
@@ -190,13 +190,13 @@ export function LeaderProfiles() {
                 <div className="bg-card rounded-xl border border-border overflow-hidden shadow-sm">
                     <div className="overflow-x-auto">
                         <table className="w-full text-left">
-                            <thead className="bg-muted/50 text-foreground-muted text-sm border-b border-border">
+                            <thead className="bg-muted/50 text-foreground font-semibold text-xs uppercase tracking-wider border-b border-border">
                                 <tr>
-                                    <th className="px-6 py-4 font-medium">Avatar</th>
-                                    <th className="px-6 py-4 font-medium">Identity & Role</th>
-                                    <th className="px-6 py-4 font-medium">Sort Order</th>
-                                    <th className="px-6 py-4 font-medium">Status</th>
-                                    <th className="px-6 py-4 text-right font-medium">Actions</th>
+                                    <th className="px-6 py-4">Identity</th>
+                                    <th className="px-6 py-4">Profile & Mandate</th>
+                                    <th className="px-6 py-4">Priority</th>
+                                    <th className="px-6 py-4">Status</th>
+                                    <th className="px-6 py-4 text-right">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-border">
@@ -304,23 +304,23 @@ export function LeaderProfiles() {
 
                                         <div className="flex-1 space-y-4">
                                             <div className="space-y-2">
-                                                <label className="text-sm font-medium text-foreground">Full Name *</label>
+                                                <label className="text-sm font-semibold text-foreground">Full Name *</label>
                                                 <input
                                                     type="text"
                                                     value={formData.name}
                                                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                                    className="w-full p-2.5 rounded-lg border border-border bg-background text-foreground focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all"
+                                                    className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                                                     placeholder="Dr. Israr Ahmed"
                                                     required
                                                 />
                                             </div>
                                             <div className="space-y-2">
-                                                <label className="text-sm font-medium text-foreground">Designation (Role)</label>
+                                                <label className="text-sm font-semibold text-foreground">Official Designation</label>
                                                 <input
                                                     type="text"
                                                     value={formData.designation}
                                                     onChange={(e) => setFormData({ ...formData, designation: e.target.value })}
-                                                    className="w-full p-2.5 rounded-lg border border-border bg-background text-foreground focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all"
+                                                    className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                                                     placeholder="The Founder"
                                                 />
                                             </div>
@@ -358,7 +358,7 @@ export function LeaderProfiles() {
                                                         onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
                                                     />
                                                     <div className={`block w-14 h-8 rounded-full transition-colors ${formData.isActive ? 'bg-primary' : 'bg-muted border border-border'}`}></div>
-                                                    <div className={`absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition-transform ${formData.isActive ? 'translate-x-6 shadow-sm' : ''}`}></div>
+                                                    <div className={`absolute left-1 top-1 bg-[#fefefc] w-6 h-6 rounded-full transition-transform ${formData.isActive ? 'translate-x-6 shadow-sm' : ''}`}></div>
                                                 </div>
                                                 <div>
                                                     <div className="text-sm font-medium text-foreground">Active Status</div>
@@ -372,11 +372,11 @@ export function LeaderProfiles() {
                             </div>
 
                             <div className="px-6 py-4 border-t border-border bg-muted/10 flex justify-end gap-3 sticky bottom-0">
-                                <button type="button" onClick={closeModal} className="px-5 py-2.5 text-sm font-medium text-foreground bg-background border border-border rounded-lg hover:bg-muted transition-colors">
+                                <button type="button" onClick={closeModal} className="px-6 py-2.5 text-sm font-semibold text-foreground bg-background border border-border rounded-xl hover:bg-muted transition-all active:scale-95">
                                     Cancel
                                 </button>
-                                <button form="profileForm" type="submit" disabled={isLoading || isUploading} className="px-5 py-2.5 text-sm font-medium text-primary-foreground bg-primary rounded-lg hover:bg-primary-dark transition-colors min-w-[120px]">
-                                    {isLoading ? <div className="mx-auto w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> : "Save Profile"}
+                                <button form="profileForm" type="submit" disabled={isLoading || isUploading} className="px-8 py-2.5 text-sm font-bold text-primary-foreground bg-primary rounded-xl hover:bg-primary-dark transition-all active:scale-95 shadow-sm hover:shadow-md min-w-[140px]">
+                                    {isLoading ? <div className="mx-auto w-5 h-5 border-2 border-white/30 border-t-[#fefefc] rounded-full animate-spin"></div> : "Save Global Profile"}
                                 </button>
                             </div>
                         </motion.div>

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
-import { getCurrentUser } from '@/lib/auth';
+import { getCurrentUser, hashPassword } from '@/lib/auth';
 
 export async function PUT(
     req: NextRequest,
@@ -31,7 +31,7 @@ export async function PUT(
 
         // Only update password if explicitly provided
         if (password) {
-            updateData.password = password;
+            updateData.password = await hashPassword(password);
         }
 
         await db.update(users).set(updateData).where(eq(users.id, id));

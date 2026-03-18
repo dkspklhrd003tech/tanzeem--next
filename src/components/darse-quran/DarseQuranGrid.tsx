@@ -61,12 +61,12 @@ export function DarseQuranGrid() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
                 {events.map((event) => (
-                    <div key={event.id} className="bg-white rounded-xl shadow-sm border border-border overflow-hidden hover:shadow-md transition-shadow flex flex-col h-full group">
+                    <div key={event.id} className="bg-[#fefefc] rounded-xl shadow-sm border border-border overflow-hidden hover:shadow-md transition-shadow flex flex-col h-full group">
 
                         {/* Card Header Teal */}
                         <div className="bg-[#0d5844] px-5 py-4 flex justify-between items-center group-hover:bg-[#0a4535] transition-colors gap-4">
-                            <h3 className="text-white font-bold text-lg truncate">{event.city}</h3>
-                            <div className="bg-white text-[#0d5844] text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap shadow-sm shrink-0">
+                            <h3 className="text-[#fefefc] font-bold text-lg truncate">{event.city}</h3>
+                            <div className="bg-[#fefefc] text-[#0d5844] text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap shadow-sm shrink-0">
                                 {event.time}
                             </div>
                         </div>

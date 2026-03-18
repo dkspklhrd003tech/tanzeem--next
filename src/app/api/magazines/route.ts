@@ -6,7 +6,7 @@ import { v4 as uuidv4 } from "uuid";
 
 export async function GET() {
     try {
-        const allMagazines = await db.select().from(magazines).orderBy(desc(magazines.createdAt));
+        const allMagazines = await db.select().from(magazines).orderBy(magazines.order, desc(magazines.createdAt));
         return NextResponse.json({ magazines: allMagazines });
     } catch (error) {
         console.error("Failed to fetch magazines:", error);
@@ -16,6 +16,9 @@ export async function GET() {
 
 export async function POST(req: NextRequest) {
     try {
+        const user = await getCurrentUser(req);
+        if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
         const body = await req.json();
         const newId = uuidv4();
 
@@ -29,13 +32,38 @@ export async function POST(req: NextRequest) {
             coverImage: body.coverImage || null,
             isFeatured: body.isFeatured || false,
             isPublished: true,
-            authorId: "admin",
-        } as any); // Using 'any' here as 'category' might not exist on magazines but we might map it to something else
+            authorId: user.id,
+        } as any);
 
         const newMag = await db.select().from(magazines).where(eq(magazines.id, newId));
         return NextResponse.json(newMag[0], { status: 201 });
     } catch (error) {
         console.error("Failed to create magazine:", error);
         return NextResponse.json({ error: "Failed to create magazine" }, { status: 500 });
+    }
+}
+
+export async function PATCH(request: NextRequest) {
+    try {
+        const user = await getCurrentUser(request);
+        if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+        const body = await request.json();
+        const { orders } = body;
+
+        if (!orders || !Array.isArray(orders)) {
+            return NextResponse.json({ error: "Invalid orders data" }, { status: 400 });
+        }
+
+        await db.transaction(async (tx) => {
+            for (const item of orders) {
+                await tx.update(magazines).set({ order: item.order }).where(eq(magazines.id, item.id));
+            }
+        });
+
+        return NextResponse.json({ success: true, message: "Magazines reordered successfully" });
+    } catch (error) {
+        console.error("Patch magazines error:", error);
+        return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
 }

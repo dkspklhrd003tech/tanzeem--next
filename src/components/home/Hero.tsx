@@ -86,13 +86,13 @@ export function Hero({ slidesData = [] }: { slidesData?: any[] }) {
           <>
             <button
               onClick={prevSlide}
-              className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-black/20 hover:bg-black/40 backdrop-blur-sm rounded-full flex items-center justify-center text-white/80 hover:text-white transition-all opacity-0 group-hover:opacity-100 z-10"
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-black/20 hover:bg-black/40 backdrop-blur-sm rounded-full flex items-center justify-center text-white/80 hover:text-[#fefefc] transition-all opacity-0 group-hover:opacity-100 z-10"
             >
               <ChevronLeft className="h-6 w-6 md:h-8 md:w-8" />
             </button>
             <button
               onClick={nextSlide}
-              className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-black/20 hover:bg-black/40 backdrop-blur-sm rounded-full flex items-center justify-center text-white/80 hover:text-white transition-all opacity-0 group-hover:opacity-100 z-10"
+              className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-black/20 hover:bg-black/40 backdrop-blur-sm rounded-full flex items-center justify-center text-white/80 hover:text-[#fefefc] transition-all opacity-0 group-hover:opacity-100 z-10"
             >
               <ChevronRight className="h-6 w-6 md:h-8 md:w-8" />
             </button>
@@ -103,7 +103,7 @@ export function Hero({ slidesData = [] }: { slidesData?: any[] }) {
                 <button
                   key={i}
                   onClick={() => setCurrent(i)}
-                  className={`w-2.5 h-2.5 rounded-full transition-all duration-300 shadow-sm ${i === current ? "bg-white w-6" : "bg-white/50 hover:bg-white/80"
+                  className={`w-2.5 h-2.5 rounded-full transition-all duration-300 shadow-sm ${i === current ? "bg-[#fefefc] w-6" : "bg-white/50 hover:bg-white/80"
                     }`}
                 />
               ))}

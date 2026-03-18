@@ -93,18 +93,18 @@ export function Dashboard() {
       className="space-y-6"
     >
       {/* Page Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between pb-4 border-b border-border mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
-          <p className="text-foreground-muted">Welcome back! Here&apos;s what&apos;s happening.</p>
+          <h1 className="text-3xl font-bold text-foreground tracking-tight">Dashboard Overview</h1>
+          <p className="text-sm text-foreground-muted mt-1">Welcome back! Here's a real-time snapshot of your platform.</p>
         </div>
-        <div className="flex items-center gap-2">
-          <Button variant="outline">
+        <div className="flex items-center gap-3">
+          <Button variant="outline" className="rounded-xl px-5 border-border hover:bg-muted font-medium transition-all">
             <Calendar className="h-4 w-4 mr-2" />
             Last 30 Days
           </Button>
-          <Button className="bg-primary hover:bg-primary-dark text-primary-foreground">
-            Add Content
+          <Button className="bg-primary hover:bg-primary-dark text-primary-foreground rounded-xl px-6 font-semibold shadow-sm hover:shadow-md transition-all active:scale-95">
+            Quick Add
           </Button>
         </div>
       </div>

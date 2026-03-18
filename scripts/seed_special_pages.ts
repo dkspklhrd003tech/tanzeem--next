@@ -4,16 +4,16 @@ import { pages } from "../src/db/schema";
 import { eq } from "drizzle-orm";
 
 async function seedPages() {
-    console.log("Seeding Special Pages...");
+  console.log("Seeding Special Pages...");
 
-    const markazHTML = `
+  const markazHTML = `
 <div class="space-y-12 pb-12">
   <div class="relative w-full aspect-[21/9] rounded-3xl overflow-hidden shadow-2xl mb-12">
     <img src="https://www.tanzeem.org/wp-content/uploads/2023/11/markaz-1.jpg" alt="Markaz Tanzeem" class="w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?auto=format&fit=crop&q=80&w=2000'" />
     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex items-end">
       <div class="p-8 md:p-12">
-        <span class="inline-block px-4 py-1.5 bg-primary text-white text-sm font-bold uppercase tracking-wider rounded-full mb-4">Headquarters</span>
-        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">Markaz Tanzeem-e-Islami</h1>
+        <span class="inline-block px-4 py-1.5 bg-primary text-[#fefefc] text-sm font-bold uppercase tracking-wider rounded-full mb-4">Headquarters</span>
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-[#fefefc] mb-4">Markaz Tanzeem-e-Islami</h1>
         <p class="text-white/90 text-lg md:text-xl max-w-2xl">The central hub of our movement, dedicated to the dissemination of Quranic knowledge and the establishment of Deen.</p>
       </div>
     </div>
@@ -91,14 +91,14 @@ async function seedPages() {
 </div>
   `;
 
-    const distanceHTML = `
+  const distanceHTML = `
 <div class="space-y-12 pb-12">
   <div class="relative w-full aspect-[21/9] rounded-3xl overflow-hidden shadow-2xl mb-12">
     <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=2000" alt="Distance Learning" class="w-full h-full object-cover" />
     <div class="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/50 to-transparent flex items-end">
       <div class="p-8 md:p-12">
-        <span class="inline-block px-4 py-1.5 bg-white text-primary text-sm font-bold uppercase tracking-wider rounded-full mb-4">E-Learning Portal</span>
-        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4">Distance Learning Programs</h1>
+        <span class="inline-block px-4 py-1.5 bg-[#fefefc] text-primary text-sm font-bold uppercase tracking-wider rounded-full mb-4">E-Learning Portal</span>
+        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-[#fefefc] mb-4">Distance Learning Programs</h1>
         <p class="text-white/90 text-lg md:text-xl max-w-2xl">Access comprehensive Islamic education from the comfort of your home. Join our interactive online courses globally.</p>
       </div>
     </div>
@@ -119,7 +119,7 @@ async function seedPages() {
       <div class="p-6">
         <h3 class="text-xl font-bold text-foreground mb-2">Fahm-e-Quran Course</h3>
         <p class="text-foreground-muted text-sm mb-6 line-clamp-3">A complete syllabus covering the translation and profound exegesis of the Holy Quran tailored for working professionals and students.</p>
-        <a href="https://elearning.tanzeem.org/" target="_blank" class="block w-full text-center py-2.5 bg-primary/10 text-primary font-bold rounded-lg hover:bg-primary hover:text-white transition-colors">
+        <a href="https://elearning.tanzeem.org/" target="_blank" class="block w-full text-center py-2.5 bg-primary/10 text-primary font-bold rounded-lg hover:bg-primary hover:text-[#fefefc] transition-colors">
           Enroll via LMS
         </a>
       </div>
@@ -145,7 +145,7 @@ async function seedPages() {
       <div class="p-6">
         <h3 class="text-xl font-bold text-foreground mb-2">Dora-e-Tarjuma Online</h3>
         <p class="text-foreground-muted text-sm mb-6 line-clamp-3">An intensive review course covering the entire translation of the Quran within specialized timeframes designed for rapid comprehension.</p>
-        <a href="https://elearning.tanzeem.org/" target="_blank" class="block w-full text-center py-2.5 bg-primary/10 text-primary font-bold rounded-lg hover:bg-primary hover:text-white transition-colors">
+        <a href="https://elearning.tanzeem.org/" target="_blank" class="block w-full text-center py-2.5 bg-primary/10 text-primary font-bold rounded-lg hover:bg-primary hover:text-[#fefefc] transition-colors">
           View Details
         </a>
       </div>
@@ -158,7 +158,7 @@ async function seedPages() {
       <h3 class="text-2xl font-bold text-foreground mb-2">Need Help Starting?</h3>
       <p class="text-foreground-muted max-w-xl">Our technical support team is available to assist you with LMS account creation, course enrollment logic, and technical troubleshooting.</p>
     </div>
-    <a href="mailto:elearning@tanzeem.org" class="px-8 py-3 bg-primary text-white font-bold rounded-xl hover:shadow-lg transition-all shrink-0">
+    <a href="mailto:elearning@tanzeem.org" class="px-8 py-3 bg-primary text-[#fefefc] font-bold rounded-xl hover:shadow-lg transition-all shrink-0">
       Contact LMS Support
     </a>
   </div>
@@ -166,46 +166,46 @@ async function seedPages() {
 </div>
   `;
 
-    // Upsert Markaz Tanzeem
-    const existingMarkaz = await db.query.pages.findFirst({
-        where: eq(pages.slug, "markaz-tanzeem")
+  // Upsert Markaz Tanzeem
+  const existingMarkaz = await db.query.pages.findFirst({
+    where: eq(pages.slug, "markaz-tanzeem")
+  });
+  if (existingMarkaz) {
+    await db.update(pages).set({ content: markazHTML }).where(eq(pages.slug, "markaz-tanzeem"));
+  } else {
+    await db.insert(pages).values({
+      id: "page-mkz-" + Date.now().toString(),
+      title: "Markaz Tanzeem",
+      slug: "markaz-tanzeem",
+      excerpt: "The central hub of our movement.",
+      content: markazHTML,
+      isPublished: true,
+      metaTitle: "Markaz Tanzeem - Headquarters | Tanzeem e Islami",
+      metaDescription: "The central hub of our movement, dedicated to the dissemination of Quranic knowledge."
     });
-    if (existingMarkaz) {
-        await db.update(pages).set({ content: markazHTML }).where(eq(pages.slug, "markaz-tanzeem"));
-    } else {
-        await db.insert(pages).values({
-            id: "page-mkz-" + Date.now().toString(),
-            title: "Markaz Tanzeem",
-            slug: "markaz-tanzeem",
-            excerpt: "The central hub of our movement.",
-            content: markazHTML,
-            isPublished: true,
-            metaTitle: "Markaz Tanzeem - Headquarters | Tanzeem e Islami",
-            metaDescription: "The central hub of our movement, dedicated to the dissemination of Quranic knowledge."
-        });
-    }
+  }
 
-    // Upsert Distance Learning
-    const existingDistance = await db.query.pages.findFirst({
-        where: eq(pages.slug, "distance-learning")
+  // Upsert Distance Learning
+  const existingDistance = await db.query.pages.findFirst({
+    where: eq(pages.slug, "distance-learning")
+  });
+  if (existingDistance) {
+    await db.update(pages).set({ content: distanceHTML }).where(eq(pages.slug, "distance-learning"));
+  } else {
+    await db.insert(pages).values({
+      id: "page-dist-" + Date.now().toString(),
+      title: "Distance Learning",
+      slug: "distance-learning",
+      excerpt: "Access comprehensive Islamic education from the comfort of your home.",
+      content: distanceHTML,
+      isPublished: true,
+      metaTitle: "Distance Learning Programs | Tanzeem e Islami",
+      metaDescription: "Access comprehensive Islamic education from the comfort of your home. Join our interactive online courses globally."
     });
-    if (existingDistance) {
-        await db.update(pages).set({ content: distanceHTML }).where(eq(pages.slug, "distance-learning"));
-    } else {
-        await db.insert(pages).values({
-            id: "page-dist-" + Date.now().toString(),
-            title: "Distance Learning",
-            slug: "distance-learning",
-            excerpt: "Access comprehensive Islamic education from the comfort of your home.",
-            content: distanceHTML,
-            isPublished: true,
-            metaTitle: "Distance Learning Programs | Tanzeem e Islami",
-            metaDescription: "Access comprehensive Islamic education from the comfort of your home. Join our interactive online courses globally."
-        });
-    }
+  }
 
-    console.log("Pages injected successfully into DB.");
-    process.exit(0);
+  console.log("Pages injected successfully into DB.");
+  process.exit(0);
 }
 
 seedPages().catch(console.error);

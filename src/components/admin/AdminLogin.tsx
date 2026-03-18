@@ -140,17 +140,6 @@ export function AdminLogin() {
             </Button>
           </form>
 
-          {/* Demo Credentials */}
-          <div className="mt-6 p-4 bg-muted/50 rounded-lg">
-            <p className="text-xs text-foreground-muted text-center mb-2">
-              Demo Credentials
-            </p>
-            <div className="text-xs text-foreground-muted space-y-1">
-              <p><strong>Email:</strong> admin@tanzeem.org</p>
-              <p><strong>Password:</strong> admin123</p>
-            </div>
-          </div>
-
           {/* Back to Site */}
           <div className="mt-6 text-center">
             <a

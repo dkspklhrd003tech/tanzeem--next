@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Settings, LayoutTemplate, Palette, Mail, MessageSquare, Send, CheckCircle2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface FormSubmission {
     id: string;
@@ -28,6 +29,12 @@ export function SettingsManager() {
     const [replyMessage, setReplyMessage] = useState("");
     const [isReplying, setIsReplying] = useState(false);
 
+    // Branding State
+    const [isLogoUploading, setIsLogoUploading] = useState(false);
+    const [logoPreview, setLogoPreview] = useState<string | null>(null);
+
+    const { toast } = useToast();
+
     useEffect(() => {
         fetchData();
     }, []);
@@ -39,7 +46,14 @@ export function SettingsManager() {
             const resSettings = await fetch("/api/settings");
             if (resSettings.ok) {
                 const data = await resSettings.json();
-                setSettings(data.settings || {});
+                // Flatten grouped settings for easier management in the UI
+                const flatSettings: Record<string, any> = {};
+                Object.values(data.settings).forEach((group: any) => {
+                    Object.entries(group).forEach(([k, v]) => {
+                        flatSettings[k] = v;
+                    });
+                });
+                setSettings(flatSettings);
             }
 
             // Load Inbox (Form Submissions)
@@ -60,33 +74,64 @@ export function SettingsManager() {
         setSettings(prev => ({ ...prev, [key]: value }));
     };
 
-    const saveSettings = async (groupName: string) => {
+    const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        // Force WEBP only
+        if (file.type !== "image/webp" && !file.name.toLowerCase().endsWith(".webp")) {
+            toast({
+                title: "Invalid Format",
+                description: "Only WEBP files are acceptable for the site logo.",
+                variant: "destructive"
+            });
+            return;
+        }
+
+        setLogoPreview(URL.createObjectURL(file));
+        setIsLogoUploading(true);
+
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("type", "general");
+
+        try {
+            const res = await fetch("/api/upload", {
+                method: "POST",
+                body: formData,
+            });
+            const data = await res.json();
+
+            if (res.ok && data.success) {
+                handleSettingChange("site_logo", data.url);
+                toast({ title: "Logo Uploaded", description: "Identity asset updated successfully." });
+            } else {
+                throw new Error(data.error || "Upload failed");
+            }
+        } catch (error: any) {
+            toast({ title: "Upload Failed", description: error.message, variant: "destructive" });
+        } finally {
+            setIsLogoUploading(false);
+        }
+    };
+
+    const saveSettings = async () => {
         setIsSaving(true);
         try {
-            // Convert current settings state map into the array format expected by PUT
-            const payload = Object.entries(settings).map(([key, value]) => ({
-                key,
-                value,
-                type: typeof value === 'boolean' ? 'boolean' : 'text',
-                group: groupName
-            }));
-
-            // Filter payload to only save what's relevant if needed, or just blast the whole dict
-            // For safety and demo, we'll just PUT the entire dictionary.
             const res = await fetch("/api/settings", {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(settings), // Note: The route.ts we looked at expects a Record<string,any> dictionary directly!
+                body: JSON.stringify(settings),
             });
 
             if (res.ok) {
-                alert("Settings saved successfully!");
+                toast({ title: "Settings Saved", description: "Global configuration updated successfully." });
             } else {
                 throw new Error("Failed to save");
             }
         } catch (error) {
             console.error(error);
-            alert("Error saving settings");
+            toast({ title: "Error", description: "Failed to save settings.", variant: "destructive" });
         } finally {
             setIsSaving(false);
         }
@@ -103,7 +148,10 @@ export function SettingsManager() {
             });
 
             if (res.ok) {
-                alert("Reply dispatched successfully");
+                toast({
+                    title: "Success",
+                    description: "Reply dispatched successfully.",
+                });
                 setActiveSubmission(null);
                 setReplyMessage("");
                 fetchData(); // Refresh inbox status
@@ -112,7 +160,11 @@ export function SettingsManager() {
             }
         } catch (error) {
             console.error(error);
-            alert("Error sending email.");
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: "Failed to send email. Please try again.",
+            });
         } finally {
             setIsReplying(false);
         }
@@ -124,49 +176,59 @@ export function SettingsManager() {
 
     return (
         <div className="space-y-6">
-            <div>
-                <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
+            <div className="pb-4 border-b border-border mb-6">
+                <h1 className="text-3xl font-bold text-foreground tracking-tight flex items-center gap-3">
                     <Settings className="w-8 h-8 text-primary" />
-                    Site Configurations
+                    Site Configuration Hub
                 </h1>
-                <p className="text-foreground-muted">Manage global interface settings, branding, and monitor the live support Inbox.</p>
+                <p className="text-sm text-foreground-muted mt-1">Manage global interface settings, brand identity, and monitor the live support Inbox in real-time.</p>
             </div>
 
             <Tabs defaultValue="identity" className="w-full">
-                <TabsList className="mb-6 bg-transparent border-b border-border w-full justify-start rounded-none h-auto p-0 gap-6">
+                <TabsList className="mb-8 bg-transparent border-b border-border w-full justify-start rounded-none h-auto p-0 gap-8">
                     <TabsTrigger
                         value="identity"
-                        className="rounded-full px-6 py-2.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md transition-all flex items-center gap-2 border border-transparent data-[state=inactive]:border-border/50 data-[state=inactive]:hover:bg-muted"
+                        className="pb-4 rounded-none px-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground"
                     >
-                        <Palette className="w-4 h-4" /> Identity & Branding
+                        <Palette className="w-4 h-4" /> Branding Matrix
                     </TabsTrigger>
 
                     <TabsTrigger
                         value="header"
-                        className="rounded-full px-6 py-2.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md transition-all flex items-center gap-2 border border-transparent data-[state=inactive]:border-border/50 data-[state=inactive]:hover:bg-muted"
+                        className="pb-4 rounded-none px-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground"
                     >
-                        <LayoutTemplate className="w-4 h-4" /> Header Layout
+                        <LayoutTemplate className="w-4 h-4" /> Header Control
                     </TabsTrigger>
 
                     <TabsTrigger
                         value="footer"
-                        className="rounded-full px-6 py-2.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md transition-all flex items-center gap-2 border border-transparent data-[state=inactive]:border-border/50 data-[state=inactive]:hover:bg-muted"
+                        className="pb-4 rounded-none px-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground"
                     >
-                        <LayoutTemplate className="w-4 h-4 rotate-180" /> Footer Layout
+                        <LayoutTemplate className="w-4 h-4 rotate-180" /> Footer Control
                     </TabsTrigger>
 
                     <TabsTrigger
                         value="inbox"
-                        className="rounded-full px-6 py-2.5 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-md transition-all flex items-center gap-2 border border-transparent data-[state=inactive]:border-border/50 data-[state=inactive]:hover:bg-muted"
+                        className="pb-4 rounded-none px-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground"
                     >
-                        <Mail className="w-4 h-4" /> Live Inbox
+                        <Mail className="w-4 h-4" /> Support Inbox
+                        {submissions.filter(s => s.status !== 'replied').length > 0 && (
+                            <Badge className="ml-1 bg-red-500 hover:bg-red-600 text-[10px] items-center justify-center">
+                                {submissions.filter(s => s.status !== 'replied').length}
+                            </Badge>
+                        )}
                     </TabsTrigger>
                 </TabsList>
 
                 {/* IDENTITY TAB */}
                 <TabsContent value="identity" className="animate-in fade-in-50 duration-500">
-                    <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
-                        <h2 className="text-xl font-bold mb-4">Color Engine</h2>
+                    <div className="bg-card border border-border rounded-xl p-6 shadow-sm space-y-8">
+                        <div>
+                            <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+                                <Palette className="w-5 h-5 text-primary" />
+                                Color Engine
+                            </h2>
+                        </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-2">
                                 <label className="text-sm font-medium">Primary Brand Color</label>
@@ -203,8 +265,8 @@ export function SettingsManager() {
                             </div>
                         </div>
                         <div className="mt-8 flex justify-end">
-                            <Button onClick={() => saveSettings('identity')} disabled={isSaving}>
-                                {isSaving ? "Saving..." : "Deploy Identity Matrix"}
+                            <Button onClick={() => saveSettings()} disabled={isSaving} className="bg-[#0d5844] hover:bg-[#0a4636] text-[#fefefc] rounded-xl px-10 font-bold shadow-md transition-all active:scale-95">
+                                {isSaving ? "Synchronizing..." : "Deploy Identity Matrix"}
                             </Button>
                         </div>
                     </div>
@@ -212,7 +274,70 @@ export function SettingsManager() {
 
                 {/* HEADER TAB */}
                 <TabsContent value="header" className="animate-in fade-in-50 duration-500">
-                    <div className="bg-card border border-border rounded-xl p-6 shadow-sm space-y-6">
+                    <div className="bg-card border border-border rounded-xl p-6 shadow-sm space-y-8">
+                        <div>
+                            <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
+                                <LayoutTemplate className="w-5 h-5 text-primary" />
+                                Header Identity & Brand Logo
+                            </h2>
+
+                            <div className="flex flex-col md:flex-row gap-8 items-start mb-6 pb-8 border-b border-border/50">
+                                <div className="space-y-4">
+                                    <label className="text-sm font-semibold text-foreground">Header Site Logo (WEBP Only)</label>
+                                    <div className="relative group">
+                                        <div className="w-32 h-32 rounded-xl border-2 border-dashed border-border bg-muted/30 flex items-center justify-center overflow-hidden transition-all group-hover:bg-muted/50">
+                                            {logoPreview || settings.site_logo ? (
+                                                <img
+                                                    src={logoPreview || settings.site_logo}
+                                                    alt="Logo Preview"
+                                                    className="max-w-full max-h-full object-contain"
+                                                />
+                                            ) : (
+                                                <div className="text-center p-2">
+                                                    <LayoutTemplate className="w-8 h-8 mx-auto mb-2 text-foreground-muted opacity-30" />
+                                                    <span className="text-[10px] text-foreground-muted">No logo defined</span>
+                                                </div>
+                                            )}
+
+                                            {isLogoUploading && (
+                                                <div className="absolute inset-0 bg-background/60 backdrop-blur-[2px] flex items-center justify-center">
+                                                    <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        <input
+                                            type="file"
+                                            id="logo-upload"
+                                            className="hidden"
+                                            accept=".webp"
+                                            onChange={handleLogoUpload}
+                                        />
+                                        <button
+                                            onClick={() => document.getElementById('logo-upload')?.click()}
+                                            className="mt-3 w-full py-2 px-4 rounded-lg bg-background border border-border text-xs font-bold hover:bg-muted transition-all active:scale-95 shadow-sm"
+                                        >
+                                            Upload WEBP Logo
+                                        </button>
+                                    </div>
+                                    <p className="text-[11px] text-foreground-muted max-w-[150px]">Acceptable Format: **WEBP** only (for optimal performance).</p>
+                                </div>
+
+                                <div className="flex-1 space-y-6 pt-2">
+                                    <div>
+                                        <label className="text-sm font-semibold text-foreground block mb-2">Live Logo Vector Path</label>
+                                        <p className="text-xs text-foreground-muted mb-4">The active URI path of your organizational logo asset.</p>
+                                        <Input
+                                            value={settings.site_logo || ""}
+                                            className="font-mono text-xs bg-muted/30"
+                                            readOnly
+                                            placeholder="Asset path will appear here after upload..."
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <h2 className="text-xl font-bold border-b border-border pb-2">Top Navigation Bar</h2>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -254,7 +379,7 @@ export function SettingsManager() {
                         </div>
 
                         <div className="mt-8 flex justify-end">
-                            <Button onClick={() => saveSettings('header')} disabled={isSaving}>
+                            <Button onClick={() => saveSettings()} disabled={isSaving} className="bg-[#0d5844] hover:bg-[#0a4636] text-[#fefefc] rounded-xl px-10 font-bold shadow-md transition-all active:scale-95">
                                 {isSaving ? "Saving..." : "Save Header Configuration"}
                             </Button>
                         </div>
@@ -286,7 +411,7 @@ export function SettingsManager() {
                         </div>
 
                         <div className="mt-8 flex justify-end">
-                            <Button onClick={() => saveSettings('footer')} disabled={isSaving}>
+                            <Button onClick={() => saveSettings()} disabled={isSaving}>
                                 {isSaving ? "Saving..." : "Save Footer Configurations"}
                             </Button>
                         </div>
@@ -348,7 +473,7 @@ export function SettingsManager() {
                                     </div>
 
                                     <div className="p-6 overflow-y-auto border-b border-border bg-muted/10 flex-1">
-                                        <div className="bg-white p-4 rounded-xl shadow-sm border border-border/50 text-sm leading-relaxed whitespace-pre-wrap">
+                                        <div className="bg-[#fefefc] p-4 rounded-xl shadow-sm border border-border/50 text-sm leading-relaxed whitespace-pre-wrap">
                                             {activeSubmission.message}
                                         </div>
                                     </div>

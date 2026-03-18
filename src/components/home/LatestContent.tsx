@@ -28,7 +28,7 @@ export function LatestContent() {
             className="text-center max-w-3xl mx-auto"
           >
             <p className="text-white/50 text-sm font-semibold tracking-wider uppercase mb-4">— Our Mission</p>
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white leading-relaxed mb-6">
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-[#fefefc] leading-relaxed mb-6">
               Working for the establishment of an Islamic state in Pakistan through
               peaceful, constitutional and democratic means
             </h2>
@@ -66,13 +66,13 @@ export function LatestContent() {
                 transition={{ duration: 0.4, delay: i * 0.1 }}
                 className="group cursor-pointer"
               >
-                <div className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all">
+                <div className="bg-[#fefefc] rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-all">
                   {/* Video Thumbnail */}
                   <div className="aspect-video bg-gradient-to-br from-primary/20 to-primary/5 relative flex items-center justify-center">
                     <div className="w-14 h-14 rounded-full bg-primary/80 flex items-center justify-center group-hover:bg-primary group-hover:scale-110 transition-all">
-                      <Play className="h-6 w-6 text-white fill-white ml-0.5" />
+                      <Play className="h-6 w-6 text-[#fefefc] fill-[#fefefc] ml-0.5" />
                     </div>
-                    <span className="absolute top-3 left-3 text-[10px] font-semibold bg-primary text-white px-2.5 py-0.5 rounded-full">
+                    <span className="absolute top-3 left-3 text-[10px] font-semibold bg-primary text-[#fefefc] px-2.5 py-0.5 rounded-full">
                       {program.category}
                     </span>
                   </div>

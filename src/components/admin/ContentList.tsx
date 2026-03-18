@@ -94,15 +94,15 @@ export function ContentList<T extends { id: string | number }>({
       className="space-y-6"
     >
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between pb-4 border-b border-border mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">{title}</h1>
+          <h1 className="text-3xl font-bold text-foreground tracking-tight">{title}</h1>
           {description && (
-            <p className="text-foreground-muted">{description}</p>
+            <p className="text-sm text-foreground-muted mt-1">{description}</p>
           )}
         </div>
         {onAdd && (
-          <Button onClick={onAdd} className="bg-primary hover:bg-primary-dark text-primary-foreground">
+          <Button onClick={onAdd} className="bg-primary hover:bg-primary-dark text-primary-foreground px-6 py-2.5 rounded-xl font-semibold shadow-sm hover:shadow-md transition-all active:scale-95">
             <Plus className="h-4 w-4 mr-2" />
             Add New
           </Button>

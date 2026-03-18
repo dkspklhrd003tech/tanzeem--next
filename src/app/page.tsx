@@ -8,7 +8,7 @@ import { CTA } from "@/components/home/CTA";
 import { BackToTop } from "@/components/ui/back-to-top";
 import { db } from "@/db";
 import { homeSliders, books, magazines, teamMembers, homeCampaigns, videos, settings } from "@/db/schema";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, asc } from "drizzle-orm";
 
 async function HomeContent() {
   // Query Active Hero Sliders
@@ -24,12 +24,14 @@ async function HomeContent() {
     .select()
     .from(books)
     .where(eq(books.isFeatured, true))
+    .orderBy(asc(books.order), desc(books.createdAt))
     .limit(4);
 
   const featuredMagazines = await db
     .select()
     .from(magazines)
     .where(eq(magazines.isFeatured, true))
+    .orderBy(asc(magazines.order), desc(magazines.createdAt))
     .limit(4);
 
   const activeCampaigns = await db
@@ -48,6 +50,7 @@ async function HomeContent() {
     .select()
     .from(videos)
     .where(eq(videos.isFeatured, true))
+    .orderBy(asc(videos.order), desc(videos.createdAt))
     .limit(8);
 
   const siteSettings = await db
@@ -81,7 +84,7 @@ async function HomeContent() {
       <PublicationsGrid booksData={featuredBooks} magazinesData={featuredMagazines} />
 
       {/* 6. Social Connect Banner */}
-      <CTA />
+      <CTA settings={settingsMap} />
     </>
   );
 }

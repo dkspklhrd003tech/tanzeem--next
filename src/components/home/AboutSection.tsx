@@ -40,10 +40,10 @@ export function AboutSection() {
             </h2>
           </div>
           <div className="hidden md:flex gap-2">
-            <button onClick={() => scroll("left")} className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-foreground-muted hover:bg-primary hover:text-white hover:border-primary transition-colors">
+            <button onClick={() => scroll("left")} className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-foreground-muted hover:bg-primary hover:text-[#fefefc] hover:border-primary transition-colors">
               <ChevronLeft className="h-5 w-5" />
             </button>
-            <button onClick={() => scroll("right")} className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-foreground-muted hover:bg-primary hover:text-white hover:border-primary transition-colors">
+            <button onClick={() => scroll("right")} className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-foreground-muted hover:bg-primary hover:text-[#fefefc] hover:border-primary transition-colors">
               <ChevronRight className="h-5 w-5" />
             </button>
           </div>
@@ -66,14 +66,14 @@ export function AboutSection() {
                   <span className="text-4xl">{item.icon}</span>
                   <div>
                     <p className="text-white/60 text-xs font-medium uppercase tracking-wider">{item.type}</p>
-                    <h3 className="text-white text-lg font-bold mt-0.5">{item.title}</h3>
+                    <h3 className="text-[#fefefc] text-lg font-bold mt-0.5">{item.title}</h3>
                   </div>
                 </div>
                 {/* Hover overlay */}
                 <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
                   <div className="opacity-0 group-hover:opacity-100 transition-opacity">
                     <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center">
-                      <Play className="h-5 w-5 text-white fill-white" />
+                      <Play className="h-5 w-5 text-[#fefefc] fill-white" />
                     </div>
                   </div>
                 </div>

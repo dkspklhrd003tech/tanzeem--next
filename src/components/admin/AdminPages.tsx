@@ -12,6 +12,7 @@ import { HomepageManager } from "./HomepageManager";
 import { DarseQuranManager } from "./DarseQuranManager";
 import { SettingsManager } from "./SettingsManager";
 import { Badge } from "@/components/ui/badge";
+import { useToast } from "@/hooks/use-toast";
 
 // Mock data - in real app, this would come from API
 const mockPages = [
@@ -65,6 +66,7 @@ export function AdminPages({ section }: AdminPagesProps) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [pages, setPages] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     if (section === "pages") {
@@ -99,13 +101,23 @@ export function AdminPages({ section }: AdminPagesProps) {
         body: JSON.stringify(data),
       });
 
+
       if (!res.ok) throw new Error("Failed to save page");
+
+      toast({
+        title: "Success",
+        description: `Page ${isNew ? "created" : "updated"} successfully.`,
+      });
 
       setEditingId(null);
       fetchPages();
     } catch (error) {
       console.error("Save error:", error);
-      alert("Failed to save page. Please try again.");
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to save page. Please try again.",
+      });
     }
   };
 
@@ -116,10 +128,19 @@ export function AdminPages({ section }: AdminPagesProps) {
       const res = await fetch(`/api/pages/${item.id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Failed to delete page");
 
+      toast({
+        title: "Success",
+        description: "Page deleted successfully.",
+      });
+
       fetchPages();
     } catch (error) {
       console.error("Delete error:", error);
-      alert("Failed to delete page. Please try again.");
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to delete page. Please try again.",
+      });
     }
   };
 

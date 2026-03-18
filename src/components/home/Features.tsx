@@ -52,7 +52,7 @@ export function Features() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: i * 0.15 }}
-              className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow group"
+              className="bg-[#fefefc] rounded-xl overflow-hidden shadow-sm hover:shadow-lg transition-shadow group"
             >
               <div className="p-6 md:p-8">
                 <p className="text-xs text-primary font-semibold tracking-wider uppercase mb-3">
@@ -62,7 +62,7 @@ export function Features() {
                 {/* Avatar / Initial */}
                 <div className="flex items-start gap-5 mb-4">
                   <div className="w-20 h-20 rounded-xl bg-gradient-to-br from-primary to-primary-light flex items-center justify-center shrink-0">
-                    <span className="text-white text-4xl font-bold" style={{ fontFamily: "'Scheherazade New', serif" }}>
+                    <span className="text-[#fefefc] text-4xl font-bold" style={{ fontFamily: "'Scheherazade New', serif" }}>
                       {leader.initial}
                     </span>
                   </div>

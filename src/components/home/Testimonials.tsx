@@ -132,7 +132,7 @@ export function Testimonials({
                 transition={{ duration: 0.4, delay: i * 0.1 }}
                 className="group cursor-pointer h-full"
               >
-                <div className="bg-white rounded-xl overflow-hidden hover:shadow-xl transition-all shadow-sm h-full flex flex-col border border-border/50">
+                <div className="bg-[#fefefc] rounded-xl overflow-hidden hover:shadow-xl transition-all shadow-sm h-full flex flex-col border border-border/50">
                   {/* Book Cover (13:18 Aspect Ratio) */}
                   <div className="relative w-full aspect-[13/18] bg-muted/30 flex items-center justify-center p-4">
                     <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/5 z-0" />

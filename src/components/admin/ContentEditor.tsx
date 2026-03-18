@@ -111,20 +111,20 @@ export function ContentEditor({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           {onCancel && (
-            <Button variant="ghost" size="icon" onClick={onCancel}>
+            <Button variant="ghost" size="icon" onClick={onCancel} className="hover:bg-muted rounded-full">
               <ArrowLeft className="h-5 w-5" />
             </Button>
           )}
           <div>
-            <h1 className="text-2xl font-bold text-foreground">{title}</h1>
-            <p className="text-foreground-muted">
-              {initialData ? `Edit ${contentType}` : `Create new ${contentType}`}
+            <h1 className="text-3xl font-bold text-foreground tracking-tight">{title}</h1>
+            <p className="text-sm text-foreground-muted mt-1">
+              {initialData ? `Update existing ${contentType} details` : `Create and publish a new ${contentType}`}
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           {onPreview && (
-            <Button variant="outline" onClick={onPreview}>
+            <Button variant="outline" onClick={onPreview} className="rounded-xl px-6">
               <Eye className="h-4 w-4 mr-2" />
               Preview
             </Button>
@@ -132,10 +132,10 @@ export function ContentEditor({
           <Button
             onClick={handleSave}
             disabled={isSaving}
-            className="bg-primary hover:bg-primary-dark text-primary-foreground"
+            className="bg-[#0d5844] hover:bg-[#0a4636] text-[#fefefc] rounded-xl px-8 font-semibold shadow-md active:scale-95 transition-all"
           >
             <Save className="h-4 w-4 mr-2" />
-            {isSaving ? "Saving..." : "Save"}
+            {isSaving ? "Saving..." : "Save Changes"}
           </Button>
         </div>
       </div>
@@ -148,7 +148,7 @@ export function ContentEditor({
             <CardContent className="p-6">
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="title">Title</Label>
+                  <Label htmlFor="title" className="text-sm font-semibold text-foreground mb-2 block">Content Title</Label>
                   <Input
                     id="title"
                     placeholder={`Enter ${contentType} title`}
@@ -165,7 +165,7 @@ export function ContentEditor({
                   />
                 </div>
                 <div>
-                  <Label htmlFor="slug">Slug</Label>
+                  <Label htmlFor="slug" className="text-sm font-semibold text-foreground mb-2 block">URL Slug</Label>
                   <Input
                     id="slug"
                     placeholder="url-friendly-slug"

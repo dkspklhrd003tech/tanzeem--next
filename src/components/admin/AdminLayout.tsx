@@ -202,7 +202,7 @@ export function AdminLayout({ children, currentSection, onExitAdmin }: AdminLayo
                             "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors",
                             isActive
                               ? "bg-primary text-primary-foreground"
-                              : "text-foreground-muted hover:bg-muted hover:text-foreground"
+                              : "text-foreground-muted hover:text-primary hover:bg-muted/50"
                           )}
                         >
                           <item.icon className="h-5 w-5 shrink-0" />
@@ -237,7 +237,7 @@ export function AdminLayout({ children, currentSection, onExitAdmin }: AdminLayo
         <div className="p-4 border-t border-border">
           <Button
             variant="outline"
-            className="w-full"
+            className="w-full border-red-600 text-red-600 hover:bg-red-600 hover:text-white"
             onClick={onExitAdmin}
           >
             <LogOut className="h-4 w-4 mr-2" />

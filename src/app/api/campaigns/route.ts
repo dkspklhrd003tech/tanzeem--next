@@ -53,3 +53,31 @@ export async function POST(request: Request) {
         );
     }
 }
+export async function PATCH(request: Request) {
+    try {
+        const body = await request.json();
+        const { orders } = body; // Expected: [{ id: string, order: number }, ...]
+
+        if (!orders || !Array.isArray(orders)) {
+            return NextResponse.json(
+                { error: "Invalid orders data" },
+                { status: 400 }
+            );
+        }
+
+        // Perform bulk update (sequential for simplicity with small lists)
+        for (const item of orders) {
+            await db.update(homeCampaigns)
+                .set({ order: item.order })
+                .where(eq(homeCampaigns.id, item.id));
+        }
+
+        return NextResponse.json({ message: "Reordered successfully" });
+    } catch (error) {
+        console.error("Failed to reorder campaigns:", error);
+        return NextResponse.json(
+            { error: "Failed to reorder campaigns" },
+            { status: 500 }
+        );
+    }
+}

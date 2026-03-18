@@ -73,32 +73,45 @@ export function Header() {
   return (
     <>
       {/* Top Social Bar */}
-      <div className="bg-primary text-white py-1.5 hidden md:block">
-        <div className="container mx-auto flex justify-end items-center gap-4 text-sm">
-          <span className="text-white/70 mr-1">Follow Us:</span>
-          {settings.youtube_url && (
-            <a href={settings.youtube_url} target="_blank" rel="noopener noreferrer" className="text-white/80 hover:text-white transition-colors">
-              <Youtube className="h-5 w-5" />
-            </a>
-          )}
-          {settings.facebook_url && (
-            <a href={settings.facebook_url} target="_blank" rel="noopener noreferrer" className="text-white/80 hover:text-white transition-colors">
-              <Facebook className="h-5 w-5" />
-            </a>
-          )}
-          <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-white/80 hover:text-white transition-colors">
-            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
-          </a>
-          <a href="https://wa.me/+924235869501" target="_blank" rel="noopener noreferrer" className="text-white/80 hover:text-white transition-colors">
-            <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" /></svg>
-          </a>
+      <div className="bg-[#f8f9fa] border-b border-border text-foreground py-2 hidden md:block">
+        <div className="container mx-auto flex justify-between items-center gap-4 text-sm">
+          {/* Top Bar Left: Search */}
+          <div className="relative">
+            <Input
+              placeholder="Search..."
+              className="w-64 h-8 pl-3 pr-9 rounded-full border-border bg-[#fefefc] text-xs"
+            />
+            <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-foreground-muted" />
+          </div>
+
+          {/* Top Bar Right: Social & Join */}
+          <div className="flex items-center gap-6">
+            <div className="flex items-center gap-3">
+              <span className="text-foreground/60 font-medium text-xs">Follow Us:</span>
+              <a href={settings.youtube_url || "https://youtube.com/@tanzeemeislami"} target="_blank" rel="noopener noreferrer" className="w-7 h-7 rounded-full bg-red-600 flex items-center justify-center text-[#fefefc] hover:bg-red-700 transition-colors shadow-sm">
+                <Youtube className="h-3.5 w-3.5" />
+              </a>
+              <a href={settings.facebook_url || "https://facebook.com/tanzeemeislami"} target="_blank" rel="noopener noreferrer" className="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-[#fefefc] hover:bg-blue-700 transition-colors shadow-sm">
+                <Facebook className="h-3.5 w-3.5" />
+              </a>
+              <a href={settings.twitter_url || "https://twitter.com/tanzeemeislami"} target="_blank" rel="noopener noreferrer" className="w-7 h-7 rounded-full bg-black flex items-center justify-center text-[#fefefc] hover:bg-gray-800 transition-colors shadow-sm">
+                <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
+              </a>
+              <a href={settings.whatsapp_url || "https://wa.me/+924235869501"} target="_blank" rel="noopener noreferrer" className="w-7 h-7 rounded-full bg-green-500 flex items-center justify-center text-[#fefefc] hover:bg-green-600 transition-colors shadow-sm">
+                <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" /></svg>
+              </a>
+            </div>
+            <Link href="/join" className="bg-primary text-[#fefefc] px-4 py-1 rounded text-xs font-bold hover:bg-primary-dark transition-colors">
+              JOIN TANZEEM
+            </Link>
+          </div>
         </div>
       </div>
 
       {/* Main Navigation */}
       <motion.header
         className={cn(
-          "sticky top-0 z-50 transition-all duration-300 bg-white border-b border-border",
+          "sticky top-0 z-50 transition-all duration-300 bg-[#fefefc] border-b border-border",
           isScrolled && "shadow-md"
         )}
         initial={{ y: -100 }}
@@ -109,17 +122,27 @@ export function Header() {
           <div className="flex items-center justify-between h-16 md:h-20">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-3 shrink-0">
-              <div className="relative w-10 h-10 md:w-12 md:h-12 bg-primary rounded-lg flex items-center justify-center overflow-hidden">
-                <span className="text-white font-bold text-lg md:text-xl">ت</span>
-              </div>
-              <div className="hidden sm:block">
-                <h1 className="text-lg md:text-xl font-bold" style={{ color: '#005031' }}>
-                  Tanzeem<span style={{ color: '#c8a84e' }}>-e-</span>Islami
-                </h1>
-                <p className="text-[10px] text-foreground-muted -mt-0.5" style={{ fontFamily: "'Scheherazade New', serif" }}>
-                  تنظیمِ اسلامی
-                </p>
-              </div>
+              {settings.site_logo ? (
+                <img
+                  src={settings.site_logo}
+                  alt="Tanzeem-e-Islami"
+                  className="h-10 md:h-14 w-auto object-contain transition-transform"
+                />
+              ) : (
+                <>
+                  <div className="relative w-10 h-10 md:w-12 md:h-12 bg-primary rounded-lg flex items-center justify-center overflow-hidden">
+                    <span className="text-[#fefefc] font-bold text-lg md:text-xl">ت</span>
+                  </div>
+                  <div className="hidden sm:block">
+                    <h1 className="text-lg md:text-xl font-bold" style={{ color: '#005031' }}>
+                      Tanzeem<span style={{ color: '#c8a84e' }}>-e-</span>Islami
+                    </h1>
+                    <p className="text-[10px] text-foreground-muted -mt-0.5" style={{ fontFamily: "'Scheherazade New', serif" }}>
+                      تنظیمِ اسلامی
+                    </p>
+                  </div>
+                </>
+              )}
             </Link>
 
             {/* Desktop Navigation */}
@@ -129,18 +152,17 @@ export function Header() {
               ))}
             </nav>
 
-            {/* Search & Mobile */}
+            {/* Mobile Search & Menu */}
             <div className="flex items-center gap-2">
-              {/* Search Box */}
-              <div className="hidden md:flex items-center">
-                <div className="relative">
-                  <Input
-                    placeholder="Search..."
-                    className="w-40 lg:w-48 h-9 pl-3 pr-9 rounded-full border-border text-sm"
-                  />
-                  <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
-                </div>
-              </div>
+              {/* Mobile Search Button */}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setIsSearchOpen(true)}
+                className="md:hidden"
+              >
+                <Search className="h-5 w-5" />
+              </Button>
 
               {/* Mobile Search */}
               <Button
@@ -162,9 +184,17 @@ export function Header() {
                 <SheetContent side="right" className="w-80">
                   <SheetHeader>
                     <SheetTitle className="flex items-center gap-2">
-                      <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                        <span className="text-white font-bold">ت</span>
-                      </div>
+                      {settings.site_logo ? (
+                        <img
+                          src={settings.site_logo}
+                          alt="Logo"
+                          className="h-8 w-auto object-contain"
+                        />
+                      ) : (
+                        <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                          <span className="text-[#fefefc] font-bold">ت</span>
+                        </div>
+                      )}
                       <span style={{ color: '#005031' }}>Tanzeem-e-Islami</span>
                     </SheetTitle>
                   </SheetHeader>
@@ -195,7 +225,7 @@ export function Header() {
             >
               <div className="relative">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-foreground-muted" />
-                <Input placeholder="Search..." className="pl-12 h-14 text-lg bg-white rounded-xl" autoFocus />
+                <Input placeholder="Search..." className="pl-12 h-14 text-lg bg-[#fefefc] rounded-xl" autoFocus />
                 <Button variant="ghost" size="sm" className="absolute right-2 top-1/2 -translate-y-1/2" onClick={() => setIsSearchOpen(false)}>
                   <X className="h-5 w-5" />
                 </Button>
@@ -219,8 +249,8 @@ function DesktopMenuItem({ item, depth = 0 }: { item: any; depth?: number }) {
         className={cn(
           "transition-colors",
           isTopLevel
-            ? "px-4 py-2 text-sm font-medium text-foreground hover:text-primary"
-            : "block px-5 py-2.5 text-sm text-foreground hover:bg-primary hover:text-white border-b border-border/30 last:border-0"
+            ? "px-4 py-2 text-md font-medium text-foreground hover:text-[#fefefc]"
+            : "block px-5 py-2.5 text-sm text-foreground hover:bg-primary hover:text-[#fefefc] border-b border-border/30 last:border-0"
         )}
       >
         {item.name}
@@ -235,12 +265,12 @@ function DesktopMenuItem({ item, depth = 0 }: { item: any; depth?: number }) {
       onMouseLeave={() => setIsOpen(false)}
     >
       {isTopLevel ? (
-        <button className="flex items-center gap-1 px-4 py-2 text-foreground hover:text-primary transition-colors text-sm font-medium">
+        <button className="flex items-center gap-1 px-4 py-2 text-foreground hover:text-primary transition-colors text-md font-medium">
           {item.name}
           <ChevronDown className={cn("h-3.5 w-3.5 transition-transform duration-200", isOpen && "rotate-180")} />
         </button>
       ) : (
-        <button className="flex w-full items-center justify-between px-5 py-2.5 text-sm text-foreground hover:bg-primary hover:text-white transition-colors border-b border-border/30 last:border-0 group">
+        <button className="flex w-full items-center justify-between px-5 py-2.5 text-md text-foreground hover:bg-primary hover:text-[#fefefc] transition-colors border-b border-border/30 last:border-0 group">
           {item.name}
           <ChevronDown className="h-3.5 w-3.5 -rotate-90 text-foreground-muted group-hover:text-white" />
         </button>
@@ -254,7 +284,7 @@ function DesktopMenuItem({ item, depth = 0 }: { item: any; depth?: number }) {
             exit={{ opacity: 0, [isTopLevel ? "y" : "x"]: isTopLevel ? 6 : -6 }}
             transition={{ duration: 0.15 }}
             className={cn(
-              "absolute bg-white shadow-xl border border-border min-w-[220px] z-[120]",
+              "absolute bg-[#fefefc] shadow-xl border border-border min-w-[220px] z-[120]",
               isTopLevel ? "top-full left-0 rounded-b-lg" : "top-0 left-full rounded-lg ml-0.5"
             )}
           >

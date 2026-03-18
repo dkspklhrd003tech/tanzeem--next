@@ -5,8 +5,8 @@
 
 :root {
   /* Primary Color - Islamic Green (tanzeem.org) */
-  --primary: #005031;
-  --primary-foreground: #ffffff;
+  --primary: #0d5844;
+  --primary-foreground: #fefefc;
   --primary-light: #007a4d;
   --primary-dark: #003d25;
 
@@ -16,29 +16,29 @@
 
   /* Background Colors */
   --background: #ffffff;
-  --background-secondary: #f7f7f7;
+  --background-secondary: #fefefc;
   --background-dark: #1a1a1a;
 
   /* Text Colors */
-  --foreground: #222222;
+  --foreground: #111111;
   --foreground-muted: #6b7280;
   --foreground-light: #9ca3af;
 
   /* Accent Colors */
-  --accent: #005031;
-  --accent-foreground: #ffffff;
+  --accent: #0d5844;
+  --accent-foreground: #fefefc;
 
   /* Border & Input */
   --border: #e5e7eb;
-  --input: #ffffff;
-  --ring: #005031;
+  --input: #fefefc;
+  --ring: #0d5844;
 
   /* Card */
   --card: #ffffff;
   --card-foreground: #222222;
 
   /* Popover */
-  --popover: #ffffff;
+  --popover: #fefefc;
   --popover-foreground: #222222;
 
   /* Secondary */
@@ -47,7 +47,7 @@
 
   /* Destructive */
   --destructive: #ef4444;
-  --destructive-foreground: #ffffff;
+  --destructive-foreground: #fefefc;
 
   /* Muted */
   --muted: #f3f4f6;
@@ -57,55 +57,55 @@
   --radius: 0.5rem;
 
   /* Chart Colors */
-  --chart-1: #005031;
+  --chart-1: #0d5844;
   --chart-2: #007a4d;
   --chart-3: #00a367;
   --chart-4: #33b882;
   --chart-5: #66cd9c;
 
   /* Sidebar */
-  --sidebar-background: #ffffff;
+  --sidebar-background: #fefefc;
   --sidebar-foreground: #222222;
-  --sidebar-primary: #005031;
-  --sidebar-primary-foreground: #ffffff;
+  --sidebar-primary: #0d5844;
+  --sidebar-primary-foreground: #fefefc;
   --sidebar-accent: #f3f4f6;
   --sidebar-accent-foreground: #222222;
   --sidebar-border: #e5e7eb;
-  --sidebar-ring: #005031;
+  --sidebar-ring: #0d5844;
 }
 
 .dark {
   --background: #0a0a0a;
   --background-secondary: #171717;
-  --foreground: #fafafa;
+  --foreground: #fefefc;
   --foreground-muted: #a1a1aa;
   --foreground-light: #71717a;
   --card: #171717;
-  --card-foreground: #fafafa;
+  --card-foreground: #fefefc;
   --popover: #171717;
-  --popover-foreground: #fafafa;
+  --popover-foreground: #fefefc;
   --primary: #007a4d;
   --primary-foreground: #ffffff;
   --secondary: #262626;
-  --secondary-foreground: #fafafa;
+  --secondary-foreground: #fefefc;
   --muted: #262626;
   --muted-foreground: #a1a1aa;
   --accent: #262626;
-  --accent-foreground: #fafafa;
+  --accent-foreground: #fefefc;
   --destructive: #7f1d1d;
-  --destructive-foreground: #fafafa;
+  --destructive-foreground: #fefefc;
   --border: #262626;
   --input: #171717;
-  --ring: #007a4d;
+  --ring: #0d5844;
   --sidebar-background: #171717;
-  --sidebar-foreground: #fafafa;
-  --sidebar-primary: #007a4d;
-  --sidebar-primary-foreground: #ffffff;
+  --sidebar-foreground: #fefefc;
+  --sidebar-primary: #0d5844;
+  --sidebar-primary-foreground: #fefefc;
   --sidebar-accent: #262626;
-  --sidebar-accent-foreground: #fafafa;
+  --sidebar-accent-foreground: #fefefc;
   --sidebar-border: #262626;
-  --sidebar-ring: #007a4d;
-  --chart-1: #007a4d;
+  --sidebar-ring: #0d5844;
+  --chart-1: #0d5844;
   --chart-2: #00a367;
   --chart-3: #33b882;
   --chart-4: #66cd9c;
@@ -337,17 +337,17 @@ h6 {
 
 @media (min-width: 640px) {
   .container {
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
 }
 
-@media (min-width: 1024px) {
+/* @media (min-width: 1024px) {
   .container {
     padding-left: 2rem;
     padding-right: 2rem;
   }
-}
+} */
 
 /* Section Spacing */
 .section {
@@ -357,8 +357,8 @@ h6 {
 
 @media (min-width: 768px) {
   .section {
-    padding-top: 5rem;
-    padding-bottom: 5rem;
+    padding-top: 3rem;
+    padding-bottom: 3rem;
   }
 }
 

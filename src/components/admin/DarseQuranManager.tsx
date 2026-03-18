@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { Plus, Pencil, Trash2, MapPin, Search } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useToast } from "@/hooks/use-toast";
 
 interface DarseQuranEvent {
     id: string;
@@ -24,6 +25,7 @@ export function DarseQuranManager() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingEvent, setEditingEvent] = useState<DarseQuranEvent | null>(null);
     const [searchTerm, setSearchTerm] = useState("");
+    const { toast } = useToast();
 
     const [formData, setFormData] = useState({
         city: "",
@@ -96,13 +98,23 @@ export function DarseQuranManager() {
                 body: JSON.stringify(formData),
             });
 
+
             if (!res.ok) throw new Error("Failed to save event");
+
+            toast({
+                title: "Success",
+                description: `Event in ${formData.city} ${editingEvent ? "updated" : "created"} successfully.`,
+            });
 
             setIsModalOpen(false);
             fetchEvents();
         } catch (error) {
             console.error(error);
-            alert("Error saving event");
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: "Failed to save event. Please try again.",
+            });
         }
     };
 
@@ -111,10 +123,20 @@ export function DarseQuranManager() {
         try {
             const res = await fetch(`/api/darse-quran/${id}`, { method: "DELETE" });
             if (!res.ok) throw new Error("Failed to delete event");
+            
+            toast({
+                title: "Success",
+                description: `Event in ${city} deleted successfully.`,
+            });
+
             fetchEvents();
         } catch (error) {
             console.error(error);
-            alert("Error deleting event");
+            toast({
+                variant: "destructive",
+                title: "Error",
+                description: "Failed to delete event. Please try again.",
+            });
         }
     };
 

@@ -3,7 +3,7 @@ import { db } from '@/db';
 import { users } from '@/db/schema';
 import { v4 as uuidv4 } from "uuid";
 import { eq } from 'drizzle-orm';
-import { getCurrentUser } from '@/lib/auth';
+import { getCurrentUser, hashPassword } from '@/lib/auth';
 
 export async function GET(req: NextRequest) {
     try {
@@ -51,15 +51,13 @@ export async function POST(req: NextRequest) {
         }
 
         const id = uuidv4();
+        const hashedPassword = await hashPassword(password);
 
-        // In a real app we'd hash the password here (e.g. bcrypt)
-        // For this simulation/demo we'll insert what's provided or simple stub
-        // The previous auth login API uses simple password matching based on initial setup.
         const newUser = {
             id,
             name: name || null,
             email,
-            password, // Password hashing skipped for brevity in this specific demo configuration
+            password: hashedPassword,
             role: role || 'editor',
             isActive: isActive !== undefined ? isActive : true,
         };

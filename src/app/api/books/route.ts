@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
           category: true,
           author: { columns: { id: true, name: true } },
         },
-        orderBy: [desc(books.createdAt)],
+        orderBy: [books.order, desc(books.createdAt)],
         limit,
         offset,
       }),
@@ -108,4 +108,29 @@ export async function POST(request: NextRequest) {
     console.error("Create book error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
+}
+export async function PATCH(request: NextRequest) {
+    try {
+        const user = await getCurrentUser(request);
+        if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+        const body = await request.json();
+        const { orders } = body; // Expected: [{ id: string, order: number }, ...]
+
+        if (!orders || !Array.isArray(orders)) {
+            return NextResponse.json({ error: "Invalid orders data" }, { status: 400 });
+        }
+
+        // Multiple updates in a transaction
+        await db.transaction(async (tx) => {
+            for (const item of orders) {
+                await tx.update(books).set({ order: item.order }).where(eq(books.id, item.id));
+            }
+        });
+
+        return NextResponse.json({ success: true, message: "Books reordered successfully" });
+    } catch (error) {
+        console.error("Patch books error:", error);
+        return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    }
 }

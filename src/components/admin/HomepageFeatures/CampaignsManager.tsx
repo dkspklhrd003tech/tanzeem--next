@@ -2,9 +2,26 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Edit2, Trash2, X, Image as ImageIcon, Link as LinkIcon } from "lucide-react";
+import { Plus, Edit2, Trash2, X, Image as ImageIcon, Link as LinkIcon, GripVertical } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
+import {
+    DndContext,
+    closestCenter,
+    KeyboardSensor,
+    PointerSensor,
+    useSensor,
+    useSensors,
+    DragEndEvent,
+} from "@dnd-kit/core";
+import {
+    arrayMove,
+    SortableContext,
+    sortableKeyboardCoordinates,
+    verticalListSortingStrategy,
+    useSortable,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
 
 type HomeCampaign = {
     id: string;
@@ -16,6 +33,95 @@ type HomeCampaign = {
     createdAt: string;
 };
 
+// --- Sortable Component ---
+function SortableCampaignRow({
+    campaign,
+    onEdit,
+    onDelete
+}: {
+    campaign: HomeCampaign;
+    onEdit: (c: HomeCampaign) => void;
+    onDelete: (id: string, title: string) => void;
+}) {
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+        isDragging,
+    } = useSortable({ id: campaign.id });
+
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+        zIndex: isDragging ? 20 : 0,
+        position: 'relative' as const,
+    };
+
+    return (
+        <tr
+            ref={setNodeRef}
+            style={style}
+            className={isDragging ? "bg-muted shadow-lg" : "hover:bg-muted/30 transition-colors"}
+        >
+            <td className="px-6 py-4 w-12">
+                <button
+                    {...attributes}
+                    {...listeners}
+                    className="p-1 cursor-grab active:cursor-grabbing text-foreground-muted hover:text-foreground"
+                >
+                    <GripVertical className="w-5 h-5" />
+                </button>
+            </td>
+            <td className="px-6 py-4 w-48">
+                <div className="w-32 h-20 rounded-md overflow-hidden bg-muted border border-border relative">
+                    {campaign.imageUrl ? (
+                        <img src={campaign.imageUrl} alt={campaign.title} className="w-full h-full object-cover" />
+                    ) : (
+                        <div className="w-full h-full flex items-center justify-center text-muted-foreground"><ImageIcon className="w-6 h-6" /></div>
+                    )}
+                </div>
+            </td>
+            <td className="px-6 py-4">
+                <div className="font-medium text-foreground">{campaign.title}</div>
+                {campaign.linkUrl && (
+                    <div className="flex items-center gap-1 text-xs text-primary mt-1">
+                        <LinkIcon className="w-3 h-3" />
+                        <a href={campaign.linkUrl} target="_blank" rel="noopener noreferrer" className="hover:underline">View Link</a>
+                    </div>
+                )}
+            </td>
+            <td className="px-6 py-4 text-foreground-muted">
+                <Badge variant="outline" className="font-mono">{campaign.order}</Badge>
+            </td>
+            <td className="px-6 py-4">
+                <Badge variant={campaign.isActive ? "default" : "secondary"} className={campaign.isActive ? "bg-emerald-500 hover:bg-emerald-600 text-white shadow-sm" : ""}>
+                    {campaign.isActive ? "Active" : "Hidden"}
+                </Badge>
+            </td>
+            <td className="px-6 py-4 text-right">
+                <div className="flex items-center justify-end gap-2">
+                    <button
+                        onClick={() => onEdit(campaign)}
+                        className="p-2 text-foreground-muted hover:text-primary transition-colors rounded-full hover:bg-primary/10"
+                        title="Edit"
+                    >
+                        <Edit2 className="w-4 h-4" />
+                    </button>
+                    <button
+                        onClick={() => onDelete(campaign.id, campaign.title)}
+                        className="p-2 text-foreground-muted hover:text-red-500 transition-colors rounded-full hover:bg-red-50"
+                        title="Delete"
+                    >
+                        <Trash2 className="w-4 h-4" />
+                    </button>
+                </div>
+            </td>
+        </tr>
+    );
+}
+
 export function CampaignsManager() {
     const [campaigns, setCampaigns] = useState<HomeCampaign[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -24,6 +130,17 @@ export function CampaignsManager() {
     const [isUploading, setIsUploading] = useState(false);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const sensors = useSensors(
+        useSensor(PointerSensor, {
+            activationConstraint: {
+                distance: 8,
+            },
+        }),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates,
+        })
+    );
 
     const [formData, setFormData] = useState({
         title: "",
@@ -58,6 +175,48 @@ export function CampaignsManager() {
         }
     };
 
+    const handleDragEnd = async (event: DragEndEvent) => {
+        const { active, over } = event;
+        if (over && active.id !== over.id) {
+            const oldIndex = campaigns.findIndex((i) => i.id === active.id);
+            const newIndex = campaigns.findIndex((i) => i.id === over.id);
+
+            const newArray = arrayMove(campaigns, oldIndex, newIndex);
+
+            // Assign new orders based on position (descending: highest at top)
+            const reorderedArray = newArray.map((item, index) => ({
+                ...item,
+                order: newArray.length - index
+            }));
+
+            setCampaigns(reorderedArray);
+
+            try {
+                const res = await fetch("/api/campaigns", {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        orders: reorderedArray.map(item => ({ id: item.id, order: item.order }))
+                    }),
+                });
+
+                if (!res.ok) throw new Error("Sync failed");
+
+                toast({
+                    title: "Campaigns Reordered",
+                    description: "The display priority has been saved.",
+                });
+            } catch (err) {
+                toast({
+                    title: "Reorder Failed",
+                    description: "Could not save the new order to the server.",
+                    variant: "destructive",
+                });
+                fetchCampaigns(); // Revert to server state
+            }
+        }
+    };
+
     const handleOpenModal = (campaign?: HomeCampaign) => {
         if (campaign) {
             setEditingCampaign(campaign);
@@ -74,7 +233,7 @@ export function CampaignsManager() {
                 title: "",
                 imageUrl: "",
                 linkUrl: "",
-                order: campaigns.length,
+                order: campaigns.length > 0 ? Math.max(...campaigns.map(c => c.order)) + 1 : 1,
                 isActive: true,
             });
         }
@@ -152,7 +311,7 @@ export function CampaignsManager() {
             if (!res.ok) throw new Error(data.error || "Failed to save campaign");
 
             toast({
-                title: "Success! 🎉",
+                title: "Success!",
                 description: `Campaign successfully ${isEditing ? "updated" : "added"}.`,
             });
 
@@ -195,17 +354,17 @@ export function CampaignsManager() {
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex justify-between items-center pb-4 border-b border-border mb-8">
                 <div>
-                    <h2 className="text-2xl font-bold text-foreground">Spotlight Campaigns</h2>
-                    <p className="text-foreground-muted text-sm mt-1">Manage the 3x2 grid of featured events and campaigns.</p>
+                    <h2 className="text-3xl font-bold text-foreground tracking-tight">Campaign Spotlight</h2>
+                    <p className="text-sm text-foreground-muted mt-1">Manage the High-Impact Grid of Featured Initiatives and Calls to Action.</p>
                 </div>
                 <button
                     onClick={() => handleOpenModal()}
-                    className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary-dark transition-colors text-sm font-medium"
+                    className="flex items-center gap-2 bg-primary text-primary-foreground px-6 py-2.5 rounded-xl font-semibold shadow-sm hover:shadow-md transition-all hover:bg-primary-dark active:scale-95"
                 >
                     <Plus className="w-4 h-4" />
-                    Add Campaign
+                    Launch Campaign
                 </button>
             </div>
 
@@ -220,72 +379,47 @@ export function CampaignsManager() {
             ) : (
                 <div className="bg-card rounded-xl border border-border overflow-hidden shadow-sm">
                     <div className="overflow-x-auto">
-                        <table className="w-full text-left">
-                            <thead className="bg-muted/50 text-foreground-muted text-sm border-b border-border">
-                                <tr>
-                                    <th className="px-6 py-4 font-medium">Image</th>
-                                    <th className="px-6 py-4 font-medium">Details</th>
-                                    <th className="px-6 py-4 font-medium">Sort Order</th>
-                                    <th className="px-6 py-4 font-medium">Status</th>
-                                    <th className="px-6 py-4 text-right font-medium">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-border">
-                                {campaigns.map((campaign) => (
-                                    <tr key={campaign.id} className="hover:bg-muted/30 transition-colors">
-                                        <td className="px-6 py-4 w-48">
-                                            <div className="w-32 h-20 rounded-md overflow-hidden bg-muted border border-border relative">
-                                                {campaign.imageUrl ? (
-                                                    <img src={campaign.imageUrl} alt={campaign.title} className="w-full h-full object-cover" />
-                                                ) : (
-                                                    <div className="w-full h-full flex items-center justify-center text-muted-foreground"><ImageIcon className="w-6 h-6" /></div>
-                                                )}
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <div className="font-medium text-foreground">{campaign.title}</div>
-                                            {campaign.linkUrl && (
-                                                <div className="flex items-center gap-1 text-xs text-primary mt-1">
-                                                    <LinkIcon className="w-3 h-3" />
-                                                    <a href={campaign.linkUrl} target="_blank" rel="noopener noreferrer" className="hover:underline">View Link</a>
-                                                </div>
-                                            )}
-                                        </td>
-                                        <td className="px-6 py-4 text-foreground-muted">{campaign.order}</td>
-                                        <td className="px-6 py-4">
-                                            <Badge variant={campaign.isActive ? "default" : "secondary"} className={campaign.isActive ? "bg-emerald-500 hover:bg-emerald-600 text-white" : ""}>
-                                                {campaign.isActive ? "Active" : "Hidden"}
-                                            </Badge>
-                                        </td>
-                                        <td className="px-6 py-4 text-right">
-                                            <div className="flex items-center justify-end gap-2">
-                                                <button
-                                                    onClick={() => handleOpenModal(campaign)}
-                                                    className="p-2 text-foreground-muted hover:text-primary transition-colors rounded-full hover:bg-primary/10"
-                                                    title="Edit"
-                                                >
-                                                    <Edit2 className="w-4 h-4" />
-                                                </button>
-                                                <button
-                                                    onClick={() => handleDelete(campaign.id, campaign.title)}
-                                                    className="p-2 text-foreground-muted hover:text-red-500 transition-colors rounded-full hover:bg-red-50"
-                                                    title="Delete"
-                                                >
-                                                    <Trash2 className="w-4 h-4" />
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
-                                {campaigns.length === 0 && (
+                        <DndContext
+                            sensors={sensors}
+                            collisionDetection={closestCenter}
+                            onDragEnd={handleDragEnd}
+                        >
+                            <table className="w-full text-left">
+                                <thead className="bg-muted/50 text-foreground font-semibold text-xs uppercase tracking-wider border-b border-border">
                                     <tr>
-                                        <td colSpan={5} className="px-6 py-12 text-center text-foreground-muted">
-                                            No campaigns found. Click "Add Campaign" to create one.
-                                        </td>
+                                        <th className="px-6 py-4 w-12">Order</th>
+                                        <th className="px-6 py-4">Visual asset</th>
+                                        <th className="px-6 py-4">Campaign Details</th>
+                                        <th className="px-6 py-4">Priority</th>
+                                        <th className="px-6 py-4">Status</th>
+                                        <th className="px-6 py-4 text-right">Control</th>
                                     </tr>
-                                )}
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody className="divide-y divide-border">
+                                    <SortableContext
+                                        items={campaigns.map(i => i.id)}
+                                        strategy={verticalListSortingStrategy}
+                                    >
+                                        {campaigns.map((campaign) => (
+                                            <SortableCampaignRow
+                                                key={campaign.id}
+                                                campaign={campaign}
+                                                onEdit={handleOpenModal}
+                                                onDelete={handleDelete}
+                                            />
+                                        ))}
+                                    </SortableContext>
+
+                                    {campaigns.length === 0 && (
+                                        <tr>
+                                            <td colSpan={6} className="px-6 py-12 text-center text-foreground-muted">
+                                                No campaigns found. Click "Launch Campaign" to create one.
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </DndContext>
                     </div>
                 </div>
             )}
@@ -324,7 +458,7 @@ export function CampaignsManager() {
                                         <label className="block text-sm font-medium text-foreground mb-2">Campaign Image (Card format) *</label>
                                         <div
                                             onClick={() => fileInputRef.current?.click()}
-                                            className="relative w-full aspect-[3/2] max-w-sm rounded-xl border-2 border-dashed border-border bg-muted/30 hover:bg-muted/50 transition-colors flex flex-col items-center justify-center cursor-pointer overflow-hidden group"
+                                            className="relative w-full aspect-[348/195] max-w-sm rounded-xl border-2 border-dashed border-border bg-muted/30 hover:bg-muted/50 transition-colors flex flex-col items-center justify-center cursor-pointer overflow-hidden group"
                                         >
                                             {(previewUrl || formData.imageUrl) ? (
                                                 <img src={previewUrl || formData.imageUrl} alt="Preview" className="w-full h-full object-cover" />
@@ -351,32 +485,32 @@ export function CampaignsManager() {
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div className="space-y-2">
-                                            <label className="text-sm font-medium text-foreground">Display Title *</label>
+                                            <label className="text-sm font-semibold text-foreground">Campaign Identity *</label>
                                             <input
                                                 type="text"
                                                 value={formData.title}
                                                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                                className="w-full p-2.5 rounded-lg border border-border bg-background text-foreground focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all"
-                                                placeholder="e.g. Free Palestine"
+                                                className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                                                placeholder="e.g. Free Palestine Campaign"
                                                 required
                                             />
                                         </div>
 
                                         <div className="space-y-2">
-                                            <label className="text-sm font-medium text-foreground">Target Link URL</label>
+                                            <label className="text-sm font-semibold text-foreground">Target Destination URL</label>
                                             <input
                                                 type="text"
                                                 value={formData.linkUrl}
                                                 onChange={(e) => setFormData({ ...formData, linkUrl: e.target.value })}
-                                                className="w-full p-2.5 rounded-lg border border-border bg-background text-foreground focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all"
-                                                placeholder="/path or https://..."
+                                                className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                                                placeholder="/initiatives/palestine or https://..."
                                             />
                                         </div>
                                     </div>
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-2">
                                         <div className="space-y-2">
-                                            <label className="text-sm font-medium text-foreground">Sort Order</label>
+                                            <label className="text-sm font-medium text-foreground">Manual Priority Score</label>
                                             <input
                                                 type="number"
                                                 value={formData.order}
@@ -384,7 +518,10 @@ export function CampaignsManager() {
                                                 className="w-full p-2.5 rounded-lg border border-border bg-background text-foreground focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all"
                                                 placeholder="0"
                                             />
-                                            <p className="text-xs text-foreground-muted">Lower numbers appear first</p>
+                                            <p className="text-xs text-foreground-muted leading-relaxed">
+                                                <span className="font-bold text-primary mr-1">Recommended:</span>
+                                                Clear branding or banner with <span className="text-primary font-bold">348px x 195px</span> dimensions for optimal rendering.
+                                            </p>
                                         </div>
 
                                         <div className="flex flex-col justify-center pt-6">
@@ -397,7 +534,7 @@ export function CampaignsManager() {
                                                         onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
                                                     />
                                                     <div className={`block w-14 h-8 rounded-full transition-colors ${formData.isActive ? 'bg-primary' : 'bg-muted border border-border'}`}></div>
-                                                    <div className={`absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition-transform ${formData.isActive ? 'translate-x-6 shadow-sm' : ''}`}></div>
+                                                    <div className={`absolute left-1 top-1 bg-[#fefefc] w-6 h-6 rounded-full transition-transform ${formData.isActive ? 'translate-x-6 shadow-sm' : ''}`}></div>
                                                 </div>
                                                 <div>
                                                     <div className="text-sm font-medium text-foreground">Active Status</div>
@@ -414,7 +551,7 @@ export function CampaignsManager() {
                                 <button
                                     type="button"
                                     onClick={closeModal}
-                                    className="px-5 py-2.5 text-sm font-medium text-foreground bg-background border border-border rounded-lg hover:bg-muted transition-colors"
+                                    className="px-6 py-2.5 text-sm font-semibold text-foreground bg-background border border-border rounded-xl hover:bg-muted transition-all active:scale-95"
                                     disabled={isLoading || isUploading}
                                 >
                                     Cancel
@@ -423,12 +560,12 @@ export function CampaignsManager() {
                                     form="campaignForm"
                                     type="submit"
                                     disabled={isLoading || isUploading}
-                                    className="px-5 py-2.5 text-sm font-medium text-primary-foreground bg-primary rounded-lg hover:bg-primary-dark transition-colors flex items-center justify-center min-w-[120px]"
+                                    className="px-8 py-2.5 text-sm font-bold text-primary-foreground bg-primary rounded-xl hover:bg-primary-dark transition-all active:scale-95 shadow-sm hover:shadow-md min-w-[140px]"
                                 >
                                     {isLoading ? (
-                                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                        <div className="w-5 h-5 border-2 border-white/30 border-t-[#fefefc] rounded-full animate-spin"></div>
                                     ) : (
-                                        "Save Campaign"
+                                        "Deploy Asset"
                                     )}
                                 </button>
                             </div>

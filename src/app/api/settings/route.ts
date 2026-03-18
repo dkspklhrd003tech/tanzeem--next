@@ -34,28 +34,35 @@ export async function PUT(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const data = await request.json();
+    const body = await request.json();
+    
+    // Support both flat object and { settings, group } format
+    const settingsToUpdate = body.settings || body;
+    const targetGroup = body.group;
+    
     const results: any[] = [];
 
-    for (const [key, value] of Object.entries(data)) {
+    for (const [key, value] of Object.entries(settingsToUpdate)) {
       const typeStr = typeof value === "boolean" ? "boolean" : typeof value === "number" ? "number" : "text";
       const valueStr = String(value);
 
-      // Generating a simple UUID fallback since settings id is required
-      const id = crypto.randomUUID();
+      // Try to find existing setting to preserve group if not explicitly provided
+      const existing = await db.select().from(settings).where(eq(settings.key, key)).limit(1);
+      const groupToUse = targetGroup || (existing.length ? existing[0].group : "general");
 
       await db.insert(settings)
         .values({
-          id,
+          id: crypto.randomUUID(),
           key,
           value: valueStr,
           type: typeStr,
-          group: "general",
+          group: groupToUse,
         })
         .onDuplicateKeyUpdate({
           set: {
             value: valueStr,
             type: typeStr,
+            group: groupToUse,
           }
         });
 
@@ -68,7 +75,7 @@ export async function PUT(request: NextRequest) {
       userId: user.id,
       action: "update",
       entityType: "settings",
-      details: JSON.stringify({ keys: Object.keys(data) }),
+      details: JSON.stringify({ keys: Object.keys(settingsToUpdate) }),
     });
 
     return NextResponse.json({ success: true, settings: results });

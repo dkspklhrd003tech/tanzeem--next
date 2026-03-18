@@ -2,9 +2,25 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Edit2, Trash2, X, Image as ImageIcon, Link as LinkIcon, Video } from "lucide-react";
+import { Plus, Edit2, Trash2, X, Image as ImageIcon, Link as LinkIcon, Video, GripVertical, Youtube, Play } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
+import {
+    DndContext,
+    closestCenter,
+    KeyboardSensor,
+    PointerSensor,
+    useSensor,
+    useSensors,
+} from '@dnd-kit/core';
+import {
+    arrayMove,
+    SortableContext,
+    sortableKeyboardCoordinates,
+    verticalListSortingStrategy,
+    useSortable,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 type VideoRecord = {
     id: string;
@@ -14,8 +30,70 @@ type VideoRecord = {
     thumbnailUrl: string | null;
     isFeatured: boolean;
     isPublished: boolean;
+    order: number;
     createdAt: string;
 };
+
+function SortableVideoRow({ vid, onEdit, onDelete }: { vid: VideoRecord; onEdit: (v: VideoRecord) => void; onDelete: (id: string, title: string) => void }) {
+    const {
+        attributes,
+        listeners,
+        setNodeRef,
+        transform,
+        transition,
+        isDragging
+    } = useSortable({ id: vid.id });
+
+    const style = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+        zIndex: isDragging ? 50 : 'auto',
+        opacity: isDragging ? 0.5 : 1,
+    };
+
+    return (
+        <tr ref={setNodeRef} style={style} className="hover:bg-muted/30 transition-colors group">
+            <td className="px-6 py-4 w-10">
+                <button {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing p-1 text-muted-foreground/50 hover:text-primary transition-colors">
+                    <GripVertical className="w-5 h-5" />
+                </button>
+            </td>
+            <td className="px-6 py-4 w-48">
+                <div className="w-32 h-20 rounded-md overflow-hidden bg-muted border border-border relative flex items-center justify-center">
+                    {vid.thumbnailUrl ? (
+                        <img src={vid.thumbnailUrl} alt={vid.title} className="w-full h-full object-cover" />
+                    ) : (
+                        <div className="text-muted-foreground"><Video className="w-6 h-6" /></div>
+                    )}
+                    <div className="absolute inset-0 flex items-center justify-center">
+                        <div className="w-8 h-8 rounded-full bg-black/50 text-[#fefefc] flex items-center justify-center backdrop-blur-sm shadow-sm pl-1">
+                            ▶
+                        </div>
+                    </div>
+                </div>
+            </td>
+            <td className="px-6 py-4">
+                <div className="font-medium text-foreground">{vid.title}</div>
+            </td>
+            <td className="px-6 py-4">
+                <div className="flex items-center gap-1 text-xs text-primary max-w-[200px] truncate">
+                    <LinkIcon className="w-3 h-3 flex-shrink-0" />
+                    <a href={vid.videoUrl} target="_blank" rel="noopener noreferrer" className="hover:underline truncate">{vid.videoUrl}</a>
+                </div>
+            </td>
+            <td className="px-6 py-4 text-right">
+                <div className="flex items-center justify-end gap-2">
+                    <button onClick={() => onEdit(vid)} className="p-2 text-foreground-muted hover:text-primary transition-colors rounded-full hover:bg-primary/10" title="Edit">
+                        <Edit2 className="w-4 h-4" />
+                    </button>
+                    <button onClick={() => onDelete(vid.id, vid.title)} className="p-2 text-foreground-muted hover:text-red-500 transition-colors rounded-full hover:bg-red-50" title="Delete">
+                        <Trash2 className="w-4 h-4" />
+                    </button>
+                </div>
+            </td>
+        </tr>
+    );
+}
 
 export function FeaturedVideos() {
     const [videos, setVideos] = useState<VideoRecord[]>([]);
@@ -37,14 +115,19 @@ export function FeaturedVideos() {
 
     const { toast } = useToast();
 
+    const sensors = useSensors(
+        useSensor(PointerSensor),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates,
+        })
+    );
+
     useEffect(() => {
         fetchVideos();
     }, []);
 
     const fetchVideos = async () => {
         try {
-            // We only want to manage the featured ones from here
-            // But for fullness, we can filter or just fetch featured natively.
             const res = await fetch("/api/videos?featured=true");
             if (res.ok) {
                 const data = await res.json();
@@ -55,6 +138,41 @@ export function FeaturedVideos() {
             toast({ title: "Error", description: "Failed to load featured videos.", variant: "destructive" });
         } finally {
             setIsLoading(false);
+        }
+    };
+
+    const handleDragEnd = async (event: any) => {
+        const { active, over } = event;
+
+        if (active.id !== over.id) {
+            const oldIndex = videos.findIndex((v) => v.id === active.id);
+            const newIndex = videos.findIndex((v) => v.id === over.id);
+
+            const newOrder = arrayMove(videos, oldIndex, newIndex);
+            setVideos(newOrder);
+
+            // Sync with backend
+            try {
+                const patchPayload = newOrder.map((v, index) => ({
+                    id: v.id,
+                    order: index,
+                }));
+
+                const res = await fetch("/api/videos", {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ orders: patchPayload }),
+                });
+
+                if (res.ok) {
+                    toast({ title: "Order Updated", description: "Videos reordered successfully." });
+                } else {
+                    throw new Error("Failed to sync order");
+                }
+            } catch (error) {
+                toast({ title: "Sync Failed", description: "Could not persist reordering.", variant: "destructive" });
+                fetchVideos(); // Rollback
+            }
         }
     };
 
@@ -126,8 +244,8 @@ export function FeaturedVideos() {
         setIsLoading(true);
 
         try {
-            if (!formData.title || !formData.videoUrl) {
-                toast({ title: "Missing Fields", description: "Title and Video URL are required.", variant: "destructive" });
+            if (!formData.title) {
+                toast({ title: "Missing Fields", description: "Title is required.", variant: "destructive" });
                 setIsLoading(false);
                 return;
             }
@@ -151,7 +269,7 @@ export function FeaturedVideos() {
             if (!res.ok) throw new Error(data.error || "Failed to save video");
 
             toast({
-                title: "Success! 🎉",
+                title: "Success!",
                 description: `Featured Video successfully ${isEditing ? "updated" : "added"}.`,
             });
 
@@ -196,17 +314,17 @@ export function FeaturedVideos() {
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-between items-center mb-6">
+            <div className="flex justify-between items-center pb-4 border-b border-border mb-8">
                 <div>
-                    <h2 className="text-2xl font-bold text-foreground">Featured Videos</h2>
-                    <p className="text-foreground-muted text-sm mt-1">Manage the "Regular Video Broadcasts" highlighted on the Homepage.</p>
+                    <h2 className="text-3xl font-bold text-foreground tracking-tight">Featured Video Broadcasts</h2>
+                    <p className="text-sm text-foreground-muted mt-1">Directly manage and Spotlight "Regular Video Broadcasts" on the Landing Page.</p>
                 </div>
                 <button
                     onClick={() => handleOpenModal()}
-                    className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary-dark transition-colors text-sm font-medium"
+                    className="flex items-center gap-2 bg-primary text-primary-foreground px-6 py-2.5 rounded-xl font-semibold shadow-sm hover:shadow-md transition-all hover:bg-primary-dark active:scale-95"
                 >
                     <Plus className="w-4 h-4" />
-                    Feature Video
+                    Spotlight Video
                 </button>
             </div>
 
@@ -222,58 +340,30 @@ export function FeaturedVideos() {
                 <div className="bg-card rounded-xl border border-border overflow-hidden shadow-sm">
                     <div className="overflow-x-auto">
                         <table className="w-full text-left">
-                            <thead className="bg-muted/50 text-foreground-muted text-sm border-b border-border">
+                            <thead className="bg-muted/50 text-foreground font-semibold text-xs uppercase tracking-wider border-b border-border">
                                 <tr>
-                                    <th className="px-6 py-4 font-medium">Cover</th>
-                                    <th className="px-6 py-4 font-medium">Broadcast Title</th>
-                                    <th className="px-6 py-4 font-medium">Video Link</th>
-                                    <th className="px-6 py-4 font-medium">Status</th>
-                                    <th className="px-6 py-4 text-right font-medium">Actions</th>
+                                    <th className="px-6 py-4 w-10"></th>
+                                    <th className="px-6 py-4">Cover frame</th>
+                                    <th className="px-6 py-4">Broadcast Title</th>
+                                    <th className="px-6 py-4">Direct Link</th>
+                                    <th className="px-6 py-4 text-right">Actions</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-border">
-                                {videos.map((vid) => (
-                                    <tr key={vid.id} className="hover:bg-muted/30 transition-colors">
-                                        <td className="px-6 py-4 w-48">
-                                            <div className="w-32 h-20 rounded-md overflow-hidden bg-muted border border-border relative flex items-center justify-center">
-                                                {vid.thumbnailUrl ? (
-                                                    <img src={vid.thumbnailUrl} alt={vid.title} className="w-full h-full object-cover" />
-                                                ) : (
-                                                    <div className="text-muted-foreground"><Video className="w-6 h-6" /></div>
-                                                )}
-                                                <div className="absolute inset-0 flex items-center justify-center">
-                                                    <div className="w-8 h-8 rounded-full bg-black/50 text-white flex items-center justify-center backdrop-blur-sm shadow-sm pl-1">
-                                                        ▶
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <div className="font-medium text-foreground">{vid.title}</div>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <div className="flex items-center gap-1 text-xs text-primary max-w-[200px] truncate">
-                                                <LinkIcon className="w-3 h-3 flex-shrink-0" />
-                                                <a href={vid.videoUrl} target="_blank" rel="noopener noreferrer" className="hover:underline truncate">{vid.videoUrl}</a>
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <Badge variant={vid.isFeatured ? "default" : "secondary"} className="bg-emerald-500 hover:bg-emerald-600 text-white font-medium">
-                                                Featured
-                                            </Badge>
-                                        </td>
-                                        <td className="px-6 py-4 text-right">
-                                            <div className="flex items-center justify-end gap-2">
-                                                <button onClick={() => handleOpenModal(vid)} className="p-2 text-foreground-muted hover:text-primary transition-colors rounded-full hover:bg-primary/10" title="Edit">
-                                                    <Edit2 className="w-4 h-4" />
-                                                </button>
-                                                <button onClick={() => handleDelete(vid.id, vid.title)} className="p-2 text-foreground-muted hover:text-red-500 transition-colors rounded-full hover:bg-red-50" title="Delete">
-                                                    <Trash2 className="w-4 h-4" />
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
+                                <DndContext
+                                    sensors={sensors}
+                                    collisionDetection={closestCenter}
+                                    onDragEnd={handleDragEnd}
+                                >
+                                    <SortableContext
+                                        items={videos.map(v => v.id)}
+                                        strategy={verticalListSortingStrategy}
+                                    >
+                                        {videos.map((vid) => (
+                                            <SortableVideoRow key={vid.id} vid={vid} onEdit={handleOpenModal} onDelete={handleDelete} />
+                                        ))}
+                                    </SortableContext>
+                                </DndContext>
                                 {videos.length === 0 && (
                                     <tr>
                                         <td colSpan={5} className="px-6 py-12 text-center text-foreground-muted">
@@ -318,33 +408,31 @@ export function FeaturedVideos() {
 
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div className="space-y-2">
-                                            <label className="text-sm font-medium text-foreground">Video Title *</label>
+                                            <label className="text-sm font-semibold text-foreground">Broadcast Title *</label>
                                             <input
                                                 type="text"
                                                 value={formData.title}
                                                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                                className="w-full p-2.5 rounded-lg border border-border bg-background text-foreground focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all"
-                                                placeholder="Khutba e Jummah"
-                                                required
+                                                className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                                                placeholder="e.g. Khutba e Jummah"
                                             />
                                         </div>
 
                                         <div className="space-y-2">
-                                            <label className="text-sm font-medium text-foreground">Video URL (YouTube) *</label>
+                                            <label className="text-sm font-semibold text-foreground">URL</label>
                                             <input
                                                 type="text"
                                                 value={formData.videoUrl}
                                                 onChange={(e) => setFormData({ ...formData, videoUrl: e.target.value })}
-                                                className="w-full p-2.5 rounded-lg border border-border bg-background text-foreground focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all"
+                                                className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                                                 placeholder="https://youtube.com/watch?..."
-                                                required
                                             />
                                         </div>
                                     </div>
 
                                     {/* Thumbnail Generator/Upload Area */}
                                     <div className="bg-muted/10 p-5 rounded-xl border border-border">
-                                        <label className="block text-sm font-medium text-foreground mb-3">Custom Thumbnail Cover</label>
+                                        <label className="block text-sm font-medium text-foreground mb-3">Custom Thumbnail Cover <span className="text-xs font-normal text-foreground-muted">(255x144 recommended)</span></label>
                                         <div className="flex flex-col md:flex-row gap-5 items-center md:items-start">
                                             <div
                                                 onClick={() => fileInputRef.current?.click()}
@@ -383,11 +471,11 @@ export function FeaturedVideos() {
                             </div>
 
                             <div className="px-6 py-4 border-t border-border bg-muted/10 flex justify-end gap-3 sticky bottom-0">
-                                <button type="button" onClick={closeModal} className="px-5 py-2.5 text-sm font-medium text-foreground bg-background border border-border rounded-lg hover:bg-muted transition-colors">
+                                <button type="button" onClick={closeModal} className="px-6 py-2.5 text-sm font-semibold text-foreground bg-background border border-border rounded-xl hover:bg-muted transition-all active:scale-95">
                                     Cancel
                                 </button>
-                                <button form="videoForm" type="submit" disabled={isLoading || isUploading} className="px-5 py-2.5 text-sm font-medium text-primary-foreground bg-primary rounded-lg hover:bg-primary-dark transition-colors min-w-[120px]">
-                                    {isLoading ? <div className="mx-auto w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> : "Save Video"}
+                                <button form="videoForm" type="submit" disabled={isLoading || isUploading} className="px-8 py-2.5 text-sm font-bold text-primary-foreground bg-primary rounded-xl hover:bg-primary-dark transition-all active:scale-95 shadow-sm hover:shadow-md min-w-[140px]">
+                                    {isLoading ? <div className="mx-auto w-5 h-5 border-2 border-white/30 border-t-[#fefefc] rounded-full animate-spin"></div> : "Deploy Video"}
                                 </button>
                             </div>
                         </motion.div>
