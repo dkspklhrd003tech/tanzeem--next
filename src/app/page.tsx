@@ -10,6 +10,8 @@ import { db } from "@/db";
 import { homeSliders, books, magazines, teamMembers, homeCampaigns, videos, settings } from "@/db/schema";
 import { eq, desc, asc } from "drizzle-orm";
 
+export const dynamic = "force-dynamic";
+
 async function HomeContent() {
   // Query Active Hero Sliders
   const activeSliders = await db

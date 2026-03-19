@@ -143,7 +143,7 @@ export function MediaLibrary() {
         title: "File Deleted",
         description: `"${name}" has been removed from the library.`,
       });
-      
+
       setMedia(prev => prev.filter(item => item.id !== id));
       setSelectedItems(prev => prev.filter(item => item !== id));
     } catch (error: any) {
@@ -157,20 +157,20 @@ export function MediaLibrary() {
 
   const handleBulkDelete = async () => {
     if (!confirm(`Delete ${selectedItems.length} items?`)) return;
-    
+
     let successCount = 0;
     for (const id of selectedItems) {
       try {
         const res = await fetch(`/api/media/${id}`, { method: "DELETE" });
         if (res.ok) successCount++;
-      } catch (e) {}
+      } catch (e) { }
     }
 
     toast({
       title: "Bulk Deletion",
       description: `Successfully deleted ${successCount} items.`,
     });
-    
+
     fetchMedia();
     setSelectedItems([]);
   };
@@ -222,7 +222,7 @@ export function MediaLibrary() {
             multiple
             className="hidden"
           />
-          <Button 
+          <Button
             disabled={isUploading}
             onClick={() => fileInputRef.current?.click()}
             className="bg-primary hover:bg-primary-dark text-primary-foreground"
@@ -285,7 +285,7 @@ export function MediaLibrary() {
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
       ) : filteredMedia.length === 0 ? (
-        <div className="text-center py-20 border-2 border-dashed border-border rounded-xl">
+        <div className="text-center py-16 border-2 border-dashed border-border rounded-xl">
           <p className="text-foreground-muted">No media files found.</p>
         </div>
       ) : viewMode === "grid" ? (
@@ -310,14 +310,14 @@ export function MediaLibrary() {
                 ) : (
                   <span className="text-4xl">📁</span>
                 )}
-                
+
                 {/* Selection Checkbox Overlay */}
                 {selectedItems.includes(item.id) && (
-                   <div className="absolute top-2 left-2 bg-primary text-white rounded-full p-0.5 shadow-md">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                      </svg>
-                   </div>
+                  <div className="absolute top-2 left-2 bg-primary text-white rounded-full p-0.5 shadow-md">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                    </svg>
+                  </div>
                 )}
               </div>
 
@@ -356,7 +356,7 @@ export function MediaLibrary() {
                       </a>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                       <a href={item.url} download={item.originalName}>
+                      <a href={item.url} download={item.originalName}>
                         <Download className="h-4 w-4 mr-2" />
                         Download
                       </a>
@@ -401,7 +401,7 @@ export function MediaLibrary() {
                           {item.mimeType.startsWith("image/") ? (
                             <img src={item.url} className="w-full h-full object-cover" />
                           ) : (
-                             <span className="text-xl">📄</span>
+                            <span className="text-xl">📄</span>
                           )}
                         </div>
                         <div className="min-w-0">

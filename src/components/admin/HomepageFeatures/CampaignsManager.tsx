@@ -395,11 +395,11 @@ export function CampaignsManager() {
                                         <th className="px-6 py-4 text-right">Control</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-border">
-                                    <SortableContext
-                                        items={campaigns.map(i => i.id)}
-                                        strategy={verticalListSortingStrategy}
-                                    >
+                                <SortableContext
+                                    items={campaigns.map(i => i.id)}
+                                    strategy={verticalListSortingStrategy}
+                                >
+                                    <tbody className="divide-y divide-border">
                                         {campaigns.map((campaign) => (
                                             <SortableCampaignRow
                                                 key={campaign.id}
@@ -408,16 +408,16 @@ export function CampaignsManager() {
                                                 onDelete={handleDelete}
                                             />
                                         ))}
-                                    </SortableContext>
 
-                                    {campaigns.length === 0 && (
-                                        <tr>
-                                            <td colSpan={6} className="px-6 py-12 text-center text-foreground-muted">
-                                                No campaigns found. Click "Launch Campaign" to create one.
-                                            </td>
-                                        </tr>
-                                    )}
-                                </tbody>
+                                        {campaigns.length === 0 && (
+                                            <tr>
+                                                <td colSpan={6} className="px-6 py-12 text-center text-foreground-muted">
+                                                    No campaigns found. Click "Launch Campaign" to create one.
+                                                </td>
+                                            </tr>
+                                        )}
+                                    </tbody>
+                                </SortableContext>
                             </table>
                         </DndContext>
                     </div>

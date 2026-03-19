@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
 import { magazines } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 
 export async function PUT(
     req: NextRequest,
@@ -19,6 +20,7 @@ export async function PUT(
             })
             .where(eq(magazines.id, id));
 
+        revalidatePath("/");
         return NextResponse.json({ success: true });
     } catch (error) {
         console.error("Failed to update mag:", error);
@@ -35,6 +37,7 @@ export async function DELETE(
 
         await db.delete(magazines).where(eq(magazines.id, id));
 
+        revalidatePath("/");
         return NextResponse.json({ success: true, message: "Magazine deleted" });
     } catch (error) {
         console.error("Failed to delete mag:", error);

@@ -133,6 +133,11 @@ const menuItems = [
     icon: Settings,
     href: "/sitemanager?section=settings",
   },
+  {
+    title: "Social Media Hub",
+    icon: Users,
+    href: "/sitemanager?section=social-media",
+  },
 ];
 
 interface AdminLayoutProps {

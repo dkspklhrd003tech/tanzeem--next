@@ -39,7 +39,7 @@ export function DarseQuranGrid() {
 
     if (isLoading) {
         return (
-            <div className="w-full flex justify-center py-20">
+            <div className="w-full flex justify-center py-16">
                 <div className="animate-pulse flex items-center gap-2 text-[#0d5844] font-bold">
                     <LibraryBig className="w-5 h-5 animate-bounce" />
                     Loading Schedules...
@@ -50,7 +50,7 @@ export function DarseQuranGrid() {
 
     if (events.length === 0) {
         return (
-            <div className="w-full flex justify-center py-20">
+            <div className="w-full flex justify-center py-16">
                 <p className="text-muted-foreground font-medium">No events are currently scheduled.</p>
             </div>
         );

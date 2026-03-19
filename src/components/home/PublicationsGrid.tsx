@@ -30,7 +30,7 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
     return (
         <div className="bg-[#fefefc]">
             {/* 1. Our Magazines Section */}
-            <section className="py-20 border-t border-border bg-gradient-to-b from-white to-[#fefefc]">
+            <section className="py-16 border-t border-border bg-gradient-to-b from-white to-[#fefefc]">
                 <div className="container max-w-7xl mx-auto px-4">
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-8">
                         <div className="space-y-3">
@@ -39,7 +39,7 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
                                 Books And Literature Of Tanzeem-e-Islami & Anjuman Khuddam Ul Quran
                             </p>
                         </div>
-                        <Link href="/resources/magazines" className="group flex items-center gap-2 bg-[#fefefc] border-2 border-primary/10 px-8 py-3 rounded-2xl text-sm font-bold hover:bg-primary hover:text-white hover:border-primary transition-all duration-300 shadow-sm">
+                        <Link href="/resources/magazines" className="group flex items-center gap-2 btn-primary-rounded px-8 py-3 text-sm font-bold shadow-sm">
                             About Magazines
                             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                         </Link>
@@ -70,22 +70,19 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
 
                                         {/* Overlay gradient */}
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-
-                                        {/* Issue Number Badge - overlaid on image */}
-                                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent px-3 py-2">
-                                            <p className="text-xs font-bold italic text-white/90 text-center tracking-wide drop-shadow-sm">
-                                                {mag.issueNumber || "Current Issue"}
-                                            </p>
-                                        </div>
                                     </div>
+                                </div>
+
+                                <div className="text-xs font-medium italic text-[#111111]/50 mb-4 line-clamp-1">
+                                    {mag.issueNumber || "Current Issue"}
                                 </div>
 
                                 <div className="text-center z-10 w-full px-4">
                                     <Link
                                         href={`/resources/magazines/${mag.id}`}
-                                        className="inline-flex items-center justify-center gap-2 w-full bg-transparent border-2 border-primary text-primary px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-primary hover:text-[#fefefc] transition-all duration-300 group/btn shadow-sm hover:shadow-md"
+                                        className="inline-flex items-center justify-center gap-2 w-full btn-primary-rounded px-6 py-2.5 text-xs font-semibold uppercase tracking-widest group/btn shadow-sm hover:shadow-md"
                                     >
-                                        {mag.title}
+                                        More {mag.title}
                                         <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform" />
                                     </Link>
                                 </div>
@@ -101,7 +98,7 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
             </section>
 
             {/* 2. Our Books Section */}
-            <section className="py-20 border-t border-border bg-white">
+            <section className="py-16 border-t border-border bg-white">
                 <div className="container max-w-7xl mx-auto px-4">
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-8">
                         <div className="space-y-3">
@@ -110,7 +107,7 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
                                 Message of Iqamat ud Din & Ruju llul Quran Through Our Periodicals.
                             </p>
                         </div>
-                        <Link href="/resources/books" className="group flex items-center gap-2 bg-[#fefefc] border-2 border-[#0d5844]/10 px-8 py-3 rounded-2xl text-sm font-bold hover:bg-[#0d5844] hover:text-[#fefefc] hover:border-[#0d5844] transition-all duration-300 shadow-sm">
+                        <Link href="/resources/books" className="group flex items-center gap-2 btn-primary-rounded px-8 py-3 text-sm font-semibold shadow-sm">
                             About Books
                             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                         </Link>
@@ -144,7 +141,7 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
                                 <div className="text-center z-10 w-full px-4">
                                     <Link
                                         href={`/resources/books/${book.id}`}
-                                        className="inline-flex items-center justify-center gap-2 w-full bg-transparent border-2 border-[#0d5844] text-[#0d5844] px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-[#0d5844] hover:text-[#fefefc] transition-all duration-300 group/btn shadow-sm hover:shadow-md"
+                                        className="inline-flex items-center justify-center gap-2 w-full btn-primary-rounded px-6 py-2.5 text-xs font-semibold uppercase tracking-widest group/btn shadow-sm hover:shadow-md"
                                     >
                                         {book.title}
                                         <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform" />

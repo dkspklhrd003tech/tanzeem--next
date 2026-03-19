@@ -86,13 +86,13 @@ export function Hero({ slidesData = [] }: { slidesData?: any[] }) {
           <>
             <button
               onClick={prevSlide}
-              className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-black/20 hover:bg-black/40 backdrop-blur-sm rounded-full flex items-center justify-center text-white/80 hover:text-[#fefefc] transition-all opacity-0 group-hover:opacity-100 z-10"
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-white/20 hover:bg-[#0d5844] border border-[#0d5844] backdrop-blur-sm rounded-full flex items-center justify-center text-[#0d5844] hover:text-[#fefefc] transition-all opacity-100 md:opacity-0 md:group-hover:opacity-100 z-10"
             >
               <ChevronLeft className="h-6 w-6 md:h-8 md:w-8" />
             </button>
             <button
               onClick={nextSlide}
-              className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-black/20 hover:bg-black/40 backdrop-blur-sm rounded-full flex items-center justify-center text-white/80 hover:text-[#fefefc] transition-all opacity-0 group-hover:opacity-100 z-10"
+              className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-white/20 hover:bg-[#0d5844] border border-[#0d5844] backdrop-blur-sm rounded-full flex items-center justify-center text-[#0d5844] hover:text-[#fefefc] transition-all opacity-100 md:opacity-0 md:group-hover:opacity-100 z-10"
             >
               <ChevronRight className="h-6 w-6 md:h-8 md:w-8" />
             </button>

@@ -32,7 +32,7 @@ export function CTA({ settings }: CTAProps) {
   ];
 
   return (
-    <section className="py-16 md:py-20 bg-primary relative overflow-hidden">
+    <section className="py-16 md:py-16 bg-primary relative overflow-hidden">
       {/* Pattern */}
       <div className="absolute inset-0 opacity-[0.03]" style={{
         backgroundImage: `radial-gradient(circle at 50% 50%, rgba(255,255,255,0.1) 1px, transparent 1px)`,

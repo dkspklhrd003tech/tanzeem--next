@@ -12,13 +12,13 @@ type HomeCampaign = {
 
 export function SpotlightCampaigns({ campaigns }: { campaigns: HomeCampaign[] }) {
     return (
-        <section className="py-20 bg-[#fefefc] border-t border-border/60">
+        <section className="py-16 bg-[#fefefc] border-t border-border/60">
             <div className="container max-w-7xl mx-auto px-4">
 
                 <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
                     <div>
                         <h2 className="text-4xl md:text-5xl font-black text-[#0d5844]">Tanzeem Spotlight</h2>
-                        <p className="text-[#111111] font-semibold text-xl mt-2 max-w-xl leading-relaxed">
+                        <p className="text-primary font-semibold text-xl mt-2 max-w-xl leading-relaxed">
                             Campaigns, Announcements & Events
                         </p>
                     </div>
@@ -32,7 +32,7 @@ export function SpotlightCampaigns({ campaigns }: { campaigns: HomeCampaign[] })
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ delay: i * 0.1, duration: 0.5 }}
-                            className="group relative flex flex-col bg-white rounded-[2rem] border border-border shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 overflow-hidden cursor-pointer h-full"
+                            className="group relative flex flex-col bg-white rounded-[1rem] border border-border shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 overflow-hidden cursor-pointer h-full"
                             onClick={() => {
                                 if (campaign.linkUrl) {
                                     window.open(campaign.linkUrl, '_blank');

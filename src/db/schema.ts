@@ -562,7 +562,7 @@ export const playlists = mysqlTable("playlists", {
 });
 
 // ============================================
-// DARS-E-QURAN EVENTS
+// DARSE-QURAN EVENTS
 // ============================================
 
 export const darseQuranEvents = mysqlTable("darse_quran_events", {
@@ -577,5 +577,40 @@ export const darseQuranEvents = mysqlTable("darse_quran_events", {
     isPublished: boolean("is_published").default(true).notNull(),
     ...timestamps,
 });
+
+// ============================================
+// SOCIAL MEDIA HUB
+// ============================================
+
+export const socialPlatforms = mysqlTable("social_platforms", {
+    id: varchar("id", { length: 191 }).primaryKey(),
+    name: varchar("name", { length: 191 }).notNull(),
+    slug: varchar("slug", { length: 191 }).notNull().unique(),
+    iconUrl: text("icon_url"),
+    themeColor: varchar("theme_color", { length: 50 }),
+    order: int("order").default(0).notNull(),
+    isActive: boolean("is_active").default(true).notNull(),
+    ...timestamps,
+});
+
+export const socialAccounts = mysqlTable("social_accounts", {
+    id: varchar("id", { length: 191 }).primaryKey(),
+    platformId: varchar("platform_id", { length: 191 }).notNull(),
+    title: varchar("title", { length: 255 }).notNull(),
+    url: text("url").notNull(),
+    imageUrl: text("image_url"),
+    buttonText: varchar("button_text", { length: 50 }).default("Follow").notNull(),
+    order: int("order").default(0).notNull(),
+    isActive: boolean("is_active").default(true).notNull(),
+    ...timestamps,
+});
+
+export const socialPlatformsRelations = relations(socialPlatforms, ({ many }) => ({
+    accounts: many(socialAccounts),
+}));
+
+export const socialAccountsRelations = relations(socialAccounts, ({ one }) => ({
+    platform: one(socialPlatforms, { fields: [socialAccounts.platformId], references: [socialPlatforms.id] }),
+}));
 
 

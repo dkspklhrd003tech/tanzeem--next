@@ -79,8 +79,12 @@ export async function PUT(request: NextRequest) {
     });
 
     return NextResponse.json({ success: true, settings: results });
-  } catch (error) {
-    console.error("Update settings error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  } catch (error: any) {
+    console.error("DEBUG: Update settings error:", {
+      message: error.message,
+      stack: error.stack,
+      code: error.code
+    });
+    return NextResponse.json({ error: error.message || "Internal server error" }, { status: 500 });
   }
 }

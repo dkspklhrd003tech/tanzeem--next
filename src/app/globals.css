@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import "tw-animate-css";
+/* @import "tw-animate-css"; */
 
 @custom-variant dark (&:is(.dark *));
 
@@ -17,7 +17,7 @@
   /* Background Colors */
   --background: #ffffff;
   --background-secondary: #fefefc;
-  --background-dark: #1a1a1a;
+  --background-dark: #111111;
 
   /* Text Colors */
   --foreground: #111111;
@@ -208,12 +208,12 @@ html {
 
 /* Link Styles */
 a {
-  color: var(--foreground);
   transition: color 0.2s ease;
 }
 
-a:hover {
-  color: var(--primary);
+.p,
+.span {
+  color: var(--foreground);
 }
 
 /* Heading Styles */
@@ -227,8 +227,21 @@ h6 {
   font-weight: 700;
 }
 
-/* Selection */
+/* Selection & Buttons */
 ::selection {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+
+.btn-primary-rounded {
+  border: 1px solid var(--primary);
+  color: var(--primary);
+  border-radius: 9999px;
+  background-color: transparent;
+  transition: all 0.2s ease;
+}
+
+.btn-primary-rounded:hover {
   background-color: var(--primary);
   color: var(--primary-foreground);
 }
@@ -314,7 +327,7 @@ h6 {
 
 /* Section label style (— Title) */
 .section-label {
-  font-size: 0.875rem;
+  font-size: 1rem;
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -328,11 +341,9 @@ h6 {
 /* Container */
 .container {
   width: 100%;
-  max-width: 1280px;
+  max-width: 1240px;
   margin-left: auto;
   margin-right: auto;
-  padding-left: 1rem;
-  padding-right: 1rem;
 }
 
 @media (min-width: 640px) {

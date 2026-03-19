@@ -3,6 +3,8 @@ import { db } from "@/db";
 import { magazines } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
+import { getCurrentUser } from "@/lib/auth";
+import { revalidatePath } from "next/cache";
 
 export async function GET() {
     try {
@@ -28,12 +30,14 @@ export async function POST(req: NextRequest) {
             id: newId,
             title: body.title,
             slug: slug,
-            issueNumber: body.category || "Monthly",
+            issueNumber: body.issueNumber || body.category || "Current Issue",
             coverImage: body.coverImage || null,
             isFeatured: body.isFeatured || false,
             isPublished: true,
             authorId: user.id,
         } as any);
+
+        revalidatePath("/");
 
         const newMag = await db.select().from(magazines).where(eq(magazines.id, newId));
         return NextResponse.json(newMag[0], { status: 201 });
@@ -61,6 +65,7 @@ export async function PATCH(request: NextRequest) {
             }
         });
 
+        revalidatePath("/");
         return NextResponse.json({ success: true, message: "Magazines reordered successfully" });
     } catch (error) {
         console.error("Patch magazines error:", error);

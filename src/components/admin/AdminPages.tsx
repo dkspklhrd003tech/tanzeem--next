@@ -11,6 +11,7 @@ import { HomeSlidersManagement } from "./HomeSlidersManagement";
 import { HomepageManager } from "./HomepageManager";
 import { DarseQuranManager } from "./DarseQuranManager";
 import { SettingsManager } from "./SettingsManager";
+import { SocialMediaManager } from "./SocialMedia/SocialMediaManager";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 
@@ -362,6 +363,11 @@ export function AdminPages({ section }: AdminPagesProps) {
   // Settings Section
   if (section === "settings") {
     return <SettingsManager />;
+  }
+
+  // Social Media Hub Section
+  if (section === "social-media") {
+    return <SocialMediaManager />;
   }
 
   // Users Section

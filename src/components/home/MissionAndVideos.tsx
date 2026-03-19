@@ -22,7 +22,7 @@ export function MissionAndVideos({ videos, settings }: MissionProps) {
         <section className="bg-white">
 
             {/* 1. Mission Banner (Full Width) */}
-            <div className="bg-[#0d5844] py-20 text-center shadow-xl relative overflow-hidden">
+            <div className="bg-[#0d5844] py-16 text-center shadow-xl relative overflow-hidden">
                 {/* Decorative background elements */}
                 <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
                 <div className="absolute bottom-0 left-0 w-64 h-64 bg-black/5 rounded-full translate-y-1/2 -translate-x-1/2 blur-3xl"></div>
@@ -43,13 +43,13 @@ export function MissionAndVideos({ videos, settings }: MissionProps) {
             </div>
 
             {/* 2. Featured Videos Grid — Spotlight-style layout */}
-            <div className="py-20 border-t border-border/60 bg-[#fefefc]">
+            <div className="py-16 border-t border-border/60 bg-[#fefefc]">
                 <div className="container max-w-7xl mx-auto px-4">
 
                     <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
                         <div>
                             <h2 className="text-4xl md:text-5xl font-black text-[#0d5844]">— Featured</h2>
-                            <p className="text-[#111111] font-semibold text-xl mt-2 max-w-xl leading-relaxed">
+                            <p className="text-primary font-semibold text-xl mt-2 max-w-xl leading-relaxed">
                                 Regular Video Broadcasts
                             </p>
                         </div>
@@ -63,7 +63,7 @@ export function MissionAndVideos({ videos, settings }: MissionProps) {
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
                                 transition={{ delay: i * 0.1, duration: 0.5 }}
-                                className="group relative flex flex-col bg-white rounded-[2rem] border border-border shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 overflow-hidden cursor-pointer h-full"
+                                className="group relative flex flex-col bg-white rounded-[1rem] border border-border shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500 overflow-hidden cursor-pointer h-full"
                                 onClick={() => window.open(vid.videoUrl, '_blank')}
                             >
                                 {/* Image Container — 348x195 aspect ratio */}

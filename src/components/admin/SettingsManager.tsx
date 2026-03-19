@@ -118,20 +118,35 @@ export function SettingsManager() {
     const saveSettings = async () => {
         setIsSaving(true);
         try {
+            // Ensure we include default colors if not present
+            const settingsToSave = {
+                primary_color: settings.primary_color || "#0d5844",
+                secondary_color: settings.secondary_color || "#c8a84e",
+                ...settings
+            };
+
             const res = await fetch("/api/settings", {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(settings),
+                body: JSON.stringify(settingsToSave),
             });
 
             if (res.ok) {
                 toast({ title: "Settings Saved", description: "Global configuration updated successfully." });
+                fetchData(); // Refresh state after save
             } else {
-                throw new Error("Failed to save");
+                const errorData = await res.json().catch(() => ({}));
+                const errorMsg = errorData.error || `Server returned ${res.status}`;
+                console.error("Save failure details:", { status: res.status, error: errorMsg, data: errorData });
+                throw new Error(errorMsg);
             }
-        } catch (error) {
-            console.error(error);
-            toast({ title: "Error", description: "Failed to save settings.", variant: "destructive" });
+        } catch (error: any) {
+            console.error("DEBUG: Save Settings Error:", error);
+            toast({ 
+                title: "Failed to save", 
+                description: error.message || "An unexpected error occurred. Please check the console.", 
+                variant: "destructive" 
+            });
         } finally {
             setIsSaving(false);
         }
@@ -188,28 +203,28 @@ export function SettingsManager() {
                 <TabsList className="mb-8 bg-transparent border-b border-border w-full justify-start rounded-none h-auto p-0 gap-8">
                     <TabsTrigger
                         value="identity"
-                        className="pb-4 rounded-none px-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground"
+                        className="rounded-none px-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground"
                     >
                         <Palette className="w-4 h-4" /> Branding Matrix
                     </TabsTrigger>
 
                     <TabsTrigger
                         value="header"
-                        className="pb-4 rounded-none px-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground"
+                        className="rounded-none px-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground"
                     >
                         <LayoutTemplate className="w-4 h-4" /> Header Control
                     </TabsTrigger>
 
                     <TabsTrigger
                         value="footer"
-                        className="pb-4 rounded-none px-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground"
+                        className="rounded-none px-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground"
                     >
                         <LayoutTemplate className="w-4 h-4 rotate-180" /> Footer Control
                     </TabsTrigger>
 
                     <TabsTrigger
                         value="inbox"
-                        className="pb-4 rounded-none px-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground"
+                        className="rounded-none px-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground"
                     >
                         <Mail className="w-4 h-4" /> Support Inbox
                         {submissions.filter(s => s.status !== 'replied').length > 0 && (

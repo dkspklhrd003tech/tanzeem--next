@@ -52,7 +52,7 @@ function SortableMagazineRow({ magazine, onEdit, onDelete }: { magazine: any; on
             </td>
             <td className="px-4 py-3 font-medium text-foreground">
                 {magazine.title}
-                <div className="text-xs text-foreground-muted font-normal uppercase">{magazine.category || "Issue"}</div>
+                <div className="text-xs text-foreground-muted font-normal uppercase">{magazine.issueNumber || magazine.category || "Issue"}</div>
             </td>
             <td className="px-4 py-3">
                 <Badge variant={magazine.isFeatured ? "default" : "secondary"}>{magazine.isFeatured ? "Featured" : "Hidden"}</Badge>
@@ -77,6 +77,7 @@ export function FeaturedMagazines() {
     const [formData, setFormData] = useState({
         title: "",
         category: "",
+        issueNumber: "",
         coverImage: "",
         isFeatured: true,
     });
@@ -149,6 +150,7 @@ export function FeaturedMagazines() {
             setFormData({
                 title: item.title,
                 category: item.category || "Monthly",
+                issueNumber: item.issueNumber || "Current Issue",
                 coverImage: item.coverImage || "",
                 isFeatured: item.isFeatured,
             });
@@ -157,6 +159,7 @@ export function FeaturedMagazines() {
             setFormData({
                 title: "",
                 category: "Monthly",
+                issueNumber: "Current Issue",
                 coverImage: "",
                 isFeatured: true,
             });
@@ -254,40 +257,40 @@ export function FeaturedMagazines() {
             </div>
 
             <div className="bg-background border border-border rounded-xl shadow-sm overflow-hidden">
-                <table className="w-full text-left text-sm">
-                    <thead className="bg-muted/50 text-foreground-muted border-b border-border">
-                        <tr>
-                            <th className="px-4 py-3 w-10"></th>
-                            <th className="px-4 py-3">Cover</th>
-                            <th className="px-4 py-3">Details</th>
-                            <th className="px-4 py-3">Homepage Feature</th>
-                            <th className="px-4 py-3 text-right">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-border">
-                        <DndContext
-                            sensors={sensors}
-                            collisionDetection={closestCenter}
-                            onDragEnd={handleDragEnd}
+                <DndContext
+                    sensors={sensors}
+                    collisionDetection={closestCenter}
+                    onDragEnd={handleDragEnd}
+                >
+                    <table className="w-full text-left text-sm">
+                        <thead className="bg-muted/50 text-foreground-muted border-b border-border">
+                            <tr>
+                                <th className="px-4 py-3 w-10"></th>
+                                <th className="px-4 py-3">Cover</th>
+                                <th className="px-4 py-3">Details</th>
+                                <th className="px-4 py-3">Homepage Feature</th>
+                                <th className="px-4 py-3 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <SortableContext
+                            items={magazines.map(m => m.id)}
+                            strategy={verticalListSortingStrategy}
                         >
-                            <SortableContext
-                                items={magazines.map(m => m.id)}
-                                strategy={verticalListSortingStrategy}
-                            >
+                            <tbody className="divide-y divide-border">
                                 {magazines.map(m => (
                                     <SortableMagazineRow key={m.id} magazine={m} onEdit={handleOpenModal} onDelete={handleDelete} />
                                 ))}
-                            </SortableContext>
-                        </DndContext>
-                        {magazines.length === 0 && !isLoading && (
-                            <tr>
-                                <td colSpan={5} className="px-4 py-12 text-center text-foreground-muted">
-                                    No featured magazines found.
-                                </td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
+                                {magazines.length === 0 && !isLoading && (
+                                    <tr>
+                                        <td colSpan={5} className="px-4 py-12 text-center text-foreground-muted">
+                                            No featured magazines found.
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </SortableContext>
+                    </table>
+                </DndContext>
             </div>
 
             {isModalOpen && (
@@ -310,6 +313,18 @@ export function FeaturedMagazines() {
                                     {isUploading && <div className="absolute inset-0 bg-background/50 flex items-center justify-center animate-pulse text-xs font-semibold">Uploading...</div>}
                                 </div>
                                 <input type="file" hidden ref={fileInputRef} accept="image/*" onChange={handleFileUpload} />
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-sm font-semibold text-foreground">Label</label>
+                                <input
+                                    type="text"
+                                    required
+                                    value={formData.issueNumber}
+                                    onChange={e => setFormData({ ...formData, issueNumber: e.target.value })}
+                                    className="w-full px-4 py-2.5 border border-border rounded-xl bg-background text-foreground focus:ring-2 focus:ring-primary/20 transition-all outline-none"
+                                    placeholder="e.g. Issue #42 or Current Issue"
+                                />
                             </div>
 
                             <div className="space-y-2">

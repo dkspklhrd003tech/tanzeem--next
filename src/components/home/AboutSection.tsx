@@ -40,10 +40,10 @@ export function AboutSection() {
             </h2>
           </div>
           <div className="hidden md:flex gap-2">
-            <button onClick={() => scroll("left")} className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-foreground-muted hover:bg-primary hover:text-[#fefefc] hover:border-primary transition-colors">
+            <button onClick={() => scroll("left")} className="w-10 h-10 rounded-full border border-[#0d5844] flex items-center justify-center text-[#0d5844] hover:bg-[#0d5844] hover:text-[#fefefc] hover:border-[#0d5844] transition-colors">
               <ChevronLeft className="h-5 w-5" />
             </button>
-            <button onClick={() => scroll("right")} className="w-10 h-10 rounded-full border border-border flex items-center justify-center text-foreground-muted hover:bg-primary hover:text-[#fefefc] hover:border-primary transition-colors">
+            <button onClick={() => scroll("right")} className="w-10 h-10 rounded-full border border-[#0d5844] flex items-center justify-center text-[#0d5844] hover:bg-[#0d5844] hover:text-[#fefefc] hover:border-[#0d5844] transition-colors">
               <ChevronRight className="h-5 w-5" />
             </button>
           </div>

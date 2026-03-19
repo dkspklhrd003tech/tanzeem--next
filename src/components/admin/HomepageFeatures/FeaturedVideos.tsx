@@ -339,40 +339,40 @@ export function FeaturedVideos() {
             ) : (
                 <div className="bg-card rounded-xl border border-border overflow-hidden shadow-sm">
                     <div className="overflow-x-auto">
-                        <table className="w-full text-left">
-                            <thead className="bg-muted/50 text-foreground font-semibold text-xs uppercase tracking-wider border-b border-border">
-                                <tr>
-                                    <th className="px-6 py-4 w-10"></th>
-                                    <th className="px-6 py-4">Cover frame</th>
-                                    <th className="px-6 py-4">Broadcast Title</th>
-                                    <th className="px-6 py-4">Direct Link</th>
-                                    <th className="px-6 py-4 text-right">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-border">
-                                <DndContext
-                                    sensors={sensors}
-                                    collisionDetection={closestCenter}
-                                    onDragEnd={handleDragEnd}
+                        <DndContext
+                            sensors={sensors}
+                            collisionDetection={closestCenter}
+                            onDragEnd={handleDragEnd}
+                        >
+                            <table className="w-full text-left">
+                                <thead className="bg-muted/50 text-foreground font-semibold text-xs uppercase tracking-wider border-b border-border">
+                                    <tr>
+                                        <th className="px-6 py-4 w-10"></th>
+                                        <th className="px-6 py-4">Cover frame</th>
+                                        <th className="px-6 py-4">Broadcast Title</th>
+                                        <th className="px-6 py-4">Direct Link</th>
+                                        <th className="px-6 py-4 text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <SortableContext
+                                    items={videos.map(v => v.id)}
+                                    strategy={verticalListSortingStrategy}
                                 >
-                                    <SortableContext
-                                        items={videos.map(v => v.id)}
-                                        strategy={verticalListSortingStrategy}
-                                    >
+                                    <tbody className="divide-y divide-border">
                                         {videos.map((vid) => (
                                             <SortableVideoRow key={vid.id} vid={vid} onEdit={handleOpenModal} onDelete={handleDelete} />
                                         ))}
-                                    </SortableContext>
-                                </DndContext>
-                                {videos.length === 0 && (
-                                    <tr>
-                                        <td colSpan={5} className="px-6 py-12 text-center text-foreground-muted">
-                                            No featured videos found. Click "Feature Video" to spotlight your first broadcast.
-                                        </td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
+                                        {videos.length === 0 && (
+                                            <tr>
+                                                <td colSpan={5} className="px-6 py-12 text-center text-foreground-muted">
+                                                    No featured videos found. Click "Feature Video" to spotlight your first broadcast.
+                                                </td>
+                                            </tr>
+                                        )}
+                                    </tbody>
+                                </SortableContext>
+                            </table>
+                        </DndContext>
                     </div>
                 </div>
             )}

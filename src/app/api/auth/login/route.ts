@@ -17,6 +17,7 @@ export async function POST(request: NextRequest) {
 
     // Find user
     const [user] = await db.select().from(users).where(eq(users.email, email)).limit(1);
+    console.log("DEBUG LOGIN: Searching for email:", email, "Found user:", user ? "YES" : "NO");
 
     if (!user) {
       return NextResponse.json(
@@ -27,6 +28,7 @@ export async function POST(request: NextRequest) {
 
     // Verify password
     const isValid = await verifyPassword(password, user.password);
+    console.log("DEBUG LOGIN: Password valid:", isValid);
 
     if (!isValid) {
       return NextResponse.json(

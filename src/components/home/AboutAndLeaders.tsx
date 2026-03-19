@@ -85,9 +85,9 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
                             <div className="flex flex-col justify-between">
                                 <div>
                                     <p className="text-primary font-bold text-xs uppercase tracking-widest mb-1">— {leader.designation || "Leader"}</p>
-                                    <h3 className="text-xl md:text-2xl font-black text-foreground mb-3">{leader.name}</h3>
+                                    <h3 className="text-xl md:text-2xl font-black text-[#111111] mb-3">{leader.name}</h3>
                                     {leader.bio && (
-                                        <p className="text-foreground-muted text-sm leading-relaxed line-clamp-4">
+                                        <p className="text-foreground text-sm leading-relaxed line-clamp-4">
                                             {leader.bio}
                                         </p>
                                     )}
@@ -100,7 +100,7 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
                                 <div className="mt-4">
                                     <Link
                                         href={`/organization/${leader.slug}`}
-                                        className="inline-flex items-center gap-2 bg-muted hover:bg-muted-dark px-4 py-2 rounded-full text-xs font-bold transition-colors"
+                                        className="inline-flex items-center gap-2 bg-transparent border border-[#0d5844] text-[#0d5844] px-4 py-2 rounded-full text-xs font-bold hover:bg-[#0d5844] hover:text-[#fefefc] hover:border-[#0d5844] transition-all duration-300"
                                     >
                                         {leader.designation?.toLowerCase().includes('founder') ? 'About Founder' : 'About Ameer'}
                                         <ArrowRight className="w-3 h-3 ml-1" />

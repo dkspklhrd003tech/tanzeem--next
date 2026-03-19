@@ -260,40 +260,40 @@ export function FeaturedBooks() {
             </div>
 
             <div className="bg-background border border-border rounded-xl shadow-sm overflow-hidden">
-                <table className="w-full text-left text-sm">
-                    <thead className="bg-muted/50 text-foreground-muted border-b border-border">
-                        <tr>
-                            <th className="px-4 py-3 w-10"></th>
-                            <th className="px-4 py-3">Cover</th>
-                            <th className="px-4 py-3">Details</th>
-                            <th className="px-4 py-3">Homepage Feature</th>
-                            <th className="px-4 py-3 text-right">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-border">
-                        <DndContext
-                            sensors={sensors}
-                            collisionDetection={closestCenter}
-                            onDragEnd={handleDragEnd}
+                <DndContext
+                    sensors={sensors}
+                    collisionDetection={closestCenter}
+                    onDragEnd={handleDragEnd}
+                >
+                    <table className="w-full text-left text-sm">
+                        <thead className="bg-muted/50 text-foreground-muted border-b border-border">
+                            <tr>
+                                <th className="px-4 py-3 w-10"></th>
+                                <th className="px-4 py-3">Cover</th>
+                                <th className="px-4 py-3">Details</th>
+                                <th className="px-4 py-3">Homepage Feature</th>
+                                <th className="px-4 py-3 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <SortableContext
+                            items={books.map(b => b.id)}
+                            strategy={verticalListSortingStrategy}
                         >
-                            <SortableContext
-                                items={books.map(b => b.id)}
-                                strategy={verticalListSortingStrategy}
-                            >
+                            <tbody className="divide-y divide-border">
                                 {books.map(b => (
                                     <SortableBookRow key={b.id} book={b} onEdit={handleOpenModal} onDelete={handleDelete} />
                                 ))}
-                            </SortableContext>
-                        </DndContext>
-                        {books.length === 0 && !isLoading && (
-                            <tr>
-                                <td colSpan={5} className="px-4 py-12 text-center text-foreground-muted">
-                                    No featured books found.
-                                </td>
-                            </tr>
-                        )}
-                    </tbody>
-                </table>
+                                {books.length === 0 && !isLoading && (
+                                    <tr>
+                                        <td colSpan={5} className="px-4 py-12 text-center text-foreground-muted">
+                                            No featured books found.
+                                        </td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </SortableContext>
+                    </table>
+                </DndContext>
             </div>
 
             {isModalOpen && (
