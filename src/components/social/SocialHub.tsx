@@ -3,15 +3,15 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { 
-  Youtube, 
-  Instagram, 
-  Facebook, 
-  Twitter, 
-  Send, 
-  Globe, 
-  Music, 
-  Video, 
+import {
+  Youtube,
+  Instagram,
+  Facebook,
+  Twitter,
+  Send,
+  Globe,
+  Music,
+  Video,
   Pin,
   ExternalLink,
   ChevronRight,
@@ -66,19 +66,19 @@ export function SocialHub({ initialPlatforms, initialAccounts }: SocialHubProps)
     <div className="w-full max-w-7xl mx-auto">
       {/* Tabs */}
       <div className="mb-12 overflow-x-auto pb-4 scrollbar-hide">
-        <div className="flex justify-start md:justify-center items-center gap-3 min-w-max px-4">
+        <div className="flex justify-start md:justify-center items-center gap-3 min-w-max">
           {initialPlatforms.map((platform) => {
             const Icon = iconMap[platform.slug.toLowerCase()] || Globe;
             const isActive = activeTab === platform.id;
-            
+
             return (
               <button
                 key={platform.id}
                 onClick={() => setActiveTab(platform.id)}
                 className={cn(
                   "flex items-center gap-2.5 px-6 py-3.5 rounded-full font-bold text-sm transition-all duration-300 whitespace-nowrap",
-                  isActive 
-                    ? "bg-[#0d5844] text-[#fefefc] shadow-xl shadow-[#0d5844]/20 scale-105" 
+                  isActive
+                    ? "bg-[#0d5844] text-[#fefefc] shadow-xl shadow-[#0d5844]/20 scale-105"
                     : "bg-white text-[#0d5844] border border-[#0d5844]/10 hover:border-[#0d5844]/30 hover:bg-[#0d5844]/5"
                 )}
               >
@@ -111,11 +111,11 @@ export function SocialHub({ initialPlatforms, initialAccounts }: SocialHubProps)
                   className="group relative bg-white rounded-3xl border border-[#0d5844]/5 overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 flex flex-col items-center p-8 text-center"
                 >
                   {/* Theme Border Accent */}
-                  <div 
-                    className="absolute top-0 left-0 w-full h-1.5 opacity-20" 
+                  <div
+                    className="absolute top-0 left-0 w-full h-1.5 opacity-20"
                     style={{ backgroundColor: activePlatform?.themeColor || "#0d5844" }}
                   />
-                  
+
                   <div className="relative mb-6">
                     <div className="absolute inset-0 bg-[#0d5844]/5 rounded-full scale-110 group-hover:scale-125 transition-transform duration-500 blur-xl" />
                     <img
@@ -128,7 +128,7 @@ export function SocialHub({ initialPlatforms, initialAccounts }: SocialHubProps)
                   <h3 className="text-xl font-black text-[#0d5844] mb-2 leading-tight group-hover:text-primary transition-colors">
                     {account.title}
                   </h3>
-                  
+
                   <p className="text-xs text-[#0d5844]/60 font-medium mb-8 line-clamp-1 uppercase tracking-widest">
                     {activePlatform?.name} Official
                   </p>

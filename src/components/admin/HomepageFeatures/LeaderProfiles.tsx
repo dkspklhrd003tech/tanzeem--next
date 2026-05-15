@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Edit2, Trash2, X, Image as ImageIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
+import { ImageUploader } from "../ImageUploader";
+import { RichTextEditor } from "../RichTextEditor";
 
 type TeamMember = {
     id: string;
@@ -86,36 +88,7 @@ export function LeaderProfiles() {
         setPreviewUrl(null);
     };
 
-    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (!e.target.files || e.target.files.length === 0) return;
-        const file = e.target.files[0];
-
-        setPreviewUrl(URL.createObjectURL(file));
-
-        setIsUploading(true);
-        const form = new FormData();
-        form.append("file", file);
-        form.append("type", "team");
-
-        try {
-            const res = await fetch("/api/upload", {
-                method: "POST",
-                body: form,
-            });
-            const data = await res.json();
-
-            if (res.ok && data.success) {
-                setFormData(prev => ({ ...prev, avatar: data.url }));
-                toast({ title: "Image Uploaded", description: "Avatar securely uploaded." });
-            } else {
-                throw new Error(data.error || "Upload failed");
-            }
-        } catch (err: any) {
-            toast({ title: "Upload Failed", description: err.message, variant: "destructive" });
-        } finally {
-            setIsUploading(false);
-        }
-    };
+    // Removed handleFileUpload as we use ImageUploader now
 
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -281,25 +254,11 @@ export function LeaderProfiles() {
                                     <div className="flex items-start gap-6">
                                         <div>
                                             <label className="block text-sm font-medium text-foreground mb-2">Avatar *</label>
-                                            <div
-                                                onClick={() => fileInputRef.current?.click()}
-                                                className="relative w-32 h-32 rounded-full border-2 border-dashed border-border bg-muted/30 hover:bg-muted/50 transition-colors flex flex-col items-center justify-center cursor-pointer overflow-hidden group"
-                                            >
-                                                {(previewUrl || formData.avatar) ? (
-                                                    <img src={previewUrl || formData.avatar} alt="Preview" className="w-full h-full object-cover" />
-                                                ) : (
-                                                    <div className="flex flex-col items-center text-foreground-muted text-xs text-center p-2">
-                                                        <ImageIcon className="w-6 h-6 mb-1 opacity-50 group-hover:opacity-100 transition-opacity" />
-                                                        <span>Upload</span>
-                                                    </div>
-                                                )}
-                                                {isUploading && (
-                                                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center backdrop-blur-sm">
-                                                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
-                                                    </div>
-                                                )}
-                                            </div>
-                                            <input type="file" ref={fileInputRef} onChange={handleFileUpload} accept="image/*" className="hidden" />
+                                            <ImageUploader
+                                                value={formData.avatar}
+                                                onChange={(url) => setFormData({ ...formData, avatar: url })}
+                                                aspectRatio={1}
+                                            />
                                         </div>
 
                                         <div className="flex-1 space-y-4">
@@ -309,7 +268,7 @@ export function LeaderProfiles() {
                                                     type="text"
                                                     value={formData.name}
                                                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                                    className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                                                    className="w-full py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                                                     placeholder="Dr. Israr Ahmed"
                                                     required
                                                 />
@@ -320,7 +279,7 @@ export function LeaderProfiles() {
                                                     type="text"
                                                     value={formData.designation}
                                                     onChange={(e) => setFormData({ ...formData, designation: e.target.value })}
-                                                    className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                                                    className="w-full py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                                                     placeholder="The Founder"
                                                 />
                                             </div>
@@ -329,10 +288,9 @@ export function LeaderProfiles() {
 
                                     <div className="space-y-2">
                                         <label className="text-sm font-medium text-foreground">Biography Synopsis</label>
-                                        <textarea
-                                            value={formData.bio}
-                                            onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-                                            className="w-full p-2.5 rounded-lg border border-border bg-background text-foreground focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-all min-h-[100px]"
+                                        <RichTextEditor
+                                            content={formData.bio}
+                                            onChange={(content) => setFormData({ ...formData, bio: content })}
                                             placeholder="Write a brief biographical profile..."
                                         />
                                     </div>

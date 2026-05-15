@@ -14,7 +14,7 @@ const menuData = [
         "children": [
             {
                 "label": "Background",
-                "url": "https://www.tanzeem.org/organization/background-2/",
+                "url": "https://www.tanzeem.org/organization/background/",
                 "children": []
             },
             {

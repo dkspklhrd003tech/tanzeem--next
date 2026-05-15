@@ -25,7 +25,7 @@ export function DarseQuranFilters() {
                     {/* Filter: City */}
                     <div className="space-y-2">
                         <label className="text-sm font-bold text-foreground">City (شہر)</label>
-                        <select className="w-full px-4 py-2.5 bg-background border border-border rounded-lg text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary appearance-none">
+                        <select className="w-full py-2.5 bg-background border border-border rounded-lg text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary appearance-none">
                             <option value="">All Cities</option>
                             <option value="karachi">Karachi - کراچی</option>
                             <option value="lahore">Lahore - لاہور</option>
@@ -38,7 +38,7 @@ export function DarseQuranFilters() {
                     {/* Filter: Type */}
                     <div className="space-y-2">
                         <label className="text-sm font-bold text-foreground">Dora / Summary</label>
-                        <select className="w-full px-4 py-2.5 bg-background border border-border rounded-lg text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary appearance-none">
+                        <select className="w-full py-2.5 bg-background border border-border rounded-lg text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary appearance-none">
                             <option value="">Any Type</option>
                             <option value="dora">Dora-e-Tarjuma-e-Quran</option>
                             <option value="khulasa">Khulasa-e-Tarjuma-e-Quran</option>
@@ -49,7 +49,7 @@ export function DarseQuranFilters() {
                     {/* Filter: Ladies Arrangement */}
                     <div className="space-y-2">
                         <label className="text-sm font-bold text-foreground">Let's Find</label>
-                        <select className="w-full px-4 py-2.5 bg-background border border-border rounded-lg text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary appearance-none">
+                        <select className="w-full py-2.5 bg-background border border-border rounded-lg text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary appearance-none">
                             <option value="">Any Arrangement</option>
                             <option value="men">Men Only - صرف مردوں کیلئے</option>
                             <option value="women">Ladies Arrangement Available - خواتین کا انتظام ہے</option>

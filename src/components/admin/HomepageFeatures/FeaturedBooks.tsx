@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { Plus, Edit2, Trash2, X, Image as ImageIcon, GripVertical } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
+import { ImageUploader } from "../ImageUploader";
 import {
     DndContext,
     closestCenter,
@@ -40,24 +41,24 @@ function SortableBookRow({ book, onEdit, onDelete }: { book: any; onEdit: (b: an
 
     return (
         <tr ref={setNodeRef} style={style} className="hover:bg-muted/30 group">
-            <td className="px-4 py-3 w-10">
+            <td className="py-3 w-10">
                 <button {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing p-1 text-muted-foreground/50 hover:text-primary transition-colors">
                     <GripVertical className="w-5 h-5" />
                 </button>
             </td>
-            <td className="px-4 py-3">
+            <td className="py-3">
                 <div className="w-12 h-16 bg-muted border border-border flex items-center justify-center overflow-hidden">
                     {book.coverImage ? <img src={book.coverImage} className="w-full h-full object-cover" /> : <ImageIcon className="w-4 h-4 text-muted-foreground" />}
                 </div>
             </td>
-            <td className="px-4 py-3 font-medium text-foreground">
+            <td className="py-3 font-medium text-foreground">
                 {book.title}
                 <div className="text-xs text-foreground-muted font-normal">{book.authorName}</div>
             </td>
-            <td className="px-4 py-3">
+            <td className="py-3">
                 <Badge variant={book.isFeatured ? "default" : "secondary"}>{book.isFeatured ? "Featured" : "Hidden"}</Badge>
             </td>
-            <td className="px-4 py-3 text-right">
+            <td className="py-3 text-right">
                 <button onClick={() => onEdit(book)} className="p-2 text-foreground-light hover:text-primary"><Edit2 className="w-4 h-4" /></button>
                 <button onClick={() => onDelete(book.id, book.title)} className="p-2 text-foreground-light hover:text-destructive"><Trash2 className="w-4 h-4" /></button>
             </td>
@@ -174,30 +175,7 @@ export function FeaturedBooks() {
         setPreviewUrl(null);
     };
 
-    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (!e.target.files?.length) return;
-
-        const file = e.target.files[0];
-        setPreviewUrl(URL.createObjectURL(file));
-
-        setIsUploading(true);
-        const form = new FormData();
-        form.append("file", file);
-        form.append("type", "cover");
-
-        try {
-            const res = await fetch("/api/upload", { method: "POST", body: form });
-            const data = await res.json();
-            if (res.ok && data.success) {
-                setFormData(prev => ({ ...prev, coverImage: data.url }));
-                toast({ title: "Cover Uploaded", description: "Image saved successfully." });
-            } else throw new Error(data.error);
-        } catch (err: any) {
-            toast({ title: "Upload Failed", description: err.message, variant: "destructive" });
-        } finally {
-            setIsUploading(false);
-        }
-    };
+    // Removed handleFileUpload as we use ImageUploader now
 
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -268,11 +246,11 @@ export function FeaturedBooks() {
                     <table className="w-full text-left text-sm">
                         <thead className="bg-muted/50 text-foreground-muted border-b border-border">
                             <tr>
-                                <th className="px-4 py-3 w-10"></th>
-                                <th className="px-4 py-3">Cover</th>
-                                <th className="px-4 py-3">Details</th>
-                                <th className="px-4 py-3">Homepage Feature</th>
-                                <th className="px-4 py-3 text-right">Actions</th>
+                                <th className="py-3 w-10"></th>
+                                <th className="py-3">Cover</th>
+                                <th className="py-3">Details</th>
+                                <th className="py-3">Homepage Feature</th>
+                                <th className="py-3 text-right">Actions</th>
                             </tr>
                         </thead>
                         <SortableContext
@@ -285,7 +263,7 @@ export function FeaturedBooks() {
                                 ))}
                                 {books.length === 0 && !isLoading && (
                                     <tr>
-                                        <td colSpan={5} className="px-4 py-12 text-center text-foreground-muted">
+                                        <td colSpan={5} className="py-12 text-center text-foreground-muted">
                                             No featured books found.
                                         </td>
                                     </tr>
@@ -311,25 +289,25 @@ export function FeaturedBooks() {
                                     <ImageIcon className="w-4 h-4 text-primary" />
                                     Book Cover <span className="text-xs font-normal text-foreground-muted">(240x332 Size recommended)</span>
                                 </label>
-                                <div onClick={() => fileInputRef.current?.click()} className="mt-2 w-32 h-44 border-2 border-dashed border-border hover:border-primary flex items-center justify-center rounded cursor-pointer relative overflow-hidden bg-muted/20">
-                                    {(formData.coverImage || previewUrl) ? <img src={previewUrl || formData.coverImage} className="w-full h-full object-cover" /> : <ImageIcon className="w-6 h-6 text-muted-foreground" />}
-                                    {isUploading && <div className="absolute inset-0 bg-background/50 flex items-center justify-center animate-pulse text-xs font-semibold">Uploading...</div>}
-                                </div>
-                                <input type="file" hidden ref={fileInputRef} accept="image/*" onChange={handleFileUpload} />
+                                <ImageUploader
+                                    value={formData.coverImage}
+                                    onChange={(url) => setFormData({ ...formData, coverImage: url })}
+                                    aspectRatio={240 / 332}
+                                />
                             </div>
 
                             <div className="space-y-2">
                                 <label className="text-sm font-semibold text-foreground">Book Title</label>
-                                <input type="text" required value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} className="w-full px-4 py-2.5 border border-border rounded-xl bg-background text-foreground focus:ring-2 focus:ring-primary/20 transition-all outline-none" placeholder="Enter book title" />
+                                <input type="text" required value={formData.title} onChange={e => setFormData({ ...formData, title: e.target.value })} className="w-full py-2.5 border border-border rounded-xl bg-background text-foreground focus:ring-2 focus:ring-primary/20 transition-all outline-none" placeholder="Enter book title" />
                             </div>
                             <div className="flex gap-4">
                                 <div className="flex-1 space-y-2">
                                     <label className="text-sm font-semibold text-foreground">Author Name</label>
-                                    <input type="text" value={formData.authorName} onChange={e => setFormData({ ...formData, authorName: e.target.value })} className="w-full px-4 py-2.5 border border-border rounded-xl bg-background text-foreground focus:ring-2 focus:ring-primary/20 transition-all outline-none" placeholder="e.g. Dr. Israr Ahmed" />
+                                    <input type="text" value={formData.authorName} onChange={e => setFormData({ ...formData, authorName: e.target.value })} className="w-full py-2.5 border border-border rounded-xl bg-background text-foreground focus:ring-2 focus:ring-primary/20 transition-all outline-none" placeholder="e.g. Dr. Israr Ahmed" />
                                 </div>
                                 <div className="w-32 space-y-2">
                                     <label className="text-sm font-semibold text-foreground">Is Featured?</label>
-                                    <select value={formData.isFeatured ? "true" : "false"} onChange={e => setFormData({ ...formData, isFeatured: e.target.value === "true" })} className="w-full px-4 py-2.5 border border-border rounded-xl bg-background text-foreground focus:ring-2 focus:ring-primary/20 transition-all outline-none">
+                                    <select value={formData.isFeatured ? "true" : "false"} onChange={e => setFormData({ ...formData, isFeatured: e.target.value === "true" })} className="w-full py-2.5 border border-border rounded-xl bg-background text-foreground focus:ring-2 focus:ring-primary/20 transition-all outline-none">
                                         <option value="true">Featured</option>
                                         <option value="false">Hidden</option>
                                     </select>

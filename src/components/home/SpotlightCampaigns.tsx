@@ -13,7 +13,7 @@ type HomeCampaign = {
 export function SpotlightCampaigns({ campaigns }: { campaigns: HomeCampaign[] }) {
     return (
         <section className="py-16 bg-[#fefefc] border-t border-border/60">
-            <div className="container max-w-7xl mx-auto px-4">
+            <div className="container max-w-7xl mx-auto">
 
                 <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
                     <div>
@@ -50,7 +50,7 @@ export function SpotlightCampaigns({ campaigns }: { campaigns: HomeCampaign[] })
                                 ) : (
                                     <div className="w-full h-full flex flex-col items-center justify-center p-8 text-center bg-gradient-to-br from-muted to-muted/30">
                                         <Target className="w-12 h-12 text-primary/20 mb-4" />
-                                        <span className="text-foreground/40 text-xs font-bold uppercase tracking-widest leading-tight px-4 border-l-2 border-primary/20">
+                                        <span className="text-foreground/40 text-xs font-bold uppercase tracking-widest leading-tight border-l-2 border-primary/20">
                                             Visual Preview Pending
                                         </span>
                                     </div>

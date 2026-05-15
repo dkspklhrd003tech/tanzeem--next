@@ -27,7 +27,7 @@ export function MissionAndVideos({ videos, settings }: MissionProps) {
                 <div className="absolute top-0 right-0 w-96 h-96 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl"></div>
                 <div className="absolute bottom-0 left-0 w-64 h-64 bg-black/5 rounded-full translate-y-1/2 -translate-x-1/2 blur-3xl"></div>
 
-                <div className="container max-w-5xl mx-auto px-4 relative z-10">
+                <div className="container max-w-5xl mx-auto relative z-10">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
@@ -44,7 +44,7 @@ export function MissionAndVideos({ videos, settings }: MissionProps) {
 
             {/* 2. Featured Videos Grid — Spotlight-style layout */}
             <div className="py-16 border-t border-border/60 bg-[#fefefc]">
-                <div className="container max-w-7xl mx-auto px-4">
+                <div className="container max-w-7xl mx-auto">
 
                     <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
                         <div>
@@ -77,7 +77,7 @@ export function MissionAndVideos({ videos, settings }: MissionProps) {
                                     ) : (
                                         <div className="w-full h-full flex flex-col items-center justify-center p-8 text-center bg-gradient-to-br from-muted to-muted/30">
                                             <PlayCircle className="w-12 h-12 text-primary/20 mb-4" />
-                                            <span className="text-foreground/40 text-xs font-bold uppercase tracking-widest leading-tight px-4 border-l-2 border-primary/20">
+                                            <span className="text-foreground/40 text-xs font-bold uppercase tracking-widest leading-tight border-l-2 border-primary/20">
                                                 Thumbnail Pending
                                             </span>
                                         </div>

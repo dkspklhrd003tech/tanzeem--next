@@ -15,49 +15,10 @@ import { SocialMediaManager } from "./SocialMedia/SocialMediaManager";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 
-// Mock data - in real app, this would come from API
-const mockPages = [
-  { id: "1", title: "About Us", slug: "about-us", status: "published", updatedAt: "2024-01-15" },
-  { id: "2", title: "Contact", slug: "contact", status: "published", updatedAt: "2024-01-10" },
-  { id: "3", title: "Our Mission", slug: "our-mission", status: "published", updatedAt: "2024-01-05" },
-  { id: "4", title: "FAQ", slug: "faq", status: "draft", updatedAt: "2024-01-01" },
-];
-
-const mockPosts = [
-  { id: "1", title: "Understanding Islamic Finance", slug: "understanding-islamic-finance", category: "Articles", status: "published", views: 1250, updatedAt: "2024-01-15" },
-  { id: "2", title: "The Importance of Education", slug: "importance-of-education", category: "Articles", status: "published", views: 890, updatedAt: "2024-01-10" },
-  { id: "3", title: "Ramadan Preparation Guide", slug: "ramadan-preparation", category: "Guides", status: "draft", views: 0, updatedAt: "2024-01-05" },
-];
-
-const mockAudio = [
-  { id: "1", title: "The Concept of Khilafah", speaker: "Dr. Israr Ahmed", category: "Lectures", duration: "45:30", plays: 12500, status: "published" },
-  { id: "2", title: "Understanding the Quran", speaker: "Dr. Israr Ahmed", category: "Tafseer", duration: "38:45", plays: 8900, status: "published" },
-  { id: "3", title: "Friday Sermon: Unity", speaker: "Dr. Israr Ahmed", category: "Sermons", duration: "25:00", plays: 5000, status: "published" },
-];
-
-const mockVideos = [
-  { id: "1", title: "Documentary: Journey of Islam", category: "Documentary", duration: "1:24:30", views: 45000, status: "published" },
-  { id: "2", title: "Lecture Series: Islamic History", category: "Lectures", duration: "58:45", views: 32500, status: "published" },
-  { id: "3", title: "Workshop: Quran Study Methods", category: "Workshop", duration: "1:15:00", views: 18000, status: "published" },
-];
-
-const mockBooks = [
-  { id: "1", title: "The Islamic State", author: "Dr. Israr Ahmed", category: "Politics", language: "English", pages: 256, downloads: 15000, status: "published" },
-  { id: "2", title: "Methodology of Dawah", author: "Dr. Israr Ahmed", category: "Dawah", language: "Urdu", pages: 180, downloads: 12000, status: "published" },
-  { id: "3", title: "Understanding Seerah", author: "Dr. Israr Ahmed", category: "Seerah", language: "English", pages: 320, downloads: 8500, status: "published" },
-];
-
-const mockTeam = [
-  { id: "1", name: "Dr. Israr Ahmed", designation: "Founder & Ameer", department: "Leadership", status: "active" },
-  { id: "2", name: "Hafiz Abdullah", designation: "Secretary General", department: "Administration", status: "active" },
-  { id: "3", name: "Maulana Yusuf", designation: "Education Director", department: "Education", status: "active" },
-];
-
-const mockEvents = [
-  { id: "1", title: "Annual Conference 2024", date: "2024-03-15", location: "Lahore", attendees: 500, status: "upcoming" },
-  { id: "2", title: "Quran Study Circle", date: "2024-02-20", location: "Online", attendees: 120, status: "upcoming" },
-  { id: "3", title: "Youth Workshop", date: "2024-01-10", location: "Karachi", attendees: 85, status: "completed" },
-];
+import { GlobalBannerManager } from "./GlobalBannerManager";
+import { SiteIdentityManager } from "./SiteIdentityManager";
+import { FooterManager } from "./FooterManager";
+import { SEOManager } from "./SEOManager";
 
 interface AdminPagesProps {
   section: string;
@@ -65,13 +26,17 @@ interface AdminPagesProps {
 
 export function AdminPages({ section }: AdminPagesProps) {
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [pages, setPages] = useState<any[]>([]);
+  const [data, setData] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+
+  const isGenericSection = ["posts", "audio", "videos", "books", "team", "events"].includes(section);
 
   useEffect(() => {
     if (section === "pages") {
       fetchPages();
+    } else if (isGenericSection) {
+      fetchGenericData(section);
     }
   }, [section]);
 
@@ -80,8 +45,8 @@ export function AdminPages({ section }: AdminPagesProps) {
     try {
       const res = await fetch("/api/pages");
       if (res.ok) {
-        const data = await res.json();
-        setPages(data.pages || []);
+        const json = await res.json();
+        setData(json.pages || []);
       }
     } catch (error) {
       console.error("Failed to load pages", error);
@@ -90,7 +55,22 @@ export function AdminPages({ section }: AdminPagesProps) {
     }
   };
 
-  const handleSavePage = async (data: Record<string, unknown>) => {
+  const fetchGenericData = async (entity: string) => {
+    setIsLoading(true);
+    try {
+      const res = await fetch(`/api/admin/${entity}`);
+      if (res.ok) {
+        const json = await res.json();
+        setData(json.items || []);
+      }
+    } catch (error) {
+      console.error(`Failed to load ${entity}`, error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSavePage = async (pageData: Record<string, unknown>) => {
     try {
       const isNew = editingId === "new";
       const url = isNew ? "/api/pages" : `/api/pages/${editingId}`;
@@ -99,11 +79,13 @@ export function AdminPages({ section }: AdminPagesProps) {
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify(pageData),
       });
 
-
-      if (!res.ok) throw new Error("Failed to save page");
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || "Failed to save page");
+      }
 
       toast({
         title: "Success",
@@ -112,19 +94,17 @@ export function AdminPages({ section }: AdminPagesProps) {
 
       setEditingId(null);
       fetchPages();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Save error:", error);
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to save page. Please try again.",
+        description: error.message || "Failed to save page. Please try again.",
       });
     }
   };
 
   const handleDeletePage = async (item: any) => {
-    if (!confirm(`Are you sure you want to delete "${item.title}"?`)) return;
-
     try {
       const res = await fetch(`/api/pages/${item.id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Failed to delete page");
@@ -141,6 +121,58 @@ export function AdminPages({ section }: AdminPagesProps) {
         variant: "destructive",
         title: "Error",
         description: "Failed to delete page. Please try again.",
+      });
+    }
+  };
+
+  const handleSaveGeneric = async (itemData: Record<string, unknown>) => {
+    try {
+      const isNew = editingId === "new";
+      const url = isNew ? `/api/admin/${section}` : `/api/admin/${section}/${editingId}`;
+      const method = isNew ? "POST" : "PUT";
+
+      const res = await fetch(url, {
+        method,
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(itemData),
+      });
+
+      if (!res.ok) throw new Error(`Failed to save ${section}`);
+
+      toast({
+        title: "Success",
+        description: `Item ${isNew ? "created" : "updated"} successfully.`,
+      });
+
+      setEditingId(null);
+      fetchGenericData(section);
+    } catch (error) {
+      console.error("Save error:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: `Failed to save ${section}. Please try again.`,
+      });
+    }
+  };
+
+  const handleDeleteGeneric = async (item: any) => {
+    try {
+      const res = await fetch(`/api/admin/${section}/${item.id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error(`Failed to delete ${section}`);
+
+      toast({
+        title: "Success",
+        description: "Item deleted successfully.",
+      });
+
+      fetchGenericData(section);
+    } catch (error) {
+      console.error("Delete error:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: `Failed to delete ${section}. Please try again.`,
       });
     }
   };
@@ -167,7 +199,7 @@ export function AdminPages({ section }: AdminPagesProps) {
         <ContentEditor
           title={editingId === "new" ? "New Page" : "Edit Page"}
           contentType="page"
-          initialData={editingId === "new" ? undefined : pages.find(p => p.id === editingId)}
+          initialData={editingId === "new" ? undefined : data.find(p => String(p.id) === editingId)}
           onSave={handleSavePage}
           onCancel={() => setEditingId(null)}
         />
@@ -196,7 +228,7 @@ export function AdminPages({ section }: AdminPagesProps) {
             render: (item: any) => new Date(item.updatedAt || new Date()).toLocaleDateString()
           },
         ]}
-        data={pages}
+        data={data}
         onAdd={() => setEditingId("new")}
         onEdit={(item: any) => setEditingId(String(item.id))}
         onDelete={handleDeletePage}
@@ -209,160 +241,73 @@ export function AdminPages({ section }: AdminPagesProps) {
     return <MenuList />;
   }
 
-  // Posts Section
-  if (section === "posts") {
-    return (
-      <ContentList
-        title="Posts"
-        description="Manage blog posts and articles"
-        columns={
-          [
-            { key: "title", header: "Title" },
-            { key: "category", header: "Category" },
-            {
-              key: "status",
-              header: "Status",
-              render: (item) => (
-                <Badge variant={item.status === "published" ? "default" : "secondary"}>
-                  {item.status}
-                </Badge>
-              ),
-            },
-            { key: "views", header: "Views" },
-            { key: "updatedAt", header: "Updated" },
-          ]}
-        data={mockPosts}
-        onAdd={() => console.log("Add post")
-        }
-        onEdit={(item) => console.log("Edit:", item)
-        }
-        onDelete={(item) => console.log("Delete:", item)}
-      />
-    );
-  }
+  // Generic Sections handling via ContentList
+  if (isGenericSection) {
+      if (editingId) {
+        return (
+          <ContentEditor
+            title={editingId === "new" ? `New ${section}` : `Edit ${section}`}
+            contentType={section}
+            initialData={editingId === "new" ? undefined : data.find(p => String(p.id) === editingId)}
+            onSave={handleSaveGeneric}
+            onCancel={() => setEditingId(null)}
+          />
+        );
+      }
 
-  // Audio Section
-  if (section === "audio") {
-    return (
-      <ContentList
-        title="Audio Lectures"
-        description="Manage audio content"
-        columns={[
-          { key: "title", header: "Title" },
-          { key: "speaker", header: "Speaker" },
-          { key: "category", header: "Category" },
-          { key: "duration", header: "Duration" },
-          { key: "plays", header: "Plays" },
-        ]}
-        data={mockAudio}
-        onAdd={() => console.log("Add audio")}
-        onEdit={(item) => console.log("Edit:", item)}
-        onDelete={(item) => console.log("Delete:", item)}
-      />
-    );
-  }
+      // Column mappings for generic sections
+      let columns: any[] = [{ key: "title", header: "Title" }];
+      if (section === "team") columns = [{ key: "name", header: "Name" }, { key: "designation", header: "Designation" }];
+      if (section === "events") columns = [{ key: "title", header: "Title" }, { key: "date", header: "Date" }, { key: "location", header: "Location" }];
+      if (section === "books") columns.push({ key: "author", header: "Author" });
+      if (section === "audio" || section === "videos" || section === "posts") columns.push({ key: "category", header: "Category" });
+      
+      columns.push({
+          key: "status",
+          header: "Status",
+          render: (item: any) => (
+            <Badge variant={item.status === "published" || item.status === "active" ? "default" : "secondary"}>
+              {item.status || "draft"}
+            </Badge>
+          ),
+      });
 
-  // Videos Section
-  if (section === "videos") {
-    return (
-      <ContentList
-        title="Videos"
-        description="Manage video content"
-        columns={[
-          { key: "title", header: "Title" },
-          { key: "category", header: "Category" },
-          { key: "duration", header: "Duration" },
-          { key: "views", header: "Views" },
-        ]}
-        data={mockVideos}
-        onAdd={() => console.log("Add video")}
-        onEdit={(item) => console.log("Edit:", item)}
-        onDelete={(item) => console.log("Delete:", item)}
-      />
-    );
-  }
-
-  // Books Section
-  if (section === "books") {
-    return (
-      <ContentList
-        title="Books"
-        description="Manage book publications"
-        columns={[
-          { key: "title", header: "Title" },
-          { key: "author", header: "Author" },
-          { key: "language", header: "Language" },
-          { key: "pages", header: "Pages" },
-          { key: "downloads", header: "Downloads" },
-        ]}
-        data={mockBooks}
-        onAdd={() => console.log("Add book")}
-        onEdit={(item) => console.log("Edit:", item)}
-        onDelete={(item) => console.log("Delete:", item)}
-      />
-    );
-  }
-
-  // Team Section
-  if (section === "team") {
-    return (
-      <ContentList
-        title="Team Members"
-        description="Manage team and leadership"
-        columns={[
-          { key: "name", header: "Name" },
-          { key: "designation", header: "Designation" },
-          { key: "department", header: "Department" },
-          {
-            key: "status",
-            header: "Status",
-            render: (item) => (
-              <Badge variant={item.status === "active" ? "default" : "secondary"}>
-                {item.status}
-              </Badge>
-            ),
-          },
-        ]}
-        data={mockTeam}
-        onAdd={() => console.log("Add member")}
-        onEdit={(item) => console.log("Edit:", item)}
-        onDelete={(item) => console.log("Delete:", item)}
-      />
-    );
-  }
-
-  // Events Section
-  if (section === "events") {
-    return (
-      <ContentList
-        title="Events"
-        description="Manage events and gatherings"
-        columns={[
-          { key: "title", header: "Title" },
-          { key: "date", header: "Date" },
-          { key: "location", header: "Location" },
-          { key: "attendees", header: "Attendees" },
-          {
-            key: "status",
-            header: "Status",
-            render: (item) => (
-              <Badge variant={item.status === "upcoming" ? "default" : "secondary"}>
-                {item.status}
-              </Badge>
-            ),
-          },
-        ]}
-        data={mockEvents}
-        onAdd={() => console.log("Add event")}
-        onEdit={(item) => console.log("Edit:", item)}
-        onDelete={(item) => console.log("Delete:", item)}
-      />
-    );
+      return (
+        <ContentList
+          title={section.charAt(0).toUpperCase() + section.slice(1)}
+          description={`Manage ${section} content`}
+          columns={columns}
+          data={data}
+          onAdd={() => setEditingId("new")}
+          onEdit={(item: any) => setEditingId(String(item.id))}
+          onDelete={handleDeleteGeneric}
+        />
+      );
   }
 
   // Settings Section
   if (section === "settings") {
     return <SettingsManager />;
+  }
+
+  // Global Banner Section
+  if (section === "banner") {
+    return <GlobalBannerManager />;
+  }
+
+  // Site Identity Section
+  if (section === "identity") {
+    return <SiteIdentityManager />;
+  }
+
+  // Footer Section
+  if (section === "footer") {
+    return <FooterManager />;
+  }
+
+  // SEO Section
+  if (section === "seo") {
+    return <SEOManager />;
   }
 
   // Social Media Hub Section
@@ -394,5 +339,3 @@ export function AdminPages({ section }: AdminPagesProps) {
     </div>
   );
 }
-
-

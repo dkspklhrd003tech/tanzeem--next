@@ -125,7 +125,7 @@ export function SocialMediaSettings() {
                                 type="text"
                                 value={settings.youtube_url}
                                 onChange={(e) => setSettings({ ...settings, youtube_url: e.target.value })}
-                                className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                                className="w-full py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                                 placeholder="https://youtube.com/@..."
                             />
                         </div>
@@ -139,7 +139,7 @@ export function SocialMediaSettings() {
                                 type="text"
                                 value={settings.facebook_url}
                                 onChange={(e) => setSettings({ ...settings, facebook_url: e.target.value })}
-                                className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                                className="w-full py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                                 placeholder="https://facebook.com/..."
                             />
                         </div>
@@ -153,7 +153,7 @@ export function SocialMediaSettings() {
                                 type="text"
                                 value={settings.twitter_url}
                                 onChange={(e) => setSettings({ ...settings, twitter_url: e.target.value })}
-                                className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                                className="w-full py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                                 placeholder="https://twitter.com/..."
                             />
                         </div>
@@ -167,7 +167,7 @@ export function SocialMediaSettings() {
                                 type="text"
                                 value={settings.whatsapp_url}
                                 onChange={(e) => setSettings({ ...settings, whatsapp_url: e.target.value })}
-                                className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                                className="w-full py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                                 placeholder="https://wa.me/..."
                             />
                         </div>

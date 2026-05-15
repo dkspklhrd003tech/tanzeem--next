@@ -2,13 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { 
-  Plus, 
-  Trash2, 
-  Settings2, 
-  ExternalLink, 
-  Layout, 
-  Users, 
+import {
+  Plus,
+  Trash2,
+  Settings2,
+  ExternalLink,
+  Layout,
+  Users,
   Save,
   Loader2,
   GripVertical,
@@ -20,11 +20,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Tabs, 
-  TabsContent, 
-  TabsList, 
-  TabsTrigger 
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger
 } from "@/components/ui/tabs";
 import {
   Dialog,
@@ -36,6 +36,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import { ImageUploader } from "../ImageUploader";
 
 interface Platform {
   id: string;
@@ -88,7 +89,7 @@ export function SocialMediaManager() {
         const accountsData = await accountsRes.json();
         setPlatforms(platformsData.platforms || []);
         setAccounts(accountsData.accounts || []);
-        
+
         if (platformsData.platforms?.length > 0 && !activePlatformId) {
           setActivePlatformId(platformsData.platforms[0].id);
         }
@@ -203,7 +204,7 @@ export function SocialMediaManager() {
         <div className="flex gap-3">
           <Dialog open={platformDialogOpen} onOpenChange={setPlatformDialogOpen}>
             <DialogTrigger asChild>
-              <Button 
+              <Button
                 onClick={() => setCurrentPlatform({ isActive: true, order: platforms.length })}
                 className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold px-6 rounded-xl shadow-lg hover:shadow-primary/20 transition-all active:scale-95"
               >
@@ -218,42 +219,41 @@ export function SocialMediaManager() {
               <div className="grid gap-4 py-4">
                 <div className="grid gap-2">
                   <Label htmlFor="name">Platform Name</Label>
-                  <Input 
-                    id="name" 
-                    value={currentPlatform.name || ""} 
-                    onChange={(e) => setCurrentPlatform({...currentPlatform, name: e.target.value})}
+                  <Input
+                    id="name"
+                    value={currentPlatform.name || ""}
+                    onChange={(e) => setCurrentPlatform({ ...currentPlatform, name: e.target.value })}
                     placeholder="e.g. YouTube, Instagram"
                   />
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="slug">Slug (Unique Identifier)</Label>
-                  <Input 
-                    id="slug" 
-                    value={currentPlatform.slug || ""} 
-                    onChange={(e) => setCurrentPlatform({...currentPlatform, slug: e.target.value.toLowerCase().replace(/\s+/g, '-')})}
+                  <Input
+                    id="slug"
+                    value={currentPlatform.slug || ""}
+                    onChange={(e) => setCurrentPlatform({ ...currentPlatform, slug: e.target.value.toLowerCase().replace(/\s+/g, '-') })}
                     placeholder="e.g. youtube"
                   />
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="icon">Icon URL (Lucide or Image Link)</Label>
-                  <Input 
-                    id="icon" 
-                    value={currentPlatform.iconUrl || ""} 
-                    onChange={(e) => setCurrentPlatform({...currentPlatform, iconUrl: e.target.value})}
-                    placeholder="https://..."
+                  <Label htmlFor="icon">Platform Icon</Label>
+                  <ImageUploader
+                    value={currentPlatform.iconUrl || ""}
+                    onChange={(url) => setCurrentPlatform({ ...currentPlatform, iconUrl: url })}
+                    aspectRatio={1}
                   />
                 </div>
                 <div className="grid gap-2">
                   <Label htmlFor="color">Theme Color (Hex)</Label>
                   <div className="flex gap-2">
-                    <Input 
-                      id="color" 
-                      value={currentPlatform.themeColor || "#0d5844"} 
-                      onChange={(e) => setCurrentPlatform({...currentPlatform, themeColor: e.target.value})}
+                    <Input
+                      id="color"
+                      value={currentPlatform.themeColor || "#0d5844"}
+                      onChange={(e) => setCurrentPlatform({ ...currentPlatform, themeColor: e.target.value })}
                       className="flex-1"
                     />
-                    <div 
-                      className="w-10 h-10 rounded-md border border-border" 
+                    <div
+                      className="w-10 h-10 rounded-md border border-border"
                       style={{ backgroundColor: currentPlatform.themeColor || "#0d5844" }}
                     />
                   </div>
@@ -287,23 +287,23 @@ export function SocialMediaManager() {
                     key={p.id}
                     onClick={() => setActivePlatformId(p.id)}
                     className={cn(
-                      "flex items-center justify-between px-4 py-3 rounded-xl text-left transition-all duration-200 group",
-                      activePlatformId === p.id 
-                        ? "bg-primary text-primary-foreground shadow-md scale-[1.02]" 
+                      "flex items-center justify-between py-3 rounded-xl text-left transition-all duration-200 group",
+                      activePlatformId === p.id
+                        ? "bg-primary text-primary-foreground shadow-md scale-[1.02]"
                         : "text-muted-foreground hover:bg-muted hover:text-foreground"
                     )}
                   >
                     <div className="flex items-center gap-3">
-                      <div 
-                        className="w-2 h-2 rounded-full" 
+                      <div
+                        className="w-2 h-2 rounded-full"
                         style={{ backgroundColor: p.themeColor }}
                       />
                       <span className="font-medium">{p.name}</span>
                     </div>
                     <div className="flex opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
+                      <Button
+                        variant="ghost"
+                        size="icon"
                         className="h-7 w-7 text-inherit"
                         onClick={(e) => {
                           e.stopPropagation();
@@ -313,9 +313,9 @@ export function SocialMediaManager() {
                       >
                         <Edit2 className="w-3 h-3" />
                       </Button>
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
+                      <Button
+                        variant="ghost"
+                        size="icon"
                         className="h-7 w-7 text-inherit hover:text-red-400"
                         onClick={(e) => {
                           e.stopPropagation();
@@ -346,7 +346,7 @@ export function SocialMediaManager() {
                 </div>
                 <Dialog open={accountDialogOpen} onOpenChange={setAccountDialogOpen}>
                   <DialogTrigger asChild>
-                    <Button 
+                    <Button
                       onClick={() => setCurrentAccount({ isActive: true, order: filteredAccounts.length, buttonText: "Follow" })}
                       className="rounded-full shadow-lg"
                     >
@@ -361,48 +361,47 @@ export function SocialMediaManager() {
                     <div className="grid gap-4 py-4">
                       <div className="grid gap-2">
                         <Label htmlFor="title">Account/Channel Title</Label>
-                        <Input 
-                          id="title" 
-                          value={currentAccount.title || ""} 
-                          onChange={(e) => setCurrentAccount({...currentAccount, title: e.target.value})}
+                        <Input
+                          id="title"
+                          value={currentAccount.title || ""}
+                          onChange={(e) => setCurrentAccount({ ...currentAccount, title: e.target.value })}
                           placeholder="e.g. Dr. Israr Ahmed Official"
                         />
                       </div>
                       <div className="grid gap-2">
                         <Label htmlFor="url">Direct URL</Label>
-                        <Input 
-                          id="url" 
-                          value={currentAccount.url || ""} 
-                          onChange={(e) => setCurrentAccount({...currentAccount, url: e.target.value})}
+                        <Input
+                          id="url"
+                          value={currentAccount.url || ""}
+                          onChange={(e) => setCurrentAccount({ ...currentAccount, url: e.target.value })}
                           placeholder="https://..."
                         />
                       </div>
                       <div className="grid gap-2">
-                        <Label htmlFor="img">Image/Avatar URL</Label>
-                        <Input 
-                          id="img" 
-                          value={currentAccount.imageUrl || ""} 
-                          onChange={(e) => setCurrentAccount({...currentAccount, imageUrl: e.target.value})}
-                          placeholder="https://..."
+                        <Label htmlFor="img">Account Avatar / Image</Label>
+                        <ImageUploader
+                          value={currentAccount.imageUrl || ""}
+                          onChange={(url) => setCurrentAccount({ ...currentAccount, imageUrl: url })}
+                          aspectRatio={1}
                         />
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div className="grid gap-2">
                           <Label htmlFor="btn">Button Text</Label>
-                          <Input 
-                            id="btn" 
-                            value={currentAccount.buttonText || ""} 
-                            onChange={(e) => setCurrentAccount({...currentAccount, buttonText: e.target.value})}
+                          <Input
+                            id="btn"
+                            value={currentAccount.buttonText || ""}
+                            onChange={(e) => setCurrentAccount({ ...currentAccount, buttonText: e.target.value })}
                             placeholder="Follow, Subscribe, Visit..."
                           />
                         </div>
                         <div className="grid gap-2">
                           <Label htmlFor="order">Sort Order</Label>
-                          <Input 
-                            id="order" 
+                          <Input
+                            id="order"
                             type="number"
-                            value={currentAccount.order || 0} 
-                            onChange={(e) => setCurrentAccount({...currentAccount, order: parseInt(e.target.value)})}
+                            value={currentAccount.order || 0}
+                            onChange={(e) => setCurrentAccount({ ...currentAccount, order: parseInt(e.target.value) })}
                           />
                         </div>
                       </div>
@@ -425,14 +424,14 @@ export function SocialMediaManager() {
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                     {filteredAccounts.map((account) => (
-                      <div 
+                      <div
                         key={account.id}
                         className="group relative bg-muted/30 border border-border/50 rounded-2xl p-5 hover:border-primary/50 hover:shadow-xl transition-all duration-300 overflow-hidden"
                       >
                         <div className="flex items-start gap-4">
                           <div className="relative shrink-0">
-                            <img 
-                              src={account.imageUrl || "https://img.icons8.com/color/96/user.png"} 
+                            <img
+                              src={account.imageUrl || "https://img.icons8.com/color/96/user.png"}
                               alt={account.title}
                               className="w-14 h-14 rounded-full object-cover border-2 border-primary/10 group-hover:scale-110 transition-transform"
                             />
@@ -446,11 +445,11 @@ export function SocialMediaManager() {
                             <Badge variant="outline" className="text-[10px] uppercase tracking-wider">{account.buttonText}</Badge>
                           </div>
                         </div>
-                        
+
                         <div className="flex gap-2 mt-6 pt-4 border-t border-border/50 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all">
-                          <Button 
-                            variant="secondary" 
-                            size="sm" 
+                          <Button
+                            variant="secondary"
+                            size="sm"
                             className="flex-1 rounded-lg"
                             onClick={() => {
                               setCurrentAccount(account);
@@ -459,9 +458,9 @@ export function SocialMediaManager() {
                           >
                             <Edit2 className="w-3.5 h-3.5 mr-2" /> Edit
                           </Button>
-                          <Button 
-                            variant="destructive" 
-                            size="sm" 
+                          <Button
+                            variant="destructive"
+                            size="sm"
                             className="flex-1 rounded-lg"
                             onClick={() => handleDeleteAccount(account.id)}
                           >

@@ -5,6 +5,7 @@ import {
     int,
     boolean,
     timestamp,
+    json,
 } from "drizzle-orm/mysql-core";
 import { relations } from 'drizzle-orm';
 
@@ -105,6 +106,21 @@ export const pagesRelations = relations(pages, ({ one, many }) => ({
     author: one(users, { fields: [pages.authorId], references: [users.id] }),
     parent: one(pages, { fields: [pages.parentId], references: [pages.id], relationName: "PageHierarchy" }),
     children: many(pages, { relationName: "PageHierarchy" }),
+    sections: many(pageSections),
+}));
+
+export const pageSections = mysqlTable("page_sections", {
+    id: varchar("id", { length: 191 }).primaryKey(),
+    pageId: varchar("page_id", { length: 191 }).notNull(),
+    type: varchar("type", { length: 50 }).notNull(), // 'hero', 'carousel', 'grid', 'text', 'media'
+    order: int("order").default(0).notNull(),
+    config: json("config").notNull(), // Stores section-specific data/styles
+    isActive: boolean("is_active").default(true).notNull(),
+    ...timestamps,
+});
+
+export const pageSectionsRelations = relations(pageSections, ({ one }) => ({
+    page: one(pages, { fields: [pageSections.pageId], references: [pages.id] }),
 }));
 
 // ============================================

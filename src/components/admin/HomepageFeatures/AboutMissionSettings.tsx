@@ -2,7 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { Save, Upload, X, Image as ImageIcon } from "lucide-react";
+import { Save, ImageIcon, Loader2 } from "lucide-react";
+import { RichTextEditor } from "../RichTextEditor";
+import { ImageUploader } from "../ImageUploader";
 
 export function AboutMissionSettings() {
     const [settings, setSettings] = useState({
@@ -47,47 +49,7 @@ export function AboutMissionSettings() {
         }
     };
 
-    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-
-        // Force WEBP only
-        if (file.type !== "image/webp" && !file.name.toLowerCase().endsWith(".webp")) {
-            toast({
-                title: "Invalid Format",
-                description: "Only WEBP files are acceptable for the about image.",
-                variant: "destructive"
-            });
-            return;
-        }
-
-        setImagePreview(URL.createObjectURL(file));
-        setIsImageUploading(true);
-
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("type", "general");
-
-        try {
-            const res = await fetch("/api/upload", {
-                method: "POST",
-                body: formData,
-            });
-            const data = await res.json();
-
-            if (res.ok && data.success) {
-                setSettings(prev => ({ ...prev, homepage_about_image: data.url }));
-                toast({ title: "Image Uploaded", description: "Successfully updated the about image." });
-            } else {
-                throw new Error(data.error || "Upload failed");
-            }
-        } catch (error: any) {
-            toast({ title: "Upload Failed", description: error.message, variant: "destructive" });
-            setImagePreview(null);
-        } finally {
-            setIsImageUploading(false);
-        }
-    };
+    // Removed handleImageUpload as we use ImageUploader now
 
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -164,7 +126,7 @@ export function AboutMissionSettings() {
                                 type="text"
                                 value={settings.homepage_about_title}
                                 onChange={(e) => setSettings({ ...settings, homepage_about_title: e.target.value })}
-                                className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                                className="w-full py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                                 placeholder="Tanzeem-e-Islami"
                                 required
                             />
@@ -172,79 +134,25 @@ export function AboutMissionSettings() {
 
                         <div className="space-y-2">
                             <label className="text-sm font-semibold text-foreground">About Description Block *</label>
-                            <textarea
-                                value={settings.homepage_about_description}
-                                onChange={(e) => setSettings({ ...settings, homepage_about_description: e.target.value })}
-                                className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all min-h-[120px]"
+                            <RichTextEditor
+                                content={settings.homepage_about_description}
+                                onChange={(content) => setSettings({ ...settings, homepage_about_description: content })}
                                 placeholder="It is not enough to practice Islam in one's individual life..."
-                                required
                             />
                         </div>
 
                         {/* Image Upload Block */}
                         <div className="pt-4 border-t border-border/50">
-                            <label className="text-sm font-semibold text-foreground block mb-4">About Section Illustration (WEBP Only)</label>
-
-                            <div className="flex flex-col sm:flex-row items-center gap-8">
-                                <div className="relative group">
-                                    <div className="w-[185px] h-[185px] rounded-2xl border-2 border-dashed border-border bg-muted/30 flex items-center justify-center overflow-hidden transition-all group-hover:bg-muted/50 shadow-inner">
-                                        {imagePreview || settings.homepage_about_image ? (
-                                            <img
-                                                src={imagePreview || settings.homepage_about_image}
-                                                alt="About Preview"
-                                                className="w-full h-full object-cover"
-                                            />
-                                        ) : (
-                                            <div className="text-center p-4">
-                                                <ImageIcon className="w-10 h-10 mx-auto mb-2 text-foreground-muted opacity-20" />
-                                                <span className="text-[10px] text-foreground-muted font-medium uppercase tracking-wider">No Image Selected</span>
-                                            </div>
-                                        )}
-
-                                        {isImageUploading && (
-                                            <div className="absolute inset-0 bg-background/60 backdrop-blur-[2px] flex items-center justify-center">
-                                                <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    {(imagePreview || settings.homepage_about_image) && (
-                                        <button
-                                            type="button"
-                                            onClick={() => {
-                                                setImagePreview(null);
-                                                setSettings(prev => ({ ...prev, homepage_about_image: "" }));
-                                            }}
-                                            className="absolute -top-2 -right-2 bg-red-500 text-white p-1.5 rounded-full shadow-lg hover:bg-red-600 transition-colors"
-                                        >
-                                            <X className="w-4 h-4" />
-                                        </button>
-                                    )}
-                                </div>
-
-                                <div className="flex-1 space-y-3">
-                                    <div className="relative">
-                                        <input
-                                            type="file"
-                                            id="about-image-upload"
-                                            className="hidden"
-                                            accept=".webp"
-                                            onChange={handleImageUpload}
-                                        />
-                                        <label
-                                            htmlFor="about-image-upload"
-                                            className="inline-flex items-center gap-2 bg-[#0d5844] hover:bg-[#0a4636] text-[#fefefc] px-6 py-2.5 rounded-xl font-bold shadow-md cursor-pointer transition-all active:scale-95"
-                                        >
-                                            <Upload className="w-4 h-4" />
-                                            {settings.homepage_about_image ? "Change Image" : "Upload WEBP Image"}
-                                        </label>
-                                    </div>
-                                    <p className="text-xs text-foreground-muted leading-relaxed">
-                                        <span className="font-bold text-primary mr-1">Recommended:</span>
-                                        WEBP format with 1:1 aspect ratio. Rendered size is exactly 185px x 185px on the homepage for optimal alignment.
-                                    </p>
-                                </div>
-                            </div>
+                            <label className="text-sm font-semibold text-foreground block mb-4">About Section Illustration</label>
+                            <ImageUploader
+                                value={settings.homepage_about_image}
+                                onChange={(url) => setSettings({ ...settings, homepage_about_image: url })}
+                                aspectRatio={1}
+                            />
+                            <p className="text-xs text-foreground-muted leading-relaxed mt-2">
+                                <span className="font-bold text-primary mr-1">Recommended:</span>
+                                1:1 aspect ratio. Rendered size is exactly 185px x 185px on the homepage for optimal alignment.
+                            </p>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -254,7 +162,7 @@ export function AboutMissionSettings() {
                                     type="text"
                                     value={settings.homepage_about_button_text}
                                     onChange={(e) => setSettings({ ...settings, homepage_about_button_text: e.target.value })}
-                                    className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                                    className="w-full py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                                     placeholder="About Tanzeem"
                                 />
                             </div>
@@ -264,7 +172,7 @@ export function AboutMissionSettings() {
                                     type="text"
                                     value={settings.homepage_about_button_link}
                                     onChange={(e) => setSettings({ ...settings, homepage_about_button_link: e.target.value })}
-                                    className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                                    className="w-full py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                                     placeholder="/about"
                                 />
                             </div>
@@ -279,12 +187,10 @@ export function AboutMissionSettings() {
                     <div className="space-y-4">
                         <div className="space-y-2">
                             <label className="text-sm font-semibold text-foreground">Mission Statement *</label>
-                            <textarea
-                                value={settings.homepage_mission_text}
-                                onChange={(e) => setSettings({ ...settings, homepage_mission_text: e.target.value })}
-                                className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all min-h-[100px]"
+                            <RichTextEditor
+                                content={settings.homepage_mission_text}
+                                onChange={(content) => setSettings({ ...settings, homepage_mission_text: content })}
                                 placeholder="Establish an Islamic State based on socio-political-economic Principles of Islam..."
-                                required
                             />
                         </div>
                     </div>

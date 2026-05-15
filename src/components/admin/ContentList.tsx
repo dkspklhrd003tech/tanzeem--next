@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {
   Table,
   TableBody,
@@ -75,6 +76,7 @@ export function ContentList<T extends { id: string | number }>({
 }: ContentListProps<T>) {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [deletingItem, setDeletingItem] = useState<T | null>(null);
   const itemsPerPage = 10;
 
   const filteredData = data.filter((item) =>
@@ -198,8 +200,8 @@ export function ContentList<T extends { id: string | number }>({
                           <DropdownMenuSeparator />
                           {onDelete && (
                             <DropdownMenuItem
-                              onClick={() => onDelete(item)}
-                              className="text-red-500 focus:text-red-500"
+                              onClick={() => setDeletingItem(item)}
+                              className="text-red-500 focus:text-red-500 cursor-pointer"
                             >
                               <Trash2 className="h-4 w-4 mr-2" />
                               Delete
@@ -215,6 +217,20 @@ export function ContentList<T extends { id: string | number }>({
           </Table>
         </CardContent>
       </Card>
+
+      {/* Confirmation Dialog outside of Dropdown to avoid closing issues */}
+      <ConfirmDialog
+        open={!!deletingItem}
+        onOpenChange={(isOpen) => !isOpen && setDeletingItem(null)}
+        title="Delete Item"
+        description={`Are you sure you want to delete this item? This action cannot be undone.`}
+        onConfirm={() => {
+          if (deletingItem && onDelete) {
+            onDelete(deletingItem);
+          }
+          setDeletingItem(null);
+        }}
+      />
 
       {/* Pagination */}
       {totalPages > 1 && (

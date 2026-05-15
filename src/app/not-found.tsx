@@ -7,7 +7,7 @@ import { Home, Search, ArrowRight } from "lucide-react";
 export default function NotFound() {
     return (
         <div className="min-h-screen flex flex-col bg-background">
-            <main className="flex-grow flex items-center justify-center py-16 px-4">
+            <main className="flex-grow flex items-center justify-center py-16">
                 <div className="max-w-3xl mx-auto text-center">
                     <motion.div
                         initial={{ opacity: 0, scale: 0.9 }}
@@ -43,7 +43,7 @@ export default function NotFound() {
                             <input
                                 type="text"
                                 placeholder="Search Tanzeem..."
-                                className="w-full px-4 py-3 pl-10 pr-12 bg-card border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                                className="w-full py-3 pl-10 pr-12 bg-card border border-border rounded-lg text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
                             />
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-foreground-muted" />
                             <button className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-primary/10 text-primary rounded-md hover:bg-primary hover:text-primary-foreground transition-colors">

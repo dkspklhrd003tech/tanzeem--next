@@ -12,7 +12,7 @@ async function seedPages() {
     <img src="https://www.tanzeem.org/wp-content/uploads/2023/11/markaz-1.jpg" alt="Markaz Tanzeem" class="w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?auto=format&fit=crop&q=80&w=2000'" />
     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex items-end">
       <div class="p-8 md:p-12">
-        <span class="inline-block px-4 py-1.5 bg-primary text-[#fefefc] text-sm font-bold uppercase tracking-wider rounded-full mb-4">Headquarters</span>
+        <span class="inline-block py-1.5 bg-primary text-[#fefefc] text-sm font-bold uppercase tracking-wider rounded-full mb-4">Headquarters</span>
         <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-[#fefefc] mb-4">Markaz Tanzeem-e-Islami</h1>
         <p class="text-white/90 text-lg md:text-xl max-w-2xl">The central hub of our movement, dedicated to the dissemination of Quranic knowledge and the establishment of Deen.</p>
       </div>
@@ -97,7 +97,7 @@ async function seedPages() {
     <img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=2000" alt="Distance Learning" class="w-full h-full object-cover" />
     <div class="absolute inset-0 bg-gradient-to-t from-primary/90 via-primary/50 to-transparent flex items-end">
       <div class="p-8 md:p-12">
-        <span class="inline-block px-4 py-1.5 bg-[#fefefc] text-primary text-sm font-bold uppercase tracking-wider rounded-full mb-4">E-Learning Portal</span>
+        <span class="inline-block py-1.5 bg-[#fefefc] text-primary text-sm font-bold uppercase tracking-wider rounded-full mb-4">E-Learning Portal</span>
         <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-[#fefefc] mb-4">Distance Learning Programs</h1>
         <p class="text-white/90 text-lg md:text-xl max-w-2xl">Access comprehensive Islamic education from the comfort of your home. Join our interactive online courses globally.</p>
       </div>

@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { pages, activityLogs } from "@/db/schema";
+import { pages, pageSections, activityLogs } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth";
-import { eq, or, and } from "drizzle-orm";
+import { eq, or, and, not } from "drizzle-orm";
 
 // GET - Get single page
 export async function GET(
@@ -52,6 +52,7 @@ export async function PUT(
 
     const { id } = await params;
     const data = await request.json();
+    console.log(`Updating page ${id}:`, { title: data.title, sectionsCount: data.sections?.length });
 
     const existingPage = await db.query.pages.findFirst({
       where: eq(pages.id, id),
@@ -61,34 +62,62 @@ export async function PUT(
       return NextResponse.json({ error: "Page not found" }, { status: 404 });
     }
 
-    if (data.slug && data.slug !== existingPage.slug) {
+    if (data.slug) {
+      console.log(`Checking slug conflict for ${data.slug}, excluding ID: ${id}`);
       const slugConflict = await db.query.pages.findFirst({
-        where: eq(pages.slug, data.slug),
+        where: and(
+          eq(pages.slug, data.slug),
+          not(eq(pages.id, id))
+        ),
       });
 
       if (slugConflict) {
-        return NextResponse.json({ error: "A page with this slug already exists" }, { status: 400 });
+        console.log(`Conflict found! Other page ID: ${slugConflict.id}, slug: ${slugConflict.slug}`);
+        return NextResponse.json({ 
+          error: `A page with this slug already exists (ID: ${slugConflict.id}, Current ID: ${id})` 
+        }, { status: 400 });
       }
     }
 
+    // Update page
     await db.update(pages).set({
-      title: data.title,
-      slug: data.slug,
-      content: data.content,
-      excerpt: data.excerpt,
-      featuredImage: data.featuredImage,
-      template: data.template,
-      parentId: data.parentId,
-      order: data.order,
-      isPublished: data.isPublished,
-      showInMenu: data.showInMenu,
-      metaTitle: data.metaTitle,
-      metaDescription: data.metaDescription,
-      metaKeywords: data.metaKeywords,
+      title: data.title ?? existingPage.title,
+      slug: data.slug ?? existingPage.slug,
+      content: data.content ?? existingPage.content ?? "",
+      excerpt: data.excerpt ?? existingPage.excerpt,
+      featuredImage: data.featuredImage ?? existingPage.featuredImage,
+      template: data.template ?? existingPage.template ?? "default",
+      parentId: data.parentId !== undefined ? data.parentId : existingPage.parentId,
+      order: data.order ?? existingPage.order ?? 0,
+      isPublished: data.isPublished ?? existingPage.isPublished,
+      showInMenu: data.showInMenu ?? existingPage.showInMenu,
+      metaTitle: data.metaTitle ?? existingPage.metaTitle,
+      metaDescription: data.metaDescription ?? existingPage.metaDescription,
+      metaKeywords: data.metaKeywords ?? existingPage.metaKeywords,
       publishedAt: data.isPublished && !existingPage.isPublished
         ? new Date()
         : existingPage.publishedAt,
     }).where(eq(pages.id, id));
+
+    // Sync sections if provided
+    if (data.sections && Array.isArray(data.sections)) {
+      // Clear existing sections
+      await db.delete(pageSections).where(eq(pageSections.pageId, id));
+      
+      // Insert new sections
+      if (data.sections.length > 0) {
+        await db.insert(pageSections).values(
+          data.sections.map((s: any, index: number) => ({
+            id: s.id && String(s.id).length >= 36 ? String(s.id) : crypto.randomUUID(),
+            pageId: id,
+            type: s.type,
+            order: index,
+            config: s.config || {},
+            isActive: s.isActive ?? true,
+          }))
+        );
+      }
+    }
 
     const updatedPage = await db.query.pages.findFirst({
       where: eq(pages.id, id),
@@ -109,9 +138,9 @@ export async function PUT(
     });
 
     return NextResponse.json({ page: updatedPage });
-  } catch (error) {
-    console.error("Update page error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  } catch (error: any) {
+    console.error("Update page error details:", error);
+    return NextResponse.json({ error: error.message || "Internal server error" }, { status: 500 });
   }
 }
 

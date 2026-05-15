@@ -40,6 +40,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator as USeparator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { PageSectionBuilder } from "./PageSectionBuilder";
+import { RichTextEditor } from "./RichTextEditor";
+import { ImageUploader } from "./ImageUploader";
 
 interface ContentEditorProps {
   title: string;
@@ -55,6 +58,7 @@ interface ContentEditorProps {
     isFeatured?: boolean;
     featuredImage?: string;
     categoryId?: string;
+    sections?: any[];
   };
   categories?: { id: string; name: string }[];
   onSave: (data: Record<string, unknown>) => void;
@@ -84,6 +88,7 @@ export function ContentEditor({
     isFeatured: initialData?.isFeatured || false,
     featuredImage: initialData?.featuredImage || "",
     categoryId: initialData?.categoryId || "",
+    sections: initialData?.sections || [],
   });
 
   const [isSaving, setIsSaving] = useState(false);
@@ -143,132 +148,88 @@ export function ContentEditor({
       <div className="grid lg:grid-cols-3 gap-6">
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Title */}
-          <Card>
-            <CardContent className="p-6">
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="title" className="text-sm font-semibold text-foreground mb-2 block">Content Title</Label>
-                  <Input
-                    id="title"
-                    placeholder={`Enter ${contentType} title`}
-                    value={formData.title}
-                    onChange={(e) => {
-                      const title = e.target.value;
-                      setFormData({
-                        ...formData,
-                        title,
-                        slug: formData.slug || generateSlug(title),
-                      });
-                    }}
-                    className="text-lg"
+          <Tabs defaultValue="general" className="w-full">
+            <TabsList className="grid w-full grid-cols-2 mb-6">
+              <TabsTrigger value="general">General Content</TabsTrigger>
+              <TabsTrigger value="sections">Page Sections</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="general" className="space-y-6">
+              {/* Title */}
+              <Card>
+                <CardContent className="p-6">
+                  <div className="space-y-4">
+                    <div>
+                      <Label htmlFor="title" className="text-sm font-semibold text-foreground mb-2 block">Content Title</Label>
+                      <Input
+                        id="title"
+                        placeholder={`Enter ${contentType} title`}
+                        value={formData.title}
+                        onChange={(e) => {
+                          const title = e.target.value;
+                          setFormData({
+                            ...formData,
+                            title,
+                            slug: formData.slug || generateSlug(title),
+                          });
+                        }}
+                        className="text-lg"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="slug" className="text-sm font-semibold text-foreground mb-2 block">URL Slug</Label>
+                      <Input
+                        id="slug"
+                        placeholder="url-friendly-slug"
+                        value={formData.slug}
+                        onChange={(e) =>
+                          setFormData({ ...formData, slug: e.target.value })
+                        }
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Content Editor */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Legacy Content (SEO/Backup)</CardTitle>
+                </CardHeader>
+                <CardContent className="p-0">
+                  <RichTextEditor
+                    content={formData.content}
+                    onChange={(content) => setFormData({ ...formData, content })}
+                    placeholder={`Write your ${contentType} content here...`}
                   />
-                </div>
-                <div>
-                  <Label htmlFor="slug" className="text-sm font-semibold text-foreground mb-2 block">URL Slug</Label>
-                  <Input
-                    id="slug"
-                    placeholder="url-friendly-slug"
-                    value={formData.slug}
+                </CardContent>
+              </Card>
+
+              {/* Excerpt */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Excerpt</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <Textarea
+                    placeholder="Brief summary of the content..."
+                    value={formData.excerpt}
                     onChange={(e) =>
-                      setFormData({ ...formData, slug: e.target.value })
+                      setFormData({ ...formData, excerpt: e.target.value })
                     }
+                    rows={3}
                   />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+                </CardContent>
+              </Card>
+            </TabsContent>
 
-          {/* Content Editor */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Content</CardTitle>
-            </CardHeader>
-            <CardContent className="p-0">
-              {/* Toolbar */}
-              <div className="flex flex-wrap items-center gap-1 p-2 border-b border-border">
-                <Button variant="ghost" size="sm" title="Bold">
-                  <Bold className="h-4 w-4" />
-                </Button>
-                <Button variant="ghost" size="sm" title="Italic">
-                  <Italic className="h-4 w-4" />
-                </Button>
-                <Button variant="ghost" size="sm" title="Underline">
-                  <Underline className="h-4 w-4" />
-                </Button>
-                <Button variant="ghost" size="sm" title="Strikethrough">
-                  <Strikethrough className="h-4 w-4" />
-                </Button>
-                <USeparator orientation="vertical" className="h-6 mx-1" />
-                <Button variant="ghost" size="sm" title="Heading 1">
-                  <Heading1 className="h-4 w-4" />
-                </Button>
-                <Button variant="ghost" size="sm" title="Heading 2">
-                  <Heading2 className="h-4 w-4" />
-                </Button>
-                <Button variant="ghost" size="sm" title="Heading 3">
-                  <Heading3 className="h-4 w-4" />
-                </Button>
-                <USeparator orientation="vertical" className="h-6 mx-1" />
-                <Button variant="ghost" size="sm" title="Align Left">
-                  <AlignLeft className="h-4 w-4" />
-                </Button>
-                <Button variant="ghost" size="sm" title="Align Center">
-                  <AlignCenter className="h-4 w-4" />
-                </Button>
-                <Button variant="ghost" size="sm" title="Align Right">
-                  <AlignRight className="h-4 w-4" />
-                </Button>
-                <USeparator orientation="vertical" className="h-6 mx-1" />
-                <Button variant="ghost" size="sm" title="Bullet List">
-                  <List className="h-4 w-4" />
-                </Button>
-                <Button variant="ghost" size="sm" title="Numbered List">
-                  <ListOrdered className="h-4 w-4" />
-                </Button>
-                <USeparator orientation="vertical" className="h-6 mx-1" />
-                <Button variant="ghost" size="sm" title="Link">
-                  <Link className="h-4 w-4" />
-                </Button>
-                <Button variant="ghost" size="sm" title="Image">
-                  <ImageIcon className="h-4 w-4" />
-                </Button>
-                <Button variant="ghost" size="sm" title="Code">
-                  <Code className="h-4 w-4" />
-                </Button>
-                <Button variant="ghost" size="sm" title="Quote">
-                  <Quote className="h-4 w-4" />
-                </Button>
-              </div>
-
-              {/* Content Area */}
-              <Textarea
-                placeholder={`Write your ${contentType} content here...`}
-                value={formData.content}
-                onChange={(e) =>
-                  setFormData({ ...formData, content: e.target.value })
-                }
-                className="min-h-[400px] border-0 rounded-none focus-visible:ring-0"
+            <TabsContent value="sections">
+              <PageSectionBuilder 
+                pageId={(initialData as any)?.id || "new"} 
+                onSave={(sections) => setFormData({ ...formData, sections: sections as any })} 
               />
-            </CardContent>
-          </Card>
-
-          {/* Excerpt */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Excerpt</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Textarea
-                placeholder="Brief summary of the content..."
-                value={formData.excerpt}
-                onChange={(e) =>
-                  setFormData({ ...formData, excerpt: e.target.value })
-                }
-                rows={3}
-              />
-            </CardContent>
-          </Card>
+            </TabsContent>
+          </Tabs>
         </div>
 
         {/* Sidebar */}
@@ -318,12 +279,11 @@ export function ContentEditor({
               <CardTitle>Featured Image</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="border-2 border-dashed border-border rounded-lg p-8 text-center hover:border-primary/50 transition-colors cursor-pointer">
-                <ImageIcon className="h-10 w-10 text-foreground-muted mx-auto mb-2" />
-                <p className="text-sm text-foreground-muted">
-                  Click or drag image to upload
-                </p>
-              </div>
+              <ImageUploader
+                value={formData.featuredImage}
+                onChange={(url) => setFormData({ ...formData, featuredImage: url })}
+                aspectRatio={16 / 9}
+              />
             </CardContent>
           </Card>
 

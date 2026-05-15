@@ -28,7 +28,7 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
 
     return (
         <section className="py-16 bg-white">
-            <div className="container max-w-7xl mx-auto px-4">
+            <div className="container max-w-7xl mx-auto">
 
                 {/* Top: Global Description in a Primary Box */}
                 <motion.div
@@ -93,14 +93,14 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
                                     )}
                                 </div>
                                 {/* <div className="mt-4">
-                                    <Link href={`/organization/${leader.slug}`} className="inline-flex items-center gap-2 bg-muted hover:bg-muted-dark px-4 py-2 rounded-full text-xs font-bold transition-colors">
+                                    <Link href={`/organization/${leader.slug}`} className="inline-flex items-center gap-2 bg-muted hover:bg-muted-dark py-2 rounded-full text-xs font-bold transition-colors">
                                         About {leader.name.split(' ')[0]} <ArrowRight className="w-3 h-3 ml-1" />
                                     </Link>
                                 </div> */}
                                 <div className="mt-4">
                                     <Link
-                                        href={`/organization/${leader.slug}`}
-                                        className="inline-flex items-center gap-2 bg-transparent border border-[#0d5844] text-[#0d5844] px-4 py-2 rounded-full text-xs font-bold hover:bg-[#0d5844] hover:text-[#fefefc] hover:border-[#0d5844] transition-all duration-300"
+                                        href={`/${leader.slug}`}
+                                        className="inline-flex items-center gap-2 bg-transparent border border-[#0d5844] text-[#0d5844] py-2 rounded-full text-xs font-bold hover:bg-[#0d5844] hover:text-[#fefefc] hover:border-[#0d5844] transition-all duration-300"
                                     >
                                         {leader.designation?.toLowerCase().includes('founder') ? 'About Founder' : 'About Ameer'}
                                         <ArrowRight className="w-3 h-3 ml-1" />

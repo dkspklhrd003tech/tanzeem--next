@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Edit2, Trash2, X, Image as ImageIcon, Link as LinkIcon, Video, GripVertical, Youtube, Play } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
+import { ImageUploader } from "../ImageUploader";
 import {
     DndContext,
     closestCenter,
@@ -208,36 +209,7 @@ export function FeaturedVideos() {
         setPreviewUrl(null);
     };
 
-    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (!e.target.files || e.target.files.length === 0) return;
-        const file = e.target.files[0];
-
-        setPreviewUrl(URL.createObjectURL(file));
-
-        setIsUploading(true);
-        const form = new FormData();
-        form.append("file", file);
-        form.append("type", "video-thumbnail");
-
-        try {
-            const res = await fetch("/api/upload", {
-                method: "POST",
-                body: form,
-            });
-            const data = await res.json();
-
-            if (res.ok && data.success) {
-                setFormData(prev => ({ ...prev, thumbnailUrl: data.url }));
-                toast({ title: "Thumbnail Uploaded", description: "Video thumbnail saved securely." });
-            } else {
-                throw new Error(data.error || "Upload failed");
-            }
-        } catch (err: any) {
-            toast({ title: "Upload Failed", description: err.message, variant: "destructive" });
-        } finally {
-            setIsUploading(false);
-        }
-    };
+    // Removed handleFileUpload as we use ImageUploader now
 
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -413,7 +385,7 @@ export function FeaturedVideos() {
                                                 type="text"
                                                 value={formData.title}
                                                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                                className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                                                className="w-full py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                                                 placeholder="e.g. Khutba e Jummah"
                                             />
                                         </div>
@@ -424,7 +396,7 @@ export function FeaturedVideos() {
                                                 type="text"
                                                 value={formData.videoUrl}
                                                 onChange={(e) => setFormData({ ...formData, videoUrl: e.target.value })}
-                                                className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                                                className="w-full py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                                                 placeholder="https://youtube.com/watch?..."
                                             />
                                         </div>
@@ -434,25 +406,13 @@ export function FeaturedVideos() {
                                     <div className="bg-muted/10 p-5 rounded-xl border border-border">
                                         <label className="block text-sm font-medium text-foreground mb-3">Custom Thumbnail Cover <span className="text-xs font-normal text-foreground-muted">(255x144 recommended)</span></label>
                                         <div className="flex flex-col md:flex-row gap-5 items-center md:items-start">
-                                            <div
-                                                onClick={() => fileInputRef.current?.click()}
-                                                className="relative w-full max-w-[200px] aspect-video rounded-xl border-2 border-dashed border-border bg-muted/30 hover:bg-muted/50 transition-colors flex flex-col items-center justify-center cursor-pointer overflow-hidden group flex-shrink-0"
-                                            >
-                                                {(previewUrl || formData.thumbnailUrl) ? (
-                                                    <img src={previewUrl || formData.thumbnailUrl} alt="Preview" className="w-full h-full object-cover" />
-                                                ) : (
-                                                    <div className="flex flex-col items-center text-foreground-muted p-2 text-center text-xs">
-                                                        <ImageIcon className="w-6 h-6 mb-1 opacity-50 group-hover:opacity-100 transition-opacity" />
-                                                        <span>Upload Cover</span>
-                                                    </div>
-                                                )}
-                                                {isUploading && (
-                                                    <div className="absolute inset-0 bg-black/50 flex items-center justify-center backdrop-blur-sm">
-                                                        <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
-                                                    </div>
-                                                )}
+                                            <div className="flex-shrink-0 w-full max-w-[200px]">
+                                                <ImageUploader
+                                                    value={formData.thumbnailUrl}
+                                                    onChange={(url) => setFormData({ ...formData, thumbnailUrl: url })}
+                                                    aspectRatio={16 / 9}
+                                                />
                                             </div>
-                                            <input type="file" ref={fileInputRef} onChange={handleFileUpload} accept="image/*" className="hidden" />
 
                                             <div className="flex flex-col gap-3 justify-center text-sm text-foreground-muted w-full">
                                                 <p>Manually upload a 16:9 thumbnail frame, OR attempt to fetch the cover payload directly from YouTube.</p>

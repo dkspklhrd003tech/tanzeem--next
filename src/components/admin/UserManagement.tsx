@@ -156,7 +156,7 @@ export function UserManagement() {
                 </div>
                 <button
                     onClick={() => handleOpenModal()}
-                    className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2 rounded-lg hover:bg-primary-dark transition-colors"
+                    className="flex items-center gap-2 bg-primary text-primary-foreground py-2 rounded-lg hover:bg-primary-dark transition-colors"
                 >
                     <Plus className="w-4 h-4" />
                     Add User
@@ -346,7 +346,7 @@ export function UserManagement() {
                                     <button
                                         type="button"
                                         onClick={closeModal}
-                                        className="px-4 py-2 hover:bg-muted text-foreground-muted hover:text-foreground rounded-lg transition-colors font-medium text-sm"
+                                        className="py-2 hover:bg-muted text-foreground-muted hover:text-foreground rounded-lg transition-colors font-medium text-sm"
                                     >
                                         Cancel
                                     </button>

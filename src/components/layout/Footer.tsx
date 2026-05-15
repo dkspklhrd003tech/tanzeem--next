@@ -186,10 +186,6 @@ export function Footer() {
               </motion.a>
             )}
           </div>
-
-          <p className="text-white/30 text-xs flex items-center gap-1">
-            Made with <Heart className="h-3 w-3 text-red-500 fill-red-500" /> for the Ummah
-          </p>
         </div>
       </div>
     </footer>

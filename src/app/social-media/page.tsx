@@ -16,9 +16,9 @@ export default async function SocialMediaPage() {
 
   return (
     <div className="min-h-screen pt-24 pb-20 bg-[#fefefc]">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto">
         <header className="text-center mb-16 space-y-4">
-          <div className="inline-block px-4 py-1.5 rounded-full bg-primary/5 text-primary text-sm font-bold tracking-widest uppercase mb-2">
+          <div className="inline-block py-1.5 rounded-full bg-primary/5 text-primary text-sm font-bold tracking-widest uppercase mb-2">
             Stay Connected
           </div>
           <h1 className="text-4xl md:text-6xl font-black text-[#0d5844] tracking-tight">

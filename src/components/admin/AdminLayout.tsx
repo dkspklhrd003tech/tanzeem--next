@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -26,6 +26,10 @@ import {
   Newspaper,
   Mic,
   ListOrdered,
+  Globe,
+  Navigation,
+  Box,
+  Hash,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -47,21 +51,11 @@ import {
 import { cn } from "@/lib/utils";
 import { useTheme } from "next-themes";
 
-const menuItems = [
+const menuItems: any[] = [
   {
     title: "Dashboard",
     icon: LayoutDashboard,
     href: "/sitemanager",
-  },
-  {
-    title: "Homepage Setup",
-    icon: LayoutDashboard,
-    href: "/sitemanager?section=homepage",
-  },
-  {
-    title: "Dars-e-Quran",
-    icon: BookOpen,
-    href: "/sitemanager?section=darse-quran",
   },
   {
     title: "Pages",
@@ -69,76 +63,140 @@ const menuItems = [
     href: "/sitemanager?section=pages",
   },
   {
-    title: "Menus",
-    icon: ListOrdered,
-    href: "/sitemanager?section=menus",
-  },
-  {
-    title: "Posts",
-    icon: Newspaper,
-    href: "/sitemanager?section=posts",
-  },
-  {
-    title: "Audio",
-    icon: Headphones,
-    href: "/sitemanager?section=audio",
-  },
-  {
-    title: "Videos",
-    icon: Video,
-    href: "/sitemanager?section=videos",
-  },
-  {
-    title: "Books",
-    icon: BookOpen,
-    href: "/sitemanager?section=books",
-  },
-  {
-    title: "Magazines",
-    icon: Folder,
-    href: "/sitemanager?section=magazines",
-  },
-  {
-    title: "Sermons",
-    icon: Mic,
-    href: "/sitemanager?section=sermons",
-  },
-  {
-    title: "Events",
-    icon: Calendar,
-    href: "/sitemanager?section=events",
-  },
-  {
-    title: "Team",
-    icon: Users,
-    href: "/sitemanager?section=team",
-  },
-  {
-    title: "Testimonials",
-    icon: MessageSquare,
-    href: "/sitemanager?section=testimonials",
-  },
-  {
-    title: "Users",
-    icon: Users,
-    href: "/sitemanager?section=users",
-  },
-  {
     title: "Media Library",
     icon: Folder,
     href: "/sitemanager?section=media",
   },
   {
-    title: "Settings",
-    icon: Settings,
-    href: "/sitemanager?section=settings",
+    title: "SEO / Meta",
+    icon: Hash,
+    href: "/sitemanager?section=seo",
   },
   {
-    title: "Social Media Hub",
-    icon: Users,
-    href: "/sitemanager?section=social-media",
+    title: "Content",
+    icon: Newspaper,
+    items: [
+      {
+        title: "Audio",
+        icon: Headphones,
+        href: "/sitemanager?section=audio",
+      },
+      {
+        title: "Videos",
+        icon: Video,
+        href: "/sitemanager?section=videos",
+      },
+      {
+        title: "Books",
+        icon: BookOpen,
+        href: "/sitemanager?section=books",
+      },
+      {
+        title: "Team",
+        icon: Users,
+        href: "/sitemanager?section=team",
+      },
+    ]
   },
+  {
+    title: "Global Settings",
+    icon: Settings,
+    items: [
+      {
+        title: "Site Identity",
+        icon: Globe,
+        href: "/sitemanager?section=identity",
+      },
+      {
+        title: "Navigation",
+        icon: Navigation,
+        href: "/sitemanager?section=menus",
+      },
+      {
+        title: "Footer",
+        icon: ListOrdered,
+        href: "/sitemanager?section=footer",
+      },
+      {
+        title: "Components",
+        icon: Box,
+        items: [
+          {
+            title: "Page Banner",
+            icon: FileText,
+            href: "/sitemanager?section=banner",
+          },
+        ],
+      },
+    ],
+  }
 ];
+
+function SidebarMenuItem({ item, currentSection, isCollapsed, level = 0 }: any) {
+  const [isOpen, setIsOpen] = useState(false);
+  const isActive = item.href?.includes(`section=${currentSection}`) ||
+    (currentSection === "dashboard" && item.href === "/sitemanager");
+  const hasItems = item.items && item.items.length > 0;
+
+  // Auto-expand if a child is active
+  useEffect(() => {
+    if (hasItems && item.items.some((i: any) => i.href?.includes(`section=${currentSection}`))) {
+      setIsOpen(true);
+    }
+  }, [currentSection, hasItems, item.items]);
+
+  const content = (
+    <div className={cn(
+      "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors cursor-pointer",
+      isActive
+        ? "bg-primary text-primary-foreground"
+        : "text-foreground-muted hover:text-primary hover:bg-muted/50",
+      level > 0 && "py-1.5 text-sm"
+    )}>
+      <item.icon className={cn("h-5 w-5 shrink-0", level > 0 && "h-4 w-4")} />
+      {!isCollapsed && (
+        <span className="flex-1 whitespace-nowrap overflow-hidden">
+          {item.title}
+        </span>
+      )}
+      {!isCollapsed && hasItems && (
+        <ChevronLeft className={cn(
+          "h-4 w-4 transition-transform",
+          isOpen ? "-rotate-90" : ""
+        )} />
+      )}
+    </div>
+  );
+
+  return (
+    <li>
+      {item.href ? (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Link href={item.href}>{content}</Link>
+          </TooltipTrigger>
+          {isCollapsed && <TooltipContent side="right">{item.title}</TooltipContent>}
+        </Tooltip>
+      ) : (
+        <div onClick={() => setIsOpen(!isOpen)}>{content}</div>
+      )}
+
+      {!isCollapsed && hasItems && isOpen && (
+        <ul className="mt-1 ml-4 space-y-1 border-l border-border">
+          {item.items.map((subItem: any) => (
+            <SidebarMenuItem
+              key={subItem.title}
+              item={subItem}
+              currentSection={currentSection}
+              isCollapsed={isCollapsed}
+              level={level + 1}
+            />
+          ))}
+        </ul>
+      )}
+    </li>
+  );
+}
 
 interface AdminLayoutProps {
   children: React.ReactNode;
@@ -160,7 +218,7 @@ export function AdminLayout({ children, currentSection, onExitAdmin }: AdminLayo
         className="fixed left-0 top-0 h-screen bg-card border-r border-border z-40 flex flex-col"
       >
         {/* Logo */}
-        <div className="h-16 flex items-center justify-between px-4 border-b border-border">
+        <div className="h-16 px-2 flex items-center justify-between border-b border-border">
           <AnimatePresence mode="wait">
             {!isSidebarCollapsed && (
               <motion.div
@@ -193,47 +251,14 @@ export function AdminLayout({ children, currentSection, onExitAdmin }: AdminLayo
         <nav className="flex-1 overflow-y-auto py-4">
           <TooltipProvider delayDuration={0}>
             <ul className="space-y-1 px-2">
-              {menuItems.map((item) => {
-                const isActive = item.href.includes(`section=${currentSection}`) ||
-                  (currentSection === "dashboard" && item.href === "/sitemanager");
-
-                return (
-                  <li key={item.title}>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Link
-                          href={item.href}
-                          className={cn(
-                            "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors",
-                            isActive
-                              ? "bg-primary text-primary-foreground"
-                              : "text-foreground-muted hover:text-primary hover:bg-muted/50"
-                          )}
-                        >
-                          <item.icon className="h-5 w-5 shrink-0" />
-                          <AnimatePresence mode="wait">
-                            {!isSidebarCollapsed && (
-                              <motion.span
-                                initial={{ opacity: 0, width: 0 }}
-                                animate={{ opacity: 1, width: "auto" }}
-                                exit={{ opacity: 0, width: 0 }}
-                                className="whitespace-nowrap overflow-hidden"
-                              >
-                                {item.title}
-                              </motion.span>
-                            )}
-                          </AnimatePresence>
-                        </Link>
-                      </TooltipTrigger>
-                      {isSidebarCollapsed && (
-                        <TooltipContent side="right">
-                          {item.title}
-                        </TooltipContent>
-                      )}
-                    </Tooltip>
-                  </li>
-                );
-              })}
+              {menuItems.map((item) => (
+                <SidebarMenuItem
+                  key={item.title}
+                  item={item}
+                  currentSection={currentSection}
+                  isCollapsed={isSidebarCollapsed}
+                />
+              ))}
             </ul>
           </TooltipProvider>
         </nav>
@@ -274,16 +299,6 @@ export function AdminLayout({ children, currentSection, onExitAdmin }: AdminLayo
           </div>
 
           <div className="flex items-center gap-4">
-            {/* Theme Toggle */}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-            >
-              <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-              <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-            </Button>
-
             {/* Notifications */}
             <Button variant="ghost" size="icon" className="relative">
               <Bell className="h-5 w-5" />

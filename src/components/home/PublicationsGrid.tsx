@@ -31,7 +31,7 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
         <div className="bg-[#fefefc]">
             {/* 1. Our Magazines Section */}
             <section className="py-16 border-t border-border bg-gradient-to-b from-white to-[#fefefc]">
-                <div className="container max-w-7xl mx-auto px-4">
+                <div className="container max-w-7xl mx-auto">
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-8">
                         <div className="space-y-3">
                             <h2 className="text-4xl md:text-5xl font-black text-[#0d5844] tracking-tight leading-tight">— Our Magazines</h2>
@@ -39,7 +39,7 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
                                 Books And Literature Of Tanzeem-e-Islami & Anjuman Khuddam Ul Quran
                             </p>
                         </div>
-                        <Link href="/resources/magazines" className="group flex items-center gap-2 btn-primary-rounded px-8 py-3 text-sm font-bold shadow-sm">
+                        <Link href="/magazines" className="group flex items-center gap-2 btn-primary-rounded px-8 py-3 text-sm font-bold shadow-sm">
                             About Magazines
                             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                         </Link>
@@ -77,9 +77,9 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
                                     {mag.issueNumber || "Current Issue"}
                                 </div>
 
-                                <div className="text-center z-10 w-full px-4">
+                                <div className="text-center z-10 w-full">
                                     <Link
-                                        href={`/resources/magazines/${mag.id}`}
+                                        href={`/magazines/${mag.id}`}
                                         className="inline-flex items-center justify-center gap-2 w-full btn-primary-rounded px-6 py-2.5 text-xs font-semibold uppercase tracking-widest group/btn shadow-sm hover:shadow-md"
                                     >
                                         More {mag.title}
@@ -99,7 +99,7 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
 
             {/* 2. Our Books Section */}
             <section className="py-16 border-t border-border bg-white">
-                <div className="container max-w-7xl mx-auto px-4">
+                <div className="container max-w-7xl mx-auto">
                     <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-8">
                         <div className="space-y-3">
                             <h2 className="text-4xl md:text-5xl font-black text-[#0d5844] tracking-tight leading-tight">— Our Books</h2>
@@ -107,7 +107,7 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
                                 Message of Iqamat ud Din & Ruju llul Quran Through Our Periodicals.
                             </p>
                         </div>
-                        <Link href="/resources/books" className="group flex items-center gap-2 btn-primary-rounded px-8 py-3 text-sm font-semibold shadow-sm">
+                        <Link href="/books" className="group flex items-center gap-2 btn-primary-rounded px-8 py-3 text-sm font-semibold shadow-sm">
                             About Books
                             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                         </Link>
@@ -138,9 +138,9 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
                                     </div>
                                 </div>
 
-                                <div className="text-center z-10 w-full px-4">
+                                <div className="text-center z-10 w-full">
                                     <Link
-                                        href={`/resources/books/${book.id}`}
+                                        href={`/books/${book.id}`}
                                         className="inline-flex items-center justify-center gap-2 w-full btn-primary-rounded px-6 py-2.5 text-xs font-semibold uppercase tracking-widest group/btn shadow-sm hover:shadow-md"
                                     >
                                         {book.title}

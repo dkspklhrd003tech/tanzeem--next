@@ -12,7 +12,7 @@ const lato = Lato({
 });
 
 export const metadata: Metadata = {
-  title: "Tanzeem-e-Islami | Working to Establish Deen",
+  title: "Tanzeem-e-Islami",
   description: "Tanzeem-e-Islami is working to re-establish Khilafah by following the methodology of Prophet Muhammad (SAWS). Access Islamic lectures, books, videos, and educational resources.",
   keywords: ["Tanzeem-e-Islami", "Dr. Israr Ahmed", "Islamic Lectures", "Khilafah", "Quran", "Hadith", "Islamic Education", "Islamic Books"],
   authors: [{ name: "Tanzeem-e-Islami" }],
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     icon: "/favicon.ico",
   },
   openGraph: {
-    title: "Tanzeem-e-Islami | Working to Establish Deen",
+    title: "Tanzeem-e-Islami",
     description: "Access Islamic lectures, books, videos, and educational resources from Tanzeem-e-Islami",
     url: "https://tanzeem.org",
     siteName: "Tanzeem-e-Islami",

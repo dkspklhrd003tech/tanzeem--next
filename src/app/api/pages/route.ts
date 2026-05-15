@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { pages, activityLogs } from "@/db/schema";
+import { pages, pageSections, activityLogs } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth";
 import { eq, or, like, desc, and } from "drizzle-orm";
 
@@ -105,6 +105,20 @@ export async function POST(request: NextRequest) {
       authorId: user.id,
       publishedAt: data.isPublished ? new Date() : null,
     });
+
+    // Create sections if provided
+    if (data.sections && Array.isArray(data.sections) && data.sections.length > 0) {
+      await db.insert(pageSections).values(
+        data.sections.map((s: any, index: number) => ({
+          id: s.id && String(s.id).length >= 36 ? String(s.id) : crypto.randomUUID(),
+          pageId,
+          type: s.type,
+          order: index,
+          config: s.config || {},
+          isActive: s.isActive ?? true,
+        }))
+      );
+    }
 
     const newPage = await db.query.pages.findFirst({
       where: eq(pages.id, pageId),

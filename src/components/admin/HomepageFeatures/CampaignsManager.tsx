@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Edit2, Trash2, X, Image as ImageIcon, Link as LinkIcon, GripVertical } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
+import { ImageUploader } from "../ImageUploader";
 import {
     DndContext,
     closestCenter,
@@ -247,43 +248,7 @@ export function CampaignsManager() {
         setPreviewUrl(null);
     };
 
-    const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (!e.target.files || e.target.files.length === 0) return;
-        const file = e.target.files[0];
-
-        setPreviewUrl(URL.createObjectURL(file));
-
-        setIsUploading(true);
-        const form = new FormData();
-        form.append("file", file);
-        form.append("type", "campaign");
-
-        try {
-            const res = await fetch("/api/upload", {
-                method: "POST",
-                body: form,
-            });
-            const data = await res.json();
-
-            if (res.ok && data.success) {
-                setFormData(prev => ({ ...prev, imageUrl: data.url }));
-                toast({
-                    title: "Image Uploaded",
-                    description: "Campaign image securely uploaded to server.",
-                });
-            } else {
-                throw new Error(data.error || "Upload failed");
-            }
-        } catch (err: any) {
-            toast({
-                title: "Upload Failed",
-                description: err.message,
-                variant: "destructive",
-            });
-        } finally {
-            setIsUploading(false);
-        }
-    };
+    // Removed handleFileUpload as we use ImageUploader now
 
     const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -456,30 +421,10 @@ export function CampaignsManager() {
                                     {/* Image Upload Area */}
                                     <div>
                                         <label className="block text-sm font-medium text-foreground mb-2">Campaign Image (Card format) *</label>
-                                        <div
-                                            onClick={() => fileInputRef.current?.click()}
-                                            className="relative w-full aspect-[348/195] max-w-sm rounded-xl border-2 border-dashed border-border bg-muted/30 hover:bg-muted/50 transition-colors flex flex-col items-center justify-center cursor-pointer overflow-hidden group"
-                                        >
-                                            {(previewUrl || formData.imageUrl) ? (
-                                                <img src={previewUrl || formData.imageUrl} alt="Preview" className="w-full h-full object-cover" />
-                                            ) : (
-                                                <div className="flex flex-col items-center text-foreground-muted">
-                                                    <ImageIcon className="w-8 h-8 mb-2 opacity-50 group-hover:opacity-100 transition-opacity" />
-                                                    <span className="text-sm">Click to upload image</span>
-                                                </div>
-                                            )}
-                                            {isUploading && (
-                                                <div className="absolute inset-0 bg-black/50 flex items-center justify-center backdrop-blur-sm">
-                                                    <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
-                                                </div>
-                                            )}
-                                        </div>
-                                        <input
-                                            type="file"
-                                            ref={fileInputRef}
-                                            onChange={handleFileUpload}
-                                            accept="image/*"
-                                            className="hidden"
+                                        <ImageUploader
+                                            value={formData.imageUrl}
+                                            onChange={(url) => setFormData({ ...formData, imageUrl: url })}
+                                            aspectRatio={348 / 195}
                                         />
                                     </div>
 
@@ -490,7 +435,7 @@ export function CampaignsManager() {
                                                 type="text"
                                                 value={formData.title}
                                                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                                className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                                                className="w-full py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                                                 placeholder="e.g. Free Palestine Campaign"
                                                 required
                                             />
@@ -502,7 +447,7 @@ export function CampaignsManager() {
                                                 type="text"
                                                 value={formData.linkUrl}
                                                 onChange={(e) => setFormData({ ...formData, linkUrl: e.target.value })}
-                                                className="w-full px-4 py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                                                className="w-full py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                                                 placeholder="/initiatives/palestine or https://..."
                                             />
                                         </div>

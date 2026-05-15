@@ -5,6 +5,7 @@ import { Plus, Pencil, Trash2, MapPin, Search } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { RichTextEditor } from "./RichTextEditor";
 
 interface DarseQuranEvent {
     id: string;
@@ -276,7 +277,11 @@ export function DarseQuranManager() {
 
                                 <div className="space-y-2 mt-4">
                                     <label className="text-sm font-medium">Complete Physical Address</label>
-                                    <textarea required rows={2} className="w-full p-2 border border-border rounded bg-background" value={formData.address} onChange={e => setFormData({ ...formData, address: e.target.value })} />
+                                    <RichTextEditor 
+                                        content={formData.address} 
+                                        onChange={(content) => setFormData({ ...formData, address: content })}
+                                        placeholder="Enter the full address and location details..."
+                                    />
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">

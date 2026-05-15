@@ -7,6 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Settings, LayoutTemplate, Palette, Mail, MessageSquare, Send, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { ImageUploader } from "./ImageUploader";
+import { RichTextEditor } from "./RichTextEditor";
 
 interface FormSubmission {
     id: string;
@@ -74,46 +76,7 @@ export function SettingsManager() {
         setSettings(prev => ({ ...prev, [key]: value }));
     };
 
-    const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-
-        // Force WEBP only
-        if (file.type !== "image/webp" && !file.name.toLowerCase().endsWith(".webp")) {
-            toast({
-                title: "Invalid Format",
-                description: "Only WEBP files are acceptable for the site logo.",
-                variant: "destructive"
-            });
-            return;
-        }
-
-        setLogoPreview(URL.createObjectURL(file));
-        setIsLogoUploading(true);
-
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("type", "general");
-
-        try {
-            const res = await fetch("/api/upload", {
-                method: "POST",
-                body: formData,
-            });
-            const data = await res.json();
-
-            if (res.ok && data.success) {
-                handleSettingChange("site_logo", data.url);
-                toast({ title: "Logo Uploaded", description: "Identity asset updated successfully." });
-            } else {
-                throw new Error(data.error || "Upload failed");
-            }
-        } catch (error: any) {
-            toast({ title: "Upload Failed", description: error.message, variant: "destructive" });
-        } finally {
-            setIsLogoUploading(false);
-        }
-    };
+    // Removed handleLogoUpload as we use ImageUploader now
 
     const saveSettings = async () => {
         setIsSaving(true);
@@ -142,10 +105,10 @@ export function SettingsManager() {
             }
         } catch (error: any) {
             console.error("DEBUG: Save Settings Error:", error);
-            toast({ 
-                title: "Failed to save", 
-                description: error.message || "An unexpected error occurred. Please check the console.", 
-                variant: "destructive" 
+            toast({
+                title: "Failed to save",
+                description: error.message || "An unexpected error occurred. Please check the console.",
+                variant: "destructive"
             });
         } finally {
             setIsSaving(false);
@@ -299,41 +262,13 @@ export function SettingsManager() {
                             <div className="flex flex-col md:flex-row gap-8 items-start mb-6 pb-8 border-b border-border/50">
                                 <div className="space-y-4">
                                     <label className="text-sm font-semibold text-foreground">Header Site Logo (WEBP Only)</label>
-                                    <div className="relative group">
-                                        <div className="w-32 h-32 rounded-xl border-2 border-dashed border-border bg-muted/30 flex items-center justify-center overflow-hidden transition-all group-hover:bg-muted/50">
-                                            {logoPreview || settings.site_logo ? (
-                                                <img
-                                                    src={logoPreview || settings.site_logo}
-                                                    alt="Logo Preview"
-                                                    className="max-w-full max-h-full object-contain"
-                                                />
-                                            ) : (
-                                                <div className="text-center p-2">
-                                                    <LayoutTemplate className="w-8 h-8 mx-auto mb-2 text-foreground-muted opacity-30" />
-                                                    <span className="text-[10px] text-foreground-muted">No logo defined</span>
-                                                </div>
-                                            )}
-
-                                            {isLogoUploading && (
-                                                <div className="absolute inset-0 bg-background/60 backdrop-blur-[2px] flex items-center justify-center">
-                                                    <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
-                                                </div>
-                                            )}
-                                        </div>
-
-                                        <input
-                                            type="file"
-                                            id="logo-upload"
-                                            className="hidden"
-                                            accept=".webp"
-                                            onChange={handleLogoUpload}
+                                    <div className="space-y-4">
+                                        <label className="text-sm font-semibold text-foreground">Header Site Logo (WEBP Only)</label>
+                                        <ImageUploader
+                                            value={settings.site_logo}
+                                            onChange={(url) => handleSettingChange("site_logo", url)}
+                                            aspectRatio={1} // Assuming square for logo or flexible
                                         />
-                                        <button
-                                            onClick={() => document.getElementById('logo-upload')?.click()}
-                                            className="mt-3 w-full py-2 px-4 rounded-lg bg-background border border-border text-xs font-bold hover:bg-muted transition-all active:scale-95 shadow-sm"
-                                        >
-                                            Upload WEBP Logo
-                                        </button>
                                     </div>
                                     <p className="text-[11px] text-foreground-muted max-w-[150px]">Acceptable Format: **WEBP** only (for optimal performance).</p>
                                 </div>
@@ -497,11 +432,10 @@ export function SettingsManager() {
                                         <p className="text-sm font-medium mb-2 flex items-center gap-2">
                                             <Send className="w-4 h-4" /> Reply via SMTP
                                         </p>
-                                        <textarea
-                                            className="w-full h-32 p-3 border border-border rounded-xl bg-muted/20 focus:bg-background transition-colors resize-none text-sm mb-3"
+                                        <RichTextEditor
+                                            content={replyMessage}
+                                            onChange={(content) => setReplyMessage(content)}
                                             placeholder={`Draft your electronic reply to ${activeSubmission.name}...`}
-                                            value={replyMessage}
-                                            onChange={(e) => setReplyMessage(e.target.value)}
                                         />
                                         <div className="flex justify-end">
                                             <Button
