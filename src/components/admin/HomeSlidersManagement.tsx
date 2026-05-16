@@ -6,6 +6,8 @@ import { Plus, Edit2, Trash2, X, Image as ImageIcon, Link as LinkIcon } from "lu
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { ImageUploader } from "./ImageUploader";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Button } from "@/components/ui/button";
 
 type HomeSlider = {
     id: string;
@@ -134,8 +136,10 @@ export function HomeSlidersManagement() {
         }
     };
 
+    const [deletingSliderId, setDeletingSliderId] = useState<{id: string, title: string} | null>(null);
+
     const handleDelete = async (id: string, title: string) => {
-        if (!confirm(`Are you sure you want to Delete Slider?"${title}"?`)) return;
+        setDeletingSliderId(null);
 
         try {
             const res = await fetch(`/api/sliders/${id}`, { method: "DELETE" });
@@ -234,7 +238,7 @@ export function HomeSlidersManagement() {
                                                     <Edit2 className="w-4 h-4" />
                                                 </button>
                                                 <button
-                                                    onClick={() => handleDelete(slider.id, slider.title)}
+                                                    onClick={() => setDeletingSliderId({id: slider.id, title: slider.title})}
                                                     className="p-2 text-foreground-light hover:text-destructive transition-colors hover:bg-destructive/10 rounded-md"
                                                     title="Delete Slider"
                                                 >
@@ -289,7 +293,7 @@ export function HomeSlidersManagement() {
                                 </button>
                             </div>
 
-                            <form onSubmit={handleSave} className="p-6 space-y-5">
+                            <form id="slider-form" onSubmit={handleSave} className="p-6 space-y-5">
 
                                 {/* Image Uploader */}
                                 <div className="space-y-3">
@@ -363,19 +367,32 @@ export function HomeSlidersManagement() {
                                     >
                                         Cancel
                                     </button>
-                                    <button
-                                        type="submit"
-                                        disabled={isLoading || isUploading}
-                                        className="px-8 py-2.5 bg-[#0d5844] text-[#fefefc] rounded-xl font-semibold shadow-md active:scale-95 transition-all disabled:opacity-50"
+                                    <ConfirmDialog
+                                        title={editingSlider ? "Update Slider" : "Create Slider"}
+                                        description={`Are you sure you want to ${editingSlider ? "update" : "create"} this homepage slider?`}
+                                        onConfirm={() => document.getElementById("slider-form")?.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }))}
                                     >
-                                        {isLoading ? "Saving..." : editingSlider ? "Update Slider" : "Create Slider"}
-                                    </button>
+                                        <Button
+                                            type="button"
+                                            disabled={isLoading || isUploading}
+                                            className="px-8 py-2.5 bg-[#0d5844] text-[#fefefc] rounded-xl font-semibold shadow-md active:scale-95 transition-all disabled:opacity-50"
+                                        >
+                                            {isLoading ? "Saving..." : editingSlider ? "Update Slider" : "Create Slider"}
+                                        </Button>
+                                    </ConfirmDialog>
                                 </div>
                             </form>
                         </motion.div>
                     </div>
                 )}
             </AnimatePresence>
+            <ConfirmDialog
+                open={!!deletingSliderId}
+                onOpenChange={(open) => !open && setDeletingSliderId(null)}
+                title="Delete Slider"
+                description={`Are you sure you want to permanently delete the slider "${deletingSliderId?.title}"?`}
+                onConfirm={() => deletingSliderId && handleDelete(deletingSliderId.id, deletingSliderId.title)}
+            />
         </div>
     );
 }

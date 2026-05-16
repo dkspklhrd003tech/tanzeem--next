@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { RichTextEditor } from "./RichTextEditor";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 export function FooterManager() {
   const [settings, setSettings] = useState({
@@ -78,10 +79,16 @@ export function FooterManager() {
           <h1 className="text-3xl font-bold tracking-tight">Footer Management</h1>
           <p className="text-foreground-muted mt-1">Configure footer columns, social icons, and copyright text.</p>
         </div>
-        <Button onClick={handleSave} disabled={isSaving} className="bg-[#0d5844] hover:bg-[#0a4636] rounded-xl px-8">
-          {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-          Save Footer
-        </Button>
+        <ConfirmDialog
+          title="Save Footer Settings"
+          description="Are you sure you want to save the updated footer settings? This will immediately affect the site-wide footer."
+          onConfirm={handleSave}
+        >
+          <Button disabled={isSaving} className="bg-[#0d5844] hover:bg-[#0a4636] rounded-xl px-8">
+            {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+            Save Footer
+          </Button>
+        </ConfirmDialog>
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">

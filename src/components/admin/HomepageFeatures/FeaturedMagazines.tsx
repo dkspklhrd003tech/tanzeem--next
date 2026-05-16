@@ -5,6 +5,7 @@ import { Plus, Edit2, Trash2, X, Image as ImageIcon, GripVertical } from "lucide
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { ImageUploader } from "../ImageUploader";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {
     DndContext,
     closestCenter,
@@ -205,8 +206,10 @@ export function FeaturedMagazines() {
         }
     };
 
+    const [deletingMagazine, setDeletingMagazine] = useState<{id: string, title: string} | null>(null);
+
     const handleDelete = async (id: string, title: string) => {
-        if (!confirm(`Delete "${title}"?`)) return;
+        setDeletingMagazine(null);
         try {
             const res = await fetch(`/api/magazines/${id}`, { method: "DELETE" });
             if (!res.ok) throw new Error("Failed to delete magazine");
@@ -280,7 +283,7 @@ export function FeaturedMagazines() {
                                 <X className="w-5 h-5" />
                             </button>
                         </div>
-                        <form onSubmit={handleSave} className="p-6 space-y-6 bg-card">
+                        <form id="magazine-form" onSubmit={handleSave} className="p-6 space-y-6 bg-card">
                             <div className="space-y-3">
                                 <label className="text-sm font-semibold text-foreground flex items-center gap-2">
                                     <ImageIcon className="w-4 h-4 text-primary" />
@@ -325,12 +328,25 @@ export function FeaturedMagazines() {
 
                             <div className="flex justify-end gap-3 pt-6 border-t border-border mt-4">
                                 <button type="button" onClick={closeModal} className="px-6 py-2.5 bg-muted text-foreground rounded-xl font-medium hover:bg-muted/80 transition-all active:scale-95">Cancel</button>
-                                <button type="submit" disabled={isLoading || isUploading} className="px-8 py-2.5 bg-[#0d5844] text-[#fefefc] rounded-xl font-semibold hover:bg-[#0a4636] transition-all shadow-md active:scale-95 disabled:opacity-50">Save Changes</button>
+                                <ConfirmDialog
+                                    title={editingItem ? "Update Magazine" : "Create Magazine"}
+                                    description={`Are you sure you want to ${editingItem ? "update" : "create"} this featured magazine?`}
+                                    onConfirm={() => document.getElementById("magazine-form")?.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }))}
+                                >
+                                    <button type="button" disabled={isLoading || isUploading} className="px-8 py-2.5 bg-[#0d5844] text-[#fefefc] rounded-xl font-semibold hover:bg-[#0a4636] transition-all shadow-md active:scale-95 disabled:opacity-50">Save Changes</button>
+                                </ConfirmDialog>
                             </div>
                         </form>
                     </div>
                 </div>
             )}
+            <ConfirmDialog
+                open={!!deletingMagazine}
+                onOpenChange={(open) => !open && setDeletingMagazine(null)}
+                title="Delete Magazine"
+                description={`Are you sure you want to permanently delete the magazine "${deletingMagazine?.title}"?`}
+                onConfirm={() => deletingMagazine && handleDelete(deletingMagazine.id, deletingMagazine.title)}
+            />
         </div>
     );
 }

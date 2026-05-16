@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { ImageUploader } from "../ImageUploader";
 import { RichTextEditor } from "../RichTextEditor";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 type TeamMember = {
     id: string;
@@ -123,8 +124,10 @@ export function LeaderProfiles() {
         }
     };
 
+    const [deletingLeader, setDeletingLeader] = useState<{id: string, name: string} | null>(null);
+
     const handleDelete = async (id: string, name: string) => {
-        if (!confirm(`Are you sure you want to delete profile for "${name}"?`)) return;
+        setDeletingLeader(null);
 
         try {
             const res = await fetch(`/api/team/${id}`, { method: "DELETE" });
@@ -333,14 +336,27 @@ export function LeaderProfiles() {
                                 <button type="button" onClick={closeModal} className="px-6 py-2.5 text-sm font-semibold text-foreground bg-background border border-border rounded-xl hover:bg-muted transition-all active:scale-95">
                                     Cancel
                                 </button>
-                                <button form="profileForm" type="submit" disabled={isLoading || isUploading} className="px-8 py-2.5 text-sm font-bold text-primary-foreground bg-primary rounded-xl hover:bg-primary-dark transition-all active:scale-95 shadow-sm hover:shadow-md min-w-[140px]">
-                                    {isLoading ? <div className="mx-auto w-5 h-5 border-2 border-white/30 border-t-[#fefefc] rounded-full animate-spin"></div> : "Save Global Profile"}
-                                </button>
+                                <ConfirmDialog
+                                    title={editingMember ? "Update Profile" : "Create Profile"}
+                                    description={`Are you sure you want to ${editingMember ? "update" : "create"} this leadership profile?`}
+                                    onConfirm={() => document.getElementById("profileForm")?.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }))}
+                                >
+                                    <button type="button" disabled={isLoading || isUploading} className="px-8 py-2.5 text-sm font-bold text-primary-foreground bg-primary rounded-xl hover:bg-primary-dark transition-all active:scale-95 shadow-sm hover:shadow-md min-w-[140px]">
+                                        {isLoading ? <div className="mx-auto w-5 h-5 border-2 border-white/30 border-t-[#fefefc] rounded-full animate-spin"></div> : "Save Global Profile"}
+                                    </button>
+                                </ConfirmDialog>
                             </div>
                         </motion.div>
                     </div>
                 )}
             </AnimatePresence>
+            <ConfirmDialog
+                open={!!deletingLeader}
+                onOpenChange={(open) => !open && setDeletingLeader(null)}
+                title="Delete Leader Profile"
+                description={`Are you sure you want to permanently delete the profile of "${deletingLeader?.name}"?`}
+                onConfirm={() => deletingLeader && handleDelete(deletingLeader.id, deletingLeader.name)}
+            />
         </div>
     );
 }

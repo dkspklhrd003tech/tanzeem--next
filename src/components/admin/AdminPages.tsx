@@ -73,6 +73,12 @@ export function AdminPages({ section }: AdminPagesProps) {
   const handleSavePage = async (pageData: Record<string, unknown>) => {
     try {
       const isNew = editingId === "new";
+      
+      // We don't necessarily need a window.confirm here because ContentEditor already has a ConfirmDialog on the button.
+      // However, to be extra safe as per user request "apply confirmation message on all CRUD operation":
+      const confirmSave = window.confirm(`Are you sure you want to ${isNew ? "create" : "update"} this page?`);
+      if (!confirmSave) return;
+
       const url = isNew ? "/api/pages" : `/api/pages/${editingId}`;
       const method = isNew ? "POST" : "PUT";
 
@@ -128,6 +134,10 @@ export function AdminPages({ section }: AdminPagesProps) {
   const handleSaveGeneric = async (itemData: Record<string, unknown>) => {
     try {
       const isNew = editingId === "new";
+      
+      const confirmSave = window.confirm(`Are you sure you want to ${isNew ? "create" : "update"} this ${section}?`);
+      if (!confirmSave) return;
+
       const url = isNew ? `/api/admin/${section}` : `/api/admin/${section}/${editingId}`;
       const method = isNew ? "POST" : "PUT";
 

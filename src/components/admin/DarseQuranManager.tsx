@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { RichTextEditor } from "./RichTextEditor";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 interface DarseQuranEvent {
     id: string;
@@ -119,8 +120,10 @@ export function DarseQuranManager() {
         }
     };
 
+    const [deletingEventId, setDeletingEventId] = useState<{id: string, city: string} | null>(null);
+
     const handleDelete = async (id: string, city: string) => {
-        if (!confirm(`Are you sure you want to delete the event in ${city}?`)) return;
+        setDeletingEventId(null);
         try {
             const res = await fetch(`/api/darse-quran/${id}`, { method: "DELETE" });
             if (!res.ok) throw new Error("Failed to delete event");
@@ -228,7 +231,7 @@ export function DarseQuranManager() {
                                                 <Button variant="ghost" size="icon" onClick={() => handleOpenModal(event)}>
                                                     <Pencil className="w-4 h-4 text-blue-500" />
                                                 </Button>
-                                                <Button variant="ghost" size="icon" onClick={() => handleDelete(event.id, event.city)}>
+                                                <Button variant="ghost" size="icon" onClick={() => setDeletingEventId({id: event.id, city: event.city})}>
                                                     <Trash2 className="w-4 h-4 text-red-500" />
                                                 </Button>
                                             </div>
@@ -305,12 +308,25 @@ export function DarseQuranManager() {
                         </div>
 
                         <div className="p-6 border-t border-border bg-muted/30 flex justify-end gap-3">
-                            <Button variant="outline" type="button" onClick={() => setIsModalOpen(false)}>Cancel</Button>
-                            <Button form="darse-quran-form" type="submit">Save Program</Button>
+                             <Button variant="outline" type="button" onClick={() => setIsModalOpen(false)}>Cancel</Button>
+                             <ConfirmDialog
+                                title="Save Program"
+                                description="Are you sure you want to save this Dars-e-Quran program?"
+                                onConfirm={() => document.getElementById("darse-quran-form")?.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }))}
+                             >
+                                <Button type="button">Save Program</Button>
+                             </ConfirmDialog>
                         </div>
                     </div>
                 </div>
             )}
+            <ConfirmDialog
+                open={!!deletingEventId}
+                onOpenChange={(open) => !open && setDeletingEventId(null)}
+                title="Delete Event"
+                description={`Are you sure you want to delete the Dars-e-Quran event in ${deletingEventId?.city}?`}
+                onConfirm={() => deletingEventId && handleDelete(deletingEventId.id, deletingEventId.city)}
+            />
         </div>
     );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { v4 as uuidv4 } from "uuid";
 import { 
   Plus, 
   Trash2, 
@@ -41,9 +42,9 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { v4 as uuidv4 } from "uuid";
 import { RichTextEditor } from "./RichTextEditor";
 import { ImageUploader } from "./ImageUploader";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 interface Section {
   id: string;
@@ -134,10 +135,13 @@ export function PageSectionBuilder({ pageId, onSave }: PageSectionBuilderProps) 
     onSave(updated);
   };
 
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
   const removeSection = (id: string) => {
     const updated = sections.filter((s) => s.id !== id);
     setSections(updated);
     onSave(updated);
+    setDeletingId(null);
   };
 
   const updateSection = (id: string, updates: Partial<Section>) => {
@@ -145,9 +149,10 @@ export function PageSectionBuilder({ pageId, onSave }: PageSectionBuilderProps) 
     setSections(updated);
     onSave(updated);
   };
-
   const getDefaultConfig = (type: string) => {
     switch (type) {
+      case "hero":
+        return { title: "", subtitle: "", backgroundImage: "" };
       case "intro":
         return { heading: "", subheading: "", body: "", image: "", alignment: "left" };
       case "cta_banner":
@@ -156,6 +161,12 @@ export function PageSectionBuilder({ pageId, onSave }: PageSectionBuilderProps) 
         return { stats: [{ number: "0", label: "Stat" }] };
       case "accordion":
         return { heading: "Frequently Asked Questions", items: [{ question: "", answer: "" }] };
+      case "team":
+        return { heading: "Our Leadership", members: [{ name: "", designation: "", avatar: "" }] };
+      case "media_grid":
+        return { heading: "Media Library", columns: 3, items: [{ title: "", image: "", type: "video", link: "" }] };
+      case "publications":
+        return { heading: "Publications", publications: [{ title: "", cover: "", author: "", link: "" }] };
       case "embed":
         return { source: "", aspectRatio: "video" };
       default:
@@ -195,14 +206,22 @@ export function PageSectionBuilder({ pageId, onSave }: PageSectionBuilderProps) 
                 section={section} 
                 isExpanded={expandedId === section.id}
                 onToggleExpand={() => setExpandedId(expandedId === section.id ? null : section.id)}
-                onRemove={() => removeSection(section.id)}
-                onUpdate={(updates) => updateSection(section.id, updates)}
+                onRemove={(id: string) => setDeletingId(id)}
+                onUpdate={(updates: any) => updateSection(section.id, updates)}
               />
             ))}
           </div>
         </SortableContext>
       </DndContext>
       
+      <ConfirmDialog
+        open={!!deletingId}
+        onOpenChange={(isOpen) => !isOpen && setDeletingId(null)}
+        title="Remove Section"
+        description="Are you sure you want to remove this section? This will delete all its content and configuration."
+        onConfirm={() => deletingId && removeSection(deletingId)}
+      />
+
       {sections.length === 0 && (
         <div className="text-center py-12 border-2 border-dashed border-border rounded-2xl bg-muted/30">
           <p className="text-foreground-muted">No sections added yet. Click "Add Section" to start building your page.</p>
@@ -261,7 +280,7 @@ function SortableItem({ section, isExpanded, onToggleExpand, onRemove, onUpdate 
             <Button variant="ghost" size="icon" onClick={onToggleExpand}>
               {isExpanded ? <ChevronUp className="w-4 h-4" /> : <Settings2 className="w-4 h-4" />}
             </Button>
-            <Button variant="ghost" size="icon" onClick={onRemove} className="text-destructive hover:bg-destructive/10">
+            <Button variant="ghost" size="icon" onClick={() => onRemove(section.id)} className="text-destructive hover:bg-destructive/10">
               <Trash2 className="w-4 h-4" />
             </Button>
           </div>
@@ -280,13 +299,35 @@ function SortableItem({ section, isExpanded, onToggleExpand, onRemove, onUpdate 
     </div>
   );
 }
-
-function SectionConfigForm({ type, config, onUpdate }: any) {
+function SectionConfigForm({ type, config, onUpdate }: { type: string, config: any, onUpdate: (config: any) => void }) {
   const handleChange = (key: string, value: any) => {
     onUpdate({ ...config, [key]: value });
   };
 
   switch (type) {
+    case "hero":
+      return (
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Main Title</Label>
+              <Input value={config.title} onChange={(e) => handleChange("title", e.target.value)} />
+            </div>
+            <div className="space-y-2">
+              <Label>Subtitle</Label>
+              <Input value={config.subtitle} onChange={(e) => handleChange("subtitle", e.target.value)} />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label>Background Image</Label>
+            <ImageUploader 
+              value={config.backgroundImage} 
+              onChange={(url) => handleChange("backgroundImage", url)} 
+              aspectRatio={16/9}
+            />
+          </div>
+        </div>
+      );
     case "intro":
       return (
         <div className="space-y-4">
@@ -337,12 +378,275 @@ function SectionConfigForm({ type, config, onUpdate }: any) {
             <Input value={config.heading} onChange={(e) => handleChange("heading", e.target.value)} />
           </div>
           <div className="space-y-2">
+            <Label>Subheading</Label>
+            <Input value={config.subheading} onChange={(e) => handleChange("subheading", e.target.value)} />
+          </div>
+          <div className="space-y-2">
             <Label>Button Label</Label>
             <Input value={config.buttonLabel} onChange={(e) => handleChange("buttonLabel", e.target.value)} />
           </div>
           <div className="space-y-2">
             <Label>Button URL</Label>
             <Input value={config.buttonUrl} onChange={(e) => handleChange("buttonUrl", e.target.value)} />
+          </div>
+        </div>
+      );
+    case "stats":
+      return (
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <Label>Stats Items</Label>
+            <Button size="sm" variant="outline" onClick={() => handleChange("stats", [...(config.stats || []), { number: "", label: "" }])}>
+              <Plus className="w-3 h-3 mr-1" /> Add Stat
+            </Button>
+          </div>
+          <div className="space-y-3">
+            {config.stats?.map((stat: any, i: number) => (
+              <div key={i} className="flex gap-4 items-end bg-background p-3 rounded-lg border">
+                <div className="flex-1 grid grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <Label className="text-[10px]">Number</Label>
+                    <Input value={stat.number} onChange={(e) => {
+                      const newStats = [...config.stats];
+                      newStats[i].number = e.target.value;
+                      handleChange("stats", newStats);
+                    }} />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-[10px]">Label</Label>
+                    <Input value={stat.label} onChange={(e) => {
+                      const newStats = [...config.stats];
+                      newStats[i].label = e.target.value;
+                      handleChange("stats", newStats);
+                    }} />
+                  </div>
+                </div>
+                <Button variant="ghost" size="icon" className="text-destructive" onClick={() => {
+                  const newStats = config.stats.filter((_: any, idx: number) => idx !== i);
+                  handleChange("stats", newStats);
+                }}>
+                  <Trash2 className="w-4 h-4" />
+                </Button>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    case "accordion":
+      return (
+        <div className="space-y-6">
+          <div className="space-y-2">
+            <Label>Heading</Label>
+            <Input value={config.heading} onChange={(e) => handleChange("heading", e.target.value)} />
+          </div>
+          <div className="flex items-center justify-between pt-4 border-t">
+            <Label>Accordion Items (FAQ)</Label>
+            <Button size="sm" variant="outline" onClick={() => handleChange("items", [...(config.items || []), { question: "", answer: "" }])}>
+              <Plus className="w-3 h-3 mr-1" /> Add Item
+            </Button>
+          </div>
+          <div className="space-y-4">
+            {config.items?.map((item: any, i: number) => (
+              <div key={i} className="space-y-2 bg-background p-4 rounded-lg border">
+                <div className="flex items-center justify-between mb-2">
+                  <Label className="text-xs font-bold text-primary">Item #{i + 1}</Label>
+                  <Button variant="ghost" size="icon" className="h-6 w-6 text-destructive" onClick={() => {
+                    const newItems = config.items.filter((_: any, idx: number) => idx !== i);
+                    handleChange("items", newItems);
+                  }}>
+                    <Trash2 className="w-3 h-3" />
+                  </Button>
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-[10px]">Question</Label>
+                  <Input value={item.question} onChange={(e) => {
+                    const newItems = [...config.items];
+                    newItems[i].question = e.target.value;
+                    handleChange("items", newItems);
+                  }} />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-[10px]">Answer</Label>
+                  <Textarea value={item.answer} onChange={(e) => {
+                    const newItems = [...config.items];
+                    newItems[i].answer = e.target.value;
+                    handleChange("items", newItems);
+                  }} rows={2} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    case "team":
+      return (
+        <div className="space-y-6">
+          <div className="space-y-2">
+            <Label>Heading</Label>
+            <Input value={config.heading} onChange={(e) => handleChange("heading", e.target.value)} />
+          </div>
+          <div className="flex items-center justify-between pt-4 border-t">
+            <Label>Team Members</Label>
+            <Button size="sm" variant="outline" onClick={() => handleChange("members", [...(config.members || []), { name: "", designation: "", avatar: "" }])}>
+              <Plus className="w-3 h-3 mr-1" /> Add Member
+            </Button>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {config.members?.map((member: any, i: number) => (
+              <div key={i} className="space-y-4 bg-background p-4 rounded-lg border">
+                <div className="flex items-center justify-between mb-2">
+                  <Label className="text-xs font-bold text-primary">Member #{i + 1}</Label>
+                  <Button variant="ghost" size="icon" className="h-6 w-6 text-destructive" onClick={() => {
+                    const newMembers = config.members.filter((_: any, idx: number) => idx !== i);
+                    handleChange("members", newMembers);
+                  }}>
+                    <Trash2 className="w-3 h-3" />
+                  </Button>
+                </div>
+                <div className="space-y-3">
+                  <ImageUploader value={member.avatar} onChange={(url) => {
+                    const newMembers = [...config.members];
+                    newMembers[i].avatar = url;
+                    handleChange("members", newMembers);
+                  }} aspectRatio={1} />
+                  <Input placeholder="Name" value={member.name} onChange={(e) => {
+                    const newMembers = [...config.members];
+                    newMembers[i].name = e.target.value;
+                    handleChange("members", newMembers);
+                  }} />
+                  <Input placeholder="Designation" value={member.designation} onChange={(e) => {
+                    const newMembers = [...config.members];
+                    newMembers[i].designation = e.target.value;
+                    handleChange("members", newMembers);
+                  }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    case "media_grid":
+      return (
+        <div className="space-y-6">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Heading</Label>
+              <Input value={config.heading} onChange={(e) => handleChange("heading", e.target.value)} />
+            </div>
+            <div className="space-y-2">
+              <Label>Columns</Label>
+              <Select value={String(config.columns)} onValueChange={(val) => handleChange("columns", parseInt(val))}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="2">2 Columns</SelectItem>
+                  <SelectItem value="3">3 Columns</SelectItem>
+                  <SelectItem value="4">4 Columns</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <div className="flex items-center justify-between pt-4 border-t">
+            <Label>Media Items</Label>
+            <Button size="sm" variant="outline" onClick={() => handleChange("items", [...(config.items || []), { title: "", image: "", type: "video", link: "" }])}>
+              <Plus className="w-3 h-3 mr-1" /> Add Media
+            </Button>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {config.items?.map((item: any, i: number) => (
+              <div key={i} className="space-y-4 bg-background p-4 rounded-lg border">
+                <div className="flex items-center justify-between mb-2">
+                  <Label className="text-xs font-bold text-primary">Media #{i + 1}</Label>
+                  <Button variant="ghost" size="icon" className="h-6 w-6 text-destructive" onClick={() => {
+                    const newItems = config.items.filter((_: any, idx: number) => idx !== i);
+                    handleChange("items", newItems);
+                  }}>
+                    <Trash2 className="w-3 h-3" />
+                  </Button>
+                </div>
+                <div className="space-y-3">
+                  <ImageUploader value={item.image} onChange={(url) => {
+                    const newItems = [...config.items];
+                    newItems[i].image = url;
+                    handleChange("items", newItems);
+                  }} aspectRatio={16/9} />
+                  <Input placeholder="Title" value={item.title} onChange={(e) => {
+                    const newItems = [...config.items];
+                    newItems[i].title = e.target.value;
+                    handleChange("items", newItems);
+                  }} />
+                  <div className="flex gap-2">
+                    <Select value={item.type} onValueChange={(val) => {
+                      const newItems = [...config.items];
+                      newItems[i].type = val;
+                      handleChange("items", newItems);
+                    }}>
+                      <SelectTrigger className="w-[120px]"><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="video">Video</SelectItem>
+                        <SelectItem value="audio">Audio</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <Input placeholder="Link / URL" className="flex-1" value={item.link} onChange={(e) => {
+                      const newItems = [...config.items];
+                      newItems[i].link = e.target.value;
+                      handleChange("items", newItems);
+                    }} />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    case "publications":
+      return (
+        <div className="space-y-6">
+          <div className="space-y-2">
+            <Label>Heading</Label>
+            <Input value={config.heading} onChange={(e) => handleChange("heading", e.target.value)} />
+          </div>
+          <div className="flex items-center justify-between pt-4 border-t">
+            <Label>Publications</Label>
+            <Button size="sm" variant="outline" onClick={() => handleChange("publications", [...(config.publications || []), { title: "", cover: "", author: "", link: "" }])}>
+              <Plus className="w-3 h-3 mr-1" /> Add Book
+            </Button>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {config.publications?.map((pub: any, i: number) => (
+              <div key={i} className="space-y-4 bg-background p-4 rounded-lg border">
+                <div className="flex items-center justify-between mb-2">
+                  <Label className="text-xs font-bold text-primary">Publication #{i + 1}</Label>
+                  <Button variant="ghost" size="icon" className="h-6 w-6 text-destructive" onClick={() => {
+                    const newPubs = config.publications.filter((_: any, idx: number) => idx !== i);
+                    handleChange("publications", newPubs);
+                  }}>
+                    <Trash2 className="w-3 h-3" />
+                  </Button>
+                </div>
+                <div className="space-y-3">
+                  <ImageUploader value={pub.cover} onChange={(url) => {
+                    const newPubs = [...config.publications];
+                    newPubs[i].cover = url;
+                    handleChange("publications", newPubs);
+                  }} aspectRatio={3/4} />
+                  <Input placeholder="Title" value={pub.title} onChange={(e) => {
+                    const newPubs = [...config.publications];
+                    newPubs[i].title = e.target.value;
+                    handleChange("publications", newPubs);
+                  }} />
+                  <Input placeholder="Author" value={pub.author} onChange={(e) => {
+                    const newPubs = [...config.publications];
+                    newPubs[i].author = e.target.value;
+                    handleChange("publications", newPubs);
+                  }} />
+                  <Input placeholder="Link / URL" value={pub.link} onChange={(e) => {
+                    const newPubs = [...config.publications];
+                    newPubs[i].link = e.target.value;
+                    handleChange("publications", newPubs);
+                  }} />
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       );

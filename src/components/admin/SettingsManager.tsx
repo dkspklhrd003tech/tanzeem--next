@@ -6,9 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Settings, LayoutTemplate, Palette, Mail, MessageSquare, Send, CheckCircle2 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import { ImageUploader } from "./ImageUploader";
 import { RichTextEditor } from "./RichTextEditor";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 interface FormSubmission {
     id: string;
@@ -243,9 +242,15 @@ export function SettingsManager() {
                             </div>
                         </div>
                         <div className="mt-8 flex justify-end">
-                            <Button onClick={() => saveSettings()} disabled={isSaving} className="bg-[#0d5844] hover:bg-[#0a4636] text-[#fefefc] rounded-xl px-10 font-bold shadow-md transition-all active:scale-95">
-                                {isSaving ? "Synchronizing..." : "Deploy Identity Matrix"}
-                            </Button>
+                            <ConfirmDialog
+                                title="Deploy Identity Matrix"
+                                description="Are you sure you want to update the global site branding? This will immediately affect the entire website's appearance."
+                                onConfirm={() => saveSettings()}
+                            >
+                                <Button disabled={isSaving} className="bg-[#0d5844] hover:bg-[#0a4636] text-[#fefefc] rounded-xl px-10 font-bold shadow-md transition-all active:scale-95">
+                                    {isSaving ? "Synchronizing..." : "Deploy Identity Matrix"}
+                                </Button>
+                            </ConfirmDialog>
                         </div>
                     </div>
                 </TabsContent>
@@ -329,9 +334,15 @@ export function SettingsManager() {
                         </div>
 
                         <div className="mt-8 flex justify-end">
-                            <Button onClick={() => saveSettings()} disabled={isSaving} className="bg-[#0d5844] hover:bg-[#0a4636] text-[#fefefc] rounded-xl px-10 font-bold shadow-md transition-all active:scale-95">
-                                {isSaving ? "Saving..." : "Save Header Configuration"}
-                            </Button>
+                            <ConfirmDialog
+                                title="Save Header Configuration"
+                                description="Are you sure you want to update the site header settings and navigation links?"
+                                onConfirm={() => saveSettings()}
+                            >
+                                <Button disabled={isSaving} className="bg-[#0d5844] hover:bg-[#0a4636] text-[#fefefc] rounded-xl px-10 font-bold shadow-md transition-all active:scale-95">
+                                    {isSaving ? "Saving..." : "Save Header Configuration"}
+                                </Button>
+                            </ConfirmDialog>
                         </div>
                     </div>
                 </TabsContent>
@@ -361,9 +372,15 @@ export function SettingsManager() {
                         </div>
 
                         <div className="mt-8 flex justify-end">
-                            <Button onClick={() => saveSettings()} disabled={isSaving}>
-                                {isSaving ? "Saving..." : "Save Footer Configurations"}
-                            </Button>
+                            <ConfirmDialog
+                                title="Save Footer Configuration"
+                                description="Are you sure you want to update the footer contact info and copyright text?"
+                                onConfirm={() => saveSettings()}
+                            >
+                                <Button disabled={isSaving}>
+                                    {isSaving ? "Saving..." : "Save Footer Configurations"}
+                                </Button>
+                            </ConfirmDialog>
                         </div>
                     </div>
                 </TabsContent>

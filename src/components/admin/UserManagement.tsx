@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Edit2, Trash2, Shield, User as UserIcon, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Button } from "@/components/ui/button";
 
 type User = {
     id: string;
@@ -123,8 +125,10 @@ export function UserManagement() {
         }
     };
 
+    const [deletingUser, setDeletingUser] = useState<{id: string, name: string | null} | null>(null);
+
     const handleDelete = async (id: string, name: string | null) => {
-        if (!confirm(`Are you sure you want to delete ${name || 'this user'}?`)) return;
+        setDeletingUser(null);
 
         try {
             const res = await fetch(`/api/users/${id}`, { method: "DELETE" });
@@ -222,7 +226,7 @@ export function UserManagement() {
                                                     <Edit2 className="w-4 h-4" />
                                                 </button>
                                                 <button
-                                                    onClick={() => handleDelete(user.id, user.name)}
+                                                    onClick={() => setDeletingUser({id: user.id, name: user.name})}
                                                     className="p-2 text-foreground-light hover:text-destructive transition-colors hover:bg-destructive/10 rounded-md"
                                                     title="Delete User"
                                                 >
@@ -277,7 +281,7 @@ export function UserManagement() {
                                 </button>
                             </div>
 
-                            <form onSubmit={handleSave} className="p-6 space-y-4">
+                            <form id="user-form" onSubmit={handleSave} className="p-6 space-y-4">
                                 <div className="space-y-1">
                                     <label className="text-sm font-medium text-foreground">Full Name</label>
                                     <input
@@ -350,19 +354,32 @@ export function UserManagement() {
                                     >
                                         Cancel
                                     </button>
-                                    <button
-                                        type="submit"
-                                        disabled={isLoading}
-                                        className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary-dark transition-colors font-medium text-sm disabled:opacity-50"
+                                    <ConfirmDialog
+                                        title={editingUser ? "Update User" : "Create User"}
+                                        description={`Are you sure you want to ${editingUser ? "update" : "create"} this user account?`}
+                                        onConfirm={() => document.getElementById("user-form")?.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }))}
                                     >
-                                        {isLoading ? "Saving..." : editingUser ? "Update User" : "Create User"}
-                                    </button>
+                                        <Button
+                                            type="button"
+                                            disabled={isLoading}
+                                            className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary-dark transition-colors font-medium text-sm disabled:opacity-50"
+                                        >
+                                            {isLoading ? "Saving..." : editingUser ? "Update User" : "Create User"}
+                                        </Button>
+                                    </ConfirmDialog>
                                 </div>
                             </form>
                         </motion.div>
                     </div>
                 )}
             </AnimatePresence>
+            <ConfirmDialog
+                open={!!deletingUser}
+                onOpenChange={(open) => !open && setDeletingUser(null)}
+                title="Delete User"
+                description={`Are you sure you want to permanently delete ${deletingUser?.name || 'this user'}? This action cannot be undone.`}
+                onConfirm={() => deletingUser && handleDelete(deletingUser.id, deletingUser.name)}
+            />
         </div>
     );
 }

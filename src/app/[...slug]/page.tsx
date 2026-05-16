@@ -35,10 +35,8 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     const resolvedParams = await params;
     const slugArray = resolvedParams.slug;
-    const slug = slugArray[slugArray.length - 1];
-
     const page = await db.query.pages.findFirst({
-        where: eq(pages.slug, slug),
+        where: eq(pages.slug, slugArray.join('/')),
     });
 
     if (!page || !page.isPublished) {
@@ -58,7 +56,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function DynamicPage({ params }: PageProps) {
     const { slug: slugArray } = await params;
-    const slug = slugArray[slugArray.length - 1];
+    const slug = slugArray.join('/');
 
     console.log(`DynamicPage: slugArray=[${slugArray.join(', ')}], searching for slug="${slug}"`);
 

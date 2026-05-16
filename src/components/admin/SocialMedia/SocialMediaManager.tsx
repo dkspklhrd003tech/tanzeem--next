@@ -37,6 +37,7 @@ import {
 } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import { ImageUploader } from "../ImageUploader";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 interface Platform {
   id: string;
@@ -127,8 +128,11 @@ export function SocialMediaManager() {
     }
   };
 
+  const [deletingPlatformId, setDeletingPlatformId] = useState<string | null>(null);
+  const [deletingAccountId, setDeletingAccountId] = useState<string | null>(null);
+
   const handleDeletePlatform = async (id: string) => {
-    if (!confirm("Are you sure? This will NOT delete associated accounts but they will have no platform.")) return;
+    setDeletingPlatformId(null);
     try {
       const res = await fetch("/api/social-media/platforms", {
         method: "DELETE",
@@ -167,7 +171,7 @@ export function SocialMediaManager() {
   };
 
   const handleDeleteAccount = async (id: string) => {
-    if (!confirm("Delete this account?")) return;
+    setDeletingAccountId(null);
     try {
       const res = await fetch("/api/social-media/accounts", {
         method: "DELETE",
@@ -261,10 +265,16 @@ export function SocialMediaManager() {
               </div>
               <DialogFooter>
                 <Button variant="outline" onClick={() => setPlatformDialogOpen(false)}>Cancel</Button>
-                <Button onClick={handleSavePlatform} disabled={isSaving}>
-                  {isSaving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                  Save Platform
-                </Button>
+                <ConfirmDialog
+                    title="Save Platform"
+                    description="Are you sure you want to save this social media platform?"
+                    onConfirm={handleSavePlatform}
+                >
+                    <Button disabled={isSaving}>
+                        {isSaving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                        Save Platform
+                    </Button>
+                </ConfirmDialog>
               </DialogFooter>
             </DialogContent>
           </Dialog>
@@ -319,7 +329,7 @@ export function SocialMediaManager() {
                         className="h-7 w-7 text-inherit hover:text-red-400"
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleDeletePlatform(p.id);
+                          setDeletingPlatformId(p.id);
                         }}
                       >
                         <Trash2 className="w-3 h-3" />
@@ -408,10 +418,16 @@ export function SocialMediaManager() {
                     </div>
                     <DialogFooter>
                       <Button variant="outline" onClick={() => setAccountDialogOpen(false)}>Cancel</Button>
-                      <Button onClick={handleSaveAccount} disabled={isSaving}>
-                        {isSaving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                        Save Account
-                      </Button>
+                      <ConfirmDialog
+                        title="Save Account"
+                        description="Are you sure you want to save this social media account details?"
+                        onConfirm={handleSaveAccount}
+                      >
+                        <Button disabled={isSaving}>
+                            {isSaving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                            Save Account
+                        </Button>
+                      </ConfirmDialog>
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>
@@ -462,7 +478,7 @@ export function SocialMediaManager() {
                             variant="destructive"
                             size="sm"
                             className="flex-1 rounded-lg"
-                            onClick={() => handleDeleteAccount(account.id)}
+                            onClick={() => setDeletingAccountId(account.id)}
                           >
                             <Trash2 className="w-3.5 h-3.5 mr-2" /> Delete
                           </Button>
@@ -480,6 +496,21 @@ export function SocialMediaManager() {
           )}
         </div>
       </div>
+      <ConfirmDialog
+        open={!!deletingPlatformId}
+        onOpenChange={(open) => !open && setDeletingPlatformId(null)}
+        title="Delete Platform"
+        description="Are you sure you want to delete this platform? This will NOT delete associated accounts but they will have no platform assigned."
+        onConfirm={() => deletingPlatformId && handleDeletePlatform(deletingPlatformId)}
+      />
+
+      <ConfirmDialog
+        open={!!deletingAccountId}
+        onOpenChange={(open) => !open && setDeletingAccountId(null)}
+        title="Delete Account"
+        description="Are you sure you want to remove this social media account?"
+        onConfirm={() => deletingAccountId && handleDeleteAccount(deletingAccountId)}
+      />
     </div>
   );
 }

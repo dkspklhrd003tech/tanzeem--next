@@ -5,6 +5,7 @@ import { Plus, Edit2, Trash2, X, Image as ImageIcon, GripVertical } from "lucide
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { ImageUploader } from "../ImageUploader";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {
     DndContext,
     closestCenter,
@@ -208,8 +209,10 @@ export function FeaturedBooks() {
         }
     };
 
+    const [deletingBook, setDeletingBook] = useState<{id: string, title: string} | null>(null);
+
     const handleDelete = async (id: string, title: string) => {
-        if (!confirm(`Delete "${title}"?`)) return;
+        setDeletingBook(null);
         try {
             const res = await fetch(`/api/books/${id}`, { method: "DELETE" });
             if (!res.ok) throw new Error("Failed to delete book");
@@ -283,7 +286,7 @@ export function FeaturedBooks() {
                                 <X className="w-5 h-5" />
                             </button>
                         </div>
-                        <form onSubmit={handleSave} className="p-6 space-y-6 bg-card">
+                        <form id="book-form" onSubmit={handleSave} className="p-6 space-y-6 bg-card">
                             <div className="space-y-3">
                                 <label className="text-sm font-semibold text-foreground flex items-center gap-2">
                                     <ImageIcon className="w-4 h-4 text-primary" />
@@ -314,14 +317,27 @@ export function FeaturedBooks() {
                                 </div>
                             </div>
 
-                            <div className="flex justify-end gap-3 pt-6 border-t border-border mt-4">
+                             <div className="flex justify-end gap-3 pt-6 border-t border-border mt-4">
                                 <button type="button" onClick={closeModal} className="px-6 py-2.5 bg-muted text-foreground rounded-xl font-medium hover:bg-muted/80 transition-all active:scale-95">Cancel</button>
-                                <button type="submit" disabled={isLoading || isUploading} className="px-8 py-2.5 bg-[#0d5844] text-[#fefefc] rounded-xl font-semibold hover:bg-[#0a4636] transition-all shadow-md active:scale-95 disabled:opacity-50">Save Changes</button>
+                                <ConfirmDialog
+                                    title={editingItem ? "Update Book" : "Create Book"}
+                                    description={`Are you sure you want to ${editingItem ? "update" : "create"} this featured book?`}
+                                    onConfirm={() => document.getElementById("book-form")?.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }))}
+                                >
+                                    <button type="button" disabled={isLoading || isUploading} className="px-8 py-2.5 bg-[#0d5844] text-[#fefefc] rounded-xl font-semibold hover:bg-[#0a4636] transition-all shadow-md active:scale-95 disabled:opacity-50">Save Changes</button>
+                                </ConfirmDialog>
                             </div>
                         </form>
                     </div>
                 </div>
             )}
+            <ConfirmDialog
+                open={!!deletingBook}
+                onOpenChange={(open) => !open && setDeletingBook(null)}
+                title="Delete Book"
+                description={`Are you sure you want to permanently delete the book "${deletingBook?.title}"?`}
+                onConfirm={() => deletingBook && handleDelete(deletingBook.id, deletingBook.title)}
+            />
         </div>
     );
 }

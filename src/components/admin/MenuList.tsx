@@ -10,8 +10,8 @@ import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 interface MenuItem {
     id: string;
@@ -83,8 +83,10 @@ export function MenuList() {
         }
     };
 
+    const [deletingMenuId, setDeletingMenuId] = useState<string | null>(null);
+
     const handleDelete = async (id: string) => {
-        if (!confirm("Are you sure you want to delete this menu item?")) return;
+        setDeletingMenuId(null);
 
         try {
             const res = await fetch(`/api/menus/${id}`, {
@@ -131,10 +133,16 @@ export function MenuList() {
                             </h1>
                         </div>
                     </div>
-                    <Button onClick={handleSave} className="bg-primary hover:bg-primary-dark text-primary-foreground">
-                        <Save className="h-4 w-4 mr-2" />
-                        Save
-                    </Button>
+                    <ConfirmDialog
+                        title={editingMenu.id ? "Update Menu Item" : "Create Menu Item"}
+                        description={`Are you sure you want to ${editingMenu.id ? "update" : "create"} this navigation link?`}
+                        onConfirm={handleSave}
+                    >
+                        <Button className="bg-primary hover:bg-primary-dark text-primary-foreground">
+                            <Save className="h-4 w-4 mr-2" />
+                            Save
+                        </Button>
+                    </ConfirmDialog>
                 </div>
 
                 <Card>
@@ -233,7 +241,7 @@ export function MenuList() {
                                 <Button variant="ghost" size="icon" onClick={() => setEditingMenu(item)}>
                                     <Edit className="h-4 w-4" />
                                 </Button>
-                                <Button variant="ghost" size="icon" onClick={() => handleDelete(item.id)} className="text-red-500">
+                                <Button variant="ghost" size="icon" onClick={() => setDeletingMenuId(item.id)} className="text-red-500">
                                     <Trash2 className="h-4 w-4" />
                                 </Button>
                             </div>
@@ -290,6 +298,13 @@ export function MenuList() {
                     </Table>
                 </CardContent>
             </Card>
+            <ConfirmDialog
+                open={!!deletingMenuId}
+                onOpenChange={(open) => !open && setDeletingMenuId(null)}
+                title="Delete Menu Item"
+                description="Are you sure you want to remove this navigation link? Sub-items will also be affected if they depend on this parent."
+                onConfirm={() => deletingMenuId && handleDelete(deletingMenuId)}
+            />
         </motion.div>
     );
 }

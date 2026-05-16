@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { ImageUploader } from "./ImageUploader";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 export function GlobalBannerManager() {
   const [settings, setSettings] = useState<Record<string, any>>({
@@ -101,10 +102,16 @@ export function GlobalBannerManager() {
           <h1 className="text-3xl font-bold tracking-tight">Global Page Banner</h1>
           <p className="text-foreground-muted mt-1">Configure the appearance of the automatic banner used on all sub-pages.</p>
         </div>
-        <Button onClick={handleSave} disabled={isSaving} className="bg-[#0d5844] hover:bg-[#0a4636] rounded-xl px-8">
-          {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-          Save Configuration
-        </Button>
+        <ConfirmDialog
+          title="Save Banner Configuration"
+          description="Are you sure you want to update the global page banner settings? This will affect all sub-pages on the site."
+          onConfirm={handleSave}
+        >
+          <Button disabled={isSaving} className="bg-[#0d5844] hover:bg-[#0a4636] rounded-xl px-8">
+            {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+            Save Configuration
+          </Button>
+        </ConfirmDialog>
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">

@@ -43,6 +43,7 @@ import { cn } from "@/lib/utils";
 import { PageSectionBuilder } from "./PageSectionBuilder";
 import { RichTextEditor } from "./RichTextEditor";
 import { ImageUploader } from "./ImageUploader";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 interface ContentEditorProps {
   title: string;
@@ -134,14 +135,19 @@ export function ContentEditor({
               Preview
             </Button>
           )}
-          <Button
-            onClick={handleSave}
-            disabled={isSaving}
-            className="bg-[#0d5844] hover:bg-[#0a4636] text-[#fefefc] rounded-xl px-8 font-semibold shadow-md active:scale-95 transition-all"
+          <ConfirmDialog
+            title={`Save ${contentType.charAt(0).toUpperCase() + contentType.slice(1)}`}
+            description={`Are you sure you want to save these changes to the ${contentType}?`}
+            onConfirm={handleSave}
           >
-            <Save className="h-4 w-4 mr-2" />
-            {isSaving ? "Saving..." : "Save Changes"}
-          </Button>
+            <Button
+              disabled={isSaving}
+              className="bg-[#0d5844] hover:bg-[#0a4636] text-[#fefefc] rounded-xl px-8 font-semibold shadow-md active:scale-95 transition-all"
+            >
+              <Save className="h-4 w-4 mr-2" />
+              {isSaving ? "Saving..." : "Save Changes"}
+            </Button>
+          </ConfirmDialog>
         </div>
       </div>
 

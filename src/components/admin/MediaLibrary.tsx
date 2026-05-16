@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 type MediaItem = {
   id: string;
@@ -129,8 +130,11 @@ export function MediaLibrary() {
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
+  const [deletingMediaId, setDeletingMediaId] = useState<{id: string, name: string} | null>(null);
+  const [isBulkDeleting, setIsBulkDeleting] = useState(false);
+
   const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`Are you sure you want to permanently delete "${name}"?`)) return;
+    setDeletingMediaId(null);
 
     try {
       const res = await fetch(`/api/media/${id}`, { method: "DELETE" });
@@ -156,7 +160,7 @@ export function MediaLibrary() {
   };
 
   const handleBulkDelete = async () => {
-    if (!confirm(`Delete ${selectedItems.length} items?`)) return;
+    setIsBulkDeleting(false);
 
     let successCount = 0;
     for (const id of selectedItems) {
@@ -273,7 +277,7 @@ export function MediaLibrary() {
             {selectedItems.length} item(s) selected
           </span>
           <div className="flex items-center gap-2">
-            <Button variant="destructive" size="sm" onClick={handleBulkDelete}>
+            <Button variant="destructive" size="sm" onClick={() => setIsBulkDeleting(true)}>
               Delete Selected
             </Button>
           </div>
@@ -362,10 +366,10 @@ export function MediaLibrary() {
                       </a>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem className="text-red-500" onClick={() => handleDelete(item.id, item.originalName)}>
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      Delete
-                    </DropdownMenuItem>
+                     <DropdownMenuItem className="text-red-500" onClick={() => setDeletingMediaId({id: item.id, name: item.originalName})}>
+                       <Trash2 className="h-4 w-4 mr-2" />
+                       Delete
+                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
@@ -435,10 +439,10 @@ export function MediaLibrary() {
                             <Copy className="h-4 w-4 mr-2" />
                             Copy URL
                           </DropdownMenuItem>
-                          <DropdownMenuItem className="text-red-500" onClick={() => handleDelete(item.id, item.originalName)}>
-                            <Trash2 className="h-4 w-4 mr-2" />
-                            Delete
-                          </DropdownMenuItem>
+                           <DropdownMenuItem className="text-red-500" onClick={() => setDeletingMediaId({id: item.id, name: item.originalName})}>
+                             <Trash2 className="h-4 w-4 mr-2" />
+                             Delete
+                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </td>
@@ -449,6 +453,21 @@ export function MediaLibrary() {
           </div>
         </div>
       )}
+      <ConfirmDialog
+        open={!!deletingMediaId}
+        onOpenChange={(open) => !open && setDeletingMediaId(null)}
+        title="Delete Media File"
+        description={`Are you sure you want to permanently delete "${deletingMediaId?.name}"? This action cannot be undone.`}
+        onConfirm={() => deletingMediaId && handleDelete(deletingMediaId.id, deletingMediaId.name)}
+      />
+
+      <ConfirmDialog
+        open={isBulkDeleting}
+        onOpenChange={setIsBulkDeleting}
+        title="Bulk Delete Media"
+        description={`Are you sure you want to permanently delete ${selectedItems.length} items? This action cannot be undone.`}
+        onConfirm={handleBulkDelete}
+      />
     </motion.div>
   );
 }

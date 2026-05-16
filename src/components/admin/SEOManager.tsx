@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 export function SEOManager() {
   const [settings, setSettings] = useState({
@@ -87,10 +88,16 @@ export function SEOManager() {
           <h1 className="text-3xl font-bold tracking-tight">SEO / Meta Management</h1>
           <p className="text-foreground-muted mt-1">Configure global search engine defaults and tracking IDs.</p>
         </div>
-        <Button onClick={handleSave} disabled={isSaving} className="bg-[#0d5844] hover:bg-[#0a4636] rounded-xl px-8">
-          {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-          Save Defaults
-        </Button>
+        <ConfirmDialog
+          title="Save SEO Defaults"
+          description="Are you sure you want to update the global SEO settings? These will apply to all pages that don't have custom meta tags."
+          onConfirm={handleSave}
+        >
+          <Button disabled={isSaving} className="bg-[#0d5844] hover:bg-[#0a4636] rounded-xl px-8">
+            {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+            Save Defaults
+          </Button>
+        </ConfirmDialog>
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">

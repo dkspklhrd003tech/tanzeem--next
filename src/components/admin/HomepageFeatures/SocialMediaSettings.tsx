@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Save, Youtube, Facebook, Twitter, MessageCircle } from "lucide-react";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 export function SocialMediaSettings() {
     const [settings, setSettings] = useState({
@@ -99,21 +100,27 @@ export function SocialMediaSettings() {
                     <h2 className="text-3xl font-bold text-foreground tracking-tight">Social Media Ecosystem</h2>
                     <p className="text-sm text-foreground-muted mt-1">Manage the digital presence links for the "Stay Connected" platform section.</p>
                 </div>
-                <button
-                    onClick={handleSave}
-                    disabled={isSaving}
-                    className="flex items-center gap-2 bg-primary text-primary-foreground px-6 py-2.5 rounded-xl font-semibold shadow-sm hover:shadow-md transition-all hover:bg-primary-dark active:scale-95 disabled:opacity-50"
+                <ConfirmDialog
+                    title="Save Social Connections"
+                    description="Are you sure you want to update the official social media links?"
+                    onConfirm={() => document.getElementById("social-settings-form")?.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }))}
                 >
-                    {isSaving ? (
-                        <div className="w-4 h-4 border-2 border-white/30 border-t-[#fefefc] rounded-full animate-spin"></div>
-                    ) : (
-                        <Save className="w-4 h-4" />
-                    )}
-                    Save Connections
-                </button>
+                    <button
+                        type="button"
+                        disabled={isSaving}
+                        className="flex items-center gap-2 bg-primary text-primary-foreground px-6 py-2.5 rounded-xl font-semibold shadow-sm hover:shadow-md transition-all hover:bg-primary-dark active:scale-95 disabled:opacity-50"
+                    >
+                        {isSaving ? (
+                            <div className="w-4 h-4 border-2 border-white/30 border-t-[#fefefc] rounded-full animate-spin"></div>
+                        ) : (
+                            <Save className="w-4 h-4" />
+                        )}
+                        Save Connections
+                    </button>
+                </ConfirmDialog>
             </div>
 
-            <form onSubmit={handleSave} className="grid grid-cols-1 gap-8 max-w-4xl">
+            <form id="social-settings-form" onSubmit={handleSave} className="grid grid-cols-1 gap-8 max-w-4xl">
                 <div className="bg-card border border-border rounded-xl p-6 shadow-sm space-y-6">
                     <div className="space-y-4">
                         <div className="space-y-2">

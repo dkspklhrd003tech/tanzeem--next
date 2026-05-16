@@ -5,6 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Save, ImageIcon, Loader2 } from "lucide-react";
 import { RichTextEditor } from "../RichTextEditor";
 import { ImageUploader } from "../ImageUploader";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 export function AboutMissionSettings() {
     const [settings, setSettings] = useState({
@@ -100,21 +101,27 @@ export function AboutMissionSettings() {
                     <h2 className="text-3xl font-bold text-foreground tracking-tight">About & Mission Info</h2>
                     <p className="text-sm text-foreground-muted mt-1">Manage the Core Statement Text Blocks Present on the Landing Page.</p>
                 </div>
-                <button
-                    onClick={handleSave}
-                    disabled={isSaving}
-                    className="flex items-center gap-2 bg-primary text-primary-foreground px-6 py-2.5 rounded-xl font-semibold shadow-sm hover:shadow-md transition-all hover:bg-primary-dark active:scale-95 disabled:opacity-50"
+                <ConfirmDialog
+                    title="Save Homepage Settings"
+                    description="Are you sure you want to update the About and Mission sections on the homepage?"
+                    onConfirm={() => document.getElementById("about-mission-form")?.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }))}
                 >
-                    {isSaving ? (
-                        <div className="w-4 h-4 border-2 border-white/30 border-t-[#fefefc] rounded-full animate-spin"></div>
-                    ) : (
-                        <Save className="w-4 h-4" />
-                    )}
-                    Save Changes
-                </button>
+                    <button
+                        type="button"
+                        disabled={isSaving}
+                        className="flex items-center gap-2 bg-primary text-primary-foreground px-6 py-2.5 rounded-xl font-semibold shadow-sm hover:shadow-md transition-all hover:bg-primary-dark active:scale-95 disabled:opacity-50"
+                    >
+                        {isSaving ? (
+                            <div className="w-4 h-4 border-2 border-white/30 border-t-[#fefefc] rounded-full animate-spin"></div>
+                        ) : (
+                            <Save className="w-4 h-4" />
+                        )}
+                        Save Changes
+                    </button>
+                </ConfirmDialog>
             </div>
 
-            <form onSubmit={handleSave} className="grid grid-cols-1 gap-8 max-w-6xl">
+            <form id="about-mission-form" onSubmit={handleSave} className="grid grid-cols-1 gap-8 max-w-6xl">
                 {/* About Us Banner Settings */}
                 <div className="bg-card border border-border rounded-xl p-6 shadow-sm space-y-6">
                     <h3 className="text-lg font-bold border-b border-border pb-3">Top "About Us" Banner</h3>

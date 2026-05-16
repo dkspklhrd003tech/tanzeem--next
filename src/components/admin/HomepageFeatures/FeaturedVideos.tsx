@@ -6,6 +6,7 @@ import { Plus, Edit2, Trash2, X, Image as ImageIcon, Link as LinkIcon, Video, Gr
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { ImageUploader } from "../ImageUploader";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {
     DndContext,
     closestCenter,
@@ -254,8 +255,10 @@ export function FeaturedVideos() {
         }
     };
 
+    const [deletingVideo, setDeletingVideo] = useState<{id: string, title: string} | null>(null);
+
     const handleDelete = async (id: string, title: string) => {
-        if (!confirm(`Are you sure you want to permanently delete "${title}"?`)) return;
+        setDeletingVideo(null);
 
         try {
             const res = await fetch(`/api/videos/${id}`, { method: "DELETE" });
@@ -434,14 +437,27 @@ export function FeaturedVideos() {
                                 <button type="button" onClick={closeModal} className="px-6 py-2.5 text-sm font-semibold text-foreground bg-background border border-border rounded-xl hover:bg-muted transition-all active:scale-95">
                                     Cancel
                                 </button>
-                                <button form="videoForm" type="submit" disabled={isLoading || isUploading} className="px-8 py-2.5 text-sm font-bold text-primary-foreground bg-primary rounded-xl hover:bg-primary-dark transition-all active:scale-95 shadow-sm hover:shadow-md min-w-[140px]">
-                                    {isLoading ? <div className="mx-auto w-5 h-5 border-2 border-white/30 border-t-[#fefefc] rounded-full animate-spin"></div> : "Deploy Video"}
-                                </button>
+                                <ConfirmDialog
+                                    title={editingVideo ? "Update Video" : "Feature Video"}
+                                    description={`Are you sure you want to ${editingVideo ? "update" : "feature"} this video broadcast?`}
+                                    onConfirm={() => document.getElementById("videoForm")?.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }))}
+                                >
+                                    <button type="button" disabled={isLoading || isUploading} className="px-8 py-2.5 text-sm font-bold text-primary-foreground bg-primary rounded-xl hover:bg-primary-dark transition-all active:scale-95 shadow-sm hover:shadow-md min-w-[140px]">
+                                        {isLoading ? <div className="mx-auto w-5 h-5 border-2 border-white/30 border-t-[#fefefc] rounded-full animate-spin"></div> : "Deploy Video"}
+                                    </button>
+                                </ConfirmDialog>
                             </div>
                         </motion.div>
                     </div>
                 )}
             </AnimatePresence>
+            <ConfirmDialog
+                open={!!deletingVideo}
+                onOpenChange={(open) => !open && setDeletingVideo(null)}
+                title="Delete Video"
+                description={`Are you sure you want to permanently delete the featured video broadcast "${deletingVideo?.title}"?`}
+                onConfirm={() => deletingVideo && handleDelete(deletingVideo.id, deletingVideo.title)}
+            />
         </div>
     );
 }

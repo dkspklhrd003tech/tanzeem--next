@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { ImageUploader } from "./ImageUploader";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 export function SiteIdentityManager() {
   const [settings, setSettings] = useState({
@@ -87,10 +88,16 @@ export function SiteIdentityManager() {
           <h1 className="text-3xl font-bold tracking-tight">Site Identity</h1>
           <p className="text-foreground-muted mt-1">Manage your website's core branding and metadata.</p>
         </div>
-        <Button onClick={handleSave} disabled={isSaving} className="bg-[#0d5844] hover:bg-[#0a4636] rounded-xl px-8">
-          {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-          Save Changes
-        </Button>
+        <ConfirmDialog
+          title="Save Identity Settings"
+          description="Are you sure you want to update the site's core identity and branding assets?"
+          onConfirm={handleSave}
+        >
+          <Button disabled={isSaving} className="bg-[#0d5844] hover:bg-[#0a4636] rounded-xl px-8">
+            {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+            Save Changes
+          </Button>
+        </ConfirmDialog>
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">
