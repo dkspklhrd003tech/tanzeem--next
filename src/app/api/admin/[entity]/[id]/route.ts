@@ -6,7 +6,11 @@ import {
     videos, 
     books, 
     teamMembers, 
-    events 
+    events,
+    pressReleases,
+    magazines,
+    homeCampaigns,
+    locations,
 } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
@@ -16,7 +20,11 @@ const entityMap: Record<string, any> = {
     videos,
     books,
     team: teamMembers,
-    events
+    events,
+    "press-releases": pressReleases,
+    magazines,
+    campaigns: homeCampaigns,
+    locations,
 };
 
 export async function PUT(

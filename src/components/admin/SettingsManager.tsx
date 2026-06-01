@@ -8,6 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { Settings, LayoutTemplate, Palette, Mail, MessageSquare, Send, CheckCircle2 } from "lucide-react";
 import { RichTextEditor } from "./RichTextEditor";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { useToast } from "@/hooks/use-toast";
+import { ImageUploader } from "./ImageUploader";
 
 interface FormSubmission {
     id: string;
@@ -267,14 +269,11 @@ export function SettingsManager() {
                             <div className="flex flex-col md:flex-row gap-8 items-start mb-6 pb-8 border-b border-border/50">
                                 <div className="space-y-4">
                                     <label className="text-sm font-semibold text-foreground">Header Site Logo (WEBP Only)</label>
-                                    <div className="space-y-4">
-                                        <label className="text-sm font-semibold text-foreground">Header Site Logo (WEBP Only)</label>
-                                        <ImageUploader
-                                            value={settings.site_logo}
-                                            onChange={(url) => handleSettingChange("site_logo", url)}
-                                            aspectRatio={1} // Assuming square for logo or flexible
-                                        />
-                                    </div>
+                                    <ImageUploader
+                                        value={settings.site_logo}
+                                        onChange={(url) => handleSettingChange("site_logo", url)}
+                                        aspectRatio={1} // Assuming square for logo or flexible
+                                    />
                                     <p className="text-[11px] text-foreground-muted max-w-[150px]">Acceptable Format: **WEBP** only (for optimal performance).</p>
                                 </div>
 

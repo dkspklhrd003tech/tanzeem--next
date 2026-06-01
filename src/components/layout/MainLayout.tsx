@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { PageBanner } from "./PageBanner";
+import { PersistentAudioPlayer } from "@/components/audio/PersistentAudioPlayer";
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -52,6 +53,7 @@ export function MainLayout({ children }: MainLayoutProps) {
       </main>
       
       {!isSiteManager && <Footer />}
+      {!isSiteManager && <PersistentAudioPlayer />}
     </div>
   );
 }

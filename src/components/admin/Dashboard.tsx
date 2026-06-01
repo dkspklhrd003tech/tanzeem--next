@@ -1,7 +1,7 @@
 "use client";
 
 import useSWR from "swr";
-
+import Link from "next/link";
 import { motion } from "framer-motion";
 import {
   FileText,
@@ -72,16 +72,22 @@ export function Dashboard() {
       color: "bg-amber-500",
     },
     {
-      title: "Team Members",
-      value: data?.stats?.team || 0,
-      icon: Users,
+      title: "Press Releases",
+      value: data?.stats?.pressReleases || 0,
+      icon: FileText,
+      color: "bg-teal-500",
+    },
+    {
+      title: "Active Campaigns",
+      value: data?.stats?.campaigns || 0,
+      icon: Calendar,
       color: "bg-green-500",
     },
     {
-      title: "Total Media Views",
-      value: data?.stats?.views || "0",
-      icon: Eye,
-      color: "bg-cyan-500",
+      title: "Quranic Circles",
+      value: data?.stats?.locations || 0,
+      icon: Users,
+      color: "bg-indigo-500",
     },
   ];
 
@@ -103,8 +109,8 @@ export function Dashboard() {
             <Calendar className="h-4 w-4 mr-2" />
             Last 30 Days
           </Button>
-          <Button className="bg-primary hover:bg-primary-dark text-primary-foreground rounded-xl px-6 font-semibold shadow-sm hover:shadow-md transition-all active:scale-95">
-            Quick Add
+          <Button asChild className="bg-primary hover:bg-primary-dark text-primary-foreground rounded-xl px-6 font-semibold shadow-sm hover:shadow-md transition-all active:scale-95">
+            <Link href="/sitemanager?section=pages">Quick Add Page</Link>
           </Button>
         </div>
       </div>
@@ -233,25 +239,23 @@ export function Dashboard() {
           </CardHeader>
           <CardContent>
             <div className="flex flex-wrap gap-3">
-              <Button variant="outline">
-                <FileText className="h-4 w-4 mr-2" />
-                New Page
+              <Button variant="outline" asChild>
+                <Link href="/sitemanager?section=pages"><FileText className="h-4 w-4 mr-2" />New Page</Link>
               </Button>
-              <Button variant="outline">
-                <Headphones className="h-4 w-4 mr-2" />
-                Upload Audio
+              <Button variant="outline" asChild>
+                <Link href="/sitemanager?section=audio"><Headphones className="h-4 w-4 mr-2" />Add Audio</Link>
               </Button>
-              <Button variant="outline">
-                <Video className="h-4 w-4 mr-2" />
-                Add Video
+              <Button variant="outline" asChild>
+                <Link href="/sitemanager?section=videos"><Video className="h-4 w-4 mr-2" />Add Video</Link>
               </Button>
-              <Button variant="outline">
-                <BookOpen className="h-4 w-4 mr-2" />
-                Add Book
+              <Button variant="outline" asChild>
+                <Link href="/sitemanager?section=books"><BookOpen className="h-4 w-4 mr-2" />Add Book</Link>
               </Button>
-              <Button variant="outline">
-                <Calendar className="h-4 w-4 mr-2" />
-                Create Event
+              <Button variant="outline" asChild>
+                <Link href="/sitemanager?section=press-releases"><FileText className="h-4 w-4 mr-2" />Press Release</Link>
+              </Button>
+              <Button variant="outline" asChild>
+                <Link href="/sitemanager?section=campaigns"><Calendar className="h-4 w-4 mr-2" />Campaign</Link>
               </Button>
             </div>
           </CardContent>

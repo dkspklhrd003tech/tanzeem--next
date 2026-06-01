@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid payload: platforms must be an array" }, { status: 400 });
     }
 
-    const results = [];
+    const results: any[] = [];
 
     for (const platform of platforms) {
       const id = platform.id || crypto.randomUUID();

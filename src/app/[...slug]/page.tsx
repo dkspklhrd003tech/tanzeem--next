@@ -32,6 +32,28 @@ interface PageProps {
     }>;
 }
 
+const parseSeoFromContent = (content: string) => {
+  const match = content.match(/<!--SEO_METADATA_JSON:([\s\S]*?)-->/);
+  let seo = {
+    canonicalUrl: "",
+    noIndex: false,
+    ogTitle: "",
+    ogImage: "",
+    schemaType: "WebPage",
+    schemaJsonLd: "",
+  };
+  let cleanContent = content;
+  if (match) {
+    try {
+      seo = { ...seo, ...JSON.parse(match[1]) };
+      cleanContent = content.replace(/<!--SEO_METADATA_JSON:[\s\S]*?-->/, "").trim();
+    } catch (e) {
+      console.error("Failed to parse SEO metadata", e);
+    }
+  }
+  return { seo, cleanContent };
+};
+
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     const resolvedParams = await params;
     const slugArray = resolvedParams.slug;
@@ -43,13 +65,26 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         return { title: "Page Not Found" };
     }
 
+    const { seo } = parseSeoFromContent(page.content || "");
+    const title = seo.ogTitle || page.metaTitle || page.title;
+    const description = page.metaDescription || page.excerpt;
+    const canonical = seo.canonicalUrl || `${process.env.NEXT_PUBLIC_APP_URL || 'https://tanzeem.org'}/${slugArray.join('/')}`;
+
     return {
         title: page.metaTitle || page.title,
-        description: page.metaDescription || page.excerpt,
+        description,
+        alternates: {
+            canonical,
+        },
+        robots: seo.noIndex ? {
+            index: false,
+            follow: false,
+        } : undefined,
         openGraph: {
-            title: page.metaTitle || page.title,
-            description: page.metaDescription || page.excerpt || undefined,
-            url: `${process.env.NEXT_PUBLIC_APP_URL}/${slugArray.join('/')}`,
+            title,
+            description: description || undefined,
+            url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://tanzeem.org'}/${slugArray.join('/')}`,
+            images: seo.ogImage ? [{ url: seo.ogImage }] : undefined,
         }
     };
 }
@@ -77,6 +112,8 @@ export default async function DynamicPage({ params }: PageProps) {
 
     console.log(`DynamicPage: Found page "${page.title}"`);
 
+    const { seo, cleanContent } = parseSeoFromContent(page.content || "");
+
     // Fetch ordered sections for this page
     const sections = await db.query.pageSections.findMany({
         where: and(
@@ -88,6 +125,13 @@ export default async function DynamicPage({ params }: PageProps) {
 
     return (
         <div className="min-h-screen bg-background">
+            {/* Render dynamically parsed JSON-LD Schema if present */}
+            {seo.schemaJsonLd && (
+                <script
+                    type="application/ld+json"
+                    dangerouslySetInnerHTML={{ __html: seo.schemaJsonLd }}
+                />
+            )}
             {sections.length > 0 ? (
                 <div className="flex flex-col">
                     {sections.map((section) => {
@@ -121,7 +165,7 @@ export default async function DynamicPage({ params }: PageProps) {
                         )}
                         <div
                             className="mt-8 dynamic-content"
-                            dangerouslySetInnerHTML={{ __html: page.content || "" }}
+                            dangerouslySetInnerHTML={{ __html: cleanContent || "" }}
                         />
                     </article>
                 </main>

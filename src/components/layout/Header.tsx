@@ -29,7 +29,7 @@ const WP_NAVIGATION = [
         children: [
           { name: "Basic Belief", href: "/organization/our-ideology/basic-belief" },
           { name: "Our Obligations", href: "/organization/our-ideology/our-obligations" },
-          { name: "Methodology", href: "/organization/our-ideology/methodology" },
+          { name: "Our Methodology", href: "/organization/our-ideology/methodology" },
           { name: "Foundation", href: "/organization/our-ideology/foundation" }
         ]
       },
@@ -38,72 +38,65 @@ const WP_NAVIGATION = [
     ]
   },
   {
-    name: "Education",
-    href: "#",
-    children: [
-      { name: "Ruju Ilal Quran", href: "/markaz-tanzeem" },
-      { name: "Distance Learning", href: "/distance-learning" },
-      { name: "Online Courses", href: "https://lms.quranacademy.com" }
-    ]
-  },
-  {
     name: "Resources",
-    href: "#",
+    href: "/resources",
     children: [
       {
         name: "Audios",
-        href: "/audio-2",
+        href: "/resources/audios",
         children: [
-          { name: "By Speaker", href: "/audios/audios-by-category-2" },
-          { name: "Audios By Category", href: "/audios/audios-by-category" },
-          { name: "Audio Books", href: "/audio-books" }
-        ]
+          { name: "By Speaker", href: "/resources/audios/by-speaker" },
+          { name: "Audios By Category", href: "/resources/audios/by-category" },
+          { name: "Audio Books", href: "/resources/audio-books" },
+        ],
       },
       {
         name: "Videos",
-        href: "/videos",
+        href: "/resources/videos",
         children: [
-          {
-            name: "Videos By Category",
-            href: "/videos-by-category",
-          },
-          {
-            name: "Videos By Speakers",
-            href: "/videos-by-speakers",
-          },
-          { name: "Dr. Israr Ahmad Lectures", href: "https://www.youtube.com/@DrIsrarRA" },
+          { name: "Videos By Category", href: "/resources/videos/by-category" },
+          { name: "Videos By Speakers", href: "/resources/videos/by-speakers" },
+          { name: "Dr. Israr Ahmad Lectures", href: "https://www.drisrar.com" },
           { name: "Dr. Israr Ahmad (Q&A)", href: "https://www.youtube.com/@AskDrIsrar" },
           { name: "Bayan ul Quran", href: "https://www.youtube.com/@BiyanulQuran" },
-          { name: "Muntakhab Nisab", href: "https://www.youtube.com/@MuntakhabNisab" },
-          { name: "Dr. Israr Ahmad (Video Clips)", href: "https://www.youtube.com/@DrIsrarAhmed_Official" }
-        ]
+          { name: "Muntakab Nisab", href: "https://www.youtube.com/@MuntakhabNisab" },
+          { name: "Dr. Israr Ahmad (Video Clips)", href: "https://www.youtube.com/@DrIsrarAhmed_Official" },
+        ],
       },
       {
         name: "Books",
-        href: "/books",
+        href: "/resources/books",
         children: [
-          { name: "Audio Books", href: "/audio-books" },
-          { name: "Books By Authors", href: "/books_author-dr-israr-ahmed/by-authors" },
-          { name: "Books by Category", href: "/books-by-category" }
-        ]
+          { name: "Audio Books", href: "/resources/audio-books" },
+          { name: "Books by Category", href: "/resources/books/by-category" },
+        ],
       },
       {
         name: "Magazines",
-        href: "/magazines",
+        href: "/resources/magazines",
         children: [
-          { name: "Meesaq", href: "/meesaq" },
-          { name: "Hikmat-e-Quran", href: "/hikmat-e-quran" },
-          { name: "Nida-e-Khilafat", href: "/nida-e-khilafat" }
-        ]
+          { name: "Meesaq", href: "/resources/magazines/meesaq" },
+          { name: "Hikmat-e-Quran", href: "/resources/magazines/hikmat-e-quran" },
+          { name: "Nida-e-Khilafat", href: "/resources/magazines/nida-e-khilafat" },
+        ],
       },
-      { name: "Press Releases", href: "/press-releases" },
-      { name: "Social Media", href: "/social-media" },
-      { name: "Khitab-e-Jum’ah (Audio)", href: "/category-audio-code-002-mutfariq-khutbat-e-jumah" },
-      { name: "FAQ’S", href: "/faq" }
-    ]
+      { name: "Press Releases", href: "/resources/press-releases" },
+      { name: "Social Media", href: "/resources/social-media" },
+      { name: "Khitab-e-Jum'ah (Audio)", href: "/resources/khitab-e-jumah" },
+    ],
   },
-  { name: "Quranic Circles", href: "/quranic-circles" },
-  { name: "Contact Us", href: "/contact-us" }
+  {
+    name: "Public Programs",
+    href: "/public-programs",
+    children: [
+      { name: "Quranic Circles", href: "/public-programs/quranic-circles" },
+      { name: "Khitabat-e-Jummah Addresses", href: "/public-programs/khitabat-e-jummah" },
+    ],
+  },
+  { name: "Online Courses", href: "https://lms.quranacademy.com" },
+  { name: "FAQs", href: "/faq" },
+  { name: "Join Tanzeem", href: "https://app.dhtr.org/contactus" },
+  { name: "Contact Us", href: "/contact" },
 ];
 
 export function Header() {
@@ -345,16 +338,22 @@ function DesktopMenuItem({ item, depth = 0 }: { item: any; depth?: number }) {
   const isTopLevel = depth === 0;
 
   if (!item.children || item.children.length === 0) {
+    const isExternal = item.href?.startsWith("http");
+    const className = cn(
+      "transition-colors",
+      isTopLevel
+        ? "py-2 px-4 text-md font-medium text-foreground hover:text-[#0d5844]"
+        : "block px-5 py-2.5 text-sm text-foreground hover:bg-primary hover:text-[#fefefc] border-b border-border/30 last:border-0"
+    );
+    if (isExternal) {
+      return (
+        <a href={item.href} target="_blank" rel="noopener noreferrer" className={className}>
+          {item.name}
+        </a>
+      );
+    }
     return (
-      <Link
-        href={item.href}
-        className={cn(
-          "transition-colors",
-          isTopLevel
-            ? "py-2 px-4 text-md font-medium text-foreground hover:text-[#0d5844]"
-            : "block px-5 py-2.5 text-sm text-foreground hover:bg-primary hover:text-[#fefefc] border-b border-border/30 last:border-0"
-        )}
-      >
+      <Link href={item.href} className={className}>
         {item.name}
       </Link>
     );
@@ -404,15 +403,20 @@ function MobileNavItem({ item, onClose, depth = 0 }: { item: any, onClose: () =>
   const [isOpen, setIsOpen] = useState(false);
 
   if (!item.children || item.children.length === 0) {
+    const isExternal = item.href?.startsWith("http");
+    const className = cn(
+      "block py-3 font-medium hover:text-primary transition-colors",
+      depth === 0 ? "px-4" : "text-sm text-foreground-muted"
+    );
+    if (isExternal) {
+      return (
+        <a href={item.href} target="_blank" rel="noopener noreferrer" onClick={onClose} className={className}>
+          {item.name}
+        </a>
+      );
+    }
     return (
-      <Link
-        href={item.href}
-        onClick={onClose}
-        className={cn(
-          "block py-3 font-medium hover:text-primary transition-colors",
-          depth === 0 ? "px-4" : "text-sm text-foreground-muted"
-        )}
-      >
+      <Link href={item.href} onClick={onClose} className={className}>
         {item.name}
       </Link>
     );

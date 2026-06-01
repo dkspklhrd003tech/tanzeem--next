@@ -26,6 +26,7 @@ import {
   Undo,
   Redo,
   Type,
+  AlignJustify,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -36,6 +37,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import { useState } from "react";
 
 interface RichTextEditorProps {
   content: string;
@@ -89,6 +91,14 @@ export function RichTextEditor({
   placeholder,
   className,
 }: RichTextEditorProps) {
+  // RTL state — persists direction for the editor surface
+  const [isRTL, setIsRTL] = useState(() => {
+    // Auto-detect Urdu/Arabic characters in initial content
+    if (!content) return false;
+    const stripped = content.replace(/<[^>]+>/g, "");
+    return /[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF]/.test(stripped);
+  });
+
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -101,6 +111,7 @@ export function RichTextEditor({
       }),
       TextAlign.configure({
         types: ["heading", "paragraph"],
+        defaultAlignment: isRTL ? "right" : "left",
       }),
       TextStyle,
       Color,
@@ -117,6 +128,8 @@ export function RichTextEditor({
           "prose prose-sm max-w-none focus:outline-none min-h-[150px] p-4 text-foreground",
           className
         ),
+        dir: isRTL ? "rtl" : "ltr",
+        style: isRTL ? "font-family: 'Noto Nastaliq Urdu', 'Jameel Noori Nastaleeq', serif; line-height: 2.2;" : "",
       },
     },
   });
@@ -126,20 +139,62 @@ export function RichTextEditor({
   const setLink = () => {
     const previousUrl = editor.getAttributes("link").href;
     const url = window.prompt("URL", previousUrl);
-
     if (url === null) return;
     if (url === "") {
       editor.chain().focus().extendMarkRange("link").unsetLink().run();
       return;
     }
-
     editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
+  };
+
+  const toggleRTL = () => {
+    const newRTL = !isRTL;
+    setIsRTL(newRTL);
+    // Apply the direction attribute live
+    const editorEl = editor.view.dom as HTMLElement;
+    editorEl.setAttribute("dir", newRTL ? "rtl" : "ltr");
+    if (newRTL) {
+      editorEl.style.fontFamily = "'Noto Nastaliq Urdu', 'Jameel Noori Nastaleeq', serif";
+      editorEl.style.lineHeight = "2.2";
+      // Switch alignment to right for Urdu
+      editor.chain().focus().setTextAlign("right").run();
+    } else {
+      editorEl.style.fontFamily = "";
+      editorEl.style.lineHeight = "";
+      editor.chain().focus().setTextAlign("left").run();
+    }
   };
 
   return (
     <div className="border border-border rounded-xl bg-card overflow-hidden focus-within:ring-2 focus-within:ring-primary/20 transition-all">
       {/* Toolbar */}
       <div className="flex flex-wrap items-center gap-1 p-2 bg-muted/30 border-b border-border">
+        {/* RTL / LTR Direction Toggle — prominently at start of toolbar */}
+        <TooltipProvider delayDuration={0}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                type="button"
+                onClick={toggleRTL}
+                className={cn(
+                  "h-8 px-2.5 rounded-md text-xs font-bold tracking-wide transition-all border",
+                  isRTL
+                    ? "bg-amber-500/20 text-amber-700 border-amber-400/50 hover:bg-amber-500/30"
+                    : "bg-muted text-foreground-muted border-border hover:bg-muted/80"
+                )}
+              >
+                {isRTL ? "اردو RTL" : "LTR"}
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="top" className="text-xs">
+              {isRTL ? "Switch to Left-to-Right (English)" : "Switch to Right-to-Left (Urdu/Arabic)"}
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+
+        <Separator orientation="vertical" className="h-6 mx-1 bg-border" />
+
+        {/* Text Formatting */}
         <div className="flex items-center gap-1">
           <MenuButton
             onClick={() => editor.chain().focus().toggleBold().run()}
@@ -173,6 +228,7 @@ export function RichTextEditor({
 
         <Separator orientation="vertical" className="h-6 mx-1 bg-border" />
 
+        {/* Headings */}
         <div className="flex items-center gap-1">
           <MenuButton
             onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
@@ -206,6 +262,7 @@ export function RichTextEditor({
 
         <Separator orientation="vertical" className="h-6 mx-1 bg-border" />
 
+        {/* Lists */}
         <div className="flex items-center gap-1">
           <MenuButton
             onClick={() => editor.chain().focus().toggleBulletList().run()}
@@ -232,6 +289,7 @@ export function RichTextEditor({
 
         <Separator orientation="vertical" className="h-6 mx-1 bg-border" />
 
+        {/* Alignment */}
         <div className="flex items-center gap-1">
           <MenuButton
             onClick={() => editor.chain().focus().setTextAlign("left").run()}
@@ -254,10 +312,18 @@ export function RichTextEditor({
           >
             <AlignRight className="h-4 w-4" />
           </MenuButton>
+          <MenuButton
+            onClick={() => editor.chain().focus().setTextAlign("justify").run()}
+            isActive={editor.isActive({ textAlign: "justify" })}
+            tooltip="Justify"
+          >
+            <AlignJustify className="h-4 w-4" />
+          </MenuButton>
         </div>
 
         <Separator orientation="vertical" className="h-6 mx-1 bg-border" />
 
+        {/* Link & History */}
         <div className="flex items-center gap-1">
           <MenuButton onClick={setLink} isActive={editor.isActive("link")} tooltip="Insert Link">
             <LinkIcon className="h-4 w-4" />
@@ -279,10 +345,23 @@ export function RichTextEditor({
         </div>
       </div>
 
+      {/* RTL Mode Indicator Banner */}
+      {isRTL && (
+        <div className="bg-amber-50 border-b border-amber-200 px-4 py-1.5 flex items-center gap-2">
+          <span className="text-amber-700 text-xs font-semibold">اردو/عربی موڈ فعال</span>
+          <span className="text-amber-600 text-xs">— Urdu/Arabic RTL mode active. Text flows right-to-left.</span>
+        </div>
+      )}
+
       {/* Editor Surface */}
       <div className="relative">
         {placeholder && !editor.getText() && (
-          <div className="absolute top-4 left-4 text-foreground-muted pointer-events-none select-none text-sm">
+          <div
+            className={cn(
+              "absolute top-4 text-foreground-muted pointer-events-none select-none text-sm",
+              isRTL ? "right-4" : "left-4"
+            )}
+          >
             {placeholder}
           </div>
         )}

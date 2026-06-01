@@ -1,6 +1,18 @@
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { pages, audio, videos, books, teamMembers, activityLogs, users } from "@/db/schema";
+import {
+  pages,
+  audio,
+  videos,
+  books,
+  teamMembers,
+  activityLogs,
+  users,
+  pressReleases,
+  homeCampaigns,
+  locations,
+  magazines,
+} from "@/db/schema";
 import { sql, desc, eq } from "drizzle-orm";
 
 export const dynamic = 'force-dynamic';
@@ -14,15 +26,22 @@ export async function GET() {
             videosCount,
             booksCount,
             teamCount,
-            monthlyViews
+            pressCount,
+            campaignsCount,
+            locationsCount,
+            magazinesCount,
+            monthlyViews,
         ] = await Promise.all([
             db.select({ count: sql<number>`count(*)` }).from(pages),
             db.select({ count: sql<number>`count(*)` }).from(audio),
             db.select({ count: sql<number>`count(*)` }).from(videos),
             db.select({ count: sql<number>`count(*)` }).from(books),
             db.select({ count: sql<number>`count(*)` }).from(teamMembers),
-            // Placeholder for monthly views, could be an aggregate of viewCount on posts/videos etc
-            db.select({ count: sql<number>`coalesce(sum(view_count), 0)` }).from(videos)
+            db.select({ count: sql<number>`count(*)` }).from(pressReleases),
+            db.select({ count: sql<number>`count(*)` }).from(homeCampaigns),
+            db.select({ count: sql<number>`count(*)` }).from(locations),
+            db.select({ count: sql<number>`count(*)` }).from(magazines),
+            db.select({ count: sql<number>`coalesce(sum(view_count), 0)` }).from(videos),
         ]);
 
         // Get recent activity
@@ -65,7 +84,11 @@ export async function GET() {
                 videos: videosCount[0].count,
                 books: booksCount[0].count,
                 team: teamCount[0].count,
-                views: `${Math.round(monthlyViews[0].count / 1000)}K`
+                pressReleases: pressCount[0].count,
+                campaigns: campaignsCount[0].count,
+                locations: locationsCount[0].count,
+                magazines: magazinesCount[0].count,
+                views: `${Math.round(Number(monthlyViews[0].count) / 1000)}K`,
             },
             recentActivity
         });

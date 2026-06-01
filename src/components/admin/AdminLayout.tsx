@@ -30,6 +30,7 @@ import {
   Navigation,
   Box,
   Hash,
+  MapPin,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -92,11 +93,37 @@ const menuItems: any[] = [
         href: "/sitemanager?section=books",
       },
       {
-        title: "Team",
+        title: "Magazines",
+        icon: Newspaper,
+        href: "/sitemanager?section=magazines",
+      },
+      {
+        title: "Press Releases",
+        icon: FileText,
+        href: "/sitemanager?section=press-releases",
+      },
+      {
+        title: "Team / Speakers",
         icon: Users,
         href: "/sitemanager?section=team",
       },
-    ]
+    ],
+  },
+  {
+    title: "Programs",
+    icon: Calendar,
+    items: [
+      {
+        title: "Quranic Circles",
+        icon: MapPin,
+        href: "/sitemanager?section=locations",
+      },
+      {
+        title: "Campaigns",
+        icon: Mic,
+        href: "/sitemanager?section=campaigns",
+      },
+    ],
   },
   {
     title: "Global Settings",

@@ -22,8 +22,8 @@ interface Platform {
   id: string;
   name: string;
   slug: string;
-  iconUrl?: string;
-  themeColor?: string;
+  iconUrl?: string | null;
+  themeColor?: string | null;
 }
 
 interface Account {
@@ -31,7 +31,7 @@ interface Account {
   platformId: string;
   title: string;
   url: string;
-  imageUrl?: string;
+  imageUrl?: string | null;
   buttonText: string;
 }
 

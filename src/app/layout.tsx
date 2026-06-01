@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
-import { Lato } from "next/font/google";
+import { Amiri } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { MainLayout } from "@/components/layout";
 import Script from "next/script";
 
-const lato = Lato({
-  variable: "--font-lato",
+const amiri = Amiri({
+  variable: "--font-amiri",
   subsets: ["latin"],
-  weight: ["100", "300", "400", "700", "900"],
+  weight: ["400", "700"],
 });
 
 export const metadata: Metadata = {
@@ -41,6 +41,12 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&display=swap"
+          rel="stylesheet"
+        />
         {/* Google tag (gtag.js) */}
         <Script async src="https://www.googletagmanager.com/gtag/js?id=G-B6P9KW8X46" strategy="afterInteractive" />
         <Script id="google-analytics" strategy="afterInteractive">
@@ -54,7 +60,7 @@ export default function RootLayout({
         </Script>
       </head>
       <body
-        className={`${lato.variable} antialiased bg-background text-foreground`}
+        className={`${amiri.variable} antialiased bg-background text-foreground font-body`}
       >
         <MainLayout>
           {children}

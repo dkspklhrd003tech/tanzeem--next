@@ -7,7 +7,8 @@ import { PublicationsGrid } from "@/components/home/PublicationsGrid";
 import { CTA } from "@/components/home/CTA";
 import { BackToTop } from "@/components/ui/back-to-top";
 import { db } from "@/db";
-import { homeSliders, books, magazines, teamMembers, homeCampaigns, videos, settings } from "@/db/schema";
+import { homeSliders, books, magazines, teamMembers, homeCampaigns, videos, settings, pressReleases } from "@/db/schema";
+import { LatestPressReleases } from "@/components/home/LatestPressReleases";
 import { eq, desc, asc } from "drizzle-orm";
 
 export const dynamic = "force-dynamic";
@@ -55,6 +56,13 @@ async function HomeContent() {
     .orderBy(asc(videos.order), desc(videos.createdAt))
     .limit(8);
 
+  const latestPress = await db
+    .select()
+    .from(pressReleases)
+    .where(eq(pressReleases.isPublished, true))
+    .orderBy(desc(pressReleases.publishedAt), desc(pressReleases.createdAt))
+    .limit(3);
+
   const siteSettings = await db
     .select()
     .from(settings)
@@ -82,10 +90,21 @@ async function HomeContent() {
       {/* 4. Mission Banner + Featured Videos */}
       <MissionAndVideos videos={featuredVideos} settings={settingsMap} />
 
-      {/* 5. Magazines & Books Grid */}
+      {/* 5. Latest Press Releases */}
+      <LatestPressReleases
+        items={latestPress.map((p) => ({
+          id: p.id,
+          title: p.title,
+          excerpt: p.excerpt,
+          content: p.content,
+          publishedAt: p.publishedAt,
+        }))}
+      />
+
+      {/* 6. Magazines & Books Grid */}
       <PublicationsGrid booksData={featuredBooks} magazinesData={featuredMagazines} />
 
-      {/* 6. Social Connect Banner */}
+      {/* 7. Social Connect Banner */}
       <CTA settings={settingsMap} />
     </>
   );

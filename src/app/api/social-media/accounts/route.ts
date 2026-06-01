@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid payload: accounts must be an array" }, { status: 400 });
     }
 
-    const results = [];
+    const results: any[] = [];
 
     for (const account of accounts) {
       const id = account.id || crypto.randomUUID();

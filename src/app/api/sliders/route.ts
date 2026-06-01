@@ -22,9 +22,6 @@ export async function POST(req: NextRequest) {
         const body = await req.json();
         const { title, imageUrl, linkUrl, order, isActive } = body;
 
-        // Optional Check: Is this an Admin? (assuming you have auth checks, simulating here)
-
-        // Insert to DB using UUID
         const { v4: uuidv4 } = require('uuid');
         const newId = uuidv4();
 
@@ -46,5 +43,28 @@ export async function POST(req: NextRequest) {
     } catch (error) {
         console.error("Failed to create slider:", error);
         return NextResponse.json({ error: "Failed to create slider" }, { status: 500 });
+    }
+}
+
+// PATCH - Bulk reorder sliders (drag-and-drop)
+export async function PATCH(req: NextRequest) {
+    try {
+        const body = await req.json();
+        const { orders } = body as { orders: { id: string; order: number }[] };
+
+        if (!Array.isArray(orders)) {
+            return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
+        }
+
+        await Promise.all(
+            orders.map(({ id, order }) =>
+                db.update(homeSliders).set({ order }).where(eq(homeSliders.id, id))
+            )
+        );
+
+        return NextResponse.json({ success: true });
+    } catch (error) {
+        console.error("Failed to reorder sliders:", error);
+        return NextResponse.json({ error: "Failed to reorder sliders" }, { status: 500 });
     }
 }

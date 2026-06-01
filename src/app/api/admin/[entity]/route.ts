@@ -6,7 +6,11 @@ import {
     videos, 
     books, 
     teamMembers, 
-    events 
+    events,
+    pressReleases,
+    magazines,
+    homeCampaigns,
+    locations,
 } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 // Assume a simple mock auth for now since getCurrentUser might be in lib/auth which we don't have exact path context for yet
@@ -18,7 +22,11 @@ const entityMap: Record<string, any> = {
     videos,
     books,
     team: teamMembers,
-    events
+    events,
+    "press-releases": pressReleases,
+    magazines,
+    campaigns: homeCampaigns,
+    locations,
 };
 
 export async function GET(

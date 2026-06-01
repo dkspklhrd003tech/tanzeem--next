@@ -1,10 +1,13 @@
 import "dotenv/config";
 import { db } from "../src/db";
-import { pages } from "../src/db/schema";
+import { pages, users } from "../src/db/schema";
 import { eq } from "drizzle-orm";
 
 async function seedPages() {
   console.log("Seeding Special Pages...");
+
+  const existingUsers = await db.select().from(users).limit(1);
+  const authorId = existingUsers[0]?.id || "585fbfee-f92d-483c-b44a-b2c10641c174";
 
   const markazHTML = `
 <div class="space-y-12 pb-12">
@@ -180,6 +183,7 @@ async function seedPages() {
       excerpt: "The central hub of our movement.",
       content: markazHTML,
       isPublished: true,
+      authorId,
       metaTitle: "Markaz Tanzeem - Headquarters | Tanzeem e Islami",
       metaDescription: "The central hub of our movement, dedicated to the dissemination of Quranic knowledge."
     });
@@ -199,6 +203,7 @@ async function seedPages() {
       excerpt: "Access comprehensive Islamic education from the comfort of your home.",
       content: distanceHTML,
       isPublished: true,
+      authorId,
       metaTitle: "Distance Learning Programs | Tanzeem e Islami",
       metaDescription: "Access comprehensive Islamic education from the comfort of your home. Join our interactive online courses globally."
     });

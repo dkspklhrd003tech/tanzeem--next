@@ -8,13 +8,13 @@ import { join } from "path";
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
     const user = await getCurrentUser(request);
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    const id = params.id;
+    const { id } = await context.params;
 
     // Get media info first to delete the file
     const item = await db.query.media.findFirst({

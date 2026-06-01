@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/db';
 import { posts, postCategories } from '@/db/schema';
-import { eq, desc } from 'drizzle-orm';
+import { eq, desc, and } from 'drizzle-orm';
 
 export async function GET(request: Request) {
     try {
@@ -10,7 +10,19 @@ export async function GET(request: Request) {
         const limitParam = searchParams.get('limit');
         const limit = limitParam ? parseInt(limitParam) : 10;
 
-        let query = db.select({
+        const conditions = [eq(posts.isPublished, true)];
+
+        if (categorySlug) {
+            // First find category id by slug
+            const catResult = await db.select().from(postCategories).where(eq(postCategories.slug, categorySlug)).limit(1);
+            if (catResult && catResult.length > 0) {
+                conditions.push(eq(posts.categoryId, catResult[0].id));
+            } else {
+                return NextResponse.json({ items: [] });
+            }
+        }
+
+        const results = await db.select({
             id: posts.id,
             title: posts.title,
             slug: posts.slug,
@@ -21,19 +33,9 @@ export async function GET(request: Request) {
         })
         .from(posts)
         .leftJoin(postCategories, eq(posts.categoryId, postCategories.id))
-        .where(eq(posts.isPublished, true));
-
-        if (categorySlug) {
-            // First find category id by slug
-            const catResult = await db.select().from(postCategories).where(eq(postCategories.slug, categorySlug)).limit(1);
-            if (catResult && catResult.length > 0) {
-                query = query.where(eq(posts.categoryId, catResult[0].id));
-            } else {
-                return NextResponse.json({ items: [] });
-            }
-        }
-
-        const results = await query.orderBy(desc(posts.publishedAt)).limit(limit);
+        .where(and(...conditions))
+        .orderBy(desc(posts.publishedAt))
+        .limit(limit);
 
         return NextResponse.json({ items: results });
     } catch (error) {
