@@ -50,7 +50,7 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
                         />
                     </div>
                     <div className="flex-1 text-center md:text-left">
-                        <p className="!text-[#fefefc] font-semibold tracking-wider uppercase mb-2 text-sm">— About Us</p>
+                        <h1 className="!text-[#fefefc] font-semibold tracking-wider uppercase mb-2 text-sm">— About Us</h1>
                         <h2 className="text-3xl md:text-4xl !text-[#fefefc] font-black mb-4">{aboutTitle}</h2>
                         <p className="!text-[#fefefc] leading-relaxed text-sm md:text-base max-w-5xl mb-8">
                             {aboutDesc}
@@ -100,7 +100,7 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
                                 <div className="mt-4">
                                     <Link
                                         href={`/${leader.slug}`}
-                                        className="inline-flex items-center gap-2 bg-transparent border border-[#0d5844] text-[#0d5844] py-2 rounded-full text-xs font-bold hover:bg-[#0d5844] hover:text-[#fefefc] hover:border-[#0d5844] transition-all duration-300"
+                                        className="inline-flex items-center gap-2 bg-transparent border border-[#0d5844] text-[#0d5844] px-3 py-2 rounded-full text-xs font-bold hover:bg-[#0d5844] hover:text-[#fefefc] hover:border-[#0d5844] transition-all duration-300"
                                     >
                                         {leader.designation?.toLowerCase().includes('founder') ? 'About Founder' : 'About Ameer'}
                                         <ArrowRight className="w-3 h-3 ml-1" />

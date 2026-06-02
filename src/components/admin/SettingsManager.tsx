@@ -5,7 +5,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Settings, LayoutTemplate, Palette, Mail, MessageSquare, Send, CheckCircle2 } from "lucide-react";
+import { Settings, LayoutTemplate, Palette, Mail, MessageSquare, Send, CheckCircle2, Calendar } from "lucide-react";
 import { RichTextEditor } from "./RichTextEditor";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToast } from "@/hooks/use-toast";
@@ -196,6 +196,13 @@ export function SettingsManager() {
                                 {submissions.filter(s => s.status !== 'replied').length}
                             </Badge>
                         )}
+                    </TabsTrigger>
+
+                    <TabsTrigger
+                        value="dates"
+                        className="rounded-none px-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground"
+                    >
+                        <Calendar className="w-4 h-4" /> Manage Dates
                     </TabsTrigger>
                 </TabsList>
 
@@ -472,6 +479,180 @@ export function SettingsManager() {
                             )}
                         </div>
 
+                    </div>
+                </TabsContent>
+
+                {/* DATES TAB */}
+                <TabsContent value="dates" className="animate-in fade-in-50 duration-500">
+                    <div className="bg-card border border-border rounded-xl p-6 shadow-sm space-y-8">
+                        <div>
+                            <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+                                <Calendar className="w-5 h-5 text-primary" />
+                                Date Management Control
+                            </h2>
+                            <p className="text-xs text-muted-foreground">
+                                Configure the display of Gregorian and Hijri dates on the top bar of the frontend.
+                            </p>
+                        </div>
+
+                        <div className="space-y-6">
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium block">Display Mode</label>
+                                <div className="flex gap-4">
+                                    <label className="flex items-center gap-2 cursor-pointer text-sm">
+                                        <input
+                                            type="radio"
+                                            name="date_display_mode"
+                                            value="dynamic"
+                                            checked={settings.date_display_mode !== "manual"}
+                                            onChange={() => handleSettingChange('date_display_mode', 'dynamic')}
+                                            className="accent-primary"
+                                        />
+                                        Auto (Dynamic Gregorian & Hijri)
+                                    </label>
+                                    <label className="flex items-center gap-2 cursor-pointer text-sm">
+                                        <input
+                                            type="radio"
+                                            name="date_display_mode"
+                                            value="manual"
+                                            checked={settings.date_display_mode === "manual"}
+                                            onChange={() => handleSettingChange('date_display_mode', 'manual')}
+                                            className="accent-primary"
+                                        />
+                                        Manual Override
+                                    </label>
+                                </div>
+                            </div>
+
+                            {settings.date_display_mode !== "manual" ? (
+                                <div className="space-y-2 max-w-md animate-in fade-in-50 duration-300">
+                                    <label className="text-sm font-medium block">Hijri Date Adjustment (Days)</label>
+                                    <select
+                                        value={settings.hijri_offset || "0"}
+                                        onChange={(e) => handleSettingChange('hijri_offset', e.target.value)}
+                                        className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                                    >
+                                        <option value="-3">-3 days</option>
+                                        <option value="-2">-2 days</option>
+                                        <option value="-1">-1 day</option>
+                                        <option value="0">0 days (Default)</option>
+                                        <option value="1">+1 day</option>
+                                        <option value="2">+2 days</option>
+                                        <option value="3">+3 days</option>
+                                    </select>
+                                    <p className="text-xs text-muted-foreground">
+                                        Adjust the dynamic Hijri date calculation to align with moon sightings.
+                                    </p>
+                                </div>
+                            ) : (
+                                <div className="space-y-2 max-w-md animate-in fade-in-50 duration-300">
+                                    <label className="text-sm font-medium block">Manual Date Text</label>
+                                    <Input
+                                        placeholder="June 06, 2026 & Dhul Hijjah 16, 1447"
+                                        value={settings.manual_date_text || ""}
+                                        onChange={(e) => handleSettingChange('manual_date_text', e.target.value)}
+                                        className="bg-background"
+                                    />
+                                    <p className="text-xs text-muted-foreground">
+                                        Enter the exact date string you want to display on the frontend.
+                                    </p>
+                                </div>
+                            )}
+
+                            {/* Date Preview */}
+                            <div className="p-4 rounded-lg bg-muted/40 border border-border max-w-md">
+                                <span className="text-xs font-semibold text-muted-foreground block mb-1">LIVE PREVIEW ON FRONTEND</span>
+                                <span className="text-sm font-bold text-foreground flex items-center gap-1.5 flex-wrap">
+                                    {(() => {
+                                        const toUrduNumerals = (n: string) =>
+                                            n.replace(/[0-9]/g, d => "۰۱۲۳۴۵۶۷۸۹"[+d]);
+
+                                        const hijriMonthNamesUr = [
+                                            "محرم", "صفر", "ربیع الاول", "ربیع الثانی",
+                                            "جمادی الاول", "جمادی الثانی", "رجب", "شعبان",
+                                            "رمضان", "شوال", "ذوالقعدہ", "ذوالحجہ"
+                                        ];
+
+                                        if (settings.date_display_mode === "manual") {
+                                            const parts = (settings.manual_date_text || "").split("&");
+                                            return (
+                                                <>
+                                                    <span>{parts[0]?.trim()}</span>
+                                                    {parts[1] && <span className="text-muted-foreground">&amp;</span>}
+                                                    {parts[1] && (
+                                                        <span
+                                                            style={{ fontFamily: "'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', serif", fontSize: "16px" }}
+                                                            dir="rtl" lang="ur"
+                                                        >
+                                                            {parts[1].trim()}
+                                                        </span>
+                                                    )}
+                                                </>
+                                            );
+                                        }
+                                        try {
+                                            const offset = parseInt(settings.hijri_offset || "0", 10) || 0;
+                                            const gregDate = new Date();
+                                            const gregStr = new Intl.DateTimeFormat('en-US', {
+                                                day: '2-digit',
+                                                month: 'long',
+                                                year: 'numeric'
+                                            }).format(gregDate);
+
+                                            const hijriDate = new Date();
+                                            hijriDate.setDate(hijriDate.getDate() + offset);
+
+                                            const hijriParts = new Intl.DateTimeFormat('en-US-u-ca-islamic-umalqura', {
+                                                day: 'numeric',
+                                                month: 'numeric',
+                                                year: 'numeric'
+                                            }).formatToParts(hijriDate);
+
+                                            let hijriDay = '';
+                                            let hijriMonthNum = '';
+                                            let hijriYear = '';
+
+                                            for (const part of hijriParts) {
+                                                if (part.type === 'day') hijriDay = part.value;
+                                                if (part.type === 'month') hijriMonthNum = part.value;
+                                                if (part.type === 'year') hijriYear = part.value;
+                                            }
+
+                                            const monthIdx = parseInt(hijriMonthNum, 10) - 1;
+                                            const hijriMonthName = hijriMonthNamesUr[monthIdx] || "ذوالحجہ";
+                                            const hijriStr = `${hijriMonthName} ${toUrduNumerals(hijriDay)}، ${toUrduNumerals(hijriYear)}`;
+
+                                            return (
+                                                <>
+                                                    <span>{gregStr}</span>
+                                                    <span className="text-muted-foreground">&amp;</span>
+                                                    <span
+                                                        style={{ fontFamily: "'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', serif", fontSize: "16px" }}
+                                                        dir="rtl" lang="ur"
+                                                    >
+                                                        {hijriStr}
+                                                    </span>
+                                                </>
+                                            );
+                                        } catch (e) {
+                                            return "June 06, 2026 & ذوالحجہ ۱۶، ۱۴۴۷";
+                                        }
+                                    })()}
+                                </span>
+                            </div>
+                        </div>
+
+                        <div className="mt-8 flex justify-end">
+                            <ConfirmDialog
+                                title="Save Date Configuration"
+                                description="Are you sure you want to update the date display settings on the website?"
+                                onConfirm={() => saveSettings()}
+                            >
+                                <Button disabled={isSaving} className="bg-[#0d5844] hover:bg-[#0a4636] text-[#fefefc] rounded-xl px-10 font-bold shadow-md transition-all active:scale-95">
+                                    {isSaving ? "Saving..." : "Save Date Configuration"}
+                                </Button>
+                            </ConfirmDialog>
+                        </div>
                     </div>
                 </TabsContent>
 

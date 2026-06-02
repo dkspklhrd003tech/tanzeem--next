@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Search, ChevronDown, Youtube, Facebook } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -105,6 +106,17 @@ export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [navigation, setNavigation] = useState<any[]>([]);
   const [settings, setSettings] = useState<Record<string, string>>({});
+  const [searchQuery, setSearchQuery] = useState("");
+  const [displayDate, setDisplayDate] = useState<{ greg: string; hijri: string } | null>(null);
+  const router = useRouter();
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
+      setIsSearchOpen(false);
+    }
+  };
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 10);
@@ -161,6 +173,77 @@ export function Header() {
     fetchSettings();
   }, []);
 
+  useEffect(() => {
+    if (settings.date_display_mode === "manual") {
+      const manual = settings.manual_date_text || "";
+      const parts = manual.split("&");
+      setDisplayDate({
+        greg: parts[0]?.trim() || manual,
+        hijri: parts[1]?.trim() || "",
+      });
+      return;
+    }
+
+    try {
+      const offset = parseInt(settings.hijri_offset || "0", 10) || 0;
+
+      const gregDate = new Date();
+      const gregStr = new Intl.DateTimeFormat('en-US', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric'
+      }).format(gregDate);
+
+      const hijriDate = new Date();
+      hijriDate.setDate(hijriDate.getDate() + offset);
+
+      const hijriParts = new Intl.DateTimeFormat('en-US-u-ca-islamic-umalqura', {
+        day: 'numeric',
+        month: 'numeric',
+        year: 'numeric'
+      }).formatToParts(hijriDate);
+
+      let hijriDay = '';
+      let hijriMonthNum = '';
+      let hijriYear = '';
+
+      for (const part of hijriParts) {
+        if (part.type === 'day') hijriDay = part.value;
+        if (part.type === 'month') hijriMonthNum = part.value;
+        if (part.type === 'year') hijriYear = part.value;
+      }
+
+      // Urdu names for Hijri months
+      const hijriMonthNamesUr = [
+        "محرم",
+        "صفر",
+        "ربیع الاول",
+        "ربیع الثانی",
+        "جمادی الاول",
+        "جمادی الثانی",
+        "رجب",
+        "شعبان",
+        "رمضان",
+        "شوال",
+        "ذوالقعدہ",
+        "ذوالحجہ"
+      ];
+
+      // Convert Western digits to Urdu-Indic numerals
+      const toUrduNumerals = (n: string) =>
+        n.replace(/[0-9]/g, d => "۰۱۲۳۴۵۶۷۸۹"[+d]);
+
+      const monthIdx = parseInt(hijriMonthNum, 10) - 1;
+      const hijriMonthName = hijriMonthNamesUr[monthIdx] || "ذوالحجہ";
+      const hijriStr = `${hijriMonthName} ${toUrduNumerals(hijriDay)}، ${toUrduNumerals(hijriYear)}`;
+
+      setDisplayDate({ greg: gregStr, hijri: hijriStr });
+    } catch (error) {
+      console.error("Error formatting dates:", error);
+      setDisplayDate({ greg: "June 06, 2026", hijri: "ذوالحجہ ۱۶، ۱۴۴۷" });
+    }
+  }, [settings]);
+
   return (
     <>
       {/* Top Social Bar */}
@@ -183,6 +266,20 @@ export function Header() {
               </a>
             </div>
           </div>
+          {displayDate && (
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-[#0d5844] bg-[#0d5844]/8 border border-[#0d5844]/15 px-3 py-1 rounded-full shadow-sm">
+              <span className="ltr">{displayDate.greg}</span>
+              <span className="text-[#0d5844]/50 mx-0.5">&amp;</span>
+              <span
+                className="font-nastaleeq text-[15px] leading-none"
+                style={{ fontFamily: "'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', serif" }}
+                dir="rtl"
+                lang="ur"
+              >
+                {displayDate.hijri}
+              </span>
+            </div>
+          )}
         </div>
       </div>
 
@@ -229,11 +326,18 @@ export function Header() {
                 <DesktopMenuItem key={item.name} item={item} />
               ))}
               {/* Search */}
-              <Input
-                placeholder="Search..."
-                className="w-64 h-8 pl-3 pr-9 rounded-full border-border bg-[#fefefc] text-xs"
-              />
-              <Search className="absolute right-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-foreground-muted" />
+              <form onSubmit={handleSearchSubmit} className="relative ml-4 flex items-center">
+                <Input
+                  type="search"
+                  placeholder="Search..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-64 h-8 pl-3 pr-9 rounded-full border-border bg-[#fefefc] text-xs"
+                />
+                <button type="submit" className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground-muted hover:text-foreground transition-colors p-1 rounded-full hover:bg-muted">
+                  <Search className="h-3.5 w-3.5" />
+                </button>
+              </form>
             </nav>
 
             {/* Mobile Search & Menu */}
@@ -317,13 +421,20 @@ export function Header() {
                 className="w-full max-w-lg"
                 onClick={(e) => e.stopPropagation()}
               >
-                <div className="relative">
+                <form onSubmit={handleSearchSubmit} className="relative">
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-foreground-muted" />
-                  <Input placeholder="Search..." className="pl-12 h-14 text-lg bg-[#fefefc] rounded-xl" autoFocus />
-                  <Button variant="ghost" size="sm" className="absolute right-2 top-1/2 -translate-y-1/2" onClick={() => setIsSearchOpen(false)}>
+                  <Input
+                    type="search"
+                    placeholder="Search..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-12 pr-12 h-14 text-lg bg-[#fefefc] rounded-xl"
+                    autoFocus
+                  />
+                  <Button type="button" variant="ghost" size="sm" className="absolute right-2 top-1/2 -translate-y-1/2" onClick={() => setIsSearchOpen(false)}>
                     <X className="h-5 w-5" />
                   </Button>
-                </div>
+                </form>
               </motion.div>
             </motion.div>
           )

@@ -47,6 +47,7 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&display=swap"
           rel="stylesheet"
         />
+        {/* Jameel Noori Nastaleeq — loaded via CSS @font-face in globals.css if installed locally */}
         {/* Google tag (gtag.js) */}
         <Script async src="https://www.googletagmanager.com/gtag/js?id=G-B6P9KW8X46" strategy="afterInteractive" />
         <Script id="google-analytics" strategy="afterInteractive">

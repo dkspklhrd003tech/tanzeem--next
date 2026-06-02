@@ -180,6 +180,13 @@ body {
   font-family: 'Noto Nastaliq Urdu', serif;
 }
 
+/* Jameel Noori Nastaleeq — primary Urdu calligraphic font */
+.font-nastaleeq {
+  font-family: 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', 'Noto Nastaliq', serif;
+  direction: rtl;
+  unicode-bidi: embed;
+}
+
 .font-body {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
