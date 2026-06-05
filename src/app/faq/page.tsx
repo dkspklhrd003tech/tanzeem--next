@@ -51,15 +51,17 @@ export default async function FAQPage() {
   });
 
   return (
-    <div className="container mx-auto py-12 md:py-16 px-4 max-w-3xl">
-      <h1 className="font-amiri text-3xl font-bold text-primary mb-2">Frequently Asked Questions</h1>
-      <p className="text-foreground-muted mb-8">
-        Common questions about Tanzeem-e-Islami, its mission, and programs.
-      </p>
-      {page?.content && !page.content.includes("<h1>FAQs</h1>") ? (
-        <div className="dynamic-content prose-tanzeem mb-8" dangerouslySetInnerHTML={{ __html: page.content }} />
-      ) : null}
-      <FAQWithTabs items={defaultFaqs} />
-    </div>
+    <main className="min-h-screen bg-background">
+      <div className="container mx-auto py-12 md:py-16 px-4 max-w-3xl">
+        <h1 className="font-amiri text-3xl font-bold text-primary mb-2">Frequently Asked Questions</h1>
+        <p className="text-foreground-muted mb-8">
+          Common questions about Tanzeem-e-Islami, its mission, and programs.
+        </p>
+        {page?.content && !page.content.includes("<h1>FAQs</h1>") ? (
+          <div className="dynamic-content prose-tanzeem mb-8" dangerouslySetInnerHTML={{ __html: page.content }} />
+        ) : null}
+        <FAQWithTabs items={defaultFaqs} />
+      </div>
+    </main>
   );
 }

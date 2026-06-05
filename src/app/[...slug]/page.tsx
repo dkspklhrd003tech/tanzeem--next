@@ -124,7 +124,7 @@ export default async function DynamicPage({ params }: PageProps) {
     });
 
     return (
-        <div className="min-h-screen bg-background">
+        <main className="min-h-screen bg-background">
             {/* Render dynamically parsed JSON-LD Schema if present */}
             {seo.schemaJsonLd && (
                 <script
@@ -149,7 +149,7 @@ export default async function DynamicPage({ params }: PageProps) {
                     })}
                 </div>
             ) : (
-                <main className="container mx-auto py-12 md:py-16">
+                <main className="container mx-auto py-12 md:py-16 px-4">
                     <article className="prose prose-lg dark:prose-invert max-w-4xl mx-auto">
                         <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
                             {page.title}
@@ -170,6 +170,6 @@ export default async function DynamicPage({ params }: PageProps) {
                     </article>
                 </main>
             )}
-        </div>
+        </main>
     );
 }

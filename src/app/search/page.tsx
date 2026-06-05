@@ -145,7 +145,7 @@ export default async function SearchPage({ searchParams }: Props) {
         title: a.title,
         description: stripHtml(a.description || ""),
         type: "audio" as const,
-        link: "/resources/audios",
+        link: `/resources/audios/${a.slug}`,
         date: a.publishedAt || a.createdAt,
       }));
 
@@ -154,7 +154,7 @@ export default async function SearchPage({ searchParams }: Props) {
         title: v.title,
         description: stripHtml(v.description || ""),
         type: "video" as const,
-        link: "/resources/videos",
+        link: `/resources/videos/${v.slug}`,
         date: v.publishedAt || v.createdAt,
       }));
 
@@ -163,7 +163,7 @@ export default async function SearchPage({ searchParams }: Props) {
         title: b.title,
         description: stripHtml(b.description || ""),
         type: "book" as const,
-        link: "/resources/books",
+        link: `/resources/books/${b.slug}`,
         date: b.publishedAt || b.createdAt,
       }));
 
@@ -172,7 +172,7 @@ export default async function SearchPage({ searchParams }: Props) {
         title: m.title,
         description: stripHtml(m.description || ""),
         type: "magazine" as const,
-        link: `/resources/magazines`,
+        link: `/resources/magazines/${m.slug}`,
         date: m.publishDate || m.createdAt,
       }));
 
@@ -181,7 +181,7 @@ export default async function SearchPage({ searchParams }: Props) {
         title: p.title,
         description: stripHtml(p.excerpt || p.content),
         type: "press_release" as const,
-        link: "/resources/press-releases",
+        link: `/resources/press-releases/${p.slug}`,
         date: p.publishedAt || p.createdAt,
       }));
 
@@ -241,7 +241,7 @@ export default async function SearchPage({ searchParams }: Props) {
   };
 
   return (
-    <div className="min-h-[70vh] bg-background py-12 md:py-20">
+    <main className="min-h-screen bg-background py-12 md:py-16">
       <div className="container mx-auto px-4 max-w-4xl">
         {/* Search header */}
         <div className="mb-12 text-center">
@@ -345,6 +345,6 @@ export default async function SearchPage({ searchParams }: Props) {
           </div>
         )}
       </div>
-    </div>
+    </main>
   );
 }

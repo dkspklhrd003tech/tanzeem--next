@@ -7,7 +7,7 @@ import { DarseQuranGrid } from "@/components/darse-quran/DarseQuranGrid";
 
 export default function DarseQuranPage() {
     return (
-        <main className="flex flex-col min-h-screen bg-[#F8F9FA] pb-12 w-full">
+        <main className="flex flex-col min-h-screen bg-background pb-12 w-full">
             <DarseQuranBanner />
             <DarseQuranFilters />
             <DarseQuranGrid />

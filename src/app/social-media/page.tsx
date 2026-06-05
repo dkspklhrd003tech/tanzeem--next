@@ -15,7 +15,7 @@ export default async function SocialMediaPage() {
   const accounts = await db.select().from(socialAccounts).where(eq(socialAccounts.isActive, true)).orderBy(asc(socialAccounts.order));
 
   return (
-    <div className="min-h-screen pt-24 pb-20 bg-[#fefefc]">
+    <main className="min-h-screen bg-background py-12 md:py-16">
       <div className="container mx-auto">
         <header className="text-center mb-16 space-y-4">
           <div className="inline-block py-1.5 rounded-full bg-primary/5 text-primary text-sm font-bold tracking-widest uppercase mb-2">
@@ -31,6 +31,6 @@ export default async function SocialMediaPage() {
 
         <SocialHub initialPlatforms={platforms} initialAccounts={accounts} />
       </div>
-    </div>
+    </main>
   );
 }

@@ -39,6 +39,15 @@ const WP_NAVIGATION = [
     ]
   },
   {
+    name: "Education",
+    href: "/distance-learning",
+    children: [
+      { name: "Ruju Ilal Quran", href: "/ruju-ilal-quran" },
+      { name: "Distance Learning", href: "/distance-learning" },
+      { name: "Online Courses", href: "/online-courses" },
+    ],
+  },
+  {
     name: "Resources",
     href: "/resources",
     children: [
@@ -68,7 +77,7 @@ const WP_NAVIGATION = [
         name: "Books",
         href: "/resources/books",
         children: [
-          { name: "Audio Books", href: "/resources/audio-books" },
+          { name: "Books by Authors", href: "/books-by-author" },
           { name: "Books by Category", href: "/resources/books/by-category" },
         ],
       },
@@ -79,25 +88,18 @@ const WP_NAVIGATION = [
           { name: "Meesaq", href: "/resources/magazines/meesaq" },
           { name: "Hikmat-e-Quran", href: "/resources/magazines/hikmat-e-quran" },
           { name: "Nida-e-Khilafat", href: "/resources/magazines/nida-e-khilafat" },
+          { name: "Perspective", href: "/resources/magazines/perspective" },
         ],
       },
       { name: "Press Releases", href: "/resources/press-releases" },
       { name: "Social Media", href: "/resources/social-media" },
       { name: "Khitab-e-Jum'ah (Audio)", href: "/resources/khitab-e-jumah" },
+      { name: "FAQ's", href: "/faq" },
     ],
   },
-  {
-    name: "Public Programs",
-    href: "/public-programs",
-    children: [
-      { name: "Quranic Circles", href: "/public-programs/quranic-circles" },
-      { name: "Khitabat-e-Jummah Addresses", href: "/public-programs/khitabat-e-jummah" },
-    ],
-  },
-  { name: "Online Courses", href: "https://lms.quranacademy.com" },
-  { name: "FAQs", href: "/faq" },
-  { name: "Join Tanzeem", href: "https://app.dhtr.org/contactus" },
+  { name: "Quranic Circles", href: "/quranic-circles" },
   { name: "Contact Us", href: "/contact" },
+  { name: "Join Tanzeem", href: "https://app.dhtr.org/contactus" },
 ];
 
 export function Header() {

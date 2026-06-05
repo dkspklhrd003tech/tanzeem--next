@@ -6,6 +6,7 @@ import { eq } from 'drizzle-orm';
 const ADMIN_AUTHOR = 'system-admin';
 
 const pageData: { title: string; slug: string; isPublished: boolean }[] = [
+  // Organization
   { title: 'Organization', slug: 'organization', isPublished: true },
   { title: 'Background', slug: 'organization/background', isPublished: true },
   { title: 'Mission Statement', slug: 'organization/mission-statement', isPublished: true },
@@ -16,6 +17,8 @@ const pageData: { title: string; slug: string; isPublished: boolean }[] = [
   { title: 'Foundation', slug: 'organization/our-ideology/foundation', isPublished: true },
   { title: 'The Founder', slug: 'organization/the-founder', isPublished: true },
   { title: 'The Ameer', slug: 'organization/the-ameer', isPublished: true },
+
+  // Resources
   { title: 'Resources', slug: 'resources', isPublished: true },
   { title: 'Audios', slug: 'resources/audios', isPublished: true },
   { title: 'Audios By Speaker', slug: 'resources/audios/by-speaker', isPublished: true },
@@ -30,15 +33,57 @@ const pageData: { title: string; slug: string; isPublished: boolean }[] = [
   { title: 'Meesaq', slug: 'resources/magazines/meesaq', isPublished: true },
   { title: 'Hikmat-e-Quran', slug: 'resources/magazines/hikmat-e-quran', isPublished: true },
   { title: 'Nida-e-Khilafat', slug: 'resources/magazines/nida-e-khilafat', isPublished: true },
+  { title: 'Perspective', slug: 'resources/magazines/perspective', isPublished: true },
   { title: 'Press Releases', slug: 'resources/press-releases', isPublished: true },
   { title: 'Social Media', slug: 'resources/social-media', isPublished: true },
   { title: "Khitab-e-Jum'ah", slug: 'resources/khitab-e-jumah', isPublished: true },
+
+  // Public Programs
   { title: 'Public Programs', slug: 'public-programs', isPublished: true },
   { title: 'Quranic Circles', slug: 'public-programs/quranic-circles', isPublished: true },
-  { title: 'Khitabat-e-Jummah', slug: 'public-programs/khitabat-e-jummah', isPublished: true },
+  { title: "Khitabat-e-Jummah", slug: 'public-programs/khitabat-e-jummah', isPublished: true },
+
+  // Education & Programs
+  { title: 'Markaz Tanzeem', slug: 'markaz-tanzeem', isPublished: true },
+  { title: 'Distance Learning', slug: 'distance-learning', isPublished: true },
+  { title: 'Quranic Circles', slug: 'quranic-circles', isPublished: true },
+  { title: 'Dars-e-Quran', slug: 'darse-quran', isPublished: true },
+  { title: 'Online Courses', slug: 'online-courses', isPublished: true },
+
+  // Magazine Hub Pages
+  { title: 'Meesaq Magazine', slug: 'meesaq', isPublished: true },
+  { title: 'Hikmat-e-Quran Magazine', slug: 'hikmat-e-quran', isPublished: true },
+  { title: 'Nida-e-Khilafat Magazine', slug: 'nida-e-khilafat', isPublished: true },
+  { title: 'Perspective Magazine', slug: 'perspective', isPublished: true },
+
+  // Resource Hub Pages
+  { title: 'Audio Books Hub', slug: 'audio-books', isPublished: true },
+  { title: 'Books by Category', slug: 'books-by-category', isPublished: true },
+  { title: 'Videos by Category', slug: 'videos-by-category', isPublished: true },
+  { title: 'Videos by Speakers', slug: 'videos-by-speakers', isPublished: true },
+
+  // Content Programs
+  { title: 'Zamana Gawah Hai', slug: 'zamana-gawah-hay', isPublished: true },
+  { title: 'Ameer Say Mulaqat', slug: 'ameer-say-mulaqat', isPublished: true },
+  { title: 'Tazkeer', slug: 'tazkeer', isPublished: true },
+  { title: 'Press Releases Hub', slug: 'press-releases', isPublished: true },
+
+  // Events
+  { title: 'Events', slug: 'events', isPublished: true },
+  { title: 'Upcoming Events', slug: 'events/upcoming', isPublished: true },
+  { title: 'Past Events', slug: 'events/past', isPublished: true },
+  { title: 'Event Categories', slug: 'events/categories', isPublished: true },
+  { title: 'Event Locations', slug: 'events/locations', isPublished: true },
+
+  // Policy
+  { title: 'Policy', slug: 'policy', isPublished: true },
+
+  // Existing pages
   { title: 'FAQs', slug: 'faq', isPublished: true },
   { title: 'Contact Us', slug: 'contact', isPublished: true },
   { title: 'History of Tanzeem-e-Islami', slug: 'history-of-tanzeem-e-islami', isPublished: true },
+  { title: 'Search', slug: 'search', isPublished: true },
+  { title: 'Site Manager', slug: 'sitemanager', isPublished: true },
 ];
 
 async function seed() {
