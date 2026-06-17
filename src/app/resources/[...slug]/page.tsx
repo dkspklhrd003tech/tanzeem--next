@@ -33,6 +33,11 @@ const TITLES: Record<string, string> = {
   videos: "Video Library",
   "videos/by-category": "Videos by Category",
   "videos/by-speakers": "Videos by Speakers",
+  "dr-israr-ahmad-lectures": "Dr. Israr Ahmad Lectures",
+  "dr-israr-ahmad-qa": "Dr. Israr Ahmad (Q&A)",
+  "bayan-ul-quran": "Bayan ul Quran",
+  "muntakab-nisab": "Muntakab Nisab",
+  "dr-israr-ahmad-video-clips": "Dr. Israr Ahmad (Video Clips)",
   books: "Books",
   "books/by-category": "Books by Category",
   magazines: "Magazines",
@@ -158,6 +163,14 @@ export default async function ResourceSubPage({ params, searchParams }: Props) {
         )}
         {(path === "videos/by-category" || path === "videos/by-speakers") && (
           <VideoGrid items={videoItems} />
+        )}
+        {["dr-israr-ahmad-lectures", "dr-israr-ahmad-qa", "bayan-ul-quran", "muntakab-nisab", "dr-israr-ahmad-video-clips"].includes(path) && (
+          <>
+            <div className="mb-6">
+              <p className="text-foreground-muted">Curated video playlists and series.</p>
+            </div>
+            <VideoGrid items={videoItems} />
+          </>
         )}
         {(path === "books" || path === "books/by-category") && <BookGrid items={bookItems} />}
         {path === "magazines" && (

@@ -1,0 +1,76 @@
+import React from "react";
+import { Hero } from "@/components/home/Hero";
+import { IntroSection } from "@/components/shared/IntroSection";
+import { StatsGrid } from "@/components/shared/StatsGrid";
+import { Accordion } from "@/components/shared/Accordion";
+import { TeamGrid } from "@/components/shared/TeamGrid";
+import { MediaCardGrid } from "@/components/shared/MediaCardGrid";
+import { PublicationGrid } from "@/components/shared/PublicationGrid";
+import { CTABanner } from "@/components/shared/CTABanner";
+import { EmbedBlock } from "@/components/shared/EmbedBlock";
+import type { CmsSectionData } from "@/lib/page-helpers";
+
+const ComponentMap: Record<string, React.FC<any>> = {
+  hero: Hero,
+  intro: IntroSection,
+  stats: StatsGrid,
+  accordion: Accordion,
+  team: TeamGrid,
+  media_grid: MediaCardGrid,
+  publications: PublicationGrid,
+  cta_banner: CTABanner,
+  embed: EmbedBlock,
+};
+
+interface DynamicPageContentProps {
+  sections: CmsSectionData[];
+}
+
+export function DynamicPageContent({ sections }: DynamicPageContentProps) {
+  if (sections.length === 0) return null;
+
+  return (
+    <div className="flex flex-col">
+      {sections.map((section) => {
+        const SectionComponent = ComponentMap[section.type];
+        if (!SectionComponent) {
+          console.warn(`No component found for section type: ${section.type}`);
+          return null;
+        }
+        return (
+          <SectionComponent
+            key={section.id}
+            {...(section.config as any)}
+          />
+        );
+      })}
+    </div>
+  );
+}
+
+export function generatePageMetadata(
+  page: { title: string; metaTitle?: string | null; metaDescription?: string | null; excerpt?: string | null } | null,
+  defaultTitle: string,
+  defaultDescription?: string
+) {
+  if (page?.metaTitle || page?.title) {
+    const title = page.metaTitle || page.title;
+    const description = page.metaDescription || page.excerpt || defaultDescription;
+    return {
+      title,
+      description,
+      openGraph: {
+        title,
+        description: description ?? undefined,
+      },
+    };
+  }
+  return {
+    title: defaultTitle,
+    description: defaultDescription,
+    openGraph: {
+      title: defaultTitle,
+      description: defaultDescription,
+    },
+  };
+}

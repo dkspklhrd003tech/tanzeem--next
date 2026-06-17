@@ -1,6 +1,37 @@
-export const metadata = { title: "Our Obligations | Tanzeem-e-Islami" };
+import { getCmsPage, getCleanContent } from "@/lib/page-helpers";
+import { DynamicPageContent, generatePageMetadata } from "@/components/shared/DynamicPageContent";
 
-export default function OurObligationsPage() {
+const SLUG = "organization/our-ideology/our-obligations";
+const DEFAULT_TITLE = "Our Obligations | Tanzeem-e-Islami";
+
+export async function generateMetadata() {
+  const { page } = await getCmsPage(SLUG);
+  return generatePageMetadata(page, DEFAULT_TITLE);
+}
+
+export default async function OurObligationsPage() {
+  const { page, sections } = await getCmsPage(SLUG);
+
+  if (page && sections.length > 0) {
+    return (
+      <main className="min-h-screen bg-background">
+        <DynamicPageContent sections={sections} />
+      </main>
+    );
+  }
+
+  if (page) {
+    return (
+      <main className="min-h-screen bg-background">
+        <div className="container mx-auto py-12 md:py-16 px-4">
+          <div className="prose prose-lg dark:prose-invert max-w-4xl mx-auto"
+            dangerouslySetInnerHTML={{ __html: getCleanContent(page.content) }}
+          />
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="min-h-screen bg-background">
       <div className="container mx-auto py-12 md:py-16">
@@ -9,17 +40,15 @@ export default function OurObligationsPage() {
           <p className="lead text-xl text-muted-foreground mb-8">
             The obligations that every Muslim must fulfill in their personal, familial, and social lives according to Islamic teachings.
           </p>
-
           <h2>Individual Obligations</h2>
           <ul>
             <li><strong>Establishing Salah (Prayer):</strong> Performing the five daily prayers as the foundation of spiritual discipline and connection with Allah.</li>
             <li><strong>Fasting during Ramadan:</strong> Observing the annual month of fasting to develop self-discipline, empathy, and spiritual elevation.</li>
             <li><strong>Zakat (Charity):</strong> Giving a fixed portion of wealth to those in need, establishing economic justice in society.</li>
             <li><strong>Hajj (Pilgrimage):</strong> Performing the pilgrimage to Makkah at least once in a lifetime if physically and financially able.</li>
-            <li><strong>Study of the Quran:</strong> Reading, understanding, and implementing the Quran in daily life. Every Muslim must strive to comprehend the message of the Quran directly.</li>
+            <li><strong>Study of the Quran:</strong> Reading, understanding, and implementing the Quran in daily life.</li>
             <li><strong>Dawah (Invitation to Islam):</strong> Inviting others to the path of Allah with wisdom, good advice, and exemplary conduct.</li>
           </ul>
-
           <h2>Familial Obligations</h2>
           <ul>
             <li><strong>Rights of Parents:</strong> Serving and honoring parents, especially in their old age, and maintaining family ties.</li>
@@ -27,7 +56,6 @@ export default function OurObligationsPage() {
             <li><strong>Rights of Children:</strong> Providing proper Islamic upbringing, education, and training to children.</li>
             <li><strong>Extended Family:</strong> Maintaining relationships with relatives (silat-ur-rahim) and supporting them in need.</li>
           </ul>
-
           <h2>Social Obligations</h2>
           <ul>
             <li><strong>Enjoining Good and Forbidding Evil:</strong> Actively working to promote virtue and prevent vice in society.</li>
@@ -35,7 +63,6 @@ export default function OurObligationsPage() {
             <li><strong>Community Service:</strong> Participating in activities that benefit the community and society at large.</li>
             <li><strong>Environmental Stewardship:</strong> Taking care of the environment as trustees (khalifah) of Allah on earth.</li>
           </ul>
-
           <h2>Political Obligations</h2>
           <ul>
             <li><strong>Establishment of Islamic System:</strong> Working for the establishment of a system based on Islamic principles of governance.</li>

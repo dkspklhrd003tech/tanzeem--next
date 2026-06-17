@@ -1,8 +1,10 @@
+import { getCmsPage, getCleanContent } from "@/lib/page-helpers";
+import { DynamicPageContent, generatePageMetadata } from "@/components/shared/DynamicPageContent";
 import { Accordion } from "@/components/shared/Accordion";
 
-export const metadata = { title: "Basic Belief | Tanzeem-e-Islami" };
-
-const items = [
+const SLUG = "organization/our-ideology/basic-belief";
+const DEFAULT_TITLE = "Basic Belief | Tanzeem-e-Islami";
+const FALLBACK_ITEMS = [
   {
     question: "Tawheed (Oneness of Allah)",
     answer: "We believe in the absolute oneness of Allah (SWT). He is the Creator, Sustainer, and Sovereign of the universe. No one is worthy of worship except Him. This fundamental belief forms the bedrock of our faith and worldview.",
@@ -29,7 +31,34 @@ const items = [
   },
 ];
 
-export default function BasicBeliefPage() {
+export async function generateMetadata() {
+  const { page } = await getCmsPage(SLUG);
+  return generatePageMetadata(page, DEFAULT_TITLE);
+}
+
+export default async function BasicBeliefPage() {
+  const { page, sections } = await getCmsPage(SLUG);
+
+  if (page && sections.length > 0) {
+    return (
+      <main className="min-h-screen bg-background">
+        <DynamicPageContent sections={sections} />
+      </main>
+    );
+  }
+
+  if (page) {
+    return (
+      <main className="min-h-screen bg-background">
+        <div className="container mx-auto py-12 md:py-16 px-4">
+          <div className="prose prose-lg dark:prose-invert max-w-4xl mx-auto"
+            dangerouslySetInnerHTML={{ __html: getCleanContent(page.content) }}
+          />
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="min-h-screen bg-background">
       <div className="container mx-auto py-12 md:py-16">
@@ -42,10 +71,7 @@ export default function BasicBeliefPage() {
           </p>
         </article>
         <div className="max-w-3xl mx-auto">
-          <Accordion
-            heading="Core Beliefs"
-            items={items}
-          />
+          <Accordion heading="Core Beliefs" items={FALLBACK_ITEMS} />
         </div>
       </div>
     </main>

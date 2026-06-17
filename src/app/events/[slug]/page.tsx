@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: Props) {
   if (!event) return { title: "Event Not Found" };
   return {
     title: `${event.title} | Tanzeem-e-Islami`,
-    description: event.description || event.excerpt,
+    description: event.description || undefined,
   };
 }
 

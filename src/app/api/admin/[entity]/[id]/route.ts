@@ -1,16 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
-import { 
-    posts, 
-    audio, 
-    videos, 
-    books, 
-    teamMembers, 
+import {
+    posts,
+    audio,
+    videos,
+    books,
+    teamMembers,
     events,
     pressReleases,
     magazines,
     homeCampaigns,
     locations,
+    sermons,
 } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { getCurrentUser } from "@/lib/auth";
@@ -26,6 +27,7 @@ const entityMap: Record<string, any> = {
     magazines,
     campaigns: homeCampaigns,
     locations,
+    sermons,
 };
 
 async function requireAuth(request: NextRequest): Promise<NextResponse | null> {
@@ -63,7 +65,7 @@ export async function GET(
 
         return NextResponse.json({ item });
     } catch (error) {
-        console.error(`Error fetching ${await params.then(p=>p.entity)}:`, error);
+        console.error(`Error fetching ${await params.then(p => p.entity)}:`, error);
         return NextResponse.json({ error: "Failed to fetch item" }, { status: 500 });
     }
 }
@@ -98,8 +100,8 @@ export async function PUT(
                 .where(eq((table as any).slug, data.slug))
                 .limit(1);
             if (dup.length > 0 && dup[0].id !== id) {
-                return NextResponse.json({ 
-                    error: "An item with this slug already exists" 
+                return NextResponse.json({
+                    error: "An item with this slug already exists"
                 }, { status: 409 });
             }
         }
@@ -108,7 +110,7 @@ export async function PUT(
 
         return NextResponse.json({ success: true });
     } catch (error) {
-        console.error(`Error updating ${await params.then(p=>p.entity)}:`, error);
+        console.error(`Error updating ${await params.then(p => p.entity)}:`, error);
         return NextResponse.json({ error: "Failed to update item" }, { status: 500 });
     }
 }
@@ -138,7 +140,7 @@ export async function DELETE(
 
         return NextResponse.json({ success: true });
     } catch (error) {
-        console.error(`Error deleting ${await params.then(p=>p.entity)}:`, error);
+        console.error(`Error deleting ${await params.then(p => p.entity)}:`, error);
         return NextResponse.json({ error: "Failed to delete item" }, { status: 500 });
     }
 }

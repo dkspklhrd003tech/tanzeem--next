@@ -1,6 +1,14 @@
 import { HubLanding } from "@/components/shared/HubLanding";
+import type { Metadata } from "next";
 
-export const metadata = { title: "Resources | Tanzeem-e-Islami" };
+export const metadata: Metadata = {
+  title: "Resources | Tanzeem-e-Islami",
+  description: "Access audios, videos, books, magazines, press releases, and official publications from Tanzeem-e-Islami.",
+  openGraph: {
+    title: "Resources | Tanzeem-e-Islami",
+    description: "Access audios, videos, books, magazines, press releases, and official publications from Tanzeem-e-Islami.",
+  },
+};
 
 const cards = [
   { title: "Audios", href: "/resources/audios", description: "Lectures by speaker, category, and audio books" },
@@ -10,6 +18,7 @@ const cards = [
   { title: "Press Releases", href: "/resources/press-releases", description: "Official announcements" },
   { title: "Social Media", href: "/resources/social-media", description: "Follow Tanzeem online" },
   { title: "Khitab-e-Jum'ah", href: "/resources/khitab-e-jumah", description: "Friday sermon audio archive" },
+  { title: "FAQ", href: "/faq", description: "Frequently asked questions" },
 ];
 
 export default function ResourcesPage() {

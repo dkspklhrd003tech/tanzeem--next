@@ -1,8 +1,38 @@
+import { getCmsPage, getCleanContent } from "@/lib/page-helpers";
+import { DynamicPageContent, generatePageMetadata } from "@/components/shared/DynamicPageContent";
 import { CTABanner } from "@/components/shared/CTABanner";
 
-export const metadata = { title: "Background | Tanzeem-e-Islami" };
+const SLUG = "organization/background";
+const DEFAULT_TITLE = "Background | Tanzeem-e-Islami";
 
-export default function BackgroundPage() {
+export async function generateMetadata() {
+  const { page } = await getCmsPage(SLUG);
+  return generatePageMetadata(page, DEFAULT_TITLE);
+}
+
+export default async function BackgroundPage() {
+  const { page, sections } = await getCmsPage(SLUG);
+
+  if (page && sections.length > 0) {
+    return (
+      <main className="min-h-screen bg-background">
+        <DynamicPageContent sections={sections} />
+      </main>
+    );
+  }
+
+  if (page) {
+    return (
+      <main className="min-h-screen bg-background">
+        <div className="container mx-auto py-12 md:py-16 px-4">
+          <div className="prose prose-lg dark:prose-invert max-w-4xl mx-auto"
+            dangerouslySetInnerHTML={{ __html: getCleanContent(page.content) }}
+          />
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="min-h-screen bg-background">
       <div className="container mx-auto py-12 md:py-16">

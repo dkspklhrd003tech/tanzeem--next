@@ -1,62 +1,58 @@
+import { getCmsPage, getCleanContent } from "@/lib/page-helpers";
+import { DynamicPageContent, generatePageMetadata } from "@/components/shared/DynamicPageContent";
 import { CTABanner } from "@/components/shared/CTABanner";
 
-export const metadata = { title: "Foundation | Tanzeem-e-Islami" };
+const SLUG = "organization/our-ideology/foundation";
+const DEFAULT_TITLE = "Foundation | Tanzeem-e-Islami";
 
-export default function FoundationPage() {
+export async function generateMetadata() {
+  const { page } = await getCmsPage(SLUG);
+  return generatePageMetadata(page, DEFAULT_TITLE);
+}
+
+export default async function FoundationPage() {
+  const { page, sections } = await getCmsPage(SLUG);
+
+  if (page && sections.length > 0) {
+    return (
+      <main className="min-h-screen bg-background">
+        <DynamicPageContent sections={sections} />
+      </main>
+    );
+  }
+
+  if (page) {
+    return (
+      <main className="min-h-screen bg-background">
+        <div className="container mx-auto py-12 md:py-16 px-4">
+          <div className="prose prose-lg dark:prose-invert max-w-4xl mx-auto"
+            dangerouslySetInnerHTML={{ __html: getCleanContent(page.content) }}
+          />
+        </div>
+      </main>
+    );
+  }
+
   return (
     <main className="min-h-screen bg-background">
       <div className="container mx-auto py-12 md:py-16">
         <article className="prose prose-lg dark:prose-invert max-w-4xl mx-auto">
           <h1>Foundation</h1>
-          <p>
-            The foundation of Tanzeem-e-Islami rests upon the firm belief that Islam is a complete code of life
-            (Deen) and that the Quran and Sunnah provide comprehensive guidance for humanity in all times and
-            places. The movement is built on the following foundational pillars:
-          </p>
-
+          <p>The foundation of Tanzeem-e-Islami rests upon the firm belief that Islam is a complete code of life (Deen) and that the Quran and Sunnah provide comprehensive guidance for humanity in all times and places.</p>
           <h2>I. The Quran as the Primary Source</h2>
-          <p>
-            The Holy Quran is the ultimate source of guidance for Tanzeem-e-Islami. We believe that the Quran
-            is not just a book of worship and recitation but a complete constitution for human life.
-          </p>
-
+          <p>The Holy Quran is the ultimate source of guidance for Tanzeem-e-Islami.</p>
           <h2>II. The Sunnah as the Practical Model</h2>
-          <p>
-            The life of Prophet Muhammad (SAW) provides the perfect practical model for implementing Quranic
-            teachings. His Sunnah demonstrates how the principles of the Quran can be applied in real-life situations.
-          </p>
-
+          <p>The life of Prophet Muhammad (SAW) provides the perfect practical model for implementing Quranic teachings.</p>
           <h2>III. The Islamic Concept of Tawheed</h2>
-          <p>
-            The concept of Tawheed (Oneness of Allah) is the central organizing principle of our worldview.
-            It implies that Allah alone is the Sovereign and Law-Giver, all authority belongs to Him alone, and
-            human life must be organized according to His commandments.
-          </p>
-
+          <p>The concept of Tawheed (Oneness of Allah) is the central organizing principle of our worldview.</p>
           <h2>IV. The Comprehensive Nature of Deen</h2>
-          <p>
-            Islam is not a religion in the Western sense &mdash; a set of private beliefs and rituals. It is a
-            complete Deen encompassing faith, worship, ethics, law, social relations, economics, politics, and culture.
-          </p>
-
+          <p>Islam is not a religion in the Western sense — a set of private beliefs and rituals. It is a complete Deen.</p>
           <h2>V. The Concept of Ummah</h2>
-          <p>
-            Muslims are not just a religious community but a distinct nation (Ummah) with a unique identity,
-            mission, and destiny. The Ummah has been entrusted with the responsibility of being witnesses over humanity.
-          </p>
-
+          <p>Muslims are not just a religious community but a distinct nation (Ummah) with a unique identity, mission, and destiny.</p>
           <h2>VI. The Principle of Shura (Consultation)</h2>
-          <p>
-            Decision-making in Tanzeem-e-Islami is based on the principle of Shura (mutual consultation).
-            Leadership is accountable to the members, and important decisions are made collectively after
-            thorough discussion and deliberation.
-          </p>
-
+          <p>Decision-making in Tanzeem-e-Islami is based on the principle of Shura (mutual consultation).</p>
           <h2>VII. Gradual and Systematic Change</h2>
-          <p>
-            Islamic revival requires patient, systematic, and sustained effort through education, training, and
-            institution-building rather than through sudden revolution or political opportunism.
-          </p>
+          <p>Islamic revival requires patient, systematic, and sustained effort through education, training, and institution-building.</p>
         </article>
       </div>
       <CTABanner

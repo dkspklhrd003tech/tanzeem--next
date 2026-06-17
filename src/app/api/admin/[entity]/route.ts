@@ -1,16 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
-import { 
-    posts, 
-    audio, 
-    videos, 
-    books, 
-    teamMembers, 
+import {
+    posts,
+    audio,
+    videos,
+    books,
+    teamMembers,
     events,
     pressReleases,
     magazines,
     homeCampaigns,
     locations,
+    sermons,
 } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { getCurrentUser } from "@/lib/auth";
@@ -26,6 +27,7 @@ const entityMap: Record<string, any> = {
     magazines,
     campaigns: homeCampaigns,
     locations,
+    sermons,
 };
 
 const REQUIRED_FIELDS: Record<string, string[]> = {
@@ -37,6 +39,7 @@ const REQUIRED_FIELDS: Record<string, string[]> = {
     magazines: ["title", "slug"],
     campaigns: ["title", "slug"],
     events: ["title", "slug", "startDate"],
+    sermons: ["title", "slug"],
 };
 
 async function requireAuth(request: NextRequest): Promise<NextResponse | null> {
@@ -66,7 +69,7 @@ export async function GET(
 
         return NextResponse.json({ items: results });
     } catch (error) {
-        console.error(`Error fetching ${await params.then(p=>p.entity)}:`, error);
+        console.error(`Error fetching ${await params.then(p => p.entity)}:`, error);
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
 }
@@ -92,15 +95,15 @@ export async function POST(
         const required = REQUIRED_FIELDS[entity] || [];
         const missing = required.filter(field => !data[field]);
         if (missing.length > 0) {
-            return NextResponse.json({ 
-                error: `Missing required fields: ${missing.join(", ")}` 
+            return NextResponse.json({
+                error: `Missing required fields: ${missing.join(", ")}`
             }, { status: 400 });
         }
 
         // Validate slug format if present
         if (data.slug && !/^[a-z0-9-]+$/.test(data.slug)) {
-            return NextResponse.json({ 
-                error: "Slug must contain only lowercase letters, numbers, and hyphens" 
+            return NextResponse.json({
+                error: "Slug must contain only lowercase letters, numbers, and hyphens"
             }, { status: 400 });
         }
 
@@ -111,8 +114,8 @@ export async function POST(
                 .where(eq((table as any).slug, data.slug))
                 .limit(1);
             if (existing.length > 0) {
-                return NextResponse.json({ 
-                    error: "An item with this slug already exists" 
+                return NextResponse.json({
+                    error: "An item with this slug already exists"
                 }, { status: 409 });
             }
         }
@@ -126,11 +129,11 @@ export async function POST(
 
         return NextResponse.json({ success: true, id: insertData.id });
     } catch (error: any) {
-        console.error(`Error creating ${await params.then(p=>p.entity)}:`, error);
+        console.error(`Error creating ${await params.then(p => p.entity)}:`, error);
         // Handle unique constraint violations from DB
         if (error?.code === 'ER_DUP_ENTRY' || error?.message?.includes('duplicate key')) {
-            return NextResponse.json({ 
-                error: "An item with this slug already exists" 
+            return NextResponse.json({
+                error: "An item with this slug already exists"
             }, { status: 409 });
         }
         return NextResponse.json({ error: "Failed to create item" }, { status: 500 });

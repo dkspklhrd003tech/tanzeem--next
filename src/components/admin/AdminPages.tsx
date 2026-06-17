@@ -11,6 +11,7 @@ import { UserManagement } from "./UserManagement";
 import { HomeSlidersManagement } from "./HomeSlidersManagement";
 import { HomepageManager } from "./HomepageManager";
 import { DarseQuranManager } from "./DarseQuranManager";
+import { SermonsManager } from "./SermonsManager";
 import { SettingsManager } from "./SettingsManager";
 import { SocialMediaManager } from "./SocialMedia/SocialMediaManager";
 import { Badge } from "@/components/ui/badge";
@@ -220,6 +221,11 @@ export function AdminPages({ section }: AdminPagesProps) {
     return <DarseQuranManager />;
   }
 
+  // Sermons Section
+  if (section === "sermons") {
+    return <SermonsManager />;
+  }
+
   // Pages Section — Smart Card Grid
   if (section === "pages") {
     if (editingId) {
@@ -369,50 +375,50 @@ export function AdminPages({ section }: AdminPagesProps) {
 
   // Generic Sections handling via ContentList
   if (isGenericSection) {
-      if (editingId) {
-        return (
-          <ContentEditor
-            title={editingId === "new" ? `New ${section}` : `Edit ${section}`}
-            contentType={section}
-            initialData={editingId === "new" ? undefined : data.find(p => String(p.id) === editingId)}
-            onSave={handleSaveGeneric}
-            onCancel={() => setEditingId(null)}
-          />
-        );
-      }
-
-      // Column mappings for generic sections
-      let columns: any[] = [{ key: "title", header: "Title" }];
-      if (section === "team") columns = [{ key: "name", header: "Name" }, { key: "designation", header: "Designation" }];
-      if (section === "events") columns = [{ key: "title", header: "Title" }, { key: "date", header: "Date" }, { key: "location", header: "Location" }];
-      if (section === "books") columns.push({ key: "authorName", header: "Author" });
-      if (section === "audio" || section === "videos" || section === "posts") columns.push({ key: "category", header: "Category" });
-      if (section === "press-releases") columns = [{ key: "title", header: "Title" }, { key: "slug", header: "Slug" }];
-      if (section === "magazines") columns = [{ key: "title", header: "Title" }, { key: "issueNumber", header: "Issue" }];
-      if (section === "campaigns") columns = [{ key: "title", header: "Title" }, { key: "isActive", header: "Active" }];
-      if (section === "locations") columns = [{ key: "name", header: "Name" }, { key: "city", header: "City" }];
-      
-      columns.push({
-          key: "status",
-          header: "Status",
-          render: (item: any) => (
-            <Badge variant={item.status === "published" || item.status === "active" ? "default" : "secondary"}>
-              {item.status || "draft"}
-            </Badge>
-          ),
-      });
-
+    if (editingId) {
       return (
-        <ContentList
-          title={section.charAt(0).toUpperCase() + section.slice(1)}
-          description={`Manage ${section} content`}
-          columns={columns}
-          data={data}
-          onAdd={() => setEditingId("new")}
-          onEdit={(item: any) => setEditingId(String(item.id))}
-          onDelete={handleDeleteGeneric}
+        <ContentEditor
+          title={editingId === "new" ? `New ${section}` : `Edit ${section}`}
+          contentType={section}
+          initialData={editingId === "new" ? undefined : data.find(p => String(p.id) === editingId)}
+          onSave={handleSaveGeneric}
+          onCancel={() => setEditingId(null)}
         />
       );
+    }
+
+    // Column mappings for generic sections
+    let columns: any[] = [{ key: "title", header: "Title" }];
+    if (section === "team") columns = [{ key: "name", header: "Name" }, { key: "designation", header: "Designation" }];
+    if (section === "events") columns = [{ key: "title", header: "Title" }, { key: "date", header: "Date" }, { key: "location", header: "Location" }];
+    if (section === "books") columns.push({ key: "authorName", header: "Author" });
+    if (section === "audio" || section === "videos" || section === "posts") columns.push({ key: "category", header: "Category" });
+    if (section === "press-releases") columns = [{ key: "title", header: "Title" }, { key: "slug", header: "Slug" }];
+    if (section === "magazines") columns = [{ key: "title", header: "Title" }, { key: "issueNumber", header: "Issue" }];
+    if (section === "campaigns") columns = [{ key: "title", header: "Title" }, { key: "isActive", header: "Active" }];
+    if (section === "locations") columns = [{ key: "name", header: "Name" }, { key: "city", header: "City" }];
+
+    columns.push({
+      key: "status",
+      header: "Status",
+      render: (item: any) => (
+        <Badge variant={item.status === "published" || item.status === "active" ? "default" : "secondary"}>
+          {item.status || "draft"}
+        </Badge>
+      ),
+    });
+
+    return (
+      <ContentList
+        title={section.charAt(0).toUpperCase() + section.slice(1)}
+        description={`Manage ${section} content`}
+        columns={columns}
+        data={data}
+        onAdd={() => setEditingId("new")}
+        onEdit={(item: any) => setEditingId(String(item.id))}
+        onDelete={handleDeleteGeneric}
+      />
+    );
   }
 
   // Settings Section

@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Facebook, Twitter, Mail } from "lucide-react";
+import { Facebook, Twitter, Mail, Globe } from "lucide-react";
 
 interface TeamMember {
   name: string;
@@ -12,6 +12,7 @@ interface TeamMember {
     facebook?: string;
     twitter?: string;
     email?: string;
+    website?: string;
   };
 }
 
@@ -68,6 +69,11 @@ export function TeamGrid({ heading, members }: TeamGridProps) {
                   {member.socials?.email && (
                     <a href={`mailto:${member.socials.email}`} className="text-white hover:text-primary transition-colors">
                       <Mail className="w-5 h-5" />
+                    </a>
+                  )}
+                  {member.socials?.website && (
+                    <a href={member.socials.website} className="text-white hover:text-primary transition-colors" target="_blank" rel="noopener noreferrer">
+                      <Globe className="w-5 h-5" />
                     </a>
                   )}
                 </div>

@@ -248,30 +248,35 @@ export function Header() {
 
   return (
     <>
+          {/* Skip to main content link — keyboard-first (WCAG 2.4.1) */}
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-md focus:shadow-lg">
+        Skip to main content
+      </a>
+
       {/* Top Social Bar */}
-      <div className="bg-[#f8f9fa] border-b border-border text-foreground py-2 hidden md:block">
+      <div className="bg-secondary border-b border-border text-foreground py-2 hidden md:block">
         <div className="container mx-auto flex justify-between items-center gap-4 text-sm">
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-3">
               <span className="text-foreground/60 font-medium text-xs">Follow Us:</span>
-              <a href={settings.youtube_url || "https://youtube.com/@tanzeemeislami"} target="_blank" rel="noopener noreferrer" className="w-7 h-7 rounded-full bg-red-600 flex items-center justify-center text-[#fefefc] hover:bg-red-700 transition-colors shadow-sm">
-                <Youtube className="h-3.5 w-3.5" />
+              <a href={settings.youtube_url || "https://youtube.com/@tanzeemeislami"} target="_blank" rel="noopener noreferrer" aria-label="YouTube — opens in new tab" className="w-7 h-7 rounded-full bg-red-600 flex items-center justify-center text-primary-foreground hover:bg-red-700 transition-colors shadow-sm focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2">
+                <Youtube className="h-3.5 w-3.5" aria-hidden="true" />
               </a>
-              <a href={settings.facebook_url || "https://facebook.com/tanzeemeislami"} target="_blank" rel="noopener noreferrer" className="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-[#fefefc] hover:bg-blue-700 transition-colors shadow-sm">
-                <Facebook className="h-3.5 w-3.5" />
+              <a href={settings.facebook_url || "https://facebook.com/tanzeemeislami"} target="_blank" rel="noopener noreferrer" aria-label="Facebook — opens in new tab" className="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-primary-foreground hover:bg-blue-700 transition-colors shadow-sm focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2">
+                <Facebook className="h-3.5 w-3.5" aria-hidden="true" />
               </a>
-              <a href={settings.twitter_url || "https://twitter.com/tanzeemeislami"} target="_blank" rel="noopener noreferrer" className="w-7 h-7 rounded-full bg-black flex items-center justify-center text-[#fefefc] hover:bg-gray-800 transition-colors shadow-sm">
-                <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
+              <a href={settings.twitter_url || "https://twitter.com/tanzeemeislami"} target="_blank" rel="noopener noreferrer" aria-label="X (Twitter) — opens in new tab" className="w-7 h-7 rounded-full bg-black flex items-center justify-center text-primary-foreground hover:bg-gray-800 transition-colors shadow-sm focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2">
+                <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
               </a>
-              <a href={settings.whatsapp_url || "https://wa.me/+924235869501"} target="_blank" rel="noopener noreferrer" className="w-7 h-7 rounded-full bg-green-500 flex items-center justify-center text-[#fefefc] hover:bg-green-600 transition-colors shadow-sm">
-                <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" /></svg>
+              <a href={settings.whatsapp_url || "https://wa.me/+924235869501"} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp — opens in new tab" className="w-7 h-7 rounded-full bg-green-500 flex items-center justify-center text-primary-foreground hover:bg-green-600 transition-colors shadow-sm focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2">
+                <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" /></svg>
               </a>
             </div>
           </div>
           {displayDate && (
-            <div className="flex items-center gap-1.5 text-xs font-semibold text-[#0d5844] bg-[#0d5844]/8 border border-[#0d5844]/15 px-3 py-1 rounded-full shadow-sm">
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-primary bg-primary/10 border border-primary/20 px-3 py-1 rounded-full shadow-sm">
               <span className="ltr">{displayDate.greg}</span>
-              <span className="text-[#0d5844]/50 mx-0.5">&amp;</span>
+              <span className="text-primary/50 mx-0.5">&amp;</span>
               <span
                 className="font-nastaleeq text-[15px] leading-none"
                 style={{ fontFamily: "'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', serif" }}
@@ -288,7 +293,7 @@ export function Header() {
       {/* Main Navigation */}
       <motion.header
         className={cn(
-          "sticky top-0 z-50 transition-all duration-300 bg-[#fefefc] border-b border-border",
+          "sticky top-0 z-50 transition-all duration-300 bg-card border-b border-border",
           isScrolled && "shadow-md"
         )}
         initial={{ y: -100 }}
@@ -311,8 +316,8 @@ export function Header() {
                     <span className="text-[#fefefc] font-bold text-lg md:text-xl">ت</span>
                   </div>
                   <div className="hidden sm:block">
-                    <h1 className="text-lg md:text-xl font-bold" style={{ color: '#005031' }}>
-                      Tanzeem<span style={{ color: '#c8a84e' }}>-e-</span>Islami
+                    <h1 className="text-lg md:text-xl font-bold text-primary">
+                      Tanzeem<span className="text-accent-gold">-e-</span>Islami
                     </h1>
                     <p className="text-[10px] text-foreground-muted -mt-0.5" style={{ fontFamily: "'Scheherazade New', serif" }}>
                       تنظیمِ اسلامی
@@ -332,12 +337,13 @@ export function Header() {
                 <Input
                   type="search"
                   placeholder="Search..."
+                  aria-label="Search the site"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-64 h-8 pl-3 pr-9 rounded-full border-border bg-[#fefefc] text-xs"
+                  className="w-64 h-8 pl-3 pr-9 rounded-full border-border bg-card text-xs"
                 />
-                <button type="submit" className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground-muted hover:text-foreground transition-colors p-1 rounded-full hover:bg-muted">
-                  <Search className="h-3.5 w-3.5" />
+                <button type="submit" aria-label="Submit search" className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground-muted hover:text-foreground transition-colors p-1 rounded-full hover:bg-muted focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2">
+                  <Search className="h-3.5 w-3.5" aria-hidden="true" />
                 </button>
               </form>
             </nav>
@@ -349,17 +355,8 @@ export function Header() {
                 variant="ghost"
                 size="icon"
                 onClick={() => setIsSearchOpen(true)}
-                className="md:hidden"
-              >
-                <Search className="h-5 w-5" />
-              </Button>
-
-              {/* Mobile Search */}
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsSearchOpen(true)}
-                className="md:hidden"
+                className="lg:hidden"
+                aria-label="Open search"
               >
                 <Search className="h-5 w-5" />
               </Button>
@@ -390,10 +387,10 @@ export function Header() {
                   </SheetHeader>
                   <MobileNavigation navigation={navigation} onClose={() => setIsMobileMenuOpen(false)} />
                   <div className="mt-8">
-                    <Link
+                      <Link
                       href="https://app.dhtr.org/contactus"
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className="block w-full text-center py-3 bg-primary text-white rounded-lg font-bold shadow-md hover:bg-primary-hover transition-all"
+                      className="block w-full text-center py-3 bg-primary text-primary-foreground rounded-lg font-bold shadow-md hover:bg-primary/90 transition-all focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
                     >
                       JOIN TANZEEM
                     </Link>
@@ -424,13 +421,14 @@ export function Header() {
                 onClick={(e) => e.stopPropagation()}
               >
                 <form onSubmit={handleSearchSubmit} className="relative">
-                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-foreground-muted" />
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-foreground-muted" aria-hidden="true" />
                   <Input
                     type="search"
                     placeholder="Search..."
+                    aria-label="Search the site"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-12 pr-12 h-14 text-lg bg-[#fefefc] rounded-xl"
+                    className="pl-12 pr-12 h-14 text-lg bg-card rounded-xl"
                     autoFocus
                   />
                   <Button type="button" variant="ghost" size="sm" className="absolute right-2 top-1/2 -translate-y-1/2" onClick={() => setIsSearchOpen(false)}>
@@ -455,8 +453,8 @@ function DesktopMenuItem({ item, depth = 0 }: { item: any; depth?: number }) {
     const className = cn(
       "transition-colors",
       isTopLevel
-        ? "py-2 px-4 text-md font-medium text-foreground hover:text-[#0d5844]"
-        : "block px-5 py-2.5 text-sm text-foreground hover:bg-primary hover:text-[#fefefc] border-b border-border/30 last:border-0"
+        ? "py-2 px-4 text-md font-medium text-foreground hover:text-primary focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
+        : "block px-5 py-2.5 text-sm text-foreground hover:bg-primary hover:text-primary-foreground border-b border-border/30 last:border-0 focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
     );
     if (isExternal) {
       return (
@@ -479,14 +477,22 @@ function DesktopMenuItem({ item, depth = 0 }: { item: any; depth?: number }) {
       onMouseLeave={() => setIsOpen(false)}
     >
       {isTopLevel ? (
-        <button className="flex items-center gap-1 py-2 px-4 text-foreground hover:text-primary transition-colors text-md font-medium">
+        <button
+          aria-haspopup="true"
+          aria-expanded={isOpen}
+          className="flex items-center gap-1 py-2 px-4 text-foreground hover:text-primary transition-colors text-md font-medium focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
+        >
           {item.name}
-          <ChevronDown className={cn("h-3.5 w-3.5 transition-transform duration-200", isOpen && "rotate-180")} />
+          <ChevronDown className={cn("h-3.5 w-3.5 transition-transform duration-200", isOpen && "rotate-180")} aria-hidden="true" />
         </button>
       ) : (
-        <button className="flex w-full items-center justify-between px-5 py-2.5 text-md text-foreground hover:bg-primary hover:text-[#fefefc] transition-colors border-b border-border/30 last:border-0 group">
+        <button
+          aria-haspopup="true"
+          aria-expanded={isOpen}
+          className="flex w-full items-center justify-between px-5 py-2.5 text-md text-foreground hover:bg-primary hover:text-primary-foreground transition-colors border-b border-border/30 last:border-0 group focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
+        >
           {item.name}
-          <ChevronDown className="h-3.5 w-3.5 -rotate-90 text-foreground-muted group-hover:text-white" />
+          <ChevronDown className="h-3.5 w-3.5 -rotate-90 text-foreground-muted group-hover:text-primary-foreground" aria-hidden="true" />
         </button>
       )}
 
@@ -539,13 +545,14 @@ function MobileNavItem({ item, onClose, depth = 0 }: { item: any, onClose: () =>
     <div>
       <button
         onClick={() => setIsOpen(!isOpen)}
+        aria-expanded={isOpen}
         className={cn(
           "flex items-center justify-between w-full py-3 text-left font-medium transition-colors hover:text-primary",
           depth === 0 ? "px-4" : "text-sm text-foreground-muted"
         )}
       >
         {item.name}
-        <ChevronDown className={cn("h-4 w-4 transition-transform", isOpen && "rotate-180")} />
+        <ChevronDown className={cn("h-4 w-4 transition-transform", isOpen && "rotate-180")} aria-hidden="true" />
       </button>
       <AnimatePresence>
         {isOpen && (
