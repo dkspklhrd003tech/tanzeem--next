@@ -2,6 +2,8 @@ import { getCmsPage, getCleanContent } from "@/lib/page-helpers";
 import { DynamicPageContent, generatePageMetadata } from "@/components/shared/DynamicPageContent";
 import { CTABanner } from "@/components/shared/CTABanner";
 
+export const dynamic = "force-dynamic";
+
 const SLUG = "quranic-circles";
 const DEFAULT_TITLE = "Quranic Circles | Tanzeem-e-Islami";
 const DEFAULT_DESC = "Join Tanzeem-e-Islami's Quranic study circles (Dars-e-Quran) to deepen your understanding of the Quran and its timeless message.";

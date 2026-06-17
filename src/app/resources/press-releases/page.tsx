@@ -4,6 +4,8 @@ import { eq, desc } from "drizzle-orm";
 import { LatestPressReleases } from "@/components/home/LatestPressReleases";
 import type { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
     title: "Press Releases | Tanzeem-e-Islami",
     description: "Official announcements and press releases from Tanzeem-e-Islami.",

@@ -2,6 +2,8 @@ import { getCmsPage, getCleanContent } from "@/lib/page-helpers";
 import { DynamicPageContent, generatePageMetadata } from "@/components/shared/DynamicPageContent";
 import { Accordion } from "@/components/shared/Accordion";
 
+export const dynamic = "force-dynamic";
+
 const SLUG = "faqs";
 const DEFAULT_TITLE = "FAQs | Tanzeem-e-Islami";
 const DEFAULT_DESC = "Frequently asked questions about Tanzeem-e-Islami, its mission, programs, and activities.";

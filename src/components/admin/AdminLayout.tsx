@@ -307,7 +307,7 @@ export function AdminLayout({ children, currentSection, onExitAdmin }: AdminLayo
       <div
         className={cn(
           "flex-1 flex flex-col transition-all duration-300",
-          isSidebarCollapsed ? "ml-20" : "ml-[280px]"
+          isSidebarCollapsed ? "ml-20" : "ml-[20px]"
         )}
       >
         {/* Top Bar */}

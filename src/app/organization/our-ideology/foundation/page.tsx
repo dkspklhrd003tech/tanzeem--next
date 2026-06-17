@@ -2,6 +2,8 @@ import { getCmsPage, getCleanContent } from "@/lib/page-helpers";
 import { DynamicPageContent, generatePageMetadata } from "@/components/shared/DynamicPageContent";
 import { CTABanner } from "@/components/shared/CTABanner";
 
+export const dynamic = "force-dynamic";
+
 const SLUG = "organization/our-ideology/foundation";
 const DEFAULT_TITLE = "Foundation | Tanzeem-e-Islami";
 

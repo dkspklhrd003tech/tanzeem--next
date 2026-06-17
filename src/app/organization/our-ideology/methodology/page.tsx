@@ -2,6 +2,8 @@ import { getCmsPage, getCleanContent } from "@/lib/page-helpers";
 import { DynamicPageContent, generatePageMetadata } from "@/components/shared/DynamicPageContent";
 import { StatsGrid } from "@/components/shared/StatsGrid";
 
+export const dynamic = "force-dynamic";
+
 const SLUG = "organization/our-ideology/methodology";
 const DEFAULT_TITLE = "Methodology | Tanzeem-e-Islami";
 const FALLBACK_STATS = [

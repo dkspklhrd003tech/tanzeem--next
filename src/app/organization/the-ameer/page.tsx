@@ -3,6 +3,8 @@ import { DynamicPageContent, generatePageMetadata } from "@/components/shared/Dy
 import { TeamGrid } from "@/components/shared/TeamGrid";
 import { CTABanner } from "@/components/shared/CTABanner";
 
+export const dynamic = "force-dynamic";
+
 const SLUG = "organization/the-ameer";
 const DEFAULT_TITLE = "The Ameer | Tanzeem-e-Islami";
 const FALLBACK_MEMBERS = [

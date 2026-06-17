@@ -2,6 +2,8 @@ import { getCmsPage, getCleanContent } from "@/lib/page-helpers";
 import { DynamicPageContent, generatePageMetadata } from "@/components/shared/DynamicPageContent";
 import { ContactSection } from "@/components/shared/ContactSection";
 
+export const dynamic = "force-dynamic";
+
 const SLUG = "contact";
 const DEFAULT_TITLE = "Contact Us | Tanzeem-e-Islami";
 const DEFAULT_DESC = "Get in touch with Tanzeem-e-Islami. Find our contact details, office locations, and reach out to us with your queries.";

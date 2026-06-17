@@ -3,6 +3,8 @@ import { DynamicPageContent, generatePageMetadata } from "@/components/shared/Dy
 import { TeamGrid } from "@/components/shared/TeamGrid";
 import { CTABanner } from "@/components/shared/CTABanner";
 
+export const dynamic = "force-dynamic";
+
 const SLUG = "organization/the-founder";
 const DEFAULT_TITLE = "The Founder | Tanzeem-e-Islami";
 const FALLBACK_MEMBERS = [

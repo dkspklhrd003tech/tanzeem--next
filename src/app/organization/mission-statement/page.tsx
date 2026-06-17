@@ -3,6 +3,8 @@ import { DynamicPageContent, generatePageMetadata } from "@/components/shared/Dy
 import { StatsGrid } from "@/components/shared/StatsGrid";
 import { CTABanner } from "@/components/shared/CTABanner";
 
+export const dynamic = "force-dynamic";
+
 const SLUG = "organization/mission-statement";
 const DEFAULT_TITLE = "Mission Statement | Tanzeem-e-Islami";
 const FALLBACK_STATS = [

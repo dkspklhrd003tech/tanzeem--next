@@ -1,6 +1,8 @@
 import { getCmsPage, getCleanContent } from "@/lib/page-helpers";
 import { DynamicPageContent, generatePageMetadata } from "@/components/shared/DynamicPageContent";
 
+export const dynamic = "force-dynamic";
+
 const SLUG = "organization/our-ideology/our-obligations";
 const DEFAULT_TITLE = "Our Obligations | Tanzeem-e-Islami";
 

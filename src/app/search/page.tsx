@@ -246,7 +246,7 @@ export default async function SearchPage({ searchParams }: Props) {
         {/* Search header */}
         <div className="mb-12 text-center">
           <h1 className="font-amiri text-3xl md:text-5xl font-bold text-primary mb-4">
-            Search Portal
+            Tanzeem Search Portal
           </h1>
           <p className="text-foreground-muted text-sm md:text-md max-w-md mx-auto">
             Discover audio lectures, video series, books, monthly magazines, and official announcements.

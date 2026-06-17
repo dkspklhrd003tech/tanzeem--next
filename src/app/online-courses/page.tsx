@@ -2,6 +2,8 @@ import { getCmsPage, getCleanContent } from "@/lib/page-helpers";
 import { DynamicPageContent, generatePageMetadata } from "@/components/shared/DynamicPageContent";
 import { CTABanner } from "@/components/shared/CTABanner";
 
+export const dynamic = "force-dynamic";
+
 const SLUG = "online-courses";
 const DEFAULT_TITLE = "Online Courses | Tanzeem-e-Islami";
 const DEFAULT_DESC = "Structured Quranic and Islamic education through our online learning platform — study at your own pace from anywhere in the world.";

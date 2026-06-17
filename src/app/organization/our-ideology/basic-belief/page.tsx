@@ -2,6 +2,8 @@ import { getCmsPage, getCleanContent } from "@/lib/page-helpers";
 import { DynamicPageContent, generatePageMetadata } from "@/components/shared/DynamicPageContent";
 import { Accordion } from "@/components/shared/Accordion";
 
+export const dynamic = "force-dynamic";
+
 const SLUG = "organization/our-ideology/basic-belief";
 const DEFAULT_TITLE = "Basic Belief | Tanzeem-e-Islami";
 const FALLBACK_ITEMS = [

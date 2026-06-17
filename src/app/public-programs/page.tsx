@@ -2,6 +2,8 @@ import { getCmsPage, getCleanContent } from "@/lib/page-helpers";
 import { DynamicPageContent, generatePageMetadata } from "@/components/shared/DynamicPageContent";
 import { HubLanding } from "@/components/shared/HubLanding";
 
+export const dynamic = "force-dynamic";
+
 const SLUG = "public-programs";
 const DEFAULT_TITLE = "Public Programs | Tanzeem-e-Islami";
 const DEFAULT_DESC = "Community programs and weekly gatherings.";

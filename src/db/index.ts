@@ -10,8 +10,9 @@ const poolConnection = mysql.createPool({
     database: process.env.DB_NAME || "tanzeemnxt_db",
     ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : undefined,
     waitForConnections: true,
-    connectionLimit: 10,
-    queueLimit: 0,
+    connectionLimit: 3,   // kept low so 3 build workers don't exceed server max_connections
+    queueLimit: 50,
+    connectTimeout: 30000,
 });
 
 export const db = drizzle({ client: poolConnection, schema, mode: "default" });

@@ -1,6 +1,8 @@
 import { getCmsPage, getCleanContent } from "@/lib/page-helpers";
 import { DynamicPageContent, generatePageMetadata } from "@/components/shared/DynamicPageContent";
 
+export const dynamic = "force-dynamic";
+
 const SLUG = "distance-learning";
 const DEFAULT_TITLE = "Distance Learning | Tanzeem-e-Islami";
 const DEFAULT_DESC = "Study the Quran, Hadith, and Islamic sciences from anywhere in the world through our distance learning programs.";

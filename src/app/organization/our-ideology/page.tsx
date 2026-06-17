@@ -2,6 +2,8 @@ import { getCmsPage, getCleanContent } from "@/lib/page-helpers";
 import { DynamicPageContent, generatePageMetadata } from "@/components/shared/DynamicPageContent";
 import { HubLanding } from "@/components/shared/HubLanding";
 
+export const dynamic = "force-dynamic";
+
 const SLUG = "organization/our-ideology";
 const DEFAULT_TITLE = "Our Ideology | Tanzeem-e-Islami";
 const DEFAULT_DESC = "Explore the beliefs, obligations, methodology, and foundation of Tanzeem-e-Islami.";

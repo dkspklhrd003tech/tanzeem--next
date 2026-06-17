@@ -1,0 +1,509 @@
+"use client";
+
+import { useState, useEffect, useCallback, useRef } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { motion } from "framer-motion";
+import {
+  ArrowLeft, Save, Send, Eye, Trash2, Copy,
+  ChevronDown, ChevronUp, Clock, AlertCircle, Check,
+} from "lucide-react";
+import { useEditor, EditorContent } from "@tiptap/react";
+import { StarterKit } from "@tiptap/starter-kit";
+import { Underline } from "@tiptap/extension-underline";
+import { Link as TipTapLink } from "@tiptap/extension-link";
+import { TextAlign } from "@tiptap/extension-text-align";
+import { TextStyle } from "@tiptap/extension-text-style";
+import { Color } from "@tiptap/extension-color";
+import { Image as TipTapImage } from "@tiptap/extension-image";
+import {
+  Bold, Italic, Underline as UnderlineIcon, Strikethrough,
+  List, ListOrdered, AlignLeft, AlignCenter, AlignRight, AlignJustify,
+  Link as LinkIcon, Heading1, Heading2, Heading3, Heading4,
+  Quote, Code, Undo, Redo, Type, Maximize2, Minimize2,
+} from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+export interface PageFormData {
+  title: string;
+  slug: string;
+  content: string;
+  excerpt: string;
+  featuredImage: string;
+  template: string;
+  parentId: string;
+  isPublished: boolean;
+  showInMenu: boolean;
+  metaTitle: string;
+  metaDescription: string;
+  metaKeywords: string;
+}
+
+export interface PageRecord extends PageFormData {
+  id: string;
+  authorName?: string | null;
+  authorEmail?: string | null;
+  updatedAt?: string;
+  createdAt?: string;
+}
+
+interface PageFormProps {
+  mode: "create" | "edit";
+  initialData?: PageRecord;
+  parentPages?: { id: string; title: string }[];
+}
+
+const EMPTY: PageFormData = {
+  title: "", slug: "", content: "", excerpt: "", featuredImage: "",
+  template: "default", parentId: "", isPublished: false, showInMenu: false,
+  metaTitle: "", metaDescription: "", metaKeywords: "",
+};
+
+function slugify(text: string) {
+  return text.toLowerCase().trim()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/[\s_]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
+function charCount(val: string, max: number) {
+  const n = val.length;
+  return (
+    <span className={cn("text-[11px] tabular-nums", n > max ? "text-destructive font-medium" : "text-muted-foreground")}>
+      {n}/{max}
+    </span>
+  );
+}
+
+// ─── Toolbar Button ───────────────────────────────────────────────────────────
+
+function ToolBtn({ onClick, active = false, disabled = false, tip, children }: {
+  onClick: () => void; active?: boolean; disabled?: boolean; tip: string; children: React.ReactNode;
+}) {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <button type="button" onClick={onClick} disabled={disabled}
+          className={cn(
+            "h-7 w-7 rounded flex items-center justify-center transition-colors text-sm",
+            "disabled:opacity-40 disabled:cursor-not-allowed",
+            active ? "bg-primary/15 text-primary" : "text-muted-foreground hover:bg-muted hover:text-foreground"
+          )}>
+          {children}
+        </button>
+      </TooltipTrigger>
+      <TooltipContent side="top" className="text-xs">{tip}</TooltipContent>
+    </Tooltip>
+  );
+}
+
+// ─── Rich Text Editor ─────────────────────────────────────────────────────────
+
+function RTE({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const [fullscreen, setFullscreen] = useState(false);
+  const [htmlMode, setHtmlMode] = useState(false);
+  const [rawHtml, setRawHtml] = useState(value);
+
+  const editor = useEditor({
+    extensions: [
+      StarterKit,
+      Underline,
+      TipTapLink.configure({ openOnClick: false, HTMLAttributes: { class: "text-primary underline cursor-pointer" } }),
+      TextAlign.configure({ types: ["heading", "paragraph"] }),
+      TextStyle,
+      Color,
+      TipTapImage,
+    ],
+    immediatelyRender: false,
+    content: value,
+    onUpdate: ({ editor }) => onChange(editor.getHTML()),
+  });
+
+  const setLink = useCallback(() => {
+    if (!editor) return;
+    const prev = editor.getAttributes("link").href;
+    const url = window.prompt("URL", prev ?? "");
+    if (url === null) return;
+    if (!url) { editor.chain().focus().extendMarkRange("link").unsetLink().run(); return; }
+    editor.chain().focus().extendMarkRange("link").setLink({ href: url }).run();
+  }, [editor]);
+
+  if (!editor) return <div className="h-64 bg-muted animate-pulse rounded-xl" />;
+
+  const toolbar = (
+    <TooltipProvider delayDuration={0}>
+      <div className="flex flex-wrap items-center gap-0.5 p-2 bg-muted/40 border-b border-border">
+        <ToolBtn tip="Bold" active={editor.isActive("bold")} onClick={() => editor.chain().focus().toggleBold().run()}><Bold className="h-3.5 w-3.5" /></ToolBtn>
+        <ToolBtn tip="Italic" active={editor.isActive("italic")} onClick={() => editor.chain().focus().toggleItalic().run()}><Italic className="h-3.5 w-3.5" /></ToolBtn>
+        <ToolBtn tip="Underline" active={editor.isActive("underline")} onClick={() => editor.chain().focus().toggleUnderline().run()}><UnderlineIcon className="h-3.5 w-3.5" /></ToolBtn>
+        <ToolBtn tip="Strikethrough" active={editor.isActive("strike")} onClick={() => editor.chain().focus().toggleStrike().run()}><Strikethrough className="h-3.5 w-3.5" /></ToolBtn>
+        <Separator orientation="vertical" className="h-5 mx-1" />
+        <ToolBtn tip="H1" active={editor.isActive("heading", { level: 1 })} onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}><Heading1 className="h-3.5 w-3.5" /></ToolBtn>
+        <ToolBtn tip="H2" active={editor.isActive("heading", { level: 2 })} onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}><Heading2 className="h-3.5 w-3.5" /></ToolBtn>
+        <ToolBtn tip="H3" active={editor.isActive("heading", { level: 3 })} onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}><Heading3 className="h-3.5 w-3.5" /></ToolBtn>
+        <ToolBtn tip="H4" active={editor.isActive("heading", { level: 4 })} onClick={() => editor.chain().focus().toggleHeading({ level: 4 }).run()}><Heading4 className="h-3.5 w-3.5" /></ToolBtn>
+        <ToolBtn tip="Paragraph" active={editor.isActive("paragraph")} onClick={() => editor.chain().focus().setParagraph().run()}><Type className="h-3.5 w-3.5" /></ToolBtn>
+        <Separator orientation="vertical" className="h-5 mx-1" />
+        <ToolBtn tip="Bullet list" active={editor.isActive("bulletList")} onClick={() => editor.chain().focus().toggleBulletList().run()}><List className="h-3.5 w-3.5" /></ToolBtn>
+        <ToolBtn tip="Numbered list" active={editor.isActive("orderedList")} onClick={() => editor.chain().focus().toggleOrderedList().run()}><ListOrdered className="h-3.5 w-3.5" /></ToolBtn>
+        <ToolBtn tip="Blockquote" active={editor.isActive("blockquote")} onClick={() => editor.chain().focus().toggleBlockquote().run()}><Quote className="h-3.5 w-3.5" /></ToolBtn>
+        <ToolBtn tip="Code block" active={editor.isActive("codeBlock")} onClick={() => editor.chain().focus().toggleCodeBlock().run()}><Code className="h-3.5 w-3.5" /></ToolBtn>
+        <Separator orientation="vertical" className="h-5 mx-1" />
+        <ToolBtn tip="Align left" active={editor.isActive({ textAlign: "left" })} onClick={() => editor.chain().focus().setTextAlign("left").run()}><AlignLeft className="h-3.5 w-3.5" /></ToolBtn>
+        <ToolBtn tip="Align center" active={editor.isActive({ textAlign: "center" })} onClick={() => editor.chain().focus().setTextAlign("center").run()}><AlignCenter className="h-3.5 w-3.5" /></ToolBtn>
+        <ToolBtn tip="Align right" active={editor.isActive({ textAlign: "right" })} onClick={() => editor.chain().focus().setTextAlign("right").run()}><AlignRight className="h-3.5 w-3.5" /></ToolBtn>
+        <ToolBtn tip="Justify" active={editor.isActive({ textAlign: "justify" })} onClick={() => editor.chain().focus().setTextAlign("justify").run()}><AlignJustify className="h-3.5 w-3.5" /></ToolBtn>
+        <Separator orientation="vertical" className="h-5 mx-1" />
+        <ToolBtn tip="Insert link" active={editor.isActive("link")} onClick={setLink}><LinkIcon className="h-3.5 w-3.5" /></ToolBtn>
+        <ToolBtn tip="Undo" disabled={!editor.can().undo()} onClick={() => editor.chain().focus().undo().run()}><Undo className="h-3.5 w-3.5" /></ToolBtn>
+        <ToolBtn tip="Redo" disabled={!editor.can().redo()} onClick={() => editor.chain().focus().redo().run()}><Redo className="h-3.5 w-3.5" /></ToolBtn>
+        <div className="ml-auto flex items-center gap-1">
+          <button type="button" onClick={() => { if (!htmlMode) setRawHtml(editor.getHTML()); setHtmlMode(v => !v); }}
+            className="text-[10px] px-2 h-6 rounded border border-border hover:bg-muted text-muted-foreground font-mono">
+            {htmlMode ? "Visual" : "HTML"}
+          </button>
+          <ToolBtn tip={fullscreen ? "Exit fullscreen" : "Fullscreen"} onClick={() => setFullscreen(v => !v)}>
+            {fullscreen ? <Minimize2 className="h-3.5 w-3.5" /> : <Maximize2 className="h-3.5 w-3.5" />}
+          </ToolBtn>
+        </div>
+      </div>
+    </TooltipProvider>
+  );
+
+  return (
+    <div className={cn("border border-border rounded-xl overflow-hidden bg-card focus-within:ring-2 focus-within:ring-primary/20 transition-all",
+      fullscreen && "fixed inset-4 z-50 flex flex-col shadow-2xl rounded-2xl")}>
+      {toolbar}
+      {htmlMode ? (
+        <textarea className="w-full font-mono text-xs p-4 bg-muted/30 resize-none focus:outline-none"
+          style={{ minHeight: fullscreen ? "100%" : "320px" }}
+          value={rawHtml}
+          onChange={(e) => { setRawHtml(e.target.value); editor.commands.setContent(e.target.value); onChange(e.target.value); }} />
+      ) : (
+        <EditorContent editor={editor}
+          className={cn("overflow-y-auto", fullscreen ? "flex-1" : "")}
+          style={{ minHeight: fullscreen ? undefined : "320px" }} />
+      )}
+    </div>
+  );
+}
+
+// ─── Main PageForm ────────────────────────────────────────────────────────────
+
+export function PageForm({ mode, initialData, parentPages = [] }: PageFormProps) {
+  const router = useRouter();
+  const { toast } = useToast();
+  const [form, setForm] = useState<PageFormData>({ ...EMPTY, ...initialData });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [slugManual, setSlugManual] = useState(mode === "edit");
+  const [saving, setSaving] = useState(false);
+  const [seoOpen, setSeoOpen] = useState(false);
+  const [showDelete, setShowDelete] = useState(false);
+  const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const autoSaveRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Auto-slug from title
+  useEffect(() => {
+    if (!slugManual && mode === "create") {
+      set("slug", slugify(form.title));
+    }
+  }, [form.title, slugManual, mode]);
+
+  // Auto-save draft every 60s
+  useEffect(() => {
+    if (mode === "create") return;
+    if (autoSaveRef.current) clearTimeout(autoSaveRef.current);
+    autoSaveRef.current = setTimeout(() => {
+      if (form.title.trim().length >= 3) doSave("draft", true);
+    }, 60_000);
+    return () => { if (autoSaveRef.current) clearTimeout(autoSaveRef.current); };
+  }, [form]);
+
+  const set = (k: keyof PageFormData, v: any) =>
+    setForm(prev => ({ ...prev, [k]: v }));
+
+  function validate(publish: boolean) {
+    const e: Record<string, string> = {};
+    if (!form.title.trim() || form.title.trim().length < 3) e.title = "Title must be at least 3 characters.";
+    if (form.title.trim().length > 200) e.title = "Title must be 200 characters or fewer.";
+    if (!form.slug.trim()) e.slug = "Slug is required.";
+    else if (!/^[a-z0-9]+(?:[/-][a-z0-9]+)*$/.test(form.slug)) e.slug = "Slug: lowercase letters, numbers, hyphens and slashes only.";
+    if (publish && (!form.content || form.content === "<p></p>")) e.content = "Content is required when publishing.";
+    if (form.metaTitle.length > 70) e.metaTitle = "Max 70 characters.";
+    if (form.metaDescription.length > 160) e.metaDescription = "Max 160 characters.";
+    setErrors(e);
+    return Object.keys(e).length === 0;
+  }
+
+  async function doSave(intent: "draft" | "publish", silent = false) {
+    const publish = intent === "publish";
+    if (!validate(publish)) { if (!silent) toast({ variant: "destructive", title: "Please fix validation errors." }); return; }
+    setSaving(true);
+    try {
+      const payload = { ...form, isPublished: publish };
+      const url = mode === "create" ? "/api/sitemanager/pages" : `/api/sitemanager/pages/${initialData!.id}`;
+      const method = mode === "create" ? "POST" : "PUT";
+      const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+      const json = await res.json();
+      if (!res.ok) {
+        if (json.errors) { setErrors(json.errors); if (!silent) toast({ variant: "destructive", title: "Validation error", description: Object.values(json.errors).join(" ") }); }
+        else if (!silent) toast({ variant: "destructive", title: json.error ?? "Save failed." });
+        return;
+      }
+      setLastSaved(new Date());
+      if (!silent) {
+        toast({ title: publish ? "Page published!" : "Draft saved.", description: `"${form.title}" has been saved.` });
+        if (mode === "create") router.push(`/sitemanager/pages/${json.page.id}/edit`);
+      }
+    } catch {
+      if (!silent) toast({ variant: "destructive", title: "Network error. Please try again." });
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function handleDelete() {
+    try {
+      await fetch(`/api/sitemanager/pages/${initialData!.id}`, { method: "DELETE" });
+      toast({ title: "Page deleted." });
+      router.push("/sitemanager/pages");
+    } catch {
+      toast({ variant: "destructive", title: "Delete failed." });
+    }
+  }
+
+  async function handleDuplicate() {
+    const res = await fetch("/api/sitemanager/pages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...form, title: `${form.title} (Copy)`, slug: `${form.slug}-copy`, isPublished: false }),
+    });
+    const json = await res.json();
+    if (res.ok) { toast({ title: "Page duplicated." }); router.push(`/sitemanager/pages/${json.page.id}/edit`); }
+    else toast({ variant: "destructive", title: json.error ?? "Duplicate failed." });
+  }
+
+  const previewUrl = form.slug ? `/${form.slug}` : null;
+
+  return (
+    <div className="space-y-6 max-w-7xl">
+      {/* ── Header ── */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <Button variant="ghost" size="icon" asChild><Link href="/sitemanager/pages"><ArrowLeft className="h-4 w-4" /></Link></Button>
+          <div>
+            <h1 className="text-xl font-bold">{mode === "create" ? "Create Page" : "Edit Page"}</h1>
+            {mode === "edit" && initialData?.authorName && (
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Last edited by {initialData.authorName}
+                {initialData.updatedAt && ` · ${new Date(initialData.updatedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`}
+              </p>
+            )}
+          </div>
+        </div>
+        <div className="flex items-center gap-2 flex-wrap">
+          {lastSaved && (
+            <span className="text-xs text-muted-foreground flex items-center gap-1"><Check className="h-3 w-3 text-green-500" />Saved {lastSaved.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span>
+          )}
+          {mode === "edit" && previewUrl && (
+            <Button variant="outline" size="sm" asChild><a href={previewUrl} target="_blank" rel="noopener noreferrer"><Eye className="h-3.5 w-3.5 mr-1.5" />View Page</a></Button>
+          )}
+          {mode === "edit" && (
+            <Button variant="outline" size="sm" onClick={handleDuplicate}><Copy className="h-3.5 w-3.5 mr-1.5" />Duplicate</Button>
+          )}
+          <Button variant="outline" size="sm" disabled={saving} onClick={() => doSave("draft")}>
+            <Save className="h-3.5 w-3.5 mr-1.5" />{saving ? "Saving…" : "Save Draft"}
+          </Button>
+          <Button size="sm" disabled={saving} onClick={() => doSave("publish")} className="bg-primary hover:bg-primary/90 text-primary-foreground">
+            <Send className="h-3.5 w-3.5 mr-1.5" />{form.isPublished ? "Update" : "Publish"}
+          </Button>
+          {mode === "edit" && (
+            <ConfirmDialog title="Delete page?" description={`"${form.title}" will be permanently deleted.`} onConfirm={handleDelete} open={showDelete} onOpenChange={setShowDelete}>
+              <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => setShowDelete(true)}>
+                <Trash2 className="h-3.5 w-3.5" />
+              </Button>
+            </ConfirmDialog>
+          )}
+        </div>
+      </div>
+
+      {/* ── Body ── */}
+      <div className="grid lg:grid-cols-3 gap-6">
+        {/* Left col — main content */}
+        <div className="lg:col-span-2 space-y-5">
+
+          {/* Basic info */}
+          <Card>
+            <CardContent className="p-5 space-y-4">
+              {/* Title */}
+              <div>
+                <Label htmlFor="title" className="text-xs font-semibold uppercase tracking-wide mb-1.5 block">Title <span className="text-destructive">*</span></Label>
+                <Input id="title" placeholder="Page title" value={form.title} onChange={e => set("title", e.target.value)}
+                  className={cn("text-base", errors.title && "border-destructive focus-visible:ring-destructive/20")} />
+                {errors.title && <p className="text-xs text-destructive mt-1 flex items-center gap-1"><AlertCircle className="h-3 w-3" />{errors.title}</p>}
+              </div>
+
+              {/* Slug */}
+              <div>
+                <Label htmlFor="slug" className="text-xs font-semibold uppercase tracking-wide mb-1.5 block">Slug <span className="text-destructive">*</span></Label>
+                <div className="flex gap-2">
+                  <div className="flex-1 relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm select-none">/</span>
+                    <Input id="slug" className={cn("pl-5 font-mono text-sm", errors.slug && "border-destructive")}
+                      value={form.slug} onChange={e => { setSlugManual(true); set("slug", e.target.value.toLowerCase().replace(/[^a-z0-9/-]/g, "")); }} />
+                  </div>
+                  {mode === "create" && (
+                    <Button variant="outline" size="sm" type="button" onClick={() => { setSlugManual(false); set("slug", slugify(form.title)); }}>Auto</Button>
+                  )}
+                </div>
+                {errors.slug && <p className="text-xs text-destructive mt-1 flex items-center gap-1"><AlertCircle className="h-3 w-3" />{errors.slug}</p>}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Content */}
+          <Card>
+            <CardHeader className="pb-3 pt-4 px-5"><CardTitle className="text-sm font-semibold uppercase tracking-wide">Content</CardTitle></CardHeader>
+            <CardContent className="px-5 pb-5">
+              <RTE value={form.content} onChange={v => set("content", v)} />
+              {errors.content && <p className="text-xs text-destructive mt-2 flex items-center gap-1"><AlertCircle className="h-3 w-3" />{errors.content}</p>}
+              <div className="mt-3">
+                <Label htmlFor="excerpt" className="text-xs font-semibold uppercase tracking-wide mb-1.5 block">Excerpt</Label>
+                <Textarea id="excerpt" rows={3} placeholder="Brief summary shown in listings…" value={form.excerpt} onChange={e => set("excerpt", e.target.value)} className="text-sm resize-none" />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* SEO */}
+          <Card>
+            <button type="button" onClick={() => setSeoOpen(v => !v)}
+              className="w-full flex items-center justify-between px-5 py-3.5 text-left hover:bg-muted/30 transition-colors rounded-t-xl">
+              <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">SEO & Meta</span>
+              {seoOpen ? <ChevronUp className="h-4 w-4 text-muted-foreground" /> : <ChevronDown className="h-4 w-4 text-muted-foreground" />}
+            </button>
+            {seoOpen && (
+              <CardContent className="px-5 pb-5 pt-0 space-y-4 border-t border-border">
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <Label htmlFor="metaTitle" className="text-xs font-medium">Meta Title</Label>
+                    {charCount(form.metaTitle, 70)}
+                  </div>
+                  <Input id="metaTitle" placeholder="Defaults to page title if empty" value={form.metaTitle}
+                    onChange={e => set("metaTitle", e.target.value)}
+                    className={cn(errors.metaTitle && "border-destructive")} />
+                  {errors.metaTitle && <p className="text-xs text-destructive mt-1">{errors.metaTitle}</p>}
+                </div>
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <Label htmlFor="metaDesc" className="text-xs font-medium">Meta Description</Label>
+                    {charCount(form.metaDescription, 160)}
+                  </div>
+                  <Textarea id="metaDesc" rows={3} placeholder="160 character summary for search engines"
+                    value={form.metaDescription} onChange={e => set("metaDescription", e.target.value)}
+                    className={cn("resize-none text-sm", errors.metaDescription && "border-destructive")} />
+                  {errors.metaDescription && <p className="text-xs text-destructive mt-1">{errors.metaDescription}</p>}
+                </div>
+                <div>
+                  <Label htmlFor="metaKw" className="text-xs font-medium mb-1.5 block">Meta Keywords</Label>
+                  <Input id="metaKw" placeholder="keyword1, keyword2, keyword3" value={form.metaKeywords} onChange={e => set("metaKeywords", e.target.value)} />
+                </div>
+              </CardContent>
+            )}
+          </Card>
+        </div>
+
+        {/* Right col — settings */}
+        <div className="space-y-4">
+          {/* Publish */}
+          <Card>
+            <CardContent className="p-5 space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-medium">Status</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{form.isPublished ? "Visible on the website" : "Hidden from visitors"}</p>
+                </div>
+                <Badge className={cn("text-xs", form.isPublished ? "bg-emerald-100 text-emerald-700 border-emerald-200" : "bg-muted text-muted-foreground border-border")} variant="outline">
+                  {form.isPublished ? "Published" : "Draft"}
+                </Badge>
+              </div>
+              <Separator />
+              <div className="flex items-center justify-between">
+                <Label htmlFor="showInMenu" className="text-sm cursor-pointer">Show in menu</Label>
+                <Switch id="showInMenu" checked={form.showInMenu} onCheckedChange={v => set("showInMenu", v)} />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Page settings */}
+          <Card>
+            <CardContent className="p-5 space-y-4">
+              <div>
+                <Label htmlFor="template" className="text-xs font-semibold uppercase tracking-wide mb-1.5 block">Template</Label>
+                <Select value={form.template} onValueChange={v => set("template", v)}>
+                  <SelectTrigger id="template"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="default">Default</SelectItem>
+                    <SelectItem value="sidebar">With Sidebar</SelectItem>
+                    <SelectItem value="full-width">Full Width</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              {parentPages.length > 0 && (
+                <div>
+                  <Label htmlFor="parent" className="text-xs font-semibold uppercase tracking-wide mb-1.5 block">Parent Page</Label>
+                  <Select value={form.parentId || "none"} onValueChange={v => set("parentId", v === "none" ? "" : v)}>
+                    <SelectTrigger id="parent"><SelectValue placeholder="None (top-level)" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">None (top-level)</SelectItem>
+                      {parentPages.filter(p => p.id !== initialData?.id).map(p => (
+                        <SelectItem key={p.id} value={p.id}>{p.title}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Featured image URL */}
+          <Card>
+            <CardContent className="p-5">
+              <Label htmlFor="featImg" className="text-xs font-semibold uppercase tracking-wide mb-1.5 block">Featured Image URL</Label>
+              {form.featuredImage && (
+                <div className="relative rounded-lg overflow-hidden aspect-video mb-3 bg-muted">
+                  <img src={form.featuredImage} alt="Featured" className="w-full h-full object-cover" />
+                  <button type="button" onClick={() => set("featuredImage", "")}
+                    className="absolute top-1.5 right-1.5 bg-black/60 hover:bg-black/80 text-white rounded-full p-0.5 transition-colors">
+                    <AlertCircle className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              )}
+              <Input id="featImg" placeholder="https://…" value={form.featuredImage} onChange={e => set("featuredImage", e.target.value)} className="text-sm" />
+            </CardContent>
+          </Card>
+
+          {/* Auto-save indicator */}
+          {mode === "edit" && (
+            <p className="text-[11px] text-muted-foreground/60 flex items-center gap-1 px-1">
+              <Clock className="h-3 w-3" />Auto-saves draft every 60 seconds
+            </p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

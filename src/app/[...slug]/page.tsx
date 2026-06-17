@@ -13,6 +13,8 @@ import { PublicationGrid } from "@/components/shared/PublicationGrid";
 import { CTABanner } from "@/components/shared/CTABanner";
 import { EmbedBlock } from "@/components/shared/EmbedBlock";
 
+export const dynamic = "force-dynamic";
+
 // Component mapping for dynamic sections
 const ComponentMap: Record<string, React.FC<any>> = {
     'hero': Hero,

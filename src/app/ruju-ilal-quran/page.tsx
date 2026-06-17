@@ -2,6 +2,8 @@ import { getCmsPage, getCleanContent } from "@/lib/page-helpers";
 import { DynamicPageContent, generatePageMetadata } from "@/components/shared/DynamicPageContent";
 import { CTABanner } from "@/components/shared/CTABanner";
 
+export const dynamic = "force-dynamic";
+
 const SLUG = "ruju-ilal-quran";
 const DEFAULT_TITLE = "Ruju Ilal Quran | Tanzeem-e-Islami";
 const DEFAULT_DESC = "Return to the Quran — a movement to revive the Quranic spirit and implement its teachings in individual and collective life.";

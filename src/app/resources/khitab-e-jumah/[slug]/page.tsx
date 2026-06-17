@@ -5,6 +5,8 @@ import { eq } from "drizzle-orm";
 import { SermonDetail } from "@/components/resources/SermonDetail";
 import type { Metadata } from "next";
 
+export const dynamic = "force-dynamic";
+
 interface Props {
     params: Promise<{ slug: string }>;
 }
