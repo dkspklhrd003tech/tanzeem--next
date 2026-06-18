@@ -4,6 +4,8 @@ import { db } from "@/lib/db";
 import { socialPlatforms, socialAccounts } from "@/db/schema";
 import { asc, eq } from "drizzle-orm";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Social Media Hub | Tanzeem-e-Islami",
   description: "Connect with Tanzeem-e-Islami and Dr. Israr Ahmed across all major social media platforms.",

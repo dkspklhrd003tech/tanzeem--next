@@ -58,104 +58,45 @@ const STATIC_ROUTES: { url: string; priority?: number; changeFrequency?: "daily"
 ];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const publishedPages = await db
-    .select({ slug: pages.slug, updatedAt: pages.updatedAt })
-    .from(pages)
-    .where(eq(pages.isPublished, true));
-
-  const publishedAudios = await db
-    .select({ slug: audio.slug, updatedAt: audio.updatedAt })
-    .from(audio)
-    .where(eq(audio.isPublished, true));
-
-  const publishedVideos = await db
-    .select({ slug: videos.slug, updatedAt: videos.updatedAt })
-    .from(videos)
-    .where(eq(videos.isPublished, true));
-
-  const publishedBooks = await db
-    .select({ slug: books.slug, updatedAt: books.updatedAt })
-    .from(books)
-    .where(eq(books.isPublished, true));
-
-  const publishedMagazines = await db
-    .select({ slug: magazines.slug, updatedAt: magazines.updatedAt })
-    .from(magazines)
-    .where(eq(magazines.isPublished, true));
-
-  const publishedPressReleases = await db
-    .select({ slug: pressReleases.slug, updatedAt: pressReleases.updatedAt })
-    .from(pressReleases)
-    .where(eq(pressReleases.isPublished, true));
-
-  const publishedEvents = await db
-    .select({ slug: events.slug, updatedAt: events.updatedAt })
-    .from(events)
-    .where(eq(events.isPublished, true));
-
-  const dynamicPageEntries: MetadataRoute.Sitemap = publishedPages.map((p) => ({
-    url: `${BASE_URL}/${p.slug}`,
-    lastModified: p.updatedAt,
-    changeFrequency: "monthly" as const,
-    priority: 0.6,
-  }));
-
-  const audioEntries: MetadataRoute.Sitemap = publishedAudios.map((a) => ({
-    url: `${BASE_URL}/resources/audios/${a.slug}`,
-    lastModified: a.updatedAt,
-    changeFrequency: "monthly" as const,
-    priority: 0.5,
-  }));
-
-  const videoEntries: MetadataRoute.Sitemap = publishedVideos.map((v) => ({
-    url: `${BASE_URL}/resources/videos/${v.slug}`,
-    lastModified: v.updatedAt,
-    changeFrequency: "monthly" as const,
-    priority: 0.5,
-  }));
-
-  const bookEntries: MetadataRoute.Sitemap = publishedBooks.map((b) => ({
-    url: `${BASE_URL}/resources/books/${b.slug}`,
-    lastModified: b.updatedAt,
-    changeFrequency: "monthly" as const,
-    priority: 0.5,
-  }));
-
-  const magazineEntries: MetadataRoute.Sitemap = publishedMagazines.map((m) => ({
-    url: `${BASE_URL}/resources/magazines/${m.slug}`,
-    lastModified: m.updatedAt,
-    changeFrequency: "monthly" as const,
-    priority: 0.5,
-  }));
-
-  const pressEntries: MetadataRoute.Sitemap = publishedPressReleases.map((p) => ({
-    url: `${BASE_URL}/resources/press-releases/${p.slug}`,
-    lastModified: p.updatedAt,
-    changeFrequency: "weekly" as const,
-    priority: 0.6,
-  }));
-
-  const eventEntries: MetadataRoute.Sitemap = publishedEvents.map((e) => ({
-    url: `${BASE_URL}/events/${e.slug}`,
-    lastModified: e.updatedAt,
-    changeFrequency: "daily" as const,
-    priority: 0.6,
-  }));
-
   const staticEntries: MetadataRoute.Sitemap = STATIC_ROUTES.map((route) => ({
     url: `${BASE_URL}${route.url}`,
     changeFrequency: route.changeFrequency || "monthly",
     priority: route.priority || 0.5,
   }));
 
-  return [
-    ...staticEntries,
-    ...dynamicPageEntries,
-    ...audioEntries,
-    ...videoEntries,
-    ...bookEntries,
-    ...magazineEntries,
-    ...pressEntries,
-    ...eventEntries,
-  ];
+  // Fetch all dynamic entries in one batch; fall back to static-only if DB is unavailable
+  let dynamicEntries: MetadataRoute.Sitemap = [];
+  try {
+    const [
+      publishedPages,
+      publishedAudios,
+      publishedVideos,
+      publishedBooks,
+      publishedMagazines,
+      publishedPressReleases,
+      publishedEvents,
+    ] = await Promise.all([
+      db.select({ slug: pages.slug, updatedAt: pages.updatedAt }).from(pages).where(eq(pages.isPublished, true)),
+      db.select({ slug: audio.slug, updatedAt: audio.updatedAt }).from(audio).where(eq(audio.isPublished, true)),
+      db.select({ slug: videos.slug, updatedAt: videos.updatedAt }).from(videos).where(eq(videos.isPublished, true)),
+      db.select({ slug: books.slug, updatedAt: books.updatedAt }).from(books).where(eq(books.isPublished, true)),
+      db.select({ slug: magazines.slug, updatedAt: magazines.updatedAt }).from(magazines).where(eq(magazines.isPublished, true)),
+      db.select({ slug: pressReleases.slug, updatedAt: pressReleases.updatedAt }).from(pressReleases).where(eq(pressReleases.isPublished, true)),
+      db.select({ slug: events.slug, updatedAt: events.updatedAt }).from(events).where(eq(events.isPublished, true)),
+    ]);
+
+    dynamicEntries = [
+      ...publishedPages.map((p) => ({ url: `${BASE_URL}/${p.slug}`, lastModified: p.updatedAt, changeFrequency: "monthly" as const, priority: 0.6 })),
+      ...publishedAudios.map((a) => ({ url: `${BASE_URL}/resources/audios/${a.slug}`, lastModified: a.updatedAt, changeFrequency: "monthly" as const, priority: 0.5 })),
+      ...publishedVideos.map((v) => ({ url: `${BASE_URL}/resources/videos/${v.slug}`, lastModified: v.updatedAt, changeFrequency: "monthly" as const, priority: 0.5 })),
+      ...publishedBooks.map((b) => ({ url: `${BASE_URL}/resources/books/${b.slug}`, lastModified: b.updatedAt, changeFrequency: "monthly" as const, priority: 0.5 })),
+      ...publishedMagazines.map((m) => ({ url: `${BASE_URL}/resources/magazines/${m.slug}`, lastModified: m.updatedAt, changeFrequency: "monthly" as const, priority: 0.5 })),
+      ...publishedPressReleases.map((p) => ({ url: `${BASE_URL}/resources/press-releases/${p.slug}`, lastModified: p.updatedAt, changeFrequency: "weekly" as const, priority: 0.6 })),
+      ...publishedEvents.map((e) => ({ url: `${BASE_URL}/events/${e.slug}`, lastModified: e.updatedAt, changeFrequency: "daily" as const, priority: 0.6 })),
+    ];
+  } catch {
+    // DB unavailable during build — return static routes only
+  }
+
+  return [...staticEntries, ...dynamicEntries];
 }
