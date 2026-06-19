@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { menuItems, activityLogs } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth";
 import { eq, or, desc, asc, and } from "drizzle-orm";
+import { sanitizeUrl } from "@/lib/security";
 
 // Helper function to build a tree structure from flat menu items
 function buildMenuTree(items: any[], parentId: string | null = null): any[] {
@@ -69,10 +70,13 @@ export async function POST(request: NextRequest) {
 
         const mId = crypto.randomUUID();
 
+        // Sanitize the URL: drops javascript:/data: schemes (returns null when unsafe).
+        const safeUrl = data.url ? sanitizeUrl(data.url) : null;
+
         await db.insert(menuItems).values({
             id: mId,
             label: data.label,
-            url: data.url,
+            url: safeUrl,
             parentId: data.parentId || null,
             order: data.order || 0,
             isOpenInNew: data.isOpenInNew ?? false,

@@ -17,6 +17,12 @@ const STATIC_ROUTES: { url: string; priority?: number; changeFrequency?: "daily"
   { url: "/organization/our-ideology/our-obligations", priority: 0.6, changeFrequency: "yearly" },
   { url: "/organization/the-founder", priority: 0.7, changeFrequency: "monthly" },
   { url: "/organization/the-ameer", priority: 0.7, changeFrequency: "monthly" },
+  { url: "/audio", priority: 0.9, changeFrequency: "daily" },
+  { url: "/videos", priority: 0.9, changeFrequency: "daily" },
+  { url: "/books", priority: 0.8, changeFrequency: "weekly" },
+  { url: "/magazines", priority: 0.8, changeFrequency: "monthly" },
+  { url: "/join", priority: 0.8, changeFrequency: "monthly" },
+  { url: "/quranic-circles", priority: 0.7, changeFrequency: "monthly" },
   { url: "/resources", priority: 0.9, changeFrequency: "daily" },
   { url: "/resources/audios", priority: 0.8, changeFrequency: "daily" },
   { url: "/resources/videos", priority: 0.8, changeFrequency: "daily" },
@@ -87,10 +93,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     dynamicEntries = [
       ...publishedPages.map((p) => ({ url: `${BASE_URL}/${p.slug}`, lastModified: p.updatedAt, changeFrequency: "monthly" as const, priority: 0.6 })),
-      ...publishedAudios.map((a) => ({ url: `${BASE_URL}/resources/audios/${a.slug}`, lastModified: a.updatedAt, changeFrequency: "monthly" as const, priority: 0.5 })),
-      ...publishedVideos.map((v) => ({ url: `${BASE_URL}/resources/videos/${v.slug}`, lastModified: v.updatedAt, changeFrequency: "monthly" as const, priority: 0.5 })),
-      ...publishedBooks.map((b) => ({ url: `${BASE_URL}/resources/books/${b.slug}`, lastModified: b.updatedAt, changeFrequency: "monthly" as const, priority: 0.5 })),
-      ...publishedMagazines.map((m) => ({ url: `${BASE_URL}/resources/magazines/${m.slug}`, lastModified: m.updatedAt, changeFrequency: "monthly" as const, priority: 0.5 })),
+      ...publishedAudios.map((a) => ({ url: `${BASE_URL}/audio/${a.slug}`, lastModified: a.updatedAt, changeFrequency: "monthly" as const, priority: 0.6 })),
+      ...publishedVideos.map((v) => ({ url: `${BASE_URL}/videos/${v.slug}`, lastModified: v.updatedAt, changeFrequency: "monthly" as const, priority: 0.6 })),
+      ...publishedBooks.map((b) => ({ url: `${BASE_URL}/books/${b.slug}`, lastModified: b.updatedAt, changeFrequency: "monthly" as const, priority: 0.6 })),
+      ...publishedMagazines.map((m) => ({ url: `${BASE_URL}/magazines`, lastModified: m.updatedAt, changeFrequency: "monthly" as const, priority: 0.5 })),
       ...publishedPressReleases.map((p) => ({ url: `${BASE_URL}/resources/press-releases/${p.slug}`, lastModified: p.updatedAt, changeFrequency: "weekly" as const, priority: 0.6 })),
       ...publishedEvents.map((e) => ({ url: `${BASE_URL}/events/${e.slug}`, lastModified: e.updatedAt, changeFrequency: "daily" as const, priority: 0.6 })),
     ];

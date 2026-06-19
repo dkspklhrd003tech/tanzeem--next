@@ -31,14 +31,14 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
     return (
         <div>
             {/* 1. Our Magazines Section */}
-            <section aria-labelledby="magazines-heading" className="py-16 border-t border-border bg-gradient-to-b from-card to-card">
+            <section aria-labelledby="magazines-heading" className="py-14 border-t border-border bg-background">
                 <div className="container max-w-7xl mx-auto">
-                    <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-8">
-                        <div className="space-y-3">
-                            <h2 id="magazines-heading" className="text-4xl md:text-5xl font-black text-primary tracking-tight leading-tight">&mdash; Our Magazines</h2>
-                            <p className="text-foreground-muted font-medium text-lg leading-relaxed max-w-2xl">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
+                        <div>
+                            <p className="section-label mb-1">Our Magazines</p>
+                            <h2 id="magazines-heading" className="text-3xl md:text-4xl font-bold text-foreground">
                                 Books And Literature Of Tanzeem-e-Islami &amp; Anjuman Khuddam Ul Quran
-                            </p>
+                            </h2>
                         </div>
                         <Link
                             href="/magazines"
@@ -112,14 +112,14 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
             </section>
 
             {/* 2. Our Books Section */}
-            <section aria-labelledby="books-heading" className="py-16 border-t border-border bg-card">
+            <section aria-labelledby="books-heading" className="py-14 border-t border-border bg-card">
                 <div className="container max-w-7xl mx-auto">
-                    <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-16 gap-8">
-                        <div className="space-y-3">
-                            <h2 id="books-heading" className="text-4xl md:text-5xl font-black text-primary tracking-tight leading-tight">&mdash; Our Books</h2>
-                            <p className="text-foreground-muted font-medium text-lg leading-relaxed max-w-2xl">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
+                        <div>
+                            <p className="section-label mb-1">Our Books</p>
+                            <h2 id="books-heading" className="text-3xl md:text-4xl font-bold text-foreground">
                                 Message of Iqamat ud Din &amp; Ruju llul Quran Through Our Periodicals.
-                            </p>
+                            </h2>
                         </div>
                         <Link
                             href="/books"

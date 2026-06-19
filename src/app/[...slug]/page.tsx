@@ -3,161 +3,110 @@ import { db } from "@/db";
 import { pages, pageSections } from "@/db/schema";
 import { eq, and } from "drizzle-orm";
 import { Metadata } from "next";
-import { Hero } from "@/components/home/Hero";
-import { IntroSection } from "@/components/shared/IntroSection";
-import { StatsGrid } from "@/components/shared/StatsGrid";
-import { Accordion } from "@/components/shared/Accordion";
-import { TeamGrid } from "@/components/shared/TeamGrid";
-import { MediaCardGrid } from "@/components/shared/MediaCardGrid";
-import { PublicationGrid } from "@/components/shared/PublicationGrid";
-import { CTABanner } from "@/components/shared/CTABanner";
-import { EmbedBlock } from "@/components/shared/EmbedBlock";
+import Script from "next/script";
+import { DynamicPageContent } from "@/components/shared/DynamicPageContent";
+import { buildMetadata, webPageJsonLd, breadcrumbJsonLd } from "@/lib/seo";
 
-export const dynamic = "force-dynamic";
-
-// Component mapping for dynamic sections
-const ComponentMap: Record<string, React.FC<any>> = {
-    'hero': Hero,
-    'intro': IntroSection,
-    'stats': StatsGrid,
-    'accordion': Accordion,
-    'team': TeamGrid,
-    'media_grid': MediaCardGrid,
-    'publications': PublicationGrid,
-    'cta_banner': CTABanner,
-    'embed': EmbedBlock,
-};
+/**
+ * ISR — revalidate every 5 minutes.
+ * Pages are cached at the edge and rebuilt in the background when stale.
+ * Individual pages can also be purged via revalidatePath() in the admin.
+ */
+export const revalidate = 300;
 
 interface PageProps {
-    params: Promise<{
-        slug: string[];
-    }>;
+    params: Promise<{ slug: string[] }>;
 }
 
-const parseSeoFromContent = (content: string) => {
-  const match = content.match(/<!--SEO_METADATA_JSON:([\s\S]*?)-->/);
-  let seo = {
-    canonicalUrl: "",
-    noIndex: false,
-    ogTitle: "",
-    ogImage: "",
-    schemaType: "WebPage",
-    schemaJsonLd: "",
-  };
-  let cleanContent = content;
-  if (match) {
-    try {
-      seo = { ...seo, ...JSON.parse(match[1]) };
-      cleanContent = content.replace(/<!--SEO_METADATA_JSON:[\s\S]*?-->/, "").trim();
-    } catch (e) {
-      console.error("Failed to parse SEO metadata", e);
-    }
-  }
-  return { seo, cleanContent };
-};
+// ── generateMetadata ──────────────────────────────────────────────────────────
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-    const resolvedParams = await params;
-    const slugArray = resolvedParams.slug;
-    const page = await db.query.pages.findFirst({
-        where: eq(pages.slug, slugArray.join('/')),
-    });
-
-    if (!page || !page.isPublished) {
-        return { title: "Page Not Found" };
-    }
-
-    const { seo } = parseSeoFromContent(page.content || "");
-    const title = seo.ogTitle || page.metaTitle || page.title;
-    const description = page.metaDescription || page.excerpt;
-    const canonical = seo.canonicalUrl || `${process.env.NEXT_PUBLIC_APP_URL || 'https://tanzeem.org'}/${slugArray.join('/')}`;
-
-    return {
-        title: page.metaTitle || page.title,
-        description,
-        alternates: {
-            canonical,
-        },
-        robots: seo.noIndex ? {
-            index: false,
-            follow: false,
-        } : undefined,
-        openGraph: {
-            title,
-            description: description || undefined,
-            url: `${process.env.NEXT_PUBLIC_APP_URL || 'https://tanzeem.org'}/${slugArray.join('/')}`,
-            images: seo.ogImage ? [{ url: seo.ogImage }] : undefined,
-        }
-    };
-}
-
-export default async function DynamicPage({ params }: PageProps) {
     const { slug: slugArray } = await params;
-    const slug = slugArray.join('/');
+    const slug = slugArray.join("/");
 
-    console.log(`DynamicPage: slugArray=[${slugArray.join(', ')}], searching for slug="${slug}"`);
-
-    // Fetch page data
     const page = await db.query.pages.findFirst({
         where: eq(pages.slug, slug),
     });
 
-    if (!page) {
-        console.log(`DynamicPage: No page found for slug="${slug}"`);
-        notFound();
-    }
+    if (!page || !page.isPublished) return { title: "Page Not Found" };
 
-    if (!page.isPublished) {
-        console.log(`DynamicPage: Page "${page.title}" is NOT published`);
-        notFound();
-    }
+    return buildMetadata({
+        title: page.metaTitle ?? page.title,
+        description: page.metaDescription ?? page.excerpt ?? undefined,
+        path: `/${slug}`,
+        ogImage: (page as any).ogImage ?? page.featuredImage ?? null,
+        noIndex: (page as any).noIndex ?? false,
+    });
+}
 
-    console.log(`DynamicPage: Found page "${page.title}"`);
+// ── Page component ────────────────────────────────────────────────────────────
 
-    const { seo, cleanContent } = parseSeoFromContent(page.content || "");
+export default async function DynamicPage({ params }: PageProps) {
+    const { slug: slugArray } = await params;
+    const slug = slugArray.join("/");
 
-    // Fetch ordered sections for this page
+    const page = await db.query.pages.findFirst({
+        where: eq(pages.slug, slug),
+    });
+
+    if (!page || !page.isPublished) notFound();
+
     const sections = await db.query.pageSections.findMany({
         where: and(
             eq(pageSections.pageId, page.id),
             eq(pageSections.isActive, true)
         ),
-        orderBy: (sections, { asc }) => [asc(sections.order)],
+        orderBy: (s, { asc }) => [asc(s.order)],
     });
+
+    // Build JSON-LD for this page
+    const webpage = webPageJsonLd({
+        title: page.metaTitle ?? page.title,
+        description: page.metaDescription ?? page.excerpt ?? undefined,
+        path: `/${slug}`,
+        datePublished: page.publishedAt,
+        dateModified: page.updatedAt,
+    });
+
+    const crumbs = [
+        { name: "Home", path: "/" },
+        ...slugArray.map((seg, i) => ({
+            name: seg.charAt(0).toUpperCase() + seg.slice(1).replace(/-/g, " "),
+            path: "/" + slugArray.slice(0, i + 1).join("/"),
+        })),
+    ];
+    const bc = breadcrumbJsonLd(crumbs);
+
+    const ldId = slug.replace(/\//g, "-");
 
     return (
         <main className="min-h-screen bg-background">
-            {/* Render dynamically parsed JSON-LD Schema if present */}
-            {seo.schemaJsonLd && (
-                <script
-                    type="application/ld+json"
-                    dangerouslySetInnerHTML={{ __html: seo.schemaJsonLd }}
-                />
-            )}
+            {/* Structured data */}
+            <Script
+                id={`jsonld-page-${ldId}`}
+                type="application/ld+json"
+                strategy="beforeInteractive"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(webpage) }}
+            />
+            <Script
+                id={`jsonld-bc-${ldId}`}
+                type="application/ld+json"
+                strategy="beforeInteractive"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(bc) }}
+            />
+
+            {/* Section-builder content (all 15 section types supported) */}
             {sections.length > 0 ? (
-                <div className="flex flex-col">
-                    {sections.map((section) => {
-                        const SectionComponent = ComponentMap[section.type];
-                        if (!SectionComponent) {
-                            console.warn(`No component found for section type: ${section.type}`);
-                            return null;
-                        }
-                        return (
-                            <SectionComponent 
-                                key={section.id} 
-                                {...(section.config as any)} 
-                            />
-                        );
-                    })}
-                </div>
+                <DynamicPageContent sections={sections as any} />
             ) : (
-                <main className="container mx-auto py-12 md:py-16 px-4">
+                /* Fallback: raw HTML prose from the Tiptap editor */
+                <div className="container mx-auto py-12 md:py-16 px-4">
                     <article className="prose prose-lg dark:prose-invert max-w-4xl mx-auto">
                         <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
                             {page.title}
                         </h1>
                         {page.featuredImage && (
-                            <div className="mb-8 rounded-2xl overflow-hidden aspect-video relative">
+                            <div className="mb-8 rounded-2xl overflow-hidden aspect-video">
                                 <img
                                     src={page.featuredImage}
                                     alt={page.title}
@@ -165,12 +114,16 @@ export default async function DynamicPage({ params }: PageProps) {
                                 />
                             </div>
                         )}
-                        <div
-                            className="mt-8 dynamic-content"
-                            dangerouslySetInnerHTML={{ __html: cleanContent || "" }}
-                        />
+                        {page.content &&
+                            page.content.trim() &&
+                            page.content !== "<p></p>" && (
+                                <div
+                                    className="mt-8"
+                                    dangerouslySetInnerHTML={{ __html: page.content }}
+                                />
+                            )}
                     </article>
-                </main>
+                </div>
             )}
         </main>
     );

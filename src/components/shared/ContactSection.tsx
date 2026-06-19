@@ -1,104 +1,245 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { Phone, Mail, MapPin, Clock } from "lucide-react";
+import { MapPin, Phone, Mail } from "lucide-react";
 import { ContactForm } from "./ContactForm";
+import { cn } from "@/lib/utils";
 
-const contactInfo = [
-  {
-    icon: Phone,
-    title: "Phone",
-    details: ["+92 123 456 789", "+92 987 654 321"],
-    action: "tel:+92123456789",
-  },
-  {
-    icon: Mail,
-    title: "Email",
-    details: ["info@tanzeem.org", "support@tanzeem.org"],
-    action: "mailto:info@tanzeem.org",
-  },
-  {
-    icon: MapPin,
-    title: "Address",
-    details: ["123 Islamic Center", "Lahore, Pakistan"],
-  },
-  {
-    icon: Clock,
-    title: "Office Hours",
-    details: ["Monday - Friday: 9:00 AM - 6:00 PM", "Saturday: 9:00 AM - 1:00 PM"],
-  },
-];
+// ── Types ─────────────────────────────────────────────────────────────────────
 
-export function ContactSection() {
+/** Shape of a row from the `locations` table. */
+export type LocationRow = {
+  id: string;
+  name: string;
+  slug: string;
+  city: string | null;
+  address: string | null;
+  phone: string | null;
+  email: string | null;
+  country: string | null;
+  isActive: boolean;
+};
+
+export interface ContactSectionProps {
+  /** Flattened key→value map from the `settings` table, group = "contact". */
+  contactSettings?: Record<string, string>;
+  /** Rows from the `locations` table (isActive = true). */
+  locationRows?: LocationRow[];
+}
+
+// ── Static fallback defaults (used when DB has no data yet) ───────────────────
+
+const DEFAULT_SETTINGS: Record<string, string> = {
+  footer_address: "23 KM Multan Road, Near Chung, Lahore, Punjab, Pakistan",
+  contact_phone: "+92 (42) 35473375-78",
+  contact_email: "markaz@tanzeem.org",
+  contact_email_office: "info@tanzeem.org",
+};
+
+/** Markaz fallback shown while locations table is empty / being seeded. */
+const MARKAZ_FALLBACK: LocationRow = {
+  id: "markaz-fallback",
+  name: "Markaz / مرکز",
+  slug: "markaz",
+  city: "Lahore",
+  country: "Pakistan",
+  address:
+    "Dar ul Islam, Markaz Tanzeem-e-Islami, Multan Road, Chung Lahore 53800",
+  phone: "(042) 35473375-78",
+  email: "markaz@tanzeem.org",
+  isActive: true,
+};
+
+// ── Component ─────────────────────────────────────────────────────────────────
+
+export function ContactSection({
+  contactSettings = {},
+  locationRows = [],
+}: ContactSectionProps) {
+  // Merge DB settings over fallback defaults
+  const s = { ...DEFAULT_SETTINGS, ...contactSettings };
+
+  // Use DB locations or fall back to just Markaz so the UI is never empty
+  const branches: LocationRow[] =
+    locationRows.length > 0 ? locationRows : [MARKAZ_FALLBACK];
+
+  const [activeSlug, setActiveSlug] = useState<string>(branches[0].slug);
+  const activeBranch = branches.find((b) => b.slug === activeSlug) ?? branches[0];
+
+  // ── Top 3 info cards (driven by settings) ──────────────────────────────────
+  const infoCards = [
+    {
+      icon: MapPin,
+      title: "Address",
+      lines: [s.footer_address],
+    },
+    {
+      icon: Phone,
+      title: "Phone",
+      lines: [
+        s.contact_phone
+          ? `Landline: ${s.contact_phone}`
+          : s.whatsapp_number
+            ? `WhatsApp: ${s.whatsapp_number}`
+            : "Contact us via email",
+      ],
+    },
+    {
+      icon: Mail,
+      title: "Email Address",
+      lines: [
+        s.contact_email ? `General: ${s.contact_email}` : "",
+        s.contact_email_office ? `Office: ${s.contact_email_office}` : "",
+      ].filter(Boolean),
+    },
+  ];
+
   return (
-    <section className="section bg-background-secondary">
-      <div className="container mx-auto">
-        {/* Section Header */}
+    <section className="bg-background py-12 md:py-16">
+      <div className="container mx-auto px-4 max-w-5xl">
+
+        {/* ── 3 info cards ───────────────────────────────────────────────── */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-12">
+          {infoCards.map((card, i) => (
+            <motion.div
+              key={card.title}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+              className="bg-card border border-border rounded-xl p-6 flex flex-col items-center text-center gap-3 shadow-sm"
+            >
+              <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center shrink-0">
+                <card.icon
+                  className="h-6 w-6 text-primary-foreground"
+                  aria-hidden="true"
+                />
+              </div>
+              <h3 className="font-bold text-foreground text-base">
+                {card.title}
+              </h3>
+              {card.lines.map((line, j) => (
+                <p key={j} className="text-sm text-foreground-muted leading-relaxed">
+                  {line}
+                </p>
+              ))}
+            </motion.div>
+          ))}
+        </div>
+
+        {/* ── Contact form ───────────────────────────────────────────────── */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center max-w-2xl mx-auto mb-12"
+          className="bg-card border border-border rounded-xl p-6 md:p-8 mb-12 shadow-sm"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-primary mb-4">
-            Get in Touch
-          </h2>
-          <p className="text-foreground-muted text-lg">
-            Have questions or want to learn more? We&apos;d love to hear from you.
-            Reach out through any of the channels below.
-          </p>
+          <ContactForm />
         </motion.div>
 
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Contact Info Cards */}
-          <div className="lg:col-span-1 space-y-4">
-            {contactInfo.map((item, index) => (
-              <motion.div
-                key={item.title}
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <a
-                  href={item.action}
-                  className="block bg-card rounded-xl p-4 border border-border hover:border-primary/30 hover:shadow-md transition-all"
-                >
-                  <div className="flex items-start gap-4">
-                    <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center shrink-0">
-                      <item.icon className="h-5 w-5 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-foreground mb-1">
-                        {item.title}
-                      </h3>
-                      {item.details.map((detail, i) => (
-                        <p key={i} className="text-sm text-foreground-muted">
-                          {detail}
-                        </p>
-                      ))}
-                    </div>
-                  </div>
-                </a>
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Contact Form */}
+        {/* ── Branch / city tabs ─────────────────────────────────────────── */}
+        {branches.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="lg:col-span-2"
           >
-            <div className="bg-card rounded-2xl p-6 md:p-8 border border-border">
-              <h3 className="text-xl font-semibold text-foreground mb-6">
-                Send us a Message
-              </h3>
-              <ContactForm />
+            {/* Tab buttons */}
+            <div
+              className="flex flex-wrap gap-2"
+              role="tablist"
+              aria-label="Branch locations"
+            >
+              {branches.map((branch) => (
+                <button
+                  key={branch.slug}
+                  role="tab"
+                  aria-selected={activeSlug === branch.slug}
+                  aria-controls={`branch-panel-${branch.slug}`}
+                  onClick={() => setActiveSlug(branch.slug)}
+                  className={cn(
+                    "px-4 py-2 text-sm font-medium rounded-t-lg border border-b-0 transition-colors",
+                    "focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2",
+                    activeSlug === branch.slug
+                      ? "bg-primary text-primary-foreground border-primary"
+                      : "bg-card text-foreground-muted border-border hover:text-primary hover:border-primary/40"
+                  )}
+                >
+                  {branch.name}
+                </button>
+              ))}
+            </div>
+
+            {/* Active branch details panel */}
+            <div
+              id={`branch-panel-${activeBranch.slug}`}
+              role="tabpanel"
+              aria-label={`${activeBranch.name} branch details`}
+              className="bg-card border border-border rounded-b-xl rounded-tr-xl p-6 shadow-sm"
+            >
+              <dl className="grid grid-cols-1 sm:grid-cols-[160px_1fr] gap-y-3 gap-x-4 text-sm">
+                {activeBranch.city && (
+                  <>
+                    <dt className="font-semibold text-foreground">City</dt>
+                    <dd className="text-foreground-muted">{activeBranch.city}</dd>
+                  </>
+                )}
+                {activeBranch.address && (
+                  <>
+                    <dt className="font-semibold text-foreground">Address</dt>
+                    <dd className="text-foreground-muted">{activeBranch.address}</dd>
+                  </>
+                )}
+                {activeBranch.phone && (
+                  <>
+                    <dt className="font-semibold text-foreground">Phone</dt>
+                    <dd>
+                      <a
+                        href={`tel:${activeBranch.phone.replace(/[^+\d]/g, "")}`}
+                        className="text-primary hover:underline"
+                      >
+                        {activeBranch.phone}
+                      </a>
+                    </dd>
+                  </>
+                )}
+                {activeBranch.email && (
+                  <>
+                    <dt className="font-semibold text-foreground">Email</dt>
+                    <dd>
+                      <a
+                        href={`mailto:${activeBranch.email}`}
+                        className="text-primary hover:underline"
+                      >
+                        {activeBranch.email}
+                      </a>
+                    </dd>
+                  </>
+                )}
+                {activeBranch.country && (
+                  <>
+                    <dt className="font-semibold text-foreground">Country</dt>
+                    <dd className="text-foreground-muted">{activeBranch.country}</dd>
+                  </>
+                )}
+              </dl>
+
+              {/* Only address/email populated hint */}
+              {!activeBranch.phone && !activeBranch.city && (
+                <p className="text-xs text-foreground-muted italic mt-3">
+                  Full contact details for this branch will be available soon.
+                  Please email{" "}
+                  <a href="mailto:markaz@tanzeem.org" className="text-primary hover:underline">
+                    markaz@tanzeem.org
+                  </a>{" "}
+                  for assistance.
+                </p>
+              )}
             </div>
           </motion.div>
-        </div>
+        )}
+
       </div>
     </section>
   );

@@ -2,43 +2,43 @@
 
 import { useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
-import { 
-  Plus, 
-  Trash2, 
-  GripVertical, 
-  Settings2, 
-  Eye, 
-  EyeOff, 
-  ChevronDown, 
-  ChevronUp 
+import {
+  Plus,
+  Trash2,
+  GripVertical,
+  Settings2,
+  Eye,
+  EyeOff,
+  ChevronDown,
+  ChevronUp
 } from "lucide-react";
-import { 
-  DndContext, 
-  closestCenter, 
-  KeyboardSensor, 
-  PointerSensor, 
-  useSensor, 
-  useSensors, 
-  DragEndEvent 
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent
 } from "@dnd-kit/core";
-import { 
-  arrayMove, 
-  SortableContext, 
-  sortableKeyboardCoordinates, 
-  verticalListSortingStrategy, 
-  useSortable 
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  useSortable
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -60,15 +60,23 @@ interface PageSectionBuilderProps {
 }
 
 const SECTION_TYPES = [
+  // ── Existing ──────────────────────────────────────────────────────────
   { value: "hero", label: "Hero Slider" },
   { value: "intro", label: "Intro (Text + Image)" },
   { value: "stats", label: "Stats Grid" },
-  { value: "accordion", label: "Accordion (FAQ)" },
+  { value: "accordion", label: "Accordion / FAQ" },
   { value: "team", label: "Team Grid" },
   { value: "media_grid", label: "Media Grid" },
   { value: "publications", label: "Publications Grid" },
   { value: "cta_banner", label: "CTA Banner" },
   { value: "embed", label: "Embed / Media" },
+  // ── New ───────────────────────────────────────────────────────────────
+  { value: "text_block", label: "Text Block (Rich Text)" },
+  { value: "image_text", label: "Image + Text (Side by Side)" },
+  { value: "quote_banner", label: "Quote Banner (Full Width)" },
+  { value: "leader_bio", label: "Leader Bio Card" },
+  { value: "ideology_cards", label: "Ideology / Feature Cards" },
+  { value: "join_cta", label: "Join Us CTA" },
 ];
 
 export function PageSectionBuilder({ pageId, onSave }: PageSectionBuilderProps) {
@@ -108,13 +116,13 @@ export function PageSectionBuilder({ pageId, onSave }: PageSectionBuilderProps) 
         const oldIndex = items.findIndex((i) => i.id === active.id);
         const newIndex = items.findIndex((i) => i.id === over.id);
         const newArray = arrayMove(items, oldIndex, newIndex);
-        
+
         // Update order field
         const updated = newArray.map((item, index) => ({
           ...item,
           order: index,
         }));
-        
+
         onSave(updated);
         return updated;
       });
@@ -169,6 +177,54 @@ export function PageSectionBuilder({ pageId, onSave }: PageSectionBuilderProps) 
         return { heading: "Publications", publications: [{ title: "", cover: "", author: "", link: "" }] };
       case "embed":
         return { source: "", aspectRatio: "video" };
+      // ── New section types ────────────────────────────────────────────
+      case "text_block":
+        return { heading: "", body: "", align: "left" };
+      case "image_text":
+        return {
+          heading: "",
+          body: "",
+          image: "",
+          imageAlt: "",
+          imagePosition: "right",  // "left" | "right"
+          buttonLabel: "",
+          buttonUrl: "",
+        };
+      case "quote_banner":
+        return {
+          quote: "",
+          attribution: "",
+          bgColor: "#0d5844",        // defaults to brand green
+          textColor: "#ffffff",
+        };
+      case "leader_bio":
+        return {
+          name: "",
+          designation: "",
+          bio: "",
+          avatar: "",
+          readMoreUrl: "",
+          readMoreLabel: "Read More",
+        };
+      case "ideology_cards":
+        return {
+          heading: "Our Ideology",
+          cards: [
+            { icon: "book", title: "Quran ul Kareem", urduTitle: "قرآن الکریم", description: "", linkLabel: "Learn More", linkUrl: "" },
+            { icon: "star", title: "Prophethood", urduTitle: "نبوت", description: "", linkLabel: "Learn More", linkUrl: "" },
+            { icon: "compass", title: "Din-ul-Qayyim", urduTitle: "دینِ قیّم", description: "", linkLabel: "Learn More", linkUrl: "" },
+            { icon: "heart", title: "Our Belief", urduTitle: "ہمارا عقیدہ", description: "", linkLabel: "Learn More", linkUrl: "" },
+          ],
+        };
+      case "join_cta":
+        return {
+          heading: "Join Tanzeem-e-Islami",
+          subheading: "Become a part of the movement for the re-establishment of the Islamic system.",
+          buttonLabel: "Join Now",
+          buttonUrl: "/join-tanzeem",
+          bgColor: "#0d5844",
+          textColor: "#ffffff",
+        };
       default:
         return {};
     }
@@ -193,17 +249,17 @@ export function PageSectionBuilder({ pageId, onSave }: PageSectionBuilderProps) 
         </Select>
       </div>
 
-      <DndContext 
-        sensors={sensors} 
-        collisionDetection={closestCenter} 
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
         onDragEnd={handleDragEnd}
       >
         <SortableContext items={sections} strategy={verticalListSortingStrategy}>
           <div className="space-y-4">
             {sections.map((section) => (
-              <SortableItem 
-                key={section.id} 
-                section={section} 
+              <SortableItem
+                key={section.id}
+                section={section}
                 isExpanded={expandedId === section.id}
                 onToggleExpand={() => setExpandedId(expandedId === section.id ? null : section.id)}
                 onRemove={(id: string) => setDeletingId(id)}
@@ -213,7 +269,7 @@ export function PageSectionBuilder({ pageId, onSave }: PageSectionBuilderProps) 
           </div>
         </SortableContext>
       </DndContext>
-      
+
       <ConfirmDialog
         open={!!deletingId}
         onOpenChange={(isOpen) => !isOpen && setDeletingId(null)}
@@ -229,6 +285,36 @@ export function PageSectionBuilder({ pageId, onSave }: PageSectionBuilderProps) 
       )}
     </div>
   );
+}
+
+/**
+ * Sanitize a config object coming from the DB — replace null/undefined with
+ * safe defaults so controlled inputs never receive null.
+ * - strings → ""
+ * - numbers → 0
+ * - booleans → false
+ * - arrays  → []
+ * - objects → {}
+ * Deep-clones one level so nested arrays of objects are also sanitized.
+ */
+function sanitizeConfig(config: any): any {
+  if (!config || typeof config !== "object") return {};
+  const out: any = {};
+  for (const [k, v] of Object.entries(config)) {
+    if (v === null || v === undefined) {
+      out[k] = "";
+    } else if (Array.isArray(v)) {
+      // Sanitize every item in the array
+      out[k] = v.map((item) =>
+        item && typeof item === "object" ? sanitizeConfig(item) : (item ?? "")
+      );
+    } else if (typeof v === "object") {
+      out[k] = sanitizeConfig(v);
+    } else {
+      out[k] = v;
+    }
+  }
+  return out;
 }
 
 function SortableItem({ section, isExpanded, onToggleExpand, onRemove, onUpdate }: any) {
@@ -257,7 +343,7 @@ function SortableItem({ section, isExpanded, onToggleExpand, onRemove, onUpdate 
           <div {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing text-foreground-muted hover:text-primary transition-colors">
             <GripVertical className="w-5 h-5" />
           </div>
-          
+
           <div className="flex-1 flex items-center gap-3">
             <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary font-bold uppercase text-xs">
               {section.type.substring(0, 2)}
@@ -269,9 +355,9 @@ function SortableItem({ section, isExpanded, onToggleExpand, onRemove, onUpdate 
           </div>
 
           <div className="flex items-center gap-2">
-            <Button 
-              variant="ghost" 
-              size="icon" 
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={() => onUpdate({ isActive: !section.isActive })}
               title={section.isActive ? "Hide" : "Show"}
             >
@@ -288,10 +374,10 @@ function SortableItem({ section, isExpanded, onToggleExpand, onRemove, onUpdate 
 
         {isExpanded && (
           <CardContent className="p-6 border-t border-border bg-muted/20">
-            <SectionConfigForm 
-              type={section.type} 
-              config={section.config} 
-              onUpdate={(config) => onUpdate({ config })} 
+            <SectionConfigForm
+              type={section.type}
+              config={section.config}
+              onUpdate={(config) => onUpdate({ config })}
             />
           </CardContent>
         )}
@@ -299,7 +385,10 @@ function SortableItem({ section, isExpanded, onToggleExpand, onRemove, onUpdate 
     </div>
   );
 }
-function SectionConfigForm({ type, config, onUpdate }: { type: string, config: any, onUpdate: (config: any) => void }) {
+function SectionConfigForm({ type, config: rawConfig, onUpdate }: { type: string, config: any, onUpdate: (config: any) => void }) {
+  // Sanitize DB config before passing to controlled inputs — prevents null/undefined values
+  const config = sanitizeConfig(rawConfig);
+
   const handleChange = (key: string, value: any) => {
     onUpdate({ ...config, [key]: value });
   };
@@ -320,10 +409,10 @@ function SectionConfigForm({ type, config, onUpdate }: { type: string, config: a
           </div>
           <div className="space-y-2">
             <Label>Background Image</Label>
-            <ImageUploader 
-              value={config.backgroundImage} 
-              onChange={(url) => handleChange("backgroundImage", url)} 
-              aspectRatio={16/9}
+            <ImageUploader
+              value={config.backgroundImage}
+              onChange={(url) => handleChange("backgroundImage", url)}
+              aspectRatio={16 / 9}
             />
           </div>
         </div>
@@ -343,23 +432,23 @@ function SectionConfigForm({ type, config, onUpdate }: { type: string, config: a
           </div>
           <div className="space-y-2">
             <Label>Body Content</Label>
-            <RichTextEditor 
-              content={config.body} 
-              onChange={(val) => handleChange("body", val)} 
+            <RichTextEditor
+              content={config.body}
+              onChange={(val) => handleChange("body", val)}
             />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label>Section Image</Label>
-              <ImageUploader 
-                value={config.image} 
-                onChange={(url) => handleChange("image", url)} 
+              <ImageUploader
+                value={config.image}
+                onChange={(url) => handleChange("image", url)}
                 aspectRatio={1.2}
               />
             </div>
             <div className="space-y-2">
               <Label>Alignment</Label>
-              <Select value={config.alignment} onValueChange={(val) => handleChange("alignment", val)}>
+              <Select value={config.alignment || "left"} onValueChange={(val) => handleChange("alignment", val)}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="left">Left (Image on Right)</SelectItem>
@@ -467,7 +556,7 @@ function SectionConfigForm({ type, config, onUpdate }: { type: string, config: a
                 </div>
                 <div className="space-y-2">
                   <Label className="text-[10px]">Answer</Label>
-                  <Textarea value={item.answer} onChange={(e) => {
+                  <Textarea value={item.answer ?? ""} onChange={(e) => {
                     const newItems = [...config.items];
                     newItems[i].answer = e.target.value;
                     handleChange("items", newItems);
@@ -535,7 +624,7 @@ function SectionConfigForm({ type, config, onUpdate }: { type: string, config: a
             </div>
             <div className="space-y-2">
               <Label>Columns</Label>
-              <Select value={String(config.columns)} onValueChange={(val) => handleChange("columns", parseInt(val))}>
+              <Select value={String(config.columns) || "3"} onValueChange={(val) => handleChange("columns", parseInt(val))}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="2">2 Columns</SelectItem>
@@ -568,14 +657,14 @@ function SectionConfigForm({ type, config, onUpdate }: { type: string, config: a
                     const newItems = [...config.items];
                     newItems[i].image = url;
                     handleChange("items", newItems);
-                  }} aspectRatio={16/9} />
+                  }} aspectRatio={16 / 9} />
                   <Input placeholder="Title" value={item.title} onChange={(e) => {
                     const newItems = [...config.items];
                     newItems[i].title = e.target.value;
                     handleChange("items", newItems);
                   }} />
                   <div className="flex gap-2">
-                    <Select value={item.type} onValueChange={(val) => {
+                    <Select value={item.type || "video"} onValueChange={(val) => {
                       const newItems = [...config.items];
                       newItems[i].type = val;
                       handleChange("items", newItems);
@@ -628,7 +717,7 @@ function SectionConfigForm({ type, config, onUpdate }: { type: string, config: a
                     const newPubs = [...config.publications];
                     newPubs[i].cover = url;
                     handleChange("publications", newPubs);
-                  }} aspectRatio={3/4} />
+                  }} aspectRatio={3 / 4} />
                   <Input placeholder="Title" value={pub.title} onChange={(e) => {
                     const newPubs = [...config.publications];
                     newPubs[i].title = e.target.value;
@@ -659,7 +748,7 @@ function SectionConfigForm({ type, config, onUpdate }: { type: string, config: a
           </div>
           <div className="space-y-2">
             <Label>Aspect Ratio</Label>
-            <Select value={config.aspectRatio} onValueChange={(val) => handleChange("aspectRatio", val)}>
+            <Select value={config.aspectRatio || "video"} onValueChange={(val) => handleChange("aspectRatio", val)}>
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="video">16:9 Video</SelectItem>
@@ -670,6 +759,265 @@ function SectionConfigForm({ type, config, onUpdate }: { type: string, config: a
           </div>
         </div>
       );
+
+    // ── NEW SECTION TYPES ────────────────────────────────────────────────
+
+    case "text_block":
+      return (
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label>Heading (optional)</Label>
+            <Input value={config.heading ?? ""} onChange={(e) => handleChange("heading", e.target.value)} placeholder="Section heading" />
+          </div>
+          <div className="space-y-2">
+            <Label>Body Content</Label>
+            <RichTextEditor content={config.body ?? ""} onChange={(val) => handleChange("body", val)} />
+          </div>
+          <div className="space-y-2">
+            <Label>Text Alignment</Label>
+            <Select value={config.align || "left"} onValueChange={(val) => handleChange("align", val)}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="left">Left</SelectItem>
+                <SelectItem value="center">Center</SelectItem>
+                <SelectItem value="right">Right</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+      );
+
+    case "image_text":
+      return (
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Heading</Label>
+              <Input value={config.heading ?? ""} onChange={(e) => handleChange("heading", e.target.value)} />
+            </div>
+            <div className="space-y-2">
+              <Label>Image Position</Label>
+              <Select value={config.imagePosition || "right"} onValueChange={(val) => handleChange("imagePosition", val)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="left">Left</SelectItem>
+                  <SelectItem value="right">Right</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label>Body Content</Label>
+            <RichTextEditor content={config.body ?? ""} onChange={(val) => handleChange("body", val)} />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Image</Label>
+              <ImageUploader value={config.image ?? ""} onChange={(url) => handleChange("image", url)} aspectRatio={1.2} />
+            </div>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label>Image Alt Text</Label>
+                <Input value={config.imageAlt ?? ""} onChange={(e) => handleChange("imageAlt", e.target.value)} placeholder="Describe the image" />
+              </div>
+              <div className="space-y-2">
+                <Label>Button Label (optional)</Label>
+                <Input value={config.buttonLabel ?? ""} onChange={(e) => handleChange("buttonLabel", e.target.value)} placeholder="Read More" />
+              </div>
+              <div className="space-y-2">
+                <Label>Button URL</Label>
+                <Input value={config.buttonUrl ?? ""} onChange={(e) => handleChange("buttonUrl", e.target.value)} placeholder="/page-slug" />
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+
+    case "quote_banner":
+      return (
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label>Quote Text</Label>
+            <Textarea value={config.quote ?? ""} onChange={(e) => handleChange("quote", e.target.value)} rows={3} placeholder="Enter the quote…" />
+          </div>
+          <div className="space-y-2">
+            <Label>Attribution (optional)</Label>
+            <Input value={config.attribution ?? ""} onChange={(e) => handleChange("attribution", e.target.value)} placeholder="— Dr. Israr Ahmed" />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Background Color</Label>
+              <div className="flex gap-2 items-center">
+                <Input type="color" value={config.bgColor ?? "#0d5844"} onChange={(e) => handleChange("bgColor", e.target.value)} className="w-12 h-9 p-1 cursor-pointer" />
+                <Input value={config.bgColor ?? "#0d5844"} onChange={(e) => handleChange("bgColor", e.target.value)} className="flex-1 font-mono text-sm" />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Text Color</Label>
+              <div className="flex gap-2 items-center">
+                <Input type="color" value={config.textColor ?? "#ffffff"} onChange={(e) => handleChange("textColor", e.target.value)} className="w-12 h-9 p-1 cursor-pointer" />
+                <Input value={config.textColor ?? "#ffffff"} onChange={(e) => handleChange("textColor", e.target.value)} className="flex-1 font-mono text-sm" />
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+
+    case "leader_bio":
+      return (
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Name</Label>
+              <Input value={config.name ?? ""} onChange={(e) => handleChange("name", e.target.value)} placeholder="Dr. Israr Ahmed" />
+            </div>
+            <div className="space-y-2">
+              <Label>Designation</Label>
+              <Input value={config.designation ?? ""} onChange={(e) => handleChange("designation", e.target.value)} placeholder="Founder" />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label>Photo</Label>
+            <ImageUploader value={config.avatar ?? ""} onChange={(url) => handleChange("avatar", url)} aspectRatio={1} />
+          </div>
+          <div className="space-y-2">
+            <Label>Biography</Label>
+            <RichTextEditor content={config.bio ?? ""} onChange={(val) => handleChange("bio", val)} />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Read More Link</Label>
+              <Input value={config.readMoreUrl ?? ""} onChange={(e) => handleChange("readMoreUrl", e.target.value)} placeholder="/organization/the-founder" />
+            </div>
+            <div className="space-y-2">
+              <Label>Read More Label</Label>
+              <Input value={config.readMoreLabel ?? "Read More"} onChange={(e) => handleChange("readMoreLabel", e.target.value)} />
+            </div>
+          </div>
+        </div>
+      );
+
+    case "ideology_cards":
+      return (
+        <div className="space-y-6">
+          <div className="space-y-2">
+            <Label>Section Heading</Label>
+            <Input value={config.heading ?? "Our Ideology"} onChange={(e) => handleChange("heading", e.target.value)} />
+          </div>
+          <div className="flex items-center justify-between pt-4 border-t">
+            <Label>Cards</Label>
+            <Button size="sm" variant="outline" onClick={() => handleChange("cards", [
+              ...(config.cards ?? []),
+              { icon: "book", title: "", urduTitle: "", description: "", linkLabel: "Learn More", linkUrl: "" },
+            ])}>
+              <Plus className="w-3 h-3 mr-1" /> Add Card
+            </Button>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {(config.cards ?? []).map((card: any, i: number) => (
+              <div key={i} className="space-y-3 bg-background p-4 rounded-lg border">
+                <div className="flex items-center justify-between">
+                  <Label className="text-xs font-bold text-primary">Card #{i + 1}</Label>
+                  <Button variant="ghost" size="icon" className="h-6 w-6 text-destructive" onClick={() => {
+                    handleChange("cards", (config.cards ?? []).filter((_: any, idx: number) => idx !== i));
+                  }}><Trash2 className="w-3 h-3" /></Button>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="space-y-1">
+                    <Label className="text-[10px]">Icon</Label>
+                    <Select value={card.icon || "book"} onValueChange={(val) => {
+                      const c = [...(config.cards ?? [])]; c[i] = { ...c[i], icon: val }; handleChange("cards", c);
+                    }}>
+                      <SelectTrigger className="h-8 text-xs"><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="book">Book</SelectItem>
+                        <SelectItem value="star">Star</SelectItem>
+                        <SelectItem value="compass">Compass</SelectItem>
+                        <SelectItem value="heart">Heart</SelectItem>
+                        <SelectItem value="shield">Shield</SelectItem>
+                        <SelectItem value="globe">Globe</SelectItem>
+                        <SelectItem value="users">Users</SelectItem>
+                        <SelectItem value="lightbulb">Lightbulb</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-[10px]">Link Label</Label>
+                    <Input className="h-8 text-xs" value={card.linkLabel ?? "Learn More"} onChange={(e) => {
+                      const c = [...(config.cards ?? [])]; c[i] = { ...c[i], linkLabel: e.target.value }; handleChange("cards", c);
+                    }} />
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-[10px]">Title (English)</Label>
+                  <Input className="h-8 text-xs" value={card.title ?? ""} onChange={(e) => {
+                    const c = [...(config.cards ?? [])]; c[i] = { ...c[i], title: e.target.value }; handleChange("cards", c);
+                  }} />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-[10px]">Title (Urdu / Arabic)</Label>
+                  <Input className="h-8 text-xs font-nastaleeq" dir="rtl" lang="ur" value={card.urduTitle ?? ""} onChange={(e) => {
+                    const c = [...(config.cards ?? [])]; c[i] = { ...c[i], urduTitle: e.target.value }; handleChange("cards", c);
+                  }} />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-[10px]">Description</Label>
+                  <Textarea className="text-xs" rows={2} value={card.description ?? ""} onChange={(e) => {
+                    const c = [...(config.cards ?? [])]; c[i] = { ...c[i], description: e.target.value }; handleChange("cards", c);
+                  }} />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-[10px]">Link URL</Label>
+                  <Input className="h-8 text-xs font-mono" value={card.linkUrl ?? ""} onChange={(e) => {
+                    const c = [...(config.cards ?? [])]; c[i] = { ...c[i], linkUrl: e.target.value }; handleChange("cards", c);
+                  }} placeholder="/organization/our-ideology" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+
+    case "join_cta":
+      return (
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Heading</Label>
+              <Input value={config.heading ?? ""} onChange={(e) => handleChange("heading", e.target.value)} placeholder="Join Tanzeem-e-Islami" />
+            </div>
+            <div className="space-y-2">
+              <Label>Button Label</Label>
+              <Input value={config.buttonLabel ?? "Join Now"} onChange={(e) => handleChange("buttonLabel", e.target.value)} />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Label>Subheading</Label>
+            <Textarea value={config.subheading ?? ""} onChange={(e) => handleChange("subheading", e.target.value)} rows={2} />
+          </div>
+          <div className="space-y-2">
+            <Label>Button URL</Label>
+            <Input value={config.buttonUrl ?? "/join-tanzeem"} onChange={(e) => handleChange("buttonUrl", e.target.value)} placeholder="/join-tanzeem" />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Background Color</Label>
+              <div className="flex gap-2 items-center">
+                <Input type="color" value={config.bgColor ?? "#0d5844"} onChange={(e) => handleChange("bgColor", e.target.value)} className="w-12 h-9 p-1 cursor-pointer" />
+                <Input value={config.bgColor ?? "#0d5844"} onChange={(e) => handleChange("bgColor", e.target.value)} className="flex-1 font-mono text-sm" />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Text Color</Label>
+              <div className="flex gap-2 items-center">
+                <Input type="color" value={config.textColor ?? "#ffffff"} onChange={(e) => handleChange("textColor", e.target.value)} className="w-12 h-9 p-1 cursor-pointer" />
+                <Input value={config.textColor ?? "#ffffff"} onChange={(e) => handleChange("textColor", e.target.value)} className="flex-1 font-mono text-sm" />
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+
     default:
       return <div className="text-sm text-foreground-muted italic">Configuration fields for this section are coming soon.</div>;
   }

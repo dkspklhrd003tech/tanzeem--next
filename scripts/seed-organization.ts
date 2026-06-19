@@ -10,7 +10,7 @@ async function seedOrganization() {
 
     const orgPages = [
         {
-            title: "Organization Overview",
+            title: "Organization",
             slug: "organization",
             sections: [
                 {
@@ -137,9 +137,9 @@ async function seedOrganization() {
     for (const pageData of orgPages) {
         // Check if page already exists
         const existingPages = await db.select().from(pages).where(eq(pages.slug, pageData.slug));
-        
+
         let pageId: string;
-        
+
         if (existingPages.length > 0) {
             console.log(`Updating existing page: ${pageData.slug}`);
             pageId = existingPages[0].id;
@@ -148,7 +148,7 @@ async function seedOrganization() {
                 authorId: AUTHOR_ID,
                 updatedAt: new Date(),
             }).where(eq(pages.id, pageId));
-            
+
             // Delete existing sections to re-seed
             await db.delete(pageSections).where(eq(pageSections.pageId, pageId));
         } else {

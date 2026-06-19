@@ -12,6 +12,11 @@ import {
     homeCampaigns,
     locations,
     sermons,
+    faqItems,
+    downloads,
+    downloadCategories,
+    galleries,
+    donationCampaigns,
 } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { getCurrentUser } from "@/lib/auth";
@@ -28,6 +33,12 @@ const entityMap: Record<string, any> = {
     campaigns: homeCampaigns,
     locations,
     sermons,
+    // ── New entities (Phase 4) ───────────────────────────────────────────────
+    faqs: faqItems,
+    downloads,
+    "download-categories": downloadCategories,
+    galleries,
+    donations: donationCampaigns,
 };
 
 const REQUIRED_FIELDS: Record<string, string[]> = {
@@ -40,6 +51,11 @@ const REQUIRED_FIELDS: Record<string, string[]> = {
     campaigns: ["title", "slug"],
     events: ["title", "slug", "startDate"],
     sermons: ["title", "slug"],
+    faqs: ["question", "answer"],
+    downloads: ["title", "slug", "fileUrl"],
+    "download-categories": ["name", "slug"],
+    galleries: ["title", "slug"],
+    donations: ["title", "slug"],
 };
 
 async function requireAuth(request: NextRequest): Promise<NextResponse | null> {

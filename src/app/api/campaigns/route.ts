@@ -42,7 +42,7 @@ export async function POST(request: Request) {
         await db.insert(homeCampaigns).values(newCampaign);
 
         return NextResponse.json(
-            { message: "Campaign created successfully", campaign: newCampaign },
+            { message: "Campaign Created Successfully", campaign: newCampaign },
             { status: 201 }
         );
     } catch (error) {

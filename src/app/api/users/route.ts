@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
         await db.insert(users).values(newUser);
 
         return NextResponse.json({
-            message: 'User created successfully',
+            message: 'User Created Successfully',
             user: {
                 id: newUser.id,
                 name: newUser.name,

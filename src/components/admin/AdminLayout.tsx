@@ -61,7 +61,7 @@ const menuItems: any[] = [
   {
     title: "Pages",
     icon: FileText,
-    href: "/sitemanager?section=pages",
+    href: "/sitemanager/pages",
   },
   {
     title: "Media Library",
@@ -137,12 +137,12 @@ const menuItems: any[] = [
       {
         title: "Navigation",
         icon: Navigation,
-        href: "/sitemanager?section=menus",
+        href: "/sitemanager/header",
       },
       {
         title: "Footer",
         icon: ListOrdered,
-        href: "/sitemanager?section=footer",
+        href: "/sitemanager/footer",
       },
       {
         title: "Components",

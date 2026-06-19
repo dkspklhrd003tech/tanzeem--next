@@ -94,9 +94,16 @@ export const pages = mysqlTable("pages", {
     order: int("order").default(0).notNull(),
     isPublished: boolean("is_published").default(true).notNull(),
     showInMenu: boolean("show_in_menu").default(false).notNull(),
+    // ── Core SEO ──────────────────────────────────────────────────────────────
     metaTitle: varchar("meta_title", { length: 255 }),
     metaDescription: text("meta_description"),
     metaKeywords: text("meta_keywords"),
+    // ── Extended SEO (Phase 6) ────────────────────────────────────────────────
+    canonicalUrl: text("canonical_url"),
+    ogImage: text("og_image"),
+    schemaType: varchar("schema_type", { length: 100 }).default("WebPage"),
+    noIndex: boolean("no_index").default(false).notNull(),
+    // ── Authorship / publishing ───────────────────────────────────────────────
     authorId: varchar("author_id", { length: 191 }).notNull(),
     publishedAt: timestamp("published_at"),
     ...timestamps,
@@ -627,6 +634,136 @@ export const socialPlatformsRelations = relations(socialPlatforms, ({ many }) =>
 
 export const socialAccountsRelations = relations(socialAccounts, ({ one }) => ({
     platform: one(socialPlatforms, { fields: [socialAccounts.platformId], references: [socialPlatforms.id] }),
+}));
+
+// ============================================
+// FAQ ITEMS  (standalone, admin-managed)
+// ============================================
+
+export const faqItems = mysqlTable("faq_items", {
+    id: varchar("id", { length: 191 }).primaryKey(),
+    question: text("question").notNull(),
+    answer: text("answer").notNull(),
+    category: varchar("category", { length: 100 }).default("general").notNull(),
+    order: int("order").default(0).notNull(),
+    isPublished: boolean("is_published").default(true).notNull(),
+    ...timestamps,
+});
+
+// ============================================
+// DOWNLOADS
+// ============================================
+
+export const downloadCategories = mysqlTable("download_categories", {
+    id: varchar("id", { length: 191 }).primaryKey(),
+    name: varchar("name", { length: 191 }).notNull(),
+    slug: varchar("slug", { length: 191 }).notNull().unique(),
+    description: text("description"),
+    order: int("order").default(0).notNull(),
+    ...timestamps,
+});
+
+export const downloads = mysqlTable("downloads", {
+    id: varchar("id", { length: 191 }).primaryKey(),
+    title: varchar("title", { length: 255 }).notNull(),
+    slug: varchar("slug", { length: 191 }).notNull().unique(),
+    description: text("description"),
+    fileUrl: text("file_url").notNull(),
+    fileSize: int("file_size"),
+    fileType: varchar("file_type", { length: 50 }),   // pdf, doc, zip …
+    thumbnailUrl: text("thumbnail_url"),
+    categoryId: varchar("category_id", { length: 191 }),
+    language: varchar("language", { length: 50 }).default("urdu").notNull(),
+    downloadCount: int("download_count").default(0).notNull(),
+    isPublished: boolean("is_published").default(true).notNull(),
+    isFeatured: boolean("is_featured").default(false).notNull(),
+    order: int("order").default(0).notNull(),
+    metaTitle: varchar("meta_title", { length: 255 }),
+    metaDescription: text("meta_description"),
+    authorId: varchar("author_id", { length: 191 }).notNull(),
+    publishedAt: timestamp("published_at"),
+    ...timestamps,
+});
+
+export const downloadsRelations = relations(downloads, ({ one }) => ({
+    category: one(downloadCategories, {
+        fields: [downloads.categoryId],
+        references: [downloadCategories.id],
+    }),
+    author: one(users, { fields: [downloads.authorId], references: [users.id] }),
+}));
+
+export const downloadCategoriesRelations = relations(downloadCategories, ({ many }) => ({
+    downloads: many(downloads),
+}));
+
+// ============================================
+// GALLERIES
+// ============================================
+
+export const galleries = mysqlTable("galleries", {
+    id: varchar("id", { length: 191 }).primaryKey(),
+    title: varchar("title", { length: 255 }).notNull(),
+    slug: varchar("slug", { length: 191 }).notNull().unique(),
+    description: text("description"),
+    coverImage: text("cover_image"),
+    isPublished: boolean("is_published").default(true).notNull(),
+    isFeatured: boolean("is_featured").default(false).notNull(),
+    order: int("order").default(0).notNull(),
+    metaTitle: varchar("meta_title", { length: 255 }),
+    metaDescription: text("meta_description"),
+    authorId: varchar("author_id", { length: 191 }).notNull(),
+    publishedAt: timestamp("published_at"),
+    ...timestamps,
+});
+
+export const galleryItems = mysqlTable("gallery_items", {
+    id: varchar("id", { length: 191 }).primaryKey(),
+    galleryId: varchar("gallery_id", { length: 191 }).notNull(),
+    imageUrl: text("image_url").notNull(),
+    thumbnailUrl: text("thumbnail_url"),
+    caption: text("caption"),
+    altText: varchar("alt_text", { length: 255 }),
+    order: int("order").default(0).notNull(),
+    ...timestamps,
+});
+
+export const galleriesRelations = relations(galleries, ({ one, many }) => ({
+    author: one(users, { fields: [galleries.authorId], references: [users.id] }),
+    items: many(galleryItems),
+}));
+
+export const galleryItemsRelations = relations(galleryItems, ({ one }) => ({
+    gallery: one(galleries, { fields: [galleryItems.galleryId], references: [galleries.id] }),
+}));
+
+// ============================================
+// DONATION CAMPAIGNS
+// ============================================
+
+export const donationCampaigns = mysqlTable("donation_campaigns", {
+    id: varchar("id", { length: 191 }).primaryKey(),
+    title: varchar("title", { length: 255 }).notNull(),
+    slug: varchar("slug", { length: 191 }).notNull().unique(),
+    description: text("description"),
+    content: text("content"),
+    coverImage: text("cover_image"),
+    goalAmount: int("goal_amount"),          // in PKR/USD (smallest currency unit)
+    raisedAmount: int("raised_amount").default(0).notNull(),
+    currency: varchar("currency", { length: 10 }).default("PKR").notNull(),
+    donationUrl: text("donation_url"),       // external payment link
+    isActive: boolean("is_active").default(true).notNull(),
+    isFeatured: boolean("is_featured").default(false).notNull(),
+    startsAt: timestamp("starts_at"),
+    endsAt: timestamp("ends_at"),
+    metaTitle: varchar("meta_title", { length: 255 }),
+    metaDescription: text("meta_description"),
+    authorId: varchar("author_id", { length: 191 }).notNull(),
+    ...timestamps,
+});
+
+export const donationCampaignsRelations = relations(donationCampaigns, ({ one }) => ({
+    author: one(users, { fields: [donationCampaigns.authorId], references: [users.id] }),
 }));
 
 

@@ -3,6 +3,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { menuItems, activityLogs } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { sanitizeUrl } from "@/lib/security";
 
 export const dynamic = "force-dynamic";
 type Ctx = { params: Promise<{ id: string }> };
@@ -18,9 +19,12 @@ export async function PUT(req: NextRequest, { params }: Ctx) {
   const [existing] = await db.select().from(menuItems).where(eq(menuItems.id, id)).limit(1);
   if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
 
+  // Sanitize URL on update: sanitizeUrl(null/undefined) → null (drops unsafe schemes).
+  const nextUrl = data.url !== undefined ? sanitizeUrl(data.url) : existing.url;
+
   await db.update(menuItems).set({
     label:       data.label       ?? existing.label,
-    url:         data.url         !== undefined ? data.url         : existing.url,
+    url:         nextUrl,
     parentId:    data.parentId    !== undefined ? data.parentId    : existing.parentId,
     order:       data.order       ?? existing.order,
     isOpenInNew: data.isOpenInNew ?? existing.isOpenInNew,

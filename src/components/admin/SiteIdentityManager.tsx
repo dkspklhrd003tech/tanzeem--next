@@ -33,7 +33,8 @@ export function SiteIdentityManager() {
       if (res.ok) {
         const data = await res.json();
         if (data.settings.general) {
-          setSettings((prev) => ({ ...prev, ...data.settings.general }));
+          const safe = Object.fromEntries(Object.entries(data.settings.general).filter(([, v]) => v != null));
+          setSettings((prev) => ({ ...prev, ...safe }));
         }
       }
     } catch (err) {

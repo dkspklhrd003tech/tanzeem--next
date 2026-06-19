@@ -1,5 +1,7 @@
 import React from "react";
-import { Hero } from "@/components/home/Hero";
+// PageHero is the static banner version for inner pages.
+// The carousel Hero component is only used on the homepage (src/app/page.tsx directly).
+import { PageHero } from "@/components/shared/PageHero";
 import { IntroSection } from "@/components/shared/IntroSection";
 import { StatsGrid } from "@/components/shared/StatsGrid";
 import { Accordion } from "@/components/shared/Accordion";
@@ -8,10 +10,17 @@ import { MediaCardGrid } from "@/components/shared/MediaCardGrid";
 import { PublicationGrid } from "@/components/shared/PublicationGrid";
 import { CTABanner } from "@/components/shared/CTABanner";
 import { EmbedBlock } from "@/components/shared/EmbedBlock";
+import { TextBlock } from "@/components/shared/TextBlock";
+import { ImageText } from "@/components/shared/ImageText";
+import { QuoteBanner } from "@/components/shared/QuoteBanner";
+import { LeaderBio } from "@/components/shared/LeaderBio";
+import { IdeologyCards } from "@/components/shared/IdeologyCards";
+import { JoinCTA } from "@/components/shared/JoinCTA";
 import type { CmsSectionData } from "@/lib/page-helpers";
 
 const ComponentMap: Record<string, React.FC<any>> = {
-  hero: Hero,
+  // "hero" on inner pages = static page banner, NOT the carousel slider
+  hero: PageHero,
   intro: IntroSection,
   stats: StatsGrid,
   accordion: Accordion,
@@ -20,6 +29,12 @@ const ComponentMap: Record<string, React.FC<any>> = {
   publications: PublicationGrid,
   cta_banner: CTABanner,
   embed: EmbedBlock,
+  text_block: TextBlock,
+  image_text: ImageText,
+  quote_banner: QuoteBanner,
+  leader_bio: LeaderBio,
+  ideology_cards: IdeologyCards,
+  join_cta: JoinCTA,
 };
 
 interface DynamicPageContentProps {

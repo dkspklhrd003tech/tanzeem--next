@@ -109,7 +109,7 @@ function RecentPagesSkeleton() {
 
 // ─── Top-level stat cards config ─────────────────────────────────────────────
 const TOP_CARDS = [
-  { key: "pages" as keyof StatsData, label: "Total Pages", icon: FileText, color: "bg-blue-500/10 text-blue-600", href: "/sitemanager?section=pages" },
+  { key: "pages" as keyof StatsData, label: "Total Pages", icon: FileText, color: "bg-blue-500/10 text-blue-600", href: "/sitemanager/pages" },
   { key: "audio" as keyof StatsData, label: "Audio Lectures", icon: Headphones, color: "bg-purple-500/10 text-purple-600", href: "/sitemanager?section=audio" },
   { key: "videos" as keyof StatsData, label: "Videos", icon: Video, color: "bg-red-500/10 text-red-600", href: "/sitemanager?section=videos" },
   { key: "books" as keyof StatsData, label: "Books", icon: BookOpen, color: "bg-amber-500/10 text-amber-600", href: "/sitemanager?section=books" },
@@ -281,9 +281,9 @@ export default function DashboardPage() {
       <motion.div variants={item}>
         <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">Quick Actions</h2>
         <div className="flex flex-wrap gap-2">
-          <Button asChild size="sm"><Link href="/sitemanager?section=pages"><Plus className="h-4 w-4" />Create New Page</Link></Button>
+          <Button asChild size="sm"><Link href="/sitemanager/pages"><Plus className="h-4 w-4" />Create New Page</Link></Button>
           <Button asChild variant="outline" size="sm"><Link href="/sitemanager?section=media"><Upload className="h-4 w-4" />Upload Media</Link></Button>
-          <Button asChild variant="outline" size="sm"><Link href="/sitemanager?section=menus"><Menu className="h-4 w-4" />Manage Menu</Link></Button>
+          <Button asChild variant="outline" size="sm"><Link href="/sitemanager/header"><Menu className="h-4 w-4" />Manage Menu</Link></Button>
           <Button asChild variant="outline" size="sm"><Link href="/" target="_blank" rel="noopener noreferrer"><Globe className="h-4 w-4" />View Website</Link></Button>
         </div>
       </motion.div>
@@ -456,14 +456,14 @@ export default function DashboardPage() {
                   <CardTitle className="text-base flex items-center gap-2"><FileText className="h-4 w-4 text-primary" />Recent Pages</CardTitle>
                   <CardDescription className="text-xs mt-0.5">Last 5 edited pages</CardDescription>
                 </div>
-                <Link href="/sitemanager?section=pages" className="text-xs text-primary hover:underline flex items-center gap-0.5">
+                <Link href="/sitemanager/pages" className="text-xs text-primary hover:underline flex items-center gap-0.5">
                   All pages <ArrowRight className="h-3 w-3" />
                 </Link>
               </div>
             </CardHeader>
             <CardContent>
               {statsLoading ? <RecentPagesSkeleton /> : recentPages.length === 0 ? (
-                <EmptyState icon={FileText} title="No pages yet" description="Create your first page to get started." actionLabel="Create Page" actionHref="/sitemanager?section=pages" className="py-8" />
+                <EmptyState icon={FileText} title="No pages yet" description="Create your first page to get started." actionLabel="Create Page" actionHref="/sitemanager/pages" className="py-8" />
               ) : (
                 <ul className="divide-y divide-border">
                   {recentPages.map((page: any) => (

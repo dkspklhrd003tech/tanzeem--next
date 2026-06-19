@@ -1,136 +1,827 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Save, Loader2, Plus, Trash2 } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import {
+  Save, Loader2, Plus, Trash2, ArrowLeft, ArrowRight,
+  ArrowUp, ArrowDown, Edit, LayoutTemplate, ExternalLink,
+  Info, Globe, Mail, Phone, MapPin, RefreshCw, Check
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
+import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { RichTextEditor } from "./RichTextEditor";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { cn } from "@/lib/utils";
+
+// ── Types ─────────────────────────────────────────────────────────────────────
+interface MenuItem {
+  id: string;
+  label: string;
+  url: string | null;
+  parentId: string | null;
+  order: number;
+  isOpenInNew: boolean;
+  isVisible: boolean;
+  menuType: string;
+  children?: MenuItem[];
+}
+
+interface FooterSettings {
+  footer_copyright: string;
+  footer_address: string;
+  footer_landline: string;
+  whatsapp_number: string;
+  contact_email: string;
+  [key: string]: string;
+}
+
+const DEFAULTS: FooterSettings = {
+  footer_copyright: "© 2024 Tanzeem-e-Islami. All rights reserved.",
+  footer_address: "",
+  footer_landline: "",
+  whatsapp_number: "",
+  contact_email: "",
+};
 
 export function FooterManager() {
-  const [settings, setSettings] = useState({
-    footer_copyright: "© 2024 Tanzeem-e-Islami. All rights reserved.",
-    footer_about_text: "",
-    footer_columns: "[]",
-    footer_social_links: "[]",
-  });
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
   const { toast } = useToast();
+
+  // Settings state
+  const [settings, setSettings] = useState<FooterSettings>(DEFAULTS);
+  const [loadingSettings, setLoadingSettings] = useState(true);
+  const [savingSettings, setSavingSettings] = useState(false);
+
+  // Columns & Links state
+  const [columns, setColumns] = useState<MenuItem[]>([]);
+  const [loadingMenu, setLoadingMenu] = useState(true);
+
+  // CRUD states
+  const [editingLink, setEditingLink] = useState<Partial<MenuItem> | null>(null);
+  const [savingLink, setSavingLink] = useState(false);
+  const [editingColumnId, setEditingColumnId] = useState<string | null>(null);
+  const [columnTitleInput, setColumnTitleInput] = useState("");
+  const [addingColumn, setAddingColumn] = useState(false);
+  const [newColumnTitle, setNewColumnTitle] = useState("");
+  const [isSavingColumn, setIsSavingColumn] = useState(false);
+
+  // Fetch Settings
+  const fetchSettings = useCallback(async () => {
+    setLoadingSettings(true);
+    try {
+      const res = await fetch("/api/settings/footer");
+      if (res.ok) {
+        const data = await res.json();
+        setSettings((prev) => ({ ...prev, ...data.settings }));
+      }
+    } catch (err) {
+      console.error("Failed to fetch settings", err);
+    } finally {
+      setLoadingSettings(false);
+    }
+  }, []);
+
+  // Fetch Menu
+  const fetchFooterMenu = useCallback(async () => {
+    setLoadingMenu(true);
+    try {
+      const res = await fetch("/api/menus?hierarchy=true&menuType=footer");
+      if (res.ok) {
+        const data = await res.json();
+        // Sort roots by order
+        const sorted = (data.menus ?? []).sort((a: MenuItem, b: MenuItem) => a.order - b.order);
+        // Sort children inside each column by order
+        sorted.forEach((col: MenuItem) => {
+          if (col.children) {
+            col.children.sort((a, b) => a.order - b.order);
+          }
+        });
+        setColumns(sorted);
+      }
+    } catch (err) {
+      console.error("Failed to fetch footer menu", err);
+    } finally {
+      setLoadingMenu(false);
+    }
+  }, []);
 
   useEffect(() => {
     fetchSettings();
-  }, []);
+    fetchFooterMenu();
+  }, [fetchSettings, fetchFooterMenu]);
 
-  const fetchSettings = async () => {
+  // Save general settings
+  const handleSaveSettings = async () => {
+    setSavingSettings(true);
     try {
-      const res = await fetch("/api/settings");
-      if (res.ok) {
-        const data = await res.json();
-        if (data.settings.footer) {
-          setSettings((prev) => ({ ...prev, ...data.settings.footer }));
-        }
-      }
-    } catch (err) {
-      console.error("Failed to fetch footer settings", err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const handleSave = async () => {
-    setIsSaving(true);
-    try {
-      const res = await fetch("/api/settings", {
+      const res = await fetch("/api/settings/footer", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          group: "footer",
-          settings,
-        }),
+        body: JSON.stringify(settings),
       });
 
       if (!res.ok) throw new Error("Failed to save settings");
 
       toast({
-        title: "Footer Updated",
-        description: "Footer settings have been saved.",
+        title: "Footer settings saved.",
+        description: "General details have been updated successfully.",
       });
-    } catch (err) {
-      console.error("Save error:", err);
+      fetchSettings();
+    } catch (err: any) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to save footer settings.",
+        description: err.message || "Failed to save settings.",
       });
     } finally {
-      setIsSaving(false);
+      setSavingSettings(false);
     }
   };
 
+  // Reorder Columns
+  const handleMoveColumn = async (columnIndex: number, direction: "left" | "right") => {
+    const swapIndex = direction === "left" ? columnIndex - 1 : columnIndex + 1;
+    if (swapIndex < 0 || swapIndex >= columns.length) return;
+
+    const newCols = [...columns];
+    const temp = newCols[columnIndex];
+    newCols[columnIndex] = newCols[swapIndex];
+    newCols[swapIndex] = temp;
+
+    // Optimistic UI update
+    setColumns(newCols);
+
+    const promises = newCols.map((col, index) => {
+      return fetch(`/api/menus/${col.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ order: index }),
+      });
+    });
+
+    try {
+      await Promise.all(promises);
+      toast({ title: "Column order updated." });
+      fetchFooterMenu();
+    } catch (err) {
+      toast({ variant: "destructive", title: "Failed to reorder columns" });
+      fetchFooterMenu();
+    }
+  };
+
+  // Reorder Links inside Column
+  const handleMoveLink = async (columnId: string, linkIndex: number, direction: "up" | "down") => {
+    const column = columns.find((c) => c.id === columnId);
+    if (!column || !column.children) return;
+    const links = [...column.children];
+    const swapIndex = direction === "up" ? linkIndex - 1 : linkIndex + 1;
+    if (swapIndex < 0 || swapIndex >= links.length) return;
+
+    const temp = links[linkIndex];
+    links[linkIndex] = links[swapIndex];
+    links[swapIndex] = temp;
+
+    // Update order properties
+    const promises = links.map((link, index) => {
+      return fetch(`/api/menus/${link.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ order: index }),
+      });
+    });
+
+    try {
+      await Promise.all(promises);
+      toast({ title: "Link order updated." });
+      fetchFooterMenu();
+    } catch (err) {
+      toast({ variant: "destructive", title: "Failed to reorder links" });
+      fetchFooterMenu();
+    }
+  };
+
+  // Save Column Title
+  const handleSaveColumnTitle = async (columnId: string) => {
+    if (!columnTitleInput.trim()) return;
+    try {
+      const res = await fetch(`/api/menus/${columnId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ label: columnTitleInput }),
+      });
+      if (!res.ok) throw new Error();
+      toast({ title: "Column title updated." });
+      setEditingColumnId(null);
+      fetchFooterMenu();
+    } catch {
+      toast({ variant: "destructive", title: "Failed to update column title" });
+    }
+  };
+
+  // Add Column
+  const handleAddColumn = async () => {
+    if (!newColumnTitle.trim()) return;
+    setIsSavingColumn(true);
+    try {
+      const res = await fetch("/api/menus", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          label: newColumnTitle,
+          url: null,
+          parentId: null,
+          menuType: "footer",
+          order: columns.length,
+        }),
+      });
+      if (!res.ok) throw new Error();
+      toast({ title: "Column Added Successfully." });
+      setNewColumnTitle("");
+      setAddingColumn(false);
+      fetchFooterMenu();
+    } catch {
+      toast({ variant: "destructive", title: "Failed to add column" });
+    } finally {
+      setIsSavingColumn(false);
+    }
+  };
+
+  // Delete Column & children
+  const handleDeleteColumn = async (column: MenuItem) => {
+    try {
+      const childDeletePromises = (column.children || []).map((child) =>
+        fetch(`/api/menus/${child.id}`, { method: "DELETE" })
+      );
+      await Promise.all(childDeletePromises);
+
+      const res = await fetch(`/api/menus/${column.id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error();
+      toast({ title: "Column and links deleted successfully." });
+      fetchFooterMenu();
+    } catch {
+      toast({ variant: "destructive", title: "Failed to delete column" });
+    }
+  };
+
+  // Save Link Item
+  const handleSaveLink = async (data: Partial<MenuItem>) => {
+    if (!data.label?.trim()) return;
+    setSavingLink(true);
+    try {
+      const isNew = !data.id;
+      const url = isNew ? "/api/menus" : `/api/menus/${data.id}`;
+      const payload = {
+        ...data,
+        menuType: "footer",
+        order: data.order ?? 0,
+      };
+
+      const res = await fetch(url, {
+        method: isNew ? "POST" : "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) throw new Error();
+      toast({ title: `Link ${isNew ? "added" : "updated"} successfully.` });
+      setEditingLink(null);
+      fetchFooterMenu();
+    } catch {
+      toast({ variant: "destructive", title: "Failed to save link" });
+    } finally {
+      setSavingLink(false);
+    }
+  };
+
+  // Delete Link
+  const handleDeleteLink = async (id: string) => {
+    try {
+      const res = await fetch(`/api/menus/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error();
+      toast({ title: "Link deleted successfully." });
+      fetchFooterMenu();
+    } catch {
+      toast({ variant: "destructive", title: "Failed to delete link" });
+    }
+  };
+
+  const validateUrl = (url: string) => {
+    if (!url) return true;
+    return url.startsWith("/") || url.startsWith("http://") || url.startsWith("https://");
+  };
+
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-8">
+      {/* Page Header */}
+      <div className="flex items-center justify-between pb-4 border-b border-border">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Footer Management</h1>
-          <p className="text-foreground-muted mt-1">Configure footer columns, social icons, and copyright text.</p>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">Footer Builder</h1>
+          <p className="text-sm text-foreground-muted mt-1">
+            Manage site contact information, copyright, and columns of footer navigation links.
+          </p>
         </div>
-        <ConfirmDialog
-          title="Save Footer Settings"
-          description="Are you sure you want to save the updated footer settings? This will immediately affect the site-wide footer."
-          onConfirm={handleSave}
-        >
-          <Button disabled={isSaving} className="bg-[#0d5844] hover:bg-[#0a4636] rounded-xl px-8">
-            {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-            Save Footer
+        <div className="flex items-center gap-2">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => { fetchSettings(); fetchFooterMenu(); }}
+            className="rounded-xl"
+          >
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Refresh
           </Button>
-        </ConfirmDialog>
+        </div>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>General Footer Info</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label>Copyright Text</Label>
-              <Input 
-                value={settings.footer_copyright} 
-                onChange={(e) => setSettings({ ...settings, footer_copyright: e.target.value })} 
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>About Us Text (Short)</Label>
-              <RichTextEditor 
-                content={settings.footer_about_text} 
-                onChange={(content) => setSettings({ ...settings, footer_about_text: content })} 
-              />
-            </div>
-          </CardContent>
-        </Card>
+      <div className="grid lg:grid-cols-3 gap-8">
+        {/* ── Left side: Contact & Copyright Settings ── */}
+        <div className="lg:col-span-1 space-y-6">
+          <Card className="border border-border shadow-sm">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg flex items-center gap-2 text-foreground">
+                <Info className="h-5 w-5 text-primary" />
+                Footer Contact &amp; General
+              </CardTitle>
+              <CardDescription>
+                These details populate the left-most or Contact Us column on the public footer.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {loadingSettings ? (
+                <div className="space-y-3 py-4">
+                  <div className="h-9 bg-muted animate-pulse rounded-lg" />
+                  <div className="h-9 bg-muted animate-pulse rounded-lg" />
+                  <div className="h-9 bg-muted animate-pulse rounded-lg" />
+                </div>
+              ) : (
+                <>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-semibold">Copyright Text</Label>
+                    <Input
+                      value={settings.footer_copyright}
+                      onChange={(e) => setSettings({ ...settings, footer_copyright: e.target.value })}
+                      placeholder="e.g. © 2024 Tanzeem-e-Islami"
+                    />
+                  </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Footer Links & Socials</CardTitle>
-            <CardDescription>Advanced configuration via JSON (UI for this coming soon)</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label>Social Links (JSON)</Label>
-              <Textarea 
-                value={settings.footer_social_links} 
-                onChange={(e) => setSettings({ ...settings, footer_social_links: e.target.value })} 
-                className="font-mono text-xs"
-                rows={5}
-              />
-            </div>
-          </CardContent>
-        </Card>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-semibold flex items-center gap-1.5">
+                      <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
+                      Address
+                    </Label>
+                    <Input
+                      value={settings.footer_address}
+                      onChange={(e) => setSettings({ ...settings, footer_address: e.target.value })}
+                      placeholder="e.g. 252-GII Johar Town, Lahore"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-semibold flex items-center gap-1.5">
+                      <Phone className="h-3.5 w-3.5 text-muted-foreground" />
+                      Landline Phone
+                    </Label>
+                    <Input
+                      value={settings.footer_landline}
+                      onChange={(e) => setSettings({ ...settings, footer_landline: e.target.value })}
+                      placeholder="e.g. +92-42-35473331"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-semibold flex items-center gap-1.5">
+                      <svg className="h-3.5 w-3.5 text-muted-foreground" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" /></svg>
+                      WhatsApp Number
+                    </Label>
+                    <Input
+                      value={settings.whatsapp_number}
+                      onChange={(e) => setSettings({ ...settings, whatsapp_number: e.target.value })}
+                      placeholder="e.g. +923001234567"
+                    />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <Label className="text-xs font-semibold flex items-center gap-1.5">
+                      <Mail className="h-3.5 w-3.5 text-muted-foreground" />
+                      Contact Email
+                    </Label>
+                    <Input
+                      value={settings.contact_email}
+                      onChange={(e) => setSettings({ ...settings, contact_email: e.target.value })}
+                      placeholder="e.g. info@tanzeem.org"
+                    />
+                  </div>
+
+                  <div className="pt-2 flex justify-end">
+                    <ConfirmDialog
+                      title="Save settings?"
+                      description="This will update the contact details immediately on the footer."
+                      onConfirm={handleSaveSettings}
+                    >
+                      <Button
+                        disabled={savingSettings}
+                        className="bg-primary text-primary-foreground rounded-xl w-full"
+                      >
+                        {savingSettings ? (
+                          <>
+                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                            Saving…
+                          </>
+                        ) : (
+                          <>
+                            <Save className="h-4 w-4 mr-2" />
+                            Save Contact Details
+                          </>
+                        )}
+                      </Button>
+                    </ConfirmDialog>
+                  </div>
+                </>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* ── Right side: Dynamic Columns Builder (2 Cols Wide) ── */}
+        <div className="lg:col-span-2 space-y-6">
+          <Card className="border border-border shadow-sm">
+            <CardHeader className="pb-4 flex flex-row items-center justify-between space-y-0">
+              <div>
+                <CardTitle className="text-lg flex items-center gap-2 text-foreground">
+                  <LayoutTemplate className="h-5 w-5 text-primary" />
+                  Navigation Columns
+                </CardTitle>
+                <CardDescription>
+                  Configure columns of links. Recommended: Up to 4 columns to maintain layout grid.
+                </CardDescription>
+              </div>
+
+              {!addingColumn && columns.length < 5 && (
+                <Button
+                  size="sm"
+                  onClick={() => {
+                    setAddingColumn(true);
+                    setNewColumnTitle("");
+                  }}
+                  className="bg-primary text-primary-foreground rounded-xl"
+                >
+                  <Plus className="h-4 w-4 mr-1.5" />
+                  New Column
+                </Button>
+              )}
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {/* Add Column Inline Card */}
+              {addingColumn && (
+                <div className="bg-muted/40 border border-border p-4 rounded-xl space-y-3">
+                  <h3 className="text-sm font-bold">Add New Column</h3>
+                  <div className="flex gap-2">
+                    <div className="flex-1 space-y-1">
+                      <Input
+                        value={newColumnTitle}
+                        onChange={(e) => setNewColumnTitle(e.target.value)}
+                        placeholder="Column Title (e.g. Media Links)"
+                        autoFocus
+                      />
+                    </div>
+                    <Button
+                      size="sm"
+                      onClick={handleAddColumn}
+                      disabled={!newColumnTitle.trim() || isSavingColumn}
+                      className="bg-primary text-primary-foreground"
+                    >
+                      {isSavingColumn ? "Creating…" : "Create"}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => setAddingColumn(false)}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {loadingMenu ? (
+                <div className="grid md:grid-cols-2 gap-4">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <div key={i} className="h-48 bg-muted animate-pulse rounded-xl" />
+                  ))}
+                </div>
+              ) : columns.length === 0 ? (
+                <div className="text-center py-16 border border-dashed border-border rounded-xl">
+                  <LayoutTemplate className="h-10 w-10 text-muted-foreground/30 mx-auto mb-3" />
+                  <p className="text-sm font-medium text-foreground-muted">No footer columns set up.</p>
+                  <Button
+                    variant="link"
+                    onClick={() => setAddingColumn(true)}
+                    className="text-primary mt-1 text-xs"
+                  >
+                    Add a column to get started →
+                  </Button>
+                </div>
+              ) : (
+                <div className="grid md:grid-cols-2 gap-6">
+                  {columns.map((column, colIndex) => {
+                    const isEditingTitle = editingColumnId === column.id;
+                    const hasLinks = (column.children?.length ?? 0) > 0;
+
+                    return (
+                      <Card key={column.id} className="border border-border/80 bg-card/40 flex flex-col justify-between">
+                        <CardHeader className="pb-3 border-b border-border/60 bg-muted/20">
+                          <div className="flex items-center justify-between gap-2">
+                            {/* Column title editor */}
+                            {isEditingTitle ? (
+                              <div className="flex items-center gap-1.5 flex-1">
+                                <Input
+                                  value={columnTitleInput}
+                                  onChange={(e) => setColumnTitleInput(e.target.value)}
+                                  className="h-8 py-1 px-2 text-sm font-semibold"
+                                  autoFocus
+                                />
+                                <Button
+                                  size="icon"
+                                  variant="ghost"
+                                  onClick={() => handleSaveColumnTitle(column.id)}
+                                  className="h-8 w-8 text-primary hover:bg-primary/10 shrink-0"
+                                >
+                                  <Check className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  size="icon"
+                                  variant="ghost"
+                                  onClick={() => setEditingColumnId(null)}
+                                  className="h-8 w-8 text-muted-foreground hover:bg-destructive/10 shrink-0"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            ) : (
+                              <div className="flex-1 min-w-0">
+                                <h3 className="font-bold text-foreground text-sm truncate flex items-center gap-1.5 group">
+                                  {column.label}
+                                  <button
+                                    onClick={() => {
+                                      setEditingColumnId(column.id);
+                                      setColumnTitleInput(column.label);
+                                    }}
+                                    className="p-1 rounded opacity-0 group-hover:opacity-100 hover:bg-muted text-muted-foreground transition-all"
+                                    title="Rename column"
+                                  >
+                                    <Edit className="h-3 w-3" />
+                                  </button>
+                                </h3>
+                              </div>
+                            )}
+
+                            {/* Column Reordering & Actions */}
+                            <div className="flex items-center gap-1 shrink-0">
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                disabled={colIndex === 0}
+                                onClick={() => handleMoveColumn(colIndex, "left")}
+                                className="h-6 w-6 text-muted-foreground hover:bg-muted"
+                                title="Move Column Left"
+                              >
+                                <ArrowLeft className="h-3 w-3" />
+                              </Button>
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                disabled={colIndex === columns.length - 1}
+                                onClick={() => handleMoveColumn(colIndex, "right")}
+                                className="h-6 w-6 text-muted-foreground hover:bg-muted"
+                                title="Move Column Right"
+                              >
+                                <ArrowRight className="h-3 w-3" />
+                              </Button>
+
+                              <ConfirmDialog
+                                title="Delete Column?"
+                                description={`Are you sure you want to delete "${column.label}"? This will permanently delete the column and all its ${column.children?.length ?? 0} links.`}
+                                onConfirm={() => handleDeleteColumn(column)}
+                              >
+                                <button
+                                  className="p-1 rounded text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                                  title="Delete column"
+                                >
+                                  <Trash2 className="h-3.5 w-3.5" />
+                                </button>
+                              </ConfirmDialog>
+                            </div>
+                          </div>
+                        </CardHeader>
+
+                        <CardContent className="pt-4 flex-1 flex flex-col justify-between space-y-4">
+                          {/* Links List */}
+                          <div className="space-y-1.5 min-h-[60px]">
+                            {!hasLinks ? (
+                              <p className="text-xs text-muted-foreground text-center py-4 italic">
+                                No links in this column.
+                              </p>
+                            ) : (
+                              (column.children ?? []).map((link, idx) => {
+                                const isLinkUrlValid = validateUrl(link.url ?? "");
+                                return (
+                                  <div
+                                    key={link.id}
+                                    className="flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-lg border border-border bg-card/60 hover:bg-muted/30 transition-all text-xs group"
+                                  >
+                                    <div className="flex-1 min-w-0">
+                                      <p className="font-medium text-foreground truncate">{link.label}</p>
+                                      <p className="text-[10px] text-muted-foreground font-mono truncate max-w-[150px]">
+                                        {link.url || "—"}
+                                      </p>
+                                    </div>
+
+                                    {/* Link Actions */}
+                                    <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+                                      <Button
+                                        size="icon"
+                                        variant="ghost"
+                                        disabled={idx === 0}
+                                        onClick={() => handleMoveLink(column.id, idx, "up")}
+                                        className="h-5 w-5 text-muted-foreground"
+                                      >
+                                        <ArrowUp className="h-2.5 w-2.5" />
+                                      </Button>
+                                      <Button
+                                        size="icon"
+                                        variant="ghost"
+                                        disabled={idx === (column.children?.length ?? 0) - 1}
+                                        onClick={() => handleMoveLink(column.id, idx, "down")}
+                                        className="h-5 w-5 text-muted-foreground"
+                                      >
+                                        <ArrowDown className="h-2.5 w-2.5" />
+                                      </Button>
+                                      <Button
+                                        size="icon"
+                                        variant="ghost"
+                                        onClick={() => setEditingLink(link)}
+                                        className="h-5 w-5 text-muted-foreground hover:text-primary"
+                                      >
+                                        <Edit className="h-2.5 w-2.5" />
+                                      </Button>
+
+                                      <ConfirmDialog
+                                        title="Delete Link?"
+                                        description={`Are you sure you want to remove the link "${link.label}"?`}
+                                        onConfirm={() => handleDeleteLink(link.id)}
+                                      >
+                                        <button className="p-1 rounded text-muted-foreground hover:text-destructive hover:bg-destructive/10">
+                                          <Trash2 className="h-3 w-3" />
+                                        </button>
+                                      </ConfirmDialog>
+                                    </div>
+                                  </div>
+                                );
+                              })
+                            )}
+                          </div>
+
+                          {/* Link Editor Inline Drawer / Form */}
+                          {editingLink && (editingLink.parentId === column.id || (!editingLink.id && editingLink.parentId === column.id)) && (
+                            <LinkEditorForm
+                              link={editingLink}
+                              onSave={handleSaveLink}
+                              onCancel={() => setEditingLink(null)}
+                              isSaving={savingLink}
+                              columns={columns}
+                            />
+                          )}
+
+                          {/* Add Link Button */}
+                          {!editingLink && (
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={() =>
+                                setEditingLink({
+                                  parentId: column.id,
+                                  isVisible: true,
+                                  isOpenInNew: false,
+                                  menuType: "footer",
+                                  order: column.children?.length ?? 0,
+                                })
+                              }
+                              className="w-full border border-dashed border-primary hover:text-white hover:border-white/50 text-[11px] h-8 rounded-lg"
+                            >
+                              <Plus className="h-3.5 w-3.5 mr-1" />
+                              Add Link
+                            </Button>
+                          )}
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Link Editor Form subcomponent ───────────────────────────────────────────────
+function LinkEditorForm({
+  link,
+  columns,
+  onSave,
+  onCancel,
+  isSaving,
+}: {
+  link: Partial<MenuItem>;
+  columns: MenuItem[];
+  onSave: (data: Partial<MenuItem>) => void;
+  onCancel: () => void;
+  isSaving: boolean;
+}) {
+  const [form, setForm] = useState<Partial<MenuItem>>(link);
+
+  const set = (k: keyof MenuItem, v: any) => setForm((p) => ({ ...p, [k]: v }));
+
+  const validateUrl = (url: string) => {
+    if (!url) return true;
+    return url.startsWith("/") || url.startsWith("http://") || url.startsWith("https://");
+  };
+
+  const urlValid = validateUrl(form.url ?? "");
+
+  return (
+    <div className="bg-muted/50 border border-border p-3 rounded-xl space-y-3 text-xs">
+      <h4 className="font-bold text-foreground">
+        {form.id ? "Edit Link" : "Add Link"}
+      </h4>
+
+      <div className="grid sm:grid-cols-2 gap-2">
+        <div className="space-y-1">
+          <Label className="text-[10px]">Label *</Label>
+          <Input
+            value={form.label ?? ""}
+            onChange={(e) => set("label", e.target.value)}
+            className="h-8 text-xs"
+            placeholder="e.g. Audios"
+          />
+        </div>
+
+        <div className="space-y-1">
+          <Label className="text-[10px]">URL</Label>
+          <Input
+            value={form.url ?? ""}
+            onChange={(e) => set("url", e.target.value)}
+            className={cn("h-8 text-xs", !urlValid && "border-destructive")}
+            placeholder="/audios or https://..."
+          />
+          {!urlValid && (
+            <p className="text-[9px] text-destructive">Must start with / or http(s)://</p>
+          )}
+        </div>
+      </div>
+
+      <div className="grid sm:grid-cols-2 gap-2">
+        <div className="space-y-1">
+          <Label className="text-[10px]">Target Column</Label>
+          <select
+            value={form.parentId ?? ""}
+            onChange={(e) => set("parentId", e.target.value)}
+            className="w-full h-8 px-2 rounded-md border border-input bg-background text-xs focus:outline-none focus:ring-1 focus:ring-primary"
+          >
+            {columns.map((col) => (
+              <option key={col.id} value={col.id}>
+                {col.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="flex items-center justify-between pt-3">
+          <Label className="text-[10px] cursor-pointer" htmlFor="link-newtab">Open in new tab</Label>
+          <Switch
+            id="link-newtab"
+            checked={!!form.isOpenInNew}
+            onCheckedChange={(v) => set("isOpenInNew", v)}
+          />
+        </div>
+      </div>
+
+      <div className="flex gap-1.5 pt-1.5 justify-end">
+        <Button
+          size="sm"
+          onClick={() => onSave(form)}
+          disabled={!form.label?.trim() || !urlValid || isSaving}
+          className="h-7 text-[10px] bg-primary text-primary-foreground"
+        >
+          {isSaving ? "Saving…" : "Save"}
+        </Button>
+        <Button size="sm" variant="outline" className="h-7 text-[10px]" onClick={onCancel}>
+          Cancel
+        </Button>
       </div>
     </div>
   );

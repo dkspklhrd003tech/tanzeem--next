@@ -46,7 +46,7 @@ export async function POST(request: Request) {
         await db.insert(teamMembers).values(newMember);
 
         return NextResponse.json(
-            { message: "Team member created successfully", teamMember: newMember },
+            { message: "Team member Created Successfully", teamMember: newMember },
             { status: 201 }
         );
     } catch (error) {

@@ -11,7 +11,7 @@ async function seedAllFinal() {
     const allPages = [
         // Organization
         {
-            title: "Organization Overview",
+            title: "Organization",
             slug: "organization",
             sections: [
                 { type: "hero", config: { title: "Tanzeem-e-Islami", subtitle: "Striving for the revival of Islam and the establishment of Khilafah.", backgroundImage: "https://images.unsplash.com/photo-1542831371-29b0f74f9713?auto=format&fit=crop&q=80&w=2000" } },
@@ -49,7 +49,7 @@ async function seedAllFinal() {
     for (const pageData of allPages) {
         const existingPages = await db.select().from(pages).where(eq(pages.slug, pageData.slug));
         let pageId: string;
-        
+
         if (existingPages.length > 0) {
             console.log(`Updating: ${pageData.slug}`);
             pageId = existingPages[0].id;

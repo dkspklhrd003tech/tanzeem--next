@@ -6,7 +6,7 @@ import { Dashboard } from "./Dashboard";
 import { ContentList } from "./ContentList";
 import { ContentEditor } from "./ContentEditor";
 import { MediaLibrary } from "./MediaLibrary";
-import { MenuList } from "./MenuList";
+import { HeaderManager } from "./HeaderManager";
 import { UserManagement } from "./UserManagement";
 import { HomeSlidersManagement } from "./HomeSlidersManagement";
 import { HomepageManager } from "./HomepageManager";
@@ -57,6 +57,11 @@ export function AdminPages({ section }: AdminPagesProps) {
     "magazines",
     "campaigns",
     "locations",
+    // ── New Phase 4 sections ───────────────────────────────────────────────
+    "faqs",
+    "downloads",
+    "galleries",
+    "donations",
   ].includes(section);
 
   useEffect(() => {
@@ -370,7 +375,7 @@ export function AdminPages({ section }: AdminPagesProps) {
 
   // Menus Section
   if (section === "menus") {
-    return <MenuList />;
+    return <HeaderManager />;
   }
 
   // Generic Sections handling via ContentList

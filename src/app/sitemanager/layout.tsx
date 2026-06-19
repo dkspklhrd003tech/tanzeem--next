@@ -1,13 +1,14 @@
 "use client";
 
-import { useState, useEffect, createContext, useContext } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { useState, useEffect, createContext, useContext, Suspense } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard,
   FileText,
   Menu,
+  LayoutTemplate,
   Image,
   Headphones,
   Video,
@@ -30,6 +31,16 @@ import {
   X,
   PanelLeftClose,
   PanelLeftOpen,
+  Calendar,
+  MapPin,
+  GalleryHorizontal,
+  Heart,
+  Megaphone,
+  Share2,
+  Globe,
+  Home,
+  Mic,
+  Sparkles,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -81,18 +92,36 @@ export const useAdminAuth = () => useContext(AuthContext);
 const NAV_ITEMS: NavItem[] = [
   { title: "Dashboard", href: "/sitemanager/dashboard", icon: LayoutDashboard },
   { title: "Pages", href: "/sitemanager/pages", icon: FileText },
-  { title: "Menu Builder", href: "/sitemanager?section=menus", icon: Menu },
+  { title: "Menu Builder", href: "/sitemanager/header", icon: Menu },
+  { title: "Footer Builder", href: "/sitemanager/footer", icon: LayoutTemplate },
+  { title: "Homepage Setup", href: "/sitemanager?section=homepage", icon: Home },
   { title: "Media Library", href: "/sitemanager?section=media", icon: Image },
+  // ── Content ──────────────────────────────────────────────────────────────
   { title: "Audio Manager", href: "/sitemanager?section=audio", icon: Headphones },
   { title: "Video Manager", href: "/sitemanager?section=videos", icon: Video },
+  { title: "Dars-e-Quran", href: "/sitemanager?section=darse-quran", icon: BookOpen },
+  { title: "Sermons", href: "/sitemanager?section=sermons", icon: Mic },
   { title: "Book Manager", href: "/sitemanager?section=books", icon: BookOpen },
   { title: "Magazine Manager", href: "/sitemanager?section=magazines", icon: BookMarked },
+  { title: "Downloads", href: "/sitemanager?section=downloads", icon: Send },
   { title: "Press Releases", href: "/sitemanager?section=press-releases", icon: Newspaper },
-  { title: "FAQs", href: "/sitemanager?section=faqs", icon: HelpCircle },
+  // ── Organisation ─────────────────────────────────────────────────────────
+  { title: "Team & Speakers", href: "/sitemanager?section=team", icon: Users },
+  { title: "Events", href: "/sitemanager?section=events", icon: Calendar },
+  { title: "Campaigns", href: "/sitemanager?section=campaigns", icon: Sparkles },
+  { title: "Locations", href: "/sitemanager?section=locations", icon: MapPin },
+  { title: "FAQ Items", href: "/sitemanager?section=faqs", icon: HelpCircle },
+  { title: "Galleries", href: "/sitemanager?section=galleries", icon: GalleryHorizontal },
+  { title: "Donations", href: "/sitemanager?section=donations", icon: Heart },
+  // ── System ───────────────────────────────────────────────────────────────
+  { title: "SEO", href: "/sitemanager?section=seo", icon: Search },
+  { title: "Global Banner", href: "/sitemanager?section=banner", icon: Megaphone },
+  { title: "Social Media", href: "/sitemanager?section=social-media", icon: Share2 },
   { title: "Contact Messages", href: "/sitemanager?section=contact", icon: Mail },
   { title: "Newsletter", href: "/sitemanager?section=newsletter", icon: Send },
   { title: "Users", href: "/sitemanager?section=users", icon: Users },
-  { title: "Settings", href: "/sitemanager?section=identity", icon: Settings },
+  { title: "Site Identity", href: "/sitemanager?section=identity", icon: Globe },
+  { title: "General Settings", href: "/sitemanager?section=settings", icon: Settings },
   { title: "Activity Log", href: "/sitemanager?section=activity", icon: History, superAdminOnly: true },
 ];
 
@@ -118,15 +147,15 @@ function SidebarNavItem({
   isCollapsed: boolean;
 }) {
   const pathname = usePathname();
-  const isActive =
-    item.href === "/sitemanager/dashboard"
+  const searchParams = useSearchParams();
+  const currentSection = searchParams.get("section");
+
+  const sectionParam = item.href.includes("?section=") ? item.href.split("?section=")[1] : null;
+  const isActive = sectionParam
+    ? pathname === "/sitemanager" && currentSection === sectionParam
+    : item.href === "/sitemanager/dashboard"
       ? pathname === "/sitemanager/dashboard"
-      : item.href.startsWith("/sitemanager/") && !item.href.includes("?")
-        ? pathname === item.href || pathname.startsWith(item.href + "/")
-        : pathname.includes(item.href.replace("/sitemanager", "")) ||
-        (item.href.includes("?section=") && pathname === "/sitemanager" &&
-          typeof window !== "undefined" &&
-          window.location.search.includes(item.href.split("?section=")[1]));
+      : pathname === item.href || pathname.startsWith(item.href + "/");
 
   const linkContent = (
     <Link
@@ -491,12 +520,23 @@ export default function SiteManagerLayout({
   const [user, setUser] = useState<AdminUser | null>(null);
   const [isUserLoading, setIsUserLoading] = useState(true);
 
-  // Load current user
+  // Load current user — redirect to login if not authenticated
   useEffect(() => {
     fetch("/api/auth/me")
-      .then((r) => r.ok ? r.json() : null)
+      .then((r) => {
+        if (!r.ok) {
+          // Not authenticated — redirect to login preserving the intended URL
+          const callbackUrl = encodeURIComponent(pathname);
+          router.replace(`/sitemanager/login?callbackUrl=${callbackUrl}`);
+          return null;
+        }
+        return r.json();
+      })
       .then((data) => setUser(data?.user ?? null))
-      .catch(() => setUser(null))
+      .catch(() => {
+        router.replace("/sitemanager/login");
+        setUser(null);
+      })
       .finally(() => setIsUserLoading(false));
   }, []);
 
@@ -523,14 +563,16 @@ export default function SiteManagerLayout({
   return (
     <AuthContext.Provider value={{ user, isLoading: isUserLoading }}>
       <div className="min-h-screen bg-muted/30">
-        <Sidebar
-          isCollapsed={isCollapsed}
-          isMobileOpen={isMobileOpen}
-          onCollapse={() => setIsCollapsed((c) => !c)}
-          onMobileClose={() => setIsMobileOpen(false)}
-          user={user}
-          onLogout={handleLogout}
-        />
+        <Suspense fallback={null}>
+          <Sidebar
+            isCollapsed={isCollapsed}
+            isMobileOpen={isMobileOpen}
+            onCollapse={() => setIsCollapsed((c) => !c)}
+            onMobileClose={() => setIsMobileOpen(false)}
+            user={user}
+            onLogout={handleLogout}
+          />
+        </Suspense>
 
         {/* Main area — offset by sidebar width */}
         <motion.div

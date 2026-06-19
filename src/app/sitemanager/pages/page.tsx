@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import {
   Plus, Search, Filter, Trash2, Globe2, EyeOff, Edit2,
   Eye, Copy, ChevronLeft, ChevronRight, MoreHorizontal,
-  CheckSquare, Square, RefreshCw, X,
+  CheckSquare, Square, RefreshCw, X, Sparkles, Bell
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -20,6 +20,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 const fetcher = (url: string) => fetch(url).then(r => r.json());
 
@@ -50,6 +51,19 @@ export default function PagesListPage() {
   const [deleting,  setDeleting]  = useState<string | null>(null);
   const [bulkOp,    setBulkOp]    = useState<string | null>(null);
   const [debouncedSearch, setDebouncedSearch] = useState("");
+  const [showNotification, setShowNotification] = useState(true);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const dismissed = localStorage.getItem("tanzeem_dismiss_org_notif") === "true";
+      if (dismissed) setShowNotification(false);
+    }
+  }, []);
+
+  const handleDismissNotification = () => {
+    setShowNotification(false);
+    localStorage.setItem("tanzeem_dismiss_org_notif", "true");
+  };
 
   useEffect(() => {
     const t = setTimeout(() => { setDebouncedSearch(search); setPage(1); }, 350);
@@ -121,6 +135,37 @@ export default function PagesListPage() {
         </div>
         <Button asChild size="sm"><Link href="/sitemanager/pages/new"><Plus className="h-4 w-4" />Create Page</Link></Button>
       </div>
+
+      {/* Admin Notification */}
+      {showNotification && (
+        <Alert className="bg-[#f0f9f6] border-[#0d5844]/20 text-[#0d5844] p-3 shadow-sm rounded-lg flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-[#0d5844]/10 flex items-center justify-center shrink-0">
+              <Bell className="h-4 w-4 text-[#0d5844]" />
+            </div>
+            <div>
+              <AlertTitle className="text-xs font-bold uppercase tracking-wider text-[#0d5844]">Admin Notification</AlertTitle>
+              <AlertDescription className="text-xs text-[#0d5844]/80 mt-0.5">
+                The dynamic, state-driven Organization Page is ready to configure.
+              </AlertDescription>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <Button asChild size="sm" className="bg-[#0d5844] hover:bg-[#0d5844]/90 text-white font-bold text-xs h-8 px-4 rounded-full">
+              <Link href="/sitemanager/pages/0f14e867-3679-4e52-9ba3-0441e7f22609/edit">
+                Configure Page
+              </Link>
+            </Button>
+            <button
+              onClick={handleDismissNotification}
+              className="text-red-500 hover:text-red-700 hover:bg-red-50 p-1.5 rounded-full transition-colors shrink-0"
+              title="Dismiss Notification"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        </Alert>
+      )}
 
       {/* Filter bar */}
       <div className="flex flex-col sm:flex-row gap-2">

@@ -126,7 +126,7 @@ export function ImageUploader({
       onChange(data.url);
       setIsCropping(false);
       setImage(null);
-      
+
       toast({
         title: "Success",
         description: "Image uploaded and cropped successfully.",
@@ -146,8 +146,8 @@ export function ImageUploader({
   return (
     <div className={cn("space-y-4", className)}>
       {label && <Label className="text-sm font-semibold">{label}</Label>}
-      
-      <div 
+
+      <div
         className={cn(
           "relative border-2 border-dashed border-border rounded-xl overflow-hidden group transition-all",
           !value && "hover:border-primary/50 cursor-pointer p-8 flex flex-col items-center justify-center",
@@ -159,9 +159,9 @@ export function ImageUploader({
           <>
             <img src={value} alt={altValue} className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-              <Button 
-                variant="secondary" 
-                size="sm" 
+              <Button
+                variant="secondary"
+                size="sm"
                 onClick={(e) => {
                   e.stopPropagation();
                   fileInputRef.current?.click();
@@ -169,9 +169,9 @@ export function ImageUploader({
               >
                 Change Image
               </Button>
-              <Button 
-                variant="destructive" 
-                size="sm" 
+              <Button
+                variant="destructive"
+                size="sm"
                 onClick={(e) => {
                   e.stopPropagation();
                   onChange("");
@@ -187,10 +187,10 @@ export function ImageUploader({
               <Upload className="h-6 w-6 text-primary" />
             </div>
             <p className="text-sm font-medium">Click to upload or drag and drop</p>
-            <p className="text-xs text-foreground-muted mt-1">SVG, PNG, JPG or GIF (max. 2MB)</p>
+            <p className="text-xs text-foreground-muted mt-1">WebP, PNG & SVG (max. 50KB)</p>
           </>
         )}
-        
+
         <input
           type="file"
           ref={fileInputRef}
@@ -202,23 +202,23 @@ export function ImageUploader({
 
       {value && (
         <div className="space-y-2">
-           <div className="flex items-center justify-between">
-              <Label htmlFor="alt-text" className="text-xs font-medium text-foreground-muted uppercase tracking-wider">Alternative Text</Label>
-              {!showAltInput && (
-                <Button variant="ghost" size="sm" className="h-6 text-[10px]" onClick={() => setShowAltInput(true)}>
-                  Add Alt Text
-                </Button>
-              )}
-           </div>
-           {showAltInput && (
-             <Input
-               id="alt-text"
-               placeholder="Describe this image for accessibility..."
-               value={altValue}
-               onChange={(e) => onAltChange?.(e.target.value)}
-               className="h-9 text-sm"
-             />
-           )}
+          <div className="flex items-center justify-between">
+            <Label htmlFor="alt-text" className="text-xs font-medium text-foreground-muted uppercase tracking-wider">Alternative Text</Label>
+            {!showAltInput && (
+              <Button variant="ghost" size="sm" className="h-6 text-[10px]" onClick={() => setShowAltInput(true)}>
+                Add Alt Text
+              </Button>
+            )}
+          </div>
+          {showAltInput && (
+            <Input
+              id="alt-text"
+              placeholder="Describe this image for accessibility..."
+              value={altValue}
+              onChange={(e) => onAltChange?.(e.target.value)}
+              className="h-9 text-sm"
+            />
+          )}
         </div>
       )}
 
@@ -231,7 +231,7 @@ export function ImageUploader({
               Crop Image
             </DialogTitle>
           </DialogHeader>
-          
+
           <div className="relative h-[400px] w-full bg-muted mt-4">
             {image && (
               <Cropper

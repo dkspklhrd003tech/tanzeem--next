@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import Script from "next/script";
 import { Hero } from "@/components/home/Hero";
 import { AboutAndLeaders } from "@/components/home/AboutAndLeaders";
 import { SpotlightCampaigns } from "@/components/home/SpotlightCampaigns";
@@ -10,8 +11,17 @@ import { db } from "@/db";
 import { homeSliders, books, magazines, teamMembers, homeCampaigns, videos, settings, pressReleases } from "@/db/schema";
 import { LatestPressReleases } from "@/components/home/LatestPressReleases";
 import { eq, desc, asc } from "drizzle-orm";
+import { webPageJsonLd, buildMetadata } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
+
+export const metadata = buildMetadata({
+  title: "Tanzeem-e-Islami",
+  description:
+    "Tanzeem-e-Islami is working to re-establish Khilafah following the methodology of Prophet Muhammad (SAWS). Access Islamic lectures, books, videos, and educational resources.",
+  keywords: ["Tanzeem-e-Islami", "Dr. Israr Ahmed", "Islamic Lectures", "Khilafah", "Quran", "Hadith", "Islamic Education"],
+  path: "/",
+});
 
 async function HomeContent() {
   // Query Active Hero Sliders
@@ -111,13 +121,27 @@ async function HomeContent() {
 }
 
 export default function Home() {
+  const jsonLd = webPageJsonLd({
+    title: "Tanzeem-e-Islami — Home",
+    description: "Islamic lectures, books, Quran education and organisational resources.",
+    path: "/",
+  });
+
   return (
-    <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" />
-      </div>
-    }>
-      <HomeContent />
-    </Suspense>
+    <>
+      <Script
+        id="jsonld-homepage"
+        type="application/ld+json"
+        strategy="beforeInteractive"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <Suspense fallback={
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" />
+        </div>
+      }>
+        <HomeContent />
+      </Suspense>
+    </>
   );
 }

@@ -3,6 +3,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { menuItems, activityLogs } from "@/db/schema";
 import { eq, and, asc } from "drizzle-orm";
+import { sanitizeUrl } from "@/lib/security";
 
 export const dynamic = "force-dynamic";
 
@@ -29,10 +30,12 @@ export async function POST(request: NextRequest) {
   if (!data.label) return NextResponse.json({ error: "Label is required" }, { status: 400 });
 
   const id = crypto.randomUUID();
+  // Sanitize the URL: drops javascript:/data: schemes (returns null when unsafe).
+  const safeUrl = data.url ? sanitizeUrl(data.url) : null;
   await db.insert(menuItems).values({
     id,
     label:       data.label,
-    url:         data.url ?? null,
+    url:         safeUrl,
     parentId:    data.parentId ?? null,
     order:       data.order ?? 0,
     isOpenInNew: data.isOpenInNew ?? false,

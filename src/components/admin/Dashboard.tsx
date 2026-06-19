@@ -110,7 +110,7 @@ export function Dashboard() {
             Last 30 Days
           </Button>
           <Button asChild className="bg-primary hover:bg-primary-dark text-primary-foreground rounded-xl px-6 font-semibold shadow-sm hover:shadow-md transition-all active:scale-95">
-            <Link href="/sitemanager?section=pages">Quick Add Page</Link>
+            <Link href="/sitemanager/pages">Quick Add Page</Link>
           </Button>
         </div>
       </div>
@@ -240,7 +240,7 @@ export function Dashboard() {
           <CardContent>
             <div className="flex flex-wrap gap-3">
               <Button variant="outline" asChild>
-                <Link href="/sitemanager?section=pages"><FileText className="h-4 w-4 mr-2" />New Page</Link>
+                <Link href="/sitemanager/pages"><FileText className="h-4 w-4 mr-2" />New Page</Link>
               </Button>
               <Button variant="outline" asChild>
                 <Link href="/sitemanager?section=audio"><Headphones className="h-4 w-4 mr-2" />Add Audio</Link>

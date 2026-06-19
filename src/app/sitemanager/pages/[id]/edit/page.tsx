@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { use } from "react";
 import { PageSpinner } from "@/components/ui/spinner";
 import { PageForm, type PageRecord } from "@/components/sitemanager/PageForm";
+import OrganizationPageEditor from "../../organization/page";
 
 export default function EditPagePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -12,6 +13,8 @@ export default function EditPagePage({ params }: { params: Promise<{ id: string 
   const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
+    if (id === "0f14e867-3679-4e52-9ba3-0441e7f22609") return;
+    
     Promise.all([
       fetch(`/api/sitemanager/pages/${id}`),
       fetch("/api/sitemanager/pages?limit=100&sort=az"),
@@ -25,6 +28,10 @@ export default function EditPagePage({ params }: { params: Promise<{ id: string 
       }
     }).catch(() => setNotFound(true));
   }, [id]);
+
+  if (id === "0f14e867-3679-4e52-9ba3-0441e7f22609") {
+    return <OrganizationPageEditor />;
+  }
 
   if (notFound) {
     return (

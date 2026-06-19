@@ -47,13 +47,11 @@ export function MissionAndVideos({ videos, settings }: MissionProps) {
             <div className="py-16 border-t border-border/60 bg-card">
                 <div className="container max-w-7xl mx-auto">
 
-                    <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
-                        <div>
-                            <h2 id="videos-heading" className="text-4xl md:text-5xl font-black text-primary">&mdash; Featured</h2>
-                            <p className="text-primary font-semibold text-xl mt-2 max-w-xl leading-relaxed">
-                                Regular Video Broadcasts
-                            </p>
-                        </div>
+                    <div className="mb-12">
+                        <p className="section-label mb-1">Featured</p>
+                        <h2 id="videos-heading" className="text-3xl md:text-4xl font-bold text-foreground">
+                            Regular Video Broadcasts
+                        </h2>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">

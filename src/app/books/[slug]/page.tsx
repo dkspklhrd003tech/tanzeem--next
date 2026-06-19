@@ -1,0 +1,179 @@
+import { notFound } from "next/navigation";
+import { Metadata } from "next";
+import Link from "next/link";
+import Script from "next/script";
+import { db } from "@/lib/db";
+import { books } from "@/db/schema";
+import { eq, and, ne, asc, desc } from "drizzle-orm";
+import { BookOpen, Download, Share2, ArrowLeft, FileText } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { buildMetadata, bookJsonLd, breadcrumbJsonLd } from "@/lib/seo";
+
+export const dynamic = "force-dynamic";
+
+type Props = { params: Promise<{ slug: string }> };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const book = await db.query.books.findFirst({
+    where: and(eq(books.slug, slug), eq(books.isPublished, true)),
+  });
+  if (!book) return { title: "Book Not Found" };
+  return buildMetadata({
+    title: book.metaTitle ?? book.title,
+    description: book.metaDescription ?? book.description ?? undefined,
+    path: `/books/${slug}`,
+    ogImage: book.coverImage,
+    keywords: ["Islamic book", book.language, book.authorName ?? "", "free download"].filter(Boolean),
+  });
+}
+
+export default async function BookDetailPage({ params }: Props) {
+  const { slug } = await params;
+
+  const book = await db.query.books.findFirst({
+    where: and(eq(books.slug, slug), eq(books.isPublished, true)),
+    with: { category: true },
+  });
+  if (!book) notFound();
+
+  const related = await db.query.books.findMany({
+    where: and(
+      eq(books.isPublished, true),
+      ne(books.id, book.id),
+      book.categoryId ? eq(books.categoryId, book.categoryId) : undefined
+    ),
+    with: { category: true },
+    orderBy: [asc(books.order), desc(books.createdAt)],
+    limit: 6,
+  });
+
+  const ld = bookJsonLd({
+    title: book.title,
+    description: book.description,
+    slug: book.slug,
+    coverImage: book.coverImage,
+    authorName: book.authorName,
+    language: book.language,
+    datePublished: book.publishedAt,
+  });
+  const bc = breadcrumbJsonLd([
+    { name: "Home", path: "/" },
+    { name: "Books", path: "/books" },
+    { name: book.title, path: `/books/${book.slug}` },
+  ]);
+
+  return (
+    <main className="min-h-screen bg-background">
+      <Script id="jsonld-book" type="application/ld+json" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} />
+      <Script id="jsonld-book-bc" type="application/ld+json" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: JSON.stringify(bc) }} />
+      <div className="container max-w-5xl mx-auto px-4 py-10">
+
+        {/* Back */}
+        <Link href="/books" className="inline-flex items-center gap-2 text-sm text-foreground-muted hover:text-primary mb-8 transition-colors">
+          <ArrowLeft className="h-4 w-4" />
+          Back to Books Library
+        </Link>
+
+        <div className="grid md:grid-cols-3 gap-10">
+
+          {/* Cover */}
+          <div className="md:col-span-1 flex flex-col items-center gap-4">
+            <div className="w-48 md:w-full max-w-xs rounded-xl overflow-hidden border border-border shadow-deep" style={{ aspectRatio: "3/4" }}>
+              {book.coverImage ? (
+                <img src={book.coverImage} alt={book.title} className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-primary/5">
+                  <BookOpen className="h-16 w-16 text-primary/20" />
+                </div>
+              )}
+            </div>
+
+            {/* Actions */}
+            {book.fileUrl && (
+              <a
+                href={book.fileUrl}
+                download
+                className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground rounded-full px-6 py-3 text-sm font-semibold hover:bg-primary-dark transition-colors"
+              >
+                <Download className="h-4 w-4" />
+                Download PDF
+              </a>
+            )}
+            <button
+              onClick={() => typeof navigator !== "undefined" && navigator.clipboard?.writeText(window.location.href)}
+              className="w-full flex items-center justify-center gap-2 border border-border rounded-full px-6 py-2.5 text-sm text-foreground-muted hover:border-primary hover:text-primary transition-colors"
+            >
+              <Share2 className="h-4 w-4" />
+              Share
+            </button>
+          </div>
+
+          {/* Details */}
+          <div className="md:col-span-2 space-y-5">
+            {book.category && (
+              <Badge variant="outline" className="text-primary border-primary/30">{book.category.name}</Badge>
+            )}
+            <h1 className="text-2xl md:text-3xl font-bold text-foreground leading-snug">{book.title}</h1>
+
+            {/* Meta grid */}
+            <dl className="grid grid-cols-2 gap-y-3 gap-x-6 text-sm border border-border rounded-xl p-5 bg-card">
+              {book.authorName && (
+                <>
+                  <dt className="font-semibold text-foreground-muted">Author</dt>
+                  <dd className="text-foreground">{book.authorName}</dd>
+                </>
+              )}
+              <dt className="font-semibold text-foreground-muted">Language</dt>
+              <dd className="text-foreground capitalize">{book.language}</dd>
+              {book.pages && (
+                <>
+                  <dt className="font-semibold text-foreground-muted">Pages</dt>
+                  <dd className="text-foreground">{book.pages}</dd>
+                </>
+              )}
+              {book.downloadCount > 0 && (
+                <>
+                  <dt className="font-semibold text-foreground-muted">Downloads</dt>
+                  <dd className="text-foreground">{book.downloadCount.toLocaleString()}</dd>
+                </>
+              )}
+            </dl>
+
+            {book.description && (
+              <div>
+                <h2 className="text-sm font-semibold uppercase tracking-wide text-foreground-muted mb-2">About this Book</h2>
+                <p className="text-foreground-muted leading-relaxed text-sm">{book.description}</p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Related */}
+        {related.length > 0 && (
+          <section className="mt-14">
+            <h2 className="text-xl font-bold text-foreground mb-6">Related Books</h2>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
+              {related.map((r) => (
+                <Link key={r.id} href={`/books/${r.slug}`} className="group flex flex-col items-center gap-2">
+                  <div className="w-full rounded-lg overflow-hidden border border-border bg-muted group-hover:shadow-mid transition-all group-hover:-translate-y-1 duration-300" style={{ aspectRatio: "3/4" }}>
+                    {r.coverImage ? (
+                      <img src={r.coverImage} alt={r.title} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-primary/5">
+                        <BookOpen className="h-6 w-6 text-primary/30" />
+                      </div>
+                    )}
+                  </div>
+                  <p className="text-[11px] font-medium text-foreground group-hover:text-primary line-clamp-2 text-center transition-colors leading-snug">
+                    {r.title}
+                  </p>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
+      </div>
+    </main>
+  );
+}

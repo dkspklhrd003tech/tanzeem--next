@@ -16,13 +16,11 @@ export function SpotlightCampaigns({ campaigns }: { campaigns: HomeCampaign[] })
         <section aria-labelledby="spotlight-heading" className="py-16 bg-card border-t border-border/60">
             <div className="container max-w-7xl mx-auto">
 
-                <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
-                    <div>
-                        <h2 id="spotlight-heading" className="text-4xl md:text-5xl font-black text-primary">Tanzeem Spotlight</h2>
-                        <p className="text-primary font-semibold text-xl mt-2 max-w-xl leading-relaxed">
-                            Campaigns, Announcements & Events
-                        </p>
-                    </div>
+                <div className="mb-12">
+                    <p className="section-label mb-1">Tanzeem Spotlight</p>
+                    <h2 id="spotlight-heading" className="text-3xl md:text-4xl font-bold text-foreground">
+                        Campaigns, Announcements &amp; Events
+                    </h2>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

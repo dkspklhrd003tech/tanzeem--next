@@ -33,7 +33,8 @@ export function SEOManager() {
       if (res.ok) {
         const data = await res.json();
         if (data.settings.seo) {
-          setSettings((prev) => ({ ...prev, ...data.settings.seo }));
+          const safe = Object.fromEntries(Object.entries(data.settings.seo).filter(([, v]) => v != null));
+          setSettings((prev) => ({ ...prev, ...safe }));
         }
       }
     } catch (err) {
@@ -160,7 +161,7 @@ export function SEOManager() {
           <p className="text-sm text-foreground-muted mb-4">
             You can override these defaults for individual pages by editing the page and expanding the "SEO Settings" card in the sidebar.
           </p>
-          <Link href="/sitemanager?section=pages">
+          <Link href="/sitemanager/pages">
             <Button variant="outline" className="gap-2">
               Go to Pages <ExternalLink className="w-4 h-4" />
             </Button>

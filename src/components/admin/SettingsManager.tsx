@@ -10,6 +10,8 @@ import { RichTextEditor } from "./RichTextEditor";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { ImageUploader } from "./ImageUploader";
+import { HeaderManager } from "./HeaderManager";
+import { FooterManager } from "./FooterManager";
 
 interface FormSubmission {
     id: string;
@@ -53,7 +55,7 @@ export function SettingsManager() {
                 const flatSettings: Record<string, any> = {};
                 Object.values(data.settings).forEach((group: any) => {
                     Object.entries(group).forEach(([k, v]) => {
-                        flatSettings[k] = v;
+                        flatSettings[k] = v ?? "";
                     });
                 });
                 setSettings(flatSettings);
@@ -264,131 +266,14 @@ export function SettingsManager() {
                     </div>
                 </TabsContent>
 
-                {/* HEADER TAB */}
+                {/* HEADER TAB — full dynamic menu builder */}
                 <TabsContent value="header" className="animate-in fade-in-50 duration-500">
-                    <div className="bg-card border border-border rounded-xl p-6 shadow-sm space-y-8">
-                        <div>
-                            <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
-                                <LayoutTemplate className="w-5 h-5 text-primary" />
-                                Header Identity & Brand Logo
-                            </h2>
-
-                            <div className="flex flex-col md:flex-row gap-8 items-start mb-6 pb-8 border-b border-border/50">
-                                <div className="space-y-4">
-                                    <label className="text-sm font-semibold text-foreground">Header Site Logo (WEBP Only)</label>
-                                    <ImageUploader
-                                        value={settings.site_logo}
-                                        onChange={(url) => handleSettingChange("site_logo", url)}
-                                        aspectRatio={1} // Assuming square for logo or flexible
-                                    />
-                                    <p className="text-[11px] text-foreground-muted max-w-[150px]">Acceptable Format: **WEBP** only (for optimal performance).</p>
-                                </div>
-
-                                <div className="flex-1 space-y-6 pt-2">
-                                    <div>
-                                        <label className="text-sm font-semibold text-foreground block mb-2">Live Logo Vector Path</label>
-                                        <p className="text-xs text-foreground-muted mb-4">The active URI path of your organizational logo asset.</p>
-                                        <Input
-                                            value={settings.site_logo || ""}
-                                            className="font-mono text-xs bg-muted/30"
-                                            readOnly
-                                            placeholder="Asset path will appear here after upload..."
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <h2 className="text-xl font-bold border-b border-border pb-2">Top Navigation Bar</h2>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium flex items-center gap-2"><MessageSquare className="w-4 h-4 text-green-500" /> WhatsApp Broadcast Number</label>
-                                <Input
-                                    placeholder="+92 42 35869501"
-                                    value={settings.whatsapp_number || ""}
-                                    onChange={(e) => handleSettingChange('whatsapp_number', e.target.value)}
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium flex items-center gap-2"><Mail className="w-4 h-4" /> Primary Contact Email</label>
-                                <Input
-                                    placeholder="info@tanzeem.org"
-                                    value={settings.contact_email || ""}
-                                    onChange={(e) => handleSettingChange('contact_email', e.target.value)}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium">Facebook URL</label>
-                                <Input
-                                    placeholder="https://facebook.com/tanzeemeislami"
-                                    value={settings.facebook_url || ""}
-                                    onChange={(e) => handleSettingChange('facebook_url', e.target.value)}
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium">YouTube Channel URL</label>
-                                <Input
-                                    placeholder="https://youtube.com/@tanzeemeislami"
-                                    value={settings.youtube_url || ""}
-                                    onChange={(e) => handleSettingChange('youtube_url', e.target.value)}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="mt-8 flex justify-end">
-                            <ConfirmDialog
-                                title="Save Header Configuration"
-                                description="Are you sure you want to update the site header settings and navigation links?"
-                                onConfirm={() => saveSettings()}
-                            >
-                                <Button disabled={isSaving} className="bg-[#0d5844] hover:bg-[#0a4636] text-[#fefefc] rounded-xl px-10 font-bold shadow-md transition-all active:scale-95">
-                                    {isSaving ? "Saving..." : "Save Header Configuration"}
-                                </Button>
-                            </ConfirmDialog>
-                        </div>
-                    </div>
+                    <HeaderManager />
                 </TabsContent>
 
-                {/* FOOTER TAB */}
+                {/* FOOTER TAB — full dynamic column builder */}
                 <TabsContent value="footer" className="animate-in fade-in-50 duration-500">
-                    <div className="bg-card border border-border rounded-xl p-6 shadow-sm space-y-6">
-                        <h2 className="text-xl font-bold border-b border-border pb-2">Footer Contact Vectors</h2>
-
-                        <div className="grid grid-cols-1 gap-4">
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium">Headquarters Address</label>
-                                <Input
-                                    placeholder="67-A, Johar Town, Lahore, Pakistan"
-                                    value={settings.footer_address || ""}
-                                    onChange={(e) => handleSettingChange('footer_address', e.target.value)}
-                                />
-                            </div>
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium">Copyright Text string</label>
-                                <Input
-                                    placeholder="© 2026 Tanzeem-e-Islami. All rights reserved."
-                                    value={settings.footer_copyright || ""}
-                                    onChange={(e) => handleSettingChange('footer_copyright', e.target.value)}
-                                />
-                            </div>
-                        </div>
-
-                        <div className="mt-8 flex justify-end">
-                            <ConfirmDialog
-                                title="Save Footer Configuration"
-                                description="Are you sure you want to update the footer contact info and copyright text?"
-                                onConfirm={() => saveSettings()}
-                            >
-                                <Button disabled={isSaving}>
-                                    {isSaving ? "Saving..." : "Save Footer Configurations"}
-                                </Button>
-                            </ConfirmDialog>
-                        </div>
-                    </div>
+                    <FooterManager />
                 </TabsContent>
 
                 {/* INBOX TAB */}

@@ -7,7 +7,9 @@ import { motion } from "framer-motion";
 import {
   ArrowLeft, Save, Send, Eye, Trash2, Copy,
   ChevronDown, ChevronUp, Clock, AlertCircle, Check,
+  LayoutTemplate, FileText,
 } from "lucide-react";
+import { PageSectionBuilder } from "@/components/admin/PageSectionBuilder";
 import { useEditor, EditorContent } from "@tiptap/react";
 import { StarterKit } from "@tiptap/starter-kit";
 import { Underline } from "@tiptap/extension-underline";
@@ -207,7 +209,11 @@ function RTE({ value, onChange }: { value: string; onChange: (v: string) => void
 export function PageForm({ mode, initialData, parentPages = [] }: PageFormProps) {
   const router = useRouter();
   const { toast } = useToast();
-  const [form, setForm] = useState<PageFormData>({ ...EMPTY, ...initialData });
+  // Strip null values from initialData so they don't overwrite EMPTY's "" defaults
+  const safeInitial = initialData
+    ? Object.fromEntries(Object.entries(initialData).filter(([, v]) => v !== null && v !== undefined))
+    : {};
+  const [form, setForm] = useState<PageFormData>({ ...EMPTY, ...safeInitial });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [slugManual, setSlugManual] = useState(mode === "edit");
   const [saving, setSaving] = useState(false);
@@ -215,6 +221,11 @@ export function PageForm({ mode, initialData, parentPages = [] }: PageFormProps)
   const [showDelete, setShowDelete] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const autoSaveRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // "content" = rich text editor tab, "sections" = section builder tab
+  const [activeTab, setActiveTab] = useState<"content" | "sections">("content");
+  // Sections are managed by PageSectionBuilder internally; we only need to
+  // trigger a DB persist on explicit save (draft / publish).
+  const sectionsRef = useRef<any[]>([]);
 
   // Auto-slug from title
   useEffect(() => {
@@ -268,6 +279,21 @@ export function PageForm({ mode, initialData, parentPages = [] }: PageFormProps)
       if (!silent) {
         toast({ title: publish ? "Page published!" : "Draft saved.", description: `"${form.title}" has been saved.` });
         if (mode === "create") router.push(`/sitemanager/pages/${json.page.id}/edit`);
+      }
+
+      // ── Persist sections if we have a page id ──────────────────────────
+      const savedPageId = mode === "create" ? json.page?.id : initialData?.id;
+      if (savedPageId && sectionsRef.current.length > 0) {
+        try {
+          await fetch("/api/admin/page_sections", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ pageId: savedPageId, sections: sectionsRef.current }),
+          });
+        } catch {
+          // Non-fatal — sections will be retried on next save
+          if (!silent) toast({ title: "Note", description: "Page saved but sections could not be persisted. Please save again." });
+        }
       }
     } catch {
       if (!silent) toast({ variant: "destructive", title: "Network error. Please try again." });
@@ -375,17 +401,75 @@ export function PageForm({ mode, initialData, parentPages = [] }: PageFormProps)
             </CardContent>
           </Card>
 
-          {/* Content */}
+          {/* Content / Sections tabs */}
           <Card>
-            <CardHeader className="pb-3 pt-4 px-5"><CardTitle className="text-sm font-semibold uppercase tracking-wide">Content</CardTitle></CardHeader>
-            <CardContent className="px-5 pb-5">
-              <RTE value={form.content} onChange={v => set("content", v)} />
-              {errors.content && <p className="text-xs text-destructive mt-2 flex items-center gap-1"><AlertCircle className="h-3 w-3" />{errors.content}</p>}
-              <div className="mt-3">
-                <Label htmlFor="excerpt" className="text-xs font-semibold uppercase tracking-wide mb-1.5 block">Excerpt</Label>
-                <Textarea id="excerpt" rows={3} placeholder="Brief summary shown in listings…" value={form.excerpt} onChange={e => set("excerpt", e.target.value)} className="text-sm resize-none" />
-              </div>
-            </CardContent>
+            {/* Tab bar */}
+            <div className="flex border-b border-border">
+              <button
+                type="button"
+                onClick={() => setActiveTab("content")}
+                className={cn(
+                  "flex items-center gap-2 px-5 py-3 text-sm font-medium border-b-2 transition-colors",
+                  activeTab === "content"
+                    ? "border-primary text-primary"
+                    : "border-transparent text-muted-foreground hover:text-foreground"
+                )}
+              >
+                <FileText className="h-4 w-4" />
+                Rich Text
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab("sections")}
+                className={cn(
+                  "flex items-center gap-2 px-5 py-3 text-sm font-medium border-b-2 transition-colors",
+                  activeTab === "sections"
+                    ? "border-primary text-primary"
+                    : "border-transparent text-muted-foreground hover:text-foreground"
+                )}
+              >
+                <LayoutTemplate className="h-4 w-4" />
+                Page Sections
+                <span className="ml-1 text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded-full font-semibold">
+                  Dynamic
+                </span>
+              </button>
+            </div>
+
+            {activeTab === "content" && (
+              <CardContent className="px-5 pb-5 pt-4">
+                <RTE value={form.content} onChange={v => set("content", v)} />
+                {errors.content && <p className="text-xs text-destructive mt-2 flex items-center gap-1"><AlertCircle className="h-3 w-3" />{errors.content}</p>}
+                <div className="mt-3">
+                  <Label htmlFor="excerpt" className="text-xs font-semibold uppercase tracking-wide mb-1.5 block">Excerpt</Label>
+                  <Textarea id="excerpt" rows={3} placeholder="Brief summary shown in listings…" value={form.excerpt} onChange={e => set("excerpt", e.target.value)} className="text-sm resize-none" />
+                </div>
+              </CardContent>
+            )}
+
+            {activeTab === "sections" && (
+              <CardContent className="px-5 pb-6 pt-4">
+                {mode === "create" ? (
+                  <div className="text-center py-10 border-2 border-dashed border-border rounded-xl bg-muted/30">
+                    <LayoutTemplate className="h-8 w-8 text-muted-foreground/40 mx-auto mb-3" />
+                    <p className="text-sm font-medium text-muted-foreground">Save the page first</p>
+                    <p className="text-xs text-muted-foreground/70 mt-1">
+                      Click "Save Draft" or "Publish" to create the page, then add sections here.
+                    </p>
+                  </div>
+                ) : (
+                  <>
+                    <p className="text-xs text-muted-foreground mb-4">
+                      Build the page layout with reorderable sections. Sections take priority over the Rich Text content when rendering.
+                    </p>
+                    <PageSectionBuilder
+                      pageId={initialData!.id}
+                      onSave={(sections) => { sectionsRef.current = sections; }}
+                    />
+                  </>
+                )}
+              </CardContent>
+            )}
           </Card>
 
           {/* SEO */}
@@ -469,7 +553,7 @@ export function PageForm({ mode, initialData, parentPages = [] }: PageFormProps)
                     <SelectTrigger id="parent"><SelectValue placeholder="None (top-level)" /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="none">None (top-level)</SelectItem>
-                      {parentPages.filter(p => p.id !== initialData?.id).map(p => (
+                      {parentPages.filter(p => p.id && p.id !== initialData?.id).map(p => (
                         <SelectItem key={p.id} value={p.id}>{p.title}</SelectItem>
                       ))}
                     </SelectContent>

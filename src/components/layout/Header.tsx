@@ -15,102 +15,21 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
-
-const WP_NAVIGATION = [
-  { name: "Home", href: "/" },
-  {
-    name: "Organization",
-    href: "/organization",
-    children: [
-      { name: "Background", href: "/organization/background" },
-      { name: "Mission Statement", href: "/organization/mission-statement" },
-      {
-        name: "Our Ideology",
-        href: "/organization/our-ideology",
-        children: [
-          { name: "Basic Belief", href: "/organization/our-ideology/basic-belief" },
-          { name: "Our Obligations", href: "/organization/our-ideology/our-obligations" },
-          { name: "Our Methodology", href: "/organization/our-ideology/methodology" },
-          { name: "Foundation", href: "/organization/our-ideology/foundation" }
-        ]
-      },
-      { name: "The Founder", href: "/organization/the-founder" },
-      { name: "The Ameer", href: "/organization/the-ameer" }
-    ]
-  },
-  {
-    name: "Education",
-    href: "/distance-learning",
-    children: [
-      { name: "Ruju Ilal Quran", href: "/ruju-ilal-quran" },
-      { name: "Distance Learning", href: "/distance-learning" },
-      { name: "Online Courses", href: "/online-courses" },
-    ],
-  },
-  {
-    name: "Resources",
-    href: "/resources",
-    children: [
-      {
-        name: "Audios",
-        href: "/resources/audios",
-        children: [
-          { name: "By Speaker", href: "/resources/audios/by-speaker" },
-          { name: "Audios By Category", href: "/resources/audios/by-category" },
-          { name: "Audio Books", href: "/resources/audio-books" },
-        ],
-      },
-      {
-        name: "Videos",
-        href: "/resources/videos",
-        children: [
-          { name: "Videos By Category", href: "/resources/videos/by-category" },
-          { name: "Videos By Speakers", href: "/resources/videos/by-speakers" },
-          { name: "Dr. Israr Ahmad Lectures", href: "https://www.drisrar.com" },
-          { name: "Dr. Israr Ahmad (Q&A)", href: "https://www.youtube.com/@AskDrIsrar" },
-          { name: "Bayan ul Quran", href: "https://www.youtube.com/@BiyanulQuran" },
-          { name: "Muntakab Nisab", href: "https://www.youtube.com/@MuntakhabNisab" },
-          { name: "Dr. Israr Ahmad (Video Clips)", href: "https://www.youtube.com/@DrIsrarAhmed_Official" },
-        ],
-      },
-      {
-        name: "Books",
-        href: "/resources/books",
-        children: [
-          { name: "Books by Authors", href: "/books-by-author" },
-          { name: "Books by Category", href: "/resources/books/by-category" },
-        ],
-      },
-      {
-        name: "Magazines",
-        href: "/resources/magazines",
-        children: [
-          { name: "Meesaq", href: "/resources/magazines/meesaq" },
-          { name: "Hikmat-e-Quran", href: "/resources/magazines/hikmat-e-quran" },
-          { name: "Nida-e-Khilafat", href: "/resources/magazines/nida-e-khilafat" },
-          { name: "Perspective", href: "/resources/magazines/perspective" },
-        ],
-      },
-      { name: "Press Releases", href: "/resources/press-releases" },
-      { name: "Social Media", href: "/resources/social-media" },
-      { name: "Khitab-e-Jum'ah (Audio)", href: "/resources/khitab-e-jumah" },
-      { name: "FAQ's", href: "/faq" },
-    ],
-  },
-  { name: "Quranic Circles", href: "/quranic-circles" },
-  { name: "Contact Us", href: "/contact" },
-  { name: "Join Tanzeem", href: "https://app.dhtr.org/contactus" },
-];
+import { resolveMenuLink, EXTERNAL_LINK_REL } from "@/lib/security";
+import { useSettings } from "@/hooks/use-settings";
+import { useNavigation, type MenuNode } from "@/hooks/use-navigation";
 
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [navigation, setNavigation] = useState<any[]>([]);
-  const [settings, setSettings] = useState<Record<string, string>>({});
   const [searchQuery, setSearchQuery] = useState("");
   const [displayDate, setDisplayDate] = useState<{ greg: string; hijri: string } | null>(null);
   const router = useRouter();
+
+  // Single shared source of truth for nav + settings (SWR-deduped across components).
+  const { items: navigation, isLoading: navLoading } = useNavigation("main", true);
+  const { settings } = useSettings();
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -127,55 +46,8 @@ export function Header() {
   }, []);
 
   useEffect(() => {
-    const fetchNavigation = async () => {
-      try {
-        const res = await fetch("/api/menus?hierarchy=true&visibleOnly=true");
-        if (res.ok) {
-          const data = await res.json();
-          if (data.menus && data.menus.length > 0) {
-            // Map DB keys to the component's expected keys
-            const mapItems = (items: any[]) => items.map(item => ({
-              name: item.label,
-              href: item.url,
-              children: item.children?.length ? mapItems(item.children) : undefined,
-            }));
-            setNavigation(mapItems(data.menus));
-          } else {
-            setNavigation(WP_NAVIGATION);
-          }
-        } else {
-          setNavigation(WP_NAVIGATION);
-        }
-      } catch (error) {
-        console.error("Failed to load navigation", error);
-        setNavigation(WP_NAVIGATION);
-      }
-    };
+    if (!settings || Object.keys(settings).length === 0) return;
 
-    const fetchSettings = async () => {
-      try {
-        const res = await fetch("/api/settings");
-        if (res.ok) {
-          const data = await res.json();
-          // Flatten grouped settings into simple map for fast access
-          const flatSettings: Record<string, string> = {};
-          Object.values(data.settings).forEach((group: any) => {
-            Object.entries(group).forEach(([k, v]) => {
-              flatSettings[k] = v as string;
-            });
-          });
-          setSettings(flatSettings);
-        }
-      } catch (err) {
-        console.error("Failed to fetch settings", err);
-      }
-    };
-
-    fetchNavigation();
-    fetchSettings();
-  }, []);
-
-  useEffect(() => {
     if (settings.date_display_mode === "manual") {
       const manual = settings.manual_date_text || "";
       const parts = manual.split("&");
@@ -242,7 +114,6 @@ export function Header() {
       setDisplayDate({ greg: gregStr, hijri: hijriStr });
     } catch (error) {
       console.error("Error formatting dates:", error);
-      setDisplayDate({ greg: "June 06, 2026", hijri: "ذوالحجہ ۱۶، ۱۴۴۷" });
     }
   }, [settings]);
 
@@ -257,23 +128,29 @@ export function Header() {
       <div className="bg-secondary border-b border-border text-foreground py-2 hidden md:block">
         <div className="container mx-auto flex justify-between items-center gap-4 text-sm">
           <div className="flex items-center gap-6">
-            <div className="flex items-center gap-3">
-              <span className="text-foreground/60 font-medium text-xs">Follow Us:</span>
-              <a href={settings.youtube_url || "https://youtube.com/@tanzeemeislami"} target="_blank" rel="noopener noreferrer" aria-label="YouTube — opens in new tab" className="w-7 h-7 rounded-full bg-red-600 flex items-center justify-center text-primary-foreground hover:bg-red-700 transition-colors shadow-sm focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2">
+            {/* Social links are driven entirely by settings — no hardcoded fallbacks. */}
+            {settings.youtube_url && (
+              <a href={settings.youtube_url} target="_blank" rel={EXTERNAL_LINK_REL} aria-label="YouTube — opens in new tab" className="w-7 h-7 rounded-full bg-red-600 flex items-center justify-center text-primary-foreground hover:bg-red-700 transition-colors shadow-sm focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2">
                 <Youtube className="h-3.5 w-3.5" aria-hidden="true" />
               </a>
-              <a href={settings.facebook_url || "https://facebook.com/tanzeemeislami"} target="_blank" rel="noopener noreferrer" aria-label="Facebook — opens in new tab" className="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-primary-foreground hover:bg-blue-700 transition-colors shadow-sm focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2">
+            )}
+            {settings.facebook_url && (
+              <a href={settings.facebook_url} target="_blank" rel={EXTERNAL_LINK_REL} aria-label="Facebook — opens in new tab" className="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-primary-foreground hover:bg-blue-700 transition-colors shadow-sm focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2">
                 <Facebook className="h-3.5 w-3.5" aria-hidden="true" />
               </a>
-              <a href={settings.twitter_url || "https://twitter.com/tanzeemeislami"} target="_blank" rel="noopener noreferrer" aria-label="X (Twitter) — opens in new tab" className="w-7 h-7 rounded-full bg-black flex items-center justify-center text-primary-foreground hover:bg-gray-800 transition-colors shadow-sm focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2">
+            )}
+            {settings.twitter_url && (
+              <a href={settings.twitter_url} target="_blank" rel={EXTERNAL_LINK_REL} aria-label="X (Twitter) — opens in new tab" className="w-7 h-7 rounded-full bg-black flex items-center justify-center text-primary-foreground hover:bg-gray-800 transition-colors shadow-sm focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2">
                 <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
               </a>
-              <a href={settings.whatsapp_url || "https://wa.me/+924235869501"} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp — opens in new tab" className="w-7 h-7 rounded-full bg-green-500 flex items-center justify-center text-primary-foreground hover:bg-green-600 transition-colors shadow-sm focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2">
+            )}
+            {settings.whatsapp_url && (
+              <a href={settings.whatsapp_url} target="_blank" rel={EXTERNAL_LINK_REL} aria-label="WhatsApp — opens in new tab" className="w-7 h-7 rounded-full bg-green-500 flex items-center justify-center text-primary-foreground hover:bg-green-600 transition-colors shadow-sm focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2">
                 <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" /></svg>
               </a>
-            </div>
+            )}
           </div>
-          {displayDate && (
+          {settings.header_show_date !== "false" && displayDate && (
             <div className="flex items-center gap-1.5 text-xs font-semibold text-primary bg-primary/10 border border-primary/20 px-3 py-1 rounded-full shadow-sm">
               <span className="ltr">{displayDate.greg}</span>
               <span className="text-primary/50 mx-0.5">&amp;</span>
@@ -329,37 +206,58 @@ export function Header() {
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-0 z-[100]">
-              {navigation.map((item) => (
-                <DesktopMenuItem key={item.name} item={item} />
-              ))}
+              {navLoading ? (
+                <div className="flex items-center gap-3 px-4">
+                  <div className="h-4 w-16 rounded bg-muted animate-pulse" />
+                  <div className="h-4 w-20 rounded bg-muted animate-pulse" />
+                  <div className="h-4 w-14 rounded bg-muted animate-pulse" />
+                </div>
+              ) : (
+                navigation.map((item) => (
+                  <DesktopMenuItem key={item.id} item={item} />
+                ))
+              )}
               {/* Search */}
-              <form onSubmit={handleSearchSubmit} className="relative ml-4 flex items-center">
-                <Input
-                  type="search"
-                  placeholder="Search..."
-                  aria-label="Search the site"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-64 h-8 pl-3 pr-9 rounded-full border-border bg-card text-xs"
-                />
-                <button type="submit" aria-label="Submit search" className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground-muted hover:text-foreground transition-colors p-1 rounded-full hover:bg-muted focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2">
-                  <Search className="h-3.5 w-3.5" aria-hidden="true" />
-                </button>
-              </form>
+              {settings.header_show_search !== "false" && (
+                <form onSubmit={handleSearchSubmit} className="relative ml-4 flex items-center">
+                  <Input
+                    type="search"
+                    placeholder="Search..."
+                    aria-label="Search the site"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-64 h-8 pl-3 pr-9 rounded-full border-border bg-card text-xs"
+                  />
+                  <button type="submit" aria-label="Submit search" className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground-muted hover:text-foreground transition-colors p-1 rounded-full hover:bg-muted focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2">
+                    <Search className="h-3.5 w-3.5" aria-hidden="true" />
+                  </button>
+                </form>
+              )}
+
+              {/* Call to Action */}
+              {settings.header_cta_text && (
+                <Button asChild size="sm" className="bg-[#005031] hover:bg-[#004026] text-white rounded-full ml-4 hidden lg:inline-flex shrink-0">
+                  <Link href={settings.header_cta_url || "/join"}>
+                    {settings.header_cta_text}
+                  </Link>
+                </Button>
+              )}
             </nav>
 
             {/* Mobile Search & Menu */}
             <div className="flex items-center gap-2">
               {/* Mobile Search Button */}
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsSearchOpen(true)}
-                className="lg:hidden"
-                aria-label="Open search"
-              >
-                <Search className="h-5 w-5" />
-              </Button>
+              {settings.header_show_search !== "false" && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setIsSearchOpen(true)}
+                  className="lg:hidden"
+                  aria-label="Open search"
+                >
+                  <Search className="h-5 w-5" />
+                </Button>
+              )}
 
               {/* Mobile Menu */}
               <Sheet open={isMobileMenuOpen} onOpenChange={setIsMobileMenuOpen}>
@@ -386,15 +284,15 @@ export function Header() {
                     </SheetTitle>
                   </SheetHeader>
                   <MobileNavigation navigation={navigation} onClose={() => setIsMobileMenuOpen(false)} />
-                  <div className="mt-8">
-                      <Link
-                      href="https://app.dhtr.org/contactus"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className="block w-full text-center py-3 bg-primary text-primary-foreground rounded-lg font-bold shadow-md hover:bg-primary/90 transition-all focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
-                    >
-                      JOIN TANZEEM
-                    </Link>
-                  </div>
+                  {settings.header_cta_text && (
+                    <div className="mt-6 px-4">
+                      <Button asChild className="w-full bg-[#005031] hover:bg-[#004026] text-white rounded-full">
+                        <Link href={settings.header_cta_url || "/join"} onClick={() => setIsMobileMenuOpen(false)}>
+                          {settings.header_cta_text}
+                        </Link>
+                      </Button>
+                    </div>
+                  )}
                 </SheetContent>
               </Sheet>
             </div>
@@ -444,12 +342,14 @@ export function Header() {
   );
 }
 
-function DesktopMenuItem({ item, depth = 0 }: { item: any; depth?: number }) {
+function DesktopMenuItem({ item, depth = 0 }: { item: MenuNode; depth?: number }) {
   const [isOpen, setIsOpen] = useState(false);
   const isTopLevel = depth === 0;
 
   if (!item.children || item.children.length === 0) {
-    const isExternal = item.href?.startsWith("http");
+    const { href, isExternal, isOpenInNew } = resolveMenuLink(item.url, item.isOpenInNew);
+    if (!href) return null; // unsafe/sanitized away
+
     const className = cn(
       "transition-colors",
       isTopLevel
@@ -458,14 +358,14 @@ function DesktopMenuItem({ item, depth = 0 }: { item: any; depth?: number }) {
     );
     if (isExternal) {
       return (
-        <a href={item.href} target="_blank" rel="noopener noreferrer" className={className}>
-          {item.name}
+        <a href={href} target={isOpenInNew ? "_blank" : undefined} rel={EXTERNAL_LINK_REL} className={className}>
+          {item.label}
         </a>
       );
     }
     return (
-      <Link href={item.href} className={className}>
-        {item.name}
+      <Link href={href} className={className}>
+        {item.label}
       </Link>
     );
   }
@@ -476,13 +376,40 @@ function DesktopMenuItem({ item, depth = 0 }: { item: any; depth?: number }) {
       onMouseEnter={() => setIsOpen(true)}
       onMouseLeave={() => setIsOpen(false)}
     >
-      {isTopLevel ? (
+      {item.url ? (
+        // Parent has its own URL → render as a link with a dropdown caret.
+        (() => {
+          const { href, isExternal, isOpenInNew } = resolveMenuLink(item.url, item.isOpenInNew);
+          if (!href) return null;
+          const sharedProps = {
+            "aria-haspopup": true as const,
+            "aria-expanded": isOpen,
+            className: cn(
+              "flex items-center gap-1",
+              isTopLevel
+                ? "py-2 px-4 text-foreground hover:text-primary transition-colors text-md font-medium focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
+                : "flex w-full items-center justify-between px-5 py-2.5 text-md text-foreground hover:bg-primary hover:text-primary-foreground transition-colors border-b border-border/30 last:border-0 group focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
+            ),
+          };
+          return isExternal ? (
+            <a href={href} target={isOpenInNew ? "_blank" : undefined} rel={EXTERNAL_LINK_REL} {...sharedProps}>
+              {item.label}
+              <ChevronDown className={cn("h-3.5 w-3.5 transition-transform duration-200", isOpen && "rotate-180")} aria-hidden="true" />
+            </a>
+          ) : (
+            <Link href={href} {...sharedProps}>
+              {item.label}
+              <ChevronDown className={cn("h-3.5 w-3.5 transition-transform duration-200", isOpen && "rotate-180")} aria-hidden="true" />
+            </Link>
+          );
+        })()
+      ) : isTopLevel ? (
         <button
           aria-haspopup="true"
           aria-expanded={isOpen}
           className="flex items-center gap-1 py-2 px-4 text-foreground hover:text-primary transition-colors text-md font-medium focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
         >
-          {item.name}
+          {item.label}
           <ChevronDown className={cn("h-3.5 w-3.5 transition-transform duration-200", isOpen && "rotate-180")} aria-hidden="true" />
         </button>
       ) : (
@@ -491,7 +418,7 @@ function DesktopMenuItem({ item, depth = 0 }: { item: any; depth?: number }) {
           aria-expanded={isOpen}
           className="flex w-full items-center justify-between px-5 py-2.5 text-md text-foreground hover:bg-primary hover:text-primary-foreground transition-colors border-b border-border/30 last:border-0 group focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
         >
-          {item.name}
+          {item.label}
           <ChevronDown className="h-3.5 w-3.5 -rotate-90 text-foreground-muted group-hover:text-primary-foreground" aria-hidden="true" />
         </button>
       )}
@@ -508,8 +435,8 @@ function DesktopMenuItem({ item, depth = 0 }: { item: any; depth?: number }) {
               isTopLevel ? "top-full left-0 rounded-b-lg" : "top-0 left-full rounded-lg ml-0.5"
             )}
           >
-            {item.children.map((child: any) => (
-              <DesktopMenuItem key={child.name} item={child} depth={depth + 1} />
+            {item.children.map((child) => (
+              <DesktopMenuItem key={child.id} item={child} depth={depth + 1} />
             ))}
           </motion.div>
         )}
@@ -518,25 +445,27 @@ function DesktopMenuItem({ item, depth = 0 }: { item: any; depth?: number }) {
   );
 }
 
-function MobileNavItem({ item, onClose, depth = 0 }: { item: any, onClose: () => void, depth?: number }) {
+function MobileNavItem({ item, onClose, depth = 0 }: { item: MenuNode, onClose: () => void, depth?: number }) {
   const [isOpen, setIsOpen] = useState(false);
 
   if (!item.children || item.children.length === 0) {
-    const isExternal = item.href?.startsWith("http");
+    const { href, isExternal, isOpenInNew } = resolveMenuLink(item.url, item.isOpenInNew);
+    if (!href) return null;
+
     const className = cn(
       "block py-3 font-medium hover:text-primary transition-colors",
       depth === 0 ? "px-4" : "text-sm text-foreground-muted"
     );
     if (isExternal) {
       return (
-        <a href={item.href} target="_blank" rel="noopener noreferrer" onClick={onClose} className={className}>
-          {item.name}
+        <a href={href} target={isOpenInNew ? "_blank" : undefined} rel={EXTERNAL_LINK_REL} onClick={onClose} className={className}>
+          {item.label}
         </a>
       );
     }
     return (
-      <Link href={item.href} onClick={onClose} className={className}>
-        {item.name}
+      <Link href={href} onClick={onClose} className={className}>
+        {item.label}
       </Link>
     );
   }
@@ -551,7 +480,7 @@ function MobileNavItem({ item, onClose, depth = 0 }: { item: any, onClose: () =>
           depth === 0 ? "px-4" : "text-sm text-foreground-muted"
         )}
       >
-        {item.name}
+        {item.label}
         <ChevronDown className={cn("h-4 w-4 transition-transform", isOpen && "rotate-180")} aria-hidden="true" />
       </button>
       <AnimatePresence>
@@ -562,8 +491,8 @@ function MobileNavItem({ item, onClose, depth = 0 }: { item: any, onClose: () =>
             exit={{ height: 0, opacity: 0 }}
             className="overflow-hidden pl-4 border-l border-border/50 ml-4 mb-2"
           >
-            {item.children.map((child: any) => (
-              <MobileNavItem key={child.name} item={child} onClose={onClose} depth={depth + 1} />
+            {item.children.map((child) => (
+              <MobileNavItem key={child.id} item={child} onClose={onClose} depth={depth + 1} />
             ))}
           </motion.div>
         )}
@@ -572,12 +501,19 @@ function MobileNavItem({ item, onClose, depth = 0 }: { item: any, onClose: () =>
   );
 }
 
-function MobileNavigation({ navigation, onClose }: { navigation: any[], onClose: () => void }) {
+function MobileNavigation({ navigation, onClose }: { navigation: MenuNode[], onClose: () => void }) {
+  if (navigation.length === 0) {
+    return (
+      <nav className="mt-6">
+        <p className="text-sm text-muted-foreground px-4">Navigation is being loaded…</p>
+      </nav>
+    );
+  }
   return (
     <nav className="mt-6">
       <div className="space-y-0.5">
         {navigation.map((item) => (
-          <MobileNavItem key={item.name} item={item} onClose={onClose} />
+          <MobileNavItem key={item.id} item={item} onClose={onClose} />
         ))}
       </div>
     </nav>
