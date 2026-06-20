@@ -160,7 +160,7 @@ export default function OrganizationPageEditor() {
   const { state: savedState, save: saveState, loaded } = useOrganizationPageState();
   const [localState, setLocalState] = useState<OrganizationPageState>(EMPTY_STATE);
   const [seoState, setSeoState] = useState<SeoState>(DEFAULT_SEO);
-  
+
   // Navigation / Tab states
   const [activeSection, setActiveSection] = useState<string>("heroBanner");
   const [activeTab, setActiveTab] = useState<string>("sections"); // sections | seo
@@ -221,7 +221,7 @@ export default function OrganizationPageEditor() {
         e.target.value = "";
         return;
       }
-      
+
       // Clear error if valid
       setImageErrors(prev => {
         const copy = { ...prev };
@@ -235,7 +235,7 @@ export default function OrganizationPageEditor() {
         updateField(section, field, base64String);
       };
       reader.readAsDataURL(file);
-      
+
       toast({
         title: "Image Uploaded",
         description: `Successfully loaded preview for ${file.name}`
@@ -388,9 +388,9 @@ export default function OrganizationPageEditor() {
   }, null, 2);
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col h-[calc(100vh-8rem)] overflow-hidden border border-border bg-background rounded-xl">
       {/* Top Banner Toolbar */}
-      <div className="flex flex-col sm:flex-row justify-between items-center bg-card p-4 border-b border-border gap-4 sticky top-16 z-20 shadow-sm">
+      <div className="flex flex-col sm:flex-row justify-between items-center bg-card p-4 border-b border-border gap-4 shrink-0 z-10 shadow-sm">
         <div>
           <h1 className="text-xl font-bold text-primary flex items-center gap-2">
             <Settings className="w-5 h-5" />
@@ -757,7 +757,7 @@ export default function OrganizationPageEditor() {
                           <Trash2 className="w-4 h-4" />
                         </button>
                         <h4 className="text-xs font-bold text-primary uppercase">Pillar Card #{i + 1}</h4>
-                        
+
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                           <div>
                             <Label className="text-xs font-medium">Select Icon</Label>
@@ -856,7 +856,7 @@ export default function OrganizationPageEditor() {
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
-                        
+
                         <div className="grid grid-cols-3 gap-4">
                           <div>
                             <Label className="text-xs font-medium">Card/Wing Title (e.g. RAFEEQ)</Label>

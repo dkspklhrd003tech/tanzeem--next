@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
-import Script from "next/script";
 import { db } from "@/lib/db";
 import { audio } from "@/db/schema";
 import { eq, and, ne, desc } from "drizzle-orm";
@@ -67,8 +66,8 @@ export default async function AudioDetailPage({ params }: Props) {
 
   return (
     <main className="min-h-screen bg-background">
-      <Script id="jsonld-audio" type="application/ld+json" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} />
-      <Script id="jsonld-audio-bc" type="application/ld+json" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: JSON.stringify(bc) }} />
+      <script id="jsonld-audio" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} />
+      <script id="jsonld-audio-bc" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(bc) }} />
       <AudioPlayerPage item={item} related={related} />
     </main>
   );

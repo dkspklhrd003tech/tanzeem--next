@@ -505,3 +505,200 @@ a, button, [role="button"] { cursor: pointer !important; }
   pointer-events: none;
   height: 0;
 }
+
+/* ─── SiteManager Admin Cinematic Glassmorphism Theme ─── */
+.sitemanager-admin-layout {
+  --background: #070a13;
+  --background-secondary: #0b0e1b;
+  --background-alt: #090c17;
+  --foreground: #f8fafc;
+  --foreground-muted: #94a3b8;
+  --foreground-light: #64748b;
+  --card: rgba(15, 23, 42, 0.45);
+  --card-foreground: #f8fafc;
+  --popover: #0b0f19;
+  --popover-foreground: #f8fafc;
+  --secondary: rgba(30, 41, 59, 0.5);
+  --secondary-foreground: #f8fafc;
+  --muted: rgba(30, 41, 59, 0.3);
+  --muted-foreground: #94a3b8;
+  --accent: rgba(16, 185, 129, 0.1);
+  --accent-foreground: #34d399;
+  --border: rgba(51, 65, 85, 0.45);
+  --border-strong: rgba(71, 85, 105, 0.65);
+  --input: rgba(15, 23, 42, 0.6);
+  --ring: #10b981;
+  --sidebar-background: rgba(10, 15, 30, 0.85);
+  --sidebar-foreground: #f8fafc;
+  --sidebar-primary: #10b981;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: rgba(30, 41, 59, 0.5);
+  --sidebar-accent-foreground: #34d399;
+  --sidebar-border: rgba(51, 65, 85, 0.45);
+  --sidebar-ring: #10b981;
+}
+
+.sitemanager-admin-layout h1,
+.sitemanager-admin-layout h2,
+.sitemanager-admin-layout h3,
+.sitemanager-admin-layout h4,
+.sitemanager-admin-layout h5,
+.sitemanager-admin-layout h6 {
+  color: #f8fafc !important;
+}
+
+/* Glassmorphic Cards & Panels */
+.sitemanager-admin-layout .bg-card,
+.sitemanager-admin-layout [class*="bg-card"],
+.sitemanager-admin-layout .bg-sidebar {
+  background-color: rgba(15, 23, 42, 0.4) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border-color: rgba(51, 65, 85, 0.4) !important;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37) !important;
+}
+
+/* Sidebar Specific fixes */
+.sitemanager-admin-layout aside {
+  background-color: rgba(9, 13, 24, 0.8) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-color: rgba(51, 65, 85, 0.45) !important;
+}
+
+/* Tabs list container styling */
+.sitemanager-admin-layout [role="tablist"] {
+  background-color: rgba(15, 23, 42, 0.5) !important;
+  border: 1px solid rgba(51, 65, 85, 0.45) !important;
+  backdrop-filter: blur(8px) !important;
+  border-radius: 14px !important;
+  padding: 4px !important;
+  gap: 4px !important;
+  display: inline-flex !important;
+  width: auto !important;
+}
+
+.sitemanager-admin-layout [role="tab"] {
+  border-radius: 10px !important;
+  color: #94a3b8 !important;
+  font-weight: 700 !important;
+  padding: 8px 16px !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  border: none !important;
+}
+
+.sitemanager-admin-layout [role="tab"][data-state="active"] {
+  background-color: rgba(16, 185, 129, 0.15) !important;
+  color: #34d399 !important;
+  border: 1px solid rgba(16, 185, 129, 0.3) !important;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.2) !important;
+}
+
+/* Inputs, Textareas, Selects styling */
+.sitemanager-admin-layout input[type="text"],
+.sitemanager-admin-layout input[type="email"],
+.sitemanager-admin-layout input[type="password"],
+.sitemanager-admin-layout input[type="search"],
+.sitemanager-admin-layout textarea,
+.sitemanager-admin-layout select,
+.sitemanager-admin-layout [data-slot="select-trigger"],
+.sitemanager-admin-layout [data-slot="input"] {
+  background-color: rgba(15, 23, 42, 0.6) !important;
+  border: 1px solid rgba(51, 65, 85, 0.5) !important;
+  color: #f8fafc !important;
+  border-radius: 12px !important;
+  padding: 8px 12px !important;
+  transition: all 0.2s ease !important;
+}
+
+.sitemanager-admin-layout input:focus,
+.sitemanager-admin-layout textarea:focus,
+.sitemanager-admin-layout select:focus,
+.sitemanager-admin-layout [data-slot="select-trigger"]:focus {
+  border-color: rgba(16, 185, 129, 0.5) !important;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15) !important;
+  outline: none !important;
+}
+
+/* Form labels color */
+.sitemanager-admin-layout label,
+.sitemanager-admin-layout [data-slot="label"] {
+  color: #e2e8f0 !important;
+  font-weight: 600 !important;
+}
+
+/* Tables visual redesign */
+.sitemanager-admin-layout table {
+  width: 100% !important;
+  border-collapse: separate !important;
+  border-spacing: 0 8px !important;
+}
+
+.sitemanager-admin-layout tr {
+  background-color: rgba(15, 23, 42, 0.2) !important;
+  border-bottom: none !important;
+  transition: all 0.2s ease !important;
+}
+
+.sitemanager-admin-layout tr:hover {
+  background-color: rgba(15, 23, 42, 0.45) !important;
+}
+
+.sitemanager-admin-layout th {
+  color: #64748b !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  font-size: 11px !important;
+  letter-spacing: 0.05em !important;
+  border-bottom: 1px solid rgba(51, 65, 85, 0.4) !important;
+  padding: 14px 16px !important;
+}
+
+.sitemanager-admin-layout td {
+  padding: 14px 16px !important;
+  border-top: 1px solid rgba(51, 65, 85, 0.2) !important;
+  border-bottom: 1px solid rgba(51, 65, 85, 0.2) !important;
+}
+
+.sitemanager-admin-layout td:first-child {
+  border-left: 1px solid rgba(51, 65, 85, 0.2) !important;
+  border-top-left-radius: 12px !important;
+  border-bottom-left-radius: 12px !important;
+}
+
+.sitemanager-admin-layout td:last-child {
+  border-right: 1px solid rgba(51, 65, 85, 0.2) !important;
+  border-top-right-radius: 12px !important;
+  border-bottom-right-radius: 12px !important;
+}
+
+/* ─── Arabesque Watermark Pattern ─── */
+.arabesque-pattern-container {
+  position: relative;
+}
+
+.arabesque-pattern-container::before,
+.arabesque-pattern-container::after {
+  content: "";
+  position: absolute;
+  width: 450px;
+  height: 450px;
+  opacity: 0.035;
+  pointer-events: none;
+  background-size: contain;
+  background-repeat: no-repeat;
+  z-index: 0;
+}
+
+.arabesque-pattern-container::before {
+  left: -120px;
+  top: 15%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M0,50 Q25,25 50,50 T100,50 Q75,75 50,50 T0,50' fill='none' stroke='%230d5844' stroke-width='0.5'/%3E%3Cpath d='M50,50 C60,40 65,30 55,20 C45,10 35,20 45,35 C30,20 20,30 35,45 C20,35 10,45 20,55 C30,65 20,75 35,65 C20,80 30,90 45,75 C35,90 45,100 55,90 C65,80 75,90 65,75 C80,90 90,80 75,65 C90,75 100,65 90,55 C80,45 90,35 75,45 C90,30 80,20 65,35 C75,20 65,10 55,20 Z' fill='none' stroke='%230d5844' stroke-width='0.5'/%3E%3Ccircle cx='50' cy='50' r='12' fill='none' stroke='%230d5844' stroke-width='0.5'/%3E%3Ccircle cx='50' cy='50' r='24' fill='none' stroke='%230d5844' stroke-width='0.5' stroke-dasharray='2,2'/%3E%3C/svg%3E");
+}
+
+.arabesque-pattern-container::after {
+  right: -120px;
+  top: 45%;
+  transform: scaleX(-1);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M0,50 Q25,25 50,50 T100,50 Q75,75 50,50 T0,50' fill='none' stroke='%230d5844' stroke-width='0.5'/%3E%3Cpath d='M50,50 C60,40 65,30 55,20 C45,10 35,20 45,35 C30,20 20,30 35,45 C20,35 10,45 20,55 C30,65 20,75 35,65 C20,80 30,90 45,75 C35,90 45,100 55,90 C65,80 75,90 65,75 C80,90 90,80 75,65 C90,75 100,65 90,55 C80,45 90,35 75,45 C90,30 80,20 65,35 C75,20 65,10 55,20 Z' fill='none' stroke='%230d5844' stroke-width='0.5'/%3E%3Ccircle cx='50' cy='50' r='12' fill='none' stroke='%230d5844' stroke-width='0.5'/%3E%3Ccircle cx='50' cy='50' r='24' fill='none' stroke='%230d5844' stroke-width='0.5' stroke-dasharray='2,2'/%3E%3C/svg%3E");
+}

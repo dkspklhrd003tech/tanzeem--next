@@ -4,7 +4,6 @@ import { ContactSection } from "@/components/shared/ContactSection";
 import { db } from "@/lib/db";
 import { settings, locations } from "@/db/schema";
 import { eq, asc } from "drizzle-orm";
-import Script from "next/script";
 import { webPageJsonLd, breadcrumbJsonLd, buildMetadata } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
@@ -77,8 +76,8 @@ export default async function ContactPage() {
 
   return (
     <main className="min-h-screen bg-background">
-      <Script id="jsonld-contact-breadcrumb" type="application/ld+json" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
-      <Script id="jsonld-contact-webpage" type="application/ld+json" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: JSON.stringify(webpage) }} />
+      <script id="jsonld-contact-breadcrumb" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
+      <script id="jsonld-contact-webpage" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webpage) }} />
       <ContactSection
         contactSettings={contactSettings}
         locationRows={locationRows}

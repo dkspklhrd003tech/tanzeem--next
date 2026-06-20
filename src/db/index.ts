@@ -2,7 +2,13 @@ import { drizzle } from 'drizzle-orm/mysql2';
 import mysql from 'mysql2/promise';
 import * as schema from './schema';
 
-const poolConnection = mysql.createPool({
+const globalForDb = globalThis as unknown as {
+  pool: mysql.Pool | undefined;
+};
+
+const poolConnection =
+  globalForDb.pool ??
+  mysql.createPool({
     host: process.env.DB_HOST || "localhost",
     port: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 3306,
     user: process.env.DB_USER || "root",
@@ -10,9 +16,11 @@ const poolConnection = mysql.createPool({
     database: process.env.DB_NAME || "tanzeemnxt_db",
     ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : undefined,
     waitForConnections: true,
-    connectionLimit: 3,   // kept low so 3 build workers don't exceed server max_connections
-    queueLimit: 50,
+    connectionLimit: 10,
+    queueLimit: 100,
     connectTimeout: 30000,
-});
+  });
+
+if (process.env.NODE_ENV !== "production") globalForDb.pool = poolConnection;
 
 export const db = drizzle({ client: poolConnection, schema, mode: "default" });

@@ -102,8 +102,14 @@ export async function POST(request: NextRequest) {
       metaTitle: data.metaTitle,
       metaDescription: data.metaDescription,
       metaKeywords: data.metaKeywords,
+      canonicalUrl: null,
+      ogImage: null,
+      schemaType: "WebPage",
+      noIndex: false,
       authorId: user.id,
       publishedAt: data.isPublished ? new Date() : null,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     });
 
     // Create sections if provided
@@ -116,6 +122,8 @@ export async function POST(request: NextRequest) {
           order: index,
           config: s.config || {},
           isActive: s.isActive ?? true,
+          createdAt: new Date(),
+          updatedAt: new Date(),
         }))
       );
     }
@@ -137,6 +145,7 @@ export async function POST(request: NextRequest) {
       entityType: "page",
       entityId: pageId,
       details: JSON.stringify({ title: data.title }),
+      createdAt: new Date(),
     });
 
     return NextResponse.json({ page: newPage }, { status: 201 });

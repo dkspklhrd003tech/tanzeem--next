@@ -45,10 +45,11 @@ export function buildMetadata({
 }: MetadataInput): Metadata {
   const url       = `${SITE_URL}${path}`;
   const image     = ogImage ?? DEFAULT_OG_IMAGE;
-  const fullTitle = title.includes(SITE_NAME) ? title : `${title} | ${SITE_NAME}`;
+  const cleanTitle = title.replace(new RegExp(`\\s*\\|?\\s*${SITE_NAME}\\s*$`, 'i'), '').trim();
+  const fullTitle  = cleanTitle ? `${cleanTitle} | ${SITE_NAME}` : SITE_NAME;
 
   return {
-    title:       fullTitle,
+    title:       cleanTitle || undefined,
     description,
     keywords:    keywords.join(", ") || undefined,
     alternates:  { canonical: url },

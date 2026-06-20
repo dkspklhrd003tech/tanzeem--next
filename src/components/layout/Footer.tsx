@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
@@ -19,6 +20,11 @@ export function Footer() {
   const { settings } = useSettings();
   // Footer columns come entirely from menu_items where menuType='footer'.
   const { items: footerColumns, isLoading } = useNavigation("footer", true);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Only render the social icons that are configured in settings.
   const socials = [
@@ -35,13 +41,17 @@ export function Footer() {
     String(new Date().getFullYear()),
   );
 
+  if (!mounted) {
+    return <footer className="bg-background-dark min-h-[350px]" />;
+  }
+
   return (
     <footer className="bg-background-dark text-white/70">
       {/* Main Footer */}
       <div className="container mx-auto py-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8">
           {/* Dynamic link columns — each top-level footer menu item is a column. */}
-          {isLoading ? (
+          {isLoading || !mounted ? (
             // Skeleton columns while the footer menu loads.
             Array.from({ length: 4 }).map((_, i) => (
               <div key={i}>

@@ -6,7 +6,6 @@ import { HubLanding } from "@/components/shared/HubLanding";
 import { db } from "@/lib/db";
 import { pageSections, pages } from "@/db/schema";
 import { eq, and, asc } from "drizzle-orm";
-import Script from "next/script";
 import { webPageJsonLd, breadcrumbJsonLd, buildMetadata } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
@@ -89,8 +88,8 @@ export default async function OrganizationPage() {
 
   return (
     <>
-      <Script id="jsonld-org-breadcrumb" type="application/ld+json" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
-      <Script id="jsonld-org-webpage" type="application/ld+json" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: JSON.stringify(webpage) }} />
+      <script id="jsonld-org-breadcrumb" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
+      <script id="jsonld-org-webpage" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webpage) }} />
       <OrganizationPageClient />
     </>
   );

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { pages, activityLogs, users } from "@/db/schema";
-import { eq, and, not } from "drizzle-orm";
+import { eq, and, not, or } from "drizzle-orm";
 
 export const dynamic = "force-dynamic";
 
@@ -58,7 +58,7 @@ export async function GET(request: NextRequest, { params }: Ctx) {
     })
     .from(pages)
     .leftJoin(users, eq(pages.authorId, users.id))
-    .where(eq(pages.id, id))
+    .where(or(eq(pages.id, id), eq(pages.slug, id)))
     .limit(1);
 
     if (!page) return NextResponse.json({ error: "Page not found" }, { status: 404 });
@@ -84,14 +84,14 @@ export async function PUT(request: NextRequest, { params }: Ctx) {
       return NextResponse.json({ errors }, { status: 422 });
     }
 
-    const [existing] = await db.select().from(pages).where(eq(pages.id, id)).limit(1);
+    const [existing] = await db.select().from(pages).where(or(eq(pages.id, id), eq(pages.slug, id))).limit(1);
     if (!existing) return NextResponse.json({ error: "Page not found" }, { status: 404 });
 
     // Slug uniqueness check (exclude self)
     if (data.slug && data.slug !== existing.slug) {
       const [conflict] = await db.select({ id: pages.id })
         .from(pages)
-        .where(and(eq(pages.slug, data.slug), not(eq(pages.id, id))))
+        .where(and(eq(pages.slug, data.slug), not(eq(pages.id, existing.id))))
         .limit(1);
       if (conflict) {
         return NextResponse.json({ errors: { slug: "A page with this slug already exists." } }, { status: 422 });
@@ -116,7 +116,7 @@ export async function PUT(request: NextRequest, { params }: Ctx) {
       metaDescription: data.metaDescription !== undefined ? data.metaDescription : existing.metaDescription,
       metaKeywords:    data.metaKeywords    !== undefined ? data.metaKeywords    : existing.metaKeywords,
       publishedAt:     (!wasPublished && nowPublished) ? new Date() : existing.publishedAt,
-    }).where(eq(pages.id, id));
+    }).where(eq(pages.id, existing.id));
 
     // Determine action label for activity log
     const action =
@@ -129,11 +129,11 @@ export async function PUT(request: NextRequest, { params }: Ctx) {
       userId:     user.id,
       action,
       entityType: "page",
-      entityId:   id,
+      entityId:   existing.id,
       details:    `${action === "PAGE_PUBLISH" ? "Published" : action === "PAGE_ARCHIVE" ? "Archived" : "Updated"} page "${data.title ?? existing.title}"`,
     });
 
-    const [updated] = await db.select().from(pages).where(eq(pages.id, id)).limit(1);
+    const [updated] = await db.select().from(pages).where(eq(pages.id, existing.id)).limit(1);
     return NextResponse.json({ page: updated });
   } catch (err) {
     console.error("PUT /api/sitemanager/pages/[id]:", err);
@@ -149,17 +149,17 @@ export async function DELETE(request: NextRequest, { params }: Ctx) {
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const { id } = await params;
-    const [existing] = await db.select().from(pages).where(eq(pages.id, id)).limit(1);
+    const [existing] = await db.select().from(pages).where(or(eq(pages.id, id), eq(pages.slug, id))).limit(1);
     if (!existing) return NextResponse.json({ error: "Page not found" }, { status: 404 });
 
-    await db.delete(pages).where(eq(pages.id, id));
+    await db.delete(pages).where(eq(pages.id, existing.id));
 
     await db.insert(activityLogs).values({
       id:         crypto.randomUUID(),
       userId:     user.id,
       action:     "PAGE_DELETE",
       entityType: "page",
-      entityId:   id,
+      entityId:   existing.id,
       details:    `Deleted page "${existing.title}"`,
     });
 

@@ -97,10 +97,9 @@ export default function RootLayout({
           `}
         </Script>
         {/* Organisation JSON-LD — present on every page */}
-        <Script
+        <script
           id="jsonld-organisation"
           type="application/ld+json"
-          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organisationJsonLd()) }}
         />
       </head>

@@ -13,7 +13,7 @@ export default function EditPagePage({ params }: { params: Promise<{ id: string 
   const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
-    if (id === "0f14e867-3679-4e52-9ba3-0441e7f22609") return;
+    if (id === "organization" || id === "0f14e867-3679-4e52-9ba3-0441e7f22609") return;
     
     Promise.all([
       fetch(`/api/sitemanager/pages/${id}`),
@@ -29,7 +29,7 @@ export default function EditPagePage({ params }: { params: Promise<{ id: string 
     }).catch(() => setNotFound(true));
   }, [id]);
 
-  if (id === "0f14e867-3679-4e52-9ba3-0441e7f22609") {
+  if (id === "organization" || id === "0f14e867-3679-4e52-9ba3-0441e7f22609") {
     return <OrganizationPageEditor />;
   }
 

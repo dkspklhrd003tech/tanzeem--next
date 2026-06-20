@@ -9,7 +9,7 @@
  * once and shared across every consumer on the page.
  */
 import useSWR from "swr";
-import { useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 export interface SettingsGroups {
   [group: string]: Record<string, string>;
@@ -39,6 +39,12 @@ function flatten(groups: SettingsGroups | undefined): Record<string, string> {
 }
 
 export function useSettings() {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const { data, error, isLoading } = useSWR<SettingsGroups>("/api/settings", fetcher, {
     revalidateOnFocus: false,
     dedupingInterval: 5 * 60 * 1000, // 5 min — settings rarely change
@@ -50,9 +56,9 @@ export function useSettings() {
   const settings = useMemo(() => flatten(data), [data]);
 
   return {
-    settings,
-    groups: data ?? {},
-    isLoading,
+    settings: mounted ? settings : {},
+    groups: mounted ? (data ?? {}) : {},
+    isLoading: !mounted || isLoading,
     error,
   };
 }

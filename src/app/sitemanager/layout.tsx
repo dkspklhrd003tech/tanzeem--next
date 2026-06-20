@@ -444,7 +444,7 @@ function TopHeader({
             type="search"
             placeholder="Search..."
             className={cn(
-              "h-9 pl-9 pr-4 w-56 rounded-lg text-sm bg-muted border border-border",
+              "h-6 pl-9 pr-4 w-40 rounded-lg text-sm bg-muted border border-border",
               "placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30",
               "transition-all"
             )}
@@ -562,7 +562,11 @@ export default function SiteManagerLayout({
 
   return (
     <AuthContext.Provider value={{ user, isLoading: isUserLoading }}>
-      <div className="min-h-screen bg-muted/30">
+      <div className="min-h-screen bg-slate-950 text-slate-100 dark sitemanager-admin-layout relative overflow-hidden">
+        {/* Ambient decorative glowing spots */}
+        <div className="absolute top-[-10%] left-[-10%] w-[45%] h-[45%] bg-[#0d5844]/8 rounded-full blur-[140px] pointer-events-none" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[45%] h-[45%] bg-indigo-950/25 rounded-full blur-[140px] pointer-events-none" />
+
         <Suspense fallback={null}>
           <Sidebar
             isCollapsed={isCollapsed}
@@ -579,7 +583,7 @@ export default function SiteManagerLayout({
           initial={false}
           animate={{ marginLeft: isCollapsed ? 72 : 260 }}
           transition={{ duration: 0.2, ease: "easeInOut" }}
-          className="flex flex-col min-h-screen max-md:!ml-0"
+          className="flex flex-col min-h-screen max-md:!ml-0 relative z-10"
         >
           <TopHeader
             isSidebarCollapsed={isCollapsed}

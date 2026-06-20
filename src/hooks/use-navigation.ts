@@ -8,6 +8,7 @@
  * fallback: if the menu is empty the nav simply renders nothing (after Phase 2,
  * the DB is seeded via `scripts/seed-navigation.ts`).
  */
+import { useState, useEffect } from "react";
 import useSWR from "swr";
 
 export interface MenuNode {
@@ -34,6 +35,12 @@ const fetcher = async (url: string): Promise<MenuNode[]> => {
 };
 
 export function useNavigation(menuType: "main" | "footer" = "main", visibleOnly = true) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const params = new URLSearchParams({
     menuType,
     hierarchy: "true",
@@ -47,8 +54,8 @@ export function useNavigation(menuType: "main" | "footer" = "main", visibleOnly 
   );
 
   return {
-    items: data ?? [],
-    isLoading,
+    items: mounted ? (data ?? []) : [],
+    isLoading: !mounted || isLoading,
     error,
   };
 }

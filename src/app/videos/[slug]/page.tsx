@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
-import Script from "next/script";
 import { db } from "@/lib/db";
 import { videos } from "@/db/schema";
 import { eq, and, ne, desc } from "drizzle-orm";
@@ -65,8 +64,8 @@ export default async function VideoDetailRoute({ params }: Props) {
 
   return (
     <main className="min-h-screen bg-background">
-      <Script id="jsonld-video" type="application/ld+json" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} />
-      <Script id="jsonld-video-bc" type="application/ld+json" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: JSON.stringify(bc) }} />
+      <script id="jsonld-video" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} />
+      <script id="jsonld-video-bc" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(bc) }} />
       <VideoDetailPage item={item} related={related} />
     </main>
   );

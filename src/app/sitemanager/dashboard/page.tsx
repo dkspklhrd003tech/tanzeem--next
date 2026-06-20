@@ -236,7 +236,7 @@ export default function DashboardPage() {
 
   const greeting = (() => {
     const h = new Date().getHours();
-    return h < 12 ? "Good morning" : h < 17 ? "Good afternoon" : "Good evening";
+    return "Welcome To Tanzeem-e-Islami";
   })();
   const today = new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
 
@@ -247,8 +247,13 @@ export default function DashboardPage() {
       <motion.div variants={item}>
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">{greeting}, {user?.name?.split(" ")[0] ?? "Admin"} 👋</h1>
-            <p className="text-sm text-muted-foreground mt-0.5">{today}</p>
+            <h1 className="text-2xl font-bold text-foreground">
+              {greeting},{" "}
+              <span style={{ color: "#108ece" }}>
+                {user?.name?.split(" ")[0] ?? "Admin"}
+              </span>
+            </h1>
+            <p className="text-sm text-[#108ece] mt-0.5">{today}</p>
           </div>
           <Button variant="ghost" size="sm" onClick={() => refreshStats()} className="self-start sm:self-auto text-muted-foreground hover:text-foreground">
             <RefreshCw className="h-3.5 w-3.5 mr-1.5" />Refresh

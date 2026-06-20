@@ -534,7 +534,7 @@ export function SettingsManager() {
                                 onConfirm={() => saveSettings()}
                             >
                                 <Button disabled={isSaving} className="bg-[#0d5844] hover:bg-[#0a4636] text-[#fefefc] rounded-xl px-10 font-bold shadow-md transition-all active:scale-95">
-                                    {isSaving ? "Saving..." : "Save Date Configuration"}
+                                    {isSaving ? "Saving..." : "Save Date"}
                                 </Button>
                             </ConfirmDialog>
                         </div>

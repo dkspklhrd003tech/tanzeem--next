@@ -25,6 +25,7 @@ export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [displayDate, setDisplayDate] = useState<{ greg: string; hijri: string } | null>(null);
+  const [mounted, setMounted] = useState(false);
   const router = useRouter();
 
   // Single shared source of truth for nav + settings (SWR-deduped across components).
@@ -40,6 +41,7 @@ export function Header() {
   };
 
   useEffect(() => {
+    setMounted(true);
     const handleScroll = () => setIsScrolled(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
@@ -125,7 +127,8 @@ export function Header() {
       </a>
 
       {/* Top Social Bar */}
-      <div className="bg-secondary border-b border-border text-foreground py-2 hidden md:block">
+      {mounted && (
+        <div className="bg-secondary border-b border-border text-foreground py-2 hidden md:block">
         <div className="container mx-auto flex justify-between items-center gap-4 text-sm">
           <div className="flex items-center gap-6">
             {/* Social links are driven entirely by settings — no hardcoded fallbacks. */}
@@ -166,6 +169,7 @@ export function Header() {
           )}
         </div>
       </div>
+      )}
 
       {/* Main Navigation */}
       <motion.header
@@ -181,7 +185,7 @@ export function Header() {
           <div className="flex items-center justify-between h-16 md:h-20">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-3 shrink-0">
-              {settings.site_logo ? (
+              {mounted && settings.site_logo ? (
                 <img
                   src={settings.site_logo}
                   alt="Tanzeem-e-Islami"
@@ -206,48 +210,50 @@ export function Header() {
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-0 z-[100]">
-              {navLoading ? (
+              {!mounted || navLoading ? (
                 <div className="flex items-center gap-3 px-4">
                   <div className="h-4 w-16 rounded bg-muted animate-pulse" />
                   <div className="h-4 w-20 rounded bg-muted animate-pulse" />
                   <div className="h-4 w-14 rounded bg-muted animate-pulse" />
                 </div>
               ) : (
-                navigation.map((item) => (
-                  <DesktopMenuItem key={item.id} item={item} />
-                ))
-              )}
-              {/* Search */}
-              {settings.header_show_search !== "false" && (
-                <form onSubmit={handleSearchSubmit} className="relative ml-4 flex items-center">
-                  <Input
-                    type="search"
-                    placeholder="Search..."
-                    aria-label="Search the site"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-64 h-8 pl-3 pr-9 rounded-full border-border bg-card text-xs"
-                  />
-                  <button type="submit" aria-label="Submit search" className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground-muted hover:text-foreground transition-colors p-1 rounded-full hover:bg-muted focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2">
-                    <Search className="h-3.5 w-3.5" aria-hidden="true" />
-                  </button>
-                </form>
-              )}
+                <>
+                  {navigation.map((item) => (
+                    <DesktopMenuItem key={item.id} item={item} />
+                  ))}
+                  {/* Search */}
+                  {settings.header_show_search !== "false" && (
+                    <form onSubmit={handleSearchSubmit} className="relative ml-4 flex items-center">
+                      <Input
+                        type="search"
+                        placeholder="Search..."
+                        aria-label="Search the site"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        className="w-64 h-8 pl-3 pr-9 rounded-full border-border bg-card text-xs"
+                      />
+                      <button type="submit" aria-label="Submit search" className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground-muted hover:text-foreground transition-colors p-1 rounded-full hover:bg-muted focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2">
+                        <Search className="h-3.5 w-3.5" aria-hidden="true" />
+                      </button>
+                    </form>
+                  )}
 
-              {/* Call to Action */}
-              {settings.header_cta_text && (
-                <Button asChild size="sm" className="bg-[#005031] hover:bg-[#004026] text-white rounded-full ml-4 hidden lg:inline-flex shrink-0">
-                  <Link href={settings.header_cta_url || "/join"}>
-                    {settings.header_cta_text}
-                  </Link>
-                </Button>
+                  {/* Call to Action */}
+                  {settings.header_cta_text && (
+                    <Button asChild size="sm" className="bg-[#005031] hover:bg-[#004026] text-white rounded-full ml-4 hidden lg:inline-flex shrink-0">
+                      <Link href={settings.header_cta_url || "/join"}>
+                        {settings.header_cta_text}
+                      </Link>
+                    </Button>
+                  )}
+                </>
               )}
             </nav>
 
             {/* Mobile Search & Menu */}
             <div className="flex items-center gap-2">
               {/* Mobile Search Button */}
-              {settings.header_show_search !== "false" && (
+              {mounted && settings.header_show_search !== "false" && (
                 <Button
                   variant="ghost"
                   size="icon"
@@ -269,7 +275,7 @@ export function Header() {
                 <SheetContent side="right" className="w-80">
                   <SheetHeader>
                     <SheetTitle className="flex items-center gap-2">
-                      {settings.site_logo ? (
+                      {mounted && settings.site_logo ? (
                         <img
                           src={settings.site_logo}
                           alt="Logo"
@@ -284,7 +290,7 @@ export function Header() {
                     </SheetTitle>
                   </SheetHeader>
                   <MobileNavigation navigation={navigation} onClose={() => setIsMobileMenuOpen(false)} />
-                  {settings.header_cta_text && (
+                  {mounted && settings.header_cta_text && (
                     <div className="mt-6 px-4">
                       <Button asChild className="w-full bg-[#005031] hover:bg-[#004026] text-white rounded-full">
                         <Link href={settings.header_cta_url || "/join"} onClick={() => setIsMobileMenuOpen(false)}>

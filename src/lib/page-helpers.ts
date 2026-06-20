@@ -29,9 +29,27 @@ export interface CmsPageResult {
 }
 
 export async function getCmsPage(slug: string): Promise<CmsPageResult> {
-  const page = await db.query.pages.findFirst({
-    where: eq(pages.slug, slug),
-  });
+  // Build candidate slugs to handle prefix mismatches between
+  // how pages were created in the CMS vs. how frontend routes reference them.
+  // e.g. route uses "organization/our-ideology" but DB might have "our-ideology"
+  const candidates = [slug];
+  if (slug.includes("/")) {
+    // Try without the first path segment  (organization/our-ideology → our-ideology)
+    candidates.push(slug.replace(/^[^/]+\//, ""));
+  }
+  // Also try with "organization/" prefix if not already present
+  if (!slug.startsWith("organization/")) {
+    candidates.push(`organization/${slug}`);
+  }
+
+  let page = null;
+  for (const candidate of candidates) {
+    page = await db.query.pages.findFirst({
+      where: eq(pages.slug, candidate),
+    });
+    if (page && page.isPublished) break;
+    page = null; // reset if not published
+  }
 
   if (!page || !page.isPublished) {
     return { page: null, sections: [] };

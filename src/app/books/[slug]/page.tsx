@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import Link from "next/link";
-import Script from "next/script";
 import { db } from "@/lib/db";
 import { books } from "@/db/schema";
 import { eq, and, ne, asc, desc } from "drizzle-orm";
@@ -65,8 +64,8 @@ export default async function BookDetailPage({ params }: Props) {
 
   return (
     <main className="min-h-screen bg-background">
-      <Script id="jsonld-book" type="application/ld+json" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} />
-      <Script id="jsonld-book-bc" type="application/ld+json" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: JSON.stringify(bc) }} />
+      <script id="jsonld-book" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} />
+      <script id="jsonld-book-bc" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(bc) }} />
       <div className="container max-w-5xl mx-auto px-4 py-10">
 
         {/* Back */}

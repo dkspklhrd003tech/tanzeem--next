@@ -68,23 +68,28 @@ export function generatePageMetadata(
   defaultTitle: string,
   defaultDescription?: string
 ) {
+  const SITE_NAME = "Tanzeem-e-Islami";
   if (page?.metaTitle || page?.title) {
-    const title = page.metaTitle || page.title;
+    const rawTitle = page.metaTitle || page.title;
+    const cleanTitle = rawTitle.replace(new RegExp(`\\s*\\|?\\s*${SITE_NAME}\\s*$`, 'i'), '').trim();
+    const fullTitle = cleanTitle ? `${cleanTitle} | ${SITE_NAME}` : SITE_NAME;
     const description = page.metaDescription || page.excerpt || defaultDescription;
     return {
-      title,
+      title: cleanTitle || undefined,
       description,
       openGraph: {
-        title,
+        title: fullTitle,
         description: description ?? undefined,
       },
     };
   }
+  const cleanDefaultTitle = defaultTitle.replace(new RegExp(`\\s*\\|?\\s*${SITE_NAME}\\s*$`, 'i'), '').trim();
+  const fullDefaultTitle = cleanDefaultTitle ? `${cleanDefaultTitle} | ${SITE_NAME}` : defaultTitle;
   return {
-    title: defaultTitle,
+    title: cleanDefaultTitle || undefined,
     description: defaultDescription,
     openGraph: {
-      title: defaultTitle,
+      title: fullDefaultTitle,
       description: defaultDescription,
     },
   };

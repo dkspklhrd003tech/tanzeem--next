@@ -1,5 +1,4 @@
 import { Suspense } from "react";
-import Script from "next/script";
 import { Hero } from "@/components/home/Hero";
 import { AboutAndLeaders } from "@/components/home/AboutAndLeaders";
 import { SpotlightCampaigns } from "@/components/home/SpotlightCampaigns";
@@ -129,10 +128,9 @@ export default function Home() {
 
   return (
     <>
-      <Script
+      <script
         id="jsonld-homepage"
         type="application/ld+json"
-        strategy="beforeInteractive"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <Suspense fallback={

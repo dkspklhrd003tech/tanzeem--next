@@ -16,6 +16,11 @@ export function MainLayout({ children }: MainLayoutProps) {
   const pathname = usePathname();
   const isSiteManager = pathname?.startsWith("/sitemanager");
   const isHome = pathname === "/";
+  const isOrgOrIdeology =
+    pathname?.startsWith("/organization") ||
+    pathname?.startsWith("/our-ideology") ||
+    pathname === "/background" ||
+    pathname === "/mission-statement";
 
   // Shared settings — SWR-deduped across Header / Footer / MainLayout / PageBanner.
   const { settings } = useSettings();
@@ -24,7 +29,7 @@ export function MainLayout({ children }: MainLayoutProps) {
     <div className="min-h-screen flex flex-col">
       {!isSiteManager && <Header />}
 
-      {!isSiteManager && !isHome && (
+      {!isSiteManager && !isHome && !isOrgOrIdeology && (
         <PageBanner settings={settings} />
       )}
 

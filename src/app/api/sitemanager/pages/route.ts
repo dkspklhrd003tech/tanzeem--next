@@ -50,7 +50,7 @@ export async function GET(request: NextRequest) {
     const search   = searchParams.get("search") ?? "";
     const sort     = searchParams.get("sort") ?? "newest";  // newest | oldest | az | za
     const page     = Math.max(1, parseInt(searchParams.get("page") ?? "1"));
-    const limit    = Math.min(50, parseInt(searchParams.get("limit") ?? "10"));
+    const limit    = Math.min(1000, parseInt(searchParams.get("limit") ?? "1000"));
     const offset   = (page - 1) * limit;
 
     const conditions: any[] = [];
@@ -148,8 +148,14 @@ export async function POST(request: NextRequest) {
       metaTitle:       data.metaTitle ?? null,
       metaDescription: data.metaDescription ?? null,
       metaKeywords:    data.metaKeywords ?? null,
+      canonicalUrl:    null,
+      ogImage:         null,
+      schemaType:      "WebPage",
+      noIndex:         false,
       authorId:        user.id,
       publishedAt:     isPublished ? new Date() : null,
+      createdAt:       new Date(),
+      updatedAt:       new Date(),
     });
 
     await db.insert(activityLogs).values({
@@ -159,6 +165,7 @@ export async function POST(request: NextRequest) {
       entityType: "page",
       entityId:   pageId,
       details:    `Created page "${data.title.trim()}"`,
+      createdAt:  new Date(),
     });
 
     const created = await db.select().from(pages).where(eq(pages.id, pageId)).limit(1);

@@ -70,6 +70,11 @@ const nextConfig: NextConfig = {
   // ── Redirects — legacy/duplicate routes → canonical ──────────────────────
   async redirects() {
     return [
+      // Redirect legacy top-level organization URLs to canonical sub-paths
+      { source: "/our-ideology", destination: "/organization/our-ideology", permanent: true },
+      { source: "/our-ideology/:slug*", destination: "/organization/our-ideology/:slug*", permanent: true },
+      { source: "/background", destination: "/organization/background", permanent: true },
+      { source: "/mission-statement", destination: "/organization/mission-statement", permanent: true },
       // Redirect old resource sub-routes to new direct routes
       { source: "/resources/audios/:slug", destination: "/audio/:slug", permanent: true },
       { source: "/resources/videos/:slug", destination: "/videos/:slug", permanent: true },

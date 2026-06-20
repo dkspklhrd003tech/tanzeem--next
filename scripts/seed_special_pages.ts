@@ -209,7 +209,7 @@ async function seedPages() {
     });
   }
 
-  console.log("Pages injected successfully into DB.");
+  console.log("Pages Injected successfully into DB.");
   process.exit(0);
 }
 
