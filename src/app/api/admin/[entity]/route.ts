@@ -17,6 +17,8 @@ import {
     downloadCategories,
     galleries,
     donationCampaigns,
+    socialPlatforms,
+    socialAccounts,
 } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { getCurrentUser } from "@/lib/auth";
@@ -39,6 +41,8 @@ const entityMap: Record<string, any> = {
     "download-categories": downloadCategories,
     galleries,
     donations: donationCampaigns,
+    "social-platforms": socialPlatforms,
+    "social-accounts": socialAccounts,
 };
 
 const REQUIRED_FIELDS: Record<string, string[]> = {
@@ -56,6 +60,8 @@ const REQUIRED_FIELDS: Record<string, string[]> = {
     "download-categories": ["name", "slug"],
     galleries: ["title", "slug"],
     donations: ["title", "slug"],
+    "social-platforms": ["name", "slug"],
+    "social-accounts": ["title", "url"],
 };
 
 function parseDateFields(data: any) {
@@ -202,7 +208,13 @@ export async function PATCH(
 
         await db.transaction(async (tx) => {
             for (const item of orders) {
-                await tx.update(table).set({ orderIndex: item.orderIndex }).where(eq((table as any).id, item.id));
+                const updateFields: Record<string, any> = {};
+                if (entity === "social-platforms" || entity === "social-accounts") {
+                    updateFields.order = item.orderIndex;
+                } else {
+                    updateFields.orderIndex = item.orderIndex;
+                }
+                await tx.update(table).set(updateFields).where(eq((table as any).id, item.id));
             }
         });
 

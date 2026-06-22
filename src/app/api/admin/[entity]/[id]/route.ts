@@ -17,6 +17,8 @@ import {
     downloadCategories,
     galleries,
     donationCampaigns,
+    socialPlatforms,
+    socialAccounts,
 } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { getCurrentUser } from "@/lib/auth";
@@ -38,6 +40,8 @@ const entityMap: Record<string, any> = {
     "download-categories": downloadCategories,
     galleries,
     donations: donationCampaigns,
+    "social-platforms": socialPlatforms,
+    "social-accounts": socialAccounts,
 };
 
 function parseDateFields(data: any) {
