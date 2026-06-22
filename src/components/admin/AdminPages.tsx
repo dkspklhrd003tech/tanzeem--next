@@ -11,6 +11,7 @@ import { UserManagement } from "./UserManagement";
 import { HomeSlidersManagement } from "./HomeSlidersManagement";
 import { HomepageManager } from "./HomepageManager";
 import { DarseQuranManager } from "./DarseQuranManager";
+import { KhitabatJummahManager } from "./KhitabatJummahManager";
 import { SermonsManager } from "./SermonsManager";
 import { SettingsManager } from "./SettingsManager";
 import { SocialMediaManager } from "./SocialMedia/SocialMediaManager";
@@ -44,6 +45,7 @@ export function AdminPages({ section }: AdminPagesProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [pageSearch, setPageSearch] = useState("");
   const [deletingPage, setDeletingPage] = useState<any | null>(null);
+  const [deletingPressRelease, setDeletingPressRelease] = useState<any | null>(null);
   const { toast } = useToast();
 
   const isGenericSection = [
@@ -226,6 +228,11 @@ export function AdminPages({ section }: AdminPagesProps) {
     return <DarseQuranManager />;
   }
 
+  // Khitabat-e-Jummah Section
+  if (section === "khitabat-addresses") {
+    return <KhitabatJummahManager />;
+  }
+
   // Sermons Section
   if (section === "sermons") {
     return <SermonsManager />;
@@ -367,6 +374,168 @@ export function AdminPages({ section }: AdminPagesProps) {
           onConfirm={() => {
             if (deletingPage) handleDeletePage(deletingPage);
             setDeletingPage(null);
+          }}
+        />
+      </motion.div>
+    );
+  }
+
+  // Press Releases Section — Custom Card Grid
+  if (section === "press-releases") {
+    if (editingId) {
+      return (
+        <ContentEditor
+          title={editingId === "new" ? "New Press Release" : "Edit Press Release"}
+          contentType="press-releases"
+          initialData={editingId === "new" ? undefined : data.find(p => String(p.id) === editingId)}
+          onSave={handleSaveGeneric}
+          onCancel={() => setEditingId(null)}
+        />
+      );
+    }
+
+    const filteredReleases = data.filter((item) =>
+      (item.title || "").toLowerCase().includes(pageSearch.toLowerCase()) ||
+      (item.slug || "").toLowerCase().includes(pageSearch.toLowerCase())
+    );
+
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="space-y-6"
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between pb-4 border-b border-border mb-2">
+          <div>
+            <h1 className="text-3xl font-bold text-foreground tracking-tight font-amiri text-[#0d5844]">Press Releases</h1>
+            <p className="text-sm text-foreground-muted mt-1">Manage dynamic press releases and PDF documents</p>
+          </div>
+          <Button
+            onClick={() => setEditingId("new")}
+            className="bg-[#0d5844] hover:bg-[#0a4636] text-white px-6 py-2.5 rounded-xl font-semibold shadow-sm hover:shadow-md transition-all active:scale-95"
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Add New
+          </Button>
+        </div>
+
+        {/* Search */}
+        <div className="relative max-w-md">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
+          <Input
+            placeholder="Search press releases..."
+            value={pageSearch}
+            onChange={(e) => setPageSearch(e.target.value)}
+            className="pl-10 h-12 bg-background border-border/80 focus-visible:ring-primary/20 rounded-2xl"
+          />
+        </div>
+
+        {/* Card Grid */}
+        {filteredReleases.length === 0 ? (
+          <div className="flex items-center justify-center py-16 text-foreground-muted">
+            <div className="text-center">
+              <FileText className="h-12 w-12 mx-auto mb-3 opacity-30" />
+              <p className="text-lg font-medium">No press releases found</p>
+              <p className="text-sm mt-1">Create a new press release or upload a PDF document.</p>
+            </div>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {filteredReleases.map((item, index) => {
+              const hasPdf = !!item.pdfUrl;
+              return (
+                <motion.div
+                  key={item.id}
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.05, duration: 0.3 }}
+                  onClick={() => setEditingId(String(item.id))}
+                  className="group relative bg-card border border-border rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-lg hover:shadow-[#0d5844]/8 hover:border-[#0d5844]/30 hover:-translate-y-1"
+                >
+                  {/* Top accent bar: red if PDF, emerald if text announcement */}
+                  <div className={`h-1.5 w-full bg-gradient-to-r ${hasPdf ? 'from-red-500 to-rose-600' : 'from-emerald-600 to-teal-500'}`} />
+
+                  <div className="p-5 flex flex-col justify-between h-[200px]">
+                    <div>
+                      {/* Card Header */}
+                      <div className="flex items-start justify-between gap-2 mb-3">
+                        <div className="flex items-center gap-3 min-w-0 flex-1">
+                          <div className={`flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center ${hasPdf ? 'bg-red-500/10 text-red-600' : 'bg-emerald-500/10 text-emerald-600'}`}>
+                            <FileText className="h-5 w-5" />
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <h3 className="font-semibold text-foreground text-base truncate group-hover:text-primary transition-colors">
+                              {item.title || "Untitled"}
+                            </h3>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          <button
+                            onClick={(e) => { e.stopPropagation(); setEditingId(String(item.id)); }}
+                            className="w-8 h-8 rounded-full bg-primary/10 hover:bg-primary/20 flex items-center justify-center transition-colors"
+                            title="Edit"
+                          >
+                            <Edit className="h-3.5 w-3.5 text-primary" />
+                          </button>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); setDeletingPressRelease(item); }}
+                            className="w-8 h-8 rounded-full bg-red-500 hover:bg-red-600 flex items-center justify-center transition-colors"
+                            title="Delete"
+                          >
+                            <Trash2 className="h-3.5 w-3.5 text-white" />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Slug */}
+                      <div className="flex items-center gap-2 mb-3 text-sm text-foreground-muted">
+                        <Globe className="h-3.5 w-3.5 flex-shrink-0" />
+                        <span className="truncate">/{item.slug || "—"}</span>
+                      </div>
+                    </div>
+
+                    <div>
+                      {/* PDF Badge Indicator */}
+                      <div className="mb-3">
+                        {hasPdf ? (
+                          <span className="text-[10px] bg-red-500/10 text-red-600 dark:text-red-400 font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border border-red-500/20">
+                            PDF Document
+                          </span>
+                        ) : (
+                          <span className="text-[10px] bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border border-emerald-500/20">
+                            Text Statement
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Footer: Status + Date */}
+                      <div className="flex items-center justify-between pt-3 border-t border-border/60">
+                        <Badge variant={item.isPublished ? "default" : "secondary"} className="text-xs">
+                          {item.isPublished ? "Published" : "Draft"}
+                        </Badge>
+                        <div className="flex items-center gap-1.5 text-xs text-foreground-muted">
+                          <Calendar className="h-3 w-3" />
+                          <span>{new Date(item.publishedAt || item.createdAt || new Date()).toLocaleDateString()}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Delete Confirmation */}
+        <ConfirmDialog
+          open={!!deletingPressRelease}
+          onOpenChange={(isOpen) => !isOpen && setDeletingPressRelease(null)}
+          title="Delete Press Release"
+          description="Are you sure you want to delete this press release? This action cannot be undone."
+          onConfirm={() => {
+            if (deletingPressRelease) handleDeleteGeneric(deletingPressRelease);
+            setDeletingPressRelease(null);
           }}
         />
       </motion.div>

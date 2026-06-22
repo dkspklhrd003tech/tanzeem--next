@@ -1357,7 +1357,7 @@ export default function OrganizationPageEditor() {
                 </div>
 
                 {/* ① Hero quote banner preview */}
-                <div className="bg-[#003d25] text-white text-center py-10 px-6 relative overflow-hidden flex flex-col items-center justify-center">
+                <div className="bg-primary text-white text-center py-10 px-6 relative overflow-hidden flex flex-col items-center justify-center">
                   {localState.heroBanner.backgroundImage && (
                     <div className="absolute inset-0 bg-cover bg-center opacity-30" style={{ backgroundImage: `url('${localState.heroBanner.backgroundImage}')` }} />
                   )}

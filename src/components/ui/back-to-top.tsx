@@ -38,11 +38,11 @@ export function BackToTop() {
     return (
         <Button
             onClick={scrollToTop}
-            className="fixed bottom-6 right-6 z-50 rounded-full w-12 h-12 shadow-lg bg-primary hover:bg-primary-dark text-primary-foreground flex items-center justify-center transition-all duration-300"
+            className="fixed bottom-6 right-6 z-50 rounded-full w-11 h-11 shadow-lg bg-primary hover:bg-primary-dark text-primary-foreground flex items-center justify-center transition-all duration-300"
             size="icon"
             aria-label="Back to top"
         >
-            <ArrowUp className="w-5 h-5" />
+            <ArrowUp className="w-7 h-7" />
         </Button>
     );
 }

@@ -71,7 +71,8 @@
   --muted-foreground: #7d7d7d;
 
   /* ── Base radius (used by shadcn calc chain) ── */
-  --radius: 0.625rem; /* 10px — base button radius from extraction */
+  --radius: 0.625rem;
+  /* 10px — base button radius from extraction */
 
   /* ── Chart Colors ── */
   --chart-1: #0d5844;
@@ -91,49 +92,75 @@
   --sidebar-ring: #0d5844;
 
   /* ── Border Radius Scale (extracted: 10 / 20 / 25 / 50 / 80 / 90px) ── */
-  --radius-btn:    0.625rem;  /* 10px  — buttons */
-  --radius-card:   1.25rem;   /* 20px  — cards (min) */
-  --radius-card-md: 1.5625rem; /* 25px  — cards (standard) */
-  --radius-pill:   3.125rem;  /* 50px  — pill / outline buttons */
-  --radius-circle: 5rem;      /* 80px  — avatar / icon circles */
-  --radius-full:   9999px;    /* fully round */
+  --radius-btn: 0.625rem;
+  /* 10px  — buttons */
+  --radius-card: 1.25rem;
+  /* 20px  — cards (min) */
+  --radius-card-md: 1.5625rem;
+  /* 25px  — cards (standard) */
+  --radius-pill: 3.125rem;
+  /* 50px  — pill / outline buttons */
+  --radius-circle: 5rem;
+  /* 80px  — avatar / icon circles */
+  --radius-full: 9999px;
+  /* fully round */
 
   /* ── Shadow Scale (extracted from tanzeem.org) ── */
-  --shadow-low:  rgba(0, 0, 0, 0.5) 0px 0px 1px 0px;
-  --shadow-mid:  rgba(0, 0, 0, 0.5) 0px 0px 5px 0px;
+  --shadow-low: rgba(0, 0, 0, 0.5) 0px 0px 1px 0px;
+  --shadow-mid: rgba(0, 0, 0, 0.5) 0px 0px 5px 0px;
   --shadow-mid2: rgb(183, 193, 211) 0px 0px 10px 0px;
   --shadow-mid3: rgba(165, 174, 213, 0.15) 0px 4px 8px 0px;
   --shadow-deep: rgba(45, 45, 45, 0.2) 0px 10px 30px 0px;
   --shadow-card-hover: rgba(0, 80, 49, 0.15) 0px 12px 24px -8px;
 
   /* ── Spacing Scale (10px base, multiples per extraction) ── */
-  --space-1:  0.25rem;   /* 4px  */
-  --space-2:  0.3125rem; /* 5px  */
-  --space-3:  0.625rem;  /* 10px — base unit */
-  --space-4:  0.75rem;   /* 12px */
-  --space-5:  0.9375rem; /* 15px */
-  --space-6:  1.25rem;   /* 20px */
-  --space-7:  1.875rem;  /* 30px */
-  --space-8:  2.5rem;    /* 40px */
-  --space-9:  3.125rem;  /* 50px */
-  --space-10: 3.75rem;   /* 60px */
+  --space-1: 0.25rem;
+  /* 4px  */
+  --space-2: 0.3125rem;
+  /* 5px  */
+  --space-3: 0.625rem;
+  /* 10px — base unit */
+  --space-4: 0.75rem;
+  /* 12px */
+  --space-5: 0.9375rem;
+  /* 15px */
+  --space-6: 1.25rem;
+  /* 20px */
+  --space-7: 1.875rem;
+  /* 30px */
+  --space-8: 2.5rem;
+  /* 40px */
+  --space-9: 3.125rem;
+  /* 50px */
+  --space-10: 3.75rem;
+  /* 60px */
 
   /* ── Typography Scale (extracted font sizes) ── */
-  --text-display: 2.5rem;     /* 40px — hero H1 */
-  --text-h1:      2rem;       /* 32px */
-  --text-h2:      1.875rem;   /* 30px */
-  --text-h3:      1.625rem;   /* 26px */
-  --text-h4:      1.5625rem;  /* 25px */
-  --text-body-lg: 1.5rem;     /* 24px */
-  --text-body:    1.125rem;   /* 18px — base body */
-  --text-small:   1rem;       /* 16px */
-  --text-xs:      0.875rem;   /* 14px */
-  --text-caption: 0.8125rem;  /* 13px */
+  --text-display: 2.5rem;
+  /* 40px — hero H1 */
+  --text-h1: 2rem;
+  /* 32px */
+  --text-h2: 1.875rem;
+  /* 30px */
+  --text-h3: 1.625rem;
+  /* 26px */
+  --text-h4: 1.5625rem;
+  /* 25px */
+  --text-body-lg: 1.5rem;
+  /* 24px */
+  --text-body: 1.125rem;
+  /* 18px — base body */
+  --text-small: 1rem;
+  /* 16px */
+  --text-xs: 0.875rem;
+  /* 14px */
+  --text-caption: 0.8125rem;
+  /* 13px */
 
   /* ── Font Families ── */
   --font-heading: 'Plus Jakarta Sans', system-ui, sans-serif;
-  --font-body:    'Kumbh Sans', Arial, Helvetica, sans-serif;
-  --font-arabic:  'Noto Nastaliq Urdu', serif;
+  --font-body: 'Kumbh Sans', Arial, Helvetica, sans-serif;
+  --font-arabic: 'Noto Nastaliq Urdu', serif;
   --font-nastaleeq: 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', serif;
 }
 
@@ -231,40 +258,40 @@
   --color-chart-5: var(--chart-5);
 
   /* ── Radius ── */
-  --radius-sm:       calc(var(--radius) - 4px);
-  --radius-md:       calc(var(--radius) - 2px);
-  --radius-lg:       var(--radius);
-  --radius-xl:       calc(var(--radius) + 4px);
-  --radius-2xl:      var(--radius-card);
-  --radius-3xl:      var(--radius-card-md);
-  --radius-pill:     var(--radius-pill);
-  --radius-circle:   var(--radius-circle);
-  --radius-full:     var(--radius-full);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: var(--radius-card);
+  --radius-3xl: var(--radius-card-md);
+  --radius-pill: var(--radius-pill);
+  --radius-circle: var(--radius-circle);
+  --radius-full: var(--radius-full);
 
   /* ── Shadows ── */
-  --shadow-low:       var(--shadow-low);
-  --shadow-mid:       var(--shadow-mid);
-  --shadow-mid2:      var(--shadow-mid2);
-  --shadow-mid3:      var(--shadow-mid3);
-  --shadow-deep:      var(--shadow-deep);
+  --shadow-low: var(--shadow-low);
+  --shadow-mid: var(--shadow-mid);
+  --shadow-mid2: var(--shadow-mid2);
+  --shadow-mid3: var(--shadow-mid3);
+  --shadow-deep: var(--shadow-deep);
   --shadow-card-hover: var(--shadow-card-hover);
 
   /* ── Spacing ── */
-  --spacing-1:  var(--space-1);
-  --spacing-2:  var(--space-2);
-  --spacing-3:  var(--space-3);
-  --spacing-4:  var(--space-4);
-  --spacing-5:  var(--space-5);
-  --spacing-6:  var(--space-6);
-  --spacing-7:  var(--space-7);
-  --spacing-8:  var(--space-8);
-  --spacing-9:  var(--space-9);
+  --spacing-1: var(--space-1);
+  --spacing-2: var(--space-2);
+  --spacing-3: var(--space-3);
+  --spacing-4: var(--space-4);
+  --spacing-5: var(--space-5);
+  --spacing-6: var(--space-6);
+  --spacing-7: var(--space-7);
+  --spacing-8: var(--space-8);
+  --spacing-9: var(--space-9);
   --spacing-10: var(--space-10);
 
   /* ── Font Families ── */
   --font-family-heading: var(--font-heading);
-  --font-family-body:    var(--font-body);
-  --font-family-amiri:   var(--font-amiri), 'Amiri', serif;
+  --font-family-body: var(--font-body);
+  --font-family-amiri: var(--font-amiri), 'Amiri', serif;
   --font-family-nastaleeq: var(--font-nastaleeq);
 }
 
@@ -281,30 +308,91 @@ body {
 }
 
 /* Heading font applied globally to all heading elements */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-heading);
   color: #108ece;
   font-weight: 700;
 }
 
 /* Type scale utilities */
-.text-display { font-size: var(--text-display); line-height: 1.1; }
-.text-h1      { font-size: var(--text-h1);      line-height: 1.2; }
-.text-h2      { font-size: var(--text-h2);      line-height: 1.25; }
-.text-h3      { font-size: var(--text-h3);      line-height: 1.3; }
-.text-h4      { font-size: var(--text-h4);      line-height: 1.4; }
-.text-body-lg { font-size: var(--text-body-lg); line-height: 1.6; }
-.text-body    { font-size: var(--text-body);    line-height: 1.75; }
+.text-display {
+  font-size: var(--text-display);
+  line-height: 1.1;
+}
+
+.text-h1 {
+  font-size: var(--text-h1);
+  line-height: 1.2;
+}
+
+.text-h2 {
+  font-size: var(--text-h2);
+  line-height: 1.25;
+}
+
+.text-h3 {
+  font-size: var(--text-h3);
+  line-height: 1.3;
+}
+
+.text-h4 {
+  font-size: var(--text-h4);
+  line-height: 1.4;
+}
+
+.text-body-lg {
+  font-size: var(--text-body-lg);
+  line-height: 1.6;
+}
+
+.text-body {
+  font-size: var(--text-body);
+  line-height: 1.75;
+}
 
 /* Font family utilities */
-.font-heading   { font-family: var(--font-heading); }
-.font-body      { font-family: var(--font-body); }
-.font-amiri     { font-family: var(--font-amiri), 'Amiri', serif; }
-.font-urdu      { font-family: 'Noto Nastaliq Urdu', serif; }
-.font-nastaleeq {
-  font-family: 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', serif;
-  direction: rtl;
-  unicode-bidi: embed;
+/* Font family utilities */
+.font-heading {
+  font-family: var(--font-heading);
+}
+
+.font-body {
+  font-family: var(--font-body);
+}
+
+.font-amiri {
+  font-family: var(--font-amiri), 'Amiri', serif;
+}
+
+/* Set Helvetica font for span and p tags for english text by default and keep LTR direction */
+span,
+p {
+  font-family: Helvetica, Arial, sans-serif;
+  direction: ltr;
+  text-align: left;
+}
+
+/* Enforce Jameel Noori Nastaleeq, Noto Nastaliq Urdu and RTL layout for Urdu/Arabic text */
+.font-urdu,
+.font-nastaleeq,
+.font-urdu span,
+.font-urdu p,
+.font-nastaleeq span,
+.font-nastaleeq p,
+[lang="ur"],
+[lang="ur"] span,
+[lang="ur"] p,
+[lang="ar"],
+[lang="ar"] span,
+[lang="ar"] p {
+  font-family: 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', serif !important;
+  direction: rtl !important;
+  text-align: right !important;
 }
 
 /* ─── Layout ──────────────────────────────────────────────────────────────── */
@@ -320,13 +408,29 @@ html {
 }
 
 /* ─── Scrollbar ───────────────────────────────────────────────────────────── */
-::-webkit-scrollbar        { width: 8px; height: 8px; }
-::-webkit-scrollbar-track  { background: var(--muted); border-radius: 4px; }
-::-webkit-scrollbar-thumb  { background: var(--primary); border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: var(--primary-dark); }
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--muted);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-dark);
+}
 
 /* ─── Interactive ─────────────────────────────────────────────────────────── */
-a { transition: color 0.2s ease; }
+a {
+  transition: color 0.2s ease;
+}
 
 ::selection {
   background-color: var(--primary);
@@ -338,7 +442,11 @@ a { transition: color 0.2s ease; }
   outline-offset: 2px;
 }
 
-a, button, [role="button"] { cursor: pointer !important; }
+a,
+button,
+[role="button"] {
+  cursor: pointer !important;
+}
 
 /* ─── Button Utilities ────────────────────────────────────────────────────── */
 .btn-primary-rounded {
@@ -348,6 +456,7 @@ a, button, [role="button"] { cursor: pointer !important; }
   background-color: transparent;
   transition: all 0.2s ease;
 }
+
 .btn-primary-rounded:hover {
   background-color: var(--primary);
   color: var(--primary-foreground);
@@ -365,6 +474,7 @@ a, button, [role="button"] { cursor: pointer !important; }
   cursor: pointer;
   transition: all 0.2s ease;
 }
+
 .btn-outline-green:hover {
   background: var(--primary);
   color: var(--primary-foreground);
@@ -374,6 +484,7 @@ a, button, [role="button"] { cursor: pointer !important; }
 .card-hover {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
+
 .card-hover:hover {
   transform: translateY(-4px);
   box-shadow: var(--shadow-card-hover);
@@ -387,14 +498,21 @@ a, button, [role="button"] { cursor: pointer !important; }
   text-transform: uppercase;
   color: var(--primary);
 }
-.section-label::before { content: "— "; }
+
+.section-label::before {
+  content: "— ";
+}
 
 .section {
   padding-top: 4rem;
   padding-bottom: 4rem;
 }
+
 @media (min-width: 768px) {
-  .section { padding-top: 3rem; padding-bottom: 3rem; }
+  .section {
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
 }
 
 .container {
@@ -403,8 +521,12 @@ a, button, [role="button"] { cursor: pointer !important; }
   margin-left: auto;
   margin-right: auto;
 }
+
 @media (min-width: 640px) {
-  .container { padding-left: 1rem; padding-right: 1rem; }
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
 }
 
 /* ─── Surfaces ────────────────────────────────────────────────────────────── */
@@ -413,7 +535,10 @@ a, button, [role="button"] { cursor: pointer !important; }
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
 }
-.dark .glass { background: rgba(10, 10, 10, 0.9); }
+
+.dark .glass {
+  background: rgba(10, 10, 10, 0.9);
+}
 
 .skeleton {
   background: linear-gradient(90deg, var(--muted) 25%, var(--secondary) 50%, var(--muted) 75%);
@@ -429,21 +554,88 @@ a, button, [role="button"] { cursor: pointer !important; }
 }
 
 /* ─── Animations ──────────────────────────────────────────────────────────── */
-.animate-fade-in  { animation: fadeIn  0.5s ease-out; }
-.animate-slide-up { animation: slideUp 0.5s ease-out; }
-.animate-slide-down { animation: slideDown 0.5s ease-out; }
-.animate-scale-in { animation: scaleIn 0.3s ease-out; }
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
 
-@keyframes fadeIn  { from { opacity: 0; }                             to { opacity: 1; } }
-@keyframes slideUp   { from { opacity: 0; transform: translateY(20px); }  to { opacity: 1; transform: translateY(0); } }
-@keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes scaleIn   { from { opacity: 0; transform: scale(0.95); }       to { opacity: 1; transform: scale(1); } }
-@keyframes shimmer   { 0%   { background-position: -200% 0; }             100% { background-position: 200% 0; } }
+.animate-slide-up {
+  animation: slideUp 0.5s ease-out;
+}
+
+.animate-slide-down {
+  animation: slideDown 0.5s ease-out;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
 
 /* ─── RTL / Print ─────────────────────────────────────────────────────────── */
-[dir="rtl"] { text-align: right; }
+[dir="rtl"] {
+  text-align: right;
+}
 
-@media print { .no-print { display: none !important; } }
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
 
 /* ─── TipTap / ProseMirror ────────────────────────────────────────────────── */
 .ProseMirror {
@@ -454,20 +646,81 @@ a, button, [role="button"] { cursor: pointer !important; }
   font-size: 0.9375rem;
   line-height: 1.75;
 }
-.ProseMirror > * + * { margin-top: 0.75em; }
-.ProseMirror h1 { font-size: 1.875rem; font-weight: 700; line-height: 1.2; margin-top: 1.5em; margin-bottom: 0.5em; }
-.ProseMirror h2 { font-size: 1.5rem;   font-weight: 700; line-height: 1.25; margin-top: 1.4em; margin-bottom: 0.4em; }
-.ProseMirror h3 { font-size: 1.25rem;  font-weight: 600; line-height: 1.3;  margin-top: 1.3em; margin-bottom: 0.4em; }
-.ProseMirror h4 { font-size: 1.125rem; font-weight: 600; line-height: 1.4;  margin-top: 1.2em; margin-bottom: 0.3em; }
-.ProseMirror p  { margin: 0; }
-.ProseMirror p + p { margin-top: 0.5em; }
-.ProseMirror strong { font-weight: 700; }
-.ProseMirror em { font-style: italic; }
-.ProseMirror u  { text-decoration: underline; }
-.ProseMirror s  { text-decoration: line-through; }
-.ProseMirror ul { list-style-type: disc;    padding-left: 1.5rem; }
-.ProseMirror ol { list-style-type: decimal; padding-left: 1.5rem; }
-.ProseMirror li { margin-top: 0.25em; }
+
+.ProseMirror>*+* {
+  margin-top: 0.75em;
+}
+
+.ProseMirror h1 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+.ProseMirror h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1.25;
+  margin-top: 1.4em;
+  margin-bottom: 0.4em;
+}
+
+.ProseMirror h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.3;
+  margin-top: 1.3em;
+  margin-bottom: 0.4em;
+}
+
+.ProseMirror h4 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.4;
+  margin-top: 1.2em;
+  margin-bottom: 0.3em;
+}
+
+.ProseMirror p {
+  margin: 0;
+}
+
+.ProseMirror p+p {
+  margin-top: 0.5em;
+}
+
+.ProseMirror strong {
+  font-weight: 700;
+}
+
+.ProseMirror em {
+  font-style: italic;
+}
+
+.ProseMirror u {
+  text-decoration: underline;
+}
+
+.ProseMirror s {
+  text-decoration: line-through;
+}
+
+.ProseMirror ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+}
+
+.ProseMirror ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+}
+
+.ProseMirror li {
+  margin-top: 0.25em;
+}
+
 .ProseMirror blockquote {
   border-left: 3px solid var(--primary);
   padding-left: 1rem;
@@ -475,6 +728,7 @@ a, button, [role="button"] { cursor: pointer !important; }
   font-style: italic;
   margin: 1em 0;
 }
+
 .ProseMirror code {
   background: color-mix(in srgb, var(--primary) 8%, transparent);
   color: var(--primary);
@@ -483,6 +737,7 @@ a, button, [role="button"] { cursor: pointer !important; }
   font-family: ui-monospace, monospace;
   font-size: 0.875em;
 }
+
 .ProseMirror pre {
   background: #1a1a2e;
   color: #e2e8f0;
@@ -493,11 +748,35 @@ a, button, [role="button"] { cursor: pointer !important; }
   font-size: 0.875rem;
   line-height: 1.6;
 }
-.ProseMirror pre code { background: none; color: inherit; padding: 0; }
-.ProseMirror a { color: var(--primary); text-decoration: underline; cursor: pointer; }
-.ProseMirror a:hover { opacity: 0.8; }
-.ProseMirror hr { border: none; border-top: 1px solid var(--border); margin: 1.5em 0; }
-.ProseMirror img { max-width: 100%; height: auto; border-radius: 0.5rem; }
+
+.ProseMirror pre code {
+  background: none;
+  color: inherit;
+  padding: 0;
+}
+
+.ProseMirror a {
+  color: var(--primary);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.ProseMirror a:hover {
+  opacity: 0.8;
+}
+
+.ProseMirror hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 1.5em 0;
+}
+
+.ProseMirror img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+}
+
 .ProseMirror p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);
   float: left;

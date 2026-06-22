@@ -22,13 +22,13 @@ export function CTABanner({
   backgroundImage,
 }: CTABannerProps) {
   return (
-    <section 
+    <section
       className="py-16 md:py-24 relative overflow-hidden"
       style={{ backgroundColor }}
     >
       {backgroundImage && (
-        <div 
-          className="absolute inset-0 z-0 bg-cover bg-center opacity-20"
+        <div
+          className="absolute inset-0 z-0 bg-contain bg-center opacity-20"
           style={{ backgroundImage: `url('${backgroundImage}')` }}
         />
       )}

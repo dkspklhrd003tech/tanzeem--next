@@ -1,12 +1,16 @@
-import { getCmsPage, getCleanContent } from "@/lib/page-helpers";
-import { DynamicPageContent, generatePageMetadata } from "@/components/shared/DynamicPageContent";
-import { Accordion } from "@/components/shared/Accordion";
+import { db } from "@/db";
+import { faqItems } from "@/db/schema";
+import { eq } from "drizzle-orm";
+import { getCmsPage } from "@/lib/page-helpers";
+import { generatePageMetadata } from "@/components/shared/DynamicPageContent";
+import { FAQPageClient, type FAQItem } from "@/components/faq/FAQPageClient";
 
 export const dynamic = "force-dynamic";
 
 const SLUG = "faqs";
 const DEFAULT_TITLE = "FAQs | Tanzeem-e-Islami";
 const DEFAULT_DESC = "Frequently asked questions about Tanzeem-e-Islami, its mission, programs, and activities.";
+
 const FALLBACK_ITEMS = [
   {
     question: "What is Tanzeem-e-Islami?",
@@ -48,41 +52,44 @@ export async function generateMetadata() {
 }
 
 export default async function FAQsPage() {
-  const { page, sections } = await getCmsPage(SLUG);
+  const { page } = await getCmsPage(SLUG);
 
-  if (page && sections.length > 0) {
-    return (
-      <main className="min-h-screen bg-background">
-        <DynamicPageContent sections={sections} />
-      </main>
-    );
+  let items: any[] = [];
+  try {
+    items = await db
+      .select()
+      .from(faqItems)
+      .where(eq(faqItems.isPublished, true))
+      .orderBy(faqItems.order);
+  } catch (error) {
+    console.error("Failed to query faqItems:", error);
   }
 
-  if (page) {
-    return (
-      <main className="min-h-screen bg-background">
-        <div className="container mx-auto py-12 md:py-16 px-4 max-w-4xl">
-          <div className="prose prose-lg dark:prose-invert max-w-none mx-auto"
-            dangerouslySetInnerHTML={{ __html: getCleanContent(page.content) }}
-          />
-        </div>
-      </main>
-    );
-  }
+  // Map dynamic database items or use mapped fallback items
+  const formattedItems: FAQItem[] = items.length > 0
+    ? items.map((item) => ({
+        id: item.id,
+        question: item.question,
+        answer: item.answer,
+        category: item.category || "General",
+        order: item.order || 0,
+        isPublished: item.isPublished,
+      }))
+    : FALLBACK_ITEMS.map((item, idx) => ({
+        id: `fallback-${idx}`,
+        question: item.question,
+        answer: item.answer,
+        category: "General",
+        order: idx,
+        isPublished: true,
+      }));
 
   return (
-    <main className="min-h-screen bg-background">
-      <div className="container mx-auto py-12 md:py-16">
-        <article className="prose prose-lg dark:prose-invert max-w-4xl mx-auto mb-12">
-          <h1>Frequently Asked Questions</h1>
-          <p className="lead text-xl text-muted-foreground mb-8">
-            {DEFAULT_DESC}
-          </p>
-        </article>
-        <div className="max-w-3xl mx-auto">
-          <Accordion items={FALLBACK_ITEMS} />
-        </div>
-      </div>
-    </main>
+    <FAQPageClient
+      initialItems={formattedItems}
+      pageTitle={page?.title || "Frequently Asked Questions"}
+      pageExcerpt={page?.excerpt || undefined}
+    />
   );
 }
+

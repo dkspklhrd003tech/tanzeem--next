@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { mutate } from "swr";
 import { Save, ImageIcon, Loader2, Globe } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -62,6 +63,7 @@ export function SiteIdentityManager() {
         title: "Identity Updated",
         description: "Site identity settings have been saved.",
       });
+      mutate("/api/settings");
     } catch (err) {
       console.error("Save error:", err);
       toast({

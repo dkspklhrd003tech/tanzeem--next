@@ -55,7 +55,7 @@ export default async function BooksByCategoryPage() {
 
   return (
     <main className="min-h-screen bg-background">
-      <div className="container mx-auto py-12 md:py-16 px-4">
+      <div className="container mx-auto py-8 md:py-10 px-4">
         <p className="section-label mb-2">Our Books</p>
         <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">Books by Category</h1>
         <p className="text-lg text-foreground-muted mb-10 max-w-2xl">

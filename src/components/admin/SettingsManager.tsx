@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { mutate } from "swr";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -99,6 +100,7 @@ export function SettingsManager() {
 
             if (res.ok) {
                 toast({ title: "Settings Saved", description: "Global configuration updated successfully." });
+                mutate("/api/settings");
                 fetchData(); // Refresh state after save
             } else {
                 const errorData = await res.json().catch(() => ({}));

@@ -3,7 +3,7 @@ export const metadata = { title: "Policy | Tanzeem-e-Islami" };
 export default function PolicyPage() {
   return (
     <main className="min-h-screen bg-background">
-      <div className="container mx-auto py-12 md:py-16 px-4">
+      <div className="container mx-auto py-8 md:py-10 px-4">
         <article className="prose prose-lg dark:prose-invert max-w-4xl mx-auto">
           <h1>Policy</h1>
 

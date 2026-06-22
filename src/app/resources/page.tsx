@@ -18,7 +18,7 @@ const cards = [
   { title: "Press Releases", href: "/resources/press-releases", description: "Official announcements" },
   { title: "Social Media", href: "/resources/social-media", description: "Follow Tanzeem online" },
   { title: "Khitab-e-Jum'ah", href: "/resources/khitab-e-jumah", description: "Friday sermon audio archive" },
-  { title: "FAQ", href: "/faq", description: "Frequently asked questions" },
+  { title: "FAQ", href: "/faqs", description: "Frequently asked questions" },
 ];
 
 export default function ResourcesPage() {

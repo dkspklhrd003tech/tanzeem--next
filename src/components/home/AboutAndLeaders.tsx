@@ -41,43 +41,41 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    className="bg-[#0d5844] border border-border rounded-xl mb-14 flex flex-col md:flex-row gap-0 overflow-hidden shadow-sm"
+                    className="bg-[#0d5844] border border-border rounded-xl mb-14 p-6 md:p-8 flex flex-col md:flex-row gap-6 md:gap-8 items-center md:items-start shadow-sm"
                 >
-                    {/* Logo panel — white bg with green border right */}
-                    <div className="md:w-52 shrink-0 flex items-center justify-center p-6 border-b md:border-b-0 md:border-r border-primary/20">
-                        <div className="w-32 h-32 md:w-40 md:h-40 border-2 border-primary rounded-lg overflow-hidden bg-white flex items-center justify-center">
-                            <img
-                                src={aboutImage}
-                                alt="Tanzeem-e-Islami logo"
-                                className="w-full h-full object-contain p-2"
-                                onError={(e) => {
-                                    const t = e.currentTarget;
-                                    if (!t.src.includes("/logo.png")) t.src = "/logo.png";
-                                    else t.style.display = "none";
-                                }}
-                            />
-                        </div>
+                    {/* Logo Panel */}
+                    <div className="w-32 h-32 md:w-40 md:h-40 shrink-0 border-2 border-primary rounded-lg overflow-hidden bg-white flex items-center justify-center">
+                        <img
+                            src={aboutImage}
+                            alt="Tanzeem-e-Islami logo"
+                            className="w-full h-full object-contain p-2"
+                            onError={(e) => {
+                                const t = e.currentTarget;
+                                if (!t.src.includes("/logo.png")) t.src = "/logo.png";
+                                else t.style.display = "none";
+                            }}
+                        />
                     </div>
 
-                    {/* Text panel */}
-                    <div className="flex-1 p-6 md:p-8 flex flex-col justify-center">
-                        <p className="text-primary-foreground/80  mb-2 text-xs">About Us</p>
+                    {/* Text Content */}
+                    <div className="flex-1 flex flex-col justify-center">
+                        <p className="text-white mb-2 text-xs">About Us</p>
                         <h2
                             id="about-heading"
-                            className="text-2xl md:text-3xl font-bold text-foreground mb-3"
+                            className="text-2xl md:text-3xl font-bold text-white mb-3"
                         >
                             {aboutTitle}
                         </h2>
-                        <p className="text-foreground-muted leading-relaxed text-sm md:text-base mb-6 max-w-3xl">
+                        <p className="text-white leading-relaxed text-sm md:text-base mb-6 max-w-3xl">
                             {aboutDesc}
                         </p>
                         <div>
                             <Link
                                 href={btnLink}
                                 className={cn(
-                                    "inline-flex items-center gap-2 bg-primary text-primary-foreground",
+                                    "inline-flex items-center gap-2 border border-white bg-primary text-white",
                                     "px-6 py-2.5 rounded-full text-sm font-semibold",
-                                    "hover:bg-primary-dark transition-colors",
+                                    "hover:bg-white hover:text-primary transition-colors",
                                     "focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
                                 )}
                             >

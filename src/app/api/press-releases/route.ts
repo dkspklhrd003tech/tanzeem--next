@@ -14,7 +14,7 @@ export async function GET(request: Request) {
       .select()
       .from(pressReleases)
       .where(eq(pressReleases.isPublished, true))
-      .orderBy(desc(pressReleases.publishedAt), desc(pressReleases.createdAt))
+      .orderBy(pressReleases.orderIndex, desc(pressReleases.publishedAt), desc(pressReleases.createdAt))
       .limit(limit);
 
     return NextResponse.json({ items });

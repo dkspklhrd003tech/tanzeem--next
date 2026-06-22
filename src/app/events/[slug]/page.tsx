@@ -34,113 +34,113 @@ export default async function EventDetailPage({ params }: Props) {
 
   return (
     <main className="min-h-screen bg-background">
-    <div className="container mx-auto py-12 md:py-16 px-4">
-      <Link href="/events" className="inline-flex items-center gap-1 text-sm text-primary hover:underline mb-6">
-        <ArrowLeft className="h-4 w-4" /> All Events
-      </Link>
+      <div className="container mx-auto py-8 md:py-10 px-4">
+        <Link href="/events" className="inline-flex items-center gap-1 text-sm text-primary hover:underline mb-6">
+          <ArrowLeft className="h-4 w-4" /> All Events
+        </Link>
 
-      <article className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
-          {event.thumbnailUrl && (
-            <img
-              src={event.thumbnailUrl}
-              alt={event.title}
-              className="w-full aspect-video rounded-xl object-cover shadow-lg mb-8"
-            />
-          )}
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">{event.title}</h1>
+        <article className="max-w-4xl mx-auto">
+          {/* Header */}
+          <div className="mb-8">
+            {event.thumbnailUrl && (
+              <img
+                src={event.thumbnailUrl}
+                alt={event.title}
+                className="w-full aspect-video rounded-xl object-cover shadow-lg mb-8"
+              />
+            )}
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">{event.title}</h1>
 
-          <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-            <span className="flex items-center gap-2">
-              <Calendar className="h-4 w-4" />
-              {event.startDate
-                ? new Date(event.startDate).toLocaleDateString("en-US", {
+            <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
+              <span className="flex items-center gap-2">
+                <Calendar className="h-4 w-4" />
+                {event.startDate
+                  ? new Date(event.startDate).toLocaleDateString("en-US", {
                     weekday: "long",
                     year: "numeric",
                     month: "long",
                     day: "numeric",
                   })
-                : "TBA"}
-              {event.endDate &&
-                ` — ${new Date(event.endDate).toLocaleDateString("en-US", {
+                  : "TBA"}
+                {event.endDate &&
+                  ` — ${new Date(event.endDate).toLocaleDateString("en-US", {
                     weekday: "long",
                     year: "numeric",
                     month: "long",
                     day: "numeric",
                   })}`}
-            </span>
-            <span className="flex items-center gap-2">
-              <Clock className="h-4 w-4" />
-              {event.startDate
-                ? new Date(event.startDate).toLocaleTimeString("en-US", {
+              </span>
+              <span className="flex items-center gap-2">
+                <Clock className="h-4 w-4" />
+                {event.startDate
+                  ? new Date(event.startDate).toLocaleTimeString("en-US", {
                     hour: "2-digit",
                     minute: "2-digit",
                   })
-                : "TBA"}
-            </span>
-            {event.isOnline ? (
-              <span className="flex items-center gap-2 text-primary">
-                <Globe className="h-4 w-4" /> Online Event
+                  : "TBA"}
               </span>
-            ) : event.location ? (
-              <span className="flex items-center gap-2">
-                <MapPin className="h-4 w-4" /> {event.location}
-              </span>
-            ) : null}
+              {event.isOnline ? (
+                <span className="flex items-center gap-2 text-primary">
+                  <Globe className="h-4 w-4" /> Online Event
+                </span>
+              ) : event.location ? (
+                <span className="flex items-center gap-2">
+                  <MapPin className="h-4 w-4" /> {event.location}
+                </span>
+              ) : null}
+            </div>
           </div>
-        </div>
 
-        {/* Description */}
-        {event.description && (
-          <div className="prose prose-lg dark:prose-invert max-w-none mb-8">
-            <p>{event.description}</p>
-          </div>
-        )}
+          {/* Description */}
+          {event.description && (
+            <div className="prose prose-lg dark:prose-invert max-w-none mb-8">
+              <p>{event.description}</p>
+            </div>
+          )}
 
-        {/* Content */}
-        {event.content && (
-          <div
-            className="prose prose-lg dark:prose-invert max-w-none mb-8"
-            dangerouslySetInnerHTML={{ __html: event.content }}
-          />
-        )}
+          {/* Content */}
+          {event.content && (
+            <div
+              className="prose prose-lg dark:prose-invert max-w-none mb-8"
+              dangerouslySetInnerHTML={{ __html: event.content }}
+            />
+          )}
 
-        {/* Address */}
-        {event.address && !event.isOnline && (
-          <div className="bg-card border border-border rounded-xl p-6 mb-8">
-            <h3 className="font-semibold text-foreground mb-2 flex items-center gap-2">
-              <MapPin className="h-4 w-4" /> Location
-            </h3>
-            <p className="text-muted-foreground">{event.address}</p>
-          </div>
-        )}
+          {/* Address */}
+          {event.address && !event.isOnline && (
+            <div className="bg-card border border-border rounded-xl p-6 mb-8">
+              <h3 className="font-semibold text-foreground mb-2 flex items-center gap-2">
+                <MapPin className="h-4 w-4" /> Location
+              </h3>
+              <p className="text-muted-foreground">{event.address}</p>
+            </div>
+          )}
 
-        {/* Registration */}
-        {event.registrationRequired && event.registrationUrl && (
-          <div className="bg-primary/5 border border-primary/20 rounded-xl p-6 text-center">
-            <h3 className="font-semibold text-foreground mb-2">Registration Required</h3>
-            <Button asChild>
-              <a href={event.registrationUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2">
-                Register Now <ExternalLink className="h-4 w-4" />
-              </a>
-            </Button>
-          </div>
-        )}
+          {/* Registration */}
+          {event.registrationRequired && event.registrationUrl && (
+            <div className="bg-primary/5 border border-primary/20 rounded-xl p-6 text-center">
+              <h3 className="font-semibold text-foreground mb-2">Registration Required</h3>
+              <Button asChild>
+                <a href={event.registrationUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2">
+                  Register Now <ExternalLink className="h-4 w-4" />
+                </a>
+              </Button>
+            </div>
+          )}
 
-        {/* Online URL */}
-        {event.isOnline && event.onlineUrl && (
-          <div className="bg-card border border-border rounded-xl p-6 text-center">
-            <h3 className="font-semibold text-foreground mb-2">Join Online</h3>
-            <Button asChild variant="default">
-              <a href={event.onlineUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2">
-                <Globe className="h-4 w-4" /> Join Event
-              </a>
-            </Button>
-          </div>
-        )}
-      </article>
-    </div>
+          {/* Online URL */}
+          {event.isOnline && event.onlineUrl && (
+            <div className="bg-card border border-border rounded-xl p-6 text-center">
+              <h3 className="font-semibold text-foreground mb-2">Join Online</h3>
+              <Button asChild variant="default">
+                <a href={event.onlineUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2">
+                  <Globe className="h-4 w-4" /> Join Event
+                </a>
+              </Button>
+            </div>
+          )}
+        </article>
+      </div>
     </main>
   );
 }

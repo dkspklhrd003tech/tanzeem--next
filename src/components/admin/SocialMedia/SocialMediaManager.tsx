@@ -202,7 +202,7 @@ export function SocialMediaManager() {
     <div className="space-y-8 animate-in fade-in duration-500">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-4xl font-extrabold tracking-tight text-foreground">Social Media Hub</h1>
+          <h1 className="text-4xl font-bold tracking-tight text-foreground">Social Media Hub</h1>
           <p className="text-muted-foreground mt-2">Orchestrate your cross-platform digital presence and engagement links.</p>
         </div>
         <div className="flex gap-3">
@@ -266,14 +266,14 @@ export function SocialMediaManager() {
               <DialogFooter>
                 <Button variant="outline" onClick={() => setPlatformDialogOpen(false)}>Cancel</Button>
                 <ConfirmDialog
-                    title="Save Platform"
-                    description="Are you sure you want to save this social media platform?"
-                    onConfirm={handleSavePlatform}
+                  title="Save Platform"
+                  description="Are you sure you want to save this social media platform?"
+                  onConfirm={handleSavePlatform}
                 >
-                    <Button disabled={isSaving}>
-                        {isSaving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                        Save Platform
-                    </Button>
+                  <Button disabled={isSaving}>
+                    {isSaving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                    Save Platform
+                  </Button>
                 </ConfirmDialog>
               </DialogFooter>
             </DialogContent>
@@ -424,8 +424,8 @@ export function SocialMediaManager() {
                         onConfirm={handleSaveAccount}
                       >
                         <Button disabled={isSaving}>
-                            {isSaving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                            Save Account
+                          {isSaving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                          Save Account
                         </Button>
                       </ConfirmDialog>
                     </DialogFooter>

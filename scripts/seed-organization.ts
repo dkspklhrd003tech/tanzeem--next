@@ -178,7 +178,7 @@ async function seedOrganization() {
         }
     }
 
-    console.log("✅ Organization pages seeded successfully!");
+    console.log("✅ Organization Pages Seeded Successfully!");
 }
 
 seedOrganization().catch(console.error);

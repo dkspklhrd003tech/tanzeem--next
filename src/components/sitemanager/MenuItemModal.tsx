@@ -65,7 +65,17 @@ export function MenuItemModal({ open, onClose, onSave, initial, allItems }: Prop
                 : <LinkIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
               }
               <Input id="mi-url" placeholder="/ or https://…" className="pl-9"
-                value={form.url ?? ""} onChange={e => set("url", e.target.value)} />
+                value={form.url ?? ""}
+                onChange={e => {
+                  const newUrl = e.target.value;
+                  const isExt = newUrl.startsWith("http://") || newUrl.startsWith("https://");
+                  setForm(p => ({
+                    ...p,
+                    url: newUrl,
+                    isOpenInNew: isExt
+                  }));
+                }}
+              />
             </div>
             {isExternal && (
               <p className="text-[11px] text-amber-600 mt-1 flex items-center gap-1">

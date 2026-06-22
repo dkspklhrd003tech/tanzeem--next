@@ -494,10 +494,12 @@ export const pressReleases = mysqlTable("press_releases", {
     content: text("content").notNull(),
     excerpt: text("excerpt"),
     featuredImage: text("featured_image"),
+    pdfUrl: text("pdf_url"),
     isPublished: boolean("is_published").default(true).notNull(),
     publishedAt: timestamp("published_at"),
     metaTitle: varchar("meta_title", { length: 255 }),
     metaDescription: text("meta_description"),
+    orderIndex: int("order_index").default(0).notNull(),
     ...timestamps,
 });
 
@@ -637,7 +639,7 @@ export const socialAccountsRelations = relations(socialAccounts, ({ one }) => ({
 }));
 
 // ============================================
-// FAQ ITEMS  (standalone, admin-managed)
+// FAQ ITEMS
 // ============================================
 
 export const faqItems = mysqlTable("faq_items", {
@@ -765,5 +767,22 @@ export const donationCampaigns = mysqlTable("donation_campaigns", {
 export const donationCampaignsRelations = relations(donationCampaigns, ({ one }) => ({
     author: one(users, { fields: [donationCampaigns.authorId], references: [users.id] }),
 }));
+
+// ============================================
+// KHITABAT-E-JUMMAH ADDRESSES
+// ============================================
+
+export const khitabatJummahAddresses = mysqlTable("khitabat_e_jummah_addresses", {
+    id: varchar("id", { length: 191 }).primaryKey(),
+    masjid: varchar("masjid", { length: 255 }).notNull(),
+    address: text("address").notNull(),
+    city: varchar("city", { length: 255 }).notNull(),
+    time: varchar("time", { length: 255 }).notNull(),
+    contact: varchar("contact", { length: 100 }),
+    map: text("map"),
+    isPublished: boolean("is_published").default(true).notNull(),
+    ...timestamps,
+});
+
 
 

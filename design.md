@@ -181,7 +181,7 @@ isActive: boolean
 
 **Fields:** `id, title, slug, content, excerpt, featuredImage, isPublished, publishedAt, metaTitle, metaDescription`
 
-**URL:** `/resources/press-releases/{slug}`
+**URL:** `/press-releases/{slug}`
 
 ---
 
@@ -298,7 +298,7 @@ isActive: boolean
 | `--primary` | `#0d5844` | Primary actions, headings, accents |
 | `--primary-foreground` | `#fefefc` | Text on primary backgrounds |
 | `--primary-light` | `#007a4d` | Hover states, lighter accents |
-| `--primary-dark` | `#003d25` | Active states, deeper accents |
+| `--primary-dark` | `--primary` | Active states, deeper accents |
 | `--accent-gold` | `#c8a84e` | Logo accent, decorative highlights |
 | `--accent-gold-dark` | `#a88a3a` | Gold hover/active states |
 
@@ -1071,7 +1071,7 @@ Audio:           /resources/audios/{slug}
 Videos:          /resources/videos/{slug}
 Books:           /resources/books/{slug}
 Magazines:       /resources/magazines/{slug}
-Press Releases:  /resources/press-releases/{slug}
+Press Releases:  /press-releases/{slug}
 Posts:           /resources
 ```
 

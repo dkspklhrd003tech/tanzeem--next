@@ -2,6 +2,8 @@ import { getCmsPage, getCleanContent } from "@/lib/page-helpers";
 import { DynamicPageContent, generatePageMetadata } from "@/components/shared/DynamicPageContent";
 import { CTABanner } from "@/components/shared/CTABanner";
 
+import { RedirectPage } from "@/components/shared/RedirectPage";
+
 export const dynamic = "force-dynamic";
 
 const SLUG = "online-courses";
@@ -16,6 +18,10 @@ export async function generateMetadata() {
 export default async function OnlineCoursesPage() {
   const { page, sections } = await getCmsPage(SLUG);
 
+  if (page && page.template === "redirect") {
+    return <RedirectPage title={page.title} url={page.content.trim() || "https://lms.quranacademy.com/"} />;
+  }
+
   if (page && sections.length > 0) {
     return (
       <main className="min-h-screen bg-background">
@@ -27,7 +33,7 @@ export default async function OnlineCoursesPage() {
   if (page) {
     return (
       <main className="min-h-screen bg-background">
-        <div className="container mx-auto py-12 md:py-16 px-4 max-w-4xl">
+        <div className="container mx-auto py-8 md:py-10 px-4 max-w-4xl">
           <div className="prose prose-lg dark:prose-invert max-w-none mx-auto"
             dangerouslySetInnerHTML={{ __html: getCleanContent(page.content) }}
           />
@@ -38,7 +44,7 @@ export default async function OnlineCoursesPage() {
 
   return (
     <main className="min-h-screen bg-background">
-      <div className="container mx-auto py-12 md:py-16 px-4">
+      <div className="container mx-auto py-8 md:py-10 px-4">
         <article className="prose prose-lg dark:prose-invert max-w-4xl mx-auto">
           <h1>Online Courses</h1>
           <p className="lead text-xl text-muted-foreground mb-8">

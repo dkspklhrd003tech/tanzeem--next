@@ -4,6 +4,8 @@ import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 
+import { cookies } from "next/headers";
+
 // Simple session management using cookies
 const SESSION_COOKIE = "admin_session";
 
@@ -20,8 +22,21 @@ export async function createSession(userId: string): Promise<string> {
   return Buffer.from(JSON.stringify({ userId, createdAt: Date.now() })).toString("base64");
 }
 
-export async function getSession(request: NextRequest): Promise<{ userId: string } | null> {
-  const sessionCookie = request.cookies.get(SESSION_COOKIE)?.value;
+export async function getSession(request?: NextRequest): Promise<{ userId: string } | null> {
+  let sessionCookie: string | undefined = undefined;
+
+  if (request) {
+    sessionCookie = request.cookies.get(SESSION_COOKIE)?.value;
+  }
+
+  if (!sessionCookie) {
+    try {
+      const cookieStore = await cookies();
+      sessionCookie = cookieStore.get(SESSION_COOKIE)?.value;
+    } catch {
+      // ignore errors if called in non-request contexts
+    }
+  }
 
   if (!sessionCookie) return null;
 
@@ -54,7 +69,7 @@ export async function clearSessionCookie(response: NextResponse) {
 }
 
 // Helper to get current user
-export async function getCurrentUser(request: NextRequest) {
+export async function getCurrentUser(request?: NextRequest) {
   const session = await getSession(request);
 
   if (!session) return null;

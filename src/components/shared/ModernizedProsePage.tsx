@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { StatsGrid } from "@/components/shared/StatsGrid";
 import { Accordion } from "@/components/shared/Accordion";
 import { CTABanner } from "@/components/shared/CTABanner";
+import { useSettings } from "@/hooks/use-settings";
 
 interface BreadcrumbItem {
   name: string;
@@ -26,6 +27,7 @@ interface ModernizedProsePageProps {
   slug: string;
   breadcrumbs: BreadcrumbItem[];
   featuredImage?: string | null;
+  template?: string; // Custom layout templates
 
   // Custom sections
   stats?: { number: string; label: string }[];
@@ -44,6 +46,7 @@ export function ModernizedProsePage({
   slug,
   breadcrumbs,
   featuredImage,
+  template,
   stats,
   accordionItems,
   ideologyCards,
@@ -84,14 +87,29 @@ export function ModernizedProsePage({
     }
   };
 
+  const { settings } = useSettings();
+  const bgImage = settings?.banner_bg_image;
+
   return (
-    <div className="min-h-screen bg-slate-50/50 dark:bg-[#0a0a0a] pb-16">
+    <div className="min-h-screen bg-slate-50/50 dark:bg-[#0a0a0a]">
       {/* ── Gorgeous Hero Header ── */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-[#0d5844] via-[#005031] to-[#003d25] text-white pt-24 pb-20 md:pt-28 md:pb-28">
+      <div className="relative overflow-hidden bg-primary text-white pt-24 pb-20 md:pt-28 md:pb-28">
+        {/* Global Banner Background Image */}
+        {bgImage && (
+          <>
+            <div
+              className="absolute inset-0 z-0 bg-contain bg-center transition-transform"
+              style={{ backgroundImage: `url('${bgImage}')` }}
+            />
+            {/* Overlay to ensure readability on dynamic background image */}
+            <div className="absolute inset-0 z-10 bg-black/40 pointer-events-none" />
+          </>
+        )}
+
         {/* Ambient Overlay Patterns */}
-        <div className="absolute inset-0 opacity-15 mix-blend-overlay pointer-events-none bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-white/30 via-transparent to-transparent" />
+        <div className="absolute inset-0 opacity-15 mix-blend-overlay pointer-events-none bg-primary" />
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#c8a84e]/10 rounded-full blur-[100px] -mr-64 -mt-64" />
-        <div className="absolute -bottom-24 left-1/4 w-[400px] h-[400px] bg-emerald-500/10 rounded-full blur-[80px]" />
+        <div className="absolute -bottom-24 left-1/4 w-[400px] h-[400px] bg-primary rounded-full blur-[80px]" />
 
         {/* Arabesque geometric watermark */}
         <div
@@ -99,7 +117,19 @@ export function ModernizedProsePage({
           style={{ backgroundImage: `url('/images/pattern-arabesque.png')`, backgroundSize: '180px' }}
         />
 
-        <div className="container mx-auto px-4 relative z-10">
+        <div className="container mx-auto relative z-10">
+          {/* Heading */}
+          <motion.div
+            initial={{ opacity: 0, y: 25 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="max-w-4xl"
+          >
+            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-normal">
+              {title}
+            </h1>
+          </motion.div>
+
           {/* Breadcrumbs */}
           <nav className="flex items-center gap-1.5 text-xs md:text-sm text-emerald-100/80 mb-6 flex-wrap">
             {breadcrumbs.map((crumb, idx) => (
@@ -115,30 +145,18 @@ export function ModernizedProsePage({
               </React.Fragment>
             ))}
           </nav>
-
-          {/* Heading */}
-          <motion.div
-            initial={{ opacity: 0, y: 25 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="max-w-4xl"
-          >
-            <h1 className="text-3xl md:text-5xl lg:text-6xl font-extrabold tracking-tight leading-tight">
-              {title}
-            </h1>
-          </motion.div>
         </div>
       </div>
 
       {/* ── Main Layout Body ── */}
-      <div className="container mx-auto px-4 mt-8 md:mt-12">
-        <div className="grid lg:grid-cols-3 gap-8 md:gap-12 items-start">
+      <div className="container mx-auto my-8 md:my-12">
+        <div className="grid grid-cols-1 gap-6 md:gap-8 items-start">
 
           {/* Left / Main Column — Article Text */}
           <div className="lg:col-span-2 space-y-8">
 
-            {/* Featured Image inside Article */}
-            {featuredImage && (
+            {/* Featured Image inside Article (Only for non-leader templates) */}
+            {featuredImage && template !== "leader" && (
               <motion.div
                 initial={{ opacity: 0, scale: 0.98 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -158,13 +176,13 @@ export function ModernizedProsePage({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="bg-white dark:bg-[#121212] rounded-3xl border border-slate-200/80 dark:border-zinc-800/80 p-6 md:p-12 shadow-mid3 relative overflow-hidden"
+              className="bg-white dark:bg-[#121212] rounded-3xl border border-slate-200/80 dark:border-zinc-800/80 p-8 md:p-6 shadow-mid3 relative overflow-hidden"
             >
               {/* Subtle Arabesque Watermark inside the card */}
               <div className="absolute inset-0 opacity-[0.01] pointer-events-none bg-repeat bg-center" style={{ backgroundImage: `url('/images/pattern-arabesque.png')` }} />
 
               {/* Action Toolbar */}
-              <div className="flex justify-between items-center border-b border-slate-100 dark:border-zinc-800/80 pb-6 mb-8 text-xs text-muted-foreground">
+              <div className="flex justify-between items-center border-b border-slate-100 dark:border-zinc-800/80 mb-4 text-xs text-muted-foreground">
                 <div className="flex items-center gap-4">
                   <span className="flex items-center gap-1.5">
                     <User className="w-3.5 h-3.5 text-primary" />
@@ -178,13 +196,24 @@ export function ModernizedProsePage({
                 </div>
                 <div className="flex items-center gap-2">
                   <Button variant="ghost" size="icon" className="w-8 h-8 rounded-full hover:bg-slate-100" onClick={handleShare} title="Share Link">
-                    <Share2 className="w-4 h-4 text-slate-600 dark:text-slate-400" />
-                  </Button>
-                  <Button variant="ghost" size="icon" className="w-8 h-8 rounded-full hover:bg-slate-100" onClick={handlePrint} title="Print Page">
-                    <Printer className="w-4 h-4 text-slate-600 dark:text-slate-400" />
+                    <Share2 className="w-5 h-5 text-slate-600 dark:text-slate-400" />
                   </Button>
                 </div>
               </div>
+
+              {/* Leader Template Centered Title & Dates */}
+              {template === "leader" && (
+                <div className="text-center mb-8 border-b border-slate-100 dark:border-zinc-800/80 pb-6">
+                  <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-2">
+                    {title}
+                  </h2>
+                  {excerpt && (
+                    <p className="text-emerald-700 dark:text-emerald-500 font-bold uppercase tracking-wider text-sm md:text-base">
+                      {excerpt}
+                    </p>
+                  )}
+                </div>
+              )}
 
               {/* Page Content Renderer */}
               {cleanContent ? (
@@ -199,39 +228,24 @@ export function ModernizedProsePage({
                     prose-ul:list-disc prose-ul:pl-6 prose-ul:mb-6
                     prose-ol:list-decimal prose-ol:pl-6 prose-ol:mb-6
                     prose-blockquote:italic prose-blockquote:border-l-4 prose-blockquote:border-[#c8a84e] prose-blockquote:pl-6 prose-blockquote:text-slate-700 dark:prose-blockquote:text-zinc-300 prose-blockquote:bg-slate-50 dark:prose-blockquote:bg-zinc-900/50 prose-blockquote:py-4 prose-blockquote:pr-4 prose-blockquote:rounded-r-2xl"
-                  dangerouslySetInnerHTML={{ __html: cleanContent }}
-                />
+                >
+                  {featuredImage && template === "leader" && (
+                    <div className="w-full max-w-xs mx-auto md:w-auto md:max-w-[340px] md:float-left md:mr-6 md:mb-4 mb-6 rounded-3xl overflow-hidden shadow-mid border border-slate-200/50 bg-slate-100">
+                      <img
+                        src={featuredImage}
+                        alt={title}
+                        className="w-full h-auto object-contain"
+                      />
+                    </div>
+                  )}
+                  <div dangerouslySetInnerHTML={{ __html: cleanContent }} />
+                </article>
               ) : (
                 <div className="text-center py-12 text-muted-foreground italic">
                   No content available for this page yet. Edit this page in the Site Manager.
                 </div>
               )}
             </motion.div>
-
-            {/* Ideology sub-cards if rendering "Our Ideology" landing page */}
-            {ideologyCards && ideologyCards.length > 0 && (
-              <div className="grid md:grid-cols-2 gap-6 mt-8">
-                {ideologyCards.map((card, idx) => (
-                  <motion.div
-                    key={card.href}
-                    initial={{ opacity: 0, y: 15 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.4, delay: idx * 0.08 }}
-                  >
-                    <Link href={card.href} className="group block h-full bg-white dark:bg-[#121212] p-6 rounded-2xl border border-slate-200/80 dark:border-zinc-800/80 shadow-sm hover:shadow-mid transition-all hover:border-primary/50">
-                      <h3 className="font-bold text-lg text-primary dark:text-[#c8a84e] flex items-center gap-1.5 group-hover:translate-x-1 transition-transform">
-                        {card.title}
-                        <ArrowRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
-                      </h3>
-                      <p className="text-sm text-slate-600 dark:text-zinc-400 mt-2 leading-relaxed">
-                        {card.description}
-                      </p>
-                    </Link>
-                  </motion.div>
-                ))}
-              </div>
-            )}
 
             {/* Accordion List Component */}
             {accordionItems && accordionItems.length > 0 && (
@@ -241,59 +255,7 @@ export function ModernizedProsePage({
             )}
           </div>
 
-          {/* Right Column — Sidebar Widgets */}
-          <div className="space-y-8">
 
-            {/* Widget 1: Related Sub-Navigation */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              className="bg-white dark:bg-[#121212] rounded-3xl border border-slate-200/80 dark:border-zinc-800/80 p-6 shadow-sm"
-            >
-              <h3 className="font-bold text-base text-slate-800 dark:text-zinc-100 mb-4 pb-3 border-b flex items-center gap-2">
-                <Compass className="w-4.5 h-4.5 text-primary" />
-                Organizational Hub
-              </h3>
-              <ul className="space-y-1.5">
-                {sidebarLinks.map((link) => {
-                  // Check if pathname contains the link URL to highlight active subpath
-                  const isActive = pathname.startsWith(link.path) || pathname === link.path || (link.path === "/organization/our-ideology" && pathname.includes("/our-ideology"));
-                  return (
-                    <li key={link.path}>
-                      <Link
-                        href={link.path}
-                        className={cn(
-                          "flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium transition-all",
-                          isActive
-                            ? "bg-primary text-white shadow-sm"
-                            : "text-slate-600 dark:text-zinc-400 hover:bg-slate-50 dark:hover:bg-zinc-900 hover:text-primary"
-                        )}
-                      >
-                        {link.name}
-                        <ChevronRight className={cn("w-4 h-4 opacity-75", isActive ? "text-[#c8a84e]" : "text-slate-400")} />
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
-            </motion.div>
-
-            {/* Widget 2: Platform Callout Info */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-              className="bg-gradient-to-br from-[#0d5844]/5 via-[#005031]/10 to-[#003d25]/5 rounded-3xl border border-primary/10 p-6 relative overflow-hidden"
-            >
-              <div className="absolute top-0 right-0 w-24 h-24 bg-[#c8a84e]/10 rounded-full blur-xl pointer-events-none" />
-              <Shield className="w-8 h-8 text-primary dark:text-[#c8a84e] mb-3" />
-              <h4 className="font-bold text-sm text-slate-800 dark:text-zinc-100">Establishment of Deen</h4>
-              <p className="text-xs text-slate-600 dark:text-zinc-400 mt-2 leading-relaxed">
-                Tanzeem-e-Islami works systematically to foster Quranic studies, purify character, and restore the prophetic model of societal change without political elections or violent means.
-              </p>
-            </motion.div>
-          </div>
         </div>
       </div>
 

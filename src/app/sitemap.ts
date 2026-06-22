@@ -57,7 +57,7 @@ const STATIC_ROUTES: { url: string; priority?: number; changeFrequency?: "daily"
   { url: "/contact", priority: 0.5, changeFrequency: "monthly" },
   { url: "/policy", priority: 0.3, changeFrequency: "yearly" },
   { url: "/social-media", priority: 0.5, changeFrequency: "monthly" },
-  { url: "/faq", priority: 0.5, changeFrequency: "monthly" },
+  { url: "/faqs", priority: 0.5, changeFrequency: "monthly" },
   { url: "/ruju-ilal-quran", priority: 0.6, changeFrequency: "monthly" },
   { url: "/books-by-author", priority: 0.6, changeFrequency: "monthly" },
   { url: "/history-of-tanzeem-e-islami", priority: 0.6, changeFrequency: "monthly" },
@@ -97,7 +97,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       ...publishedVideos.map((v) => ({ url: `${BASE_URL}/videos/${v.slug}`, lastModified: v.updatedAt, changeFrequency: "monthly" as const, priority: 0.6 })),
       ...publishedBooks.map((b) => ({ url: `${BASE_URL}/books/${b.slug}`, lastModified: b.updatedAt, changeFrequency: "monthly" as const, priority: 0.6 })),
       ...publishedMagazines.map((m) => ({ url: `${BASE_URL}/magazines`, lastModified: m.updatedAt, changeFrequency: "monthly" as const, priority: 0.5 })),
-      ...publishedPressReleases.map((p) => ({ url: `${BASE_URL}/resources/press-releases/${p.slug}`, lastModified: p.updatedAt, changeFrequency: "weekly" as const, priority: 0.6 })),
+      ...publishedPressReleases.map((p) => ({ url: `${BASE_URL}/press-releases/${p.slug}`, lastModified: p.updatedAt, changeFrequency: "weekly" as const, priority: 0.6 })),
       ...publishedEvents.map((e) => ({ url: `${BASE_URL}/events/${e.slug}`, lastModified: e.updatedAt, changeFrequency: "daily" as const, priority: 0.6 })),
     ];
   } catch {

@@ -774,7 +774,15 @@ function LinkEditorForm({
           <Label className="text-[10px]">URL</Label>
           <Input
             value={form.url ?? ""}
-            onChange={(e) => set("url", e.target.value)}
+            onChange={(e) => {
+              const newUrl = e.target.value;
+              const isExt = newUrl.startsWith("http://") || newUrl.startsWith("https://");
+              setForm(p => ({
+                ...p,
+                url: newUrl,
+                isOpenInNew: isExt
+              }));
+            }}
             className={cn("h-8 text-xs", !urlValid && "border-destructive")}
             placeholder="/audios or https://..."
           />

@@ -12,6 +12,11 @@ import {
     homeCampaigns,
     locations,
     sermons,
+    faqItems,
+    downloads,
+    downloadCategories,
+    galleries,
+    donationCampaigns,
 } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { getCurrentUser } from "@/lib/auth";
@@ -28,7 +33,28 @@ const entityMap: Record<string, any> = {
     campaigns: homeCampaigns,
     locations,
     sermons,
+    faqs: faqItems,
+    downloads,
+    "download-categories": downloadCategories,
+    galleries,
+    donations: donationCampaigns,
 };
+
+function parseDateFields(data: any) {
+    const dateFields = ["publishedAt", "createdAt", "updatedAt", "startDate", "endDate"];
+    const parsed = { ...data };
+    for (const field of dateFields) {
+        if (parsed[field] !== undefined) {
+            if (parsed[field]) {
+                const date = new Date(parsed[field]);
+                parsed[field] = isNaN(date.getTime()) ? null : date;
+            } else {
+                parsed[field] = null;
+            }
+        }
+    }
+    return parsed;
+}
 
 async function requireAuth(request: NextRequest): Promise<NextResponse | null> {
     const user = await getCurrentUser(request);
@@ -106,7 +132,8 @@ export async function PUT(
             }
         }
 
-        await db.update(table).set(data).where(eq((table as any).id, id));
+        const parsedData = parseDateFields(data);
+        await db.update(table).set(parsedData).where(eq((table as any).id, id));
 
         return NextResponse.json({ success: true });
     } catch (error) {

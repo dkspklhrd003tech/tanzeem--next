@@ -186,16 +186,16 @@ function HeroBanner({ data }: { data: HeroBannerState }) {
       {/* Background */}
       {data.backgroundImage ? (
         <div
-          className="absolute inset-0 z-0 bg-cover bg-center"
+          className="absolute inset-0 z-0 bg-contain bg-center"
           style={{ backgroundImage: `url('${data.backgroundImage}')` }}
           aria-hidden="true"
         />
       ) : (
-        <div className="absolute inset-0 z-0 bg-gradient-to-br from-[#003d25] via-[#0d5844] to-[#004d30]" aria-hidden="true" />
+        <div className="absolute inset-0 z-0 bg-primary" aria-hidden="true" />
       )}
 
       {/* Overlay */}
-      <div className="absolute inset-0 z-10 bg-[#003d25]/70" aria-hidden="true" />
+      <div className="absolute inset-0 z-10 bg-primary" aria-hidden="true" />
 
       {/* Decorative Islamic geometry – right side */}
       {data.decorativeImage && (

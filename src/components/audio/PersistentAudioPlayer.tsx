@@ -37,18 +37,18 @@ function WaveformBars({ isPlaying }: { isPlaying: boolean }) {
           animate={
             isPlaying
               ? {
-                  scaleY: [h * 0.5, h, h * 0.3, h * 0.8, h * 0.5],
-                }
+                scaleY: [h * 0.5, h, h * 0.3, h * 0.8, h * 0.5],
+              }
               : { scaleY: 0.3 }
           }
           transition={
             isPlaying
               ? {
-                  duration: 0.8 + i * 0.07,
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: i * 0.06,
-                }
+                duration: 0.8 + i * 0.07,
+                repeat: Infinity,
+                ease: "easeInOut",
+                delay: i * 0.06,
+              }
               : { duration: 0.3 }
           }
           initial={{ scaleY: 0.3 }}
@@ -197,7 +197,7 @@ export function PersistentAudioPlayer() {
         </div>
 
         {/* Main player body */}
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto">
           <AnimatePresence initial={false}>
             {!isCollapsed && (
               <motion.div

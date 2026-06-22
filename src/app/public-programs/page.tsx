@@ -39,7 +39,7 @@ export default async function PublicProgramsPage() {
   if (page) {
     return (
       <main className="min-h-screen bg-background">
-        <div className="container mx-auto py-12 md:py-16 px-4 max-w-4xl">
+        <div className="container mx-auto py-8 md:py-10 px-4 max-w-4xl">
           <div className="prose prose-lg dark:prose-invert max-w-none mx-auto"
             dangerouslySetInnerHTML={{ __html: getCleanContent(page.content) }}
           />

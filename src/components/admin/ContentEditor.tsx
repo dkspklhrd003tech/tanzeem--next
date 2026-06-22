@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import {
   Save,
@@ -8,6 +8,10 @@ import {
   ArrowLeft,
   ChevronDown,
   ChevronUp,
+  FileText,
+  Upload,
+  Trash2,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -43,6 +47,7 @@ interface ContentEditorProps {
     isPublished?: boolean;
     isFeatured?: boolean;
     featuredImage?: string;
+    pdfUrl?: string;
     categoryId?: string;
     sections?: any[];
   };
@@ -73,17 +78,25 @@ export function ContentEditor({
     isPublished: initialData?.isPublished || false,
     isFeatured: initialData?.isFeatured || false,
     featuredImage: initialData?.featuredImage || "",
+    pdfUrl: initialData?.pdfUrl || "",
     categoryId: initialData?.categoryId || "",
     sections: initialData?.sections || [],
   });
 
   const [isSaving, setIsSaving] = useState(false);
   const [showSeo, setShowSeo] = useState(false);
+  const [pressReleaseTab, setPressReleaseTab] = useState<"pdf" | "text">(
+    initialData?.pdfUrl ? "pdf" : "text"
+  );
 
   const handleSave = async () => {
     setIsSaving(true);
+    let finalContent = formData.content;
+    if (contentType === "press-releases" && pressReleaseTab === "pdf" && formData.pdfUrl && !finalContent) {
+      finalContent = "<p>PDF Document Attached</p>";
+    }
     const { sections, ...rest } = formData;
-    await onSave({ ...rest, sections: sections as any });
+    await onSave({ ...rest, content: finalContent, sections: sections as any });
     setIsSaving(false);
   };
 
@@ -163,14 +176,67 @@ export function ContentEditor({
                   onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
                 />
               </div>
-              <div>
-                <Label className="text-sm font-semibold mb-1.5 block">Content</Label>
-                <RichTextEditor
-                  content={formData.content}
-                  onChange={(content) => setFormData({ ...formData, content })}
-                  placeholder={`Write ${contentType} content here...`}
-                />
-              </div>
+              {contentType === "press-releases" ? (
+                <div className="space-y-4">
+                  <div>
+                    <Label className="text-sm font-semibold mb-2 block">Release Type</Label>
+                    <div className="flex gap-2 p-1 bg-muted rounded-xl w-fit">
+                      <button
+                        type="button"
+                        onClick={() => setPressReleaseTab("pdf")}
+                        className={cn(
+                          "px-4 py-2 text-xs font-semibold rounded-lg transition-all",
+                          pressReleaseTab === "pdf"
+                            ? "bg-background text-foreground shadow-sm"
+                            : "text-muted-foreground hover:text-foreground"
+                        )}
+                      >
+                        PDF Document Upload
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setPressReleaseTab("text")}
+                        className={cn(
+                          "px-4 py-2 text-xs font-semibold rounded-lg transition-all",
+                          pressReleaseTab === "text"
+                            ? "bg-background text-foreground shadow-sm"
+                            : "text-muted-foreground hover:text-foreground"
+                        )}
+                      >
+                        Written Statement
+                      </button>
+                    </div>
+                  </div>
+
+                  {pressReleaseTab === "pdf" ? (
+                    <div>
+                      <Label className="text-sm font-semibold mb-2 block">PDF Document</Label>
+                      <PdfUploader
+                        value={formData.pdfUrl}
+                        onChange={(url) => setFormData({ ...formData, pdfUrl: url })}
+                      />
+                    </div>
+                  ) : (
+                    <div>
+                      <Label className="text-sm font-semibold mb-1.5 block">Content</Label>
+                      <RichTextEditor
+                        content={formData.content}
+                        onChange={(content) => setFormData({ ...formData, content })}
+                        placeholder={`Write ${contentType} content here...`}
+                      />
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div>
+                  <Label className="text-sm font-semibold mb-1.5 block">Content</Label>
+                  <RichTextEditor
+                    content={formData.content}
+                    onChange={(content) => setFormData({ ...formData, content })}
+                    placeholder={`Write ${contentType} content here...`}
+                  />
+                </div>
+              )}
               <div>
                 <Label htmlFor="excerpt" className="text-sm font-semibold mb-1.5 block">Excerpt</Label>
                 <Textarea
@@ -278,6 +344,8 @@ export function ContentEditor({
             </CardContent>
           </Card>
 
+
+
           {categories && categories.length > 0 && (
             <Card>
               <CardContent className="p-6">
@@ -301,5 +369,109 @@ export function ContentEditor({
         </div>
       </div>
     </motion.div>
+  );
+}
+
+interface PdfUploaderProps {
+  value?: string;
+  onChange: (url: string) => void;
+}
+
+function PdfUploader({ value = "", onChange }: PdfUploaderProps) {
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      if (file.type !== "application/pdf") {
+        alert("Please select a PDF file");
+        return;
+      }
+
+      setIsUploading(true);
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("type", "uploads");
+
+        const res = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!res.ok) throw new Error("Upload failed");
+
+        const data = await res.json();
+        onChange(data.url);
+      } catch (err) {
+        console.error("PDF upload error:", err);
+        alert("Failed to upload PDF");
+      } finally {
+        setIsUploading(false);
+      }
+    }
+  };
+
+  return (
+    <div className="space-y-3">
+      {value ? (
+        <div className="flex items-center justify-between p-3 border border-emerald-500/30 bg-emerald-50/50 dark:bg-emerald-950/10 rounded-xl">
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-8 h-8 rounded-lg bg-red-100 dark:bg-red-950/40 flex items-center justify-center flex-shrink-0">
+              <FileText className="h-4 w-4 text-red-600 dark:text-red-400" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-semibold text-foreground truncate">Attached PDF</p>
+              <a
+                href={value}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[10px] text-primary hover:underline truncate block"
+              >
+                {value.split("/").pop()}
+              </a>
+            </div>
+          </div>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={() => onChange("")}
+            className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg h-7 w-7"
+          >
+            <Trash2 className="h-3.5 w-3.5" />
+          </Button>
+        </div>
+      ) : (
+        <div
+          onClick={() => !isUploading && fileInputRef.current?.click()}
+          className={cn(
+            "border-2 border-dashed border-border rounded-xl p-6 flex flex-col items-center justify-center cursor-pointer transition-all hover:border-primary/50",
+            isUploading && "pointer-events-none opacity-60"
+          )}
+        >
+          {isUploading ? (
+            <>
+              <Loader2 className="h-7 w-7 text-primary animate-spin mb-2" />
+              <p className="text-xs font-medium">Uploading PDF...</p>
+            </>
+          ) : (
+            <>
+              <Upload className="h-7 w-7 text-primary mb-2" />
+              <p className="text-xs font-medium text-center">Click to upload PDF</p>
+              <p className="text-[10px] text-muted-foreground mt-0.5">PDF format only</p>
+            </>
+          )}
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            accept="application/pdf"
+            className="hidden"
+          />
+        </div>
+      )}
+    </div>
   );
 }

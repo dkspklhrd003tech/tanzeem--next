@@ -100,6 +100,7 @@ const NAV_ITEMS: NavItem[] = [
   { title: "Audio Manager", href: "/sitemanager?section=audio", icon: Headphones },
   { title: "Video Manager", href: "/sitemanager?section=videos", icon: Video },
   { title: "Dars-e-Quran", href: "/sitemanager?section=darse-quran", icon: BookOpen },
+  { title: "Jummah Venues", href: "/sitemanager?section=khitabat-addresses", icon: MapPin },
   { title: "Sermons", href: "/sitemanager?section=sermons", icon: Mic },
   { title: "Book Manager", href: "/sitemanager?section=books", icon: BookOpen },
   { title: "Magazine Manager", href: "/sitemanager?section=magazines", icon: BookMarked },
@@ -163,14 +164,14 @@ function SidebarNavItem({
       className={cn(
         "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-150 group",
         isActive
-          ? "bg-primary text-primary-foreground shadow-sm"
-          : "text-sidebar-foreground hover:bg-primary/10 hover:text-primary"
+          ? "bg-primary text-white shadow-sm"
+          : "text-sidebar-foreground hover:bg-primary/10 hover:text-white"
       )}
     >
       <item.icon
         className={cn(
           "h-5 w-5 shrink-0 transition-colors",
-          isActive ? "text-primary-foreground" : "text-sidebar-foreground/70 group-hover:text-primary"
+          isActive ? "text-white" : "text-white group-hover:text-white"
         )}
       />
       {!isCollapsed && (

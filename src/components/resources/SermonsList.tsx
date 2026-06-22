@@ -20,7 +20,7 @@ interface SermonsListProps {
 export function SermonsList({ sermons }: SermonsListProps) {
     return (
         <section aria-labelledby="sermons-heading" className="py-14 md:py-16">
-            <div className="container mx-auto px-4">
+            <div className="container mx-auto">
                 <h1
                     id="sermons-heading"
                     className="font-amiri text-3xl md:text-4xl text-primary font-bold mb-8"

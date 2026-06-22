@@ -3,6 +3,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { pages, activityLogs, users } from "@/db/schema";
 import { eq, and, not, or } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 
 export const dynamic = "force-dynamic";
 
@@ -118,6 +119,19 @@ export async function PUT(request: NextRequest, { params }: Ctx) {
       publishedAt:     (!wasPublished && nowPublished) ? new Date() : existing.publishedAt,
     }).where(eq(pages.id, existing.id));
 
+    // Clear Next.js cache for the page
+    const updatedSlug = data.slug ?? existing.slug;
+    try {
+      revalidatePath(`/${updatedSlug}`);
+      revalidatePath(`/${existing.slug}`);
+      revalidatePath(`/organization/${updatedSlug}`);
+      revalidatePath(`/organization/${existing.slug}`);
+      revalidatePath("/[...slug]");
+      revalidatePath("/");
+    } catch (revalErr) {
+      console.error("Cache revalidation failed:", revalErr);
+    }
+
     // Determine action label for activity log
     const action =
       !wasPublished && nowPublished ? "PAGE_PUBLISH" :
@@ -153,6 +167,16 @@ export async function DELETE(request: NextRequest, { params }: Ctx) {
     if (!existing) return NextResponse.json({ error: "Page not found" }, { status: 404 });
 
     await db.delete(pages).where(eq(pages.id, existing.id));
+
+    // Clear Next.js cache for the deleted page
+    try {
+      revalidatePath(`/${existing.slug}`);
+      revalidatePath(`/organization/${existing.slug}`);
+      revalidatePath("/[...slug]");
+      revalidatePath("/");
+    } catch (revalErr) {
+      console.error("Cache revalidation failed during delete:", revalErr);
+    }
 
     await db.insert(activityLogs).values({
       id:         crypto.randomUUID(),

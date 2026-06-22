@@ -12,6 +12,7 @@ export interface CmsPageData {
   metaTitle: string | null;
   metaDescription: string | null;
   isPublished: boolean;
+  template: string;
 }
 
 export interface CmsSectionData {
@@ -42,7 +43,7 @@ export async function getCmsPage(slug: string): Promise<CmsPageResult> {
     candidates.push(`organization/${slug}`);
   }
 
-  let page = null;
+  let page: any = null;
   for (const candidate of candidates) {
     page = await db.query.pages.findFirst({
       where: eq(pages.slug, candidate),
@@ -74,6 +75,7 @@ export async function getCmsPage(slug: string): Promise<CmsPageResult> {
       metaTitle: page.metaTitle,
       metaDescription: page.metaDescription,
       isPublished: page.isPublished,
+      template: page.template,
     },
     sections: sections.map((s) => ({
       id: s.id,

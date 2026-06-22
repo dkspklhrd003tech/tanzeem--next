@@ -15,6 +15,7 @@
  */
 import { db } from "../src/lib/db";
 import { settings } from "../src/db/schema";
+import { eq } from "drizzle-orm";
 
 interface SettingSeed {
   key: string;
@@ -25,7 +26,7 @@ interface SettingSeed {
 
 const SEEDS: SettingSeed[] = [
   // ─── Identity / Branding ───────────────────────────────────────────────────
-  { key: "site_logo", value: "", type: "image", group: "identity" },
+  { key: "site_logo", value: "/tanzeem-logo.webp", type: "image", group: "identity" },
   { key: "site_name", value: "Tanzeem-e-Islami", type: "text", group: "identity" },
   { key: "site_tagline", value: "تنظیمِ اسلامی", type: "text", group: "identity" },
 
@@ -47,7 +48,7 @@ const SEEDS: SettingSeed[] = [
 
   // ─── Global Page Banner ────────────────────────────────────────────────────
   { key: "banner_bg_image", value: "/images/default-banner.jpg", type: "image", group: "global_banner" },
-  { key: "banner_overlay_color", value: "#003d25", type: "text", group: "global_banner" },
+  { key: "banner_overlay_color", value: "var(--primary)", type: "text", group: "global_banner" },
   { key: "banner_overlay_opacity", value: "0.7", type: "text", group: "global_banner" },
   { key: "banner_text_color", value: "#ffffff", type: "text", group: "global_banner" },
   { key: "banner_height", value: "300px", type: "text", group: "global_banner" },
@@ -86,22 +87,39 @@ async function main() {
     // Resolve the ${year} placeholder in copyright at seed time.
     const value = s.value.replace("${year}", String(new Date().getFullYear()));
 
-    await db
-      .insert(settings)
-      .values({
-        id: crypto.randomUUID(),
-        key: s.key,
-        value,
-        type: s.type,
-        group: s.group,
-      })
-      .onDuplicateKeyUpdate({
-        set: {
+    // Check if key already exists
+    const existing = await db
+      .select()
+      .from(settings)
+      .where(eq(settings.key, s.key))
+      .limit(1);
+
+    if (existing.length > 0) {
+      // If it exists but has an empty value and the seed has a non-empty default, update it.
+      if (!existing[0].value && value) {
+        await db
+          .update(settings)
+          .set({ value, type: s.type, group: s.group })
+          .where(eq(settings.key, s.key));
+      } else {
+        // Just update type/group
+        await db
+          .update(settings)
+          .set({ type: s.type, group: s.group })
+          .where(eq(settings.key, s.key));
+      }
+    } else {
+      // Insert new setting
+      await db
+        .insert(settings)
+        .values({
+          id: crypto.randomUUID(),
+          key: s.key,
           value,
           type: s.type,
           group: s.group,
-        },
-      });
+        });
+    }
   }
 
   console.log("✓ Settings seeded successfully.");

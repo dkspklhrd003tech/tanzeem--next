@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { mutate } from "swr";
 import {
   LayoutTemplate, Plus, Trash2, GripVertical,
   ChevronDown, ChevronRight, Check, ExternalLink,
@@ -236,7 +237,15 @@ function MenuItemForm({
           <Label className="text-xs">URL</Label>
           <Input
             value={form.url ?? ""}
-            onChange={(e) => set("url", e.target.value)}
+            onChange={(e) => {
+              const newUrl = e.target.value;
+              const isExt = newUrl.startsWith("http://") || newUrl.startsWith("https://");
+              setForm(p => ({
+                ...p,
+                url: newUrl,
+                isOpenInNew: isExt
+              }));
+            }}
             placeholder="/organization or https://..."
             className={cn(!urlValid && "border-destructive")}
           />
@@ -328,7 +337,7 @@ export function HeaderManager() {
         const data = await res.json();
         setForm((prev) => ({ ...prev, ...data.settings }));
       }
-    } catch {}
+    } catch { }
     finally { setLoadingSettings(false); }
   }, []);
 
@@ -341,8 +350,8 @@ export function HeaderManager() {
         fetch("/api/menus?menuType=main"),
       ]);
       if (treeRes.ok) setMenuTree((await treeRes.json()).menus ?? []);
-      if (flatRes.ok)  setFlatMenu((await flatRes.json()).menus ?? []);
-    } catch {}
+      if (flatRes.ok) setFlatMenu((await flatRes.json()).menus ?? []);
+    } catch { }
     finally { setLoadingMenu(false); }
   }, []);
 
@@ -361,6 +370,7 @@ export function HeaderManager() {
       });
       if (!res.ok) throw new Error((await res.json()).error ?? "Save failed");
       toast({ title: "Header settings saved." });
+      mutate("/api/settings");
       fetchSettings();
     } catch (err: any) {
       toast({ variant: "destructive", title: err.message });
@@ -373,7 +383,7 @@ export function HeaderManager() {
     setSavingItem(true);
     try {
       const isNew = !data.id;
-      const url  = isNew ? "/api/menus" : `/api/menus/${data.id}`;
+      const url = isNew ? "/api/menus" : `/api/menus/${data.id}`;
       const payload = { ...data, menuType: "main", order: data.order ?? flatMenu.length };
       const res = await fetch(url, {
         method: isNew ? "POST" : "PUT",
@@ -634,12 +644,12 @@ export function HeaderManager() {
         <CardContent>
           <div className="grid sm:grid-cols-2 gap-4">
             {[
-              { key: "youtube_url",   label: "YouTube URL" },
-              { key: "facebook_url",  label: "Facebook URL" },
-              { key: "twitter_url",   label: "X (Twitter) URL" },
-              { key: "whatsapp_url",  label: "WhatsApp URL" },
+              { key: "youtube_url", label: "YouTube URL" },
+              { key: "facebook_url", label: "Facebook URL" },
+              { key: "twitter_url", label: "X (Twitter) URL" },
+              { key: "whatsapp_url", label: "WhatsApp URL" },
               { key: "instagram_url", label: "Instagram URL" },
-              { key: "telegram_url",  label: "Telegram URL" },
+              { key: "telegram_url", label: "Telegram URL" },
             ].map(({ key, label }) => (
               <div key={key} className="space-y-1.5">
                 <Label className="text-xs">{label}</Label>
@@ -657,7 +667,7 @@ export function HeaderManager() {
       {/* Save */}
       <div className="flex justify-end pt-2">
         <ConfirmDialog
-          title="Save header settings?"
+          title="Save Header"
           description="This will update the site header immediately for all visitors."
           onConfirm={saveSettings}
         >
@@ -666,7 +676,7 @@ export function HeaderManager() {
             className="bg-primary text-primary-foreground rounded-full px-8"
           >
             <Save className="h-4 w-4 mr-2" />
-            {savingSettings ? "Saving…" : "Save Header Settings"}
+            {savingSettings ? "Saving…" : "Save Header"}
           </Button>
         </ConfirmDialog>
       </div>

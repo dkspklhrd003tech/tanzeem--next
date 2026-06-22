@@ -66,9 +66,9 @@ export async function PATCH(request: NextRequest) {
         });
 
         revalidatePath("/");
-        return NextResponse.json({ success: true, message: "Magazines reordered successfully" });
+        return NextResponse.json({ success: true, message: "Magazines Reordered Successfully" });
     } catch (error) {
         console.error("Patch magazines error:", error);
-        return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+        return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }
 }

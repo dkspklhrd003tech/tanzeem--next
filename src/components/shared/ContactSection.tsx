@@ -97,7 +97,7 @@ export function ContactSection({
 
   return (
     <section className="bg-background py-12 md:py-16">
-      <div className="container mx-auto px-4 max-w-5xl">
+      <div className="container mx-auto max-w-5xl">
 
         {/* ── 3 info cards ───────────────────────────────────────────────── */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mb-12">

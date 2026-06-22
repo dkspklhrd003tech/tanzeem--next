@@ -181,7 +181,7 @@ export default async function SearchPage({ searchParams }: Props) {
         title: p.title,
         description: stripHtml(p.excerpt || p.content),
         type: "press_release" as const,
-        link: `/resources/press-releases/${p.slug}`,
+        link: `/press-releases/${p.slug}`,
         date: p.publishedAt || p.createdAt,
       }));
 
@@ -242,7 +242,7 @@ export default async function SearchPage({ searchParams }: Props) {
 
   return (
     <main className="min-h-screen bg-background py-12 md:py-16">
-      <div className="container mx-auto px-4 max-w-4xl">
+      <div className="container mx-auto max-w-4xl">
         {/* Search header */}
         <div className="mb-12 text-center">
           <h1 className="font-amiri text-3xl md:text-5xl font-bold text-primary mb-4">

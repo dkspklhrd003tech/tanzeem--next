@@ -87,7 +87,7 @@ export function MissionAndVideos({ videos, settings }: MissionProps) {
 
                                     {/* Content */}
                                     <div className="p-4 flex-1 flex flex-col justify-center items-center text-center bg-card transition-colors duration-500">
-                                        <h3 className="font-extrabold text-foreground text-lg md:text-xl line-clamp-2 leading-tight">
+                                        <h3 className="font-bold text-foreground text-lg md:text-xl line-clamp-2 leading-tight">
                                             {vid.title}
                                         </h3>
                                     </div>

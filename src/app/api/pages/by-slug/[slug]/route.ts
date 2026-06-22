@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server';
-import { db } from '@/db';
-import { pages, pageSections } from '@/db/schema';
-import { eq } from 'drizzle-orm';
+import { GET as catchAllGET } from '../[...slug]/route';
 
 export async function GET(
     request: Request,
@@ -9,28 +7,10 @@ export async function GET(
 ) {
     try {
         const { slug } = await params;
-
-        // Fetch the page
-        const pageResult = await db.select().from(pages).where(eq(pages.slug, slug)).limit(1);
-
-        if (!pageResult || pageResult.length === 0) {
-            return NextResponse.json({ error: 'Page not found' }, { status: 404 });
-        }
-
-        const page = pageResult[0];
-
-        // Fetch its sections
-        const sectionsResult = await db.select()
-            .from(pageSections)
-            .where(eq(pageSections.pageId, page.id))
-            .orderBy(pageSections.order);
-
-        return NextResponse.json({
-            ...page,
-            sections: sectionsResult,
-        });
+        // Forward as string array to match catchAllGET expected signature
+        return catchAllGET(request, { params: Promise.resolve({ slug: [slug] }) });
     } catch (error) {
-        console.error("Error fetching page:", error);
+        console.error("Error delegating single slug GET:", error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
     }
 }

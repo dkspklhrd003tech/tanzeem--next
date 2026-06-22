@@ -122,7 +122,10 @@ function RTE({ value, onChange }: { value: string; onChange: (v: string) => void
 
   const editor = useEditor({
     extensions: [
-      StarterKit,
+      StarterKit.configure({
+        link: false,
+        underline: false,
+      }),
       Underline,
       TipTapLink.configure({ openOnClick: false, HTMLAttributes: { class: "text-primary underline cursor-pointer" } }),
       TextAlign.configure({ types: ["heading", "paragraph"] }),
@@ -253,7 +256,17 @@ export function PageForm({ mode, initialData, parentPages = [] }: PageFormProps)
     if (form.title.trim().length > 200) e.title = "Title must be 200 characters or fewer.";
     if (!form.slug.trim()) e.slug = "Slug is required.";
     else if (!/^[a-z0-9]+(?:[/-][a-z0-9]+)*$/.test(form.slug)) e.slug = "Slug: lowercase letters, numbers, hyphens and slashes only.";
-    if (publish && (!form.content || form.content === "<p></p>")) e.content = "Content is required when publishing.";
+    if (publish) {
+      if (form.template === "redirect") {
+        if (!form.content.trim()) {
+          e.content = "Redirect URL is required.";
+        } else if (!/^https?:\/\/\S+$/.test(form.content.trim()) && !/^\/\S*$/.test(form.content.trim())) {
+          e.content = "Please enter a valid URL (e.g. https://example.com or an internal path starting with /).";
+        }
+      } else {
+        if (!form.content || form.content === "<p></p>") e.content = "Content is required when publishing.";
+      }
+    }
     if (form.metaTitle.length > 70) e.metaTitle = "Max 70 characters.";
     if (form.metaDescription.length > 160) e.metaDescription = "Max 160 characters.";
     setErrors(e);
@@ -261,7 +274,7 @@ export function PageForm({ mode, initialData, parentPages = [] }: PageFormProps)
   }
 
   async function doSave(intent: "draft" | "publish", silent = false) {
-    const publish = intent === "publish";
+    const publish = intent === "publish" || (intent === "draft" && silent && form.isPublished);
     if (!validate(publish)) { if (!silent) toast({ variant: "destructive", title: "Please fix validation errors." }); return; }
     setSaving(true);
     try {
@@ -275,6 +288,15 @@ export function PageForm({ mode, initialData, parentPages = [] }: PageFormProps)
         else if (!silent) toast({ variant: "destructive", title: json.error ?? "Save failed." });
         return;
       }
+
+      if (json.page) {
+        setForm(prev => ({
+          ...prev,
+          isPublished: json.page.isPublished,
+          slug: json.page.slug,
+        }));
+      }
+
       setLastSaved(new Date());
       if (!silent) {
         toast({ title: publish ? "Page published!" : "Draft saved.", description: `"${form.title}" has been saved.` });
@@ -402,75 +424,108 @@ export function PageForm({ mode, initialData, parentPages = [] }: PageFormProps)
           </Card>
 
           {/* Content / Sections tabs */}
-          <Card>
-            {/* Tab bar */}
-            <div className="flex border-b border-border">
-              <button
-                type="button"
-                onClick={() => setActiveTab("content")}
-                className={cn(
-                  "flex items-center gap-2 px-5 py-3 text-sm font-medium border-b-2 transition-colors",
-                  activeTab === "content"
-                    ? "border-primary text-primary"
-                    : "border-transparent text-muted-foreground hover:text-foreground"
-                )}
-              >
-                <FileText className="h-4 w-4" />
-                Rich Text
-              </button>
-              <button
-                type="button"
-                onClick={() => setActiveTab("sections")}
-                className={cn(
-                  "flex items-center gap-2 px-5 py-3 text-sm font-medium border-b-2 transition-colors",
-                  activeTab === "sections"
-                    ? "border-primary text-primary"
-                    : "border-transparent text-muted-foreground hover:text-foreground"
-                )}
-              >
-                <LayoutTemplate className="h-4 w-4" />
-                Page Sections
-                <span className="ml-1 text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded-full font-semibold">
-                  Dynamic
-                </span>
-              </button>
-            </div>
-
-            {activeTab === "content" && (
-              <CardContent className="px-5 pb-5 pt-4">
-                <RTE value={form.content} onChange={v => set("content", v)} />
-                {errors.content && <p className="text-xs text-destructive mt-2 flex items-center gap-1"><AlertCircle className="h-3 w-3" />{errors.content}</p>}
-                <div className="mt-3">
-                  <Label htmlFor="excerpt" className="text-xs font-semibold uppercase tracking-wide mb-1.5 block">Excerpt</Label>
-                  <Textarea id="excerpt" rows={3} placeholder="Brief summary shown in listings…" value={form.excerpt} onChange={e => set("excerpt", e.target.value)} className="text-sm resize-none" />
+          {form.template === "redirect" ? (
+            <Card>
+              <CardHeader className="pb-2 pt-4 px-4">
+                <CardTitle className="text-sm font-semibold flex items-center gap-2">
+                  <LinkIcon className="h-4 w-4 text-primary" />
+                  Redirect Configuration
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="px-4 pb-4 space-y-3">
+                <div>
+                  <Label htmlFor="redirectUrl" className="text-xs font-semibold uppercase tracking-wide mb-1.5 block">
+                    Redirect URL (opens in new tab by default) <span className="text-destructive">*</span>
+                  </Label>
+                  <Input
+                    id="redirectUrl"
+                    placeholder="e.g. https://lms.quranacademy.com/"
+                    value={form.content}
+                    onChange={e => set("content", e.target.value)}
+                    className={cn(errors.content && "border-destructive focus-visible:ring-destructive/20")}
+                  />
+                  <p className="text-xs text-muted-foreground mt-1.5">
+                    Visitors navigating to this page will be automatically redirected to this URL in a new tab.
+                  </p>
+                  {errors.content && (
+                    <p className="text-xs text-destructive mt-1 flex items-center gap-1">
+                      <AlertCircle className="h-3 w-3" />{errors.content}
+                    </p>
+                  )}
                 </div>
               </CardContent>
-            )}
+            </Card>
+          ) : (
+            <Card>
+              {/* Tab bar */}
+              <div className="flex border-b border-border">
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("content")}
+                  className={cn(
+                    "flex items-center gap-2 px-5 py-3 text-sm font-medium border-b-2 transition-colors",
+                    activeTab === "content"
+                      ? "border-primary text-primary"
+                      : "border-transparent text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  <FileText className="h-4 w-4" />
+                  Rich Text
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("sections")}
+                  className={cn(
+                    "flex items-center gap-2 px-5 py-3 text-sm font-medium border-b-2 transition-colors",
+                    activeTab === "sections"
+                      ? "border-primary text-primary"
+                      : "border-transparent text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  <LayoutTemplate className="h-4 w-4" />
+                  Page Sections
+                  <span className="ml-1 text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded-full font-semibold">
+                    Dynamic
+                  </span>
+                </button>
+              </div>
 
-            {activeTab === "sections" && (
-              <CardContent className="px-5 pb-6 pt-4">
-                {mode === "create" ? (
-                  <div className="text-center py-10 border-2 border-dashed border-border rounded-xl bg-muted/30">
-                    <LayoutTemplate className="h-8 w-8 text-muted-foreground/40 mx-auto mb-3" />
-                    <p className="text-sm font-medium text-muted-foreground">Save the page first</p>
-                    <p className="text-xs text-muted-foreground/70 mt-1">
-                      Click "Save Draft" or "Publish" to create the page, then add sections here.
-                    </p>
+              {activeTab === "content" && (
+                <CardContent className="px-5 pb-5 pt-4">
+                  <RTE value={form.content} onChange={v => set("content", v)} />
+                  {errors.content && <p className="text-xs text-destructive mt-2 flex items-center gap-1"><AlertCircle className="h-3 w-3" />{errors.content}</p>}
+                  <div className="mt-3">
+                    <Label htmlFor="excerpt" className="text-xs font-semibold uppercase tracking-wide mb-1.5 block">Excerpt</Label>
+                    <Textarea id="excerpt" rows={3} placeholder="Brief summary shown in listings…" value={form.excerpt} onChange={e => set("excerpt", e.target.value)} className="text-sm resize-none" />
                   </div>
-                ) : (
-                  <>
-                    <p className="text-xs text-muted-foreground mb-4">
-                      Build the page layout with reorderable sections. Sections take priority over the Rich Text content when rendering.
-                    </p>
-                    <PageSectionBuilder
-                      pageId={initialData!.id}
-                      onSave={(sections) => { sectionsRef.current = sections; }}
-                    />
-                  </>
-                )}
-              </CardContent>
-            )}
-          </Card>
+                </CardContent>
+              )}
+
+              {activeTab === "sections" && (
+                <CardContent className="px-5 pb-6 pt-4">
+                  {mode === "create" ? (
+                    <div className="text-center py-10 border-2 border-dashed border-border rounded-xl bg-muted/30">
+                      <LayoutTemplate className="h-8 w-8 text-muted-foreground/40 mx-auto mb-3" />
+                      <p className="text-sm font-medium text-muted-foreground">Save the page first</p>
+                      <p className="text-xs text-muted-foreground/70 mt-1">
+                        Click "Save Draft" or "Publish" to create the page, then add sections here.
+                      </p>
+                    </div>
+                  ) : (
+                    <>
+                      <p className="text-xs text-muted-foreground mb-4">
+                        Build the page layout with reorderable sections. Sections take priority over the Rich Text content when rendering.
+                      </p>
+                      <PageSectionBuilder
+                        pageId={initialData!.id}
+                        onSave={(sections) => { sectionsRef.current = sections; }}
+                      />
+                    </>
+                  )}
+                </CardContent>
+              )}
+            </Card>
+          )}
 
           {/* SEO */}
           <Card>
@@ -543,6 +598,8 @@ export function PageForm({ mode, initialData, parentPages = [] }: PageFormProps)
                     <SelectItem value="default">Default</SelectItem>
                     <SelectItem value="sidebar">With Sidebar</SelectItem>
                     <SelectItem value="full-width">Full Width</SelectItem>
+                    <SelectItem value="leader">Leader Profile</SelectItem>
+                    <SelectItem value="redirect">External Redirect</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

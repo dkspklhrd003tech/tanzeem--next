@@ -58,6 +58,22 @@ const REQUIRED_FIELDS: Record<string, string[]> = {
     donations: ["title", "slug"],
 };
 
+function parseDateFields(data: any) {
+    const dateFields = ["publishedAt", "createdAt", "updatedAt", "startDate", "endDate"];
+    const parsed = { ...data };
+    for (const field of dateFields) {
+        if (parsed[field] !== undefined) {
+            if (parsed[field]) {
+                const date = new Date(parsed[field]);
+                parsed[field] = isNaN(date.getTime()) ? null : date;
+            } else {
+                parsed[field] = null;
+            }
+        }
+    }
+    return parsed;
+}
+
 async function requireAuth(request: NextRequest): Promise<NextResponse | null> {
     const user = await getCurrentUser(request);
     if (!user) {
@@ -81,7 +97,12 @@ export async function GET(
             return NextResponse.json({ error: "Invalid entity type" }, { status: 400 });
         }
 
-        const results = await db.select().from(table).orderBy(desc((table as any).updatedAt || (table as any).id)).limit(100);
+        let results;
+        if (entity === "press-releases") {
+            results = await db.select().from(table).orderBy(table.orderIndex, desc(table.publishedAt)).limit(100);
+        } else {
+            results = await db.select().from(table).orderBy(desc((table as any).updatedAt || (table as any).id)).limit(100);
+        }
 
         return NextResponse.json({ items: results });
     } catch (error) {
@@ -136,9 +157,10 @@ export async function POST(
             }
         }
 
+        const parsedData = parseDateFields(data);
         const insertData = {
             id: crypto.randomUUID(),
-            ...data,
+            ...parsedData,
         };
 
         await db.insert(table).values(insertData);
@@ -153,5 +175,40 @@ export async function POST(
             }, { status: 409 });
         }
         return NextResponse.json({ error: "Failed to create item" }, { status: 500 });
+    }
+}
+
+export async function PATCH(
+    request: NextRequest,
+    { params }: { params: Promise<{ entity: string }> }
+) {
+    try {
+        const authError = await requireAuth(request);
+        if (authError) return authError;
+
+        const { entity } = await params;
+        const table = entityMap[entity];
+
+        if (!table) {
+            return NextResponse.json({ error: "Invalid entity type" }, { status: 400 });
+        }
+
+        const body = await request.json();
+        const { orders } = body; // Expected: [{ id: string, orderIndex: number }, ...]
+
+        if (!orders || !Array.isArray(orders)) {
+            return NextResponse.json({ error: "Invalid orders data" }, { status: 400 });
+        }
+
+        await db.transaction(async (tx) => {
+            for (const item of orders) {
+                await tx.update(table).set({ orderIndex: item.orderIndex }).where(eq((table as any).id, item.id));
+            }
+        });
+
+        return NextResponse.json({ success: true, message: `${entity} reordered successfully` });
+    } catch (error) {
+        console.error(`Patch ${await params.then(p => p.entity)} error:`, error);
+        return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
 }

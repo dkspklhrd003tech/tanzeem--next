@@ -1,17 +1,18 @@
 "use client";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import useSWR from "swr";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   Plus, Search, Filter, Trash2, Globe2, EyeOff, Edit2,
   Eye, Copy, MoreHorizontal, CheckSquare, Square,
-  RefreshCw, X, Bell, LayoutGrid
+  RefreshCw, X, Bell, LayoutGrid, Upload, Image as ImageIcon, AlertCircle
 } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -42,6 +43,127 @@ function copySlug(slug: string, toast: any) {
 export default function PagesListPage() {
   const router = useRouter();
   const { toast } = useToast();
+
+  const [bannerBgImage, setBannerBgImage] = useState<string>("");
+  const [isUploadingBanner, setIsUploadingBanner] = useState(false);
+  const [bannerError, setBannerError] = useState<string | null>(null);
+  const bannerFileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    fetch("/api/settings")
+      .then((res) => res.json())
+      .then((data) => {
+        const bg = data?.settings?.banner?.banner_bg_image || "";
+        setBannerBgImage(bg);
+      })
+      .catch((err) => console.error("Failed to load settings:", err));
+  }, []);
+
+  const handleBannerFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    setBannerError(null);
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      if (!file.type.startsWith("image/")) {
+        setBannerError("Selected file is not a valid image.");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = () => {
+        const img = new Image();
+        img.src = reader.result as string;
+        img.onload = async () => {
+          const width = img.width;
+          const height = img.height;
+          const ratio = width / height;
+          const targetRatio = 1920 / 339;
+          const ratioDiff = Math.abs(ratio - targetRatio);
+
+          if (width !== 1920 || height !== 339) {
+            if (ratioDiff > 0.02) {
+              setBannerError(`Image size must be exactly 1920px x 339px (got ${width}px x ${height}px) and maintain the aspect ratio.`);
+              return;
+            }
+          }
+
+          setIsUploadingBanner(true);
+          try {
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("type", "uploads");
+
+            const res = await fetch("/api/upload", {
+              method: "POST",
+              body: formData,
+            });
+
+            if (!res.ok) throw new Error("Upload failed");
+
+            const uploadData = await res.json();
+            const imageUrl = uploadData.url;
+
+            // Save to settings API
+            const settingsRes = await fetch("/api/settings", {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                settings: {
+                  banner_bg_image: imageUrl,
+                },
+                group: "banner",
+              }),
+            });
+
+            if (!settingsRes.ok) throw new Error("Failed to save banner image setting");
+
+            setBannerBgImage(imageUrl);
+            toast({
+              title: "Success",
+              description: "Global Page Banner Background Image updated successfully.",
+            });
+          } catch (error) {
+            console.error("Upload error:", error);
+            setBannerError("Failed to upload/save banner image. Please try again.");
+          } finally {
+            setIsUploadingBanner(false);
+          }
+        };
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemoveBanner = async () => {
+    setIsUploadingBanner(true);
+    try {
+      const settingsRes = await fetch("/api/settings", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          settings: {
+            banner_bg_image: "",
+          },
+          group: "banner",
+        }),
+      });
+
+      if (!settingsRes.ok) throw new Error("Failed to clear banner image setting");
+
+      setBannerBgImage("");
+      toast({
+        title: "Success",
+        description: "Global Page Banner Background Image removed successfully.",
+      });
+    } catch (error) {
+      console.error("Clear error:", error);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Failed to remove banner image. Please try again.",
+      });
+    } finally {
+      setIsUploadingBanner(false);
+    }
+  };
 
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("all");
@@ -165,7 +287,7 @@ export default function PagesListPage() {
       {showNotification && (
         <Alert className="relative z-10 bg-emerald-950/20 border-emerald-500/20 text-emerald-200 p-4 shadow-[0_4px_30px_rgba(0,0,0,0.2)] rounded-xl flex items-center justify-between gap-4 backdrop-blur-md">
           <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-emerald-500/10 flex items-center justify-center shrink-0 border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.15)] animate-pulse">
+            <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center shrink-0 border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.15)] animate-pulse">
               <Bell className="h-4.5 w-4.5 text-emerald-400" />
             </div>
             <div>
@@ -192,6 +314,99 @@ export default function PagesListPage() {
         </Alert>
       )}
 
+      {/* Global Page Banner Background Image Uploader */}
+      <Card className="relative z-10 bg-slate-950/40 backdrop-blur-md border border-slate-900 shadow-2xl overflow-hidden rounded-2xl">
+        <CardHeader className="pb-3 flex flex-row items-center justify-between border-b border-slate-900">
+          <div>
+            <CardTitle className="text-sm font-black uppercase tracking-wider text-white flex items-center gap-2">
+              <ImageIcon className="h-4.5 w-4.5 text-emerald-400" /> Global Page Banner Background Image
+            </CardTitle>
+            <p className="text-xs text-slate-400 mt-1 font-medium">
+              This banner background image applies globally to all internal pages (excluding the homepage).
+            </p>
+          </div>
+          {bannerBgImage && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="bg-red-500/10 hover:bg-red-500/20 border-red-500/30 text-red-300 hover:text-red-100 text-xs font-bold rounded-xl px-3 py-1.5 h-8 transition-all duration-200"
+              onClick={handleRemoveBanner}
+              disabled={isUploadingBanner}
+            >
+              <Trash2 className="h-3.5 w-3.5 mr-1.5" /> Remove Image
+            </Button>
+          )}
+        </CardHeader>
+        <CardContent className="p-6 grid lg:grid-cols-2 gap-6 items-start">
+          <div className="space-y-4">
+            <div
+              className={cn(
+                "border-2 border-dashed border-slate-800 rounded-xl p-8 flex flex-col items-center justify-center cursor-pointer transition-all hover:border-emerald-500/40 bg-slate-950/20 hover:bg-slate-900/10 group",
+                isUploadingBanner && "pointer-events-none opacity-60"
+              )}
+              onClick={() => bannerFileInputRef.current?.click()}
+            >
+              <Upload className="h-8 w-8 text-slate-500 group-hover:text-emerald-400 transition-colors mb-2" />
+              <p className="text-sm font-bold text-slate-200">Click to upload global banner image</p>
+              <p className="text-xs text-slate-500 mt-1">Exactly 1920px x 339px (aspect ratio 1920:339, max 1MB)</p>
+              <input
+                type="file"
+                ref={bannerFileInputRef}
+                onChange={handleBannerFileChange}
+                accept="image/*"
+                className="hidden"
+              />
+            </div>
+
+            {bannerError && (
+              <div className="p-3 bg-red-950/20 border border-red-500/20 text-red-400 text-xs rounded-xl flex items-center gap-2">
+                <AlertCircle className="h-4.5 w-4.5 shrink-0 text-red-400" />
+                <span className="font-semibold">{bannerError}</span>
+              </div>
+            )}
+          </div>
+
+          {/* Real-time Banner Preview */}
+          <div className="space-y-2">
+            <div className="relative overflow-hidden bg-primary text-white py-10 rounded-xl flex flex-col items-center justify-center text-center w-full min-h-[140px] shadow-inner border border-primary/20">
+              {/* Dynamic BG Image */}
+              {bannerBgImage ? (
+                <>
+                  <div
+                    className="absolute inset-0 z-0 bg-contain bg-center"
+                    style={{ backgroundImage: `url('${bannerBgImage}')` }}
+                  />
+                  <div className="absolute inset-0 z-10 bg-black/40 pointer-events-none" />
+                </>
+              ) : null}
+
+              {/* Ambient Overlay Patterns */}
+              <div className="absolute inset-0 opacity-15 mix-blend-overlay pointer-events-none bg-primary" />
+              <div className="absolute top-0 right-0 w-[200px] h-[200px] bg-[#c8a84e]/10 rounded-full blur-[45px] -mr-20 -mt-20" />
+              <div className="absolute -bottom-12 left-1/4 w-[150px] h-[150px] bg-primary rounded-full blur-[30px]" />
+
+              {/* Arabesque geometric watermark */}
+              <div
+                className="absolute inset-0 opacity-[0.03] pointer-events-none bg-repeat bg-center"
+                style={{ backgroundImage: `url('/images/pattern-arabesque.png')`, backgroundSize: '100px' }}
+              />
+
+              {/* Content */}
+              <div className="relative z-20 px-4">
+                <h1 className="text-lg md:text-xl font-bold mb-1.5 drop-shadow-md">
+                  Frequently Asked Questions
+                </h1>
+                <div className="flex items-center justify-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-200/90">
+                  <span>Home</span>
+                  <span>/</span>
+                  <span>FAQs</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Filter & Search Bar */}
       <div className="flex flex-col sm:flex-row gap-3 relative z-10">
         <div className="relative flex-1">
@@ -216,9 +431,9 @@ export default function PagesListPage() {
             </div>
           </SelectTrigger>
           <SelectContent className="bg-slate-950 border-slate-800 text-slate-200 rounded-xl">
-            <SelectItem value="all" className="focus:bg-emerald-500/10 focus:text-emerald-300 font-medium">All Status</SelectItem>
-            <SelectItem value="published" className="focus:bg-emerald-500/10 focus:text-emerald-300 font-medium">Active Only</SelectItem>
-            <SelectItem value="draft" className="focus:bg-emerald-500/10 focus:text-emerald-300 font-medium">Draft Only</SelectItem>
+            <SelectItem value="all" className="focus:bg-primary focus:text-emerald-300 font-medium">All Status</SelectItem>
+            <SelectItem value="published" className="focus:bg-primary focus:text-emerald-300 font-medium">Active Only</SelectItem>
+            <SelectItem value="draft" className="focus:bg-primary focus:text-emerald-300 font-medium">Draft Only</SelectItem>
           </SelectContent>
         </Select>
         <Select value={sort} onValueChange={v => setSort(v)}>
@@ -226,10 +441,10 @@ export default function PagesListPage() {
             <SelectValue placeholder="Newest first" />
           </SelectTrigger>
           <SelectContent className="bg-slate-950 border-slate-800 text-slate-200 rounded-xl">
-            <SelectItem value="newest" className="focus:bg-emerald-500/10 focus:text-emerald-300 font-medium">Newest first</SelectItem>
-            <SelectItem value="oldest" className="focus:bg-emerald-500/10 focus:text-emerald-300 font-medium">Oldest first</SelectItem>
-            <SelectItem value="az" className="focus:bg-emerald-500/10 focus:text-emerald-300 font-medium">Title A–Z</SelectItem>
-            <SelectItem value="za" className="focus:bg-emerald-500/10 focus:text-emerald-300 font-medium">Title Z–A</SelectItem>
+            <SelectItem value="newest" className="focus:bg-primary focus:text-emerald-300 font-medium">Newest first</SelectItem>
+            <SelectItem value="oldest" className="focus:bg-primary focus:text-emerald-300 font-medium">Oldest first</SelectItem>
+            <SelectItem value="az" className="focus:bg-primary focus:text-emerald-300 font-medium">Title A–Z</SelectItem>
+            <SelectItem value="za" className="focus:bg-primary focus:text-emerald-300 font-medium">Title Z–A</SelectItem>
           </SelectContent>
         </Select>
         <Button variant="ghost" size="icon" onClick={() => mutate()} className="bg-slate-950/60 border border-slate-800/80 hover:bg-slate-900/60 hover:text-emerald-400 rounded-xl text-slate-400 p-2 shrink-0 transition-all duration-300">
@@ -246,7 +461,7 @@ export default function PagesListPage() {
           </div>
           <div className="flex flex-wrap items-center gap-1 sm:ml-auto">
             <ConfirmDialog title="Set selected pages to Active?" description={`${selected.size} page(s) will be set to published and shown on the frontend.`} onConfirm={() => doBulk("publish")} open={bulkOp === "publish"} onOpenChange={o => setBulkOp(o ? "publish" : null)}>
-              <Button variant="outline" size="sm" onClick={() => setBulkOp("publish")} className="bg-emerald-500/10 hover:bg-emerald-500/25 border-emerald-500/30 text-emerald-300 text-xs font-bold rounded-lg px-3 py-1.5 h-8">
+              <Button variant="outline" size="sm" onClick={() => setBulkOp("publish")} className="bg-primary hover:bg-emerald-500/25 border-emerald-500/30 text-emerald-300 text-xs font-bold rounded-lg px-3 py-1.5 h-8">
                 <Globe2 className="h-3.5 w-3.5 mr-1.5 text-emerald-400" />Make Active
               </Button>
             </ConfirmDialog>
@@ -386,7 +601,7 @@ export default function PagesListPage() {
                           <SelectTrigger size="xs" className={cn(
                             "h-6 w-28 text-[10px] font-black uppercase rounded-full border-none focus:ring-0 focus:ring-offset-0 px-2 cursor-pointer transition-all duration-300 select-none",
                             row.isPublished
-                              ? "bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/20 shadow-[0_0_12px_rgba(16,185,129,0.1)]"
+                              ? "bg-primary text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/20 shadow-[0_0_12px_rgba(16,185,129,0.1)]"
                               : "bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 border border-amber-500/20 shadow-[0_0_12px_rgba(245,158,11,0.1)]"
                           )}>
                             <SelectValue>
@@ -402,7 +617,7 @@ export default function PagesListPage() {
                             </SelectValue>
                           </SelectTrigger>
                           <SelectContent className="bg-slate-950 border-slate-900 text-slate-100 min-w-[130px] rounded-xl shadow-2xl z-50">
-                            <SelectItem value="active" className="text-[10px] font-black uppercase tracking-wider text-emerald-400 focus:bg-emerald-500/10 focus:text-emerald-300 cursor-pointer py-2">
+                            <SelectItem value="active" className="text-[10px] font-black uppercase tracking-wider text-emerald-400 focus:bg-primary focus:text-emerald-300 cursor-pointer py-2">
                               Active
                             </SelectItem>
                             <SelectItem value="draft" className="text-[10px] font-black uppercase tracking-wider text-amber-400 focus:bg-amber-500/10 focus:text-amber-300 cursor-pointer py-2">
@@ -426,7 +641,7 @@ export default function PagesListPage() {
                           asChild
                           variant="ghost"
                           size="icon"
-                          className="h-8 w-8 text-slate-400 hover:text-emerald-400 hover:bg-emerald-500/10 rounded-lg transition-all duration-200"
+                          className="h-8 w-8 text-slate-400 hover:text-emerald-400 hover:bg-primary rounded-lg transition-all duration-200"
                           title="Edit Page"
                         >
                           <Link href={`/sitemanager/pages/${row.id}/edit`}>

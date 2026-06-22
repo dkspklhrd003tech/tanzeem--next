@@ -35,7 +35,7 @@ export function LatestPressReleases({ items }: Props) {
 
   return (
     <section aria-labelledby="press-heading" className="py-16 bg-background">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto">
         <div className="flex items-end justify-between mb-8">
           <div>
             <h2 id="press-heading" className="font-amiri text-2xl md:text-3xl font-bold text-primary">Latest Press Releases</h2>
@@ -68,10 +68,10 @@ export function LatestPressReleases({ items }: Props) {
                 <Calendar className="h-3.5 w-3.5" aria-hidden="true" />
                 {item.publishedAt
                   ? new Date(item.publishedAt).toLocaleDateString("en-PK", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })
                   : "\u2014"}
               </div>
               <h3 className="font-semibold text-foreground line-clamp-2">{item.title}</h3>

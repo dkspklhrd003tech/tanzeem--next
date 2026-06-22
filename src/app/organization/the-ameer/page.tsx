@@ -1,21 +1,27 @@
 import { getCmsPage, getCleanContent } from "@/lib/page-helpers";
 import { DynamicPageContent, generatePageMetadata } from "@/components/shared/DynamicPageContent";
-import { TeamGrid } from "@/components/shared/TeamGrid";
-import { CTABanner } from "@/components/shared/CTABanner";
+import { ModernizedProsePage } from "@/components/shared/ModernizedProsePage";
 
 export const dynamic = "force-dynamic";
 
 const SLUG = "organization/the-ameer";
 const DEFAULT_TITLE = "The Ameer | Tanzeem-e-Islami";
-const FALLBACK_MEMBERS = [
-  {
-    name: "Shujauddin Sheikh",
-    designation: "Ameer of Tanzeem-e-Islami",
-    bio: "Mohtaram Shujauddin Shaikh is the current Ameer (leader) of Tanzeem-e-Islami, who assumed leadership in 2020.",
-    avatar: "https://tanzeem.org/media/shujauddin-sheikh.jpg",
-    socials: { website: "https://tanzeem.org/shujauddin-sheikh" },
-  },
-];
+
+const FALLBACK_AMEER = {
+  title: "Shujauddin Shaikh",
+  excerpt: "AMEER (2020 – PRESENT)",
+  featuredImage: "/uploads/f9d523c3-80f5-4aa9-8bcb-9394cfdb15ca-ameer.webp",
+  slug: SLUG,
+  content: `
+    <p>Mohtaram Shujauddin Shaikh is the current Ameer (leader) of Tanzeem-e-Islami, who assumed the responsibility in 2020 following the resignation of Hafiz Akif Saeed on health grounds. Born on September 29, 1974, he has been an active member of the organization for over two decades, contributing significantly to its educational, organizational, and propagation activities across Pakistan and internationally.</p>
+    
+    <p>Before assuming the leadership, he served in various key capacities within Tanzeem-e-Islami, including as the Nazim of different regions and as a prominent speaker of Quranic lectures. He has gained widespread recognition for his articulation of Islamic teachings in the context of contemporary socio-political and economic challenges.</p>
+    
+    <p>Under his leadership, Tanzeem-e-Islami has significantly expanded its digital outreach, utilizing modern media platforms to broadcast Quranic education, lectures, and organizational messages to a global audience. He remains committed to the core vision of the founder, Dr. Israr Ahmed, focusing on individual reform (Tazkiyah) and collective struggle for the establishment of the Islamic system (Khilafah).</p>
+    
+    <p>He regularly delivers the Friday Sermon (Khitab-e-Jum'ah) at the central Quran Academy in Lahore and travels extensively to engage with different chapters of the organization and the broader Muslim community, emphasizing unity and disciplined effort.</p>
+  `.trim()
+};
 
 export async function generateMetadata() {
   const { page } = await getCmsPage(SLUG);
@@ -24,6 +30,12 @@ export async function generateMetadata() {
 
 export default async function AmeerPage() {
   const { page, sections } = await getCmsPage(SLUG);
+
+  const crumbs = [
+    { name: "Home", path: "/" },
+    { name: "Organization", path: "/organization" },
+    { name: "The Ameer", path: "/organization/the-ameer" },
+  ];
 
   if (page && sections.length > 0) {
     return (
@@ -35,45 +47,36 @@ export default async function AmeerPage() {
 
   if (page) {
     return (
-      <main className="min-h-screen bg-background">
-        <div className="container mx-auto py-12 md:py-16 px-4">
-          <div className="prose prose-lg dark:prose-invert max-w-4xl mx-auto"
-            dangerouslySetInnerHTML={{ __html: getCleanContent(page.content) }}
-          />
-        </div>
-      </main>
+      <ModernizedProsePage
+        title={page.title}
+        excerpt={page.excerpt}
+        content={getCleanContent(page.content)}
+        slug={page.slug}
+        breadcrumbs={crumbs}
+        featuredImage={page.featuredImage}
+        template={page.template}
+        ctaHeading="Explore Our Ideology"
+        ctaSubheading="Learn about the beliefs and principles that guide our work."
+        ctaButtonLabel="Our Ideology"
+        ctaButtonUrl="/organization/our-ideology"
+      />
     );
   }
 
+  // Fallback if DB record doesn't exist
   return (
-    <main className="min-h-screen bg-background">
-      <div className="container mx-auto py-12 md:py-16">
-        <article className="prose prose-lg dark:prose-invert max-w-4xl mx-auto">
-          <h1>The Ameer</h1>
-          <p className="lead text-xl text-muted-foreground mb-8">
-            Shujauddin Sheikh &mdash; Current Ameer of Tanzeem-e-Islami, guiding the organization&apos;s vision and activities in the contemporary era.
-          </p>
-          <TeamGrid heading="Ameer" members={FALLBACK_MEMBERS} />
-          <h2>Leadership</h2>
-          <p>Shujauddin Sheikh was born on September 29, 1974. He assumed the leadership of Tanzeem-e-Islami in 2020.</p>
-          <h2>Vision and Approach</h2>
-          <ul>
-            <li>Expanding digital outreach through modern media platforms</li>
-            <li>Strengthening the Dars-e-Quran network globally</li>
-            <li>Engaging with contemporary issues from an Islamic perspective</li>
-            <li>Building bridges with other Islamic movements and organizations</li>
-            <li>Developing youth leadership programs</li>
-          </ul>
-          <h2>Message to the Ummah</h2>
-          <p>The Ameer emphasizes the need for Muslims to unite on the basis of their shared faith and to work collectively for the revival of Islam.</p>
-        </article>
-      </div>
-      <CTABanner
-        heading="Learn About Our Mission"
-        subheading="Discover the mission that guides Tanzeem-e-Islami."
-        buttonLabel="Mission Statement"
-        buttonUrl="/organization/mission-statement"
-      />
-    </main>
+    <ModernizedProsePage
+      title={FALLBACK_AMEER.title}
+      excerpt={FALLBACK_AMEER.excerpt}
+      content={FALLBACK_AMEER.content}
+      slug={FALLBACK_AMEER.slug}
+      breadcrumbs={crumbs}
+      featuredImage={FALLBACK_AMEER.featuredImage}
+      template="leader"
+      ctaHeading="Explore Our Ideology"
+      ctaSubheading="Learn about the beliefs and principles that guide our work."
+      ctaButtonLabel="Our Ideology"
+      ctaButtonUrl="/organization/our-ideology"
+    />
   );
 }

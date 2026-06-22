@@ -57,7 +57,7 @@ interface SermonsListProps {
 **Layout:**
 ```
 <section aria-labelledby="sermons-heading" className="py-14 md:py-16">
-  <div className="container mx-auto px-4">
+  <div className="container mx-auto">
     <h1 id="sermons-heading" className="font-amiri text-3xl md:text-4xl text-primary font-bold mb-8">
       Khitab-e-Jum'ah
     </h1>
@@ -105,7 +105,7 @@ interface SermonDetailProps {
 
 **Layout:**
 ```
-<article className="container mx-auto px-4 py-14 md:py-16 max-w-4xl">
+<article className="container mx-auto py-14 md:py-16 max-w-4xl">
   <header>
     <p className="text-sm text-foreground-muted">{sermonDate}</p>
     <h1 className="font-amiri text-3xl md:text-4xl text-primary font-bold mt-2">{title}</h1>
@@ -228,7 +228,7 @@ const RESOURCE_CARDS = [
   { title: "Videos", href: "/resources/videos", description: "..." },
   { title: "Books", href: "/resources/books", description: "..." },
   { title: "Magazines", href: "/resources/magazines", description: "..." },
-  { title: "Press Releases", href: "/resources/press-releases", description: "..." },
+  { title: "Press Releases", href: "/press-releases", description: "..." },
   { title: "Social Media", href: "/resources/social-media", description: "..." },
   { title: "Khitab-e-Jum'ah", href: "/resources/khitab-e-jumah", description: "..." },
   { title: "FAQ", href: "/faq", description: "..." },
@@ -295,7 +295,7 @@ export default async function SermonDetailPage({ params }) {
 }
 ```
 
-#### `/resources/press-releases/page.tsx`
+#### `/press-releases/page.tsx`
 
 Fetches from `pressReleases` table ordered by `publishedAt` desc. Reuses `LatestPressReleases` component (already exists).
 
@@ -477,7 +477,7 @@ for (const sermon of SERMON_SEEDS) {
 |------|---------|
 | `src/app/resources/khitab-e-jumah/page.tsx` | SermonsList page |
 | `src/app/resources/khitab-e-jumah/[slug]/page.tsx` | SermonDetail page |
-| `src/app/resources/press-releases/page.tsx` | Press releases listing |
+| `src/app/press-releases/page.tsx` | Press releases listing |
 | `src/app/resources/social-media/page.tsx` | Redirect to /social-media |
 | `src/components/resources/SermonsList.tsx` | Sermons grid component |
 | `src/components/resources/SermonDetail.tsx` | Sermon detail component |

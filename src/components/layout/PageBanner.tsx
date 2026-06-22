@@ -13,8 +13,9 @@ interface PageBannerProps {
 export function PageBanner({ settings }: PageBannerProps) {
   const pathname = usePathname();
 
-  // Resolve the page title from the DB (not just the slug).
+  // Resolve the page title and image from the DB (not just the slug).
   const [pageTitle, setPageTitle] = useState<string | null>(null);
+  const [pageImage, setPageImage] = useState<string | null>(null);
   const [titleLoading, setTitleLoading] = useState(false);
 
   const slug = pathname?.split("/").filter(Boolean).join("/") ?? "";
@@ -29,12 +30,10 @@ export function PageBanner({ settings }: PageBannerProps) {
       .then((r) => (r.ok ? r.json() : null))
       .then((data) => {
         if (!cancelled) {
-          // The API returns { page: { title, … } } or similar shape.
-          const title =
-            data?.page?.title ??
-            data?.title ??
-            null;
+          const title = data?.page?.title ?? data?.title ?? null;
+          const image = data?.page?.featuredImage ?? data?.featuredImage ?? null;
           setPageTitle(title);
+          setPageImage(image);
         }
       })
       .catch(() => {
@@ -50,16 +49,8 @@ export function PageBanner({ settings }: PageBannerProps) {
   }, [slug]);
 
   // Banner settings come from the DB (seeded in seed-settings.ts).
-  const bgImage =
-    settings?.banner_bg_image || "/images/default-banner.jpg";
-  const overlayColor =
-    settings?.banner_overlay_color || "#003d25";
-  const opacity = parseFloat(
-    settings?.banner_overlay_opacity || "0.7",
-  );
   const textColor =
     settings?.banner_text_color || "#ffffff";
-  const height = settings?.banner_height || "300px";
   const separator =
     settings?.banner_breadcrumb_separator || "/";
   const showBreadcrumbs =
@@ -81,21 +72,33 @@ export function PageBanner({ settings }: PageBannerProps) {
     breadcrumbs[breadcrumbs.length - 1]?.label ??
     "Page";
 
+  const bgImage = settings?.banner_bg_image;
+
   return (
     <section
-      className="relative w-full overflow-hidden flex items-center justify-center text-center"
-      style={{ height }}
+      className="relative overflow-hidden bg-primary text-white pt-24 pb-20 md:pt-28 md:pb-28 flex items-center justify-center text-center w-full"
     >
-      {/* Background Image */}
-      <div
-        className="absolute inset-0 z-0 bg-cover bg-center transition-transform duration-700 hover:scale-105"
-        style={{ backgroundImage: `url('${bgImage}')` }}
-      />
+      {/* Background Image - global setting */}
+      {bgImage && (
+        <>
+          <div
+            className="absolute inset-0 z-0 bg-contain bg-center transition-transform"
+            style={{ backgroundImage: `url('${bgImage}')` }}
+          />
+          {/* Overlay to ensure readability on dynamic background image */}
+          <div className="absolute inset-0 z-10 bg-black/40 pointer-events-none" />
+        </>
+      )}
 
-      {/* Overlay */}
+      {/* Ambient Overlay Patterns */}
+      <div className="absolute inset-0 opacity-15 mix-blend-overlay pointer-events-none bg-primary" />
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#c8a84e]/10 rounded-full blur-[100px] -mr-64 -mt-64" />
+      <div className="absolute -bottom-24 left-1/4 w-[400px] h-[400px] bg-primary rounded-full blur-[80px]" />
+
+      {/* Arabesque geometric watermark */}
       <div
-        className="absolute inset-0 z-10"
-        style={{ backgroundColor: overlayColor, opacity }}
+        className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none bg-repeat bg-center"
+        style={{ backgroundImage: `url('/images/pattern-arabesque.png')`, backgroundSize: '180px' }}
       />
 
       {/* Content */}

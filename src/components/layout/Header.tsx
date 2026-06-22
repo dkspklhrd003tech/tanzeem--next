@@ -31,6 +31,9 @@ export function Header() {
   // Single shared source of truth for nav + settings (SWR-deduped across components).
   const { items: navigation, isLoading: navLoading } = useNavigation("main", true);
   const { settings } = useSettings();
+  const logoSrc = (settings.site_logo && settings.site_logo !== "null" && settings.site_logo !== "undefined" && settings.site_logo.trim() !== "")
+    ? settings.site_logo
+    : "/tanzeem-logo.webp";
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -121,7 +124,7 @@ export function Header() {
 
   return (
     <>
-          {/* Skip to main content link — keyboard-first (WCAG 2.4.1) */}
+      {/* Skip to main content link — keyboard-first (WCAG 2.4.1) */}
       <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-md focus:shadow-lg">
         Skip to main content
       </a>
@@ -129,46 +132,46 @@ export function Header() {
       {/* Top Social Bar */}
       {mounted && (
         <div className="bg-secondary border-b border-border text-foreground py-2 hidden md:block">
-        <div className="container mx-auto flex justify-between items-center gap-4 text-sm">
-          <div className="flex items-center gap-6">
-            {/* Social links are driven entirely by settings — no hardcoded fallbacks. */}
-            {settings.youtube_url && (
-              <a href={settings.youtube_url} target="_blank" rel={EXTERNAL_LINK_REL} aria-label="YouTube — opens in new tab" className="w-7 h-7 rounded-full bg-red-600 flex items-center justify-center text-primary-foreground hover:bg-red-700 transition-colors shadow-sm focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2">
-                <Youtube className="h-3.5 w-3.5" aria-hidden="true" />
-              </a>
-            )}
-            {settings.facebook_url && (
-              <a href={settings.facebook_url} target="_blank" rel={EXTERNAL_LINK_REL} aria-label="Facebook — opens in new tab" className="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-primary-foreground hover:bg-blue-700 transition-colors shadow-sm focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2">
-                <Facebook className="h-3.5 w-3.5" aria-hidden="true" />
-              </a>
-            )}
-            {settings.twitter_url && (
-              <a href={settings.twitter_url} target="_blank" rel={EXTERNAL_LINK_REL} aria-label="X (Twitter) — opens in new tab" className="w-7 h-7 rounded-full bg-black flex items-center justify-center text-primary-foreground hover:bg-gray-800 transition-colors shadow-sm focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2">
-                <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
-              </a>
-            )}
-            {settings.whatsapp_url && (
-              <a href={settings.whatsapp_url} target="_blank" rel={EXTERNAL_LINK_REL} aria-label="WhatsApp — opens in new tab" className="w-7 h-7 rounded-full bg-green-500 flex items-center justify-center text-primary-foreground hover:bg-green-600 transition-colors shadow-sm focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2">
-                <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" /></svg>
-              </a>
+          <div className="container mx-auto flex justify-between items-center gap-4 text-sm">
+            <div className="flex items-center gap-6">
+              {/* Social links are driven entirely by settings — no hardcoded fallbacks. */}
+              {settings.youtube_url && (
+                <a href={settings.youtube_url} target="_blank" rel={EXTERNAL_LINK_REL} aria-label="YouTube — opens in new tab" className="w-7 h-7 rounded-full bg-red-600 flex items-center justify-center text-primary-foreground hover:bg-red-700 transition-colors shadow-sm focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2">
+                  <Youtube className="h-3.5 w-3.5" aria-hidden="true" />
+                </a>
+              )}
+              {settings.facebook_url && (
+                <a href={settings.facebook_url} target="_blank" rel={EXTERNAL_LINK_REL} aria-label="Facebook — opens in new tab" className="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-primary-foreground hover:bg-blue-700 transition-colors shadow-sm focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2">
+                  <Facebook className="h-3.5 w-3.5" aria-hidden="true" />
+                </a>
+              )}
+              {settings.twitter_url && (
+                <a href={settings.twitter_url} target="_blank" rel={EXTERNAL_LINK_REL} aria-label="X (Twitter) — opens in new tab" className="w-7 h-7 rounded-full bg-black flex items-center justify-center text-primary-foreground hover:bg-gray-800 transition-colors shadow-sm focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2">
+                  <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
+                </a>
+              )}
+              {settings.whatsapp_url && (
+                <a href={settings.whatsapp_url} target="_blank" rel={EXTERNAL_LINK_REL} aria-label="WhatsApp — opens in new tab" className="w-7 h-7 rounded-full bg-green-500 flex items-center justify-center text-primary-foreground hover:bg-green-600 transition-colors shadow-sm focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2">
+                  <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" /></svg>
+                </a>
+              )}
+            </div>
+            {settings.header_show_date !== "false" && displayDate && (
+              <div className="flex items-center gap-1.5 text-xs font-semibold text-primary border border-primary/20 px-3 py-1 rounded-full shadow-sm">
+                <span className="ltr">{displayDate.greg}</span>
+                <span className="text-primary/70 mx-0.5">&amp;</span>
+                <span
+                  className="font-nastaleeq text-[16px] leading-none"
+                  style={{ fontFamily: "'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', serif" }}
+                  dir="rtl"
+                  lang="ur"
+                >
+                  {displayDate.hijri}
+                </span>
+              </div>
             )}
           </div>
-          {settings.header_show_date !== "false" && displayDate && (
-            <div className="flex items-center gap-1.5 text-xs font-semibold text-primary bg-primary/10 border border-primary/20 px-3 py-1 rounded-full shadow-sm">
-              <span className="ltr">{displayDate.greg}</span>
-              <span className="text-primary/50 mx-0.5">&amp;</span>
-              <span
-                className="font-nastaleeq text-[15px] leading-none"
-                style={{ fontFamily: "'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', serif" }}
-                dir="rtl"
-                lang="ur"
-              >
-                {displayDate.hijri}
-              </span>
-            </div>
-          )}
         </div>
-      </div>
       )}
 
       {/* Main Navigation */}
@@ -185,9 +188,9 @@ export function Header() {
           <div className="flex items-center justify-between h-16 md:h-20">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-3 shrink-0">
-              {mounted && settings.site_logo ? (
+              {mounted && logoSrc ? (
                 <img
-                  src={settings.site_logo}
+                  src={logoSrc}
                   alt="Tanzeem-e-Islami"
                   className="h-10 md:h-14 w-auto object-contain transition-transform"
                 />
@@ -237,15 +240,6 @@ export function Header() {
                       </button>
                     </form>
                   )}
-
-                  {/* Call to Action */}
-                  {settings.header_cta_text && (
-                    <Button asChild size="sm" className="bg-[#005031] hover:bg-[#004026] text-white rounded-full ml-4 hidden lg:inline-flex shrink-0">
-                      <Link href={settings.header_cta_url || "/join"}>
-                        {settings.header_cta_text}
-                      </Link>
-                    </Button>
-                  )}
                 </>
               )}
             </nav>
@@ -275,9 +269,9 @@ export function Header() {
                 <SheetContent side="right" className="w-80">
                   <SheetHeader>
                     <SheetTitle className="flex items-center gap-2">
-                      {mounted && settings.site_logo ? (
+                      {mounted && logoSrc ? (
                         <img
-                          src={settings.site_logo}
+                          src={logoSrc}
                           alt="Logo"
                           className="h-8 w-auto object-contain"
                         />
@@ -348,20 +342,25 @@ export function Header() {
   );
 }
 
+function getMenuItemClass(isTopLevel: boolean) {
+  return cn(
+    "transition-colors focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2",
+    isTopLevel
+      ? "flex items-center gap-1 py-2 px-3 text-[14px] font-medium text-[#222222] hover:text-primary"
+      : "flex w-full items-center justify-between px-5 py-2.5 text-[14px] text-[#222222] hover:bg-primary hover:text-primary-foreground border-b border-border/30 last:border-0 group"
+  );
+}
+
 function DesktopMenuItem({ item, depth = 0 }: { item: MenuNode; depth?: number }) {
   const [isOpen, setIsOpen] = useState(false);
   const isTopLevel = depth === 0;
+
+  const className = getMenuItemClass(isTopLevel);
 
   if (!item.children || item.children.length === 0) {
     const { href, isExternal, isOpenInNew } = resolveMenuLink(item.url, item.isOpenInNew);
     if (!href) return null; // unsafe/sanitized away
 
-    const className = cn(
-      "transition-colors",
-      isTopLevel
-        ? "py-2 px-4 text-md font-medium text-foreground hover:text-primary focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
-        : "block px-5 py-2.5 text-sm text-foreground hover:bg-primary hover:text-primary-foreground border-b border-border/30 last:border-0 focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
-    );
     if (isExternal) {
       return (
         <a href={href} target={isOpenInNew ? "_blank" : undefined} rel={EXTERNAL_LINK_REL} className={className}>
@@ -390,12 +389,7 @@ function DesktopMenuItem({ item, depth = 0 }: { item: MenuNode; depth?: number }
           const sharedProps = {
             "aria-haspopup": true as const,
             "aria-expanded": isOpen,
-            className: cn(
-              "flex items-center gap-1",
-              isTopLevel
-                ? "py-2 px-4 text-foreground hover:text-primary transition-colors text-md font-medium focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
-                : "flex w-full items-center justify-between px-5 py-2.5 text-md text-foreground hover:bg-primary hover:text-primary-foreground transition-colors border-b border-border/30 last:border-0 group focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
-            ),
+            className,
           };
           return isExternal ? (
             <a href={href} target={isOpenInNew ? "_blank" : undefined} rel={EXTERNAL_LINK_REL} {...sharedProps}>
@@ -409,23 +403,18 @@ function DesktopMenuItem({ item, depth = 0 }: { item: MenuNode; depth?: number }
             </Link>
           );
         })()
-      ) : isTopLevel ? (
-        <button
-          aria-haspopup="true"
-          aria-expanded={isOpen}
-          className="flex items-center gap-1 py-2 px-4 text-foreground hover:text-primary transition-colors text-md font-medium focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
-        >
-          {item.label}
-          <ChevronDown className={cn("h-3.5 w-3.5 transition-transform duration-200", isOpen && "rotate-180")} aria-hidden="true" />
-        </button>
       ) : (
         <button
           aria-haspopup="true"
           aria-expanded={isOpen}
-          className="flex w-full items-center justify-between px-5 py-2.5 text-md text-foreground hover:bg-primary hover:text-primary-foreground transition-colors border-b border-border/30 last:border-0 group focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
+          className={className}
         >
           {item.label}
-          <ChevronDown className="h-3.5 w-3.5 -rotate-90 text-foreground-muted group-hover:text-primary-foreground" aria-hidden="true" />
+          {isTopLevel ? (
+            <ChevronDown className={cn("h-3.5 w-3.5 transition-transform duration-200", isOpen && "rotate-180")} aria-hidden="true" />
+          ) : (
+            <ChevronDown className="h-3.5 w-3.5 -rotate-90 text-foreground-muted group-hover:text-primary-foreground" aria-hidden="true" />
+          )}
         </button>
       )}
 

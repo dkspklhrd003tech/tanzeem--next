@@ -33,7 +33,7 @@ This plan implements the remaining work to fully clone all header menu pages fro
   - [x] 3.1 Create `src/components/resources/SermonDetail.tsx`
     - Accept `sermon: SermonRecord` prop
     - Render: page heading with `font-amiri text-3xl md:text-4xl text-primary`, date (`text-sm text-foreground-muted`), speaker name, optional thumbnail `<img>` (aspect-video, rounded-lg), optional `<audio controls>` player when `audioUrl` is set, YouTube `<iframe>` embed when `videoUrl` contains `youtube.com` or `youtu.be` (transform `watch?v=ID` and `youtu.be/ID` to `https://www.youtube.com/embed/ID`), rich description via `dangerouslySetInnerHTML`
-    - Container: `container mx-auto px-4 py-14 md:py-16 max-w-4xl`
+    - Container: `container mx-auto py-14 md:py-16 max-w-4xl`
     - _Requirements: 4.3, 4.5_
 
 - [x] 4. Create Khitab-e-Jum'ah listing page route
@@ -51,11 +51,11 @@ This plan implements the remaining work to fully clone all header menu pages fro
     - _Requirements: 3.5, 3.6, 3.9, 11.1, 11.3, 11.4_
 
 - [x] 5. Create `/resources/press-releases` dedicated route
-  - [x] 5.1 Create `src/app/resources/press-releases/page.tsx`
+  - [x] 5.1 Create `src/app/press-releases/page.tsx`
     - Server component; fetch `db.select().from(pressReleases).where(eq(pressReleases.isPublished, true)).orderBy(desc(pressReleases.publishedAt)).limit(30)`
     - Render using the existing `LatestPressReleases` component imported from `@/components/home/LatestPressReleases`
     - Export static `metadata` with title `"Press Releases | Tanzeem-e-Islami"`
-    - Note: The catch-all `/resources/[...slug]` already handles this path; creating a dedicated route file makes it the canonical handler — confirm the catch-all's `press-releases` branch still handles detail slugs at `/resources/press-releases/[slug]`
+    - Note: The catch-all `/resources/[...slug]` already handles this path; creating a dedicated route file makes it the canonical handler — confirm the catch-all's `press-releases` branch still handles detail slugs at `/press-releases/[slug]`
     - _Requirements: 3.7, 11.1_
 
 - [x] 6. Create `/resources/social-media` redirect route

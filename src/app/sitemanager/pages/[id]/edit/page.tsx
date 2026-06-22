@@ -5,6 +5,8 @@ import { use } from "react";
 import { PageSpinner } from "@/components/ui/spinner";
 import { PageForm, type PageRecord } from "@/components/sitemanager/PageForm";
 import OrganizationPageEditor from "../../organization/page";
+import FaqPageEditor from "@/components/admin/FaqPageEditor";
+import PressReleasesPageEditor from "@/components/admin/PressReleasesPageEditor";
 
 export default function EditPagePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -13,8 +15,8 @@ export default function EditPagePage({ params }: { params: Promise<{ id: string 
   const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
-    if (id === "organization" || id === "0f14e867-3679-4e52-9ba3-0441e7f22609") return;
-    
+    if (id === "organization") return;
+
     Promise.all([
       fetch(`/api/sitemanager/pages/${id}`),
       fetch("/api/sitemanager/pages?limit=100&sort=az"),
@@ -29,7 +31,7 @@ export default function EditPagePage({ params }: { params: Promise<{ id: string 
     }).catch(() => setNotFound(true));
   }, [id]);
 
-  if (id === "organization" || id === "0f14e867-3679-4e52-9ba3-0441e7f22609") {
+  if (id === "organization") {
     return <OrganizationPageEditor />;
   }
 
@@ -44,6 +46,14 @@ export default function EditPagePage({ params }: { params: Promise<{ id: string 
   }
 
   if (!page) return <PageSpinner />;
+
+  if (page.slug === "faqs" || page.slug === "faq" || page.id === "9f332f17-55ce-4c3a-a25d-8156d26da541") {
+    return <FaqPageEditor pageId={page.id} initialPageData={page} />;
+  }
+
+  if (page.slug === "press-releases" || page.id === "36fcba66-d2fd-47e6-b36f-ec559c43f02d") {
+    return <PressReleasesPageEditor pageId={page.id} initialPageData={page} />;
+  }
 
   return <PageForm mode="edit" initialData={page} parentPages={parentPages} />;
 }

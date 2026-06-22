@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { settings } from "@/db/schema";
 import { eq, inArray } from "drizzle-orm";
-import { getCurrentUser } from "@/lib/auth";
+import { getCurrentUser, getSession } from "@/lib/auth";
 
 /** Keys that belong to the header group (consumed by Header.tsx + admin HeaderManager). */
 const HEADER_KEYS = [
@@ -52,7 +52,12 @@ export async function GET() {
  */
 export async function PUT(request: NextRequest) {
   try {
+    const allCookies = request.cookies.getAll().map(c => `${c.name}=${c.value}`);
+    console.log("DEBUG PUT /api/settings/header - cookies:", allCookies);
+    const session = await getSession(request);
+    console.log("DEBUG PUT /api/settings/header - session:", session);
     const user = await getCurrentUser(request);
+    console.log("DEBUG PUT /api/settings/header - user:", user);
     if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
     const body: Record<string, string> = await request.json();

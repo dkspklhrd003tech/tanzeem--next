@@ -1,21 +1,27 @@
 import { getCmsPage, getCleanContent } from "@/lib/page-helpers";
 import { DynamicPageContent, generatePageMetadata } from "@/components/shared/DynamicPageContent";
-import { TeamGrid } from "@/components/shared/TeamGrid";
-import { CTABanner } from "@/components/shared/CTABanner";
+import { ModernizedProsePage } from "@/components/shared/ModernizedProsePage";
 
 export const dynamic = "force-dynamic";
 
 const SLUG = "organization/the-founder";
 const DEFAULT_TITLE = "The Founder | Tanzeem-e-Islami";
-const FALLBACK_MEMBERS = [
-  {
-    name: "Dr. Israr Ahmed",
-    designation: "Founder & First Ameer (1975–2010)",
-    bio: "Dr. Israr Ahmed (1932–2010) was a visionary Islamic scholar, theologian, philosopher, and the founder of Tanzeem-e-Islami.",
-    avatar: "https://tanzeem.org/media/dr-israr-ahmed.jpg",
-    socials: { website: "https://tanzeem.org/dr-israr-ahmed" },
-  },
-];
+
+const FALLBACK_FOUNDER = {
+  title: "Dr. Israr Ahmed",
+  excerpt: "APRIL 26, 1932 – APRIL 14, 2010",
+  featuredImage: "/uploads/40384275-a53c-4bdb-8134-d748eb00d88c-founder.webp",
+  slug: SLUG,
+  content: `
+    <p>Dr. Israr Ahmad, the second son of a government servant, was born on April 26, 1932 in Hisar (a district of East Punjab, now a part of Haryana) in India. He graduated from King Edward Medical College (Lahore) in 1954 and later received his masters in Islamic Studies from the University of Karachi in 1965. He came under the influence of Allama Iqbal and Maulana Abul A\`la Maududi as a young student, worked briefly for Muslim Student’s Federation in the Independence Movement and, following the creation of Pakistan in 1947, for the Islami Jami\`yat-e-Talaba and then for the Jama\`at-e-Islami.</p>
+    
+    <p>Dr. Israr Ahmad resigned from the Jama\`at in April 1957 because of its involvement in the electoral politics, which he believed was irreconcilable with the revolutionary methodology adopted by the Jama’at in the pre-1947 period. While still a student and an activist of the Islami Jami\`yat-e-Talaba, Dr. Israr Ahmad gained considerable fame and eminence as a Mudarris (or teacher) of the Holy Qur’an.</p>
+    
+    <p>Even after resigning from the Jama\`at, he continued to give Qur’anic lectures in different cities of Pakistan, and especially after 1965 he has, according to his own disclosure, invested the better part of his physical and intellectual abilities in the learning and teaching of the Qur’an’ic wisdom.</p>
+    
+    <p>Dr. Israr Ahmad wrote an extremely significant tract in 1967 in which he explained his basic thought — that an Islamic Renaissance is possible only by revitalizing the Iman (true faith and conviction) among the Muslims, particularly their intelligentsia. The revitalization of Iman, in turn, is possible only by the propagation of the Qur’an’ic teachings and the study of the Qur’an in modern terms.</p>
+  `.trim()
+};
 
 export async function generateMetadata() {
   const { page } = await getCmsPage(SLUG);
@@ -24,6 +30,12 @@ export async function generateMetadata() {
 
 export default async function FounderPage() {
   const { page, sections } = await getCmsPage(SLUG);
+
+  const crumbs = [
+    { name: "Home", path: "/" },
+    { name: "Organization", path: "/organization" },
+    { name: "The Founder", path: "/organization/the-founder" },
+  ];
 
   if (page && sections.length > 0) {
     return (
@@ -35,55 +47,36 @@ export default async function FounderPage() {
 
   if (page) {
     return (
-      <main className="min-h-screen bg-background">
-        <div className="container mx-auto py-12 md:py-16 px-4">
-          <div className="prose prose-lg dark:prose-invert max-w-4xl mx-auto"
-            dangerouslySetInnerHTML={{ __html: getCleanContent(page.content) }}
-          />
-        </div>
-      </main>
+      <ModernizedProsePage
+        title={page.title}
+        excerpt={page.excerpt}
+        content={getCleanContent(page.content)}
+        slug={page.slug}
+        breadcrumbs={crumbs}
+        featuredImage={page.featuredImage}
+        template={page.template}
+        ctaHeading="Meet Our Ameer"
+        ctaSubheading="Discover the current Ameer of Tanzeem-e-Islami and read his profile."
+        ctaButtonLabel="The Ameer"
+        ctaButtonUrl="/organization/the-ameer"
+      />
     );
   }
 
+  // Fallback if DB record doesn't exist
   return (
-    <main className="min-h-screen bg-background">
-      <div className="container mx-auto py-12 md:py-16">
-        <article className="prose prose-lg dark:prose-invert max-w-4xl mx-auto">
-          <h1>The Founder</h1>
-          <p className="lead text-xl text-muted-foreground mb-8">
-            Dr. Israr Ahmed (1932&ndash;2010) &mdash; Founder of Tanzeem-e-Islami, a visionary scholar, theologian, and revivalist who dedicated his life to the cause of Islam.
-          </p>
-          <TeamGrid heading="Founder" members={FALLBACK_MEMBERS} />
-          <h2>Early Life and Education</h2>
-          <p>Dr. Israr Ahmed was born on April 26, 1932, in Hisar, Punjab (now in Haryana, India).</p>
-          <h2>Intellectual Development</h2>
-          <p>During his student years, Dr. Israr Ahmed was deeply influenced by the poetry and philosophy of Allama Muhammad Iqbal and the writings of Maulana Abul A&apos;la Maududi.</p>
-          <h2>Founding of Tanzeem-e-Islami</h2>
-          <p>In 1975, Dr. Israr Ahmed founded Tanzeem-e-Islami with the vision of creating a nucleus of committed workers (kaar-kun) who would devote their lives to the revival of Islam.</p>
-          <h2>Literary and Scholarly Contributions</h2>
-          <ul>
-            <li>Tafseer-e-Asri (Contemporary Commentary on the Quran)</li>
-            <li>Minhaj-e-Inqilab-e-Nabawi (The Prophetic Method of Revolution)</li>
-            <li>Tasheel-ul-Quran (Simplified Quran Study Series)</li>
-            <li>Thousands of audio and video lectures</li>
-          </ul>
-          <h2>Key Contributions</h2>
-          <ul>
-            <li><strong>Bayan-ul-Quran:</strong> Comprehensive Quran commentary program</li>
-            <li><strong>Dars-e-Quran:</strong> Systematic Quran study circles</li>
-            <li><strong>Quran Academy:</strong> Structured Islamic education</li>
-            <li><strong>Zamana Gawah Hai:</strong> Landmark television program</li>
-          </ul>
-          <h2>Legacy</h2>
-          <p>Dr. Israr Ahmed passed away on April 14, 2010, but his legacy continues through Tanzeem-e-Islami and the countless individuals whose lives he transformed.</p>
-        </article>
-      </div>
-      <CTABanner
-        heading="Current Leadership"
-        subheading="Meet Shujauddin Sheikh, the current Ameer of Tanzeem-e-Islami."
-        buttonLabel="The Ameer"
-        buttonUrl="/organization/the-ameer"
-      />
-    </main>
+    <ModernizedProsePage
+      title={FALLBACK_FOUNDER.title}
+      excerpt={FALLBACK_FOUNDER.excerpt}
+      content={FALLBACK_FOUNDER.content}
+      slug={FALLBACK_FOUNDER.slug}
+      breadcrumbs={crumbs}
+      featuredImage={FALLBACK_FOUNDER.featuredImage}
+      template="leader"
+      ctaHeading="Meet Our Ameer"
+      ctaSubheading="Discover the current Ameer of Tanzeem-e-Islami and read his profile."
+      ctaButtonLabel="The Ameer"
+      ctaButtonUrl="/organization/the-ameer"
+    />
   );
 }

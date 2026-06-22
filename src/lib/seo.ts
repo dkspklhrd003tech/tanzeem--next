@@ -12,11 +12,10 @@ import type { Metadata } from "next";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-export const SITE_URL  = process.env.NEXT_PUBLIC_APP_URL ?? "https://tanzeem.org";
+export const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://tanzeem.org";
 export const SITE_NAME = "Tanzeem-e-Islami";
-export const SITE_LOGO = `${SITE_URL}/logo.svg`;
-
-export const DEFAULT_OG_IMAGE = `${SITE_URL}/og-default.jpg`;
+export const SITE_LOGO = SITE_URL ? `${SITE_URL}/tanzeem-logo.webp` : "";
+export const DEFAULT_OG_IMAGE = SITE_URL ? `${SITE_URL}/og-default.jpg` : "";
 
 // ─── buildMetadata ────────────────────────────────────────────────────────────
 
@@ -43,32 +42,32 @@ export function buildMetadata({
   noIndex = false,
   schemaType: _schemaType = "WebPage",
 }: MetadataInput): Metadata {
-  const url       = `${SITE_URL}${path}`;
-  const image     = ogImage ?? DEFAULT_OG_IMAGE;
+  const url = `${SITE_URL}${path}`;
+  const image = ogImage ?? DEFAULT_OG_IMAGE;
   const cleanTitle = title.replace(new RegExp(`\\s*\\|?\\s*${SITE_NAME}\\s*$`, 'i'), '').trim();
-  const fullTitle  = cleanTitle ? `${cleanTitle} | ${SITE_NAME}` : SITE_NAME;
+  const fullTitle = cleanTitle ? `${cleanTitle} | ${SITE_NAME}` : SITE_NAME;
 
   return {
-    title:       cleanTitle || undefined,
+    title: cleanTitle || undefined,
     description,
-    keywords:    keywords.join(", ") || undefined,
-    alternates:  { canonical: url },
-    robots:      noIndex ? "noindex,nofollow" : "index,follow",
+    keywords: keywords.join(", ") || undefined,
+    alternates: { canonical: url },
+    robots: noIndex ? "noindex,nofollow" : "index,follow",
     openGraph: {
-      title:       fullTitle,
+      title: fullTitle,
       description,
       url,
-      siteName:    SITE_NAME,
-      type:        "website",
-      locale:      "en_PK",
-      images:      [{ url: image, width: 1200, height: 630, alt: fullTitle }],
+      siteName: SITE_NAME,
+      type: "website",
+      locale: "en_PK",
+      images: [{ url: image, width: 1200, height: 630, alt: fullTitle }],
     },
     twitter: {
-      card:        "summary_large_image",
-      title:       fullTitle,
+      card: "summary_large_image",
+      title: fullTitle,
       description,
-      images:      [image],
-      site:        "@tanzeemeislami",
+      images: [image],
+      site: "@tanzeemeislami",
     },
   };
 }
@@ -78,30 +77,30 @@ export function buildMetadata({
 /** Organisation structured data — used on every page via RootLayout */
 export function organisationJsonLd() {
   return {
-    "@context":   "https://schema.org",
-    "@type":      "Organization",
-    name:         SITE_NAME,
-    url:          SITE_URL,
-    logo:         SITE_LOGO,
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: SITE_NAME,
+    url: SITE_URL,
+    logo: SITE_LOGO,
     sameAs: [
       "https://www.youtube.com/@tanzeemeislami",
       "https://www.facebook.com/tanzeemeislami",
       "https://twitter.com/tanzeemeislami",
     ],
     contactPoint: {
-      "@type":             "ContactPoint",
-      telephone:           "+92-42-35473375",
-      contactType:         "customer service",
-      areaServed:          "PK",
-      availableLanguage:   ["Urdu", "English"],
+      "@type": "ContactPoint",
+      telephone: "+92-42-35473375",
+      contactType: "customer service",
+      areaServed: "PK",
+      availableLanguage: ["Urdu", "English"],
     },
     address: {
-      "@type":           "PostalAddress",
-      streetAddress:     "23 KM Multan Road, Near Chung",
-      addressLocality:   "Lahore",
-      addressRegion:     "Punjab",
-      postalCode:        "53800",
-      addressCountry:    "PK",
+      "@type": "PostalAddress",
+      streetAddress: "23 KM Multan Road, Near Chung",
+      addressLocality: "Lahore",
+      addressRegion: "Punjab",
+      postalCode: "53800",
+      addressCountry: "PK",
     },
   };
 }
@@ -121,16 +120,16 @@ export function webPageJsonLd({
   dateModified?: Date | string | null;
 }) {
   return {
-    "@context":     "https://schema.org",
-    "@type":        "WebPage",
-    name:           title,
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: title,
     description,
-    url:            `${SITE_URL}${path}`,
-    inLanguage:     "ur",
-    isPartOf:       { "@id": SITE_URL },
-    publisher:      { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
-    datePublished:  datePublished ? new Date(datePublished).toISOString() : undefined,
-    dateModified:   dateModified  ? new Date(dateModified).toISOString()  : undefined,
+    url: `${SITE_URL}${path}`,
+    inLanguage: "ur",
+    isPartOf: { "@id": SITE_URL },
+    publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
+    datePublished: datePublished ? new Date(datePublished).toISOString() : undefined,
+    dateModified: dateModified ? new Date(dateModified).toISOString() : undefined,
   };
 }
 
@@ -155,20 +154,20 @@ export function audioJsonLd({
   datePublished?: Date | string | null;
 }) {
   return {
-    "@context":    "https://schema.org",
-    "@type":       "AudioObject",
-    name:          title,
-    description:   description ?? undefined,
-    contentUrl:    audioUrl,
-    url:           `${SITE_URL}/audio/${slug}`,
-    thumbnailUrl:  thumbnailUrl ?? undefined,
-    duration:      duration ? `PT${Math.floor(duration / 60)}M${duration % 60}S` : undefined,
-    inLanguage:    "ur",
-    author:        speakerName
+    "@context": "https://schema.org",
+    "@type": "AudioObject",
+    name: title,
+    description: description ?? undefined,
+    contentUrl: audioUrl,
+    url: `${SITE_URL}/audio/${slug}`,
+    thumbnailUrl: thumbnailUrl ?? undefined,
+    duration: duration ? `PT${Math.floor(duration / 60)}M${duration % 60}S` : undefined,
+    inLanguage: "ur",
+    author: speakerName
       ? { "@type": "Person", name: speakerName }
       : { "@type": "Organization", name: SITE_NAME },
-    publisher:     { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
-    uploadDate:    datePublished ? new Date(datePublished).toISOString() : undefined,
+    publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
+    uploadDate: datePublished ? new Date(datePublished).toISOString() : undefined,
   };
 }
 
@@ -193,20 +192,20 @@ export function videoJsonLd({
   datePublished?: Date | string | null;
 }) {
   return {
-    "@context":    "https://schema.org",
-    "@type":       "VideoObject",
-    name:          title,
-    description:   description ?? undefined,
-    contentUrl:    videoUrl,
-    url:           `${SITE_URL}/videos/${slug}`,
-    thumbnailUrl:  thumbnailUrl ?? `${DEFAULT_OG_IMAGE}`,
-    duration:      duration ? `PT${Math.floor(duration / 60)}M${duration % 60}S` : undefined,
-    inLanguage:    "ur",
-    author:        speakerName
+    "@context": "https://schema.org",
+    "@type": "VideoObject",
+    name: title,
+    description: description ?? undefined,
+    contentUrl: videoUrl,
+    url: `${SITE_URL}/videos/${slug}`,
+    thumbnailUrl: thumbnailUrl ?? `${DEFAULT_OG_IMAGE}`,
+    duration: duration ? `PT${Math.floor(duration / 60)}M${duration % 60}S` : undefined,
+    inLanguage: "ur",
+    author: speakerName
       ? { "@type": "Person", name: speakerName }
       : { "@type": "Organization", name: SITE_NAME },
-    publisher:     { "@type": "Organization", name: SITE_NAME, url: SITE_URL, logo: { "@type": "ImageObject", url: SITE_LOGO } },
-    uploadDate:    datePublished ? new Date(datePublished).toISOString() : undefined,
+    publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL, logo: { "@type": "ImageObject", url: SITE_LOGO } },
+    uploadDate: datePublished ? new Date(datePublished).toISOString() : undefined,
   };
 }
 
@@ -229,17 +228,17 @@ export function bookJsonLd({
   datePublished?: Date | string | null;
 }) {
   return {
-    "@context":    "https://schema.org",
-    "@type":       "Book",
-    name:          title,
-    description:   description ?? undefined,
-    url:           `${SITE_URL}/books/${slug}`,
-    image:         coverImage ?? undefined,
-    inLanguage:    language ?? "ur",
-    author:        authorName
+    "@context": "https://schema.org",
+    "@type": "Book",
+    name: title,
+    description: description ?? undefined,
+    url: `${SITE_URL}/books/${slug}`,
+    image: coverImage ?? undefined,
+    inLanguage: language ?? "ur",
+    author: authorName
       ? { "@type": "Person", name: authorName }
       : { "@type": "Organization", name: SITE_NAME },
-    publisher:     { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
+    publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
     datePublished: datePublished ? new Date(datePublished).toISOString() : undefined,
   };
 }
@@ -247,13 +246,13 @@ export function bookJsonLd({
 /** BreadcrumbList JSON-LD — navigation path */
 export function breadcrumbJsonLd(crumbs: { name: string; path: string }[]) {
   return {
-    "@context":        "https://schema.org",
-    "@type":           "BreadcrumbList",
-    itemListElement:   crumbs.map((crumb, i) => ({
-      "@type":   "ListItem",
-      position:  i + 1,
-      name:      crumb.name,
-      item:      `${SITE_URL}${crumb.path}`,
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: crumbs.map((crumb, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      name: crumb.name,
+      item: `${SITE_URL}${crumb.path}`,
     })),
   };
 }
@@ -262,10 +261,10 @@ export function breadcrumbJsonLd(crumbs: { name: string; path: string }[]) {
 export function faqJsonLd(items: { question: string; answer: string }[]) {
   return {
     "@context": "https://schema.org",
-    "@type":    "FAQPage",
+    "@type": "FAQPage",
     mainEntity: items.map((item) => ({
-      "@type":        "Question",
-      name:           item.question,
+      "@type": "Question",
+      name: item.question,
       acceptedAnswer: { "@type": "Answer", text: item.answer },
     })),
   };
