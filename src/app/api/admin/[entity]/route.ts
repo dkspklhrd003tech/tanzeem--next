@@ -20,6 +20,7 @@ import {
     donationCampaigns,
     socialPlatforms,
     socialAccounts,
+    bookCategories,
 } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { getCurrentUser } from "@/lib/auth";
@@ -40,6 +41,9 @@ function revalidateEntityPaths(entity: string) {
             revalidatePath("/sermons");
         } else if (entity === "campaigns") {
             revalidatePath("/");
+        } else if (entity === "book-categories" || entity === "books") {
+            revalidatePath("/books-by-category");
+            revalidatePath("/books");
         }
         revalidatePath("/");
     } catch (e) {
@@ -68,6 +72,7 @@ const entityMap: Record<string, any> = {
     donations: donationCampaigns,
     "social-platforms": socialPlatforms,
     "social-accounts": socialAccounts,
+    "book-categories": bookCategories,
 };
 
 const REQUIRED_FIELDS: Record<string, string[]> = {
@@ -88,6 +93,7 @@ const REQUIRED_FIELDS: Record<string, string[]> = {
     donations: ["title", "slug"],
     "social-platforms": ["name", "slug"],
     "social-accounts": ["title", "url"],
+    "book-categories": ["name", "slug"],
 };
 
 function parseDateFields(data: any) {
@@ -236,7 +242,7 @@ export async function PATCH(
         await db.transaction(async (tx) => {
             for (const item of orders) {
                 const updateFields: Record<string, any> = {};
-                if (entity === "social-platforms" || entity === "social-accounts") {
+                if (entity === "social-platforms" || entity === "social-accounts" || entity === "book-categories" || entity === "books") {
                     updateFields.order = item.orderIndex;
                 } else {
                     updateFields.orderIndex = item.orderIndex;

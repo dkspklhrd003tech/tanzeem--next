@@ -20,6 +20,7 @@ import {
     donationCampaigns,
     socialPlatforms,
     socialAccounts,
+    bookCategories,
 } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { getCurrentUser } from "@/lib/auth";
@@ -40,6 +41,9 @@ function revalidateEntityPaths(entity: string) {
             revalidatePath("/sermons");
         } else if (entity === "campaigns") {
             revalidatePath("/");
+        } else if (entity === "book-categories" || entity === "books") {
+            revalidatePath("/books-by-category");
+            revalidatePath("/books");
         }
         revalidatePath("/");
     } catch (e) {
@@ -67,6 +71,7 @@ const entityMap: Record<string, any> = {
     donations: donationCampaigns,
     "social-platforms": socialPlatforms,
     "social-accounts": socialAccounts,
+    "book-categories": bookCategories,
 };
 
 function parseDateFields(data: any) {

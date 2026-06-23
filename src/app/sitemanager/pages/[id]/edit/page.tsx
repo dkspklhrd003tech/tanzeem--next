@@ -9,6 +9,7 @@ import FaqPageEditor from "@/components/admin/FaqPageEditor";
 import PressReleasesPageEditor from "@/components/admin/PressReleasesPageEditor";
 import AudioBooksPageEditor from "@/components/admin/AudioBooksPageEditor";
 import SocialMediaPageEditor from "@/components/admin/SocialMediaPageEditor";
+import BooksByCategoryPageEditor from "@/components/admin/BooksByCategoryPageEditor";
 
 export default function EditPagePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -63,6 +64,10 @@ export default function EditPagePage({ params }: { params: Promise<{ id: string 
 
   if (page.slug === "social-media" || page.id === "6eded7db-bc24-46aa-981f-6d37528dd98f") {
     return <SocialMediaPageEditor pageId={page.id} initialPageData={page} />;
+  }
+
+  if (page.slug === "books-by-category") {
+    return <BooksByCategoryPageEditor pageId={page.id} initialPageData={page} />;
   }
 
   return <PageForm mode="edit" initialData={page} parentPages={parentPages} />;

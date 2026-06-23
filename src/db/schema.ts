@@ -343,6 +343,8 @@ export const bookCategories = mysqlTable("book_categories", {
     name: varchar("name", { length: 191 }).notNull(),
     slug: varchar("slug", { length: 191 }).notNull().unique(),
     description: text("description"),
+    coverImage: text("cover_image"),
+    order: int("order").default(0).notNull(),
     ...timestamps,
 });
 

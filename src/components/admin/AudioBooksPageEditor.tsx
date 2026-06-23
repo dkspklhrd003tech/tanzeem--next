@@ -672,7 +672,7 @@ export default function AudioBooksPageEditor({ pageId, initialPageData }: AudioB
             {isUploading ? (
               <div className="flex flex-col items-center gap-3">
                 <Loader2 className="h-10 w-10 text-primary animate-spin" />
-                <p className="font-semibold text-foreground">Uploading MP3 document...</p>
+                <p className="font-semibold text-foreground">Uploading MP3...</p>
                 <p className="text-xs text-muted-foreground">This will only take a moment.</p>
               </div>
             ) : (
@@ -688,24 +688,6 @@ export default function AudioBooksPageEditor({ pageId, initialPageData }: AudioB
                 </p>
               </div>
             )}
-          </div>
-
-          {/* Grid Search Filter */}
-          <div className="bg-card border border-border rounded-2xl p-4 flex items-center justify-between shadow-sm">
-            <div className="relative w-full max-w-md">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-muted-foreground" />
-              <input
-                type="text"
-                placeholder="Search audio books..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 border border-border rounded-xl bg-background focus:outline-none focus:border-primary text-sm h-10"
-              />
-            </div>
-
-            <div className="text-xs text-muted-foreground font-medium hidden sm:block">
-              {filteredItems.length} audio book{filteredItems.length !== 1 ? "s" : ""} found
-            </div>
           </div>
 
           {/* Sortable grid container */}
@@ -955,7 +937,7 @@ export default function AudioBooksPageEditor({ pageId, initialPageData }: AudioB
                   <ImageUploader
                     value={formData.featuredImage}
                     onChange={(url) => setFormData(prev => ({ ...prev, featuredImage: url }))}
-                    aspectRatio={3/4}
+                    aspectRatio={9 / 16}
                   />
                 </div>
 

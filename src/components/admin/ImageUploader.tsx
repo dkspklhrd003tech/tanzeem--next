@@ -11,6 +11,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Slider } from "@/components/ui/slider";
@@ -230,6 +231,9 @@ export function ImageUploader({
               <CropIcon className="h-5 w-5 text-primary" />
               Crop Image
             </DialogTitle>
+            <DialogDescription className="sr-only">
+              Adjust the image crop before uploading.
+            </DialogDescription>
           </DialogHeader>
 
           <div className="relative h-[400px] w-full bg-muted mt-4">

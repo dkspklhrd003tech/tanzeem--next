@@ -685,24 +685,6 @@ export default function PressReleasesPageEditor({ pageId, initialPageData }: Pre
             )}
           </div>
 
-          {/* Grid Search Filter */}
-          <div className="bg-card border border-border rounded-2xl p-4 flex items-center justify-between shadow-sm">
-            <div className="relative w-full max-w-md">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-muted-foreground" />
-              <input
-                type="text"
-                placeholder="Search press releases..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-9 pr-4 py-2 border border-border rounded-xl bg-background focus:outline-none focus:border-primary text-sm h-10"
-              />
-            </div>
-
-            <div className="text-xs text-muted-foreground font-medium hidden sm:block">
-              {filteredItems.length} press release{filteredItems.length !== 1 ? "s" : ""} found
-            </div>
-          </div>
-
           {/* Sortable grid container */}
           {isLoadingItems ? (
             <div className="flex items-center justify-center py-20 text-muted-foreground gap-2">
