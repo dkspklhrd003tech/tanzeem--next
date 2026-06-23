@@ -48,6 +48,7 @@ interface ContentEditorProps {
     isFeatured?: boolean;
     featuredImage?: string;
     pdfUrl?: string;
+    audioUrl?: string;
     categoryId?: string;
     sections?: any[];
   };
@@ -79,6 +80,7 @@ export function ContentEditor({
     isFeatured: initialData?.isFeatured || false,
     featuredImage: initialData?.featuredImage || "",
     pdfUrl: initialData?.pdfUrl || "",
+    audioUrl: initialData?.audioUrl || "",
     categoryId: initialData?.categoryId || "",
     sections: initialData?.sections || [],
   });
@@ -94,6 +96,9 @@ export function ContentEditor({
     let finalContent = formData.content;
     if (contentType === "press-releases" && pressReleaseTab === "pdf" && formData.pdfUrl && !finalContent) {
       finalContent = "<p>PDF Document Attached</p>";
+    }
+    if (contentType === "audio-books" && pressReleaseTab === "pdf" && formData.audioUrl && !finalContent) {
+      finalContent = "<p>Audio File Attached</p>";
     }
     const { sections, ...rest } = formData;
     await onSave({ ...rest, content: finalContent, sections: sections as any });
@@ -176,7 +181,17 @@ export function ContentEditor({
                   onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
                 />
               </div>
-              {contentType === "press-releases" ? (
+              {contentType === "audio-books" ? (
+                <div className="space-y-4">
+                  <div>
+                    <Label className="text-sm font-semibold mb-2 block">Audio File (MP3)</Label>
+                    <AudioUploader
+                      value={formData.audioUrl}
+                      onChange={(url) => setFormData({ ...formData, audioUrl: url })}
+                    />
+                  </div>
+                </div>
+              ) : contentType === "press-releases" ? (
                 <div className="space-y-4">
                   <div>
                     <Label className="text-sm font-semibold mb-2 block">Release Type</Label>
@@ -250,17 +265,19 @@ export function ContentEditor({
             </CardContent>
           </Card>
 
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold">Page Sections</h3>
-              </div>
-              <PageSectionBuilder
-                pageId={(initialData as any)?.id || "new"}
-                onSave={(sections) => setFormData({ ...formData, sections: sections as any })}
-              />
-            </CardContent>
-          </Card>
+          {contentType !== "audio-books" && (
+            <Card>
+              <CardContent className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="text-lg font-semibold">Page Sections</h3>
+                </div>
+                <PageSectionBuilder
+                  pageId={(initialData as any)?.id || "new"}
+                  onSave={(sections) => setFormData({ ...formData, sections: sections as any })}
+                />
+              </CardContent>
+            </Card>
+          )}
 
           <Card>
             <button
@@ -468,6 +485,110 @@ function PdfUploader({ value = "", onChange }: PdfUploaderProps) {
             ref={fileInputRef}
             onChange={handleFileChange}
             accept="application/pdf"
+            className="hidden"
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
+interface AudioUploaderProps {
+  value?: string;
+  onChange: (url: string) => void;
+}
+
+function AudioUploader({ value = "", onChange }: AudioUploaderProps) {
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0];
+      if (!file.type.startsWith("audio/")) {
+        alert("Please select an audio file (e.g., MP3)");
+        return;
+      }
+
+      setIsUploading(true);
+      try {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("type", "audio");
+
+        const res = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!res.ok) throw new Error("Upload failed");
+
+        const data = await res.json();
+        onChange(data.url);
+      } catch (err) {
+        console.error("Audio upload error:", err);
+        alert("Failed to upload Audio");
+      } finally {
+        setIsUploading(false);
+      }
+    }
+  };
+
+  return (
+    <div className="space-y-3">
+      {value ? (
+        <div className="flex items-center justify-between p-3 border border-emerald-500/30 bg-emerald-50/50 dark:bg-emerald-950/10 rounded-xl">
+          <div className="flex items-center gap-2.5 min-w-0 flex-1">
+            <div className="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-950/40 flex items-center justify-center flex-shrink-0">
+              <Upload className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-semibold text-foreground truncate">Attached Audio</p>
+              <a
+                href={value}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[10px] text-primary hover:underline truncate block"
+              >
+                {value.split("/").pop()}
+              </a>
+            </div>
+          </div>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={() => onChange("")}
+            className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg h-7 w-7 shrink-0"
+          >
+            <Trash2 className="h-3.5 w-3.5" />
+          </Button>
+        </div>
+      ) : (
+        <div
+          onClick={() => !isUploading && fileInputRef.current?.click()}
+          className={cn(
+            "border-2 border-dashed border-border rounded-xl p-6 flex flex-col items-center justify-center cursor-pointer transition-all hover:border-primary/50",
+            isUploading && "pointer-events-none opacity-60"
+          )}
+        >
+          {isUploading ? (
+            <>
+              <Loader2 className="h-7 w-7 text-primary animate-spin mb-2" />
+              <p className="text-xs font-medium">Uploading Audio...</p>
+            </>
+          ) : (
+            <>
+              <Upload className="h-7 w-7 text-primary mb-2" />
+              <p className="text-xs font-medium text-center">Click to upload Audio</p>
+              <p className="text-[10px] text-muted-foreground mt-0.5">MP3 format recommended</p>
+            </>
+          )}
+          <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleFileChange}
+            accept="audio/*"
             className="hidden"
           />
         </div>

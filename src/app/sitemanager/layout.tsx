@@ -98,6 +98,7 @@ const NAV_ITEMS: NavItem[] = [
   { title: "Media Library", href: "/sitemanager?section=media", icon: Image },
   // ── Content ──────────────────────────────────────────────────────────────
   { title: "Audio Manager", href: "/sitemanager?section=audio", icon: Headphones },
+  { title: "Audio Books", href: "/sitemanager?section=audio-books", icon: Headphones },
   { title: "Video Manager", href: "/sitemanager?section=videos", icon: Video },
   { title: "Dars-e-Quran", href: "/sitemanager?section=darse-quran", icon: BookOpen },
   { title: "Jummah Venues", href: "/sitemanager?section=khitabat-addresses", icon: MapPin },

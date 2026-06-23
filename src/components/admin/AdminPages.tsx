@@ -380,13 +380,14 @@ export function AdminPages({ section }: AdminPagesProps) {
     );
   }
 
-  // Press Releases Section — Custom Card Grid
-  if (section === "press-releases") {
+  // Press Releases & Audio Books Section — Custom Card Grid
+  if (section === "press-releases" || section === "audio-books") {
+    const isAudioBooks = section === "audio-books";
     if (editingId) {
       return (
         <ContentEditor
-          title={editingId === "new" ? "New Press Release" : "Edit Press Release"}
-          contentType="press-releases"
+          title={editingId === "new" ? `New ${isAudioBooks ? 'Audio Book' : 'Press Release'}` : `Edit ${isAudioBooks ? 'Audio Book' : 'Press Release'}`}
+          contentType={section}
           initialData={editingId === "new" ? undefined : data.find(p => String(p.id) === editingId)}
           onSave={handleSaveGeneric}
           onCancel={() => setEditingId(null)}
@@ -394,7 +395,7 @@ export function AdminPages({ section }: AdminPagesProps) {
       );
     }
 
-    const filteredReleases = data.filter((item) =>
+    const filteredItems = data.filter((item) =>
       (item.title || "").toLowerCase().includes(pageSearch.toLowerCase()) ||
       (item.slug || "").toLowerCase().includes(pageSearch.toLowerCase())
     );
@@ -408,8 +409,12 @@ export function AdminPages({ section }: AdminPagesProps) {
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-border mb-2">
           <div>
-            <h1 className="text-3xl font-bold text-foreground tracking-tight font-amiri text-[#0d5844]">Press Releases</h1>
-            <p className="text-sm text-foreground-muted mt-1">Manage dynamic press releases and PDF documents</p>
+            <h1 className="text-3xl font-bold text-foreground tracking-tight font-amiri text-[#0d5844]">
+              {isAudioBooks ? "Audio Books" : "Press Releases"}
+            </h1>
+            <p className="text-sm text-foreground-muted mt-1">
+              {isAudioBooks ? "Manage your audio books library" : "Manage dynamic press releases and PDF documents"}
+            </p>
           </div>
           <Button
             onClick={() => setEditingId("new")}
@@ -424,7 +429,7 @@ export function AdminPages({ section }: AdminPagesProps) {
         <div className="relative max-w-md">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground-muted" />
           <Input
-            placeholder="Search press releases..."
+            placeholder={`Search ${isAudioBooks ? "audio books" : "press releases"}...`}
             value={pageSearch}
             onChange={(e) => setPageSearch(e.target.value)}
             className="pl-10 h-12 bg-background border-border/80 focus-visible:ring-primary/20 rounded-2xl"
@@ -432,18 +437,18 @@ export function AdminPages({ section }: AdminPagesProps) {
         </div>
 
         {/* Card Grid */}
-        {filteredReleases.length === 0 ? (
+        {filteredItems.length === 0 ? (
           <div className="flex items-center justify-center py-16 text-foreground-muted">
             <div className="text-center">
               <FileText className="h-12 w-12 mx-auto mb-3 opacity-30" />
-              <p className="text-lg font-medium">No press releases found</p>
-              <p className="text-sm mt-1">Create a new press release or upload a PDF document.</p>
+              <p className="text-lg font-medium">No {isAudioBooks ? "audio books" : "press releases"} found</p>
+              <p className="text-sm mt-1">Create a new {isAudioBooks ? "audio book" : "press release"}.</p>
             </div>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {filteredReleases.map((item, index) => {
-              const hasPdf = !!item.pdfUrl;
+            {filteredItems.map((item, index) => {
+              const hasMedia = isAudioBooks ? !!item.audioUrl : !!item.pdfUrl;
               return (
                 <motion.div
                   key={item.id}
@@ -453,15 +458,15 @@ export function AdminPages({ section }: AdminPagesProps) {
                   onClick={() => setEditingId(String(item.id))}
                   className="group relative bg-card border border-border rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-lg hover:shadow-[#0d5844]/8 hover:border-[#0d5844]/30 hover:-translate-y-1"
                 >
-                  {/* Top accent bar: red if PDF, emerald if text announcement */}
-                  <div className={`h-1.5 w-full bg-gradient-to-r ${hasPdf ? 'from-red-500 to-rose-600' : 'from-emerald-600 to-teal-500'}`} />
+                  {/* Top accent bar */}
+                  <div className={`h-1.5 w-full bg-gradient-to-r ${hasMedia ? (isAudioBooks ? 'from-fuchsia-500 to-purple-600' : 'from-red-500 to-rose-600') : 'from-emerald-600 to-teal-500'}`} />
 
                   <div className="p-5 flex flex-col justify-between h-[200px]">
                     <div>
                       {/* Card Header */}
                       <div className="flex items-start justify-between gap-2 mb-3">
                         <div className="flex items-center gap-3 min-w-0 flex-1">
-                          <div className={`flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center ${hasPdf ? 'bg-red-500/10 text-red-600' : 'bg-emerald-500/10 text-emerald-600'}`}>
+                          <div className={`flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center ${hasMedia ? (isAudioBooks ? 'bg-fuchsia-500/10 text-fuchsia-600' : 'bg-red-500/10 text-red-600') : 'bg-emerald-500/10 text-emerald-600'}`}>
                             <FileText className="h-5 w-5" />
                           </div>
                           <div className="min-w-0 flex-1">
@@ -496,15 +501,21 @@ export function AdminPages({ section }: AdminPagesProps) {
                     </div>
 
                     <div>
-                      {/* PDF Badge Indicator */}
+                      {/* Media Badge Indicator */}
                       <div className="mb-3">
-                        {hasPdf ? (
-                          <span className="text-[10px] bg-red-500/10 text-red-600 dark:text-red-400 font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border border-red-500/20">
-                            PDF Document
+                        {hasMedia ? (
+                          <span className={cn(
+                            "text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border",
+                            isAudioBooks ? "bg-fuchsia-500/10 text-fuchsia-600 border-fuchsia-500/20" : "bg-red-500/10 text-red-600 border-red-500/20"
+                          )}>
+                            {isAudioBooks ? "Audio File" : "PDF Document"}
                           </span>
                         ) : (
-                          <span className="text-[10px] bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border border-emerald-500/20">
-                            Text Statement
+                          <span className={cn(
+                            "text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border",
+                            isAudioBooks ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20" : "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
+                          )}>
+                            {isAudioBooks ? "Written Info" : "Text Statement"}
                           </span>
                         )}
                       </div>
@@ -531,8 +542,8 @@ export function AdminPages({ section }: AdminPagesProps) {
         <ConfirmDialog
           open={!!deletingPressRelease}
           onOpenChange={(isOpen) => !isOpen && setDeletingPressRelease(null)}
-          title="Delete Press Release"
-          description="Are you sure you want to delete this press release? This action cannot be undone."
+          title={`Delete ${isAudioBooks ? 'Audio Book' : 'Press Release'}`}
+          description={`Are you sure you want to delete this ${isAudioBooks ? 'audio book' : 'press release'}? This action cannot be undone.`}
           onConfirm={() => {
             if (deletingPressRelease) handleDeleteGeneric(deletingPressRelease);
             setDeletingPressRelease(null);

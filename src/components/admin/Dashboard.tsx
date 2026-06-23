@@ -60,6 +60,12 @@ export function Dashboard() {
       color: "bg-purple-500",
     },
     {
+      title: "Audio Books",
+      value: data?.stats?.audioBooks || 0,
+      icon: Headphones,
+      color: "bg-fuchsia-500",
+    },
+    {
       title: "Videos",
       value: data?.stats?.videos || 0,
       icon: Video,

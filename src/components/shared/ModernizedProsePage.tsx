@@ -194,36 +194,16 @@ export function ModernizedProsePage({
               {/* Subtle Arabesque Watermark inside the card */}
               <div className="absolute inset-0 opacity-[0.01] pointer-events-none bg-repeat bg-center" style={{ backgroundImage: `url('/images/pattern-arabesque.png')` }} />
 
-              {/* Action Toolbar */}
-              {/* <div className="flex justify-between items-center border-b border-slate-100 dark:border-zinc-800/80 mb-4 text-xs text-muted-foreground">
-                <div className="flex items-center gap-4">
-                  <span className="flex items-center gap-1.5">
-                    <User className="w-3.5 h-3.5 text-primary" />
-                    Official Publication
-                  </span>
-                  <span className="hidden sm:inline-block border-l border-slate-200 dark:border-zinc-800 h-3" />
-                  <span className="hidden sm:flex items-center gap-1.5">
-                    <Calendar className="w-3.5 h-3.5 text-primary" />
-                    Updated June 2026
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Button variant="ghost" size="icon" className="w-8 h-8 rounded-full hover:bg-slate-100" onClick={handleShare} title="Share Link">
-                    <Share2 className="w-5 h-5 text-slate-600 dark:text-slate-400" />
-                  </Button>
-                </div>
-              </div> */}
-
               {/* Leader Template Centered Title & Dates */}
               {template === "leader" && (
-                <div className="justify-center items-center mb-6 border-b border-slate-100 dark:border-zinc-800/80">
+                <div className="text-center mb-6 border-b border-slate-100 dark:border-zinc-800/80">
                   <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-2">
                     {title}
                   </h2>
                   {excerpt && (
-                    <p className="text-emerald-700 text-center dark:text-emerald-500 font-bold uppercase tracking-wider text-sm md:text-base">
+                    <h3 className="text-center !text-emerald-700 dark:text-emerald-500 font-bold uppercase tracking-wider text-sm md:text-base">
                       {excerpt}
-                    </p>
+                    </h3>
                   )}
                 </div>
               )}

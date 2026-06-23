@@ -7,6 +7,7 @@ import { PageForm, type PageRecord } from "@/components/sitemanager/PageForm";
 import OrganizationPageEditor from "../../organization/page";
 import FaqPageEditor from "@/components/admin/FaqPageEditor";
 import PressReleasesPageEditor from "@/components/admin/PressReleasesPageEditor";
+import AudioBooksPageEditor from "@/components/admin/AudioBooksPageEditor";
 import SocialMediaPageEditor from "@/components/admin/SocialMediaPageEditor";
 
 export default function EditPagePage({ params }: { params: Promise<{ id: string }> }) {
@@ -54,6 +55,10 @@ export default function EditPagePage({ params }: { params: Promise<{ id: string 
 
   if (page.slug === "press-releases" || page.id === "36fcba66-d2fd-47e6-b36f-ec559c43f02d") {
     return <PressReleasesPageEditor pageId={page.id} initialPageData={page} />;
+  }
+
+  if (page.slug === "audio-books" || page.id === "76715fe2-6301-4b17-8afb-aab3505242f7") {
+    return <AudioBooksPageEditor pageId={page.id} initialPageData={page} />;
   }
 
   if (page.slug === "social-media" || page.id === "6eded7db-bc24-46aa-981f-6d37528dd98f") {

@@ -9,6 +9,7 @@ import {
   activityLogs,
   users,
   pressReleases,
+  audioBooks,
   homeCampaigns,
   locations,
   magazines,
@@ -30,6 +31,7 @@ export async function GET() {
             campaignsCount,
             locationsCount,
             magazinesCount,
+            audioBooksCount,
             monthlyViews,
         ] = await Promise.all([
             db.select({ count: sql<number>`count(*)` }).from(pages),
@@ -41,6 +43,7 @@ export async function GET() {
             db.select({ count: sql<number>`count(*)` }).from(homeCampaigns),
             db.select({ count: sql<number>`count(*)` }).from(locations),
             db.select({ count: sql<number>`count(*)` }).from(magazines),
+            db.select({ count: sql<number>`count(*)` }).from(audioBooks),
             db.select({ count: sql<number>`coalesce(sum(view_count), 0)` }).from(videos),
         ]);
 
@@ -85,6 +88,7 @@ export async function GET() {
                 books: booksCount[0].count,
                 team: teamCount[0].count,
                 pressReleases: pressCount[0].count,
+                audioBooks: audioBooksCount[0].count,
                 campaigns: campaignsCount[0].count,
                 locations: locationsCount[0].count,
                 magazines: magazinesCount[0].count,

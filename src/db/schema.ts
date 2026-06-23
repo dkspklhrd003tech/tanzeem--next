@@ -504,6 +504,26 @@ export const pressReleases = mysqlTable("press_releases", {
 });
 
 // ============================================
+// AUDIO BOOKS
+// ============================================
+
+export const audioBooks = mysqlTable("audio_books", {
+    id: varchar("id", { length: 191 }).primaryKey(),
+    title: varchar("title", { length: 255 }).notNull(),
+    slug: varchar("slug", { length: 191 }).notNull().unique(),
+    content: text("content").notNull(),
+    excerpt: text("excerpt"),
+    featuredImage: text("featured_image"),
+    audioUrl: text("audio_url"),
+    isPublished: boolean("is_published").default(true).notNull(),
+    publishedAt: timestamp("published_at"),
+    metaTitle: varchar("meta_title", { length: 255 }),
+    metaDescription: text("meta_description"),
+    orderIndex: int("order_index").default(0).notNull(),
+    ...timestamps,
+});
+
+// ============================================
 // FORM SUBMISSIONS
 // ============================================
 

@@ -8,6 +8,7 @@ import {
     teamMembers,
     events,
     pressReleases,
+    audioBooks,
     magazines,
     homeCampaigns,
     locations,
@@ -31,6 +32,8 @@ function revalidateEntityPaths(entity: string) {
             revalidatePath("/faq");
         } else if (entity === "press-releases") {
             revalidatePath("/press-releases");
+        } else if (entity === "audio-books") {
+            revalidatePath("/audio-books");
         } else if (entity === "social-accounts" || entity === "social-platforms") {
             revalidatePath("/social-media");
         } else if (entity === "sermons") {
@@ -52,6 +55,7 @@ const entityMap: Record<string, any> = {
     team: teamMembers,
     events,
     "press-releases": pressReleases,
+    "audio-books": audioBooks,
     magazines,
     campaigns: homeCampaigns,
     locations,
