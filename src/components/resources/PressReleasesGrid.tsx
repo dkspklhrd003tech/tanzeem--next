@@ -166,16 +166,16 @@ export function PressReleasesGrid({ initialItems }: PressReleasesGridProps) {
   return (
     <div className="w-full">
       {/* Search & Filters Bar */}
-      <div className="bg-card border border-border rounded-3xl p-6 mb-8 shadow-sm">
+      <div className="bg-card border border-border rounded-xl p-4 mb-6 shadow-[#0d5844]/30 shadow-md">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           {/* Search */}
-          <div className="relative flex-1 max-w-4xl">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4.5 w-4.5 text-muted-foreground" />
+          <div className="relative flex-1 max-w-5xl">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4.5 w-4.5 text-[#0d5844]" />
             <Input
-              placeholder="Search press releases..."
+              placeholder="Search Press Releases..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-11 h-12 bg-background border-border/80 focus-visible:ring-primary/20 rounded-2xl"
+              className="pl-11 h-12 bg-background border-border/80 focus-visible:ring-primary/20 rounded-xl"
             />
           </div>
 
@@ -184,7 +184,7 @@ export function PressReleasesGrid({ initialItems }: PressReleasesGridProps) {
             <select
               value={sortBy}
               onChange={(e: any) => setSortBy(e.target.value)}
-              className="h-12 bg-background border border-border rounded-2xl px-4 text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-primary/30 min-w-[150px]"
+              className="h-12 bg-background border border-border rounded-xl px-4 text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-primary/30 min-w-[120px]"
             >
               <option value="newest">Newest First</option>
               <option value="oldest">Oldest First</option>
@@ -195,7 +195,7 @@ export function PressReleasesGrid({ initialItems }: PressReleasesGridProps) {
 
       {/* Grid View */}
       {filteredItems.length === 0 ? (
-        <div className="text-center py-20 bg-card border border-border rounded-3xl">
+        <div className="text-center py-20 bg-card border border-border rounded-2xl">
           <AlertCircle className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
           <h3 className="text-lg font-bold text-foreground">No Press Releases Found</h3>
         </div>
@@ -219,7 +219,7 @@ export function PressReleasesGrid({ initialItems }: PressReleasesGridProps) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.4, delay: idx * 0.05 }}
                 onClick={() => setSelectedItem(item)}
-                className="group relative bg-card border bg-slate-100 rounded-3xl overflow-hidden cursor-pointer hover:-translate-y-1.5 transition-all duration-300"
+                className="group relative bg-card border bg-slate-100 rounded-2xl overflow-hidden cursor-pointer hover:-translate-y-1.5 transition-all duration-300"
               >
                 {/* Visual Top Bar */}
                 <div
@@ -247,7 +247,6 @@ export function PressReleasesGrid({ initialItems }: PressReleasesGridProps) {
                             : "bg-emerald-50/50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 border-emerald-200/50 dark:border-emerald-900/30"
                         )}
                       >
-                        {hasPdf ? "PDF Document" : "Statement"}
                       </span>
                     </div>
 
@@ -267,7 +266,7 @@ export function PressReleasesGrid({ initialItems }: PressReleasesGridProps) {
                   {/* Card Action Footer */}
                   <div className="flex items-center justify-between pt-4 mt-5 border-t border-border/50">
                     <span className="text-xs font-semibold text-primary flex items-center gap-1 group-hover:gap-2 transition-all duration-200">
-                      {hasPdf ? "Read PR" + formattedDate : "Read PR" + formattedDate}
+                      {hasPdf ? "Read PR - " + formattedDate : "Read PR" + formattedDate}
                       <ChevronRight className="h-4 w-4" />
                     </span>
                   </div>
@@ -300,33 +299,33 @@ export function PressReleasesGrid({ initialItems }: PressReleasesGridProps) {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ duration: 0.3, ease: "easeOut" }}
-              className="relative bg-card border border-border shadow-2xl rounded-3xl w-[92vw] max-w-5xl h-[88vh] flex flex-col overflow-hidden z-10"
+              className="relative bg-card border border-border shadow-2xl rounded-2xl w-[92vw] max-w-5xl h-[88vh] flex flex-col overflow-hidden z-10"
             >
               {/* Custom Red Close Button on Top Right (exactly as requested) */}
               <button
                 type="button"
                 onClick={() => setSelectedItem(null)}
-                className="absolute top-4 right-4 bg-red-500 hover:bg-red-600 text-white rounded-full p-2 w-7 h-7 flex items-center justify-center transition-colors shadow-lg hover:shadow-red-500/20 active:scale-95 z-50"
+                className="absolute top-4 right-4 bg-red-600 hover:bg-red-700 text-white rounded-full p-2 w-7 h-7 flex items-center justify-center transition-colors shadow-lg hover:shadow-red-500/20 active:scale-95 z-50"
                 title="Close"
               >
                 <X className="h-5 w-5" strokeWidth={2.5} />
               </button>
 
               {/* Modal Top Bar */}
-              <div className="flex flex-col md:flex-row md:items-center justify-between p-5 md:px-7 border-b border-border/80 bg-muted/40 gap-4">
-                <div className="max-w-[70%]">
-                  <h2 className="text-xl font-bold text-foreground truncate pr-6">
+              <div className="items-center justify-between p-5 md:px-7 border-b border-border/80 bg-muted/40 gap-4">
+                <div className="max-w-full">
+                  <h2 className="text-xl font-bold text-md line-clamp-2 pr-4">
                     {selectedItem.title}
                   </h2>
                 </div>
 
                 {/* Toolbar Buttons */}
-                <div className="flex items-center gap-2 pr-12">
+                <div className="flex items-center justify-center gap-2 pt-4">
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => handlePrint(selectedItem)}
-                    className="h-10 rounded-xl px-3.5 text-xs font-semibold bg-background hover:bg-yellow-600 border-border"
+                    className="h-8 rounded-xl px-3.5 text-xs font-semibold !border-yellow-600 hover:bg-yellow-600 hover:text-white shadow-yellow-600/40 shadow-md hover:shadow-yellow-600/60 hover:shadow-lg"
                     title="Print document"
                   >
                     <Printer className="h-4 w-4 mr-2" />
@@ -338,7 +337,7 @@ export function PressReleasesGrid({ initialItems }: PressReleasesGridProps) {
                       variant="outline"
                       size="sm"
                       onClick={() => handleDownload(selectedItem)}
-                      className="h-10 rounded-xl px-3.5 text-xs font-semibold bg-background hover:bg-primary border-border"
+                      className="h-8 rounded-xl px-3.5 text-xs font-semibold !border-[#0d5844] hover:#0d5844 hover:text-white shadow-md shadow-[#0d5844]/40 hover:shadow-lg hover:shadow-[#0d5844]/60"
                       title="Download PDF"
                     >
                       <Download className="h-4 w-4 mr-2" />
@@ -350,7 +349,7 @@ export function PressReleasesGrid({ initialItems }: PressReleasesGridProps) {
                     variant="outline"
                     size="sm"
                     onClick={() => handleShare(selectedItem)}
-                    className="h-10 rounded-xl px-3.5 text-xs font-semibold bg-background hover:bg-orange-600 border-border"
+                    className="h-8 rounded-xl px-3.5 text-xs font-semibold !border-[#108ece] hover:bg-[#108ece] hover:text-white shadow-md shadow-[#108ece]/40 hover:shadow-lg hover:shadow-[#108ece]/60"
                     title="Copy share link"
                   >
                     {isCopied ? (

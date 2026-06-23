@@ -22,6 +22,27 @@ import {
 } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { getCurrentUser } from "@/lib/auth";
+import { revalidatePath } from "next/cache";
+
+function revalidateEntityPaths(entity: string) {
+    try {
+        if (entity === "faqs") {
+            revalidatePath("/faqs");
+            revalidatePath("/faq");
+        } else if (entity === "press-releases") {
+            revalidatePath("/press-releases");
+        } else if (entity === "social-accounts" || entity === "social-platforms") {
+            revalidatePath("/social-media");
+        } else if (entity === "sermons") {
+            revalidatePath("/sermons");
+        } else if (entity === "campaigns") {
+            revalidatePath("/");
+        }
+        revalidatePath("/");
+    } catch (e) {
+        console.error("Revalidation failed:", e);
+    }
+}
 
 const entityMap: Record<string, any> = {
     posts,
@@ -170,6 +191,7 @@ export async function POST(
         };
 
         await db.insert(table).values(insertData);
+        revalidateEntityPaths(entity);
 
         return NextResponse.json({ success: true, id: insertData.id });
     } catch (error: any) {
@@ -217,6 +239,7 @@ export async function PATCH(
                 await tx.update(table).set(updateFields).where(eq((table as any).id, item.id));
             }
         });
+        revalidateEntityPaths(entity);
 
         return NextResponse.json({ success: true, message: `${entity} reordered successfully` });
     } catch (error) {

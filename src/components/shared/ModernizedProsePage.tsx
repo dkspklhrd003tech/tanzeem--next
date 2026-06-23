@@ -90,6 +90,12 @@ export function ModernizedProsePage({
   const { settings } = useSettings();
   const bgImage = settings?.banner_bg_image;
 
+  const textColor = settings?.banner_text_color || "#ffffff";
+  const separator = settings?.banner_breadcrumb_separator || "/";
+  const showBreadcrumbs = settings?.banner_show_breadcrumbs !== "false";
+  const titleLoading = false;
+  const displayTitle = title;
+
   return (
     <div className="min-h-screen bg-slate-50/50 dark:bg-[#0a0a0a]">
       {/* ── Gorgeous Hero Header ── */}
@@ -116,35 +122,42 @@ export function ModernizedProsePage({
           className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none bg-repeat bg-center"
           style={{ backgroundImage: `url('/images/pattern-arabesque.png')`, backgroundSize: '180px' }}
         />
-
-        <div className="container mx-auto relative z-10">
-          {/* Heading */}
-          <motion.div
-            initial={{ opacity: 0, y: 25 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="max-w-4xl"
+        <div className="container relative z-20 px-4 text-center">
+          <h1
+            className={cn(
+              "text-4xl md:text-5xl lg:text-6xl font-bold mb-4 drop-shadow-lg",
+              titleLoading && "animate-pulse",
+            )}
+            style={{ color: textColor }}
           >
-            <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-normal">
-              {title}
-            </h1>
-          </motion.div>
+            {displayTitle}
+          </h1>
 
-          {/* Breadcrumbs */}
-          <nav className="flex items-center gap-1.5 text-xs md:text-sm text-emerald-100/80 mb-6 flex-wrap">
-            {breadcrumbs.map((crumb, idx) => (
-              <React.Fragment key={crumb.path}>
-                {idx > 0 && <ChevronRight className="w-3.5 h-3.5 opacity-60 text-[#c8a84e]" />}
-                {idx === breadcrumbs.length - 1 ? (
-                  <span className="font-semibold text-emerald-200">{crumb.name}</span>
-                ) : (
-                  <Link href={crumb.path} className="hover:text-white transition-colors">
-                    {crumb.name}
-                  </Link>
-                )}
-              </React.Fragment>
-            ))}
-          </nav>
+          {showBreadcrumbs && breadcrumbs.length > 0 && (
+            <nav className="flex items-center justify-center gap-2 text-sm md:text-base font-medium drop-shadow-md flex-wrap">
+              {breadcrumbs.map((crumb, index) => (
+                <div key={crumb.path} className="flex items-center gap-2">
+                  {index > 0 && <span style={{ color: textColor }}>{separator}</span>}
+                  {index === breadcrumbs.length - 1 ? (
+                    <span
+                      className="opacity-80"
+                      style={{ color: textColor }}
+                    >
+                      {crumb.name}
+                    </span>
+                  ) : (
+                    <Link
+                      href={crumb.path}
+                      className="hover:text-emerald-200 transition-colors"
+                      style={{ color: textColor }}
+                    >
+                      {crumb.name}
+                    </Link>
+                  )}
+                </div>
+              ))}
+            </nav>
+          )}
         </div>
       </div>
 
@@ -182,7 +195,7 @@ export function ModernizedProsePage({
               <div className="absolute inset-0 opacity-[0.01] pointer-events-none bg-repeat bg-center" style={{ backgroundImage: `url('/images/pattern-arabesque.png')` }} />
 
               {/* Action Toolbar */}
-              <div className="flex justify-between items-center border-b border-slate-100 dark:border-zinc-800/80 mb-4 text-xs text-muted-foreground">
+              {/* <div className="flex justify-between items-center border-b border-slate-100 dark:border-zinc-800/80 mb-4 text-xs text-muted-foreground">
                 <div className="flex items-center gap-4">
                   <span className="flex items-center gap-1.5">
                     <User className="w-3.5 h-3.5 text-primary" />
@@ -199,16 +212,16 @@ export function ModernizedProsePage({
                     <Share2 className="w-5 h-5 text-slate-600 dark:text-slate-400" />
                   </Button>
                 </div>
-              </div>
+              </div> */}
 
               {/* Leader Template Centered Title & Dates */}
               {template === "leader" && (
-                <div className="text-center mb-8 border-b border-slate-100 dark:border-zinc-800/80 pb-6">
+                <div className="justify-center items-center mb-6 border-b border-slate-100 dark:border-zinc-800/80">
                   <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-2">
                     {title}
                   </h2>
                   {excerpt && (
-                    <p className="text-emerald-700 dark:text-emerald-500 font-bold uppercase tracking-wider text-sm md:text-base">
+                    <p className="text-emerald-700 text-center dark:text-emerald-500 font-bold uppercase tracking-wider text-sm md:text-base">
                       {excerpt}
                     </p>
                   )}
@@ -230,7 +243,7 @@ export function ModernizedProsePage({
                     prose-blockquote:italic prose-blockquote:border-l-4 prose-blockquote:border-[#c8a84e] prose-blockquote:pl-6 prose-blockquote:text-slate-700 dark:prose-blockquote:text-zinc-300 prose-blockquote:bg-slate-50 dark:prose-blockquote:bg-zinc-900/50 prose-blockquote:py-4 prose-blockquote:pr-4 prose-blockquote:rounded-r-2xl"
                 >
                   {featuredImage && template === "leader" && (
-                    <div className="w-full max-w-xs mx-auto md:w-auto md:max-w-[340px] md:float-left md:mr-6 md:mb-4 mb-6 rounded-3xl overflow-hidden shadow-mid border border-slate-200/50 bg-slate-100">
+                    <div className="w-full max-w-xs mx-auto md:ml-0 md:mr-8 md:float-left md:w-[320px] md:mb-4 mb-6 rounded-3xl overflow-hidden shadow-mid border border-slate-200/50 bg-slate-100">
                       <img
                         src={featuredImage}
                         alt={title}

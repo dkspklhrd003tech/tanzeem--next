@@ -1398,25 +1398,19 @@ export default function SocialMediaPageEditor({ pageId, initialPageData }: Socia
 
       {/* Confirmation Dialogs */}
       <ConfirmDialog
-        isOpen={!!deletingPlatformItem}
-        onClose={() => setDeletingPlatformItem(null)}
+        open={!!deletingPlatformItem}
+        onOpenChange={(open) => !open && setDeletingPlatformItem(null)}
         onConfirm={() => deletingPlatformItem && handleDeletePlatform(deletingPlatformItem.id)}
         title="Delete Platform Tab?"
         description={`This will permanently delete the "${deletingPlatformItem?.name}" platform tab and remove all associated cards. This action is irreversible.`}
-        confirmText="Delete Tab"
-        cancelText="Cancel"
-        variant="destructive"
       />
 
       <ConfirmDialog
-        isOpen={!!deletingAccountItem}
-        onClose={() => setDeletingAccountItem(null)}
+        open={!!deletingAccountItem}
+        onOpenChange={(open) => !open && setDeletingAccountItem(null)}
         onConfirm={() => deletingAccountItem && handleDeleteAccount(deletingAccountItem.id)}
         title="Delete Social Card?"
         description={`Are you sure you want to delete the card for "${deletingAccountItem?.title}"?`}
-        confirmText="Delete Card"
-        cancelText="Cancel"
-        variant="destructive"
       />
 
     </div>

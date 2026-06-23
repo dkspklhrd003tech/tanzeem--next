@@ -404,6 +404,7 @@ export default function PressReleasesPageEditor({ pageId, initialPageData }: Pre
         metaTitle: cleanedTitle,
         metaDescription: `Press Release: ${cleanedTitle}`,
         content: "PDF Document Attached",
+        excerpt: "",
       });
       setFormErrors({});
       setIsModalOpen(true);

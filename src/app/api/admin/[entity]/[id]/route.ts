@@ -22,6 +22,27 @@ import {
 } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { getCurrentUser } from "@/lib/auth";
+import { revalidatePath } from "next/cache";
+
+function revalidateEntityPaths(entity: string) {
+    try {
+        if (entity === "faqs") {
+            revalidatePath("/faqs");
+            revalidatePath("/faq");
+        } else if (entity === "press-releases") {
+            revalidatePath("/press-releases");
+        } else if (entity === "social-accounts" || entity === "social-platforms") {
+            revalidatePath("/social-media");
+        } else if (entity === "sermons") {
+            revalidatePath("/sermons");
+        } else if (entity === "campaigns") {
+            revalidatePath("/");
+        }
+        revalidatePath("/");
+    } catch (e) {
+        console.error("Revalidation failed:", e);
+    }
+}
 
 const entityMap: Record<string, any> = {
     posts,
@@ -138,6 +159,7 @@ export async function PUT(
 
         const parsedData = parseDateFields(data);
         await db.update(table).set(parsedData).where(eq((table as any).id, id));
+        revalidateEntityPaths(entity);
 
         return NextResponse.json({ success: true });
     } catch (error) {
@@ -168,6 +190,7 @@ export async function DELETE(
         }
 
         await db.delete(table).where(eq((table as any).id, id));
+        revalidateEntityPaths(entity);
 
         return NextResponse.json({ success: true });
     } catch (error) {

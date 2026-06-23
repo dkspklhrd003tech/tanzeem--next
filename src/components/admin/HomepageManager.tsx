@@ -60,49 +60,49 @@ export function HomepageManager() {
 
                 <div className="bg-card rounded-2xl border border-border p-6 shadow-sm min-h-[500px]">
                     <TabsContent value="sliders" className="mt-0 outline-none">
-                        <div className="max-w-6xl">
+                        <div className="max-w-7xl">
                             <HomeSlidersManagement />
                         </div>
                     </TabsContent>
 
                     <TabsContent value="about" className="mt-0 outline-none">
-                        <div className="max-w-6xl">
+                        <div className="max-w-7xl">
                             <AboutMissionSettings />
                         </div>
                     </TabsContent>
 
                     <TabsContent value="leaders" className="mt-0 outline-none">
-                        <div className="max-w-6xl">
+                        <div className="max-w-7xl">
                             <LeaderProfiles />
                         </div>
                     </TabsContent>
 
                     <TabsContent value="campaigns" className="mt-0 outline-none">
-                        <div className="max-w-6xl">
+                        <div className="max-w-7xl">
                             <CampaignsManager />
                         </div>
                     </TabsContent>
 
                     <TabsContent value="videos" className="mt-0 outline-none">
-                        <div className="max-w-6xl">
+                        <div className="max-w-7xl">
                             <FeaturedVideos />
                         </div>
                     </TabsContent>
 
                     <TabsContent value="books" className="mt-0 outline-none">
-                        <div className="max-w-6xl">
+                        <div className="max-w-7xl">
                             <FeaturedBooks />
                         </div>
                     </TabsContent>
 
                     <TabsContent value="magazines" className="mt-0 outline-none">
-                        <div className="max-w-6xl">
+                        <div className="max-w-7xl">
                             <FeaturedMagazines />
                         </div>
                     </TabsContent>
 
                     <TabsContent value="social" className="mt-0 outline-none">
-                        <div className="max-w-6xl">
+                        <div className="max-w-7xl">
                             <SocialMediaSettings />
                         </div>
                     </TabsContent>

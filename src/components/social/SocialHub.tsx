@@ -152,15 +152,15 @@ export function SocialHub({ initialPlatforms, initialAccounts, layout = "horizon
               style={
                 isActive
                   ? {
-                      backgroundColor: originalColor,
-                      color: "#ffffff",
-                      boxShadow: `0 10px 15px -3px ${originalColor}30`,
-                    }
+                    backgroundColor: originalColor,
+                    color: "#ffffff",
+                    boxShadow: `0 10px 15px -3px ${originalColor}30`,
+                  }
                   : {
-                      color: originalColor,
-                      borderColor: `${originalColor}30`,
-                      backgroundColor: "#ffffff",
-                    }
+                    color: originalColor,
+                    borderColor: `${originalColor}30`,
+                    backgroundColor: "#ffffff",
+                  }
               }
               className={cn(
                 "flex items-center gap-2.5 px-5 py-3.5 rounded-full font-bold text-xs uppercase tracking-wider transition-all duration-300 border hover:scale-105",
@@ -215,7 +215,7 @@ export function SocialHub({ initialPlatforms, initialAccounts, layout = "horizon
                   className="snap-start shrink-0 w-[280px] sm:w-[320px] bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden flex flex-col items-center p-8 text-center relative border-l-4 border-l-red-500 hover:shadow-xl transition-all duration-300"
                 >
                   {/* Circle Image Wrapper */}
-                  <div className="relative mb-6">
+                  <div className="relative mb-2">
                     <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-slate-200/80 p-1 bg-white">
                       <img
                         src={account.imageUrl || "https://img.icons8.com/color/144/user.png"}
@@ -226,7 +226,7 @@ export function SocialHub({ initialPlatforms, initialAccounts, layout = "horizon
                   </div>
 
                   {/* Title */}
-                  <h3 className="text-lg font-bold text-slate-800 mb-6 leading-snug line-clamp-2 h-14 flex items-center justify-center">
+                  <h3 className="text-lg font-bold text-slate-800 mb-4 leading-snug line-clamp-2 h-10 flex items-center justify-center">
                     {account.title}
                   </h3>
 
@@ -237,8 +237,8 @@ export function SocialHub({ initialPlatforms, initialAccounts, layout = "horizon
                     rel="noopener noreferrer"
                     className="w-full inline-flex items-center justify-center gap-1.5 px-6 py-3.5 rounded-2xl bg-[#0d5844] hover:bg-[#0b4837] text-white font-bold text-sm tracking-wide transition-all shadow-md active:scale-95"
                   >
-                    {account.buttonText || "Subscribe"}
-                    <ChevronRight className="w-4 h-4" />
+                    <span className="line-clamp-1">{account.title}</span>
+                    <ChevronRight className="w-5 h-5" />
                   </a>
                 </div>
               ))
@@ -259,7 +259,7 @@ export function SocialHub({ initialPlatforms, initialAccounts, layout = "horizon
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4">
-      
+
       {/* Premium Glassmorphic Layout Orientation Toggle switcher */}
       <div className="flex justify-end mb-6 max-w-7xl mx-auto">
         <div className="inline-flex bg-slate-100/80 backdrop-blur-md p-1 rounded-2xl border border-slate-200/50 shadow-sm">
@@ -298,24 +298,21 @@ export function SocialHub({ initialPlatforms, initialAccounts, layout = "horizon
       >
         {currentLayout === "vertical" ? (
           <div className="flex flex-col lg:flex-row gap-8 items-start">
-            
+
             {/* Left Sidebar - Social Platforms */}
             <div className="w-full lg:w-72 shrink-0 bg-slate-50 border border-slate-100 rounded-[2.5rem] p-5 md:p-6 shadow-sm">
-              <h3 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-4 px-2">
-                Social Channels
+              <h3 className="text-xs font-black text-slate-400 uppercase tracking-normal mb-4 px-2">
+                Tanzeem Social Channels
               </h3>
               {renderTabsList(true)}
             </div>
 
             {/* Right Area - Heading, Subtitle & Card Carousel */}
             <div className="flex-1 w-full min-w-0">
-              <div className="mb-8 lg:mb-10 text-left px-2 animate-fadeIn">
+              <div className="mb-4 lg:mb-6 text-left px-2 animate-fadeIn">
                 <h2 className="text-2xl md:text-3.5xl font-black text-slate-800 tracking-tight mb-2">
                   {currentText.heading}
                 </h2>
-                <p className="text-sm md:text-base text-slate-500 font-medium max-w-xl">
-                  {currentText.sub}
-                </p>
               </div>
 
               {renderCarouselContent()}
@@ -330,13 +327,10 @@ export function SocialHub({ initialPlatforms, initialAccounts, layout = "horizon
             </div>
 
             {/* Dynamic Subheading and Info */}
-            <div className="text-center mb-10">
+            <div className="text-center mb-4 lg:mb-6">
               <h2 className="text-2xl md:text-3.5xl font-black text-slate-800 tracking-tight mb-2">
                 {currentText.heading}
               </h2>
-              <p className="text-sm md:text-base text-slate-500 font-medium max-w-xl mx-auto">
-                {currentText.sub}
-              </p>
             </div>
 
             {renderCarouselContent()}

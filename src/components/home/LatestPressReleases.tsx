@@ -78,8 +78,8 @@ export function LatestPressReleases({ items }: Props) {
               {item.excerpt && (
                 <p className="mt-2 text-sm text-foreground-muted line-clamp-3">{item.excerpt}</p>
               )}
-              <Button variant="link" className="px-0 mt-3 h-auto text-primary" tabIndex={-1}>
-                Read full release
+              <Button variant="link" className="px-0 mt-3 h-auto text-primary" tabIndex={-1} asChild>
+                <span>Read full release</span>
               </Button>
             </motion.button>
           ))}

@@ -37,7 +37,7 @@ export default async function AmeerPage() {
     { name: "The Ameer", path: "/organization/the-ameer" },
   ];
 
-  if (page && sections.length > 0) {
+  if (page && page.template !== "leader" && sections.length > 0) {
     return (
       <main className="min-h-screen bg-background">
         <DynamicPageContent sections={sections} />

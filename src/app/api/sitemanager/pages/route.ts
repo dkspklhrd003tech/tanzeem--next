@@ -3,6 +3,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { pages, activityLogs, users } from "@/db/schema";
 import { eq, or, like, desc, asc, and, not, sql } from "drizzle-orm";
+import { revalidatePath } from "next/cache";
 
 export const dynamic = "force-dynamic";
 
@@ -167,6 +168,20 @@ export async function POST(request: NextRequest) {
       details:    `Created page "${data.title.trim()}"`,
       createdAt:  new Date(),
     });
+
+    const slug = data.slug.trim();
+    try {
+      revalidatePath(`/${slug}`);
+      if (!slug.startsWith("organization/")) {
+        revalidatePath(`/organization/${slug}`);
+      } else {
+        revalidatePath(`/organization/${slug.replace(/^[^/]+\//, "")}`);
+      }
+      revalidatePath("/[...slug]");
+      revalidatePath("/");
+    } catch (revalErr) {
+      console.error("Cache revalidation failed during page creation:", revalErr);
+    }
 
     const created = await db.select().from(pages).where(eq(pages.id, pageId)).limit(1);
     return NextResponse.json({ page: created[0] }, { status: 201 });

@@ -124,8 +124,16 @@ export async function PUT(request: NextRequest, { params }: Ctx) {
     try {
       revalidatePath(`/${updatedSlug}`);
       revalidatePath(`/${existing.slug}`);
-      revalidatePath(`/organization/${updatedSlug}`);
-      revalidatePath(`/organization/${existing.slug}`);
+      if (!updatedSlug.startsWith("organization/")) {
+        revalidatePath(`/organization/${updatedSlug}`);
+      } else {
+        revalidatePath(`/organization/${updatedSlug.replace(/^[^/]+\//, "")}`);
+      }
+      if (!existing.slug.startsWith("organization/")) {
+        revalidatePath(`/organization/${existing.slug}`);
+      } else {
+        revalidatePath(`/organization/${existing.slug.replace(/^[^/]+\//, "")}`);
+      }
       revalidatePath("/[...slug]");
       revalidatePath("/");
     } catch (revalErr) {
@@ -171,7 +179,11 @@ export async function DELETE(request: NextRequest, { params }: Ctx) {
     // Clear Next.js cache for the deleted page
     try {
       revalidatePath(`/${existing.slug}`);
-      revalidatePath(`/organization/${existing.slug}`);
+      if (!existing.slug.startsWith("organization/")) {
+        revalidatePath(`/organization/${existing.slug}`);
+      } else {
+        revalidatePath(`/organization/${existing.slug.replace(/^[^/]+\//, "")}`);
+      }
       revalidatePath("/[...slug]");
       revalidatePath("/");
     } catch (revalErr) {

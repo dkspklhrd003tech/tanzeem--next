@@ -365,7 +365,7 @@ export default async function DynamicPage({ params }: PageProps) {
       />
 
       {/* Section-builder content (all 15 section types supported) */}
-      {sections.length > 0 ? (
+      {sections.length > 0 && page.template !== "leader" ? (
         <DynamicPageContent sections={sections as any} />
       ) : (
         <ModernizedProsePage
@@ -375,6 +375,7 @@ export default async function DynamicPage({ params }: PageProps) {
           slug={slug}
           breadcrumbs={crumbs}
           featuredImage={page.featuredImage}
+          template={page.template || undefined}
           stats={stats}
           accordionItems={accordionItems}
           ideologyCards={ideologyCards}
