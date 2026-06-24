@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 type LocationRow = {
   id: string;
@@ -38,6 +39,9 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
   const [isLocationDialogOpen, setIsLocationDialogOpen] = useState(false);
   const [editingLocation, setEditingLocation] = useState<Partial<LocationRow> | null>(null);
   const [isSavingLocation, setIsSavingLocation] = useState(false);
+
+  // Confirmation state
+  const [deletingLocationId, setDeletingLocationId] = useState<string | null>(null);
 
   useEffect(() => {
     Promise.all([
@@ -141,7 +145,6 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
   };
 
   const deleteLocation = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this branch?")) return;
     try {
       const res = await fetch(`/api/sitemanager/locations/${id}`, { method: "DELETE" });
       if (res.ok) {
@@ -152,6 +155,8 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
       }
     } catch {
       toast({ variant: "destructive", title: "Network error" });
+    } finally {
+      setDeletingLocationId(null);
     }
   };
 
@@ -204,10 +209,16 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
                 <Label>Office Email</Label>
                 <Input value={settings.contact_email_office || ""} onChange={(e) => handleSettingChange("contact_email_office", e.target.value)} />
               </div>
-              <Button className="w-full mt-4" onClick={saveSettings} disabled={isSavingSettings}>
-                {isSavingSettings ? <RefreshCw className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
-                Save Details
-              </Button>
+              <ConfirmDialog
+                title="Save Contact Details"
+                description="Are you sure you want to save the updated contact information?"
+                onConfirm={saveSettings}
+              >
+                <Button className="w-full mt-4" disabled={isSavingSettings}>
+                  {isSavingSettings ? <RefreshCw className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
+                  Save Details
+                </Button>
+              </ConfirmDialog>
             </CardContent>
           </Card>
         </div>
@@ -251,7 +262,7 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
                         <Button variant="ghost" size="icon" onClick={() => openLocationDialog(loc)}>
                           <Edit2 className="h-4 w-4" />
                         </Button>
-                        <Button variant="ghost" size="icon" onClick={() => deleteLocation(loc.id)} className="text-destructive hover:text-destructive hover:bg-destructive/10">
+                        <Button variant="ghost" size="icon" onClick={() => setDeletingLocationId(loc.id)} className="text-destructive hover:text-destructive hover:bg-destructive/10">
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
@@ -306,12 +317,27 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsLocationDialogOpen(false)}>Cancel</Button>
-            <Button onClick={saveLocation} disabled={isSavingLocation}>
-              {isSavingLocation ? "Saving..." : "Save Branch"}
-            </Button>
+            <ConfirmDialog
+              title={editingLocation?.id ? "Update Branch" : "Add Branch"}
+              description={`Are you sure you want to ${editingLocation?.id ? "update" : "add"} this branch location?`}
+              onConfirm={saveLocation}
+            >
+              <Button disabled={isSavingLocation}>
+                {isSavingLocation ? "Saving..." : "Save Branch"}
+              </Button>
+            </ConfirmDialog>
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Delete Location Confirmation */}
+      <ConfirmDialog
+        open={!!deletingLocationId}
+        onOpenChange={(open) => !open && setDeletingLocationId(null)}
+        title="Delete Branch"
+        description="Are you sure you want to permanently delete this branch location?"
+        onConfirm={() => deletingLocationId && deleteLocation(deletingLocationId)}
+      />
     </div>
   );
 }

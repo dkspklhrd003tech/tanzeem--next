@@ -15,6 +15,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 import {
   DndContext, closestCenter, KeyboardSensor, PointerSensor,
@@ -188,6 +189,10 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Confirmation dialogs
+  const [deletingCat, setDeletingCat] = useState<CategoryItem | null>(null);
+  const [deletingBook, setDeletingBook] = useState<BookItem | null>(null);
+
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
@@ -257,11 +262,15 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
   };
 
   const handleCatDelete = async (item: CategoryItem) => {
-    if (!confirm(`Delete category ${item.name}?`)) return;
     try {
       await fetch(`/api/admin/book-categories/${item.id}`, { method: "DELETE" });
       fetchCategories();
-    } catch (e) { }
+      toast({ title: "Category deleted" });
+    } catch (e) {
+      toast({ variant: "destructive", title: "Failed to delete category" });
+    } finally {
+      setDeletingCat(null);
+    }
   };
 
   const handleCatDragEnd = async (event: DragEndEvent) => {
@@ -295,11 +304,15 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
   };
 
   const handleBookDelete = async (item: BookItem) => {
-    if (!confirm(`Delete book ${item.title}?`)) return;
     try {
       await fetch(`/api/admin/books/${item.id}`, { method: "DELETE" });
       fetchBooks();
-    } catch (e) { }
+      toast({ title: "Book deleted" });
+    } catch (e) {
+      toast({ variant: "destructive", title: "Failed to delete book" });
+    } finally {
+      setDeletingBook(null);
+    }
   };
 
   const handleBookDragEnd = async (event: DragEndEvent) => {
@@ -453,7 +466,7 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
                       <SortableCategoryCard key={cat.id} id={cat.id} item={cat} onClick={setActiveCategory}
                         bookCount={books.filter(b => b.categoryId === cat.id).length}
                         onEdit={(item: any) => { setEditingCatId(item.id); setCatFormData({ name: item.name, slug: item.slug, description: item.description || "", coverImage: item.coverImage || "" }); setIsCatModalOpen(true); }}
-                        onDelete={handleCatDelete} />
+                        onDelete={(item: CategoryItem) => setDeletingCat(item)} />
                     ))}
                   </div>
                 </SortableContext>
@@ -501,7 +514,7 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
                     {activeBooks.map(book => (
                       <SortableBookCard key={book.id} id={book.id} item={book}
                         onEdit={(item: any) => { setEditingBookId(item.id); setBookFormData({ title: item.title, slug: item.slug, description: item.description || "", coverImage: item.coverImage || "", fileUrl: item.fileUrl || "", isPublished: item.isPublished }); setIsBookModalOpen(true); }}
-                        onDelete={handleBookDelete} />
+                        onDelete={(item: BookItem) => setDeletingBook(item)} />
                     ))}
                     {activeBooks.length === 0 && <div className="col-span-full py-10 text-center text-muted-foreground border border-dashed rounded-xl">No books found in this category.</div>}
                   </div>
@@ -551,7 +564,15 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
             </div>
             <div className="p-6 border-t border-border bg-muted/20 flex justify-end gap-3">
               <Button variant="outline" onClick={() => setIsCatModalOpen(false)}>Cancel</Button>
-              <Button onClick={handleCatSave} disabled={isUploading} className="bg-primary text-primary-foreground hover:bg-primary/95">Save Category</Button>
+              <ConfirmDialog
+                title={editingCatId ? "Update Category" : "Create Category"}
+                description={`Are you sure you want to ${editingCatId ? "update" : "create"} this book category?`}
+                onConfirm={handleCatSave}
+              >
+                <Button disabled={isUploading} className="bg-primary text-primary-foreground hover:bg-primary/95">
+                  {editingCatId ? "Update Category" : "Save Category"}
+                </Button>
+              </ConfirmDialog>
             </div>
           </div>
         </div>
@@ -582,11 +603,37 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
             </div>
             <div className="p-6 border-t border-border bg-muted/20 flex justify-end gap-3">
               <Button variant="outline" onClick={() => setIsBookModalOpen(false)}>Cancel</Button>
-              <Button onClick={handleBookSave} disabled={isUploading} className="bg-primary text-primary-foreground hover:bg-primary/95">Save Book</Button>
+              <ConfirmDialog
+                title={editingBookId ? "Update Book" : "Add Book"}
+                description={`Are you sure you want to ${editingBookId ? "update" : "add"} this book?`}
+                onConfirm={handleBookSave}
+              >
+                <Button disabled={isUploading} className="bg-primary text-primary-foreground hover:bg-primary/95">
+                  {editingBookId ? "Update Book" : "Save Book"}
+                </Button>
+              </ConfirmDialog>
             </div>
           </div>
         </div>
       )}
+
+      {/* Delete Category Confirmation */}
+      <ConfirmDialog
+        open={!!deletingCat}
+        onOpenChange={(open) => !open && setDeletingCat(null)}
+        title="Delete Category"
+        description={`Are you sure you want to delete the category "${deletingCat?.name}"? All books inside will also be removed.`}
+        onConfirm={() => deletingCat && handleCatDelete(deletingCat)}
+      />
+
+      {/* Delete Book Confirmation */}
+      <ConfirmDialog
+        open={!!deletingBook}
+        onOpenChange={(open) => !open && setDeletingBook(null)}
+        title="Delete Book"
+        description={`Are you sure you want to delete "${deletingBook?.title}"?`}
+        onConfirm={() => deletingBook && handleBookDelete(deletingBook)}
+      />
     </div>
   );
 }

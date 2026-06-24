@@ -164,45 +164,6 @@
   --font-nastaleeq: 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', serif;
 }
 
-.dark {
-  --background: #0a0a0a;
-  --background-secondary: #171717;
-  --background-alt: #111111;
-  --foreground: #fefefc;
-  --foreground-muted: #a1a1aa;
-  --foreground-light: #71717a;
-  --card: #171717;
-  --card-foreground: #fefefc;
-  --popover: #171717;
-  --popover-foreground: #fefefc;
-  --primary: #007a4d;
-  --primary-foreground: #ffffff;
-  --secondary: #262626;
-  --secondary-foreground: #fefefc;
-  --muted: #262626;
-  --muted-foreground: #a1a1aa;
-  --accent: #262626;
-  --accent-foreground: #fefefc;
-  --destructive: #7f1d1d;
-  --destructive-foreground: #fefefc;
-  --border: #2a2a2a;
-  --border-strong: #3f3f46;
-  --input: #171717;
-  --ring: #0d5844;
-  --sidebar-background: #171717;
-  --sidebar-foreground: #fefefc;
-  --sidebar-primary: #0d5844;
-  --sidebar-primary-foreground: #fefefc;
-  --sidebar-accent: #262626;
-  --sidebar-accent-foreground: #fefefc;
-  --sidebar-border: #262626;
-  --sidebar-ring: #0d5844;
-  --chart-1: #0d5844;
-  --chart-2: #00a367;
-  --chart-3: #33b882;
-  --chart-4: #66cd9c;
-  --chart-5: #99e2b7;
-}
 
 @theme inline {
   /* ── Colors ── */
@@ -816,6 +777,257 @@ button,
   --sidebar-border: rgba(51, 65, 85, 0.45);
   --sidebar-ring: #10b981;
 }
+
+/* ─── SiteManager Admin — Light Mode ─── */
+.sitemanager-admin-layout.admin-light {
+  /* CSS variable overrides */
+  --background: #f1f5f9;
+  --background-secondary: #e8edf4;
+  --background-alt: #dde4ef;
+  --foreground: #0f172a;
+  --foreground-muted: #475569;
+  --foreground-light: #64748b;
+  --card: #ffffff;
+  --card-foreground: #0f172a;
+  --popover: #ffffff;
+  --popover-foreground: #0f172a;
+  --secondary: #e2e8f0;
+  --secondary-foreground: #1e293b;
+  --muted: #e8edf4;
+  --muted-foreground: #475569;
+  --accent: #f0fdf4;
+  --accent-foreground: #0d5844;
+  --border: #cbd5e1;
+  --border-strong: #94a3b8;
+  --input: #ffffff;
+  --ring: #0d5844;
+  --primary: #0d5844;
+  --primary-foreground: #ffffff;
+  --sidebar-background: #ffffff;
+  --sidebar-foreground: #0f172a;
+  --sidebar-primary: #0d5844;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f1f5f9;
+  --sidebar-accent-foreground: #0f172a;
+  --sidebar-border: #e2e8f0;
+  --sidebar-ring: #0d5844;
+  --destructive: #dc2626;
+  --destructive-foreground: #ffffff;
+}
+
+/* Root element background and text */
+.sitemanager-admin-layout.admin-light,
+.sitemanager-admin-layout.admin-light * {
+  color: var(--foreground);
+}
+
+/* Headings */
+.sitemanager-admin-layout.admin-light h1,
+.sitemanager-admin-layout.admin-light h2,
+.sitemanager-admin-layout.admin-light h3,
+.sitemanager-admin-layout.admin-light h4,
+.sitemanager-admin-layout.admin-light h5,
+.sitemanager-admin-layout.admin-light h6 {
+  color: #0f172a !important;
+}
+
+/* Muted / secondary text */
+.sitemanager-admin-layout.admin-light .text-foreground-muted,
+.sitemanager-admin-layout.admin-light .text-muted-foreground,
+.sitemanager-admin-layout.admin-light .text-slate-400,
+.sitemanager-admin-layout.admin-light .text-slate-300 {
+  color: #475569 !important;
+}
+
+/* ── Cards & Panels ── */
+.sitemanager-admin-layout.admin-light .bg-card,
+.sitemanager-admin-layout.admin-light [class*="bg-card"],
+.sitemanager-admin-layout.admin-light .bg-sidebar {
+  background-color: #ffffff !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 0 1px 8px 0 rgba(15, 23, 42, 0.07) !important;
+}
+
+/* ── Sidebar ── */
+.sitemanager-admin-layout.admin-light aside {
+  background-color: #ffffff !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  border-color: #e2e8f0 !important;
+  box-shadow: 1px 0 8px 0 rgba(15, 23, 42, 0.06) !important;
+}
+
+/* ── Header ── */
+.sitemanager-admin-layout.admin-light header {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  backdrop-filter: none !important;
+}
+
+/* ── Main / Page background ── */
+.sitemanager-admin-layout.admin-light main {
+  background-color: #f1f5f9;
+}
+
+/* ── Muted surfaces ── */
+.sitemanager-admin-layout.admin-light .bg-muted,
+.sitemanager-admin-layout.admin-light [class*="bg-muted"] {
+  background-color: #e8edf4 !important;
+}
+
+.sitemanager-admin-layout.admin-light .bg-secondary {
+  background-color: #e2e8f0 !important;
+}
+
+/* ── Tabs ── */
+.sitemanager-admin-layout.admin-light [role="tablist"] {
+  background-color: #e8edf4 !important;
+  border: 1px solid #e2e8f0 !important;
+  backdrop-filter: none !important;
+}
+
+.sitemanager-admin-layout.admin-light [role="tab"] {
+  color: #475569 !important;
+}
+
+.sitemanager-admin-layout.admin-light [role="tab"][data-state="active"] {
+  background-color: #ffffff !important;
+  color: #0d5844 !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.1) !important;
+}
+
+/* ── Inputs, Textareas, Selects ── */
+.sitemanager-admin-layout.admin-light input[type="text"],
+.sitemanager-admin-layout.admin-light input[type="email"],
+.sitemanager-admin-layout.admin-light input[type="password"],
+.sitemanager-admin-layout.admin-light input[type="search"],
+.sitemanager-admin-layout.admin-light input[type="number"],
+.sitemanager-admin-layout.admin-light textarea,
+.sitemanager-admin-layout.admin-light select,
+.sitemanager-admin-layout.admin-light [data-slot="select-trigger"],
+.sitemanager-admin-layout.admin-light [data-slot="input"] {
+  background-color: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+.sitemanager-admin-layout.admin-light input::placeholder,
+.sitemanager-admin-layout.admin-light textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+.sitemanager-admin-layout.admin-light input:focus,
+.sitemanager-admin-layout.admin-light textarea:focus,
+.sitemanager-admin-layout.admin-light select:focus,
+.sitemanager-admin-layout.admin-light [data-slot="select-trigger"]:focus {
+  border-color: #0d5844 !important;
+  box-shadow: 0 0 0 3px rgba(13, 88, 68, 0.12) !important;
+}
+
+/* ── Labels ── */
+.sitemanager-admin-layout.admin-light label,
+.sitemanager-admin-layout.admin-light [data-slot="label"] {
+  color: #1e293b !important;
+  font-weight: 600 !important;
+}
+
+/* ── Popover / Dropdown menus ── */
+.sitemanager-admin-layout.admin-light [data-slot="popover-content"],
+.sitemanager-admin-layout.admin-light [role="menu"],
+.sitemanager-admin-layout.admin-light [data-radix-popper-content-wrapper] > div {
+  background-color: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  color: #0f172a !important;
+}
+
+.sitemanager-admin-layout.admin-light [role="menuitem"],
+.sitemanager-admin-layout.admin-light [role="option"] {
+  color: #0f172a !important;
+}
+
+.sitemanager-admin-layout.admin-light [role="menuitem"]:hover,
+.sitemanager-admin-layout.admin-light [role="option"]:hover {
+  background-color: #f1f5f9 !important;
+}
+
+/* ── Tables ── */
+.sitemanager-admin-layout.admin-light table {
+  width: 100% !important;
+  border-collapse: separate !important;
+  border-spacing: 0 4px !important;
+}
+
+.sitemanager-admin-layout.admin-light tr {
+  background-color: #ffffff !important;
+  transition: all 0.15s ease !important;
+}
+
+.sitemanager-admin-layout.admin-light tr:hover {
+  background-color: #f8fafc !important;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.06) !important;
+}
+
+.sitemanager-admin-layout.admin-light thead tr {
+  background-color: transparent !important;
+}
+
+.sitemanager-admin-layout.admin-light th {
+  color: #475569 !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  font-size: 11px !important;
+  letter-spacing: 0.05em !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  padding: 12px 16px !important;
+}
+
+.sitemanager-admin-layout.admin-light td {
+  padding: 12px 16px !important;
+  border-top: 1px solid #f1f5f9 !important;
+  border-bottom: 1px solid #f1f5f9 !important;
+  color: #0f172a !important;
+}
+
+.sitemanager-admin-layout.admin-light td:first-child {
+  border-left: 1px solid #f1f5f9 !important;
+  border-top-left-radius: 8px !important;
+  border-bottom-left-radius: 8px !important;
+}
+
+.sitemanager-admin-layout.admin-light td:last-child {
+  border-right: 1px solid #f1f5f9 !important;
+  border-top-right-radius: 8px !important;
+  border-bottom-right-radius: 8px !important;
+}
+
+/* ── Borders ── */
+.sitemanager-admin-layout.admin-light .border,
+.sitemanager-admin-layout.admin-light .border-border,
+.sitemanager-admin-layout.admin-light [class*="border-border"] {
+  border-color: #e2e8f0 !important;
+}
+
+.sitemanager-admin-layout.admin-light .divide-border > * + * {
+  border-color: #e2e8f0 !important;
+}
+
+/* ── Scrollbar (light mode) ── */
+.sitemanager-admin-layout.admin-light ::-webkit-scrollbar-track {
+  background: #e8edf4;
+}
+
+.sitemanager-admin-layout.admin-light ::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+}
+
+.sitemanager-admin-layout.admin-light ::-webkit-scrollbar-thumb:hover {
+  background: #0d5844;
+}
+
+
 
 .sitemanager-admin-layout h1,
 .sitemanager-admin-layout h2,

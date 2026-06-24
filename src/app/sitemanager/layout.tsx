@@ -41,6 +41,8 @@ import {
   Home,
   Mic,
   Sparkles,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -59,6 +61,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useAdminTheme } from "@/hooks/use-theme";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -392,11 +395,15 @@ function TopHeader({
   onMobileMenuOpen,
   user,
   onLogout,
+  theme,
+  onThemeToggle,
 }: {
   isSidebarCollapsed: boolean;
   onMobileMenuOpen: () => void;
   user: AdminUser | null;
   onLogout: () => void;
+  theme: "dark" | "light";
+  onThemeToggle: () => void;
 }) {
   const breadcrumbs = useBreadcrumbs();
   const userInitials = user?.name
@@ -437,26 +444,73 @@ function TopHeader({
       </div>
 
       {/* Right: search, notifications, user */}
-      <div className="flex items-center gap-2">
-        {/* Search — hidden on mobile */}
-        <div className="relative hidden lg:block">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-          <input
-            type="search"
-            placeholder="Search..."
-            className={cn(
-              "h-6 pl-9 pr-4 w-40 rounded-lg text-sm bg-muted border border-border",
-              "placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30",
-              "transition-all"
-            )}
-          />
-        </div>
+      <TooltipProvider delayDuration={300}>
+        <div className="flex items-center gap-2">
+          {/* Search — hidden on mobile */}
+          <div className="relative hidden lg:block">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+            <input
+              type="search"
+              placeholder="Search..."
+              className={cn(
+                "h-6 pl-9 pr-4 w-40 rounded-lg text-sm bg-muted border border-border",
+                "placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30",
+                "transition-all"
+              )}
+            />
+          </div>
 
-        {/* Notification bell */}
-        <Button variant="ghost" size="icon" className="relative" aria-label="Notifications">
-          <Bell className="h-5 w-5" />
-          <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-red-500 rounded-full" />
-        </Button>
+          {/* Notification bell */}
+          <Button variant="ghost" size="icon" className="relative" aria-label="Notifications">
+            <Bell className="h-5 w-5" />
+            <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-red-500 rounded-full" />
+          </Button>
+
+          {/* Dark / Light theme toggle */}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                onClick={onThemeToggle}
+                aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+                className={cn(
+                  "relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300",
+                  "border border-border hover:border-primary/40",
+                  theme === "dark"
+                    ? "bg-slate-800 hover:bg-slate-700 text-amber-400"
+                    : "bg-amber-50 hover:bg-amber-100 text-amber-500"
+                )}
+              >
+                <AnimatePresence mode="wait" initial={false}>
+                  {theme === "dark" ? (
+                    <motion.span
+                      key="sun"
+                      initial={{ rotate: -90, opacity: 0, scale: 0.5 }}
+                      animate={{ rotate: 0, opacity: 1, scale: 1 }}
+                      exit={{ rotate: 90, opacity: 0, scale: 0.5 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute"
+                    >
+                      <Sun className="h-[18px] w-[18px]" />
+                    </motion.span>
+                  ) : (
+                    <motion.span
+                      key="moon"
+                      initial={{ rotate: 90, opacity: 0, scale: 0.5 }}
+                      animate={{ rotate: 0, opacity: 1, scale: 1 }}
+                      exit={{ rotate: -90, opacity: 0, scale: 0.5 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute"
+                    >
+                      <Moon className="h-[18px] w-[18px]" />
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom" className="font-medium">
+              {theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
+            </TooltipContent>
+          </Tooltip>
 
         {/* User dropdown */}
         <DropdownMenu>
@@ -502,7 +556,8 @@ function TopHeader({
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-      </div>
+        </div>
+      </TooltipProvider>
     </header>
   );
 }
@@ -520,6 +575,7 @@ export default function SiteManagerLayout({
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [user, setUser] = useState<AdminUser | null>(null);
   const [isUserLoading, setIsUserLoading] = useState(true);
+  const { theme, toggleTheme } = useAdminTheme();
 
   // Load current user — redirect to login if not authenticated
   useEffect(() => {
@@ -561,12 +617,21 @@ export default function SiteManagerLayout({
     );
   }
 
+  const isDark = theme === "dark";
+
   return (
     <AuthContext.Provider value={{ user, isLoading: isUserLoading }}>
-      <div className="min-h-screen bg-slate-950 text-slate-100 dark sitemanager-admin-layout relative overflow-hidden">
-        {/* Ambient decorative glowing spots */}
-        <div className="absolute top-[-10%] left-[-10%] w-[45%] h-[45%] bg-[#0d5844]/8 rounded-full blur-[140px] pointer-events-none" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[45%] h-[45%] bg-indigo-950/25 rounded-full blur-[140px] pointer-events-none" />
+      <div
+        className={cn(
+          "min-h-screen sitemanager-admin-layout relative overflow-hidden",
+          isDark
+            ? "dark bg-slate-950 text-slate-100"
+            : "admin-light bg-slate-100 text-slate-900"
+        )}
+      >
+        {/* Ambient decorative glowing spots — subdued in light mode */}
+        <div className={cn("absolute top-[-10%] left-[-10%] w-[45%] h-[45%] rounded-full blur-[140px] pointer-events-none", isDark ? "bg-[#0d5844]/8" : "bg-[#0d5844]/5")} />
+        <div className={cn("absolute bottom-[-10%] right-[-10%] w-[45%] h-[45%] rounded-full blur-[140px] pointer-events-none", isDark ? "bg-indigo-950/25" : "bg-slate-300/40")} />
 
         <Suspense fallback={null}>
           <Sidebar
@@ -591,6 +656,8 @@ export default function SiteManagerLayout({
             onMobileMenuOpen={() => setIsMobileOpen(true)}
             user={user}
             onLogout={handleLogout}
+            theme={theme}
+            onThemeToggle={toggleTheme}
           />
 
           {/* Page content */}
