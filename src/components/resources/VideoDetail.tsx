@@ -29,7 +29,7 @@ export function VideoDetail({ video, backHref, backLabel }: VideoDetailProps) {
   const youtubeId = video.embedUrl ? getYouTubeId(video.embedUrl) : getYouTubeId(video.videoUrl);
 
   return (
-    <div className="container mx-auto py-8 md:py-10 px-4">
+    <div className="container mx-auto py-6 md:py-8">
       <Link href={backHref} className="inline-flex items-center gap-1 text-sm text-primary hover:underline mb-6">
         <ArrowLeft className="h-4 w-4" /> {backLabel}
       </Link>

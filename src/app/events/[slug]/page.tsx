@@ -34,7 +34,7 @@ export default async function EventDetailPage({ params }: Props) {
 
   return (
     <main className="min-h-screen bg-background">
-      <div className="container mx-auto py-8 md:py-10 px-4">
+      <div className="container mx-auto py-6 md:py-8">
         <Link href="/events" className="inline-flex items-center gap-1 text-sm text-primary hover:underline mb-6">
           <ArrowLeft className="h-4 w-4" /> All Events
         </Link>

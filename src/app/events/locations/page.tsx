@@ -11,7 +11,7 @@ const locations = [
 export default function EventLocationsPage() {
   return (
     <main className="min-h-screen bg-background">
-      <div className="container mx-auto py-8 md:py-10 px-4">
+      <div className="container mx-auto py-6 md:py-8">
         <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Event Locations</h1>
         <p className="text-lg text-muted-foreground mb-8">Discover Tanzeem-e-Islami events happening at various locations.</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">

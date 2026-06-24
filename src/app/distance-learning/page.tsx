@@ -32,7 +32,7 @@ export default async function DistanceLearningPage() {
   if (page) {
     return (
       <main className="min-h-screen bg-background">
-        <div className="container mx-auto py-8 md:py-10 px-4">
+        <div className="container mx-auto py-6 md:py-8">
           <div className="prose prose-lg dark:prose-invert max-w-4xl mx-auto"
             dangerouslySetInnerHTML={{ __html: getCleanContent(page.content) }}
           />

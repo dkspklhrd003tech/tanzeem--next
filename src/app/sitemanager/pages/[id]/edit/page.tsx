@@ -10,6 +10,7 @@ import PressReleasesPageEditor from "@/components/admin/PressReleasesPageEditor"
 import AudioBooksPageEditor from "@/components/admin/AudioBooksPageEditor";
 import SocialMediaPageEditor from "@/components/admin/SocialMediaPageEditor";
 import BooksByCategoryPageEditor from "@/components/admin/BooksByCategoryPageEditor";
+import { HomepageManager } from "@/components/admin/HomepageManager";
 
 export default function EditPagePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -52,6 +53,10 @@ export default function EditPagePage({ params }: { params: Promise<{ id: string 
 
   if (page.slug === "faqs" || page.slug === "faq" || page.id === "9f332f17-55ce-4c3a-a25d-8156d26da541") {
     return <FaqPageEditor pageId={page.id} initialPageData={page} />;
+  }
+
+  if (page.slug === "home" || page.id === "e1f45ef2-66e6-47e7-999a-e4bc70397ed6") {
+    return <HomepageManager />;
   }
 
   if (page.slug === "press-releases" || page.id === "36fcba66-d2fd-47e6-b36f-ec559c43f02d") {

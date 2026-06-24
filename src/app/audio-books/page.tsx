@@ -26,8 +26,8 @@ export default async function AudioBooksPage() {
 
     return (
         <main className="min-h-screen bg-background">
-            <div className="container mx-auto py-8 md:py-10 px-4">
-                <div className="max-w-6xl mx-auto">
+            <div className="container mx-auto py-6 md:py-8">
+                <div className="max-w-7xl mx-auto">
                     <AudioBooksGrid initialItems={items} />
                 </div>
             </div>

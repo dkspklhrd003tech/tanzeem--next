@@ -2,12 +2,13 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Edit2, Trash2, X, Image as ImageIcon, Link as LinkIcon, GripVertical } from "lucide-react";
+import { Plus, Edit2, Trash2, X, Image as ImageIcon, Link as LinkIcon, GripVertical, UploadCloud, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { ImageUploader } from "./ImageUploader";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import {
     DndContext,
     closestCenter,
@@ -81,7 +82,7 @@ function SortableSliderRow({
             <td className="px-6 py-4 w-48">
                 <div className="w-40 h-16 rounded-md overflow-hidden bg-muted border border-border relative">
                     {slider.imageUrl ? (
-                        <img src={slider.imageUrl} alt={slider.title} className="w-full h-full object-cover" />
+                        <img src={slider.imageUrl} alt={slider.title} className="w-full h-full object-contain" />
                     ) : (
                         <div className="w-full h-full flex items-center justify-center text-muted-foreground">
                             <ImageIcon className="w-6 h-6" />
@@ -141,6 +142,9 @@ export function HomeSlidersManagement() {
     const [isUploading, setIsUploading] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [deletingSliderId, setDeletingSliderId] = useState<{ id: string; title: string } | null>(null);
+    const [bannerStyle, setBannerStyle] = useState<"slider" | "fixed">("slider");
+    const [fixedBannerData, setFixedBannerData] = useState({ imageUrl: "", title: "", linkUrl: "" });
+    const [isSavingFixed, setIsSavingFixed] = useState(false);
 
     const sensors = useSensors(
         useSensor(PointerSensor, {
@@ -164,7 +168,66 @@ export function HomeSlidersManagement() {
 
     useEffect(() => {
         fetchSliders();
+        fetchSettings();
     }, []);
+
+    const fetchSettings = async () => {
+        try {
+            const res = await fetch("/api/settings");
+            if (res.ok) {
+                const data = await res.json();
+                const homepage = data.settings?.homepage || {};
+                setBannerStyle(homepage.hero_banner_style || "slider");
+                setFixedBannerData({
+                    imageUrl: homepage.hero_fixed_image || "",
+                    title: homepage.hero_fixed_title || "",
+                    linkUrl: homepage.hero_fixed_link || ""
+                });
+            }
+        } catch (error) {
+            console.error("Failed to load settings", error);
+        }
+    };
+
+    const updateBannerStyle = async (style: "slider" | "fixed") => {
+        setBannerStyle(style);
+        try {
+            await fetch("/api/settings", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    group: "homepage",
+                    settings: { hero_banner_style: style }
+                })
+            });
+            toast({ title: "Updated", description: `Banner style set to ${style === "fixed" ? "Fixed Image" : "Slider"}` });
+        } catch (e) {
+            toast({ variant: "destructive", title: "Error", description: "Failed to update banner style." });
+        }
+    };
+
+    const handleSaveFixedBanner = async () => {
+        setIsSavingFixed(true);
+        try {
+            await fetch("/api/settings", {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    group: "homepage",
+                    settings: {
+                        hero_fixed_image: fixedBannerData.imageUrl,
+                        hero_fixed_title: fixedBannerData.title,
+                        hero_fixed_link: fixedBannerData.linkUrl
+                    }
+                })
+            });
+            toast({ title: "Success", description: "Fixed banner saved successfully." });
+        } catch (e) {
+            toast({ variant: "destructive", title: "Error", description: "Failed to save fixed banner." });
+        } finally {
+            setIsSavingFixed(false);
+        }
+    };
 
     const fetchSliders = async () => {
         try {
@@ -179,6 +242,52 @@ export function HomeSlidersManagement() {
             toast({ title: "Error", description: "Failed to load sliders.", variant: "destructive" });
         } finally {
             setIsLoading(false);
+        }
+    };
+
+    const handleBulkUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!e.target.files || e.target.files.length === 0) return;
+        setIsUploading(true);
+        try {
+            const files = Array.from(e.target.files);
+            let addedCount = 0;
+            for (const file of files) {
+                const formData = new FormData();
+                formData.append("file", file);
+                formData.append("type", "uploads");
+
+                const res = await fetch("/api/upload", {
+                    method: "POST",
+                    body: formData,
+                });
+
+                if (!res.ok) continue;
+                const data = await res.json();
+
+                await fetch("/api/sliders", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        title: file.name.split('.')[0] || "Slider",
+                        imageUrl: data.url,
+                        linkUrl: "",
+                        isActive: true,
+                        order: sliders.length + addedCount + 1
+                    }),
+                });
+                addedCount++;
+            }
+            if (addedCount > 0) {
+                toast({ title: "Success", description: `Uploaded ${addedCount} banners successfully.` });
+                fetchSliders();
+            } else {
+                toast({ variant: "destructive", title: "Error", description: "Failed to upload banners." });
+            }
+        } catch (error) {
+            toast({ variant: "destructive", title: "Error", description: "Failed to upload banners." });
+        } finally {
+            setIsUploading(false);
+            if (fileInputRef.current) fileInputRef.current.value = "";
         }
     };
 
@@ -301,16 +410,98 @@ export function HomeSlidersManagement() {
                         Manage homepage carousel images — <span className="font-semibold text-primary">drag rows to reorder</span>
                     </p>
                 </div>
-                <button
-                    onClick={() => handleOpenModal()}
-                    className="flex items-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 rounded-xl font-semibold shadow-sm hover:shadow-md transition-all hover:bg-primary-dark active:scale-95"
-                >
-                    <Plus className="w-4 h-4" />
-                    Add New Slider
-                </button>
+                <div className="flex items-center gap-2">
+                    {bannerStyle === "slider" && (
+                        <>
+                            <input type="file" ref={fileInputRef} multiple accept="image/*" className="hidden" onChange={handleBulkUpload} />
+                            <button
+                                onClick={() => fileInputRef.current?.click()}
+                                disabled={isUploading}
+                                className="flex items-center gap-2 bg-secondary text-secondary-foreground px-5 py-2.5 rounded-xl font-semibold shadow-sm hover:shadow-md transition-all active:scale-95 border border-border"
+                            >
+                                {isUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <UploadCloud className="w-4 h-4" />}
+                                Bulk Upload
+                            </button>
+                            <button
+                                onClick={() => handleOpenModal()}
+                                className="flex items-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 rounded-xl font-semibold shadow-sm hover:shadow-md transition-all hover:bg-primary-dark active:scale-95"
+                            >
+                                <Plus className="w-4 h-4" />
+                                Add New Banner
+                            </button>
+                        </>
+                    )}
+                </div>
             </div>
 
-            {isLoading && sliders.length === 0 ? (
+            <div className="flex flex-col sm:flex-row gap-4 justify-between items-center mb-6">
+                <div className="flex items-center gap-2 p-1 bg-muted rounded-xl border border-border">
+                    <button
+                        onClick={() => updateBannerStyle("slider")}
+                        className={cn("px-4 py-2 rounded-lg text-sm font-medium transition-all", bannerStyle === "slider" ? "bg-background shadow text-foreground" : "text-muted-foreground hover:text-foreground")}
+                    >
+                        Slider (Multiple)
+                    </button>
+                    <button
+                        onClick={() => updateBannerStyle("fixed")}
+                        className={cn("px-4 py-2 rounded-lg text-sm font-medium transition-all", bannerStyle === "fixed" ? "bg-background shadow text-foreground" : "text-muted-foreground hover:text-foreground")}
+                    >
+                        Fixed (Single Banner)
+                    </button>
+                </div>
+                {bannerStyle === "fixed" && (
+                    <div className="text-sm text-amber-600 bg-amber-500/10 px-4 py-2 rounded-lg border border-amber-500/20">
+                        In <strong>Fixed mode</strong>, only the banner configured below will be displayed.
+                    </div>
+                )}
+            </div>
+
+            {bannerStyle === "fixed" ? (
+                <div className="bg-card rounded-xl border border-border p-6 shadow-sm space-y-6 max-w-3xl">
+                    <div className="space-y-3">
+                        <label className="text-sm font-semibold text-foreground flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                <ImageIcon className="w-4 h-4 text-primary" />
+                                <span>Fixed Banner Image</span>
+                            </div>
+                            <span className="text-xs text-foreground-muted font-normal">(Min size: 1920×450)</span>
+                        </label>
+                        <ImageUploader
+                            value={fixedBannerData.imageUrl}
+                            onChange={(url, alt) => {
+                                setFixedBannerData({ ...fixedBannerData, imageUrl: url, title: alt || fixedBannerData.title });
+                            }}
+                            aspectRatio={1920 / 450}
+                        />
+                    </div>
+                    <div className="space-y-2">
+                        <label className="text-sm font-semibold text-foreground">Banner Title (Alt Text)</label>
+                        <input
+                            type="text"
+                            value={fixedBannerData.title}
+                            onChange={(e) => setFixedBannerData({ ...fixedBannerData, title: e.target.value })}
+                            className="w-full px-4 py-2.5 bg-background border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                            placeholder="e.g. Annual Convention 2026"
+                        />
+                    </div>
+                    <div className="space-y-2">
+                        <label className="text-sm font-semibold text-foreground">Target Link URL (Optional)</label>
+                        <input
+                            type="text"
+                            value={fixedBannerData.linkUrl}
+                            onChange={(e) => setFixedBannerData({ ...fixedBannerData, linkUrl: e.target.value })}
+                            className="w-full px-4 py-2.5 bg-background border border-border rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all"
+                            placeholder="https://..."
+                        />
+                    </div>
+                    <div className="flex justify-end pt-4">
+                        <Button onClick={handleSaveFixedBanner} disabled={isSavingFixed} className="bg-primary hover:bg-primary/90 text-white font-semibold">
+                            {isSavingFixed ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
+                            Save Fixed Banner
+                        </Button>
+                    </div>
+                </div>
+            ) : isLoading && sliders.length === 0 ? (
                 <div className="flex justify-center p-12">
                     <div className="animate-pulse space-y-4 w-full">
                         <div className="h-16 bg-muted rounded-lg w-full" />
@@ -321,27 +512,27 @@ export function HomeSlidersManagement() {
             ) : (
                 <div className="bg-card rounded-xl border border-border overflow-hidden shadow-sm">
                     <div className="overflow-x-auto">
-                        <table className="w-full text-left">
-                            <thead className="bg-muted/50 text-foreground-muted text-sm border-b border-border">
-                                <tr>
-                                    <th className="px-6 py-4 font-medium w-12"></th>
-                                    <th className="px-6 py-4 font-medium">Image</th>
-                                    <th className="px-6 py-4 font-medium">Details</th>
-                                    <th className="px-6 py-4 font-medium">Order</th>
-                                    <th className="px-6 py-4 font-medium">Status</th>
-                                    <th className="px-6 py-4 text-right font-medium">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-border">
-                                <DndContext
-                                    sensors={sensors}
-                                    collisionDetection={closestCenter}
-                                    onDragEnd={handleDragEnd}
-                                >
-                                    <SortableContext
-                                        items={sliders.map((s) => s.id)}
-                                        strategy={verticalListSortingStrategy}
-                                    >
+                        <DndContext
+                            sensors={sensors}
+                            collisionDetection={closestCenter}
+                            onDragEnd={handleDragEnd}
+                        >
+                            <SortableContext
+                                items={sliders.map((s) => s.id)}
+                                strategy={verticalListSortingStrategy}
+                            >
+                                <table className="w-full text-left">
+                                    <thead className="bg-muted/50 text-foreground-muted text-sm border-b border-border">
+                                        <tr>
+                                            <th className="px-6 py-4 font-medium w-12"></th>
+                                            <th className="px-6 py-4 font-medium">Image</th>
+                                            <th className="px-6 py-4 font-medium">Details</th>
+                                            <th className="px-6 py-4 font-medium">Order</th>
+                                            <th className="px-6 py-4 font-medium">Status</th>
+                                            <th className="px-6 py-4 text-right font-medium">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-border">
                                         {sliders.map((slider) => (
                                             <SortableSliderRow
                                                 key={slider.id}
@@ -350,17 +541,17 @@ export function HomeSlidersManagement() {
                                                 onDelete={(id, title) => setDeletingSliderId({ id, title })}
                                             />
                                         ))}
-                                    </SortableContext>
-                                </DndContext>
-                                {sliders.length === 0 && (
-                                    <tr>
-                                        <td colSpan={6} className="px-6 py-12 text-center text-foreground-muted">
-                                            No sliders found. Click "Add Slider" to create one.
-                                        </td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
+                                        {sliders.length === 0 && (
+                                            <tr>
+                                                <td colSpan={6} className="px-6 py-12 text-center text-foreground-muted">
+                                                    No sliders found. Click "Add Slider" to create one.
+                                                </td>
+                                            </tr>
+                                        )}
+                                    </tbody>
+                                </table>
+                            </SortableContext>
+                        </DndContext>
                     </div>
                 </div>
             )}
@@ -404,12 +595,12 @@ export function HomeSlidersManagement() {
                                             <ImageIcon className="w-4 h-4 text-primary" />
                                             <span>Slider Image</span>
                                         </div>
-                                        <span className="text-xs text-foreground-muted font-normal">(Recommended: 1351×374)</span>
+                                        <span className="text-xs text-foreground-muted font-normal">(Min size: 1920×450)</span>
                                     </label>
                                     <ImageUploader
                                         value={formData.imageUrl}
                                         onChange={(url) => setFormData({ ...formData, imageUrl: url })}
-                                        aspectRatio={1351 / 374}
+                                        aspectRatio={1920 / 450}
                                     />
                                 </div>
 

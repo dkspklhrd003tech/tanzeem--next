@@ -244,7 +244,7 @@ function OurHistory({ data }: { data: HistoryState }) {
 
   return (
     <section className="py-14 md:py-20 bg-background">
-      <div className="container max-w-6xl mx-auto px-4">
+      <div className="container max-w-7xl mx-auto px-4">
         <div className="flex flex-col md:flex-row gap-10 items-start">
           {/* Text */}
           <div className="flex-1 space-y-5">

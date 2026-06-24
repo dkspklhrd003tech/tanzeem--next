@@ -27,7 +27,7 @@ export default async function PublicProgramSubPage({ params }: Props) {
   if (!title) notFound();
 
   return (
-    <div className="container mx-auto py-8 md:py-10 px-4">
+    <div className="container mx-auto py-6 md:py-8">
       <div className="max-w-4xl mb-8">
         <Link href="/public-programs" className="text-sm text-primary hover:underline">
           ← Public Programs

@@ -5,7 +5,7 @@ export const metadata = { title: "History of Tanzeem-e-Islami | Tanzeem-e-Islami
 export default function HistoryOfTanzeemPage() {
   return (
     <main className="min-h-screen bg-background">
-      <div className="container mx-auto py-8 md:py-10 px-4">
+      <div className="container mx-auto py-6 md:py-8">
         <article className="prose prose-lg dark:prose-invert max-w-4xl mx-auto">
           <h1>History of Tanzeem-e-Islami</h1>
           <p className="lead text-xl text-muted-foreground mb-8">

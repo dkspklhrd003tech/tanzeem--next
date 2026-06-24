@@ -24,7 +24,7 @@ type BookItem = {
   category: { id: string; name: string; slug: string } | null;
 };
 
-type Category = { id: string; name: string; slug: string };
+type Category = { id: string; name: string; slug: string; bookCount?: number };
 
 const LANGUAGES = [
   { value: "urdu",    label: "Urdu" },
@@ -104,7 +104,7 @@ export function BooksListing({
           </Link>
           {categories.map((cat) => (
             <Link key={cat.id} href={buildUrl({ category: cat.slug })} className={cn("px-3 py-1.5 rounded-full text-xs font-medium border transition-colors", activeCategorySlug === cat.slug ? "bg-primary/10 text-primary border-primary/30" : "border-border text-foreground-muted hover:border-primary/40 hover:text-primary")}>
-              {cat.name}
+              {cat.name} ({cat.bookCount || 0})
             </Link>
           ))}
         </div>

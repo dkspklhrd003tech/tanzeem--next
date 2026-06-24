@@ -29,12 +29,12 @@ function formatDuration(seconds?: number | null): string {
 
 export function AudioDetail({ audio, backHref, backLabel }: AudioDetailProps) {
   return (
-    <div className="container mx-auto py-8 md:py-10 px-4">
+    <div className="container mx-auto py-6 md:py-8">
       <Link href={backHref} className="inline-flex items-center gap-1 text-sm text-primary hover:underline mb-6">
         <ArrowLeft className="h-4 w-4" /> {backLabel}
       </Link>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
         {/* Thumbnail */}
         <div className="lg:col-span-1">
           {audio.thumbnailUrl ? (

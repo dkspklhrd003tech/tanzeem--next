@@ -43,8 +43,8 @@ export function ConfirmDialog({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel className="cursor-pointer">Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={onConfirm} className="cursor-pointer bg-red-600 hover:bg-red-700 text-white">
+          <AlertDialogCancel className="cursor-pointer bg-red-600 hover:bg-red-700 text-white">Cancel</AlertDialogCancel>
+          <AlertDialogAction onClick={onConfirm} className="cursor-pointer bg-[#0d5844] hover:bg-green-600 text-white">
             Continue
           </AlertDialogAction>
         </AlertDialogFooter>

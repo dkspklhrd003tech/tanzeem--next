@@ -26,7 +26,16 @@ export default async function BooksPage({
   const pageNum  = Math.max(1, parseInt(sp.page ?? "1"));
   const PER_PAGE = 24;
 
-  const cats = await db.select().from(bookCategories).orderBy(asc(bookCategories.name));
+  const cats = await db.select({
+    id: bookCategories.id,
+    name: bookCategories.name,
+    slug: bookCategories.slug,
+    bookCount: count(books.id),
+  })
+  .from(bookCategories)
+  .leftJoin(books, and(eq(books.categoryId, bookCategories.id), eq(books.isPublished, true)))
+  .groupBy(bookCategories.id)
+  .orderBy(asc(bookCategories.name));
 
   const activeCatId = catSlug ? (cats.find((c) => c.slug === catSlug)?.id ?? null) : null;
 

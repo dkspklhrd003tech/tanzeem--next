@@ -584,7 +584,7 @@ export default function AudioBooksPageEditor({ pageId, initialPageData }: AudioB
 
       toast({
         title: "Order Saved",
-        description: "audio books grid sequence synchronized.",
+        description: "Audio Books Grid Sequence Synchronized.",
       });
     } catch (err) {
       console.error(err);
@@ -609,7 +609,7 @@ export default function AudioBooksPageEditor({ pageId, initialPageData }: AudioB
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 className="text-3xl font-bold text-foreground tracking-tight flex items-center gap-2">
-            audio books Manager
+            Audio Books Manager
           </h1>
           <p className="text-muted-foreground mt-1">
             Reorder cards, manage metadata, and upload MP3 Statements.
@@ -636,7 +636,7 @@ export default function AudioBooksPageEditor({ pageId, initialPageData }: AudioB
       <Tabs defaultValue="list" className="space-y-6">
         <TabsList className="bg-muted p-1 rounded-lg">
           <TabsTrigger value="list" className="flex items-center gap-2 px-4 py-2 rounded">
-            <FileText className="w-4 h-4" /> audio books Grid
+            <FileText className="w-4 h-4" /> Audio Books Grid
           </TabsTrigger>
           <TabsTrigger value="settings" className="flex items-center gap-2 px-4 py-2 rounded">
             <Settings2 className="w-4 h-4" /> Page SEO & Setup

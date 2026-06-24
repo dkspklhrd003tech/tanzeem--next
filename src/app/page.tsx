@@ -83,12 +83,25 @@ async function HomeContent() {
     return acc;
   }, {} as Record<string, string>);
 
+  const bannerStyle = settingsMap.hero_banner_style || "slider";
+  const finalSliders = bannerStyle === "fixed" && settingsMap.hero_fixed_image
+    ? [{
+        id: "fixed-banner",
+        title: settingsMap.hero_fixed_title || "Homepage Banner",
+        imageUrl: settingsMap.hero_fixed_image,
+        linkUrl: settingsMap.hero_fixed_link || null,
+        order: 1,
+        isActive: true,
+        createdAt: new Date().toISOString()
+      }]
+    : activeSliders;
+
   return (
     <>
       <BackToTop />
 
       {/* 1. Hero Slider (Pass Dynamic payload) */}
-      <Hero slidesData={activeSliders} />
+      <Hero slidesData={finalSliders} />
 
       {/* 2. About Us & Leader Profiles */}
       <AboutAndLeaders team={team} settings={settingsMap} />

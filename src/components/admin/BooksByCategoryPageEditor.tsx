@@ -64,7 +64,7 @@ interface BookItem {
 // SORTABLE COMPONENTS
 // ==========================================
 
-function SortableCategoryCard({ id, item, onEdit, onDelete, onClick }: any) {
+function SortableCategoryCard({ id, item, onEdit, onDelete, onClick, bookCount }: any) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
   const style = { transform: CSS.Transform.toString(transform), transition, zIndex: isDragging ? 50 : undefined };
 
@@ -90,7 +90,10 @@ function SortableCategoryCard({ id, item, onEdit, onDelete, onClick }: any) {
 
       <div className="p-4 flex-1 flex flex-col">
         <div className="flex items-center justify-between mb-2">
-          <Badge variant="outline" className="text-[10px] uppercase">Category</Badge>
+          <div className="flex items-center gap-2">
+            <Badge variant="outline" className="text-[10px] uppercase">Category</Badge>
+            <Badge variant="secondary" className="text-[10px] uppercase">{bookCount} Books</Badge>
+          </div>
           <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
             <Button variant="ghost" size="icon" className="h-7 w-7 text-green-500 hover:text-green-600 hover:bg-green-500/10" onClick={() => onEdit(item)}>
               <Pencil className="h-3.5 w-3.5" />
@@ -448,6 +451,7 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     {filteredCategories.map(cat => (
                       <SortableCategoryCard key={cat.id} id={cat.id} item={cat} onClick={setActiveCategory}
+                        bookCount={books.filter(b => b.categoryId === cat.id).length}
                         onEdit={(item: any) => { setEditingCatId(item.id); setCatFormData({ name: item.name, slug: item.slug, description: item.description || "", coverImage: item.coverImage || "" }); setIsCatModalOpen(true); }}
                         onDelete={handleCatDelete} />
                     ))}

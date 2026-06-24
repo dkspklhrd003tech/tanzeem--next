@@ -45,7 +45,7 @@ export function VideoDetailPage({ item, related }: { item: VideoItem; related: V
   };
 
   return (
-    <div className="container max-w-6xl mx-auto px-4 py-10">
+    <div className="container max-w-7xl mx-auto px-4 py-10">
       <Link href="/videos" className="inline-flex items-center gap-2 text-sm text-foreground-muted hover:text-primary mb-6 transition-colors">
         <ArrowLeft className="h-4 w-4" />
         Back to Video Library

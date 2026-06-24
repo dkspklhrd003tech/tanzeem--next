@@ -94,7 +94,6 @@ const NAV_ITEMS: NavItem[] = [
   { title: "Pages", href: "/sitemanager/pages", icon: FileText },
   { title: "Menu Builder", href: "/sitemanager/header", icon: Menu },
   { title: "Footer Builder", href: "/sitemanager/footer", icon: LayoutTemplate },
-  { title: "Homepage Setup", href: "/sitemanager?section=homepage", icon: Home },
   { title: "Media Library", href: "/sitemanager?section=media", icon: Image },
   // ── Content ──────────────────────────────────────────────────────────────
   { title: "Audio Manager", href: "/sitemanager?section=audio", icon: Headphones },

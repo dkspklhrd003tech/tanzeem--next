@@ -9,7 +9,6 @@ import { MediaLibrary } from "./MediaLibrary";
 import { HeaderManager } from "./HeaderManager";
 import { UserManagement } from "./UserManagement";
 import { HomeSlidersManagement } from "./HomeSlidersManagement";
-import { HomepageManager } from "./HomepageManager";
 import { DarseQuranManager } from "./DarseQuranManager";
 import { KhitabatJummahManager } from "./KhitabatJummahManager";
 import { SermonsManager } from "./SermonsManager";
@@ -216,11 +215,6 @@ export function AdminPages({ section }: AdminPagesProps) {
   // Dashboard
   if (section === "dashboard" || !section) {
     return <Dashboard />;
-  }
-
-  // Homepage Setup Section
-  if (section === "homepage") {
-    return <HomepageManager />;
   }
 
   // Dars-e-Quran Section

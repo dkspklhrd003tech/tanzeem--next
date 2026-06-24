@@ -43,7 +43,11 @@ export function ImageUploader({
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
   const [isCropping, setIsCropping] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const [showAltInput, setShowAltInput] = useState(!!altValue);
+  
+  // Use either controlled altValue or local state
+  const [localAltValue, setLocalAltValue] = useState(altValue || "");
+  const [showAltInput, setShowAltInput] = useState(!!altValue || !!localAltValue);
+  
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
@@ -54,6 +58,17 @@ export function ImageUploader({
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
+      
+      // Auto-fill alt text
+      const baseName = file.name.replace(/\.[^/.]+$/, "");
+      const cleanedName = baseName.split(/[-_]+/).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
+      
+      setLocalAltValue(cleanedName);
+      setShowAltInput(true);
+      if (onAltChange && !altValue) {
+        onAltChange(cleanedName);
+      }
+
       const reader = new FileReader();
       reader.addEventListener("load", () => {
         setImage(reader.result as string);
@@ -124,7 +139,7 @@ export function ImageUploader({
       if (!res.ok) throw new Error("Upload failed");
 
       const data = await res.json();
-      onChange(data.url);
+      onChange(data.url, altValue || localAltValue);
       setIsCropping(false);
       setImage(null);
 
@@ -144,6 +159,11 @@ export function ImageUploader({
     }
   };
 
+  const handleAltChange = (val: string) => {
+    setLocalAltValue(val);
+    if (onAltChange) onAltChange(val);
+  };
+
   return (
     <div className={cn("space-y-4", className)}>
       {label && <Label className="text-sm font-semibold">{label}</Label>}
@@ -158,7 +178,7 @@ export function ImageUploader({
       >
         {value ? (
           <>
-            <img src={value} alt={altValue} className="w-full h-full object-cover" />
+            <img src={value} alt={altValue || localAltValue} className="w-full h-full object-contain" />
             <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
               <Button
                 variant="secondary"
@@ -175,7 +195,7 @@ export function ImageUploader({
                 size="sm"
                 onClick={(e) => {
                   e.stopPropagation();
-                  onChange("");
+                  onChange("", "");
                 }}
               >
                 Remove
@@ -215,8 +235,8 @@ export function ImageUploader({
             <Input
               id="alt-text"
               placeholder="Describe this image for accessibility..."
-              value={altValue}
-              onChange={(e) => onAltChange?.(e.target.value)}
+              value={altValue !== undefined ? altValue : localAltValue}
+              onChange={(e) => handleAltChange(e.target.value)}
               className="h-9 text-sm"
             />
           )}

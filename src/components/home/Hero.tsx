@@ -88,7 +88,7 @@ export function Hero({ slidesData = [] }: { slidesData?: any[] }) {
       className="relative w-full overflow-hidden bg-background-secondary flex justify-center focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
     >
       {/* Edge-to-Edge Hero Container */}
-      <div className="relative w-full aspect-[1351/374] overflow-hidden group">
+      <div className="relative w-full aspect-[1920/450] overflow-hidden group">
 
         <AnimatePresence mode="wait">
           <motion.div
@@ -108,7 +108,7 @@ export function Hero({ slidesData = [] }: { slidesData?: any[] }) {
                 <img
                   src={displaySlides[current].imageUrl}
                   alt={displaySlides[current].title || ""}
-                  className="w-full h-full object-cover cursor-pointer"
+                  className="w-full h-full object-contain cursor-pointer"
                   onError={(e) => {
                     const target = e.currentTarget;
                     target.style.display = "none";
@@ -127,7 +127,7 @@ export function Hero({ slidesData = [] }: { slidesData?: any[] }) {
                 <img
                   src={displaySlides[current].imageUrl}
                   alt={displaySlides[current].title || ""}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-contain"
                   onError={(e) => {
                     const target = e.currentTarget;
                     target.style.display = "none";
@@ -156,14 +156,14 @@ export function Hero({ slidesData = [] }: { slidesData?: any[] }) {
             <button
               onClick={prevSlide}
               aria-label="Previous slide"
-              className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-white/20 hover:bg-primary border border-primary backdrop-blur-sm rounded-full flex items-center justify-center text-primary hover:text-primary-foreground transition-all opacity-100 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100 z-10 focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2 focus-visible:opacity-100"
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 md:w-12 md:h-12 bg-white/20 hover:bg-primary border border-primary backdrop-blur-sm rounded-full flex items-center justify-center text-primary hover:text-primary-foreground transition-all opacity-100 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100 z-10 focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2 focus-visible:opacity-100"
             >
               <ChevronLeft className="h-6 w-6 md:h-8 md:w-8" aria-hidden="true" />
             </button>
             <button
               onClick={nextSlide}
               aria-label="Next slide"
-              className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 md:w-12 md:h-12 bg-white/20 hover:bg-primary border border-primary backdrop-blur-sm rounded-full flex items-center justify-center text-primary hover:text-primary-foreground transition-all opacity-100 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100 z-10 focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2 focus-visible:opacity-100"
+              className="absolute right-4 top-1/2 -translate-y-1/2 w-6 h-6 md:w-12 md:h-12 bg-white/20 hover:bg-primary border border-primary backdrop-blur-sm rounded-full flex items-center justify-center text-primary hover:text-primary-foreground transition-all opacity-100 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100 z-10 focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2 focus-visible:opacity-100"
             >
               <ChevronRight className="h-6 w-6 md:h-8 md:w-8" aria-hidden="true" />
             </button>
