@@ -228,7 +228,7 @@ export function Dashboard() {
                 >
                   <h4 className="font-medium text-foreground mb-1">{event.title}</h4>
                   <p className="text-sm text-foreground-muted mb-2">{event.date}</p>
-                  <p className="text-xs text-foreground-light">{event.attendees} attendees</p>
+                  <p className="text-xs text-foreground-light">{event.attendees} Attendees</p>
                 </div>
               ))}
             </div>

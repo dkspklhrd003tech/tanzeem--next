@@ -263,9 +263,8 @@ export function PageForm({ mode, initialData, parentPages = [] }: PageFormProps)
         } else if (!/^https?:\/\/\S+$/.test(form.content.trim()) && !/^\/\S*$/.test(form.content.trim())) {
           e.content = "Please enter a valid URL (e.g. https://example.com or an internal path starting with /).";
         }
-      } else {
-        if (!form.content || form.content === "<p></p>") e.content = "Content is required when publishing.";
       }
+      // Content is no longer strictly required when publishing because a page might use the dynamic PageSectionBuilder.
     }
     if (form.metaTitle.length > 70) e.metaTitle = "Max 70 characters.";
     if (form.metaDescription.length > 160) e.metaDescription = "Max 160 characters.";

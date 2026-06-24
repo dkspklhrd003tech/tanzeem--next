@@ -24,9 +24,7 @@ function validatePage(data: any, isCreate = true) {
     errors.slug = "Slug must be lowercase alphanumeric with hyphens or slashes only.";
   }
 
-  if (isCreate && data.isPublished && (!data.content || data.content.trim() === "" || data.content === "<p></p>")) {
-    errors.content = "Content is required when publishing a page.";
-  }
+  // Content is no longer strictly required when publishing because a page might use the dynamic PageSectionBuilder.
 
   if (data.metaTitle && data.metaTitle.length > 70) {
     errors.metaTitle = "Meta title must be 70 characters or fewer.";

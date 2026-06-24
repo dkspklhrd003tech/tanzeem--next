@@ -312,15 +312,15 @@ export function PressReleasesGrid({ initialItems }: PressReleasesGridProps) {
               </button>
 
               {/* Modal Top Bar */}
-              <div className="items-center justify-between p-5 md:px-7 border-b border-border/80 bg-muted/40 gap-4">
-                <div className="max-w-full">
-                  <h2 className="text-xl font-bold text-md line-clamp-2 pr-4">
+              <div className="flex items-center justify-between p-5 md:px-7 border-b border-border/80 bg-muted/40 gap-4 pr-16">
+                <div className="flex-1 min-w-0">
+                  <h2 className="text-xl font-bold text-foreground truncate">
                     {selectedItem.title}
                   </h2>
                 </div>
 
                 {/* Toolbar Buttons */}
-                <div className="flex items-center justify-center gap-2 pt-4">
+                <div className="flex items-center justify-center gap-2">
                   <Button
                     variant="outline"
                     size="sm"

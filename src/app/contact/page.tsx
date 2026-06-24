@@ -27,29 +27,8 @@ export async function generateMetadata() {
 export default async function ContactPage() {
   const { page, sections } = await getCmsPage(SLUG);
 
-  // CMS-driven path — page sections take full control
-  if (page && sections.length > 0) {
-    return (
-      <main className="min-h-screen bg-background">
-        <DynamicPageContent sections={sections} />
-      </main>
-    );
-  }
-
-  if (page && page.content?.trim()) {
-    return (
-      <main className="min-h-screen bg-background">
-        <div className="container mx-auto py-6 md:py-8">
-          <div
-            className="prose prose-lg dark:prose-invert max-w-4xl mx-auto"
-            dangerouslySetInnerHTML={{ __html: getCleanContent(page.content) }}
-          />
-        </div>
-      </main>
-    );
-  }
-
-  // ── Fallback: pull live data from DB and render ContactSection ──────────────
+  // We ignore generic CMS content since Contact is a fully custom dynamic page.
+  // ── Pull live data from DB and render ContactSection ──────────────
   const [settingsRows, locationRows] = await Promise.all([
     db
       .select()
