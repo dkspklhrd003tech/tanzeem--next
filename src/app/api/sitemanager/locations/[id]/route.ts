@@ -20,6 +20,7 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
         address: data.address,
         phone: data.phone,
         email: data.email,
+        details: data.details,
         country: data.country,
         isActive: data.isActive,
       })

@@ -6,7 +6,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Settings, LayoutTemplate, Palette, Mail, MessageSquare, Send, CheckCircle2, Calendar } from "lucide-react";
+import { Settings, LayoutTemplate, Palette, Mail, MessageSquare, Send, CheckCircle2, Calendar, Lock } from "lucide-react";
 import { RichTextEditor } from "./RichTextEditor";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToast } from "@/hooks/use-toast";
@@ -207,6 +207,13 @@ export function SettingsManager() {
                         className="rounded-none px-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground"
                     >
                         <Calendar className="w-4 h-4" /> Manage Dates
+                    </TabsTrigger>
+
+                    <TabsTrigger
+                        value="login"
+                        className="rounded-none px-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground"
+                    >
+                        <Lock className="w-4 h-4" /> Login Auth
                     </TabsTrigger>
                 </TabsList>
 
@@ -537,6 +544,71 @@ export function SettingsManager() {
                             >
                                 <Button disabled={isSaving} className="bg-[#0d5844] hover:bg-[#0a4636] text-[#fefefc] rounded-xl px-10 font-bold shadow-md transition-all active:scale-95">
                                     {isSaving ? "Saving..." : "Save Date"}
+                                </Button>
+                            </ConfirmDialog>
+                        </div>
+                    </div>
+                </TabsContent>
+
+                {/* LOGIN AUTH TAB */}
+                <TabsContent value="login" className="animate-in fade-in-50 duration-500">
+                    <div className="bg-card border border-border rounded-xl p-6 shadow-sm space-y-8">
+                        <div>
+                            <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+                                <Lock className="w-5 h-5 text-primary" />
+                                Login Authentication UI Settings
+                            </h2>
+                            <p className="text-xs text-muted-foreground">
+                                Configure the cinematic 3D login screen's background, logo, and footer text.
+                            </p>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div className="space-y-4">
+                                <div>
+                                    <label className="text-sm font-medium block mb-2">Login Page Background Image</label>
+                                    <ImageUploader 
+                                        value={settings.login_bg_image || ""}
+                                        onChange={(url) => handleSettingChange('login_bg_image', url)}
+                                        aspectRatio={16/9}
+                                        folder="images"
+                                    />
+                                    <p className="text-xs text-muted-foreground mt-2">Upload a high-quality background for the login page (1920x1080 recommended).</p>
+                                </div>
+                                
+                                <div>
+                                    <label className="text-sm font-medium block mb-2">Login Form Logo</label>
+                                    <ImageUploader 
+                                        value={settings.login_logo || ""}
+                                        onChange={(url) => handleSettingChange('login_logo', url)}
+                                        aspectRatio={1}
+                                        folder="images"
+                                    />
+                                    <p className="text-xs text-muted-foreground mt-2">Upload a square logo (e.g. 512x512) for the login form center.</p>
+                                </div>
+                            </div>
+
+                            <div className="space-y-6">
+                                <div>
+                                    <label className="text-sm font-medium block mb-2">Login Footer Text</label>
+                                    <Input
+                                        placeholder="Sign in to Tanzeem-e-Islami Site Manager"
+                                        value={settings.login_footer_text || ""}
+                                        onChange={(e) => handleSettingChange('login_footer_text', e.target.value)}
+                                        className="bg-background"
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="mt-8 flex justify-end">
+                            <ConfirmDialog
+                                title="Save Login Settings"
+                                description="Are you sure you want to update the login interface configuration?"
+                                onConfirm={() => saveSettings()}
+                            >
+                                <Button disabled={isSaving} className="bg-[#0d5844] hover:bg-[#0a4636] text-[#fefefc] rounded-xl px-10 font-bold shadow-md transition-all active:scale-95">
+                                    {isSaving ? "Saving..." : "Save Login Settings"}
                                 </Button>
                             </ConfirmDialog>
                         </div>

@@ -12,6 +12,15 @@ import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
+type AddressDetail = {
+  id: string;
+  title: string;
+  address: string;
+  phone: string;
+  email: string;
+  mapUrl: string;
+};
+
 type LocationRow = {
   id: string;
   name: string;
@@ -21,6 +30,7 @@ type LocationRow = {
   phone: string | null;
   email: string | null;
   country: string | null;
+  details: AddressDetail[] | null;
   isActive: boolean;
 };
 
@@ -102,6 +112,7 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
         phone: "",
         email: "",
         country: "Pakistan",
+        details: [],
         isActive: true,
       });
     }
@@ -253,10 +264,25 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
                         </div>
                         <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
                           {loc.city && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" /> {loc.city}</span>}
-                          {loc.phone && <span className="flex items-center gap-1"><Phone className="h-3 w-3" /> {loc.phone}</span>}
-                          {loc.email && <span className="flex items-center gap-1"><Mail className="h-3 w-3" /> {loc.email}</span>}
+                          {(!loc.details || loc.details.length === 0) && loc.phone && <span className="flex items-center gap-1"><Phone className="h-3 w-3" /> {loc.phone}</span>}
+                          {(!loc.details || loc.details.length === 0) && loc.email && <span className="flex items-center gap-1"><Mail className="h-3 w-3" /> {loc.email}</span>}
                         </div>
-                        {loc.address && <p className="text-xs text-muted-foreground mt-2">{loc.address}</p>}
+                        {(!loc.details || loc.details.length === 0) && loc.address && <p className="text-xs text-muted-foreground mt-2">{loc.address}</p>}
+                        
+                        {loc.details && loc.details.length > 0 && (
+                          <div className="mt-3 space-y-2">
+                            {loc.details.map((detail) => (
+                              <div key={detail.id} className="bg-secondary/30 p-2 rounded text-xs border border-border/50">
+                                <div className="font-semibold mb-1">{detail.title || "Office"}</div>
+                                {detail.address && <div className="text-muted-foreground flex items-start gap-1"><MapPin className="h-3 w-3 mt-0.5 shrink-0" /> {detail.address}</div>}
+                                <div className="flex flex-wrap gap-2 mt-1">
+                                  {detail.phone && <span className="text-muted-foreground flex items-center gap-1"><Phone className="h-3 w-3" /> {detail.phone}</span>}
+                                  {detail.email && <span className="text-muted-foreground flex items-center gap-1"><Mail className="h-3 w-3" /> {detail.email}</span>}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
                       <div className="flex items-center gap-1 shrink-0 ml-4">
                         <Button variant="ghost" size="icon" onClick={() => openLocationDialog(loc)}>
@@ -294,18 +320,95 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
                 <Label>Country</Label>
                 <Input value={editingLocation?.country || ""} onChange={(e) => setEditingLocation({ ...editingLocation, country: e.target.value })} placeholder="e.g. Pakistan" />
               </div>
-              <div className="col-span-2">
-                <Label>Full Address</Label>
-                <Input value={editingLocation?.address || ""} onChange={(e) => setEditingLocation({ ...editingLocation, address: e.target.value })} />
+              
+              <div className="col-span-2 flex items-center justify-between mt-2 pt-4 border-t border-border">
+                <Label className="text-base font-semibold">Address Details</Label>
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  onClick={() => {
+                    const newDetails = [...(editingLocation?.details || []), {
+                      id: crypto.randomUUID(),
+                      title: "",
+                      address: "",
+                      phone: "",
+                      email: "",
+                      mapUrl: ""
+                    }];
+                    setEditingLocation({ ...editingLocation, details: newDetails });
+                  }}
+                >
+                  <Plus className="h-4 w-4 mr-1" /> Add Address
+                </Button>
               </div>
-              <div className="col-span-2 sm:col-span-1">
-                <Label>Phone / Mobile</Label>
-                <Input value={editingLocation?.phone || ""} onChange={(e) => setEditingLocation({ ...editingLocation, phone: e.target.value })} />
+
+              <div className="col-span-2 space-y-4 max-h-[300px] overflow-y-auto pr-2">
+                {(!editingLocation?.details || editingLocation.details.length === 0) && (
+                   <p className="text-sm text-muted-foreground italic text-center py-4 border border-dashed rounded bg-secondary/20">No addresses added. Click "Add Address" to add multiple offices or locations within this branch.</p>
+                )}
+                {editingLocation?.details?.map((detail, index) => (
+                  <div key={detail.id} className="relative p-4 border border-border rounded-lg bg-secondary/10 space-y-3">
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="absolute right-2 top-2 h-6 w-6 text-destructive hover:bg-destructive/10"
+                      onClick={() => {
+                        const newDetails = editingLocation.details!.filter(d => d.id !== detail.id);
+                        setEditingLocation({ ...editingLocation, details: newDetails });
+                      }}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                    
+                    <div className="pr-8">
+                      <Label className="text-xs">Office/Detail Title (e.g., Head Office)</Label>
+                      <Input className="h-8" value={detail.title} onChange={(e) => {
+                        const newDetails = [...editingLocation.details!];
+                        newDetails[index].title = e.target.value;
+                        setEditingLocation({ ...editingLocation, details: newDetails });
+                      }} />
+                    </div>
+                    
+                    <div>
+                      <Label className="text-xs">Full Address</Label>
+                      <Input className="h-8" value={detail.address} onChange={(e) => {
+                        const newDetails = [...editingLocation.details!];
+                        newDetails[index].address = e.target.value;
+                        setEditingLocation({ ...editingLocation, details: newDetails });
+                      }} />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <Label className="text-xs">Phone</Label>
+                        <Input className="h-8" value={detail.phone} onChange={(e) => {
+                          const newDetails = [...editingLocation.details!];
+                          newDetails[index].phone = e.target.value;
+                          setEditingLocation({ ...editingLocation, details: newDetails });
+                        }} />
+                      </div>
+                      <div>
+                        <Label className="text-xs">Email</Label>
+                        <Input className="h-8" value={detail.email} onChange={(e) => {
+                          const newDetails = [...editingLocation.details!];
+                          newDetails[index].email = e.target.value;
+                          setEditingLocation({ ...editingLocation, details: newDetails });
+                        }} />
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label className="text-xs">Google Maps URL</Label>
+                      <Input className="h-8" placeholder="https://maps.google.com/..." value={detail.mapUrl} onChange={(e) => {
+                        const newDetails = [...editingLocation.details!];
+                        newDetails[index].mapUrl = e.target.value;
+                        setEditingLocation({ ...editingLocation, details: newDetails });
+                      }} />
+                    </div>
+                  </div>
+                ))}
               </div>
-              <div className="col-span-2 sm:col-span-1">
-                <Label>Email</Label>
-                <Input value={editingLocation?.email || ""} onChange={(e) => setEditingLocation({ ...editingLocation, email: e.target.value })} />
-              </div>
+
               <div className="col-span-2 flex items-center justify-between p-3 border border-border rounded-lg mt-2">
                 <div className="space-y-0.5">
                   <Label>Active Status</Label>

@@ -89,6 +89,7 @@ export const pages = mysqlTable("pages", {
     content: text("content").notNull(),
     excerpt: text("excerpt"),
     featuredImage: text("featured_image"),
+    featuredImageAlt: text("featured_image_alt"),
     template: varchar("template", { length: 50 }).default("default").notNull(),
     parentId: varchar("parent_id", { length: 191 }),
     order: int("order").default(0).notNull(),
@@ -103,6 +104,7 @@ export const pages = mysqlTable("pages", {
     ogImage: text("og_image"),
     schemaType: varchar("schema_type", { length: 100 }).default("WebPage"),
     noIndex: boolean("no_index").default(false).notNull(),
+    seoData: json("seo_data"),
     // ── Authorship / publishing ───────────────────────────────────────────────
     authorId: varchar("author_id", { length: 191 }).notNull(),
     publishedAt: timestamp("published_at"),
@@ -141,6 +143,7 @@ export const posts = mysqlTable("posts", {
     content: text("content").notNull(),
     excerpt: text("excerpt"),
     featuredImage: text("featured_image"),
+    featuredImageAlt: text("featured_image_alt"),
     categoryId: varchar("category_id", { length: 191 }),
     isPublished: boolean("is_published").default(true).notNull(),
     isFeatured: boolean("is_featured").default(false).notNull(),
@@ -496,6 +499,7 @@ export const pressReleases = mysqlTable("press_releases", {
     content: text("content").notNull(),
     excerpt: text("excerpt"),
     featuredImage: text("featured_image"),
+    featuredImageAlt: text("featured_image_alt"),
     pdfUrl: text("pdf_url"),
     isPublished: boolean("is_published").default(true).notNull(),
     publishedAt: timestamp("published_at"),
@@ -516,6 +520,7 @@ export const audioBooks = mysqlTable("audio_books", {
     content: text("content").notNull(),
     excerpt: text("excerpt"),
     featuredImage: text("featured_image"),
+    featuredImageAlt: text("featured_image_alt"),
     audioUrl: text("audio_url"),
     isPublished: boolean("is_published").default(true).notNull(),
     publishedAt: timestamp("published_at"),
@@ -582,11 +587,12 @@ export const locations = mysqlTable("locations", {
     id: varchar("id", { length: 191 }).primaryKey(),
     name: varchar("name", { length: 191 }).notNull(),
     slug: varchar("slug", { length: 191 }).notNull().unique(),
-    address: text("address"),
+    address: text("address"), // Legacy
     city: varchar("city", { length: 100 }),
     country: varchar("country", { length: 100 }),
-    phone: varchar("phone", { length: 50 }),
-    email: varchar("email", { length: 191 }),
+    phone: varchar("phone", { length: 50 }), // Legacy
+    email: varchar("email", { length: 191 }), // Legacy
+    details: json("details"), // Array of { title, address, phone, email, mapUrl }
     isActive: boolean("is_active").default(true).notNull(),
     ...timestamps,
 });

@@ -8,6 +8,15 @@ import { cn } from "@/lib/utils";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
+export type AddressDetail = {
+  id: string;
+  title: string;
+  address: string;
+  phone: string;
+  email: string;
+  mapUrl: string;
+};
+
 /** Shape of a row from the `locations` table. */
 export type LocationRow = {
   id: string;
@@ -18,6 +27,7 @@ export type LocationRow = {
   phone: string | null;
   email: string | null;
   country: string | null;
+  details: AddressDetail[] | null;
   isActive: boolean;
 };
 
@@ -134,12 +144,39 @@ export function ContactSection({
                 <h3 className="font-bold text-foreground text-xl mb-3 tracking-tight">
                   {card.title}
                 </h3>
-                <div className="space-y-1.5">
-                  {card.lines.map((line, j) => (
-                    <p key={j} className="text-sm text-muted-foreground leading-relaxed font-medium">
-                      {line}
-                    </p>
-                  ))}
+                <div className="space-y-1.5 flex flex-col items-center">
+                  {card.lines.map((line, j) => {
+                    let href = undefined;
+                    let displayLine = line;
+                    
+                    if (card.title === "Phone" && line.includes(":")) {
+                      const number = line.split(":")[1].trim();
+                      href = `tel:${number.replace(/[^+\d]/g, "")}`;
+                    } else if (card.title === "Email Address" && line.includes(":")) {
+                      const email = line.split(":")[1].trim();
+                      href = `mailto:${email}`;
+                    } else if (card.title === "Address") {
+                      href = `https://maps.google.com/?q=${encodeURIComponent(line)}`;
+                    }
+
+                    if (!line) return null;
+
+                    return href ? (
+                      <a 
+                        key={j} 
+                        href={href} 
+                        target="_blank" 
+                        rel="noopener noreferrer" 
+                        className="text-sm text-muted-foreground leading-relaxed font-medium hover:text-primary transition-colors block text-center"
+                      >
+                        {displayLine}
+                      </a>
+                    ) : (
+                      <p key={j} className="text-sm text-muted-foreground leading-relaxed font-medium text-center">
+                        {displayLine}
+                      </p>
+                    );
+                  })}
                 </div>
               </div>
             </motion.div>
@@ -216,54 +253,115 @@ export function ContactSection({
                   
                   <h3 className="text-2xl font-bold mb-6 text-foreground">{activeBranch.name}</h3>
                   
-                  <dl className="grid grid-cols-1 sm:grid-cols-[140px_1fr] gap-y-5 gap-x-4 text-sm relative z-10">
-                    {activeBranch.city && (
-                      <>
-                        <dt className="font-semibold text-muted-foreground flex items-center gap-2">
-                          <MapPin className="w-4 h-4 text-primary" /> City
-                        </dt>
-                        <dd className="text-foreground font-medium">{activeBranch.city}</dd>
-                      </>
-                    )}
-                    {activeBranch.address && (
-                      <>
-                        <dt className="font-semibold text-muted-foreground flex items-center gap-2">
-                          <MapPin className="w-4 h-4 text-primary opacity-0" /> Address
-                        </dt>
-                        <dd className="text-foreground font-medium leading-relaxed max-w-md">{activeBranch.address}</dd>
-                      </>
-                    )}
-                    {activeBranch.phone && (
-                      <>
-                        <dt className="font-semibold text-muted-foreground flex items-center gap-2">
-                          <Phone className="w-4 h-4 text-primary" /> Phone
-                        </dt>
-                        <dd>
-                          <a
-                            href={`tel:${activeBranch.phone.replace(/[^+\d]/g, "")}`}
-                            className="text-foreground font-medium hover:text-primary transition-colors inline-flex items-center gap-1"
-                          >
-                            {activeBranch.phone}
-                          </a>
-                        </dd>
-                      </>
-                    )}
-                    {activeBranch.email && (
-                      <>
-                        <dt className="font-semibold text-muted-foreground flex items-center gap-2">
-                          <Mail className="w-4 h-4 text-primary" /> Email
-                        </dt>
-                        <dd>
-                          <a
-                            href={`mailto:${activeBranch.email}`}
-                            className="text-foreground font-medium hover:text-primary transition-colors inline-flex items-center gap-1"
-                          >
-                            {activeBranch.email}
-                          </a>
-                        </dd>
-                      </>
-                    )}
-                  </dl>
+                  {/* Legacy fields if no details array exists */}
+                  {(!activeBranch.details || activeBranch.details.length === 0) && (
+                    <dl className="grid grid-cols-1 sm:grid-cols-[140px_1fr] gap-y-5 gap-x-4 text-sm relative z-10">
+                      {activeBranch.city && (
+                        <>
+                          <dt className="font-semibold text-muted-foreground flex items-center gap-2">
+                            <MapPin className="w-4 h-4 text-primary" /> City
+                          </dt>
+                          <dd className="text-foreground font-medium">{activeBranch.city}</dd>
+                        </>
+                      )}
+                      {activeBranch.address && (
+                        <>
+                          <dt className="font-semibold text-muted-foreground flex items-center gap-2">
+                            <MapPin className="w-4 h-4 text-primary opacity-0" /> Address
+                          </dt>
+                          <dd className="text-foreground font-medium leading-relaxed max-w-md">
+                            <a href={`https://maps.google.com/?q=${encodeURIComponent(activeBranch.address)}`} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors flex items-start gap-1">
+                              {activeBranch.address}
+                            </a>
+                          </dd>
+                        </>
+                      )}
+                      {activeBranch.phone && (
+                        <>
+                          <dt className="font-semibold text-muted-foreground flex items-center gap-2">
+                            <Phone className="w-4 h-4 text-primary" /> Phone
+                          </dt>
+                          <dd>
+                            <a
+                              href={`tel:${activeBranch.phone.replace(/[^+\d]/g, "")}`}
+                              target="_blank" rel="noopener noreferrer"
+                              className="text-foreground font-medium hover:text-primary transition-colors inline-flex items-center gap-1"
+                            >
+                              {activeBranch.phone}
+                            </a>
+                          </dd>
+                        </>
+                      )}
+                      {activeBranch.email && (
+                        <>
+                          <dt className="font-semibold text-muted-foreground flex items-center gap-2">
+                            <Mail className="w-4 h-4 text-primary" /> Email
+                          </dt>
+                          <dd>
+                            <a
+                              href={`mailto:${activeBranch.email}`}
+                              target="_blank" rel="noopener noreferrer"
+                              className="text-foreground font-medium hover:text-primary transition-colors inline-flex items-center gap-1"
+                            >
+                              {activeBranch.email}
+                            </a>
+                          </dd>
+                        </>
+                      )}
+                    </dl>
+                  )}
+
+                  {/* Multiple Addresses Grid */}
+                  {activeBranch.details && activeBranch.details.length > 0 && (
+                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 relative z-10">
+                      {activeBranch.details.map(detail => (
+                        <div key={detail.id} className="bg-background rounded-xl p-5 border border-border/50 shadow-sm hover:shadow-md transition-shadow">
+                          <h4 className="font-bold text-foreground text-lg mb-3 pb-2 border-b border-border/50">{detail.title || "Office"}</h4>
+                          <div className="space-y-3 text-sm">
+                            {detail.address && (
+                              <div className="flex items-start gap-2">
+                                <MapPin className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                                <a 
+                                  href={detail.mapUrl || `https://maps.google.com/?q=${encodeURIComponent(detail.address)}`} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer" 
+                                  className="text-muted-foreground hover:text-primary font-medium transition-colors"
+                                >
+                                  {detail.address}
+                                </a>
+                              </div>
+                            )}
+                            {detail.phone && (
+                              <div className="flex items-start gap-2">
+                                <Phone className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                                <a 
+                                  href={`tel:${detail.phone.replace(/[^+\d]/g, "")}`} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer" 
+                                  className="text-muted-foreground hover:text-primary font-medium transition-colors"
+                                >
+                                  {detail.phone}
+                                </a>
+                              </div>
+                            )}
+                            {detail.email && (
+                              <div className="flex items-start gap-2">
+                                <Mail className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                                <a 
+                                  href={`mailto:${detail.email}`} 
+                                  target="_blank" 
+                                  rel="noopener noreferrer" 
+                                  className="text-muted-foreground hover:text-primary font-medium transition-colors"
+                                >
+                                  {detail.email}
+                                </a>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
 
                   {!activeBranch.phone && !activeBranch.city && (
                     <p className="text-sm text-muted-foreground mt-8 bg-background p-4 rounded-xl border border-border/50 flex items-start gap-3">

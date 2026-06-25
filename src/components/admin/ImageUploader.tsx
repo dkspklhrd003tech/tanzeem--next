@@ -31,7 +31,7 @@ interface ImageUploaderProps {
 export function ImageUploader({
   value,
   onChange,
-  altValue = "",
+  altValue,
   onAltChange,
   aspectRatio = 16 / 9,
   label,
@@ -44,9 +44,10 @@ export function ImageUploader({
   const [isCropping, setIsCropping] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   
-  // Use either controlled altValue or local state
-  const [localAltValue, setLocalAltValue] = useState(altValue || "");
-  const [showAltInput, setShowAltInput] = useState(!!altValue || !!localAltValue);
+  // Use controlled altValue (via onAltChange) or local state
+  const isControlled = typeof onAltChange === "function";
+  const [localAltValue, setLocalAltValue] = useState(altValue ?? "");
+  const [showAltInput, setShowAltInput] = useState(true);
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
@@ -65,7 +66,7 @@ export function ImageUploader({
       
       setLocalAltValue(cleanedName);
       setShowAltInput(true);
-      if (onAltChange && !altValue) {
+      if (isControlled) {
         onAltChange(cleanedName);
       }
 
@@ -139,7 +140,7 @@ export function ImageUploader({
       if (!res.ok) throw new Error("Upload failed");
 
       const data = await res.json();
-      onChange(data.url, altValue || localAltValue);
+      onChange(data.url, isControlled ? (altValue ?? "") : localAltValue);
       setIsCropping(false);
       setImage(null);
 
@@ -178,7 +179,7 @@ export function ImageUploader({
       >
         {value ? (
           <>
-            <img src={value} alt={altValue || localAltValue} className="w-full h-full object-contain" />
+            <img src={value} alt={isControlled ? (altValue ?? "") : localAltValue} className="w-full h-full object-contain" />
             <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
               <Button
                 variant="secondary"
@@ -225,21 +226,14 @@ export function ImageUploader({
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <Label htmlFor="alt-text" className="text-xs font-medium text-foreground-muted uppercase tracking-wider">Alternative Text</Label>
-            {!showAltInput && (
-              <Button variant="ghost" size="sm" className="h-6 text-[10px]" onClick={() => setShowAltInput(true)}>
-                Add Alt Text
-              </Button>
-            )}
           </div>
-          {showAltInput && (
-            <Input
-              id="alt-text"
-              placeholder="Describe this image for accessibility..."
-              value={altValue !== undefined ? altValue : localAltValue}
-              onChange={(e) => handleAltChange(e.target.value)}
-              className="h-9 text-sm"
-            />
-          )}
+          <Input
+            id="alt-text"
+            placeholder="Describe this image for accessibility..."
+            value={isControlled ? (altValue ?? "") : localAltValue}
+            onChange={(e) => handleAltChange(e.target.value)}
+            className="h-9 text-sm"
+          />
         </div>
       )}
 

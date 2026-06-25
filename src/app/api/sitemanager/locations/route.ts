@@ -30,6 +30,7 @@ export async function POST(request: NextRequest) {
       address: data.address || null,
       phone: data.phone || null,
       email: data.email || null,
+      details: data.details || null,
       country: data.country || "Pakistan",
       isActive: data.isActive !== undefined ? data.isActive : true,
     });

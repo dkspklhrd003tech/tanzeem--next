@@ -47,6 +47,7 @@ interface ContentEditorProps {
     isPublished?: boolean;
     isFeatured?: boolean;
     featuredImage?: string;
+    featuredImageAlt?: string;
     pdfUrl?: string;
     audioUrl?: string;
     categoryId?: string;
@@ -79,6 +80,7 @@ export function ContentEditor({
     isPublished: initialData?.isPublished || false,
     isFeatured: initialData?.isFeatured || false,
     featuredImage: initialData?.featuredImage || "",
+    featuredImageAlt: initialData?.featuredImageAlt || "",
     pdfUrl: initialData?.pdfUrl || "",
     audioUrl: initialData?.audioUrl || "",
     categoryId: initialData?.categoryId || "",
@@ -356,6 +358,8 @@ export function ContentEditor({
               <ImageUploader
                 value={formData.featuredImage}
                 onChange={(url) => setFormData({ ...formData, featuredImage: url })}
+                altValue={formData.featuredImageAlt}
+                onAltChange={(alt) => setFormData({ ...formData, featuredImageAlt: alt })}
                 aspectRatio={16 / 9}
               />
             </CardContent>

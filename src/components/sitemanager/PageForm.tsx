@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import {
   ArrowLeft, Save, Send, Eye, Trash2, Copy,
   ChevronDown, ChevronUp, Clock, AlertCircle, Check,
-  LayoutTemplate, FileText,
+  LayoutTemplate, FileText, SlidersHorizontal,
 } from "lucide-react";
 import { PageSectionBuilder } from "@/components/admin/PageSectionBuilder";
 import { useEditor, EditorContent } from "@tiptap/react";
@@ -371,6 +371,13 @@ export function PageForm({ mode, initialData, parentPages = [] }: PageFormProps)
           )}
           {mode === "edit" && (
             <Button variant="outline" size="sm" onClick={handleDuplicate}><Copy className="h-3.5 w-3.5 mr-1.5" />Duplicate</Button>
+          )}
+          {mode === "edit" && (
+            <Button variant="outline" size="sm" asChild className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 border-emerald-200">
+              <Link href={`/sitemanager/pages/${initialData!.id}/edit/seo`}>
+                <SlidersHorizontal className="h-3.5 w-3.5 mr-1.5" />Page SEO
+              </Link>
+            </Button>
           )}
           <Button variant="outline" size="sm" disabled={saving} onClick={() => doSave("draft")}>
             <Save className="h-3.5 w-3.5 mr-1.5" />{saving ? "Saving…" : "Save Draft"}
