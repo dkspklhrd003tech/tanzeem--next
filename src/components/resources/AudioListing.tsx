@@ -25,7 +25,7 @@ type AudioItem = {
 };
 
 type Category = { id: string; name: string; slug: string };
-type Speaker  = { id: string; name: string; slug: string };
+type Speaker = { id: string; name: string; slug: string };
 
 interface AudioListingProps {
   items: AudioItem[];
@@ -66,9 +66,9 @@ export function AudioListing({
   function buildUrl(overrides: Record<string, string>) {
     const params = new URLSearchParams();
     if (activeCategorySlug) params.set("category", activeCategorySlug);
-    if (activeSpeakerSlug)  params.set("speaker",  activeSpeakerSlug);
-    if (searchQuery)        params.set("q",         searchQuery);
-    if (page > 1)           params.set("page",      String(page));
+    if (activeSpeakerSlug) params.set("speaker", activeSpeakerSlug);
+    if (searchQuery) params.set("q", searchQuery);
+    if (page > 1) params.set("page", String(page));
     Object.entries(overrides).forEach(([k, v]) => {
       if (v) params.set(k, v); else params.delete(k);
     });
@@ -82,14 +82,10 @@ export function AudioListing({
   }
 
   return (
-    <div className="container max-w-7xl mx-auto px-4 py-10">
+    <div className="container max-w-7xl mx-auto py-10">
 
       {/* Header */}
-      <div className="mb-8">
-        <p className="section-label mb-1">Audio Library</p>
-        <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
-          Islamic Audio Lectures
-        </h1>
+      <div className="mb-6">
         <p className="text-foreground-muted">
           {total} lecture{total !== 1 ? "s" : ""} available
         </p>

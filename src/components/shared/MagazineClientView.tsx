@@ -69,24 +69,23 @@ export function MagazineClientView({ links }: { links: MagazineLink[] }) {
           <button
             key={link.id}
             onClick={() => setSelectedLink(link)}
-            className="group relative flex flex-col items-start justify-between p-8 overflow-hidden rounded-3xl bg-card border border-border/50 shadow-sm hover:shadow-2xl hover:shadow-primary/10 transition-all duration-500 text-left hover:-translate-y-1 animate-in fade-in slide-in-from-bottom-4"
+            className="group relative flex flex-col items-start justify-between p-6 overflow-hidden rounded-2xl bg-card border border-border/50 shadow-sm hover:shadow-2xl hover:shadow-primary/30 transition-all duration-500 text-left hover:-translate-y-1 animate-in fade-in slide-in-from-bottom-4"
             style={{ animationDelay: `${index * 50}ms`, animationFillMode: "both" }}
           >
             {/* Cinematic background gradient that appears on hover */}
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
             <div className="relative z-10 w-full">
-              <div className="w-12 h-12 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-6 group-hover:scale-110 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-500 shadow-sm">
-                <ExternalLink className="h-5 w-5" />
-              </div>
 
               <h3 className="text-xl font-bold text-foreground mb-2 leading-tight group-hover:text-primary transition-colors duration-300 line-clamp-2">
                 {link.title}
               </h3>
 
               <div className="flex items-center gap-2 mt-6 uppercase tracking-wider">
-                <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-semibold">Read Now</span>
-                <span className="opacity-0 -translate-x-4 text-primary group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 font-bold">→</span>
+                <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-semibold">{link.title}</span>
+                {/* <div className="w-8 h-8 rounded-2xl bg-primary/10 text-primary flex items-center justify-center mb-5 group-hover:scale-110 group-hover:bg-primary group-hover:text-primary-foreground transition-all duration-500 shadow-sm">
+                  <ExternalLink className="h-5 w-5" />
+                </div> */}
               </div>
             </div>
           </button>
@@ -129,12 +128,17 @@ export function MagazineClientView({ links }: { links: MagazineLink[] }) {
                   <h2 className="text-xl font-bold text-foreground truncate">
                     {selectedLink.title}
                   </h2>
-                  <div className="flex items-center gap-2 mt-1 overflow-hidden">
-                    <ExternalLink className="h-3 w-3 text-muted-foreground shrink-0" />
-                    <span className="text-xs text-muted-foreground truncate font-mono">
+                  <a
+                    href={selectedLink.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 mt-1 overflow-hidden group hover:text-primary transition-colors"
+                  >
+                    <ExternalLink className="h-3 w-3 text-muted-foreground shrink-0 group-hover:text-primary transition-colors" />
+                    <span className="text-xs text-muted-foreground truncate font-mono group-hover:text-primary transition-colors">
                       {selectedLink.url}
                     </span>
-                  </div>
+                  </a>
                 </div>
 
                 {/* Toolbar Buttons */}

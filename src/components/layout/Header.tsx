@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Search, ChevronDown, Youtube, Facebook } from "lucide-react";
+import { Menu, X, Search, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -131,18 +131,18 @@ export function Header() {
 
       {/* Top Social Bar */}
       {mounted && (
-        <div className="bg-secondary border-b border-border text-foreground py-2 hidden md:block">
+        <div className="bg-primary border-b border-border text-secondary py-2 hidden md:block">
           <div className="container mx-auto flex justify-between items-center gap-4 text-sm">
             <div className="flex items-center gap-6">
               {/* Social links are driven entirely by settings — no hardcoded fallbacks. */}
               {settings.youtube_url && (
                 <a href={settings.youtube_url} target="_blank" rel={EXTERNAL_LINK_REL} aria-label="YouTube — opens in new tab" className="w-7 h-7 rounded-full bg-red-600 flex items-center justify-center text-primary-foreground hover:bg-red-700 transition-colors shadow-sm focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2">
-                  <Youtube className="h-3.5 w-3.5" aria-hidden="true" />
+                  <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.5 12 3.5 12 3.5s-7.505 0-9.377.55a3.016 3.016 0 0 0-2.122 2.136C0 8.07 0 12 0 12s0 3.93.501 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.55 9.377.55 9.377.55s7.505 0 9.377-.55a3.016 3.016 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
                 </a>
               )}
               {settings.facebook_url && (
                 <a href={settings.facebook_url} target="_blank" rel={EXTERNAL_LINK_REL} aria-label="Facebook — opens in new tab" className="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center text-primary-foreground hover:bg-blue-700 transition-colors shadow-sm focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2">
-                  <Facebook className="h-3.5 w-3.5" aria-hidden="true" />
+                  <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
                 </a>
               )}
               {settings.twitter_url && (
@@ -157,9 +157,9 @@ export function Header() {
               )}
             </div>
             {settings.header_show_date !== "false" && displayDate && (
-              <div className="flex items-center gap-1.5 text-xs font-semibold text-primary border border-primary/20 px-3 py-1 rounded-full shadow-sm">
+              <div className="flex items-center gap-1.5 text-xs font-semibold text-secondary border border-primary/20 px-3 py-1 rounded-full shadow-sm">
                 <span className="ltr">{displayDate.greg}</span>
-                <span className="text-primary/70 mx-0.5">&amp;</span>
+                <span className="text-secondary mx-0.5">&amp;</span>
                 <span
                   className="font-nastaleeq text-[16px] leading-none"
                   style={{ fontFamily: "'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', serif" }}

@@ -19,20 +19,9 @@ export async function MagazineFrontendView({ pageId, slug }: { pageId: string, s
   }
 
   return (
-    <main className="min-h-screen bg-background pb-12">
-
-      {/* Content + Interactive Links Grid */}
-      <div className="container mx-auto py-6">
-        {page.content && (
-          <div
-            className="prose prose-lg dark:prose-invert max-w-7xl mx-auto mb-12"
-            dangerouslySetInnerHTML={{ __html: page.content }}
-          />
-        )}
-
-        <div className="max-w-7xl mx-auto">
-          <MagazineClientView links={links} />
-        </div>
+    <main className="min-h-screen bg-background py-8">
+      <div className="max-w-7xl mx-auto">
+        <MagazineClientView links={links} />
       </div>
     </main>
   );

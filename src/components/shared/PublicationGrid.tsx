@@ -18,7 +18,7 @@ interface PublicationGridProps {
 
 export function PublicationGrid({ heading, publications }: PublicationGridProps) {
   return (
-    <section className="py-16 md:py-24 bg-card/30">
+    <section className="py-16 md:py-10 bg-card/30">
       <div className="container px-4 mx-auto">
         {heading && (
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 text-foreground">
@@ -45,7 +45,7 @@ export function PublicationGrid({ heading, publications }: PublicationGridProps)
                   />
                   {/* Overlay */}
                   <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-4 p-4 text-center">
-                    <Link 
+                    <Link
                       href={pub.link}
                       className="w-full py-2 bg-primary text-white font-bold rounded hover:bg-primary-dark transition-colors flex items-center justify-center gap-2 text-sm"
                     >

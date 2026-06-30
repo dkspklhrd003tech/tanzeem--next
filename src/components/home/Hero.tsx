@@ -156,14 +156,14 @@ export function Hero({ slidesData = [] }: { slidesData?: any[] }) {
             <button
               onClick={prevSlide}
               aria-label="Previous slide"
-              className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 md:w-12 md:h-12 bg-white/20 hover:bg-primary border border-primary backdrop-blur-sm rounded-full flex items-center justify-center text-primary hover:text-primary-foreground transition-all opacity-100 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100 z-10 focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2 focus-visible:opacity-100"
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 md:w-12 md:h-12 bg-white/20 hover:bg-primary border border-primary hover:border-none backdrop-blur-sm rounded-full flex items-center justify-center text-primary hover:text-primary-foreground transition-all opacity-100 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100 z-10 focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2 focus-visible:opacity-100"
             >
               <ChevronLeft className="h-6 w-6 md:h-8 md:w-8" aria-hidden="true" />
             </button>
             <button
               onClick={nextSlide}
               aria-label="Next slide"
-              className="absolute right-4 top-1/2 -translate-y-1/2 w-6 h-6 md:w-12 md:h-12 bg-white/20 hover:bg-primary border border-primary backdrop-blur-sm rounded-full flex items-center justify-center text-primary hover:text-primary-foreground transition-all opacity-100 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100 z-10 focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2 focus-visible:opacity-100"
+              className="absolute right-4 top-1/2 -translate-y-1/2 w-6 h-6 md:w-12 md:h-12 bg-white/20 hover:bg-primary border border-primary hover:border-none backdrop-blur-sm rounded-full flex items-center justify-center text-primary hover:text-primary-foreground transition-all opacity-100 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100 z-10 focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2 focus-visible:opacity-100"
             >
               <ChevronRight className="h-6 w-6 md:h-8 md:w-8" aria-hidden="true" />
             </button>
@@ -180,14 +180,14 @@ export function Hero({ slidesData = [] }: { slidesData?: any[] }) {
                   className={cn(
                     "flex items-center justify-center w-6 h-6 rounded-full transition-all duration-300 focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2",
                     i === current
-                      ? "bg-primary-foreground/90"
+                      ? "bg-primary/90"
                       : "bg-white/50 hover:bg-white/80"
                   )}
                 >
                   <span
                     className={cn(
                       "block rounded-full transition-all duration-300",
-                      i === current ? "w-3 h-3 bg-primary-foreground" : "w-1.5 h-1.5 bg-white/90"
+                      i === current ? "w-2.5 h-2.5 bg-primary-foreground" : "w-1.5 h-1.5 bg-white/90"
                     )}
                     aria-hidden="true"
                   />

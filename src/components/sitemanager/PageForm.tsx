@@ -9,6 +9,7 @@ import {
   ChevronDown, ChevronUp, Clock, AlertCircle, Check,
   LayoutTemplate, FileText, SlidersHorizontal,
 } from "lucide-react";
+import { PageActionBar } from "@/components/admin/PageActionBar";
 import { PageSectionBuilder } from "@/components/admin/PageSectionBuilder";
 import { useEditor, EditorContent } from "@tiptap/react";
 import { StarterKit } from "@tiptap/starter-kit";
@@ -337,7 +338,7 @@ export function PageForm({ mode, initialData, parentPages = [] }: PageFormProps)
     const res = await fetch("/api/sitemanager/pages", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...form, title: `${form.title} (Copy)`, slug: `${form.slug}-copy`, isPublished: false }),
+      body: JSON.stringify({ ...form, title: `${form.title} (Copy)`, slug: `${form.slug}-copy`, isPublished: false, duplicateFromId: initialData?.id }),
     });
     const json = await res.json();
     if (res.ok) { toast({ title: "Page duplicated." }); router.push(`/sitemanager/pages/${json.page.id}/edit`); }
@@ -349,51 +350,24 @@ export function PageForm({ mode, initialData, parentPages = [] }: PageFormProps)
   return (
     <div className="space-y-6 max-w-7xl">
       {/* ── Header ── */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" asChild><Link href="/sitemanager/pages"><ArrowLeft className="h-4 w-4" /></Link></Button>
-          <div>
-            <h1 className="text-xl font-bold">{mode === "create" ? "Create Page" : "Edit Page"}</h1>
-            {mode === "edit" && initialData?.authorName && (
-              <p className="text-xs text-muted-foreground mt-0.5">
-                Last edited by {initialData.authorName}
-                {initialData.updatedAt && ` · ${new Date(initialData.updatedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`}
-              </p>
-            )}
-          </div>
-        </div>
-        <div className="flex items-center gap-2 flex-wrap">
-          {lastSaved && (
-            <span className="text-xs text-muted-foreground flex items-center gap-1"><Check className="h-3 w-3 text-green-500" />Saved {lastSaved.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span>
-          )}
-          {mode === "edit" && previewUrl && (
-            <Button variant="outline" size="sm" asChild><a href={previewUrl} target="_blank" rel="noopener noreferrer"><Eye className="h-3.5 w-3.5 mr-1.5" />View Page</a></Button>
-          )}
-          {mode === "edit" && (
-            <Button variant="outline" size="sm" onClick={handleDuplicate}><Copy className="h-3.5 w-3.5 mr-1.5" />Duplicate</Button>
-          )}
-          {mode === "edit" && (
-            <Button variant="outline" size="sm" asChild className="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 border-emerald-200">
-              <Link href={`/sitemanager/pages/${initialData!.id}/edit/seo`}>
-                <SlidersHorizontal className="h-3.5 w-3.5 mr-1.5" />Page SEO
-              </Link>
-            </Button>
-          )}
-          <Button variant="outline" size="sm" disabled={saving} onClick={() => doSave("draft")}>
-            <Save className="h-3.5 w-3.5 mr-1.5" />{saving ? "Saving…" : "Save Draft"}
-          </Button>
-          <Button size="sm" disabled={saving} onClick={() => doSave("publish")} className="bg-primary hover:bg-primary/90 text-primary-foreground">
-            <Send className="h-3.5 w-3.5 mr-1.5" />{form.isPublished ? "Update" : "Publish"}
-          </Button>
-          {mode === "edit" && (
-            <ConfirmDialog title="Delete page?" description={`"${form.title}" will be permanently deleted.`} onConfirm={handleDelete} open={showDelete} onOpenChange={setShowDelete}>
-              <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => setShowDelete(true)}>
-                <Trash2 className="h-3.5 w-3.5" />
-              </Button>
-            </ConfirmDialog>
-          )}
-        </div>
-      </div>
+      <PageActionBar
+        mode={mode}
+        title={mode === "create" ? "Create Page" : form.title || "Edit Page"}
+        authorName={initialData?.authorName}
+        updatedAt={initialData?.updatedAt}
+        lastSaved={lastSaved}
+        previewUrl={previewUrl}
+        seoUrl={initialData ? `/sitemanager/pages/${initialData.id}/edit/seo` : null}
+        isPublished={form.isPublished}
+        saving={saving}
+        onDuplicate={mode === "edit" ? handleDuplicate : undefined}
+        onSaveDraft={() => doSave("draft")}
+        onPublish={() => doSave("publish")}
+        onDelete={mode === "edit" ? () => setShowDelete(true) : undefined}
+      />
+      {showDelete && mode === "edit" && (
+        <ConfirmDialog title="Delete page?" description={`"${form.title}" will be permanently deleted.`} onConfirm={handleDelete} open={showDelete} onOpenChange={setShowDelete} />
+      )}
 
       {/* ── Body ── */}
       <div className="grid lg:grid-cols-3 gap-6">

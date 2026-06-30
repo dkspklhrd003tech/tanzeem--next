@@ -23,7 +23,29 @@ export function MainLayout({ children }: MainLayoutProps) {
     pathname === "/mission-statement";
 
   // Shared settings — SWR-deduped across Header / Footer / MainLayout / PageBanner.
-  const { settings } = useSettings();
+  const { settings, isLoading } = useSettings();
+
+  if (!isLoading && settings?.maintenance_mode === "true" && !isSiteManager) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-background p-4 text-center relative overflow-hidden">
+        {/* Decorative background elements matching the admin layout */}
+        <div className="absolute top-[-10%] left-[-10%] w-[45%] h-[45%] rounded-full blur-[140px] pointer-events-none bg-[#0d5844]/5" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[45%] h-[45%] rounded-full blur-[140px] pointer-events-none bg-slate-300/40" />
+
+        <div className="max-w-md space-y-6 relative z-10 bg-card p-10 rounded-3xl shadow-xl border border-border">
+          {settings.login_logo ? (
+             <img src={settings.login_logo} alt="Logo" className="w-24 h-24 mx-auto mb-6 object-contain" />
+          ) : (
+             <div className="w-24 h-24 mx-auto mb-6 bg-primary/10 rounded-2xl flex items-center justify-center">
+               <span className="text-4xl text-primary font-bold">ت</span>
+             </div>
+          )}
+          <h1 className="text-3xl md:text-4xl font-bold text-foreground font-amiri text-[#0d5844]">Under Maintenance</h1>
+          <p className="text-muted-foreground text-base">We are currently performing scheduled maintenance on the website. Please check back shortly. Jazakallah Khair for your patience.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col">

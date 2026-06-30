@@ -26,7 +26,7 @@ export function LeaderBio({
 
   return (
     <section className="py-14 bg-background">
-      <div className="container max-w-5xl mx-auto px-4">
+      <div className="container max-w-5xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}

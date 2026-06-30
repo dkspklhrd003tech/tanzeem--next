@@ -34,9 +34,10 @@ export function ImageUploader({
   altValue,
   onAltChange,
   aspectRatio = 16 / 9,
+  freeCrop = false,
   label,
   className,
-}: ImageUploaderProps) {
+}: ImageUploaderProps & { freeCrop?: boolean }) {
   const [image, setImage] = useState<string | null>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
@@ -256,7 +257,7 @@ export function ImageUploader({
                 image={image}
                 crop={crop}
                 zoom={zoom}
-                aspect={aspectRatio}
+                aspect={freeCrop ? undefined : aspectRatio}
                 onCropChange={setCrop}
                 onCropComplete={onCropComplete}
                 onZoomChange={setZoom}

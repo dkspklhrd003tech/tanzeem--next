@@ -80,14 +80,10 @@ export function QuranicCirclesPage({
   const hasActiveFilters = !!(activeCity || activeType || activeLadies);
 
   return (
-    <div className="container max-w-7xl mx-auto px-4 py-10">
+    <div className="container max-w-7xl mx-auto py-10">
 
       {/* ── Page Header ── */}
-      <div className="mb-8">
-        <p className="section-label mb-1">Public Programs</p>
-        <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
-          Dars-e-Quran / Quranic Circles
-        </h1>
+      <div className="mb-6">
         <p className="text-foreground-muted max-w-2xl">
           {total} active circle{total !== 1 ? "s" : ""} across Pakistan.
           Find a Quran study session near you.

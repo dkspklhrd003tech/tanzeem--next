@@ -79,7 +79,7 @@ export function IdeologySection({ pillars }: IdeologySectionProps) {
       aria-labelledby="ideology-heading"
       className="py-14 bg-background border-t border-border"
     >
-      <div className="container max-w-7xl mx-auto px-4">
+      <div className="container max-w-7xl mx-auto">
 
         {/* Heading */}
         <motion.div

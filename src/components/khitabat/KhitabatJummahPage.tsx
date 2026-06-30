@@ -82,13 +82,9 @@ export function KhitabatJummahPage({ addresses }: KhitabatJummahPageProps) {
   };
 
   return (
-    <div className="container max-w-7xl mx-auto px-4 py-10">
+    <div className="container max-w-7xl mx-auto py-10">
       {/* ── Page Header ── */}
-      <div className="mb-10 text-center md:text-left">
-        <p className="section-label mb-1">Public Programs</p>
-        <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
-          Khitabat-e-Jummah Addresses (خطاباتِ جمعہ)
-        </h1>
+      <div className="mb-6 text-center md:text-left">
         <p className="text-foreground-muted max-w-2xl">
           Weekly Friday sermon addresses of Tanzeem-e-Islami across Pakistan.
           Find a venue and timings near you.
@@ -274,12 +270,12 @@ export function KhitabatJummahPage({ addresses }: KhitabatJummahPageProps) {
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
-          
+
           <div className="flex items-center gap-1.5">
             {Array.from({ length: totalPages }).map((_, i) => {
               const pageNum = i + 1;
               const isCurrent = pageNum === currentPage;
-              
+
               // Only show first, last, and pages around current page to prevent overflow
               if (
                 totalPages > 6 &&

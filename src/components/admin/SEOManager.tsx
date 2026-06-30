@@ -14,7 +14,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 export function SEOManager() {
   const [settings, setSettings] = useState({
     global_meta_title_suffix: "| Tanzeem-e-Islami",
-    global_meta_description: "Pakistan Is Working To Re-establish / Re-instate Khilafah By Following The Methodology Of Prophet Muhammad (SAWS)",
+    global_meta_description: "Tanzeem-e-Islami Is Working To Re-establish / Re-instate Khilafah By Following The Methodology Of Prophet Muhammad (SAWS)",
     global_meta_keywords: "Tanzeem, Khilafah, Quran, Islam",
     og_image_default: "",
     google_analytics_id: "",
@@ -110,17 +110,17 @@ export function SEOManager() {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label>Meta Title Suffix</Label>
-              <Input 
-                value={settings.global_meta_title_suffix} 
-                onChange={(e) => setSettings({ ...settings, global_meta_title_suffix: e.target.value })} 
+              <Input
+                value={settings.global_meta_title_suffix}
+                onChange={(e) => setSettings({ ...settings, global_meta_title_suffix: e.target.value })}
                 placeholder="| Site Name"
               />
             </div>
             <div className="space-y-2">
               <Label>Default Meta Description</Label>
-              <Textarea 
-                value={settings.global_meta_description} 
-                onChange={(e) => setSettings({ ...settings, global_meta_description: e.target.value })} 
+              <Textarea
+                value={settings.global_meta_description}
+                onChange={(e) => setSettings({ ...settings, global_meta_description: e.target.value })}
                 rows={3}
               />
             </div>
@@ -134,16 +134,16 @@ export function SEOManager() {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label>Default OG Image URL</Label>
-              <Input 
-                value={settings.og_image_default} 
-                onChange={(e) => setSettings({ ...settings, og_image_default: e.target.value })} 
+              <Input
+                value={settings.og_image_default}
+                onChange={(e) => setSettings({ ...settings, og_image_default: e.target.value })}
               />
             </div>
             <div className="space-y-2">
               <Label>Google Analytics ID</Label>
-              <Input 
-                value={settings.google_analytics_id} 
-                onChange={(e) => setSettings({ ...settings, google_analytics_id: e.target.value })} 
+              <Input
+                value={settings.google_analytics_id}
+                onChange={(e) => setSettings({ ...settings, google_analytics_id: e.target.value })}
                 placeholder="G-XXXXXXXXXX"
               />
             </div>

@@ -8,6 +8,8 @@ interface TeamMember {
   designation: string;
   bio?: string;
   avatar?: string;
+  buttonText?: string;
+  buttonUrl?: string;
   socials?: {
     facebook?: string;
     twitter?: string;
@@ -23,7 +25,7 @@ interface TeamGridProps {
 
 export function TeamGrid({ heading, members }: TeamGridProps) {
   return (
-    <section className="py-16 md:py-24 bg-background">
+    <section className="py-16 md:py-10 bg-background">
       <div className="container px-4 mx-auto">
         {heading && (
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 text-foreground">
@@ -53,7 +55,7 @@ export function TeamGrid({ heading, members }: TeamGridProps) {
                     <span className="text-4xl font-bold text-primary/20">{member.name.charAt(0)}</span>
                   </div>
                 )}
-                
+
                 {/* Social Overlay */}
                 <div className="absolute inset-x-0 bottom-0 p-6 translate-y-full group-hover:translate-y-0 transition-transform duration-300 bg-gradient-to-t from-black/80 to-transparent flex justify-center gap-4">
                   {member.socials?.facebook && (
@@ -90,6 +92,16 @@ export function TeamGrid({ heading, members }: TeamGridProps) {
                   <p className="mt-4 text-foreground-muted text-sm line-clamp-3">
                     {member.bio}
                   </p>
+                )}
+                {member.buttonText && member.buttonUrl && (
+                  <a
+                    href={member.buttonUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-4 inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider bg-primary text-primary-foreground hover:bg-primary/85 transition-colors duration-200"
+                  >
+                    {member.buttonText}
+                  </a>
                 )}
               </div>
             </motion.div>

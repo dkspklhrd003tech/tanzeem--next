@@ -16,6 +16,7 @@ import { QuoteBanner } from "@/components/shared/QuoteBanner";
 import { LeaderBio } from "@/components/shared/LeaderBio";
 import { IdeologyCards } from "@/components/shared/IdeologyCards";
 import { JoinCTA } from "@/components/shared/JoinCTA";
+import { NestedCategoryGrid } from "@/components/shared/NestedCategoryGrid";
 import type { CmsSectionData } from "@/lib/page-helpers";
 
 const ComponentMap: Record<string, React.FC<any>> = {
@@ -35,6 +36,7 @@ const ComponentMap: Record<string, React.FC<any>> = {
   leader_bio: LeaderBio,
   ideology_cards: IdeologyCards,
   join_cta: JoinCTA,
+  nested_category_grid: NestedCategoryGrid,
 };
 
 interface DynamicPageContentProps {

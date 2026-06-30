@@ -4,6 +4,14 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight, User } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { CinematicBackground } from "./CinematicBackground";
+
+if (typeof window !== "undefined") {
+    gsap.registerPlugin(ScrollTrigger);
+}
 
 type TeamMember = {
     id: string;
@@ -32,33 +40,79 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
     const aboutImage =
         settings["homepage_about_image"] || "/media/logo-dark.png";
 
-    return (
-        <section aria-labelledby="about-heading" className="py-14 bg-background">
-            <div className="container max-w-7xl mx-auto px-4">
+    const sectionRef = useRef<HTMLElement>(null);
+    const aboutRef = useRef<HTMLDivElement>(null);
+    const leadersRef = useRef<HTMLDivElement>(null);
 
-                {/* ── About Card — white bg, green left border accent (matches tanzeem.org) ── */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    className="bg-[#0d5844] border border-border rounded-xl mb-14 p-6 md:p-8 flex flex-col md:flex-row gap-6 md:gap-8 items-center md:items-start shadow-sm"
+    useEffect(() => {
+        if (!sectionRef.current || !aboutRef.current || !leadersRef.current) return;
+
+        const ctx = gsap.context(() => {
+            // About Section Parallax & Reveal
+            gsap.fromTo(aboutRef.current,
+                { y: 100, opacity: 0, scale: 0.95 },
+                {
+                    y: 0, opacity: 1, scale: 1,
+                    duration: 1.2,
+                    ease: "power4.out",
+                    scrollTrigger: {
+                        trigger: aboutRef.current,
+                        start: "top 85%",
+                    }
+                }
+            );
+
+            // Leaders Staggered Reveal
+            const cards = gsap.utils.toArray(".leader-card");
+            gsap.fromTo(cards,
+                { y: 50, opacity: 0, rotateX: -15 },
+                {
+                    y: 0, opacity: 1, rotateX: 0,
+                    duration: 1,
+                    stagger: 0.2,
+                    ease: "back.out(1.2)",
+                    scrollTrigger: {
+                        trigger: leadersRef.current,
+                        start: "top 80%",
+                    }
+                }
+            );
+        }, sectionRef);
+
+        return () => ctx.revert();
+    }, []);
+
+    return (
+        <section ref={sectionRef} aria-labelledby="about-heading" className="relative py-20 bg-background overflow-hidden perspective-1000">
+            <CinematicBackground />
+            <div className="container max-w-7xl mx-auto relative z-10">
+
+                {/* ── About Card ── */}
+                <div
+                    ref={aboutRef}
+                    className="relative bg-gradient-to-br from-[#0a4233] to-[#04241b] border border-primary/20 rounded-2xl mb-20 p-8 md:p-12 flex flex-col md:flex-row gap-8 md:gap-12 items-center md:items-start shadow-2xl overflow-hidden group"
                 >
+                    <div className="absolute inset-0 bg-[url('/noise.png')] opacity-20 mix-blend-overlay pointer-events-none" />
+                    <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none" />
                     {/* Logo Panel */}
-                    <div className="w-32 h-32 md:w-40 md:h-40 shrink-0 border-2 border-primary rounded-lg overflow-hidden bg-white flex items-center justify-center">
+                    <motion.div
+                        whileHover={{ scale: 1.05, rotateY: 10 }}
+                        className="w-32 h-32 md:w-48 md:h-48 shrink-0 border border-primary/30 rounded-2xl overflow-hidden bg-black/40 backdrop-blur-md flex items-center justify-center shadow-[0_0_40px_rgba(16,185,129,0.15)] relative z-10"
+                    >
                         <img
                             src={aboutImage}
                             alt="Tanzeem-e-Islami logo"
-                            className="w-full h-full object-contain p-2"
+                            className="w-full h-full object-contain p-4 drop-shadow-xl"
                             onError={(e) => {
                                 const t = e.currentTarget;
                                 if (!t.src.includes("/logo.png")) t.src = "/logo.png";
                                 else t.style.display = "none";
                             }}
                         />
-                    </div>
+                    </motion.div>
 
                     {/* Text Content */}
-                    <div className="flex-1 flex flex-col justify-center">
+                    <div className="flex-1 flex flex-col justify-center relative z-10">
                         <p className="text-white mb-2 text-xs">About Us</p>
                         <h2
                             id="about-heading"
@@ -73,38 +127,36 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
                             <Link
                                 href={btnLink}
                                 className={cn(
-                                    "inline-flex items-center gap-2 border border-white bg-primary text-white",
-                                    "px-6 py-2.5 rounded-full text-sm font-semibold",
-                                    "hover:bg-white hover:text-primary transition-colors",
-                                    "focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
+                                    "inline-flex items-center gap-3 border border-primary/50 bg-primary/10 text-primary-foreground backdrop-blur-md",
+                                    "px-8 py-3.5 rounded-full text-sm font-bold tracking-wide uppercase",
+                                    "hover:bg-primary hover:border-primary transition-all duration-500 hover:shadow-[0_0_30px_rgba(16,185,129,0.3)]",
+                                    "focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2 group/btn"
                                 )}
                             >
                                 {btnText}
-                                <ArrowRight className="w-4 h-4" aria-hidden="true" />
+                                <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" aria-hidden="true" />
                             </Link>
                         </div>
                     </div>
-                </motion.div>
+                </div>
 
                 {/* ── Leader Cards ── */}
                 <div
+                    ref={leadersRef}
                     className="grid grid-cols-1 md:grid-cols-2 gap-8"
                     role="list"
                     aria-label="Leadership team"
                 >
                     {team.length > 0 ? (
                         team.map((leader, i) => (
-                            <motion.div
+                            <div
                                 key={leader.id}
                                 role="listitem"
-                                initial={{ opacity: 0, y: 30 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ duration: 0.5, delay: i * 0.15 }}
-                                className="bg-card border border-border rounded-xl p-6 shadow-sm hover:shadow-md transition-all flex flex-col md:flex-row gap-6"
+                                className="leader-card group bg-card/40 backdrop-blur-xl border border-border/50 rounded-2xl p-6 shadow-lg hover:shadow-primary/5 hover:border-primary/30 transition-all duration-700 flex flex-col md:flex-row gap-6 relative overflow-hidden"
                             >
+                                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
                                 {/* Photo */}
-                                <div className="w-full md:w-44 aspect-square rounded-lg overflow-hidden shrink-0 bg-muted border border-border">
+                                <div className="w-full md:w-44 aspect-square rounded-xl overflow-hidden shrink-0 bg-black/50 border border-white/5 relative z-10">
                                     {leader.avatar ? (
                                         <img
                                             src={leader.avatar}
@@ -125,7 +177,7 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
                                 </div>
 
                                 {/* Content */}
-                                <div className="flex flex-col justify-between">
+                                <div className="flex flex-col justify-between relative z-10">
                                     <div>
                                         <p className="text-primary font-bold text-xs uppercase tracking-widest mb-1">
                                             {leader.designation || "Leader"}
@@ -157,7 +209,7 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
                                         </Link>
                                     </div>
                                 </div>
-                            </motion.div>
+                            </div>
                         ))
                     ) : (
                         /* Skeleton fallbacks */

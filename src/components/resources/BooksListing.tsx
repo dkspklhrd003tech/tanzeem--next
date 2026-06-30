@@ -27,9 +27,9 @@ type BookItem = {
 type Category = { id: string; name: string; slug: string; bookCount?: number };
 
 const LANGUAGES = [
-  { value: "urdu",    label: "Urdu" },
+  { value: "urdu", label: "Urdu" },
   { value: "english", label: "English" },
-  { value: "arabic",  label: "Arabic" },
+  { value: "arabic", label: "Arabic" },
 ];
 
 interface BooksListingProps {
@@ -54,8 +54,8 @@ export function BooksListing({
   function buildUrl(overrides: Record<string, string>) {
     const params = new URLSearchParams();
     if (activeCategorySlug) params.set("category", activeCategorySlug);
-    if (activeLanguage)     params.set("language",  activeLanguage);
-    if (searchQuery)        params.set("q",          searchQuery);
+    if (activeLanguage) params.set("language", activeLanguage);
+    if (searchQuery) params.set("q", searchQuery);
     Object.entries(overrides).forEach(([k, v]) => { if (v) params.set(k, v); else params.delete(k); });
     params.delete("page");
     return `/books?${params.toString()}`;
@@ -67,11 +67,9 @@ export function BooksListing({
   }
 
   return (
-    <div className="container max-w-7xl mx-auto px-4 py-10">
+    <div className="container max-w-7xl mx-auto py-10">
       {/* Header */}
-      <div className="mb-8">
-        <p className="section-label mb-1">Our Books</p>
-        <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">Islamic Books Library</h1>
+      <div className="mb-6">
         <p className="text-foreground-muted">{total} book{total !== 1 ? "s" : ""} available</p>
       </div>
 

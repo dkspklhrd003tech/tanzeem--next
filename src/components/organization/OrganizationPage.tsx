@@ -244,7 +244,7 @@ function OurHistory({ data }: { data: HistoryState }) {
 
   return (
     <section className="py-14 md:py-20 bg-background">
-      <div className="container max-w-7xl mx-auto px-4">
+      <div className="container max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row gap-10 items-start">
           {/* Text */}
           <div className="flex-1 space-y-5">
@@ -305,7 +305,7 @@ function MissionStatement({ data }: { data: MissionStatementState }) {
 
   return (
     <section className="py-14 md:py-20 bg-background-secondary border-t border-border">
-      <div className="container max-w-4xl mx-auto px-4">
+      <div className="container max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -338,7 +338,7 @@ function LeaderBio({ data }: { data: LeaderState }) {
 
   return (
     <section className="py-14 bg-background border-t border-border">
-      <div className="container max-w-5xl mx-auto px-4">
+      <div className="container max-w-5xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -420,7 +420,7 @@ function IdeologySection({ data }: { data: IdeologyState }) {
 
   return (
     <section aria-labelledby="org-ideology-heading" className="py-14 bg-background border-t border-border">
-      <div className="container max-w-7xl mx-auto px-4">
+      <div className="container max-w-7xl mx-auto">
         {data.heading && (
           <motion.div
             initial={{ opacity: 0, y: 16 }}
@@ -514,7 +514,7 @@ function JoinUS({ data }: { data: JoinState }) {
       <div className="absolute top-0 right-0 w-72 h-72 rounded-full opacity-[0.06] -translate-y-1/2 translate-x-1/3 blur-3xl bg-white" aria-hidden="true" />
       <div className="absolute bottom-0 left-0 w-56 h-56 rounded-full opacity-[0.06] translate-y-1/3 -translate-x-1/4 blur-3xl bg-white" aria-hidden="true" />
 
-      <div className="container max-w-5xl mx-auto px-4 relative z-10">
+      <div className="container max-w-5xl mx-auto relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}

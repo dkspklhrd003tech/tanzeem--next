@@ -58,6 +58,7 @@ const MARKAZ_FALLBACK: LocationRow = {
     "Dar ul Islam, Markaz Tanzeem-e-Islami, Multan Road, Chung Lahore 53800",
   phone: "(042) 35473375-78",
   email: "markaz@tanzeem.org",
+  details: null,
   isActive: true,
 };
 
@@ -112,16 +113,6 @@ export function ContactSection({
       <div className="absolute left-1/2 -top-[150px] -translate-x-1/2 -z-10 h-[400px] w-[600px] rounded-full bg-primary/20 blur-[120px]" />
 
       <div className="container mx-auto max-w-6xl px-4 pt-16">
-        
-        {/* Header Text */}
-        <div className="text-center mb-16 animate-in fade-in slide-in-from-bottom-4 duration-700">
-          <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-b from-foreground to-foreground/70 mb-4">
-            Get in Touch
-          </h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto font-light">
-            Have questions or want to reach out to Tanzeem-e-Islami? Find our contact details, branch locations, or send us a message directly.
-          </p>
-        </div>
 
         {/* ── 3 info cards ───────────────────────────────────────────────── */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20 relative z-10">
@@ -135,38 +126,38 @@ export function ContactSection({
               className="group relative bg-card/60 backdrop-blur-xl border border-border/50 hover:border-primary/30 rounded-3xl p-8 flex flex-col items-center text-center gap-4 shadow-sm hover:shadow-2xl hover:shadow-primary/5 transition-all duration-500 hover:-translate-y-1 overflow-hidden"
             >
               <div className="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              
+
               <div className="relative w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:bg-primary transition-all duration-500 shadow-sm">
                 <card.icon className="h-7 w-7 text-primary group-hover:text-primary-foreground transition-colors duration-500" aria-hidden="true" />
               </div>
-              
+
               <div className="relative z-10">
                 <h3 className="font-bold text-foreground text-xl mb-3 tracking-tight">
                   {card.title}
                 </h3>
                 <div className="space-y-1.5 flex flex-col items-center">
                   {card.lines.map((line, j) => {
-                    let href = undefined;
+                    let href: string | undefined = undefined;
                     let displayLine = line;
-                    
+
+                    if (!line) return null;
+
                     if (card.title === "Phone" && line.includes(":")) {
-                      const number = line.split(":")[1].trim();
+                      const number = line.split(":")[1]?.trim() || "";
                       href = `tel:${number.replace(/[^+\d]/g, "")}`;
                     } else if (card.title === "Email Address" && line.includes(":")) {
-                      const email = line.split(":")[1].trim();
+                      const email = line.split(":")[1]?.trim() || "";
                       href = `mailto:${email}`;
                     } else if (card.title === "Address") {
                       href = `https://maps.google.com/?q=${encodeURIComponent(line)}`;
                     }
 
-                    if (!line) return null;
-
                     return href ? (
-                      <a 
-                        key={j} 
-                        href={href} 
-                        target="_blank" 
-                        rel="noopener noreferrer" 
+                      <a
+                        key={j}
+                        href={href}
+                        target="_blank"
+                        rel="noopener noreferrer"
                         className="text-sm text-muted-foreground leading-relaxed font-medium hover:text-primary transition-colors block text-center"
                       >
                         {displayLine}
@@ -185,7 +176,7 @@ export function ContactSection({
 
         {/* ── Contact form & Locations Grid ─────────────────────────────────── */}
         <div className="grid lg:grid-cols-12 gap-8 items-start relative z-10">
-          
+
           {/* Form Side */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -250,9 +241,9 @@ export function ContactSection({
                   <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity pointer-events-none">
                     <MapPin className="w-40 h-40" />
                   </div>
-                  
+
                   <h3 className="text-2xl font-bold mb-6 text-foreground">{activeBranch.name}</h3>
-                  
+
                   {/* Legacy fields if no details array exists */}
                   {(!activeBranch.details || activeBranch.details.length === 0) && (
                     <dl className="grid grid-cols-1 sm:grid-cols-[140px_1fr] gap-y-5 gap-x-4 text-sm relative z-10">
@@ -321,10 +312,10 @@ export function ContactSection({
                             {detail.address && (
                               <div className="flex items-start gap-2">
                                 <MapPin className="w-4 h-4 text-primary mt-0.5 shrink-0" />
-                                <a 
-                                  href={detail.mapUrl || `https://maps.google.com/?q=${encodeURIComponent(detail.address)}`} 
-                                  target="_blank" 
-                                  rel="noopener noreferrer" 
+                                <a
+                                  href={detail.mapUrl || `https://maps.google.com/?q=${encodeURIComponent(detail.address)}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
                                   className="text-muted-foreground hover:text-primary font-medium transition-colors"
                                 >
                                   {detail.address}
@@ -334,10 +325,10 @@ export function ContactSection({
                             {detail.phone && (
                               <div className="flex items-start gap-2">
                                 <Phone className="w-4 h-4 text-primary mt-0.5 shrink-0" />
-                                <a 
-                                  href={`tel:${detail.phone.replace(/[^+\d]/g, "")}`} 
-                                  target="_blank" 
-                                  rel="noopener noreferrer" 
+                                <a
+                                  href={`tel:${detail.phone.replace(/[^+\d]/g, "")}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
                                   className="text-muted-foreground hover:text-primary font-medium transition-colors"
                                 >
                                   {detail.phone}
@@ -347,10 +338,10 @@ export function ContactSection({
                             {detail.email && (
                               <div className="flex items-start gap-2">
                                 <Mail className="w-4 h-4 text-primary mt-0.5 shrink-0" />
-                                <a 
-                                  href={`mailto:${detail.email}`} 
-                                  target="_blank" 
-                                  rel="noopener noreferrer" 
+                                <a
+                                  href={`mailto:${detail.email}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
                                   className="text-muted-foreground hover:text-primary font-medium transition-colors"
                                 >
                                   {detail.email}

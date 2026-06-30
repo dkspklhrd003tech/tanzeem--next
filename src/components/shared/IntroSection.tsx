@@ -22,8 +22,8 @@ export function IntroSection({
   backgroundColor = "transparent",
 }: IntroSectionProps) {
   return (
-    <section 
-      className="py-16 md:py-24 overflow-hidden"
+    <section
+      className="py-16 md:py-10 overflow-hidden"
       style={{ backgroundColor }}
     >
       <div className="container px-4 mx-auto">
@@ -41,7 +41,7 @@ export function IntroSection({
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-tight">
               {heading}
             </h2>
-            <div 
+            <div
               className="prose prose-lg text-foreground-muted max-w-none"
               dangerouslySetInnerHTML={{ __html: body }}
             />
@@ -51,9 +51,9 @@ export function IntroSection({
           {image && (
             <div className="flex-1 w-full max-w-2xl">
               <div className="relative rounded-2xl overflow-hidden shadow-2xl transition-transform duration-500 hover:scale-[1.02]">
-                <img 
-                  src={image} 
-                  alt={imageAlt || heading} 
+                <img
+                  src={image}
+                  alt={imageAlt || heading}
                   className="w-full h-auto object-cover"
                 />
                 <div className="absolute inset-0 ring-1 ring-inset ring-black/10 rounded-2xl" />

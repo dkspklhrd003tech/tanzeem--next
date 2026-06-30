@@ -12,13 +12,13 @@ import { cn } from "@/lib/utils";
 
 // ── Icon registry (matches PageSectionBuilder select options) ─────────────────
 const ICON_MAP: Record<string, LucideIcon> = {
-  book:      BookOpen,
-  star:      Star,
-  compass:   Compass,
-  heart:     Heart,
-  shield:    Shield,
-  globe:     Globe,
-  users:     Users,
+  book: BookOpen,
+  star: Star,
+  compass: Compass,
+  heart: Heart,
+  shield: Shield,
+  globe: Globe,
+  users: Users,
   lightbulb: Lightbulb,
 };
 
@@ -41,7 +41,7 @@ export function IdeologyCards({ heading, cards = [] }: IdeologyCardsProps) {
 
   return (
     <section aria-labelledby="ideology-cards-heading" className="py-14 bg-background border-t border-border">
-      <div className="container max-w-7xl mx-auto px-4">
+      <div className="container max-w-7xl mx-auto">
 
         {heading && (
           <motion.div

@@ -4,6 +4,13 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import { BookOpen, Newspaper, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+if (typeof window !== "undefined") {
+    gsap.registerPlugin(ScrollTrigger);
+}
 
 type BookRecord = {
     id: string;
@@ -28,22 +35,61 @@ type PublicationsProps = {
 };
 
 export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps) {
+    const section1Ref = useRef<HTMLElement>(null);
+    const section2Ref = useRef<HTMLElement>(null);
+
+    useEffect(() => {
+        if (!section1Ref.current || !section2Ref.current) return;
+
+        const ctx = gsap.context(() => {
+            [section1Ref.current, section2Ref.current].forEach(sec => {
+                if (!sec) return;
+                const header = sec.querySelector(".pub-header");
+                const cards = sec.querySelectorAll(".pub-card");
+
+                gsap.fromTo(header,
+                    { opacity: 0, y: 30 },
+                    {
+                        opacity: 1, y: 0, duration: 1, ease: "power3.out",
+                        scrollTrigger: { trigger: sec, start: "top 80%" }
+                    }
+                );
+
+                gsap.fromTo(cards,
+                    { opacity: 0, y: 60, scale: 0.95, rotateY: 10 },
+                    {
+                        opacity: 1, y: 0, scale: 1, rotateY: 0,
+                        duration: 1,
+                        stagger: 0.15,
+                        ease: "back.out(1.2)",
+                        scrollTrigger: { trigger: sec, start: "top 70%" }
+                    }
+                );
+            });
+        });
+
+        return () => ctx.revert();
+    }, []);
+
     return (
-        <div>
+        <div className="bg-background overflow-hidden perspective-1000">
             {/* 1. Our Magazines Section */}
-            <section aria-labelledby="magazines-heading" className="py-14 border-t border-border bg-background">
-                <div className="container max-w-7xl mx-auto">
-                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
+            <section ref={section1Ref} aria-labelledby="magazines-heading" className="relative py-10 border-t border-border/20">
+                <div className="absolute inset-0 bg-gradient-to-b from-card/30 to-background pointer-events-none" />
+                <div className="container max-w-7xl mx-auto relative z-10">
+                    <div className="pub-header flex flex-col md:flex-row justify-between items-start md:items-center mb-16 gap-6">
                         <div>
-                            <p className="section-label mb-1">Our Magazines</p>
-                            <h2 id="magazines-heading" className="text-3xl md:text-4xl font-bold text-foreground">
+                            <p className="text-primary font-bold tracking-widest uppercase text-xs mb-3">Our Magazines</p>
+                            <h2 id="magazines-heading" className="text-4xl md:text-5xl font-black text-foreground drop-shadow-sm max-w-3xl">
                                 Books And Literature Of Tanzeem-e-Islami &amp; Anjuman Khuddam Ul Quran
                             </h2>
                         </div>
                         <Link
                             href="/magazines"
                             className={cn(
-                                "group flex items-center gap-2 btn-primary-rounded px-8 py-3 text-sm font-bold shadow-sm",
+                                "group inline-flex items-center gap-3 border border-primary/50 bg-primary text-primary-foreground backdrop-blur-md",
+                                "px-8 py-3.5 rounded-full text-sm font-bold tracking-wide uppercase shadow-lg",
+                                "hover:bg-primary hover:border-primary transition-all duration-500 hover:shadow-[0_0_30px_rgba(16,185,129,0.3)]",
                                 "focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
                             )}
                         >
@@ -52,27 +98,21 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
                         </Link>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                         {magazinesData.length > 0 ? magazinesData.map((mag, i) => (
-                            <motion.div
+                            <div
                                 key={mag.id}
-                                initial={{ opacity: 0, y: 30 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: i * 0.1, duration: 0.5 }}
-                                className="group flex flex-col items-center"
+                                className="pub-card group flex flex-col items-center"
                             >
                                 <div className="relative mb-6">
-                                    {/* Glassmorphism background for card */}
-                                    <div className="absolute -inset-4 bg-primary/5 rounded-[2rem] opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl" aria-hidden="true" />
 
                                     <div className={cn(
-                                        "relative w-[240px] h-[332px] rounded-2xl overflow-hidden border border-border bg-card shadow-lg",
-                                        "group-hover:shadow-2xl group-hover:-translate-y-2 transition-all duration-500",
-                                        "ring-4 ring-white/50 group-hover:ring-primary/10"
+                                        "relative w-[260px] h-[360px] rounded-[1.5rem] overflow-hidden border border-border/50 bg-card shadow-[0_8px_30px_rgb(0,0,0,0.04)]",
+                                        "group-hover:shadow-[0_20px_40px_rgba(16,185,129,0.15)] group-hover:-translate-y-3 transition-all duration-700",
+                                        "ring-1 ring-white/10 group-hover:ring-primary/30 group-hover:rotate-1"
                                     )}>
                                         {mag.coverImage ? (
-                                            <img src={mag.coverImage} alt={mag.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" onError={(e) => { e.currentTarget.style.display = "none"; }} />
+                                            <img src={mag.coverImage} alt={mag.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)]" onError={(e) => { e.currentTarget.style.display = "none"; }} />
                                         ) : (
                                             <div className="w-full h-full flex flex-col items-center justify-center bg-muted/30" aria-hidden="true">
                                                 <Newspaper className="w-12 h-12 text-primary/20" />
@@ -80,7 +120,7 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
                                         )}
 
                                         {/* Overlay gradient */}
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" aria-hidden="true" />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" aria-hidden="true" />
                                     </div>
                                 </div>
 
@@ -92,16 +132,18 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
                                     <Link
                                         href={`/magazines/${mag.id}`}
                                         className={cn(
-                                            "inline-flex items-center justify-center gap-2 w-full btn-primary-rounded px-6 py-2.5 text-xs font-semibold uppercase tracking-widest group/btn shadow-sm hover:shadow-md",
+                                            "group inline-flex items-center gap-3 border border-primary/50 bg-primary text-primary-foreground backdrop-blur-md",
+                                            "px-8 py-3.5 rounded-full text-sm font-bold tracking-wide uppercase shadow-lg",
+                                            "hover:bg-primary hover:border-primary transition-all duration-500 hover:shadow-[0_0_30px_rgba(16,185,129,0.3)]",
                                             "focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
                                         )}
                                     >
                                         More {mag.title}
-                                        <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform" aria-hidden="true" />
+                                        <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" aria-hidden="true" />
                                     </Link>
                                 </div>
 
-                            </motion.div>
+                            </div>
                         )) : (
                             Array(4).fill(0).map((_, i) => (
                                 <div key={i} className="w-[240px] h-[332px] mx-auto bg-muted/30 animate-pulse rounded-2xl border border-border" aria-hidden="true" />
@@ -112,19 +154,22 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
             </section>
 
             {/* 2. Our Books Section */}
-            <section aria-labelledby="books-heading" className="py-14 border-t border-border bg-card">
-                <div className="container max-w-7xl mx-auto">
-                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
+            <section ref={section2Ref} aria-labelledby="books-heading" className="relative py-10 border-t border-border/20 bg-background">
+                <div className="absolute inset-0 bg-gradient-to-t from-card/30 to-background pointer-events-none" />
+                <div className="container max-w-7xl mx-auto relative z-10">
+                    <div className="pub-header flex flex-col md:flex-row justify-between items-start md:items-center mb-16 gap-6">
                         <div>
-                            <p className="section-label mb-1">Our Books</p>
-                            <h2 id="books-heading" className="text-3xl md:text-4xl font-bold text-foreground">
+                            <p className="text-primary font-bold tracking-widest uppercase text-xs mb-3">Our Books</p>
+                            <h2 id="books-heading" className="text-4xl md:text-5xl font-black text-foreground drop-shadow-sm max-w-3xl">
                                 Message of Iqamat ud Din &amp; Ruju llul Quran Through Our Periodicals.
                             </h2>
                         </div>
                         <Link
                             href="/books"
                             className={cn(
-                                "group flex items-center gap-2 btn-primary-rounded px-8 py-3 text-sm font-semibold shadow-sm",
+                                "group inline-flex items-center gap-3 border border-primary/50 bg-primary text-primary-foreground backdrop-blur-md",
+                                "px-8 py-3.5 rounded-full text-sm font-bold tracking-wide uppercase shadow-lg",
+                                "hover:bg-primary hover:border-primary transition-all duration-500 hover:shadow-[0_0_30px_rgba(16,185,129,0.3)]",
                                 "focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
                             )}
                         >
@@ -133,32 +178,28 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
                         </Link>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                         {booksData.length > 0 ? booksData.map((book, i) => (
-                            <motion.div
+                            <div
                                 key={book.id}
-                                initial={{ opacity: 0, y: 30 }}
-                                whileInView={{ opacity: 1, y: 0 }}
-                                viewport={{ once: true }}
-                                transition={{ delay: i * 0.1, duration: 0.5 }}
-                                className="group flex flex-col items-center"
+                                className="pub-card group flex flex-col items-center"
                             >
                                 <div className="relative mb-6">
-                                    <div className="absolute -inset-4 bg-primary/5 rounded-[2rem] opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-xl" aria-hidden="true" />
+                                    <div className="absolute -inset-6 bg-primary/10 rounded-[3rem] opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-2xl" aria-hidden="true" />
 
                                     <div className={cn(
-                                        "relative w-[240px] h-[332px] rounded-2xl overflow-hidden border border-border bg-card shadow-lg",
-                                        "group-hover:shadow-2xl group-hover:-translate-y-2 transition-all duration-500",
-                                        "ring-4 ring-white/50 group-hover:ring-primary/10"
+                                        "relative w-[260px] h-[360px] rounded-[1.5rem] overflow-hidden border border-border/50 bg-card shadow-[0_8px_30px_rgb(0,0,0,0.04)]",
+                                        "group-hover:shadow-[0_20px_40px_rgba(16,185,129,0.15)] group-hover:-translate-y-3 transition-all duration-700",
+                                        "ring-1 ring-white/10 group-hover:ring-primary/30 group-hover:-rotate-1"
                                     )}>
                                         {book.coverImage ? (
-                                            <img src={book.coverImage} alt={book.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" onError={(e) => { e.currentTarget.style.display = "none"; }} />
+                                            <img src={book.coverImage} alt={book.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)]" onError={(e) => { e.currentTarget.style.display = "none"; }} />
                                         ) : (
                                             <div className="w-full h-full flex flex-col items-center justify-center bg-muted/30" aria-hidden="true">
                                                 <BookOpen className="w-12 h-12 text-primary/20" />
                                             </div>
                                         )}
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" aria-hidden="true" />
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" aria-hidden="true" />
                                     </div>
                                 </div>
 
@@ -166,15 +207,16 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
                                     <Link
                                         href={`/books/${book.id}`}
                                         className={cn(
-                                            "inline-flex items-center justify-center gap-2 w-full btn-primary-rounded px-6 py-2.5 text-xs font-semibold uppercase tracking-widest group/btn shadow-sm hover:shadow-md",
+                                            "inline-flex items-center justify-center gap-2 w-[260px] border border-primary/20 bg-card backdrop-blur-sm px-6 py-3.5 rounded-full text-xs font-bold uppercase tracking-widest shadow-sm hover:shadow-primary/20",
+                                            "hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-500 group/btn",
                                             "focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
                                         )}
                                     >
                                         {book.title}
-                                        <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-1 transition-transform" aria-hidden="true" />
+                                        <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" aria-hidden="true" />
                                     </Link>
                                 </div>
-                            </motion.div>
+                            </div>
                         )) : (
                             Array(4).fill(0).map((_, i) => (
                                 <div key={i} className="w-[240px] h-[332px] mx-auto bg-muted/30 animate-pulse rounded-2xl border border-border" aria-hidden="true" />

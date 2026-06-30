@@ -34,7 +34,7 @@ export function QuoteBanner({
         aria-hidden="true"
       />
 
-      <div className="container max-w-4xl mx-auto px-4 relative z-10 text-center">
+      <div className="container max-w-4xl mx-auto relative z-10 text-center">
         <motion.blockquote
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}

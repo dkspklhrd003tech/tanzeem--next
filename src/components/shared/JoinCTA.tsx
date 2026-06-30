@@ -39,7 +39,7 @@ export function JoinCTA({
         aria-hidden="true"
       />
 
-      <div className="container max-w-3xl mx-auto px-4 relative z-10 text-center">
+      <div className="container max-w-3xl mx-auto relative z-10 text-center">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}

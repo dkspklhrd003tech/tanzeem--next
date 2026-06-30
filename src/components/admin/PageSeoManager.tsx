@@ -18,10 +18,12 @@ import { PageSpinner } from "@/components/ui/spinner";
 import { cn } from "@/lib/utils";
 
 interface PageSeoManagerProps {
-  pageId: string;
+  pageId?: string;
+  endpoint?: string;
+  backHref?: string;
 }
 
-export default function PageSeoManager({ pageId }: PageSeoManagerProps) {
+export default function PageSeoManager({ pageId, endpoint, backHref }: PageSeoManagerProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
@@ -38,19 +40,21 @@ export default function PageSeoManager({ pageId }: PageSeoManagerProps) {
     schema: "Missing",
   });
 
+  const url = endpoint || `/api/sitemanager/pages/${pageId}`;
+
   useEffect(() => {
-    fetch(`/api/sitemanager/pages/${pageId}`)
+    fetch(url)
       .then(res => res.json())
       .then(data => {
-        setPage(data.page);
+        setPage(data.page || data.item || data);
         setLoading(false);
       });
-  }, [pageId]);
+  }, [url]);
 
   const handleSave = async () => {
     setSaving(true);
     try {
-      const res = await fetch(`/api/sitemanager/pages/${pageId}`, {
+      const res = await fetch(url, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(page),
@@ -121,17 +125,17 @@ export default function PageSeoManager({ pageId }: PageSeoManagerProps) {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-4 rounded-xl border border-border sticky top-4 z-10 shadow-sm">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" asChild>
-            <Link href={`/sitemanager/pages/${pageId}/edit`}>
+            <Link href={backHref || `/sitemanager/pages/${pageId}/edit`}>
               <ArrowLeft className="h-5 w-5" />
             </Link>
           </Button>
           <div>
             <h1 className="text-xl font-bold flex items-center gap-2">
               <Bot className="h-6 w-6 text-emerald-500" />
-              Page SEO Center
+              SEO Center
             </h1>
             <p className="text-sm text-muted-foreground">
-              Editing: <span className="font-medium text-foreground">{page.title}</span>
+              Editing: <span className="font-medium text-foreground">{page.title || page.name}</span>
             </p>
           </div>
         </div>

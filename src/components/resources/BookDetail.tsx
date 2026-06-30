@@ -45,7 +45,6 @@ export function BookDetail({ book, backHref, backLabel }: BookDetailProps) {
         {/* Details */}
         <div className="md:col-span-2 space-y-6">
           <div>
-            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">{book.title}</h1>
             {book.authorName && (
               <p className="flex items-center gap-2 text-lg text-primary">
                 <User className="h-4 w-4" /> {book.authorName}

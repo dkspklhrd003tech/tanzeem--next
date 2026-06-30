@@ -77,6 +77,7 @@ const SECTION_TYPES = [
   { value: "leader_bio", label: "Leader Bio Card" },
   { value: "ideology_cards", label: "Ideology / Feature Cards" },
   { value: "join_cta", label: "Join Us CTA" },
+  { value: "nested_category_grid", label: "Nested Categories Grid (Audio/Video)" },
 ];
 
 export function PageSectionBuilder({ pageId, onSave }: PageSectionBuilderProps) {
@@ -224,6 +225,21 @@ export function PageSectionBuilder({ pageId, onSave }: PageSectionBuilderProps) 
           buttonUrl: "/join-tanzeem",
           bgColor: "#0d5844",
           textColor: "#ffffff",
+        };
+      case "nested_category_grid":
+        return {
+          heading: "Categories",
+          style: "capsule", // "capsule" or "image_card"
+          categories: [
+            {
+              id: uuidv4(),
+              title: "Category 1",
+              image: "",
+              subcategories: [
+                { id: uuidv4(), title: "Sub Category 1", mediaUrl: "", description: "" }
+              ]
+            }
+          ]
         };
       default:
         return {};
@@ -576,7 +592,7 @@ function SectionConfigForm({ type, config: rawConfig, onUpdate }: { type: string
           </div>
           <div className="flex items-center justify-between pt-4 border-t">
             <Label>Team Members</Label>
-            <Button size="sm" variant="outline" onClick={() => handleChange("members", [...(config.members || []), { name: "", designation: "", avatar: "" }])}>
+            <Button size="sm" variant="outline" onClick={() => handleChange("members", [...(config.members || []), { name: "", designation: "", avatar: "", buttonText: "", buttonUrl: "" }])}>
               <Plus className="w-3 h-3 mr-1" /> Add Member
             </Button>
           </div>
@@ -608,6 +624,18 @@ function SectionConfigForm({ type, config: rawConfig, onUpdate }: { type: string
                     newMembers[i].designation = e.target.value;
                     handleChange("members", newMembers);
                   }} />
+                  <div className="grid grid-cols-2 gap-2 pt-1 border-t border-border/50">
+                    <Input placeholder="Button Text (e.g. View Profile)" value={member.buttonText || ""} onChange={(e) => {
+                      const newMembers = [...config.members];
+                      newMembers[i].buttonText = e.target.value;
+                      handleChange("members", newMembers);
+                    }} />
+                    <Input placeholder="Button URL (https://...)" value={member.buttonUrl || ""} onChange={(e) => {
+                      const newMembers = [...config.members];
+                      newMembers[i].buttonUrl = e.target.value;
+                      handleChange("members", newMembers);
+                    }} />
+                  </div>
                 </div>
               </div>
             ))}
@@ -971,6 +999,128 @@ function SectionConfigForm({ type, config: rawConfig, onUpdate }: { type: string
                   <Input className="h-8 text-xs font-mono" value={card.linkUrl ?? ""} onChange={(e) => {
                     const c = [...(config.cards ?? [])]; c[i] = { ...c[i], linkUrl: e.target.value }; handleChange("cards", c);
                   }} placeholder="/organization/our-ideology" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+
+    case "nested_category_grid":
+      return (
+        <div className="space-y-6">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Heading</Label>
+              <Input value={config.heading ?? ""} onChange={(e) => handleChange("heading", e.target.value)} placeholder="View Audios by Category" />
+            </div>
+            <div className="space-y-2">
+              <Label>Grid Style</Label>
+              <Select value={config.style || "capsule"} onValueChange={(val) => handleChange("style", val)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="capsule">Capsules (Outline Buttons)</SelectItem>
+                  <SelectItem value="image_card">Image Cards</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between pt-4 border-t border-border/50">
+            <Label>Categories</Label>
+            <Button size="sm" variant="outline" onClick={() => handleChange("categories", [...(config.categories || []), { id: uuidv4(), title: "New Category", image: "", subcategories: [] }])}>
+              <Plus className="w-3 h-3 mr-1" /> Add Category
+            </Button>
+          </div>
+
+          <div className="space-y-6">
+            {config.categories?.map((cat: any, cIdx: number) => (
+              <div key={cat.id || cIdx} className="space-y-4 bg-background p-4 rounded-xl border border-border/80 shadow-sm">
+                <div className="flex items-center justify-between mb-2">
+                  <Label className="text-sm font-bold text-primary">Category: {cat.title || `Item #${cIdx + 1}`}</Label>
+                  <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:bg-destructive/10" onClick={() => {
+                    const newCats = config.categories.filter((_: any, idx: number) => idx !== cIdx);
+                    handleChange("categories", newCats);
+                  }}>
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
+
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-[10px]">Title</Label>
+                    <Input value={cat.title ?? ""} onChange={(e) => {
+                      const newCats = [...config.categories];
+                      newCats[cIdx].title = e.target.value;
+                      handleChange("categories", newCats);
+                    }} placeholder="e.g. Ameer Say Mulaqat" />
+                  </div>
+                  {config.style === "image_card" && (
+                    <div className="space-y-2">
+                      <Label className="text-[10px]">Thumbnail Image</Label>
+                      <ImageUploader value={cat.image ?? ""} onChange={(url) => {
+                        const newCats = [...config.categories];
+                        newCats[cIdx].image = url;
+                        handleChange("categories", newCats);
+                      }} aspectRatio={16 / 9} />
+                    </div>
+                  )}
+                </div>
+
+                <div className="mt-4 p-4 bg-muted/30 rounded-lg border border-border/50 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-xs font-semibold text-foreground-muted">Sub-categories for {cat.title}</Label>
+                    <Button size="sm" variant="secondary" className="h-7 text-[10px]" onClick={() => {
+                      const newCats = [...config.categories];
+                      newCats[cIdx].subcategories = [...(newCats[cIdx].subcategories || []), { id: uuidv4(), title: "New Sub-category", mediaUrl: "", description: "" }];
+                      handleChange("categories", newCats);
+                    }}>
+                      <Plus className="w-3 h-3 mr-1" /> Add Sub-category
+                    </Button>
+                  </div>
+
+                  <div className="space-y-3">
+                    {cat.subcategories?.map((sub: any, sIdx: number) => (
+                      <div key={sub.id || sIdx} className="grid sm:grid-cols-12 gap-3 items-end bg-background p-3 rounded-lg border border-border/60">
+                        <div className="sm:col-span-3 space-y-1">
+                          <Label className="text-[9px]">Sub-category Title</Label>
+                          <Input className="h-8 text-xs" value={sub.title ?? ""} onChange={(e) => {
+                            const newCats = [...config.categories];
+                            newCats[cIdx].subcategories[sIdx].title = e.target.value;
+                            handleChange("categories", newCats);
+                          }} placeholder="Episode 1" />
+                        </div>
+                        <div className="sm:col-span-4 space-y-1">
+                          <Label className="text-[9px]">Media URL (Video/Audio)</Label>
+                          <Input className="h-8 text-xs" value={sub.mediaUrl ?? ""} onChange={(e) => {
+                            const newCats = [...config.categories];
+                            newCats[cIdx].subcategories[sIdx].mediaUrl = e.target.value;
+                            handleChange("categories", newCats);
+                          }} placeholder="https://..." />
+                        </div>
+                        <div className="sm:col-span-4 space-y-1">
+                          <Label className="text-[9px]">Description (optional)</Label>
+                          <Input className="h-8 text-xs" value={sub.description ?? ""} onChange={(e) => {
+                            const newCats = [...config.categories];
+                            newCats[cIdx].subcategories[sIdx].description = e.target.value;
+                            handleChange("categories", newCats);
+                          }} placeholder="Short description..." />
+                        </div>
+                        <div className="sm:col-span-1 text-right">
+                          <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:bg-destructive/10" onClick={() => {
+                            const newCats = [...config.categories];
+                            newCats[cIdx].subcategories = newCats[cIdx].subcategories.filter((_: any, idx: number) => idx !== sIdx);
+                            handleChange("categories", newCats);
+                          }}>
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                    {(!cat.subcategories || cat.subcategories.length === 0) && (
+                      <p className="text-[11px] text-muted-foreground text-center py-2">No sub-categories yet.</p>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}

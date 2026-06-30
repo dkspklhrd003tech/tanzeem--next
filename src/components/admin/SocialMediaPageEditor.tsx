@@ -1,23 +1,25 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { 
-  Plus, 
-  Pencil, 
-  Trash2, 
-  Search, 
-  Settings2, 
-  FileText, 
-  Check, 
-  Loader2, 
-  Globe, 
+import {
+  Plus,
+  Pencil,
+  Trash2,
+  Search,
+  Settings2,
+  FileText,
+  Check,
+  Loader2,
+  Globe,
   ExternalLink,
   Sparkles,
   UploadCloud,
   Layers,
   Palette,
-  Eye
+  ArrowLeft,
+  Eye,
 } from "lucide-react";
+import { PageActionBar } from "@/components/admin/PageActionBar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -27,7 +29,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 // DnD Kit Imports
@@ -61,6 +63,8 @@ interface PageRecord {
   metaTitle: string;
   metaDescription: string;
   metaKeywords: string;
+  authorName?: string | null;
+  updatedAt?: string;
 }
 
 interface PlatformItem {
@@ -141,7 +145,7 @@ function SortableAccountCard({ id, account, platformName, onEdit, onDelete }: So
       )}
     >
       {/* Top Drag Handle Accent */}
-      <div 
+      <div
         {...attributes}
         {...listeners}
         className="h-9 bg-muted/40 hover:bg-muted/80 border-b border-border flex items-center justify-center cursor-grab active:cursor-grabbing text-muted-foreground/60 hover:text-muted-foreground transition-colors"
@@ -279,7 +283,7 @@ function SortablePlatformRow({ id, platform, onEdit, onDelete }: SortablePlatfor
         <Badge variant={platform.isActive ? "default" : "outline"} className={platform.isActive ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/25" : ""}>
           {platform.isActive ? "Active" : "Inactive"}
         </Badge>
-        
+
         <div className="flex gap-1">
           <Button
             variant="ghost"
@@ -307,7 +311,6 @@ function SortablePlatformRow({ id, platform, onEdit, onDelete }: SortablePlatfor
 
 // ─── Main Page Editor Component ──────────────────────────────────────────────
 export default function SocialMediaPageEditor({ pageId, initialPageData }: SocialMediaPageEditorProps) {
-  const router = useRouter();
   const { toast } = useToast();
 
   // Page settings state
@@ -456,6 +459,25 @@ export default function SocialMediaPageEditor({ pageId, initialPageData }: Socia
       });
     } finally {
       setIsSavingPage(false);
+    }
+  };
+
+  const handleDuplicate = async () => {
+    try {
+      const res = await fetch("/api/sitemanager/pages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...pageForm, title: `${pageForm.title} (Copy)`, slug: `${pageForm.slug}-copy`, isPublished: false, duplicateFromId: pageId }),
+      });
+      const json = await res.json();
+      if (res.ok) {
+        toast({ title: "Page duplicated." });
+        window.location.href = `/sitemanager/pages/${json.page.id}/edit`;
+      } else {
+        toast({ variant: "destructive", title: json.error ?? "Duplicate failed." });
+      }
+    } catch (e) {
+      toast({ variant: "destructive", title: "Duplicate failed." });
     }
   };
 
@@ -764,7 +786,7 @@ export default function SocialMediaPageEditor({ pageId, initialPageData }: Socia
 
     // Filter accounts belonging to current active platform tab
     const platformAccounts = accounts.filter(a => a.platformId === activePlatformId);
-    
+
     const oldIndex = platformAccounts.findIndex(a => a.id === active.id);
     const newIndex = platformAccounts.findIndex(a => a.id === over.id);
     if (oldIndex === -1 || newIndex === -1) return;
@@ -818,30 +840,31 @@ export default function SocialMediaPageEditor({ pageId, initialPageData }: Socia
 
   return (
     <div className="space-y-6 max-w-7xl">
-      {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground tracking-tight flex items-center gap-2">
-            Social Media Hub Manager
-          </h1>
-          <p className="text-muted-foreground mt-1">
-            Manage links, circular cards, and configure tab-wise social handles.
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          {lastSavedPage && (
-            <span className="text-xs text-muted-foreground flex items-center gap-1">
-              <Check className="h-3.5 w-3.5 text-emerald-500" />
-              Settings Saved {lastSavedPage.toLocaleTimeString()}
-            </span>
-          )}
-          <Button variant="outline" asChild>
-            <a href="/social-media" target="_blank" rel="noopener noreferrer">
-              <Eye className="w-4 h-4 mr-2" /> Preview Page
-            </a>
-          </Button>
-        </div>
-      </div>
+      <PageActionBar
+        mode="edit"
+        title={pageForm.title}
+        authorName={initialPageData.authorName}
+        updatedAt={initialPageData.updatedAt}
+        lastSaved={lastSavedPage}
+        previewUrl="/social-media"
+        seoUrl={`/sitemanager/pages/${pageId}/edit/seo`}
+        isPublished={pageForm.isPublished}
+        saving={isSavingPage}
+        onDuplicate={handleDuplicate}
+        onSaveDraft={() => {
+          setPageForm({ ...pageForm, isPublished: false });
+          document.getElementById("hidden-submit-page-btn")?.click();
+        }}
+        onPublish={() => {
+          setPageForm({ ...pageForm, isPublished: true });
+          document.getElementById("hidden-submit-page-btn")?.click();
+        }}
+      />
+
+      {/* Hidden button for triggering page save since the action bar is outside the form */}
+      <form onSubmit={handlePageSave} className="hidden">
+        <button id="hidden-submit-page-btn" type="submit"></button>
+      </form>
 
       <Tabs defaultValue="cards" className="space-y-6">
         <TabsList className="bg-muted p-1 rounded-lg">
@@ -859,7 +882,7 @@ export default function SocialMediaPageEditor({ pageId, initialPageData }: Socia
         {/* Tab 1: Dynamic Card grid inside platform tabs */}
         <TabsContent value="cards" className="space-y-6 outline-none">
           <div className="flex flex-col lg:flex-row gap-6">
-            
+
             {/* Left Sidebar - Platform Switchers */}
             <div className="w-full lg:w-64 shrink-0 space-y-2">
               <Card className="rounded-2xl border border-border">
@@ -909,8 +932,8 @@ export default function SocialMediaPageEditor({ pageId, initialPageData }: Socia
                       Drag & Drop to rearrange the sequence of {activePlatformName} handles.
                     </CardDescription>
                   </div>
-                  <Button 
-                    disabled={!activePlatformId} 
+                  <Button
+                    disabled={!activePlatformId}
                     onClick={handleOpenAddAccount}
                     className="bg-primary text-primary-foreground hover:bg-primary/95"
                   >
@@ -1156,7 +1179,7 @@ export default function SocialMediaPageEditor({ pageId, initialPageData }: Socia
 
             <div className="overflow-y-auto p-5 flex-1">
               <form onSubmit={handleAccountSubmit} className="space-y-4">
-                
+
                 {/* Platform select dropdown */}
                 <div className="space-y-2">
                   <Label htmlFor="acc-platform">Platform <span className="text-destructive">*</span></Label>
@@ -1295,7 +1318,7 @@ export default function SocialMediaPageEditor({ pageId, initialPageData }: Socia
 
             <div className="p-5">
               <form onSubmit={handlePlatformSubmit} className="space-y-4">
-                
+
                 <div className="space-y-2">
                   <Label htmlFor="plat-name">Platform Name <span className="text-destructive">*</span></Label>
                   <Input

@@ -3,6 +3,13 @@
 import { motion } from "framer-motion";
 import { Youtube, Facebook } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 type CTAProps = {
   settings: Record<string, string>;
@@ -103,82 +110,111 @@ const PLATFORMS: Platform[] = [
 ];
 
 export function CTA({ settings }: CTAProps) {
+  const sectionRef = useRef<HTMLElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const iconsRef = useRef<HTMLDivElement>(null);
+
   // Only render platforms that have a configured URL or a fallback
   const platforms = PLATFORMS.filter(
     (p) => settings[p.settingsKey] || p.fallbackUrl
   );
 
+  useEffect(() => {
+    if (!sectionRef.current || !headerRef.current || !iconsRef.current) return;
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo(headerRef.current,
+        { opacity: 0, y: 50 },
+        {
+          opacity: 1, y: 0, duration: 1.2, ease: "power4.out",
+          scrollTrigger: { trigger: sectionRef.current, start: "top 85%" }
+        }
+      );
+
+      const links = gsap.utils.toArray(".social-link");
+      gsap.fromTo(links,
+        { opacity: 0, scale: 0.5, y: 50, rotateX: 45 },
+        {
+          opacity: 1, scale: 1, y: 0, rotateX: 0,
+          duration: 1,
+          stagger: 0.1,
+          ease: "back.out(1.5)",
+          scrollTrigger: { trigger: iconsRef.current, start: "top 85%" }
+        }
+      );
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
     <section
+      ref={sectionRef}
       aria-labelledby="social-heading"
-      className="py-14 md:py-16 bg-primary relative overflow-hidden"
+      className="py-10 bg-primary/95 relative overflow-hidden perspective-1000 shadow-[0_0_50px_rgba(16,185,129,0.3)] z-10"
     >
-      {/* Subtle dot pattern */}
+      {/* Subtle dot pattern and glow */}
+      <div className="absolute inset-0 bg-[url('/noise.png')] opacity-30 mix-blend-overlay pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-white/10 rounded-full blur-[120px] pointer-events-none" aria-hidden="true" />
       <div
-        className="absolute inset-0 opacity-[0.04]"
+        className="absolute inset-0 opacity-[0.05] pointer-events-none"
         aria-hidden="true"
         style={{
-          backgroundImage: `radial-gradient(circle, rgba(255,255,255,0.8) 1px, transparent 1px)`,
-          backgroundSize: "28px 28px",
+          backgroundImage: `radial-gradient(circle, rgba(255,255,255,0.8) 1.5px, transparent 1.5px)`,
+          backgroundSize: "32px 32px",
         }}
       />
 
-      <div className="container mx-auto relative z-10 px-4">
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-10"
-        >
-          <p className="text-white/50 text-xs font-semibold tracking-widest uppercase mb-2">
+      <div className="container mx-auto relative z-20 px-4">
+        <div ref={headerRef} className="text-center mb-16">
+          <p className="text-white/60 text-xs font-bold tracking-[0.3em] uppercase mb-4">
             Stay Connected
           </p>
           <h2
             id="social-heading"
-            className="text-2xl md:text-3xl font-bold text-white"
+            className="text-4xl md:text-5xl font-black text-white drop-shadow-lg tracking-tight"
           >
-            — Follow Us On Social Media
+            Follow Us On Social Media
           </h2>
-          <p className="text-white/50 mt-2 text-sm">
+          <p className="text-white/70 mt-4 text-base md:text-lg max-w-2xl mx-auto">
             We&apos;re Connecting To All Digital Life
           </p>
-        </motion.div>
+        </div>
 
-        <div className="flex flex-wrap items-center justify-center gap-6 md:gap-10">
+        <div ref={iconsRef} className="flex flex-wrap items-center justify-center gap-6 md:gap-10">
           {platforms.map((platform, i) => {
             const href = settings[platform.settingsKey] || platform.fallbackUrl;
             return (
-              <motion.a
+              <a
                 key={platform.id}
                 href={href}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={`${platform.name} — opens in new tab`}
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: i * 0.08 }}
-                whileHover={{ scale: 1.1, y: -4 }}
-                whileTap={{ scale: 0.95 }}
                 className={cn(
-                  "flex flex-col items-center gap-2 group",
+                  "social-link flex flex-col items-center gap-4 group relative",
                   "focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-4"
                 )}
               >
+                {/* Glow Effect */}
+                <div className={cn("absolute inset-0 rounded-full blur-xl opacity-0 group-hover:opacity-40 transition-opacity duration-500 pointer-events-none", platform.color.split(' ')[0])} />
+
                 <div
                   className={cn(
-                    "w-16 h-16 md:w-20 md:h-20 rounded-full flex items-center justify-center",
-                    "text-white shadow-mid transition-all duration-200",
+                    "relative w-20 h-20 md:w-24 md:h-24 rounded-[1.5rem] flex items-center justify-center",
+                    "text-white shadow-[0_10px_30px_rgba(0,0,0,0.2)] transition-all duration-500",
+                    "group-hover:-translate-y-3 group-hover:shadow-[0_20px_40px_rgba(0,0,0,0.3)] group-hover:rotate-6",
                     platform.color
                   )}
                 >
-                  <platform.Icon />
+                  <div className="scale-[1.2] transition-transform duration-500 group-hover:scale-[1.3] drop-shadow-md">
+                    <platform.Icon />
+                  </div>
                 </div>
-                <p className="text-white/80 font-medium text-xs text-center">
+                <p className="text-white font-bold text-sm text-center tracking-wide group-hover:text-white/100 text-white/70 transition-colors duration-500">
                   {platform.name}
                 </p>
-              </motion.a>
+              </a>
             );
           })}
         </div>

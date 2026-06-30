@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { db } from "@/lib/db";
 import { videoCategories, videos } from "@/db/schema";
-import { count, eq, asc, desc } from "drizzle-orm";
+import { count, eq, asc, desc, isNull } from "drizzle-orm";
 
 export const dynamic = "force-dynamic";
 
@@ -15,6 +15,7 @@ export default async function VideosByCategoryPage() {
       imageUrl: videoCategories.imageUrl,
     })
     .from(videoCategories)
+    .where(isNull(videoCategories.parentId))
     .orderBy(desc(videoCategories.order), asc(videoCategories.name));
 
   const countRows = await db

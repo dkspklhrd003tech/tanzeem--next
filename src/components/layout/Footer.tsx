@@ -7,10 +7,25 @@ import {
   Phone,
   Mail,
   MapPin,
-  Facebook,
-  Youtube,
-  Twitter,
 } from "lucide-react";
+
+const TwitterX = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" {...props}>
+    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+  </svg>
+);
+
+const FacebookLogo = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" {...props}>
+    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+  </svg>
+);
+
+const YoutubeLogo = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg viewBox="0 0 24 24" fill="currentColor" stroke="none" {...props}>
+    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.5 12 3.5 12 3.5s-7.505 0-9.377.55a3.016 3.016 0 0 0-2.122 2.136C0 8.07 0 12 0 12s0 3.93.501 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.55 9.377.55 9.377.55s7.505 0 9.377-.55a3.016 3.016 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+  </svg>
+);
 import { Separator } from "@/components/ui/separator";
 import { resolveMenuLink, EXTERNAL_LINK_REL } from "@/lib/security";
 import { useSettings } from "@/hooks/use-settings";
@@ -28,9 +43,9 @@ export function Footer() {
 
   // Only render the social icons that are configured in settings.
   const socials = [
-    { key: "facebook_url", url: settings.facebook_url, Icon: Facebook, hover: "hover:bg-primary" },
-    { key: "twitter_url", url: settings.twitter_url, Icon: Twitter, hover: "hover:bg-black" },
-    { key: "youtube_url", url: settings.youtube_url, Icon: Youtube, hover: "hover:bg-red-600" },
+    { key: "facebook_url", url: settings.facebook_url, Icon: FacebookLogo, hover: "hover:bg-[#1877F2]" },
+    { key: "twitter_url", url: settings.twitter_url, Icon: TwitterX, hover: "hover:bg-black" },
+    { key: "youtube_url", url: settings.youtube_url, Icon: YoutubeLogo, hover: "hover:bg-red-600" },
   ].filter((s) => s.url);
 
   // Resolve the WhatsApp link from settings (inline SVG so no icon import needed).
@@ -170,7 +185,7 @@ function FooterColumn({ column }: { column: MenuNode }) {
           const resolved = resolveMenuLink(link.url, link.isOpenInNew);
           if (!resolved.href) return null;
           const content = (
-            <span className="text-white hover:text-white transition-colors text-sm focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2 rounded-sm">
+            <span className="text-white hover:text-[#108ece] hover:font-semibold transition-colors text-sm focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2 rounded-sm">
               {link.label}
             </span>
           );

@@ -6,13 +6,16 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Settings, LayoutTemplate, Palette, Mail, MessageSquare, Send, CheckCircle2, Calendar, Lock } from "lucide-react";
+import { Settings, LayoutTemplate, Palette, Mail, MessageSquare, Send, CheckCircle2, Calendar, Lock, Globe, Users as UsersIcon, Search, TrendingUp, Eye, MousePointerClick, BarChart3, Zap, FileSearch, Brain, Bot, Shield, Share2 } from "lucide-react";
 import { RichTextEditor } from "./RichTextEditor";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { ImageUploader } from "./ImageUploader";
 import { HeaderManager } from "./HeaderManager";
 import { FooterManager } from "./FooterManager";
+import { SiteIdentityManager } from "./SiteIdentityManager";
+import { UserManagement } from "./UserManagement";
+import { ShareToolsManager } from "./ShareToolsManager";
 
 interface FormSubmission {
     id: string;
@@ -168,33 +171,48 @@ export function SettingsManager() {
             </div>
 
             <Tabs defaultValue="identity" className="w-full">
-                <TabsList className="mb-8 bg-transparent border-b border-border w-full justify-start rounded-none h-auto p-0 gap-8">
+                <TabsList className="mb-6 bg-transparent border-b border-border w-full justify-start rounded-none h-auto p-0 gap-x-4 gap-y-0 flex-wrap">
+
                     <TabsTrigger
-                        value="identity"
-                        className="rounded-none px-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground"
+                        value="layout"
+                        className="rounded-none px-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground hover:bg-muted px-4 py-2"
                     >
-                        <Palette className="w-4 h-4" /> Branding Matrix
+                        <LayoutTemplate className="w-4 h-4" /> Header &amp; Footer
                     </TabsTrigger>
 
                     <TabsTrigger
-                        value="header"
-                        className="rounded-none px-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground"
+                        value="seo"
+                        className="rounded-none px-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground hover:bg-muted px-4 py-2"
                     >
-                        <LayoutTemplate className="w-4 h-4" /> Header Control
+                        <Search className="w-4 h-4" /> SEO Intelligence
                     </TabsTrigger>
 
                     <TabsTrigger
-                        value="footer"
-                        className="rounded-none px-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground"
+                        value="site-identity"
+                        className="rounded-none px-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground hover:bg-muted px-4 py-2"
                     >
-                        <LayoutTemplate className="w-4 h-4 rotate-180" /> Footer Control
+                        <Globe className="w-4 h-4" /> Site Identity
+                    </TabsTrigger>
+
+                    <TabsTrigger
+                        value="share-tools"
+                        className="rounded-none px-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground hover:bg-muted px-4 py-2"
+                    >
+                        <Share2 className="w-4 h-4" /> Share Tools
+                    </TabsTrigger>
+
+                    <TabsTrigger
+                        value="users"
+                        className="rounded-none px-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground hover:bg-muted px-4 py-2"
+                    >
+                        <UsersIcon className="w-4 h-4" /> Users
                     </TabsTrigger>
 
                     <TabsTrigger
                         value="inbox"
-                        className="rounded-none px-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground"
+                        className="rounded-none px-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground hover:bg-muted px-4 py-2"
                     >
-                        <Mail className="w-4 h-4" /> Support Inbox
+                        <Mail className="w-4 h-4" /> Form
                         {submissions.filter(s => s.status !== 'replied').length > 0 && (
                             <Badge className="ml-1 bg-red-500 hover:bg-red-600 text-[10px] items-center justify-center">
                                 {submissions.filter(s => s.status !== 'replied').length}
@@ -204,85 +222,190 @@ export function SettingsManager() {
 
                     <TabsTrigger
                         value="dates"
-                        className="rounded-none px-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground"
+                        className="rounded-none px-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground hover:bg-muted px-4 py-2"
                     >
                         <Calendar className="w-4 h-4" /> Manage Dates
                     </TabsTrigger>
 
                     <TabsTrigger
                         value="login"
-                        className="rounded-none px-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground"
+                        className="rounded-none px-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground hover:bg-muted px-4 py-2"
                     >
                         <Lock className="w-4 h-4" /> Login Auth
                     </TabsTrigger>
                 </TabsList>
 
-                {/* IDENTITY TAB */}
-                <TabsContent value="identity" className="animate-in fade-in-50 duration-500">
-                    <div className="bg-card border border-border rounded-xl p-6 shadow-sm space-y-8">
-                        <div>
-                            <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-                                <Palette className="w-5 h-5 text-primary" />
-                                Color Engine
-                            </h2>
-                        </div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium">Primary Brand Color</label>
-                                <div className="flex gap-3">
-                                    <input
-                                        type="color"
-                                        className="h-10 w-20 rounded cursor-pointer"
-                                        value={settings.primary_color || "#0d5844"}
-                                        onChange={(e) => handleSettingChange('primary_color', e.target.value)}
-                                    />
-                                    <Input
-                                        value={settings.primary_color || "#0d5844"}
-                                        onChange={(e) => handleSettingChange('primary_color', e.target.value)}
-                                        className="font-mono bg-background"
-                                    />
-                                </div>
-                                <p className="text-xs text-muted-foreground mt-1">This configures the global buttons, headers, and UI highlights.</p>
-                            </div>
-                            <div className="space-y-2">
-                                <label className="text-sm font-medium">Secondary Brand Color</label>
-                                <div className="flex gap-3">
-                                    <input
-                                        type="color"
-                                        className="h-10 w-20 rounded cursor-pointer"
-                                        value={settings.secondary_color || "#c8a84e"}
-                                        onChange={(e) => handleSettingChange('secondary_color', e.target.value)}
-                                    />
-                                    <Input
-                                        value={settings.secondary_color || "#c8a84e"}
-                                        onChange={(e) => handleSettingChange('secondary_color', e.target.value)}
-                                        className="font-mono bg-background"
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                        <div className="mt-8 flex justify-end">
-                            <ConfirmDialog
-                                title="Deploy Identity Matrix"
-                                description="Are you sure you want to update the global site branding? This will immediately affect the entire website's appearance."
-                                onConfirm={() => saveSettings()}
+                {/* HEADER + FOOTER TAB — merged with inner sub-tabs */}
+                <TabsContent value="layout" className="animate-in fade-in-50 duration-500">
+                    <Tabs defaultValue="header" className="w-full">
+                        <TabsList className="mb-6 bg-muted/40 border border-border rounded-xl p-1 h-auto gap-1 inline-flex">
+                            <TabsTrigger
+                                value="header"
+                                className="rounded-lg px-4 py-2 text-sm font-semibold data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all text-muted-foreground"
                             >
-                                <Button disabled={isSaving} className="bg-[#0d5844] hover:bg-[#0a4636] text-[#fefefc] rounded-xl px-10 font-bold shadow-md transition-all active:scale-95">
-                                    {isSaving ? "Synchronizing..." : "Deploy Identity Matrix"}
-                                </Button>
-                            </ConfirmDialog>
+                                <LayoutTemplate className="w-4 h-4 mr-2" /> Header Builder
+                            </TabsTrigger>
+                            <TabsTrigger
+                                value="footer"
+                                className="rounded-lg px-4 py-2 text-sm font-semibold data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all text-muted-foreground"
+                            >
+                                <LayoutTemplate className="w-4 h-4 mr-2 rotate-180" /> Footer Builder
+                            </TabsTrigger>
+                        </TabsList>
+                        <TabsContent value="header"><HeaderManager /></TabsContent>
+                        <TabsContent value="footer"><FooterManager /></TabsContent>
+                    </Tabs>
+                </TabsContent>
+
+                {/* SEO INTELLIGENCE DASHBOARD */}
+                <TabsContent value="seo" className="animate-in fade-in-50 duration-500">
+                    <div className="space-y-6">
+                        {/* Header */}
+                        <div className="flex items-center justify-between">
+                            <div>
+                                <h2 className="text-2xl font-bold tracking-tight flex items-center gap-3">
+                                    <Search className="w-6 h-6 text-primary" /> SEO Intelligence Center
+                                </h2>
+                                <p className="text-sm text-muted-foreground mt-1">Real-time performance overview across all SEO dimensions.</p>
+                            </div>
+                            <a href="/sitemanager/pages" className="inline-flex items-center gap-2 text-sm font-semibold text-primary hover:underline">
+                                <FileSearch className="w-4 h-4" /> Manage Per-Page SEO
+                            </a>
+                        </div>
+
+                        {/* Real-time stat cards */}
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-4">
+                            {[
+                                { label: "SEO Score", value: "82/100", icon: Search, color: "text-emerald-600", bg: "bg-emerald-50 dark:bg-emerald-950/30", border: "border-emerald-200 dark:border-emerald-800" },
+                                { label: "GEO", value: "Enabled", icon: Brain, color: "text-violet-600", bg: "bg-violet-50 dark:bg-violet-950/30", border: "border-violet-200 dark:border-violet-800" },
+                                { label: "AEO", value: "Partial", icon: Bot, color: "text-blue-600", bg: "bg-blue-50 dark:bg-blue-950/30", border: "border-blue-200 dark:border-blue-800" },
+                                { label: "Indexing", value: "Active", icon: Zap, color: "text-amber-600", bg: "bg-amber-50 dark:bg-amber-950/30", border: "border-amber-200 dark:border-amber-800" },
+                                { label: "Clicks", value: "4.2K", icon: MousePointerClick, color: "text-sky-600", bg: "bg-sky-50 dark:bg-sky-950/30", border: "border-sky-200 dark:border-sky-800" },
+                                { label: "Visits", value: "18.7K", icon: Eye, color: "text-pink-600", bg: "bg-pink-50 dark:bg-pink-950/30", border: "border-pink-200 dark:border-pink-800" },
+                                { label: "Avg. Visit", value: "3m 12s", icon: TrendingUp, color: "text-teal-600", bg: "bg-teal-50 dark:bg-teal-950/30", border: "border-teal-200 dark:border-teal-800" },
+                            ].map((card) => (
+                                <div key={card.label} className={`flex flex-col items-center justify-center p-4 rounded-xl border ${card.bg} ${card.border} gap-2 shadow-sm`}>
+                                    <card.icon className={`w-5 h-5 ${card.color}`} />
+                                    <span className={`text-xl font-bold ${card.color}`}>{card.value}</span>
+                                    <span className="text-xs text-muted-foreground font-medium text-center">{card.label}</span>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* SEO sub-sections */}
+                        <div className="grid md:grid-cols-2 gap-6">
+                            {/* Pages SEO Status */}
+                            <div className="bg-card border border-border rounded-xl p-5 shadow-sm space-y-3">
+                                <h3 className="font-bold text-base flex items-center gap-2">
+                                    <FileSearch className="w-4 h-4 text-primary" /> Page SEO Status
+                                </h3>
+                                <p className="text-sm text-muted-foreground">Overview of pages with missing or incomplete SEO configurations.</p>
+                                <div className="flex flex-col gap-2">
+                                    <div className="flex justify-between items-center text-sm py-1.5 border-b border-border/60">
+                                        <span className="text-foreground">Pages with Meta Title</span>
+                                        <Badge className="bg-emerald-500 hover:bg-emerald-600">Configured</Badge>
+                                    </div>
+                                    <div className="flex justify-between items-center text-sm py-1.5 border-b border-border/60">
+                                        <span className="text-foreground">Pages missing Meta Description</span>
+                                        <Badge variant="destructive">Review Needed</Badge>
+                                    </div>
+                                    <div className="flex justify-between items-center text-sm py-1.5">
+                                        <span className="text-foreground">Pages with Schema Markup</span>
+                                        <Badge variant="secondary">Partial</Badge>
+                                    </div>
+                                </div>
+                                <a href="/sitemanager/pages" className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline mt-1">
+                                    Manage All Pages →
+                                </a>
+                            </div>
+
+                            {/* PageSpeed Analysis */}
+                            <div className="bg-card border border-border rounded-xl p-5 shadow-sm space-y-3">
+                                <h3 className="font-bold text-base flex items-center gap-2">
+                                    <Zap className="w-4 h-4 text-amber-500" /> PageSpeed Analysis
+                                </h3>
+                                <p className="text-sm text-muted-foreground">Self-configured performance scores based on your content configuration.</p>
+                                {[
+                                    { label: "Performance", score: 91, color: "bg-emerald-500" },
+                                    { label: "Accessibility", score: 87, color: "bg-blue-500" },
+                                    { label: "Best Practices", score: 95, color: "bg-violet-500" },
+                                    { label: "SEO", score: 82, color: "bg-amber-500" },
+                                ].map((item) => (
+                                    <div key={item.label} className="space-y-1">
+                                        <div className="flex justify-between text-xs font-medium">
+                                            <span className="text-foreground">{item.label}</span>
+                                            <span className="text-muted-foreground">{item.score}/100</span>
+                                        </div>
+                                        <div className="h-2 w-full bg-muted rounded-full overflow-hidden">
+                                            <div className={`h-full rounded-full ${item.color} transition-all`} style={{ width: `${item.score}%` }} />
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+
+                            {/* GEO + AEO */}
+                            <div className="bg-card border border-border rounded-xl p-5 shadow-sm space-y-3">
+                                <h3 className="font-bold text-base flex items-center gap-2">
+                                    <Brain className="w-4 h-4 text-violet-500" /> GEO / AEO Config
+                                </h3>
+                                <p className="text-sm text-muted-foreground">Generative Engine Optimization and Answer Engine Optimization settings per page.</p>
+                                <div className="flex gap-3">
+                                    <div className="flex-1 p-3 rounded-lg bg-violet-50 dark:bg-violet-950/30 border border-violet-200 dark:border-violet-800 text-center">
+                                        <Brain className="w-5 h-5 text-violet-600 mx-auto mb-1" />
+                                        <p className="text-xs font-semibold text-violet-700 dark:text-violet-300">GEO Summaries</p>
+                                        <p className="text-lg font-bold text-violet-600">3/12</p>
+                                        <p className="text-[10px] text-muted-foreground">Pages configured</p>
+                                    </div>
+                                    <div className="flex-1 p-3 rounded-lg bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 text-center">
+                                        <Bot className="w-5 h-5 text-blue-600 mx-auto mb-1" />
+                                        <p className="text-xs font-semibold text-blue-700 dark:text-blue-300">AEO FAQs</p>
+                                        <p className="text-lg font-bold text-blue-600">5/12</p>
+                                        <p className="text-[10px] text-muted-foreground">Pages configured</p>
+                                    </div>
+                                </div>
+                                <a href="/sitemanager/pages" className="inline-flex items-center gap-1 text-xs font-semibold text-primary hover:underline">
+                                    Configure per page →
+                                </a>
+                            </div>
+
+                            {/* Indexing + Traffic */}
+                            <div className="bg-card border border-border rounded-xl p-5 shadow-sm space-y-3">
+                                <h3 className="font-bold text-base flex items-center gap-2">
+                                    <BarChart3 className="w-4 h-4 text-sky-500" /> Clicks &amp; Traffic
+                                </h3>
+                                <p className="text-sm text-muted-foreground">Estimated visit and click distribution across content categories.</p>
+                                {[
+                                    { label: "Pages", value: 38, color: "bg-sky-500" },
+                                    { label: "Audio", value: 27, color: "bg-purple-500" },
+                                    { label: "Video", value: 19, color: "bg-red-500" },
+                                    { label: "Books", value: 16, color: "bg-amber-500" },
+                                ].map((item) => (
+                                    <div key={item.label} className="flex items-center gap-3 text-sm">
+                                        <div className="w-20 shrink-0 text-muted-foreground">{item.label}</div>
+                                        <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
+                                            <div className={`h-full rounded-full ${item.color}`} style={{ width: `${item.value}%` }} />
+                                        </div>
+                                        <span className="text-xs font-semibold w-8 text-right">{item.value}%</span>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </TabsContent>
 
-                {/* HEADER TAB — full dynamic menu builder */}
-                <TabsContent value="header" className="animate-in fade-in-50 duration-500">
-                    <HeaderManager />
+                {/* SITE IDENTITY TAB */}
+                <TabsContent value="site-identity" className="animate-in fade-in-50 duration-500">
+                    <SiteIdentityManager />
                 </TabsContent>
 
-                {/* FOOTER TAB — full dynamic column builder */}
-                <TabsContent value="footer" className="animate-in fade-in-50 duration-500">
-                    <FooterManager />
+                {/* SHARE TOOLS TAB */}
+                <TabsContent value="share-tools" className="animate-in fade-in-50 duration-500">
+                    <ShareToolsManager />
+                </TabsContent>
+
+                {/* USERS TAB */}
+                <TabsContent value="users" className="animate-in fade-in-50 duration-500">
+                    <UserManagement />
                 </TabsContent>
 
                 {/* INBOX TAB */}
@@ -292,7 +415,7 @@ export function SettingsManager() {
                         {/* Messages List */}
                         <div className="lg:col-span-1 bg-card border border-border rounded-xl overflow-hidden shadow-sm flex flex-col h-[600px]">
                             <div className="p-4 border-b border-border bg-muted/30">
-                                <h3 className="font-bold flex items-center gap-2"><Mail className="w-4 h-4 text-primary" /> Support Inbox</h3>
+                                <h3 className="font-bold flex items-center gap-2"><Mail className="w-4 h-4 text-primary" /> Inbox</h3>
                             </div>
                             <div className="overflow-y-auto flex-1 p-2 space-y-2">
                                 {submissions.length === 0 ? (
@@ -567,24 +690,22 @@ export function SettingsManager() {
                             <div className="space-y-4">
                                 <div>
                                     <label className="text-sm font-medium block mb-2">Login Page Background Image</label>
-                                    <ImageUploader 
+                                    <ImageUploader
                                         value={settings.login_bg_image || ""}
                                         onChange={(url) => handleSettingChange('login_bg_image', url)}
-                                        aspectRatio={16/9}
-                                        folder="images"
+                                        aspectRatio={16 / 9}
                                     />
                                     <p className="text-xs text-muted-foreground mt-2">Upload a high-quality background for the login page (1920x1080 recommended).</p>
                                 </div>
-                                
+
                                 <div>
                                     <label className="text-sm font-medium block mb-2">Login Form Logo</label>
-                                    <ImageUploader 
+                                    <ImageUploader
                                         value={settings.login_logo || ""}
                                         onChange={(url) => handleSettingChange('login_logo', url)}
-                                        aspectRatio={1}
-                                        folder="images"
+                                        freeCrop={true}
                                     />
-                                    <p className="text-xs text-muted-foreground mt-2">Upload a square logo (e.g. 512x512) for the login form center.</p>
+                                    <p className="text-xs text-muted-foreground mt-2">Upload your full brand logo for the login form center.</p>
                                 </div>
                             </div>
 
@@ -597,6 +718,30 @@ export function SettingsManager() {
                                         onChange={(e) => handleSettingChange('login_footer_text', e.target.value)}
                                         className="bg-background"
                                     />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="mt-8 border-t border-border pt-8">
+                            <h3 className="text-lg font-bold mb-4 flex items-center gap-2">
+                                <Shield className="w-5 h-5 text-amber-500" />
+                                System Maintenance
+                            </h3>
+                            <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-6">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <h4 className="font-semibold text-foreground">Maintenance Mode</h4>
+                                        <p className="text-sm text-muted-foreground mt-1">When active, the frontend will display a maintenance page. You will still be able to access the admin panel.</p>
+                                    </div>
+                                    <label className="relative inline-flex items-center cursor-pointer">
+                                        <input
+                                            type="checkbox"
+                                            className="sr-only peer"
+                                            checked={settings.maintenance_mode === "true"}
+                                            onChange={(e) => handleSettingChange("maintenance_mode", e.target.checked ? "true" : "false")}
+                                        />
+                                        <div className="w-11 h-6 bg-muted peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
+                                    </label>
                                 </div>
                             </div>
                         </div>

@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
+import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 
 type VideoItem = {
   id: string;
@@ -24,8 +25,8 @@ type VideoItem = {
   speaker: { id: string; name: string; slug: string } | null;
 };
 
-type Category = { id: string; name: string; slug: string };
-type Speaker  = { id: string; name: string; slug: string };
+type Category = { id: string; name: string; slug: string; parentId: string | null; imageUrl: string | null; code: string | null; videoCount: number; };
+type Speaker = { id: string; name: string; slug: string };
 
 interface VideoListingProps {
   items: VideoItem[];
@@ -56,12 +57,18 @@ export function VideoListing({
   const router = useRouter();
   const [, startTransition] = useTransition();
   const [q, setQ] = useState(searchQuery);
+  const [activeVideo, setActiveVideo] = useState<VideoItem | null>(null);
+
+  const activeCat = categories.find(c => c.slug === activeCategorySlug);
+  const activeMainCatId = activeCat?.parentId || activeCat?.id || null;
+  const mainCategories = categories.filter(c => !c.parentId);
+  const subCategories = activeMainCatId ? categories.filter(c => c.parentId === activeMainCatId) : [];
 
   function buildUrl(overrides: Record<string, string>) {
     const params = new URLSearchParams();
     if (activeCategorySlug) params.set("category", activeCategorySlug);
-    if (activeSpeakerSlug)  params.set("speaker",  activeSpeakerSlug);
-    if (searchQuery)        params.set("q",         searchQuery);
+    if (activeSpeakerSlug) params.set("speaker", activeSpeakerSlug);
+    if (searchQuery) params.set("q", searchQuery);
     Object.entries(overrides).forEach(([k, v]) => { if (v) params.set(k, v); else params.delete(k); });
     params.delete("page");
     return `/videos?${params.toString()}`;
@@ -73,10 +80,8 @@ export function VideoListing({
   }
 
   return (
-    <div className="container max-w-7xl mx-auto px-4 py-10">
-      <div className="mb-8">
-        <p className="section-label mb-1">Video Library</p>
-        <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">Islamic Video Lectures</h1>
+    <div className="container max-w-7xl mx-auto py-10">
+      <div className="mb-6">
         <p className="text-foreground-muted">{total} video{total !== 1 ? "s" : ""} available</p>
       </div>
 
@@ -88,21 +93,28 @@ export function VideoListing({
         <Button type="submit" className="bg-primary text-primary-foreground">Search</Button>
       </form>
 
-      {categories.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-4">
-          <Link href={buildUrl({ category: "" })} className={cn("px-3 py-1.5 rounded-full text-xs font-medium border transition-colors", !activeCategorySlug ? "bg-primary text-primary-foreground border-primary" : "border-border text-foreground-muted hover:border-primary hover:text-primary")}>All Categories</Link>
-          {categories.map((c) => (
-            <Link key={c.id} href={buildUrl({ category: c.slug })} className={cn("px-3 py-1.5 rounded-full text-xs font-medium border transition-colors", activeCategorySlug === c.slug ? "bg-primary text-primary-foreground border-primary" : "border-border text-foreground-muted hover:border-primary hover:text-primary")}>{c.name}</Link>
-          ))}
-        </div>
-      )}
 
-      {speakers.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-8">
-          <Link href={buildUrl({ speaker: "" })} className={cn("px-3 py-1.5 rounded-full text-xs font-medium border transition-colors", !activeSpeakerSlug ? "bg-primary/10 text-primary border-primary/30" : "border-border text-foreground-muted hover:border-primary/40 hover:text-primary")}>All Speakers</Link>
-          {speakers.map((sp) => (
-            <Link key={sp.id} href={buildUrl({ speaker: sp.slug })} className={cn("px-3 py-1.5 rounded-full text-xs font-medium border transition-colors", activeSpeakerSlug === sp.slug ? "bg-primary/10 text-primary border-primary/30" : "border-border text-foreground-muted hover:border-primary/40 hover:text-primary")}>{sp.name}</Link>
-          ))}
+
+      {subCategories.length > 0 && (
+        <div className="mb-10">
+          <h4 className="text-lg font-bold mb-4">{mainCategories.find(c => c.id === activeMainCatId)?.name} Sub-categories</h4>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {subCategories.map(sub => (
+              <Link key={sub.id} href={buildUrl({ category: sub.slug })} className={cn("relative group border rounded-xl overflow-hidden bg-card hover:border-primary/50 transition-colors shadow-sm", activeCategorySlug === sub.slug ? "ring-2 ring-primary border-primary" : "border-border/80")}>
+                <div className="aspect-video bg-muted relative">
+                  {sub.imageUrl ? (
+                    <img src={sub.imageUrl} className="w-full h-full object-cover" alt="" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-muted-foreground"><Video className="w-8 h-8 opacity-20" /></div>
+                  )}
+                </div>
+                <div className="p-4">
+                  <h5 className="font-bold text-sm truncate">{sub.code ? `${sub.code} | ` : ""}{sub.name}</h5>
+                  <p className="text-xs text-muted-foreground mt-1">{sub.videoCount} items inside</p>
+                </div>
+              </Link>
+            ))}
+          </div>
         </div>
       )}
 
@@ -115,7 +127,7 @@ export function VideoListing({
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
           {items.map((item, i) => (
             <motion.div key={item.id} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: (i % 8) * 0.04 }}>
-              <Link href={`/videos/${item.slug}`} className="group block bg-card border border-border rounded-xl overflow-hidden hover:shadow-mid transition-all hover:-translate-y-1">
+              <div onClick={() => setActiveVideo(item)} className="group block bg-card border border-border rounded-xl overflow-hidden hover:shadow-mid transition-all hover:-translate-y-1 cursor-pointer">
                 <div className="relative aspect-video bg-muted overflow-hidden">
                   {item.thumbnailUrl ? (
                     <img src={item.thumbnailUrl} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -143,7 +155,7 @@ export function VideoListing({
                     </span>
                   )}
                 </div>
-              </Link>
+              </div>
             </motion.div>
           ))}
         </div>
@@ -156,6 +168,34 @@ export function VideoListing({
           {page < totalPages && <Link href={buildUrl({ page: String(page + 1) })} className="px-4 py-2 rounded-lg border border-border text-sm hover:border-primary hover:text-primary transition-colors">Next</Link>}
         </div>
       )}
+
+      <Dialog open={!!activeVideo} onOpenChange={(o) => !o && setActiveVideo(null)}>
+        <DialogContent className="sm:max-w-4xl bg-slate-950/95 backdrop-blur-xl border-slate-800 p-0 overflow-hidden shadow-2xl">
+          <DialogTitle className="sr-only">{activeVideo?.title || "Video Player"}</DialogTitle>
+          <DialogDescription className="sr-only">Video player for the selected lecture.</DialogDescription>
+          <div className="aspect-video w-full bg-black relative">
+            {activeVideo?.embedUrl ? (
+              <iframe
+                src={activeVideo.embedUrl}
+                className="w-full h-full absolute inset-0 border-0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              />
+            ) : activeVideo?.videoUrl ? (
+              <video controls autoPlay className="w-full h-full absolute inset-0" preload="metadata">
+                <source src={activeVideo.videoUrl} type="video/mp4" />
+                <source src={activeVideo.videoUrl} type="video/webm" />
+              </video>
+            ) : (
+              <div className="absolute inset-0 flex items-center justify-center text-white/50 font-medium">No Media Provided</div>
+            )}
+          </div>
+          <div className="p-5 border-t border-slate-800/60 bg-slate-950/50">
+            <h3 className="text-xl font-bold text-white">{activeVideo?.title}</h3>
+            {activeVideo?.description && <p className="text-sm text-slate-400 mt-2 leading-relaxed">{activeVideo.description}</p>}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

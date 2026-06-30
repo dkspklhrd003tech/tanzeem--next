@@ -2,11 +2,18 @@
 
 import { useState, useCallback } from "react";
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { Calendar, ArrowRight } from "lucide-react";
+import { Calendar, ArrowRight, FileText } from "lucide-react";
+import { useEffect, useRef } from "react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
+}
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -31,40 +38,77 @@ export function LatestPressReleases({ items }: Props) {
   const openDialog = useCallback((item: PressReleaseItem) => setSelected(item), []);
   const closeDialog = useCallback(() => setSelected(null), []);
 
+  const sectionRef = useRef<HTMLElement>(null);
+  const headerRef = useRef<HTMLDivElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!sectionRef.current || !headerRef.current || !gridRef.current) return;
+
+    const ctx = gsap.context(() => {
+      gsap.fromTo(headerRef.current,
+        { opacity: 0, y: 50 },
+        {
+          opacity: 1, y: 0, duration: 1, ease: "power3.out",
+          scrollTrigger: { trigger: sectionRef.current, start: "top 80%" }
+        }
+      );
+
+      const cards = gsap.utils.toArray(".press-card");
+      gsap.fromTo(cards,
+        { opacity: 0, y: 80, scale: 0.95, rotateX: 10 },
+        {
+          opacity: 1, y: 0, scale: 1, rotateX: 0,
+          duration: 1.2,
+          stagger: 0.15,
+          ease: "back.out(1.2)",
+          scrollTrigger: { trigger: gridRef.current, start: "top 75%" }
+        }
+      );
+    }, sectionRef);
+
+    return () => ctx.revert();
+  }, []);
+
   if (!items.length) return null;
 
   return (
-    <section aria-labelledby="press-heading" className="py-16 bg-background">
-      <div className="container mx-auto">
-        <div className="flex items-end justify-between mb-8">
+    <section ref={sectionRef} aria-labelledby="press-heading" className="py-10 bg-card relative overflow-hidden perspective-1000 border-t border-border/20">
+      <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent pointer-events-none" />
+      <div className="container max-w-7xl mx-auto relative z-10">
+        <div ref={headerRef} className="flex flex-col md:flex-row items-start md:items-end justify-between mb-16 gap-6">
           <div>
-            <h2 id="press-heading" className="font-amiri text-2xl md:text-3xl font-bold text-primary">Latest Press Releases</h2>
-            <p className="text-foreground-muted mt-1">Official announcements from Tanzeem-e-Islami</p>
+            <p className="text-primary font-bold tracking-widest uppercase text-xs mb-3">News & Updates</p>
+            <h2 id="press-heading" className="text-4xl md:text-5xl font-black text-foreground drop-shadow-sm">Latest Press Releases</h2>
           </div>
           <Link
             href="/resources/press-releases"
-            className="hidden sm:inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
+            className={cn(
+              "group inline-flex items-center gap-3 border border-primary/50 bg-primary text-primary-foreground backdrop-blur-md",
+              "px-8 py-3.5 rounded-full text-sm font-bold tracking-wide uppercase shadow-lg",
+              "hover:bg-primary hover:border-primary transition-all duration-500 hover:shadow-[0_0_30px_rgba(16,185,129,0.3)]",
+              "focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
+            )}
           >
-            View all <ArrowRight className="h-4 w-4" aria-hidden="true" />
+            View all <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
           </Link>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {items.map((item, i) => (
-            <motion.button
+            <button
               key={item.id}
               type="button"
-              initial={{ opacity: 0, y: 12 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.05 }}
               onClick={() => openDialog(item)}
               className={cn(
-                "bg-card border border-border rounded-md p-5 text-left w-full",
-                "hover:border-primary/30 transition-colors cursor-pointer",
+                "press-card group relative flex flex-col bg-background/60 backdrop-blur-md border border-border/50 rounded-[1.5rem] p-8 text-left w-full shadow-sm",
+                "hover:shadow-[0_10px_40px_rgba(16,185,129,0.1)] hover:border-primary/40 hover:-translate-y-2 transition-all duration-700 cursor-pointer overflow-hidden",
                 "focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
               )}
             >
-              <div className="flex items-center gap-2 text-xs text-foreground-muted mb-2">
+              <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity duration-700 pointer-events-none">
+                <FileText className="w-24 h-24 text-primary" />
+              </div>
+              <div className="relative z-10 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-primary mb-4 bg-primary/10 w-fit px-3 py-1 rounded-full">
                 <Calendar className="h-3.5 w-3.5" aria-hidden="true" />
                 {item.publishedAt
                   ? new Date(item.publishedAt).toLocaleDateString("en-PK", {
@@ -74,30 +118,24 @@ export function LatestPressReleases({ items }: Props) {
                   })
                   : "\u2014"}
               </div>
-              <h3 className="font-semibold text-foreground line-clamp-2">{item.title}</h3>
+              <h3 className="font-bold text-foreground text-xl leading-snug line-clamp-2 relative z-10 group-hover:text-primary transition-colors duration-500">{item.title}</h3>
               {item.excerpt && (
-                <p className="mt-2 text-sm text-foreground-muted line-clamp-3">{item.excerpt}</p>
+                <p className="mt-4 text-sm text-foreground-muted line-clamp-3 leading-relaxed relative z-10">{item.excerpt}</p>
               )}
-              <Button variant="link" className="px-0 mt-3 h-auto text-primary" tabIndex={-1} asChild>
+              <div className="mt-auto pt-6 w-full flex items-center gap-2 text-sm font-semibold text-primary relative z-10">
                 <span>Read full release</span>
-              </Button>
-            </motion.button>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              </div>
+            </button>
           ))}
-        </div>
-        <div className="mt-6 text-center sm:hidden">
-          <Link
-            href="/resources/press-releases"
-            className="text-sm font-medium text-primary focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
-          >
-            View all press releases →
-          </Link>
         </div>
       </div>
 
       <Dialog open={!!selected} onOpenChange={(o) => !o && closeDialog()}>
-        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+        <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto bg-card/95 backdrop-blur-xl border-border/50 shadow-2xl rounded-2xl">
           <DialogHeader>
             <DialogTitle>{selected?.title}</DialogTitle>
+            <DialogDescription className="sr-only">Full text of the selected press release.</DialogDescription>
           </DialogHeader>
           <div
             className="prose prose-sm max-w-none dynamic-content"
