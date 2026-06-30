@@ -6,6 +6,7 @@ import {
     boolean,
     timestamp,
     json,
+    customType,
 } from "drizzle-orm/mysql-core";
 import { relations } from 'drizzle-orm';
 
@@ -13,6 +14,18 @@ const timestamps = {
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
 };
+
+const longblob = customType<{ data: Buffer; driverData: Buffer }>({
+    dataType() {
+        return "longblob";
+    },
+    toDriver(value: Buffer) {
+        return value;
+    },
+    fromDriver(value: Buffer) {
+        return value;
+    },
+});
 
 // ============================================
 // USER & AUTHENTICATION
@@ -189,11 +202,14 @@ export const audio = mysqlTable("audio", {
     thumbnailUrl: text("thumbnail_url"),
     categoryId: varchar("category_id", { length: 191 }),
     speakerId: varchar("speaker_id", { length: 191 }),
+    code: varchar("code", { length: 50 }),
+    tags: text("tags"),
     isPublished: boolean("is_published").default(true).notNull(),
     isFeatured: boolean("is_featured").default(false).notNull(),
     order: int("order").default(0).notNull(),
     playCount: int("play_count").default(0).notNull(),
     downloadCount: int("download_count").default(0).notNull(),
+    isNew: boolean("is_new").default(false).notNull(),
     metaTitle: varchar("meta_title", { length: 255 }),
     metaDescription: text("meta_description"),
     authorId: varchar("author_id", { length: 191 }).notNull(),
@@ -209,9 +225,14 @@ export const audioRelations = relations(audio, ({ one }) => ({
 
 export const audioCategories = mysqlTable("audio_categories", {
     id: varchar("id", { length: 191 }).primaryKey(),
+    parentId: varchar("parent_id", { length: 191 }),
     name: varchar("name", { length: 191 }).notNull(),
     slug: varchar("slug", { length: 191 }).notNull().unique(),
+    code: varchar("code", { length: 50 }),
     description: text("description"),
+    imageUrl: text("image_url"),
+    order: int("order").default(0).notNull(),
+    isActive: boolean("is_active").default(true).notNull(),
     ...timestamps,
 });
 
@@ -234,10 +255,14 @@ export const videos = mysqlTable("videos", {
     duration: int("duration"),
     categoryId: varchar("category_id", { length: 191 }),
     speakerId: varchar("speaker_id", { length: 191 }),
+    episodeNumber: varchar("episode_number", { length: 50 }),
+    eventLocation: varchar("event_location", { length: 255 }),
+    tags: text("tags"),
     isPublished: boolean("is_published").default(true).notNull(),
     isFeatured: boolean("is_featured").default(false).notNull(),
     order: int("order").default(0).notNull(),
     viewCount: int("view_count").default(0).notNull(),
+    isNew: boolean("is_new").default(false).notNull(),
     metaTitle: varchar("meta_title", { length: 255 }),
     metaDescription: text("meta_description"),
     authorId: varchar("author_id", { length: 191 }).notNull(),
@@ -253,9 +278,14 @@ export const videosRelations = relations(videos, ({ one }) => ({
 
 export const videoCategories = mysqlTable("video_categories", {
     id: varchar("id", { length: 191 }).primaryKey(),
+    parentId: varchar("parent_id", { length: 191 }),
     name: varchar("name", { length: 191 }).notNull(),
     slug: varchar("slug", { length: 191 }).notNull().unique(),
+    code: varchar("code", { length: 50 }),
     description: text("description"),
+    imageUrl: text("image_url"),
+    order: int("order").default(0).notNull(),
+    isActive: boolean("is_active").default(true).notNull(),
     ...timestamps,
 });
 
@@ -301,6 +331,10 @@ export const speakers = mysqlTable("speakers", {
     slug: varchar("slug", { length: 191 }).notNull().unique(),
     bio: text("bio"),
     avatar: text("avatar"),
+    metaTitle: varchar("meta_title", { length: 255 }),
+    metaDescription: text("meta_description"),
+    metaKeywords: text("meta_keywords"),
+    seoData: json("seo_data"),
     ...timestamps,
 });
 
@@ -562,6 +596,7 @@ export const media = mysqlTable("media", {
     thumbnailUrl: text("thumbnail_url"),
     altText: varchar("alt_text", { length: 255 }),
     caption: text("caption"),
+    fileData: longblob("file_data"),
     uploadedBy: varchar("uploaded_by", { length: 191 }),
     createdAt: timestamp("created_at").defaultNow().notNull(),
 });

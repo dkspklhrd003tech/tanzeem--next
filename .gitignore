@@ -27,7 +27,9 @@ node_modules/
 /build/
 next-env.d.ts
 *.tsbuildinfo
-
+/public/
+scratch/
+drizzle/
 # =======================================================
 # 🔐 ENVIRONMENT & SECRETS
 # =======================================================
@@ -107,3 +109,32 @@ temp/
 # 🚀 VERCEL / DEPLOYMENT
 # =======================================================
 .vercel
+# =======================================================
+# ?? TEMPORARY, UPLOADS & DEV SCRIPTS
+# =======================================================
+/upload/
+/public/uploads/
+/public/media/
+/scratch/
+/scripts/
+/*.txt
+!/robots.txt
+/*.js
+!/next.config.js
+!/next.config.mjs
+!/postcss.config.js
+!/prettier.config.js
+!/tailwind.config.js
+/test-*.ts
+/seed*.ts
+/seed*.js
+/clean*.ts
+/clean*.js
+/migrate*.js
+/fix*.js
+/build*.js
+/inspect*.js
+/list*.js
+/set*.js
+*.log
+

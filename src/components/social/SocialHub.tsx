@@ -258,7 +258,7 @@ export function SocialHub({ initialPlatforms, initialAccounts, layout = "horizon
   };
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4">
+    <div className="w-full max-w-7xl mx-auto">
 
       {/* Premium Glassmorphic Layout Orientation Toggle switcher */}
       <div className="flex justify-end mb-6 max-w-7xl mx-auto">
