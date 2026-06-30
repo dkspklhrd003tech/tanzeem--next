@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { MainLayout } from "@/components/layout";
 import Script from "next/script";
 import { organisationJsonLd, SITE_URL, SITE_NAME } from "@/lib/seo";
+import { ShareSidebar } from "@/components/shared/ShareSidebar";
 
 // ── Heading font: Plus Jakarta Sans (matched from tanzeem.org extraction) ──
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -30,42 +31,59 @@ const amiri = Amiri({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: {
-    default: SITE_NAME,
-    template: `%s | ${SITE_NAME}`,
-  },
-  description:
-    "Tanzeem-e-Islami is working to re-establish Khilafah by following the methodology of Prophet Muhammad (SAWS). Access Islamic lectures, books, videos, and educational resources.",
-  keywords: [
-    "Tanzeem-e-Islami",
-    "Dr. Israr Ahmed",
-    "Islamic Lectures",
-    "Khilafah",
-    "Quran",
-    "Hadith",
-    "Islamic Education",
-    "Islamic Books",
-  ],
-  authors: [{ name: SITE_NAME }],
-  icons: { icon: "/favicon.ico" },
-  metadataBase: new URL(SITE_URL),
-  openGraph: {
-    title: SITE_NAME,
-    description:
-      "Access Islamic lectures, books, videos, and educational resources from Tanzeem-e-Islami",
-    url: SITE_URL,
-    siteName: SITE_NAME,
-    type: "website",
-    locale: "en_PK",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: SITE_NAME,
-    description: "Working to establish Deen through knowledge and action",
-    site: "@tanzeemeislami",
-  },
-};
+import { db } from "@/lib/db";
+import { settings } from "@/db/schema";
+import { inArray } from "drizzle-orm";
+
+export async function generateMetadata(): Promise<Metadata> {
+  const settingsRows = await db
+    .select()
+    .from(settings)
+    .where(inArray(settings.key, ["site_favicon", "site_name", "site_description"]));
+
+  const settingsMap = Object.fromEntries(settingsRows.map((r) => [r.key, r.value]));
+
+  const siteName = settingsMap["site_name"] || SITE_NAME;
+  const siteDesc =
+    settingsMap["site_description"] ||
+    "Tanzeem-e-Islami is working to re-establish Khilafah by following the methodology of Prophet Muhammad (SAWS). Access Islamic lectures, books, videos, and educational resources.";
+  const favicon = settingsMap["site_favicon"] || "/favicon.ico";
+
+  return {
+    title: {
+      default: siteName,
+      template: `%s | ${siteName}`,
+    },
+    description: siteDesc,
+    keywords: [
+      "Tanzeem-e-Islami",
+      "Dr. Israr Ahmed",
+      "Islamic Lectures",
+      "Khilafah",
+      "Quran",
+      "Hadith",
+      "Islamic Education",
+      "Islamic Books",
+    ],
+    authors: [{ name: siteName }],
+    icons: { icon: favicon },
+    metadataBase: new URL(SITE_URL),
+    openGraph: {
+      title: siteName,
+      description: siteDesc,
+      url: SITE_URL,
+      siteName: siteName,
+      type: "website",
+      locale: "en_PK",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: siteName,
+      description: siteDesc,
+      site: "@tanzeemeislami",
+    },
+  };
+}
 
 export default function RootLayout({
   children,
@@ -107,6 +125,7 @@ export default function RootLayout({
         className={`${plusJakartaSans.variable} ${kumbhSans.variable} ${amiri.variable} antialiased bg-background text-foreground font-body`}
       >
         <MainLayout>{children}</MainLayout>
+        <ShareSidebar />
         <Toaster />
       </body>
     </html>

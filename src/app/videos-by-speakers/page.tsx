@@ -1,31 +1,89 @@
-export const metadata = { title: "Videos by Speakers | Tanzeem-e-Islami" };
+import Link from "next/link";
+import { db } from "@/lib/db";
+import { speakers, videos } from "@/db/schema";
+import { eq, asc, count } from "drizzle-orm";
+import { buildMetadata } from "@/lib/seo";
 
-const speakers = [
-  { title: "Dr. Israr Ahmed", href: "/resources/videos/by-speakers/dr-israr-ahmed", description: "Founder of Tanzeem-e-Islami", count: 500 },
-  { title: "Shujauddin Sheikh", href: "/resources/videos/by-speakers/shujauddin-sheikh", description: "Current Ameer of Tanzeem-e-Islami", count: 200 },
-  { title: "Other Speakers", href: "/resources/videos/by-speakers/other", description: "Guest scholars and speakers", count: 100 },
-];
+export const revalidate = 3600; // 1 hour ISR
 
-export default function VideosBySpeakersPage() {
+export const metadata = buildMetadata({
+  title: "Videos by Speakers",
+  description: "Browse Islamic video lectures organized by speakers, including Dr. Israr Ahmed and Shujauddin Sheikh.",
+  path: "/videos-by-speakers",
+  keywords: ["Islamic speakers", "Dr Israr Ahmed lectures", "Shujauddin Sheikh videos", "Tanzeem speakers"],
+});
+
+export default async function VideosBySpeakersPage() {
+  const speakerRows = await db
+    .select({
+      id: speakers.id,
+      name: speakers.name,
+      slug: speakers.slug,
+      bio: speakers.bio,
+      imageUrl: speakers.avatar,
+    })
+    .from(speakers)
+    .orderBy(asc(speakers.name));
+
+  const countRows = await db
+    .select({ speakerId: videos.speakerId, total: count() })
+    .from(videos)
+    .where(eq(videos.isPublished, true))
+    .groupBy(videos.speakerId);
+
+  const countMap = countRows.reduce<Record<string, number>>((acc, r) => {
+    if (r.speakerId) acc[r.speakerId] = Number(r.total);
+    return acc;
+  }, {});
+
+  const FALLBACK = [
+    { id: "s1", name: "Dr. Israr Ahmed", slug: "dr-israr-ahmed", bio: "Founder of Tanzeem-e-Islami", count: 0 },
+    { id: "s2", name: "Mohtaram Shujauddin Shaikh", slug: "shujauddin-shaikh", bio: "Current Ameer of Tanzeem-e-Islami", count: 0 },
+  ];
+
+  const display = speakerRows.length > 0
+    ? speakerRows.map((s) => ({ ...s, count: countMap[s.id] ?? 0 }))
+    : FALLBACK;
+
   return (
-    <main className="min-h-screen bg-background">
-      <div className="container mx-auto py-6 md:py-8">
-        <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Videos by Speakers</h1>
-        <p className="text-lg text-muted-foreground mb-8">Explore video lectures and talks organized by speaker.</p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
-          {speakers.map((sp) => (
-            <a
-              key={sp.href}
-              href={sp.href}
-              className="group bg-card rounded-xl p-6 shadow-sm border border-border hover:shadow-md transition-all duration-300 hover:-translate-y-1"
-            >
-              <h3 className="text-lg font-semibold mb-2 text-foreground group-hover:text-primary transition-colors">
-                {sp.title}
-              </h3>
-              <p className="text-sm text-muted-foreground mb-2">{sp.description}</p>
-              <span className="text-xs text-primary font-medium">{sp.count} videos</span>
-            </a>
-          ))}
+    <main className="min-h-screen bg-muted/20 py-10">
+      <div className="container mx-auto">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
+          {display.map((sp) => {
+            let href = sp.slug;
+            if (!href?.startsWith("videos-by-speakers")) {
+              href = `/videos-by-speakers/${sp.slug}`;
+            } else {
+              href = `/${sp.slug}`;
+            }
+            if (!sp.slug) href = "/videos";
+            return (
+              <Link
+                key={sp.id}
+                href={href}
+                className="bg-card rounded-2xl overflow-hidden shadow-sm border border-border hover:shadow-md hover:border-primary/40 transition-all duration-300 flex flex-col group"
+              >
+                <div className="aspect-[1/1] bg-[#f0f4f8] relative overflow-hidden flex items-end justify-center">
+                  {sp.imageUrl ? (
+                    <img
+                      src={sp.imageUrl}
+                      alt={sp.name}
+                      className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 flex items-center justify-center bg-primary/5 text-primary text-4xl font-bold">
+                      {sp.name.charAt(0)}
+                    </div>
+                  )}
+                </div>
+                <div className="p-4 flex items-center justify-center bg-card">
+                  <h3 className="text-[17px] font-medium text-foreground text-center line-clamp-1">
+                    {sp.name}
+                  </h3>
+                </div>
+              </Link>
+            );
+          })}
         </div>
       </div>
     </main>

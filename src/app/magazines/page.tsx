@@ -31,14 +31,10 @@ export default async function MagazinesPage() {
 
   return (
     <main className="min-h-screen bg-background">
-      <div className="container max-w-7xl mx-auto px-4 py-10">
+      <div className="container max-w-7xl mx-auto py-10">
 
         {/* Header */}
-        <div className="mb-10">
-          <p className="section-label mb-1">Our Magazines</p>
-          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
-            Publications &amp; Periodicals
-          </h1>
+        <div className="mb-6">
           <p className="text-foreground-muted max-w-2xl">
             Books and literature of Tanzeem-e-Islami &amp; Anjuman Khuddam ul Quran
           </p>
@@ -109,10 +105,10 @@ export default async function MagazinesPage() {
         {/* Links to specific magazine series pages */}
         <nav className="mt-14 grid grid-cols-2 sm:grid-cols-4 gap-4">
           {[
-            { href: "/meesaq",          label: "Meesaq",          desc: "Monthly magazine" },
-            { href: "/hikmat-e-quran",  label: "Hikmat-e-Quran",  desc: "Quranic studies" },
+            { href: "/meesaq", label: "Meesaq", desc: "Monthly magazine" },
+            { href: "/hikmat-e-quran", label: "Hikmat-e-Quran", desc: "Quranic studies" },
             { href: "/nida-e-khilafat", label: "Nida-e-Khilafat", desc: "Policy & Khilafah" },
-            { href: "/perspective",     label: "Perspective",     desc: "English quarterly" },
+            { href: "/perspective", label: "Perspective", desc: "English quarterly" },
           ].map((s) => (
             <Link
               key={s.href}

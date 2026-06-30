@@ -1,13 +1,14 @@
 import { notFound } from "next/navigation";
 import { db } from "@/db";
-import { pages, pageSections } from "@/db/schema";
-import { eq, and } from "drizzle-orm";
+import { pages, pageSections, audioCategories, videoCategories, audio, videos } from "@/db/schema";
+import { eq, and, desc } from "drizzle-orm";
 import { Metadata } from "next";
 import crypto from "crypto";
 import { DynamicPageContent } from "@/components/shared/DynamicPageContent";
 import { buildMetadata, webPageJsonLd, breadcrumbJsonLd } from "@/lib/seo";
 import { ModernizedProsePage } from "@/components/shared/ModernizedProsePage";
 import { RedirectPage } from "@/components/shared/RedirectPage";
+import { NestedCategoryGrid } from "@/components/shared/NestedCategoryGrid";
 
 // ── Slug resolver — handles prefix mismatches (e.g. DB has "our-ideology"
 //    but route provides "organization/our-ideology") ────────────────────────────
@@ -280,6 +281,105 @@ export default async function DynamicPage({ params }: PageProps) {
   let ctaButtonLabel: string | undefined = undefined;
   let ctaButtonUrl: string | undefined = undefined;
 
+  let mediaGridData: any[] = [];
+  if (page.id === '56f118be-bcad-42a0-a60a-37300adc8a39' || page.slug === 'audios-by-category') {
+    const rawCategories = await db.select().from(audioCategories).orderBy(desc(audioCategories.order));
+    const allAudio = await db.select().from(audio);
+
+    mediaGridData = rawCategories
+      .filter(cat => !cat.parentId)
+      .map(mainCat => {
+        const subCats = rawCategories
+          .filter(subCat => subCat.parentId === mainCat.id)
+          .map(subCat => ({
+            id: subCat.id,
+            title: subCat.name,
+            code: subCat.code,
+            mediaItems: allAudio.filter(a => a.categoryId === subCat.id).map(a => ({
+              id: a.id,
+              title: a.title,
+              mediaUrl: a.audioUrl,
+              description: a.description,
+              code: a.code
+            }))
+          }));
+
+        const directMedia = allAudio.filter(a => a.categoryId === mainCat.id).map(a => ({
+          id: a.id,
+          title: a.title,
+          mediaUrl: a.audioUrl,
+          description: a.description,
+          code: a.code
+        }));
+
+        if (directMedia.length > 0) {
+          subCats.unshift({
+            id: mainCat.id + "_direct",
+            title: mainCat.name,
+            code: mainCat.code,
+            mediaItems: directMedia
+          });
+        }
+
+        return {
+          id: mainCat.id,
+          title: mainCat.name,
+          code: mainCat.code,
+          subCategories: subCats
+        };
+      });
+  } else if (page.id === 'e34f44a9-bd26-4433-a962-250991321181' || page.slug === 'videos-by-category') {
+    const rawCategories = await db.select().from(videoCategories).orderBy(desc(videoCategories.order));
+    const allVideos = await db.select().from(videos);
+
+    mediaGridData = rawCategories
+      .filter(cat => !cat.parentId)
+      .map(mainCat => {
+        const subCats = rawCategories
+          .filter(subCat => subCat.parentId === mainCat.id)
+          .map(subCat => ({
+            id: subCat.id,
+            title: subCat.name,
+            image: subCat.imageUrl,
+            code: subCat.code,
+            mediaItems: allVideos.filter(v => v.categoryId === subCat.id).map(v => ({
+              id: v.id,
+              title: v.title,
+              mediaUrl: v.videoUrl || v.embedUrl,
+              embedUrl: v.embedUrl,
+              description: v.description,
+              code: v.episodeNumber
+            }))
+          }));
+
+        const directMedia = allVideos.filter(v => v.categoryId === mainCat.id).map(v => ({
+          id: v.id,
+          title: v.title,
+          mediaUrl: v.videoUrl || v.embedUrl,
+          embedUrl: v.embedUrl,
+          description: v.description,
+          code: v.episodeNumber
+        }));
+
+        if (directMedia.length > 0) {
+          subCats.unshift({
+            id: mainCat.id + "_direct",
+            title: mainCat.name,
+            image: mainCat.imageUrl,
+            code: mainCat.code,
+            mediaItems: directMedia
+          });
+        }
+
+        return {
+          id: mainCat.id,
+          title: mainCat.name,
+          code: mainCat.code,
+          subCategories: subCats
+        };
+      });
+  }
+
   const normalizedSlug = slug.replace(/^organization\//, "");
 
   if (normalizedSlug === "background") {
@@ -367,6 +467,14 @@ export default async function DynamicPage({ params }: PageProps) {
       {/* Section-builder content (all 15 section types supported) */}
       {sections.length > 0 && page.template !== "leader" ? (
         <DynamicPageContent sections={sections as any} />
+      ) : (page.slug === 'audios-by-category' || page.slug === 'videos-by-category') ? (
+        <div className="py-6">
+          <NestedCategoryGrid
+            heading={page.title}
+            style={page.slug === 'audios-by-category' ? 'capsule' : 'image_card'}
+            categories={mediaGridData}
+          />
+        </div>
       ) : (
         <ModernizedProsePage
           title={page.title}

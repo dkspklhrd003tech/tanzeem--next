@@ -112,7 +112,7 @@ export function FooterManager() {
     fetchFooterMenu();
   }, [fetchSettings, fetchFooterMenu]);
 
-  // Save general settings
+  // Save Tanzeem Settings
   const handleSaveSettings = async () => {
     setSavingSettings(true);
     try {
@@ -317,7 +317,7 @@ export function FooterManager() {
       {/* Page Header */}
       <div className="flex items-center justify-between pb-4 border-b border-border">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">Footer Builder</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">Footer</h1>
           <p className="text-sm text-foreground-muted mt-1">
             Manage site contact information, copyright, and columns of footer navigation links.
           </p>
@@ -743,6 +743,13 @@ function LinkEditorForm({
   isSaving: boolean;
 }) {
   const [form, setForm] = useState<Partial<MenuItem>>(link);
+  const [pages, setPages] = useState<{id: string, title: string, slug: string}[]>([]);
+
+  useEffect(() => {
+    fetch("/api/pages").then(r => r.json()).then(d => {
+      if(d.pages) setPages(d.pages);
+    }).catch(() => {});
+  }, []);
 
   const set = (k: keyof MenuItem, v: any) => setForm((p) => ({ ...p, [k]: v }));
 
@@ -758,6 +765,32 @@ function LinkEditorForm({
       <h4 className="font-bold text-foreground">
         {form.id ? "Edit Link" : "Add Link"}
       </h4>
+
+      <div className="bg-primary/5 p-2.5 rounded-lg border border-primary/20 space-y-1.5">
+        <Label className="text-[10px] font-semibold text-primary flex items-center gap-1.5">
+          <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+          Quick Link to Existing Page
+        </Label>
+        <select 
+          className="w-full h-8 px-2 rounded-md border border-primary/30 text-[11px] bg-background focus:ring-1 focus:ring-primary focus:outline-none"
+          onChange={(e) => {
+              const p = pages.find(x => x.id === e.target.value);
+              if(p) {
+                setForm(prev => ({
+                  ...prev,
+                  label: p.title,
+                  url: p.slug.startsWith('/') ? p.slug : `/${p.slug}`,
+                  isOpenInNew: false
+                }));
+              }
+              e.target.value = "";
+          }}
+        >
+          <option value="">— Select a Page to auto-fill —</option>
+          {pages.map(p => <option key={p.id} value={p.id}>{p.title}</option>)}
+        </select>
+        <p className="text-[9px] text-muted-foreground mt-1 leading-tight">Auto-fills the Label &amp; URL. Automatically updates if the page URL changes later.</p>
+      </div>
 
       <div className="grid sm:grid-cols-2 gap-2">
         <div className="space-y-1">

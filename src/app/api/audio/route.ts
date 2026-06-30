@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { audio, activityLogs } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth";
@@ -67,13 +68,15 @@ export async function POST(request: NextRequest) {
     const user = await getCurrentUser(request);
 
     if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      revalidatePath("/", "layout");
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const data = await request.json();
 
     if (!data.title || !data.slug || !data.audioUrl) {
-      return NextResponse.json(
+      revalidatePath("/", "layout");
+    return NextResponse.json(
         { error: "Title, slug, and audio URL are required" },
         { status: 400 }
       );
@@ -85,7 +88,8 @@ export async function POST(request: NextRequest) {
     });
 
     if (existingAudio) {
-      return NextResponse.json(
+      revalidatePath("/", "layout");
+    return NextResponse.json(
         { error: "An audio file with this slug already exists" },
         { status: 400 }
       );
@@ -104,6 +108,8 @@ export async function POST(request: NextRequest) {
       thumbnailUrl: data.thumbnailUrl,
       categoryId: data.categoryId,
       speakerId: data.speakerId,
+      code: data.code,
+      tags: data.tags,
       isPublished: data.isPublished ?? false,
       isFeatured: data.isFeatured ?? false,
       metaTitle: data.metaTitle,
@@ -130,12 +136,15 @@ export async function POST(request: NextRequest) {
       details: JSON.stringify({ title: data.title }),
     });
 
+    revalidatePath("/", "layout");
     return NextResponse.json({ audio: newAudio }, { status: 201 });
   } catch (error) {
     console.error("Create audio error:", error);
+    revalidatePath("/", "layout");
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
     );
   }
 }
+

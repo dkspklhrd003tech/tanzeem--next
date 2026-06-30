@@ -26,10 +26,26 @@ export default async function VideosPage({
   const pageNum      = Math.max(1, parseInt(sp.page ?? "1"));
   const PER_PAGE     = 24;
 
-  const [cats, speakersList] = await Promise.all([
-    db.select().from(videoCategories).orderBy(asc(videoCategories.name)),
+  const [rawCats, speakersList, countRows] = await Promise.all([
+    db.select().from(videoCategories).orderBy(desc(videoCategories.order), asc(videoCategories.name)),
     db.select().from(speakers).orderBy(asc(speakers.name)),
+    db.select({ categoryId: videos.categoryId, total: count() }).from(videos).where(eq(videos.isPublished, true)).groupBy(videos.categoryId),
   ]);
+
+  const countMap = countRows.reduce<Record<string, number>>((acc, r) => {
+    if (r.categoryId) acc[r.categoryId] = Number(r.total);
+    return acc;
+  }, {});
+
+  const cats = rawCats.map(c => ({
+    id: c.id,
+    name: c.name,
+    slug: c.slug,
+    parentId: c.parentId,
+    imageUrl: c.imageUrl,
+    code: c.code,
+    videoCount: countMap[c.id] || 0
+  }));
 
   const activeCatId = categorySlug ? (cats.find((c) => c.slug === categorySlug)?.id ?? null) : null;
   const activeSpId  = speakerSlug  ? (speakersList.find((s) => s.slug === speakerSlug)?.id ?? null) : null;

@@ -1,6 +1,6 @@
 import { getCmsPage, getCleanContent } from "@/lib/page-helpers";
 import { DynamicPageContent, generatePageMetadata } from "@/components/shared/DynamicPageContent";
-import { ContactSection } from "@/components/shared/ContactSection";
+import { ContactSection, type LocationRow } from "@/components/shared/ContactSection";
 import { db } from "@/lib/db";
 import { settings, locations } from "@/db/schema";
 import { eq, asc } from "drizzle-orm";
@@ -59,7 +59,7 @@ export default async function ContactPage() {
       <script id="jsonld-contact-webpage" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webpage) }} />
       <ContactSection
         contactSettings={contactSettings}
-        locationRows={locationRows}
+        locationRows={locationRows as LocationRow[]}
       />
     </main>
   );

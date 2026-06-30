@@ -13,7 +13,7 @@ import * as THREE from "three";
 
 function CinematicScene() {
   const group = useRef<THREE.Group>(null);
-  
+
   useFrame((state) => {
     if (group.current) {
       group.current.rotation.y = state.clock.elapsedTime * 0.05;
@@ -26,11 +26,11 @@ function CinematicScene() {
       <Float speed={1.5} rotationIntensity={0.5} floatIntensity={0.5}>
         <mesh position={[0, 0, -20]}>
           <torusKnotGeometry args={[9, 3, 128, 32]} />
-          <meshStandardMaterial 
-            color="#0d5844" 
-            wireframe 
-            transparent 
-            opacity={0.15} 
+          <meshStandardMaterial
+            color="#0d5844"
+            wireframe
+            transparent
+            opacity={0.15}
             emissive="#0d5844"
             emissiveIntensity={0.5}
           />
@@ -55,7 +55,7 @@ function getPasswordStrength(password: string) {
 
 function PasswordStrengthBar({ password }: { password: string }) {
   const score = getPasswordStrength(password);
-  
+
   const colors = [
     "bg-gray-200", // 0
     "bg-red-500", // 1
@@ -71,9 +71,9 @@ function PasswordStrengthBar({ password }: { password: string }) {
     <div className="mt-2">
       <div className="flex gap-1 h-1">
         {[1, 2, 3, 4, 5].map((level) => (
-          <div 
-            key={level} 
-            className={cn("flex-1 rounded-full transition-all duration-300", level <= score ? color : "bg-gray-200")} 
+          <div
+            key={level}
+            className={cn("flex-1 rounded-full transition-all duration-300", level <= score ? color : "bg-gray-200")}
           />
         ))}
       </div>
@@ -95,7 +95,7 @@ function LoginForm() {
 
   // Login Settings State
   const [settings, setSettings] = useState<Record<string, string>>({});
-  
+
   // View State
   const [mode, setMode] = useState<ViewMode>("login");
   const [isLoading, setIsLoading] = useState(false);
@@ -107,7 +107,7 @@ function LoginForm() {
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  
+
   // Forgot Password Fields
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -168,13 +168,13 @@ function LoginForm() {
     setError(null);
     setSuccess(null);
     if (!email) return setError("Please enter your email.");
-    
+
     setIsLoading(true);
     try {
       // MOCK API CALL for OTP generation
       // In a real app, this would be a real API route
       await new Promise(r => setTimeout(r, 1000));
-      
+
       setSuccess("A 6-digit code has been sent to your email.");
       setMode("verify");
     } catch {
@@ -189,12 +189,12 @@ function LoginForm() {
     setError(null);
     setSuccess(null);
     if (otp.length !== 6) return setError("Please enter a valid 6-digit code.");
-    
+
     setIsLoading(true);
     try {
       // MOCK API CALL for OTP verification
       await new Promise(r => setTimeout(r, 1000));
-      
+
       setMode("reset");
     } catch {
       setError("Invalid code.");
@@ -207,15 +207,15 @@ function LoginForm() {
     e.preventDefault();
     setError(null);
     setSuccess(null);
-    
+
     if (newPassword !== confirmPassword) return setError("Passwords do not match.");
     if (getPasswordStrength(newPassword) < 3) return setError("Please choose a stronger password.");
-    
+
     setIsLoading(true);
     try {
       // MOCK API CALL for Password Reset
       await new Promise(r => setTimeout(r, 1000));
-      
+
       setSuccess("Password reset successfully. You can now log in.");
       setMode("login");
       setPassword("");
@@ -228,7 +228,7 @@ function LoginForm() {
 
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-black p-4">
-      
+
       {/* 3D Cinematic Canvas Layer */}
       <div className="absolute inset-0 z-0">
         <Canvas camera={{ position: [0, 0, 5], fov: 60 }}>
@@ -240,12 +240,12 @@ function LoginForm() {
 
       {/* Dynamic Background Image Overlay */}
       {settings.login_bg_image && (
-        <div 
+        <div
           className="absolute inset-0 z-0 bg-cover bg-center opacity-40 mix-blend-overlay transition-opacity duration-1000"
           style={{ backgroundImage: `url('${settings.login_bg_image}')` }}
         />
       )}
-      
+
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/80 z-0" />
 
       {/* Main Card */}
@@ -256,7 +256,7 @@ function LoginForm() {
         className="relative z-10 w-full max-w-md"
       >
         <div className="bg-white/95 backdrop-blur-xl rounded-3xl shadow-[0_0_50px_rgba(13,88,68,0.3)] overflow-hidden border border-white/20">
-          
+
           <div className="p-8 pb-10">
             {/* Logo area */}
             <div className="flex flex-col items-center mb-8">
@@ -271,10 +271,10 @@ function LoginForm() {
                 {mode === "login" ? "Welcome back" : mode === "forgot" ? "Reset Password" : mode === "verify" ? "Verify Code" : "Create Password"}
               </h1>
               <p className="text-sm text-gray-500 mt-1.5 font-medium text-center">
-                {mode === "login" ? "Sign in to the Tanzeem Site Manager" : 
-                 mode === "forgot" ? "Enter your email to receive a recovery code." :
-                 mode === "verify" ? "Enter the 6-digit code sent to your email." :
-                 "Secure your account with a strong password."}
+                {mode === "login" ? "Sign in to the Tanzeem Site Manager" :
+                  mode === "forgot" ? "Enter your email to receive a recovery code." :
+                    mode === "verify" ? "Enter the 6-digit code sent to your email." :
+                      "Secure your account with a strong password."}
               </p>
             </div>
 
@@ -284,7 +284,7 @@ function LoginForm() {
             <AnimatePresence mode="wait">
               {/* LOGIN MODE */}
               {mode === "login" && (
-                <motion.form 
+                <motion.form
                   key="login-form"
                   initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}
                   onSubmit={handleLoginSubmit} className="space-y-5" noValidate
@@ -309,9 +309,6 @@ function LoginForm() {
                   <div>
                     <div className="flex items-center justify-between mb-1.5">
                       <label className="block text-sm font-semibold text-gray-700">Password</label>
-                      <button type="button" onClick={() => { setMode("forgot"); setError(null); setSuccess(null); }} className="text-xs text-primary hover:text-primary/80 font-bold transition-colors">
-                        Forgot password?
-                      </button>
                     </div>
                     <div className="relative">
                       <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -327,6 +324,9 @@ function LoginForm() {
                       />
                       <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
                         {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </button>
+                      <button type="button" onClick={() => { setMode("forgot"); setError(null); setSuccess(null); }} className="cursor-pointer text-right text-xs text-primary hover:text-primary/80 font-bold transition-colors">
+                        Forgot password?
                       </button>
                     </div>
                     <PasswordStrengthBar password={password} />
@@ -344,7 +344,7 @@ function LoginForm() {
 
                   <button
                     type="submit" disabled={isLoading || !email || !password}
-                    className="w-full h-12 mt-2 rounded-xl font-bold text-sm text-white transition-all bg-primary hover:bg-primary/90 active:scale-[0.98] focus:ring-2 focus:ring-primary/40 disabled:opacity-60 flex items-center justify-center gap-2 shadow-lg shadow-primary/30"
+                    className="w-full h-12 mt-2 rounded-xl font-bold text-sm text-white transition-all bg-primary hover:bg-primary/80 focus:ring-2 focus:ring-primary/40 disabled:opacity-90 flex items-center justify-center gap-2 shadow-lg shadow-primary/30"
                   >
                     {isLoading ? <><Loader2 className="h-4 w-4 animate-spin" /> Authenticating...</> : "Sign In Securely"}
                   </button>
@@ -353,7 +353,7 @@ function LoginForm() {
 
               {/* FORGOT PASSWORD MODE */}
               {mode === "forgot" && (
-                <motion.form 
+                <motion.form
                   key="forgot-form"
                   initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
                   onSubmit={handleForgotSubmit} className="space-y-5" noValidate
@@ -365,7 +365,7 @@ function LoginForm() {
                       <input
                         type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
                         placeholder="admin@tanzeem.org"
-                        className="w-full h-11 pl-10 pr-4 rounded-xl border text-sm transition-all bg-gray-50 text-gray-900 placeholder:text-gray-400 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20"
+                        className="w-full h-11 pl-4 pr-4 rounded-xl border text-sm transition-all bg-gray-50 text-gray-900 placeholder:text-gray-400 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20"
                       />
                     </div>
                   </div>
@@ -382,7 +382,7 @@ function LoginForm() {
 
               {/* VERIFY MODE */}
               {mode === "verify" && (
-                <motion.form 
+                <motion.form
                   key="verify-form"
                   initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
                   onSubmit={handleVerifySubmit} className="space-y-5" noValidate
@@ -411,7 +411,7 @@ function LoginForm() {
 
               {/* RESET PASSWORD MODE */}
               {mode === "reset" && (
-                <motion.form 
+                <motion.form
                   key="reset-form"
                   initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }}
                   onSubmit={handleResetSubmit} className="space-y-5" noValidate
@@ -423,7 +423,7 @@ function LoginForm() {
                       <input
                         type={showPassword ? "text" : "password"} required value={newPassword} onChange={(e) => setNewPassword(e.target.value)}
                         placeholder="••••••••"
-                        className="w-full h-11 pl-10 pr-10 rounded-xl border text-sm transition-all bg-gray-50 text-gray-900 placeholder:text-gray-400 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20"
+                        className="w-full h-11 pl-4 pr-4 rounded-xl border text-sm transition-all bg-gray-50 text-gray-900 placeholder:text-gray-400 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20"
                       />
                       <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
                         {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}

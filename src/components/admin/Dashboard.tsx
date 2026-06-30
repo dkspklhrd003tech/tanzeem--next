@@ -249,19 +249,19 @@ export function Dashboard() {
                 <Link href="/sitemanager/pages"><FileText className="h-4 w-4 mr-2" />New Page</Link>
               </Button>
               <Button variant="outline" asChild>
-                <Link href="/sitemanager?section=audio"><Headphones className="h-4 w-4 mr-2" />Add Audio</Link>
+                <Link href="/sitemanager/audio"><Headphones className="h-4 w-4 mr-2" />Add Audio</Link>
               </Button>
               <Button variant="outline" asChild>
-                <Link href="/sitemanager?section=videos"><Video className="h-4 w-4 mr-2" />Add Video</Link>
+                <Link href="/sitemanager/videos"><Video className="h-4 w-4 mr-2" />Add Video</Link>
               </Button>
               <Button variant="outline" asChild>
-                <Link href="/sitemanager?section=books"><BookOpen className="h-4 w-4 mr-2" />Add Book</Link>
+                <Link href="/sitemanager/books"><BookOpen className="h-4 w-4 mr-2" />Add Book</Link>
               </Button>
               <Button variant="outline" asChild>
-                <Link href="/sitemanager?section=press-releases"><FileText className="h-4 w-4 mr-2" />Press Release</Link>
+                <Link href="/sitemanager/press-releases"><FileText className="h-4 w-4 mr-2" />Press Release</Link>
               </Button>
               <Button variant="outline" asChild>
-                <Link href="/sitemanager?section=campaigns"><Calendar className="h-4 w-4 mr-2" />Campaign</Link>
+                <Link href="/sitemanager/campaigns"><Calendar className="h-4 w-4 mr-2" />Campaign</Link>
               </Button>
             </div>
           </CardContent>

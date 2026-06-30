@@ -21,6 +21,8 @@ import {
     socialPlatforms,
     socialAccounts,
     bookCategories,
+    audioCategories,
+    speakers,
 } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { getCurrentUser } from "@/lib/auth";
@@ -72,6 +74,8 @@ const entityMap: Record<string, any> = {
     "social-platforms": socialPlatforms,
     "social-accounts": socialAccounts,
     "book-categories": bookCategories,
+    "audio-categories": audioCategories,
+    speakers,
 };
 
 function parseDateFields(data: any) {
@@ -155,6 +159,12 @@ export async function PUT(
 
         // Check for duplicate slug if slug is being changed
         if (data.slug) {
+            if (!/^[a-z0-9-/]+$/.test(data.slug)) {
+                return NextResponse.json({
+                    error: "Slug must contain only lowercase letters, numbers, hyphens, and forward slashes"
+                }, { status: 400 });
+            }
+
             const dup = await db.select({ id: (table as any).id })
                 .from(table)
                 .where(eq((table as any).slug, data.slug))

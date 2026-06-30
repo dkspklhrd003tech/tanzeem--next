@@ -13,6 +13,12 @@ import BooksByCategoryPageEditor from "@/components/admin/BooksByCategoryPageEdi
 import ContactPageEditor from "@/components/admin/ContactPageEditor";
 import { HomepageManager } from "@/components/admin/HomepageManager";
 import MagazineLinksEditor from "@/components/admin/MagazineLinksEditor";
+import VideosPageEditor from "@/components/admin/VideosPageEditor";
+import MediaLibraryEditor from "@/components/admin/MediaLibraryEditor";
+import AudiosPageEditor from "@/components/admin/AudiosPageEditor";
+import AudioSpeakersPageEditor from "@/components/admin/AudioSpeakersPageEditor";
+import VideoSpeakersPageEditor from "@/components/admin/VideoSpeakersPageEditor";
+import HistoryPageEditor from "@/components/admin/HistoryPageEditor";
 
 export default function EditPagePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -43,7 +49,7 @@ export default function EditPagePage({ params }: { params: Promise<{ id: string 
 
   if (notFound) {
     return (
-      <div className="flex flex-col items-center justify-center py-24 text-center">
+      <div className="flex flex-col items-center justify-center py-10 text-center">
         <p className="text-lg font-semibold text-foreground">Page not found</p>
         <p className="text-sm text-muted-foreground mt-1">This page may have been deleted.</p>
         <a href="/sitemanager/pages" className="mt-4 text-sm text-primary hover:underline">← Back to pages</a>
@@ -79,6 +85,30 @@ export default function EditPagePage({ params }: { params: Promise<{ id: string 
 
   if (page.slug === "contact" || page.id === "426e2660-c453-4763-a0f4-35395bf8a10f") {
     return <ContactPageEditor pageId={page.id} title={page.title} />;
+  }
+
+  if (page.id === "56f118be-bcad-42a0-a60a-37300adc8a39" || page.slug === "audios-by-category") {
+    return <AudiosPageEditor pageId={page.id} initialPageData={page} />;
+  }
+
+  if (page.id === "e34f44a9-bd26-4433-a962-250991321181" || page.slug === "videos-by-category") {
+    return <MediaLibraryEditor pageId={page.id} initialPageData={page} mediaType="video" />;
+  }
+
+  if (page.slug === "videos") {
+    return <VideosPageEditor pageId={page.id} initialPageData={page} />;
+  }
+
+  if (page.id === "b2a4338c-df58-407a-9f94-a9b338767a27" || page.slug === "audios-by-speaker") {
+    return <AudioSpeakersPageEditor pageId={page.id} initialPageData={page} />;
+  }
+
+  if (page.id === "39140524-7122-407b-b32f-3570f6f52ee2" || page.slug === "videos-by-speakers") {
+    return <VideoSpeakersPageEditor pageId={page.id} initialPageData={page} />;
+  }
+
+  if (page.id === "07d5dfdd-1c18-4de6-80b5-54ea7f0570bd" || page.slug === "history-of-tanzeem-e-islami") {
+    return <HistoryPageEditor pageId={page.id} initialPageData={page} />;
   }
 
   const magazineIds = [

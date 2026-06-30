@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 import { Switch } from "@/components/ui/switch";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 type AddressDetail = {
@@ -36,15 +36,15 @@ type LocationRow = {
 
 export default function ContactPageEditor({ pageId, title }: { pageId: string; title: string }) {
   const { toast } = useToast();
-  
+
   // Settings
   const [settings, setSettings] = useState<Record<string, string>>({});
   const [isSavingSettings, setIsSavingSettings] = useState(false);
-  
+
   // Locations
   const [locations, setLocations] = useState<LocationRow[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  
+
   // Location Dialog
   const [isLocationDialogOpen, setIsLocationDialogOpen] = useState(false);
   const [editingLocation, setEditingLocation] = useState<Partial<LocationRow> | null>(null);
@@ -177,15 +177,21 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto pb-20">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" asChild>
-            <Link href="/sitemanager/pages"><ArrowLeft className="h-5 w-5" /></Link>
-          </Button>
-          <div>
-            <h1 className="text-2xl font-bold">{title} Editor</h1>
-            <p className="text-sm text-muted-foreground">Manage global contact settings and branch locations.</p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <div className="flex items-center gap-3">
+            <Button variant="outline" size="icon" asChild className="h-8 w-8">
+              <Link href="/sitemanager/pages">
+                <ArrowLeft className="h-4 w-4" />
+              </Link>
+            </Button>
+            <h1 className="text-3xl font-bold text-foreground tracking-tight">
+              {title}
+            </h1>
           </div>
+          <p className="text-muted-foreground mt-1">
+            Manage global contact settings and branch locations.
+          </p>
         </div>
       </div>
 
@@ -268,7 +274,7 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
                           {(!loc.details || loc.details.length === 0) && loc.email && <span className="flex items-center gap-1"><Mail className="h-3 w-3" /> {loc.email}</span>}
                         </div>
                         {(!loc.details || loc.details.length === 0) && loc.address && <p className="text-xs text-muted-foreground mt-2">{loc.address}</p>}
-                        
+
                         {loc.details && loc.details.length > 0 && (
                           <div className="mt-3 space-y-2">
                             {loc.details.map((detail) => (
@@ -305,6 +311,7 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
             <DialogTitle>{editingLocation?.id ? "Edit Branch" : "Add Branch"}</DialogTitle>
+            <DialogDescription className="sr-only">Fill in the branch details including name, city, addresses, and contact information.</DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-2 gap-4">
@@ -320,12 +327,12 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
                 <Label>Country</Label>
                 <Input value={editingLocation?.country || ""} onChange={(e) => setEditingLocation({ ...editingLocation, country: e.target.value })} placeholder="e.g. Pakistan" />
               </div>
-              
+
               <div className="col-span-2 flex items-center justify-between mt-2 pt-4 border-t border-border">
                 <Label className="text-base font-semibold">Address Details</Label>
-                <Button 
-                  size="sm" 
-                  variant="outline" 
+                <Button
+                  size="sm"
+                  variant="outline"
                   onClick={() => {
                     const newDetails = [...(editingLocation?.details || []), {
                       id: crypto.randomUUID(),
@@ -344,13 +351,13 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
 
               <div className="col-span-2 space-y-4 max-h-[300px] overflow-y-auto pr-2">
                 {(!editingLocation?.details || editingLocation.details.length === 0) && (
-                   <p className="text-sm text-muted-foreground italic text-center py-4 border border-dashed rounded bg-secondary/20">No addresses added. Click "Add Address" to add multiple offices or locations within this branch.</p>
+                  <p className="text-sm text-muted-foreground italic text-center py-4 border border-dashed rounded bg-secondary/20">No addresses added. Click "Add Address" to add multiple offices or locations within this branch.</p>
                 )}
                 {editingLocation?.details?.map((detail, index) => (
                   <div key={detail.id} className="relative p-4 border border-border rounded-lg bg-secondary/10 space-y-3">
-                    <Button 
-                      variant="ghost" 
-                      size="icon" 
+                    <Button
+                      variant="ghost"
+                      size="icon"
                       className="absolute right-2 top-2 h-6 w-6 text-destructive hover:bg-destructive/10"
                       onClick={() => {
                         const newDetails = editingLocation.details!.filter(d => d.id !== detail.id);
@@ -359,7 +366,7 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
                     >
                       <Trash2 className="h-4 w-4" />
                     </Button>
-                    
+
                     <div className="pr-8">
                       <Label className="text-xs">Office/Detail Title (e.g., Head Office)</Label>
                       <Input className="h-8" value={detail.title} onChange={(e) => {
@@ -368,7 +375,7 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
                         setEditingLocation({ ...editingLocation, details: newDetails });
                       }} />
                     </div>
-                    
+
                     <div>
                       <Label className="text-xs">Full Address</Label>
                       <Input className="h-8" value={detail.address} onChange={(e) => {

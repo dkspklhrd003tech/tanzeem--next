@@ -144,7 +144,7 @@ export async function PUT(request: NextRequest, { params }: Ctx) {
       } else {
         revalidatePath(`/organization/${existing.slug.replace(/^[^/]+\//, "")}`);
       }
-      revalidatePath("/[...slug]");
+      revalidatePath("/[...slug]", "page");
       revalidatePath("/");
     } catch (revalErr) {
       console.error("Cache revalidation failed:", revalErr);
@@ -194,7 +194,7 @@ export async function DELETE(request: NextRequest, { params }: Ctx) {
       } else {
         revalidatePath(`/organization/${existing.slug.replace(/^[^/]+\//, "")}`);
       }
-      revalidatePath("/[...slug]");
+      revalidatePath("/[...slug]", "page");
       revalidatePath("/");
     } catch (revalErr) {
       console.error("Cache revalidation failed during delete:", revalErr);

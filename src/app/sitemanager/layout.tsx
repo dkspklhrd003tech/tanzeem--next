@@ -1,14 +1,13 @@
 "use client";
 
 import { useState, useEffect, createContext, useContext, Suspense } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard,
   FileText,
   Menu,
-  LayoutTemplate,
   Image,
   Headphones,
   Video,
@@ -24,7 +23,6 @@ import {
   ChevronLeft,
   ChevronRight,
   Bell,
-  Search,
   LogOut,
   User,
   KeyRound,
@@ -37,7 +35,6 @@ import {
   Heart,
   Megaphone,
   Share2,
-  Globe,
   Home,
   Mic,
   Sparkles,
@@ -68,7 +65,7 @@ import { useAdminTheme } from "@/hooks/use-theme";
 interface NavItem {
   title: string;
   href: string;
-  icon: React.ElementType;
+  icon: React.ComponentType<{ className?: string }>;
   superAdminOnly?: boolean;
 }
 
@@ -95,38 +92,12 @@ export const useAdminAuth = () => useContext(AuthContext);
 const NAV_ITEMS: NavItem[] = [
   { title: "Dashboard", href: "/sitemanager/dashboard", icon: LayoutDashboard },
   { title: "Pages", href: "/sitemanager/pages", icon: FileText },
-  { title: "Menu Builder", href: "/sitemanager/header", icon: Menu },
-  { title: "Footer Builder", href: "/sitemanager/footer", icon: LayoutTemplate },
-  { title: "Media Library", href: "/sitemanager?section=media", icon: Image },
   // ── Content ──────────────────────────────────────────────────────────────
-  { title: "Audio Manager", href: "/sitemanager?section=audio", icon: Headphones },
-  { title: "Audio Books", href: "/sitemanager?section=audio-books", icon: Headphones },
-  { title: "Video Manager", href: "/sitemanager?section=videos", icon: Video },
-  { title: "Dars-e-Quran", href: "/sitemanager?section=darse-quran", icon: BookOpen },
-  { title: "Jummah Venues", href: "/sitemanager?section=khitabat-addresses", icon: MapPin },
-  { title: "Sermons", href: "/sitemanager?section=sermons", icon: Mic },
-  { title: "Book Manager", href: "/sitemanager?section=books", icon: BookOpen },
-  { title: "Magazine Manager", href: "/sitemanager?section=magazines", icon: BookMarked },
-  { title: "Downloads", href: "/sitemanager?section=downloads", icon: Send },
-  { title: "Press Releases", href: "/sitemanager?section=press-releases", icon: Newspaper },
-  // ── Organisation ─────────────────────────────────────────────────────────
-  { title: "Team & Speakers", href: "/sitemanager?section=team", icon: Users },
-  { title: "Events", href: "/sitemanager?section=events", icon: Calendar },
-  { title: "Campaigns", href: "/sitemanager?section=campaigns", icon: Sparkles },
-  { title: "Locations", href: "/sitemanager?section=locations", icon: MapPin },
-  { title: "FAQ Items", href: "/sitemanager?section=faqs", icon: HelpCircle },
-  { title: "Galleries", href: "/sitemanager?section=galleries", icon: GalleryHorizontal },
-  { title: "Donations", href: "/sitemanager?section=donations", icon: Heart },
+  { title: "Jummah Venues", href: "/sitemanager/khitabat-addresses", icon: MapPin },
+  { title: "Sermons", href: "/sitemanager/sermons", icon: Mic },
   // ── System ───────────────────────────────────────────────────────────────
-  { title: "SEO", href: "/sitemanager?section=seo", icon: Search },
-  { title: "Global Banner", href: "/sitemanager?section=banner", icon: Megaphone },
-  { title: "Social Media", href: "/sitemanager?section=social-media", icon: Share2 },
-  { title: "Contact Messages", href: "/sitemanager?section=contact", icon: Mail },
-  { title: "Newsletter", href: "/sitemanager?section=newsletter", icon: Send },
-  { title: "Users", href: "/sitemanager?section=users", icon: Users },
-  { title: "Site Identity", href: "/sitemanager?section=identity", icon: Globe },
-  { title: "General Settings", href: "/sitemanager?section=settings", icon: Settings },
-  { title: "Activity Log", href: "/sitemanager?section=activity", icon: History, superAdminOnly: true },
+  { title: "Tanzeem Settings", href: "/sitemanager/settings", icon: Settings },
+  { title: "Activity Log", href: "/sitemanager/activity", icon: History, superAdminOnly: true },
 ];
 
 // ─── Breadcrumb helper ────────────────────────────────────────────────────────
@@ -151,15 +122,9 @@ function SidebarNavItem({
   isCollapsed: boolean;
 }) {
   const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const currentSection = searchParams.get("section");
-
-  const sectionParam = item.href.includes("?section=") ? item.href.split("?section=")[1] : null;
-  const isActive = sectionParam
-    ? pathname === "/sitemanager" && currentSection === sectionParam
-    : item.href === "/sitemanager/dashboard"
-      ? pathname === "/sitemanager/dashboard"
-      : pathname === item.href || pathname.startsWith(item.href + "/");
+  const isActive = item.href === "/sitemanager/dashboard"
+    ? pathname === "/sitemanager/dashboard"
+    : pathname === item.href || pathname.startsWith(item.href + "/");
 
   const linkContent = (
     <Link
@@ -361,13 +326,13 @@ function Sidebar({
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
-                <Link href="/sitemanager?section=profile">
+                <Link href="/sitemanager/profile">
                   <User className="h-4 w-4" />
                   Profile
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link href="/sitemanager?section=change-password">
+                <Link href="/sitemanager/change-password">
                   <KeyRound className="h-4 w-4" />
                   Change Password
                 </Link>
@@ -448,14 +413,13 @@ function TopHeader({
         <div className="flex items-center gap-2">
           {/* Search — hidden on mobile */}
           <div className="relative hidden lg:block">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
             <input
               type="search"
               placeholder="Search..."
               className={cn(
-                "h-6 pl-9 pr-4 w-40 rounded-lg text-sm bg-muted border border-border",
-                "placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30",
-                "transition-all"
+                "h-8 pl-8 pr-4 w-40 rounded-lg text-sm bg-muted border border-border",
+                "text-muted-foreground placeholder:text-muted-foreground",
+                "focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
               )}
             />
           </div>
@@ -463,7 +427,7 @@ function TopHeader({
           {/* Notification bell */}
           <Button variant="ghost" size="icon" className="relative" aria-label="Notifications">
             <Bell className="h-5 w-5" />
-            <span className="absolute top-2 right-2 w-1.5 h-1.5 bg-red-500 rounded-full" />
+            <span className="absolute top-2 right-2 w-1 h-1 bg-red-500 rounded-full" />
           </Button>
 
           {/* Dark / Light theme toggle */}
@@ -473,7 +437,7 @@ function TopHeader({
                 onClick={onThemeToggle}
                 aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
                 className={cn(
-                  "relative w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300",
+                  "relative w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300",
                   "border border-border hover:border-primary/40",
                   theme === "dark"
                     ? "bg-slate-800 hover:bg-slate-700 text-amber-400"
@@ -490,7 +454,7 @@ function TopHeader({
                       transition={{ duration: 0.2 }}
                       className="absolute"
                     >
-                      <Sun className="h-[18px] w-[18px]" />
+                      <Sun className="h-[15px] w-[15px]" />
                     </motion.span>
                   ) : (
                     <motion.span
@@ -512,50 +476,50 @@ function TopHeader({
             </TooltipContent>
           </Tooltip>
 
-        {/* User dropdown */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button className="flex items-center gap-2 pl-1 pr-2 py-1 rounded-lg hover:bg-muted transition-colors">
-              <Avatar className="h-8 w-8">
-                {user?.avatar && <AvatarImage src={user.avatar} />}
-                <AvatarFallback className="bg-primary/20 text-primary text-xs font-semibold">
-                  {userInitials}
-                </AvatarFallback>
-              </Avatar>
-              <span className="hidden md:inline text-sm font-medium">
-                {user?.name ?? "Admin"}
-              </span>
-              <ChevronRight className="h-3.5 w-3.5 text-muted-foreground rotate-90 hidden md:block" />
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-52">
-            <DropdownMenuLabel>
-              <p className="font-medium">{user?.name ?? "Admin"}</p>
-              <p className="text-xs text-muted-foreground font-normal">{user?.email}</p>
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <Link href="/sitemanager?section=profile">
-                <User className="h-4 w-4" />
-                Profile
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <Link href="/sitemanager?section=change-password">
-                <KeyRound className="h-4 w-4" />
-                Change Password
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={onLogout}
-              className="text-destructive focus:text-destructive focus:bg-destructive/10"
-            >
-              <LogOut className="h-4 w-4" />
-              Logout
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+          {/* User dropdown */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="flex items-center gap-2 pl-1 pr-2 py-1 rounded-lg hover:bg-muted transition-colors">
+                <Avatar className="h-8 w-8">
+                  {user?.avatar && <AvatarImage src={user.avatar} />}
+                  <AvatarFallback className="bg-primary/20 text-primary text-xs font-semibold">
+                    {userInitials}
+                  </AvatarFallback>
+                </Avatar>
+                <span className="hidden md:inline text-sm font-medium">
+                  {user?.name ?? "Admin"}
+                </span>
+                <ChevronRight className="h-3.5 w-3.5 text-muted-foreground rotate-90 hidden md:block" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-52">
+              <DropdownMenuLabel>
+                <p className="font-medium">{user?.name ?? "Admin"}</p>
+                <p className="text-xs text-muted-foreground font-normal">{user?.email}</p>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem asChild>
+                <Link href="/sitemanager/profile">
+                  <User className="h-4 w-4" />
+                  Profile
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/sitemanager/change-password">
+                  <KeyRound className="h-4 w-4" />
+                  Change Password
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={onLogout}
+                className="text-destructive focus:text-destructive focus:bg-destructive/10"
+              >
+                <LogOut className="h-4 w-4" />
+                Logout
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </TooltipProvider>
     </header>
@@ -595,7 +559,7 @@ export default function SiteManagerLayout({
         setUser(null);
       })
       .finally(() => setIsUserLoading(false));
-  }, []);
+  }, [pathname]);
 
   // Close mobile sidebar on route change
   useEffect(() => {

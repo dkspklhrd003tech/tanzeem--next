@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
@@ -418,13 +419,19 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <div className="flex items-center gap-3">
-            {activeCategory && (
+            {activeCategory ? (
               <Button variant="outline" size="icon" onClick={() => { setActiveCategory(null); setSearchQuery(""); }} className="h-8 w-8">
                 <ArrowLeft className="h-4 w-4" />
               </Button>
+            ) : (
+              <Button variant="outline" size="icon" asChild className="h-8 w-8">
+                <Link href="/sitemanager/pages">
+                  <ArrowLeft className="h-4 w-4" />
+                </Link>
+              </Button>
             )}
             <h1 className="text-3xl font-bold text-foreground tracking-tight">
-              {activeCategory ? `${activeCategory.name} Books` : "Books Library"}
+              {activeCategory ? `${activeCategory.name} Books` : pageForm.title}
             </h1>
           </div>
           <p className="text-muted-foreground mt-1">

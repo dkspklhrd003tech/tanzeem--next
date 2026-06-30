@@ -31,7 +31,9 @@ import { cn } from "@/lib/utils";
 import { PageSectionBuilder } from "./PageSectionBuilder";
 import { RichTextEditor } from "./RichTextEditor";
 import { ImageUploader } from "./ImageUploader";
+import { MediaCategoryManager } from "./MediaCategoryManager";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { toast } from "sonner";
 
 interface ContentEditorProps {
   title: string;
@@ -244,6 +246,14 @@ export function ContentEditor({
                     </div>
                   )}
                 </div>
+              ) : contentType === "pages" && (initialData?.id === '56f118be-bcad-42a0-a60a-37300adc8a39' || initialData?.id === 'e34f44a9-bd26-4433-a962-250991321181') ? (
+                <div>
+                  <MediaCategoryManager
+                    data={formData.content}
+                    onChange={(content) => setFormData({ ...formData, content })}
+                    mediaType={initialData?.id === '56f118be-bcad-42a0-a60a-37300adc8a39' ? 'audio' : 'video'}
+                  />
+                </div>
               ) : (
                 <div>
                   <Label className="text-sm font-semibold mb-1.5 block">Content</Label>
@@ -267,7 +277,7 @@ export function ContentEditor({
             </CardContent>
           </Card>
 
-          {contentType !== "audio-books" && (
+          {contentType !== "audio-books" && !(contentType === "pages" && (formData.slug === 'audios-by-category' || formData.slug === 'videos-by-category')) && (
             <Card>
               <CardContent className="p-6">
                 <div className="flex items-center justify-between mb-4">

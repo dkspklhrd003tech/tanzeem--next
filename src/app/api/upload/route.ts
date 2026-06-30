@@ -105,6 +105,7 @@ export async function POST(req: NextRequest) {
         thumbnailUrl: null,
         altText: null,
         caption: null,
+        fileData: buffer,
         uploadedBy: uploadedBy ?? null,
       });
     } catch (dbError) {

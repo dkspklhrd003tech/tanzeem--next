@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { pages, pageSections, activityLogs } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth";
 import { eq, or, and, not } from "drizzle-orm";
+import { menuItems } from "@/db/schema";
 
 // GET - Get single page
 export async function GET(
@@ -116,6 +117,31 @@ export async function PUT(
             isActive: s.isActive ?? true,
           }))
         );
+      }
+    }
+
+    // Sync menu items if slug or title changed
+    const newSlug = data.slug ?? existingPage.slug;
+    const oldSlug = existingPage.slug;
+    const newTitle = data.title ?? existingPage.title;
+    const oldTitle = existingPage.title;
+
+    if (oldSlug !== newSlug || oldTitle !== newTitle) {
+      // We want to find any menu items that point to the old URL
+      const oldUrl = oldSlug.startsWith('/') ? oldSlug : `/${oldSlug}`;
+      const newUrl = newSlug.startsWith('/') ? newSlug : `/${newSlug}`;
+
+      const affectedMenus = await db.query.menuItems.findMany({
+        where: eq(menuItems.url, oldUrl),
+      });
+
+      for (const menu of affectedMenus) {
+        const updateData: any = { url: newUrl };
+        // If the menu label was exactly the old page title, update the label too
+        if (menu.label === oldTitle) {
+          updateData.label = newTitle;
+        }
+        await db.update(menuItems).set(updateData).where(eq(menuItems.id, menu.id));
       }
     }
 

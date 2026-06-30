@@ -66,7 +66,7 @@ export default async function BookDetailPage({ params }: Props) {
     <main className="min-h-screen bg-background">
       <script id="jsonld-book" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} />
       <script id="jsonld-book-bc" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(bc) }} />
-      <div className="container max-w-5xl mx-auto px-4 py-10">
+      <div className="container max-w-5xl mx-auto py-10">
 
         {/* Back */}
         <Link href="/books" className="inline-flex items-center gap-2 text-sm text-foreground-muted hover:text-primary mb-8 transition-colors">

@@ -1,6 +1,6 @@
 export default function MagazinesLoading() {
   return (
-    <div className="container max-w-7xl mx-auto px-4 py-10">
+    <div className="container max-w-7xl mx-auto py-10">
       <div className="mb-10 space-y-2">
         <div className="h-3 w-28 bg-muted rounded-full animate-pulse" />
         <div className="h-9 w-72 bg-muted rounded-lg animate-pulse" />

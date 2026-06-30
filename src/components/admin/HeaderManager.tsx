@@ -80,6 +80,12 @@ function SortableMenuRow({
   onEdit,
   onDelete,
   onAddChild,
+  editingItem,
+  MenuItemFormRender,
+  savingItem,
+  saveMenuItem,
+  setEditingItem,
+  flatMenu,
 }: {
   item: MenuItem;
   depth: number;
@@ -87,6 +93,12 @@ function SortableMenuRow({
   onEdit: (item: MenuItem) => void;
   onDelete: (id: string) => void;
   onAddChild: (parentId: string) => void;
+  editingItem: Partial<MenuItem> | null;
+  MenuItemFormRender: any;
+  savingItem: boolean;
+  saveMenuItem: any;
+  setEditingItem: any;
+  flatMenu: MenuItem[];
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: item.id });
@@ -177,6 +189,19 @@ function SortableMenuRow({
           </ConfirmDialog>
         </div>
       </div>
+      
+      {/* Inline Editor */}
+      {editingItem && editingItem.id === item.id && (
+        <div className={cn("mt-2 mb-4 animate-in fade-in slide-in-from-top-2", depth > 0 && "ml-6")}>
+          <MenuItemFormRender
+            item={editingItem}
+            parentOptions={flatMenu.filter(m => !m.parentId)}
+            onSave={saveMenuItem}
+            onCancel={() => setEditingItem(null)}
+            isSaving={savingItem}
+          />
+        </div>
+      )}
 
       {/* Render children */}
       {(item.children ?? []).map((child) => (
@@ -188,6 +213,12 @@ function SortableMenuRow({
           onEdit={onEdit}
           onDelete={onDelete}
           onAddChild={onAddChild}
+          editingItem={editingItem}
+          MenuItemFormRender={MenuItemFormRender}
+          savingItem={savingItem}
+          saveMenuItem={saveMenuItem}
+          setEditingItem={setEditingItem}
+          flatMenu={flatMenu}
         />
       ))}
     </>
@@ -209,6 +240,13 @@ function MenuItemForm({
   isSaving: boolean;
 }) {
   const [form, setForm] = useState<Partial<MenuItem>>(item);
+  const [pages, setPages] = useState<{ id: string, title: string, slug: string }[]>([]);
+
+  useEffect(() => {
+    fetch("/api/pages").then(r => r.json()).then(d => {
+      if (d.pages) setPages(d.pages);
+    }).catch(() => { });
+  }, []);
 
   const set = (k: keyof MenuItem, v: any) => setForm((p) => ({ ...p, [k]: v }));
 
@@ -224,6 +262,33 @@ function MenuItemForm({
       <h3 className="text-sm font-bold text-foreground">
         {form.id ? "Edit Menu Item" : "New Menu Item"}
       </h3>
+
+      <div className="bg-primary/5 p-3 rounded-lg border border-primary/20 space-y-1.5">
+        <Label className="text-xs font-semibold text-primary flex items-center gap-1.5">
+          <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
+          Quick Link to Existing Page
+        </Label>
+        <select
+          className="w-full h-9 px-3 rounded-md border border-primary/30 text-sm bg-background focus:ring-1 focus:ring-primary focus:outline-none"
+          onChange={(e) => {
+            const p = pages.find(x => x.id === e.target.value);
+            if (p) {
+              setForm(prev => ({
+                ...prev,
+                label: p.title,
+                url: p.slug.startsWith('/') ? p.slug : `/${p.slug}`,
+                isOpenInNew: false
+              }));
+            }
+            e.target.value = ""; // Reset after selection
+          }}
+        >
+          <option value="">— Select a Page to auto-fill —</option>
+          {pages.map(p => <option key={p.id} value={p.id}>{p.title}</option>)}
+        </select>
+        <p className="text-[10px] text-muted-foreground mt-1">Selecting a page will auto-fill the Label and URL below. If the page URL changes later, this link will update automatically.</p>
+      </div>
+
       <div className="grid sm:grid-cols-2 gap-4">
         <div className="space-y-1.5">
           <Label className="text-xs">Label *</Label>
@@ -502,7 +567,7 @@ export function HeaderManager() {
         </CardContent>
       </Card>
 
-      {/* ── Navigation Menu Builder ── */}
+      {/* ── Navigation Header ── */}
       <Card>
         <CardHeader className="pb-3">
           <div className="flex items-center justify-between">
@@ -521,15 +586,17 @@ export function HeaderManager() {
           </div>
         </CardHeader>
         <CardContent className="space-y-3">
-          {/* Edit form */}
-          {editingItem && (
-            <MenuItemForm
-              item={editingItem}
-              parentOptions={topLevelItems}
-              onSave={saveMenuItem}
-              onCancel={() => setEditingItem(null)}
-              isSaving={savingItem}
-            />
+          {/* Edit form for NEW items */}
+          {editingItem && !editingItem.id && (
+            <div className="mb-4 animate-in fade-in slide-in-from-top-2">
+              <MenuItemForm
+                item={editingItem}
+                parentOptions={topLevelItems}
+                onSave={saveMenuItem}
+                onCancel={() => setEditingItem(null)}
+                isSaving={savingItem}
+              />
+            </div>
           )}
 
           {/* Draggable tree */}
@@ -562,6 +629,12 @@ export function HeaderManager() {
                       onEdit={(it) => setEditingItem(it)}
                       onDelete={deleteMenuItem}
                       onAddChild={(pid) => setEditingItem({ menuType: "main", parentId: pid, isVisible: true, isOpenInNew: false })}
+                      editingItem={editingItem}
+                      MenuItemFormRender={MenuItemForm}
+                      savingItem={savingItem}
+                      saveMenuItem={saveMenuItem}
+                      setEditingItem={setEditingItem}
+                      flatMenu={flatMenu}
                     />
                   ))}
                 </div>
@@ -571,39 +644,6 @@ export function HeaderManager() {
           <p className="text-[10px] text-muted-foreground pt-1">
             Drag rows to reorder. Click + on any item to add a submenu entry (2+ levels supported).
           </p>
-        </CardContent>
-      </Card>
-
-      {/* ── CTA Button ── */}
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-base">Call-to-Action Button</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid sm:grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <Label className="text-xs">Button Label</Label>
-              <Input
-                value={form.header_cta_text}
-                onChange={(e) => set("header_cta_text", e.target.value)}
-                placeholder="Join Tanzeem"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label className="text-xs">Button URL</Label>
-              <Input
-                value={form.header_cta_url}
-                onChange={(e) => set("header_cta_url", e.target.value)}
-                placeholder="/join"
-              />
-            </div>
-          </div>
-          <div className="mt-3 p-3 rounded-lg bg-muted/40 text-xs text-muted-foreground">
-            Preview:{" "}
-            <span className="inline-flex items-center gap-1.5 bg-primary text-primary-foreground px-3 py-1 rounded-full text-xs font-semibold ml-1">
-              {form.header_cta_text || "Join Tanzeem"}
-            </span>
-          </div>
         </CardContent>
       </Card>
 

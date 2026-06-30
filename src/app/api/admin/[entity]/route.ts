@@ -21,6 +21,9 @@ import {
     socialPlatforms,
     socialAccounts,
     bookCategories,
+    videoCategories,
+    audioCategories,
+    speakers,
 } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { getCurrentUser } from "@/lib/auth";
@@ -44,6 +47,10 @@ function revalidateEntityPaths(entity: string) {
         } else if (entity === "book-categories" || entity === "books") {
             revalidatePath("/books-by-category");
             revalidatePath("/books");
+        } else if (entity === "videos" || entity === "video-categories" || entity === "speakers") {
+            revalidatePath("/videos");
+            revalidatePath("/videos-by-category");
+            revalidatePath("/videos-by-speakers");
         }
         revalidatePath("/");
     } catch (e) {
@@ -73,6 +80,9 @@ const entityMap: Record<string, any> = {
     "social-platforms": socialPlatforms,
     "social-accounts": socialAccounts,
     "book-categories": bookCategories,
+    "video-categories": videoCategories,
+    "audio-categories": audioCategories,
+    speakers,
 };
 
 const REQUIRED_FIELDS: Record<string, string[]> = {
@@ -94,6 +104,9 @@ const REQUIRED_FIELDS: Record<string, string[]> = {
     "social-platforms": ["name", "slug"],
     "social-accounts": ["title", "url"],
     "book-categories": ["name", "slug"],
+    "video-categories": ["name", "slug"],
+    "audio-categories": ["name", "slug"],
+    speakers: ["name", "slug"],
 };
 
 function parseDateFields(data: any) {
@@ -154,8 +167,11 @@ export async function POST(
     { params }: { params: Promise<{ entity: string }> }
 ) {
     try {
-        const authError = await requireAuth(request);
-        if (authError) return authError;
+        const userError = await requireAuth(request);
+        if (userError) return userError;
+        
+        // Retrieve user to use for authorId
+        const user = await getCurrentUser(request);
 
         const { entity } = await params;
         const table = entityMap[entity];
@@ -176,9 +192,9 @@ export async function POST(
         }
 
         // Validate slug format if present
-        if (data.slug && !/^[a-z0-9-]+$/.test(data.slug)) {
+        if (data.slug && !/^[a-z0-9-/]+$/.test(data.slug)) {
             return NextResponse.json({
-                error: "Slug must contain only lowercase letters, numbers, and hyphens"
+                error: "Slug must contain only lowercase letters, numbers, hyphens, and forward slashes"
             }, { status: 400 });
         }
 
@@ -200,6 +216,11 @@ export async function POST(
             id: crypto.randomUUID(),
             ...parsedData,
         };
+
+        // Add authorId if the table expects it
+        if (entity === "posts" || entity === "audio" || entity === "videos" || entity === "books" || entity === "press-releases" || entity === "audio-books" || entity === "magazines" || entity === "campaigns" || entity === "sermons") {
+            insertData.authorId = user?.id || "system";
+        }
 
         await db.insert(table).values(insertData);
         revalidateEntityPaths(entity);

@@ -110,13 +110,13 @@ function RecentPagesSkeleton() {
 // ─── Top-level stat cards config ─────────────────────────────────────────────
 const TOP_CARDS = [
   { key: "pages" as keyof StatsData, label: "Total Pages", icon: FileText, color: "bg-blue-500/10 text-blue-600", href: "/sitemanager/pages" },
-  { key: "audio" as keyof StatsData, label: "Audio Lectures", icon: Headphones, color: "bg-purple-500/10 text-purple-600", href: "/sitemanager?section=audio" },
-  { key: "videos" as keyof StatsData, label: "Videos", icon: Video, color: "bg-red-500/10 text-red-600", href: "/sitemanager?section=videos" },
-  { key: "books" as keyof StatsData, label: "Books", icon: BookOpen, color: "bg-amber-500/10 text-amber-600", href: "/sitemanager?section=books" },
-  { key: "magazines" as keyof StatsData, label: "Magazines", icon: BookMarked, color: "bg-orange-500/10 text-orange-600", href: "/sitemanager?section=magazines" },
-  { key: "sermons" as keyof StatsData, label: "Sermons", icon: Mic2, color: "bg-teal-500/10 text-teal-600", href: "/sitemanager?section=sermons" },
-  { key: "media" as keyof StatsData, label: "Media Files", icon: Image, color: "bg-violet-500/10 text-violet-600", href: "/sitemanager?section=media" },
-  { key: "unreadMessages" as keyof StatsData, label: "Unread Messages", icon: Mail, color: "bg-rose-500/10 text-rose-600", href: "/sitemanager?section=contact" },
+  { key: "audio" as keyof StatsData, label: "Audio Lectures", icon: Headphones, color: "bg-purple-500/10 text-purple-600", href: "/sitemanager/audio" },
+  { key: "videos" as keyof StatsData, label: "Videos", icon: Video, color: "bg-red-500/10 text-red-600", href: "/sitemanager/videos" },
+  { key: "books" as keyof StatsData, label: "Books", icon: BookOpen, color: "bg-amber-500/10 text-amber-600", href: "/sitemanager/books" },
+  { key: "magazines" as keyof StatsData, label: "Magazines", icon: BookMarked, color: "bg-orange-500/10 text-orange-600", href: "/sitemanager/magazines" },
+  { key: "sermons" as keyof StatsData, label: "Sermons", icon: Mic2, color: "bg-teal-500/10 text-teal-600", href: "/sitemanager/sermons" },
+  { key: "media" as keyof StatsData, label: "Media Files", icon: Image, color: "bg-violet-500/10 text-violet-600", href: "/sitemanager/media" },
+  { key: "unreadMessages" as keyof StatsData, label: "Unread Messages", icon: Mail, color: "bg-rose-500/10 text-rose-600", href: "/sitemanager/contact" },
 ];
 
 // ─── Sub-bar: shows a percentage bar relative to max ─────────────────────────
@@ -287,7 +287,7 @@ export default function DashboardPage() {
         <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">Quick Actions</h2>
         <div className="flex flex-wrap gap-2">
           <Button asChild size="sm"><Link href="/sitemanager/pages"><Plus className="h-4 w-4" />Create New Page</Link></Button>
-          <Button asChild variant="outline" size="sm"><Link href="/sitemanager?section=media"><Upload className="h-4 w-4" />Upload Media</Link></Button>
+          <Button asChild variant="outline" size="sm"><Link href="/sitemanager/media"><Upload className="h-4 w-4" />Upload Media</Link></Button>
           <Button asChild variant="outline" size="sm"><Link href="/sitemanager/header"><Menu className="h-4 w-4" />Manage Menu</Link></Button>
           <Button asChild variant="outline" size="sm"><Link href="/" target="_blank" rel="noopener noreferrer"><Globe className="h-4 w-4" />View Website</Link></Button>
         </div>
@@ -423,7 +423,7 @@ export default function DashboardPage() {
                   <CardTitle className="text-base flex items-center gap-2"><Activity className="h-4 w-4 text-primary" />Recent Activity</CardTitle>
                   <CardDescription className="text-xs mt-0.5">Last 10 admin actions</CardDescription>
                 </div>
-                <Link href="/sitemanager?section=activity" className="text-xs text-primary hover:underline flex items-center gap-0.5">
+                <Link href="/sitemanager/activity" className="text-xs text-primary hover:underline flex items-center gap-0.5">
                   View all <ArrowRight className="h-3 w-3" />
                 </Link>
               </div>

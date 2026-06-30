@@ -1,7 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Pencil, Trash2, Search, ArrowUp, ArrowDown, HelpCircle, Settings2, FileText, Check, AlertCircle } from "lucide-react";
+import {
+  HelpCircle, Settings2, Plus, ArrowUp, ArrowDown,
+  Trash2, GripVertical, Check, ArrowLeft, Search, Eye, Pencil
+} from "lucide-react";
+import { PageActionBar } from "@/components/admin/PageActionBar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -27,6 +31,8 @@ interface PageRecord {
   metaTitle: string;
   metaDescription: string;
   metaKeywords: string;
+  authorName?: string | null;
+  updatedAt?: string;
 }
 
 interface FaqItem {
@@ -54,7 +60,6 @@ const defaultFaqFormData = {
 };
 
 export default function FaqPageEditor({ pageId, initialPageData }: FaqPageEditorProps) {
-  const router = useRouter();
   const { toast } = useToast();
 
   // Page Settings State
@@ -147,6 +152,25 @@ export default function FaqPageEditor({ pageId, initialPageData }: FaqPageEditor
       });
     } finally {
       setIsSavingPage(false);
+    }
+  };
+
+  const handleDuplicate = async () => {
+    try {
+      const res = await fetch("/api/sitemanager/pages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...pageForm, title: `${pageForm.title} (Copy)`, slug: `${pageForm.slug}-copy`, isPublished: false, duplicateFromId: pageId }),
+      });
+      const json = await res.json();
+      if (res.ok) {
+        toast({ title: "Page duplicated." });
+        window.location.href = `/sitemanager/pages/${json.page.id}/edit`;
+      } else {
+        toast({ variant: "destructive", title: json.error ?? "Duplicate failed." });
+      }
+    } catch (e) {
+      toast({ variant: "destructive", title: "Duplicate failed." });
     }
   };
 
@@ -299,33 +323,35 @@ export default function FaqPageEditor({ pageId, initialPageData }: FaqPageEditor
 
   return (
     <div className="space-y-6 max-w-7xl">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground tracking-tight flex items-center gap-2">
-            FAQs Configuration Manager
-          </h1>
-          <p className="text-muted-foreground mt-1">
-            Configure metadata and manage the dynamic list of English/Urdu FAQs.
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          {lastSavedPage && (
-            <span className="text-xs text-muted-foreground flex items-center gap-1">
-              <Check className="h-3.5 w-3.5 text-emerald-500" />
-              Settings Saved {lastSavedPage.toLocaleTimeString()}
-            </span>
-          )}
-          <Button variant="outline" asChild>
-            <a href="/faqs" target="_blank" rel="noopener noreferrer">
-              Preview Page
-            </a>
-          </Button>
-          <Button onClick={() => handleOpenFaqModal()} className="bg-primary text-primary-foreground hover:bg-primary/95">
-            <Plus className="w-4 h-4 mr-2" /> Add FAQ Item
-          </Button>
-        </div>
-      </div>
+      <PageActionBar
+        mode="edit"
+        title={pageForm.title}
+        authorName={initialPageData.authorName}
+        updatedAt={initialPageData.updatedAt}
+        lastSaved={lastSavedPage}
+        previewUrl="/faqs"
+        seoUrl={`/sitemanager/pages/${pageId}/edit/seo`}
+        isPublished={pageForm.isPublished}
+        saving={isSavingPage}
+        onDuplicate={handleDuplicate}
+        onSaveDraft={() => {
+          setPageForm({ ...pageForm, isPublished: false });
+          document.getElementById("hidden-submit-page-btn")?.click();
+        }}
+        onPublish={() => {
+          setPageForm({ ...pageForm, isPublished: true });
+          document.getElementById("hidden-submit-page-btn")?.click();
+        }}
+      >
+        <Button onClick={() => handleOpenFaqModal()} className="bg-primary text-primary-foreground hover:bg-primary/95 ml-2">
+          <Plus className="w-4 h-4 mr-2" /> Add FAQ Item
+        </Button>
+      </PageActionBar>
+      
+      {/* Hidden button for triggering page save since the action bar is outside the form */}
+      <form onSubmit={handlePageSave} className="hidden">
+        <button id="hidden-submit-page-btn" type="submit"></button>
+      </form>
 
       <Tabs defaultValue="items" className="space-y-6">
         <TabsList className="bg-muted p-1 rounded-lg">

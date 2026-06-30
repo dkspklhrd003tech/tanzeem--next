@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { audio, activityLogs } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth";
@@ -24,7 +25,7 @@ export async function GET(
     });
 
     if (!audioData) {
-      return NextResponse.json({ error: "Audio not found" }, { status: 404 });
+    return NextResponse.json({ error: "Audio not found" }, { status: 404 });
     }
 
     // Increment play count
@@ -51,7 +52,8 @@ export async function PUT(
     const user = await getCurrentUser(request);
 
     if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      revalidatePath("/", "layout");
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { id } = await params;
@@ -62,7 +64,8 @@ export async function PUT(
     });
 
     if (!existingAudio) {
-      return NextResponse.json({ error: "Audio not found" }, { status: 404 });
+      revalidatePath("/", "layout");
+    return NextResponse.json({ error: "Audio not found" }, { status: 404 });
     }
 
     // Check if new slug conflicts
@@ -72,7 +75,8 @@ export async function PUT(
       });
 
       if (slugConflict) {
-        return NextResponse.json(
+        revalidatePath("/", "layout");
+    return NextResponse.json(
           { error: "An audio file with this slug already exists" },
           { status: 400 }
         );
@@ -115,9 +119,11 @@ export async function PUT(
       details: JSON.stringify({ title: updatedAudio?.title }),
     });
 
+    revalidatePath("/", "layout");
     return NextResponse.json({ audio: updatedAudio });
   } catch (error) {
     console.error("Update audio error:", error);
+    revalidatePath("/", "layout");
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
@@ -134,7 +140,8 @@ export async function DELETE(
     const user = await getCurrentUser(request);
 
     if (!user) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      revalidatePath("/", "layout");
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { id } = await params;
@@ -144,7 +151,8 @@ export async function DELETE(
     });
 
     if (!existingAudio) {
-      return NextResponse.json({ error: "Audio not found" }, { status: 404 });
+      revalidatePath("/", "layout");
+    return NextResponse.json({ error: "Audio not found" }, { status: 404 });
     }
 
     await db.delete(audio).where(eq(audio.id, id));
@@ -158,12 +166,15 @@ export async function DELETE(
       details: JSON.stringify({ title: existingAudio.title }),
     });
 
+    revalidatePath("/", "layout");
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Delete audio error:", error);
+    revalidatePath("/", "layout");
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
     );
   }
 }
+

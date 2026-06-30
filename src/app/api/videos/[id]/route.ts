@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { videos, activityLogs } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth";
@@ -15,12 +16,12 @@ export async function GET(
             with: { category: true, speaker: true, author: { columns: { id: true, name: true } } },
         });
 
-        if (!video) return NextResponse.json({ error: "Video not found" }, { status: 404 });
+    return NextResponse.json({ error: "Video not found" }, { status: 404 });
 
-        return NextResponse.json({ video });
+    return NextResponse.json({ video });
     } catch (error) {
         console.error("Get video error:", error);
-        return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
 }
 
@@ -30,7 +31,8 @@ export async function PUT(
 ) {
     try {
         const user = await getCurrentUser(request);
-        if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        if (!user) revalidatePath("/", "layout");
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
         const resolvedParams = await params;
         const data = await request.json();
@@ -39,7 +41,8 @@ export async function PUT(
             where: eq(videos.id, resolvedParams.id),
         });
 
-        if (!existing) return NextResponse.json({ error: "Video not found" }, { status: 404 });
+        if (!existing) revalidatePath("/", "layout");
+    return NextResponse.json({ error: "Video not found" }, { status: 404 });
 
         await db.update(videos).set({
             title: data.title ?? existing.title,
@@ -67,10 +70,12 @@ export async function PUT(
             details: JSON.stringify({ title: data.title || existing.title }),
         });
 
-        return NextResponse.json({ message: "Video updated successfully" });
+        revalidatePath("/", "layout");
+    return NextResponse.json({ message: "Video updated successfully" });
     } catch (error) {
         console.error("Update video error:", error);
-        return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+        revalidatePath("/", "layout");
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
 }
 
@@ -80,14 +85,16 @@ export async function DELETE(
 ) {
     try {
         const user = await getCurrentUser(request);
-        if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        if (!user) revalidatePath("/", "layout");
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
         const resolvedParams = await params;
         const existing = await db.query.videos.findFirst({
             where: eq(videos.id, resolvedParams.id),
         });
 
-        if (!existing) return NextResponse.json({ error: "Video not found" }, { status: 404 });
+        if (!existing) revalidatePath("/", "layout");
+    return NextResponse.json({ error: "Video not found" }, { status: 404 });
 
         await db.delete(videos).where(eq(videos.id, resolvedParams.id));
 
@@ -100,9 +107,12 @@ export async function DELETE(
             details: JSON.stringify({ title: existing.title }),
         });
 
-        return NextResponse.json({ message: "Video deleted successfully" });
+        revalidatePath("/", "layout");
+    return NextResponse.json({ message: "Video deleted successfully" });
     } catch (error) {
         console.error("Delete video error:", error);
-        return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+        revalidatePath("/", "layout");
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
 }
+

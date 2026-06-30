@@ -31,6 +31,11 @@ import {
   Box,
   Hash,
   MapPin,
+  Image as ImageIcon,
+  Download,
+  Heart,
+  HelpCircle,
+  Share2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -154,6 +159,42 @@ const menuItems: any[] = [
             href: "/sitemanager?section=banner",
           },
         ],
+      },
+    ],
+  },
+  {
+    title: "Additional Tools",
+    icon: Box,
+    items: [
+      {
+        title: "Galleries",
+        icon: ImageIcon,
+        href: "/sitemanager?section=galleries",
+      },
+      {
+        title: "Downloads",
+        icon: Download,
+        href: "/sitemanager?section=downloads",
+      },
+      {
+        title: "Donations",
+        icon: Heart,
+        href: "/sitemanager?section=donations",
+      },
+      {
+        title: "FAQs",
+        icon: HelpCircle,
+        href: "/sitemanager?section=faqs",
+      },
+      {
+        title: "Users",
+        icon: Users,
+        href: "/sitemanager?section=users",
+      },
+      {
+        title: "Social Media",
+        icon: Share2,
+        href: "/sitemanager?section=social-media",
       },
     ],
   }

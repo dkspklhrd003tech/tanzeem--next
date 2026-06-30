@@ -6,6 +6,7 @@ import {
   Settings2, Check, AlertCircle, UploadCloud, Loader2, ArrowLeft,
   ExternalLink, Sparkles
 } from "lucide-react";
+import { PageActionBar } from "@/components/admin/PageActionBar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -17,6 +18,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { ImageUploader } from "@/components/admin/ImageUploader";
 
@@ -336,6 +338,25 @@ export default function AudioBooksPageEditor({ pageId, initialPageData }: AudioB
     }
   };
 
+  const handleDuplicate = async () => {
+    try {
+      const res = await fetch("/api/sitemanager/pages", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...pageForm, title: `${pageForm.title} (Copy)`, slug: `${pageForm.slug}-copy`, isPublished: false, duplicateFromId: pageId }),
+      });
+      const json = await res.json();
+      if (res.ok) {
+        toast({ title: "Page duplicated." });
+        window.location.href = `/sitemanager/pages/${json.page.id}/edit`;
+      } else {
+        toast({ variant: "destructive", title: json.error ?? "Duplicate failed." });
+      }
+    } catch (e) {
+      toast({ variant: "destructive", title: "Duplicate failed." });
+    }
+  };
+
   // Drag over / Drag leave handlers
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -605,33 +626,35 @@ export default function AudioBooksPageEditor({ pageId, initialPageData }: AudioB
 
   return (
     <div className="space-y-6 max-w-7xl">
-      {/* Header section */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground tracking-tight flex items-center gap-2">
-            Audio Books Manager
-          </h1>
-          <p className="text-muted-foreground mt-1">
-            Reorder cards, manage metadata, and upload MP3 Statements.
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          {lastSavedPage && (
-            <span className="text-xs text-muted-foreground flex items-center gap-1">
-              <Check className="h-3.5 w-3.5 text-emerald-500" />
-              Settings Saved {lastSavedPage.toLocaleTimeString()}
-            </span>
-          )}
-          <Button variant="outline" asChild>
-            <a href="/audio-books" target="_blank" rel="noopener noreferrer">
-              Preview Page
-            </a>
-          </Button>
-          <Button onClick={handleOpenAddModal} className="bg-primary text-primary-foreground hover:bg-primary/95">
-            <Plus className="w-4 h-4 mr-2" /> Add Release
-          </Button>
-        </div>
-      </div>
+      <PageActionBar
+        mode="edit"
+        title={pageForm.title}
+        authorName={undefined}
+        updatedAt={undefined}
+        lastSaved={lastSavedPage}
+        previewUrl="/audio-books"
+        seoUrl={`/sitemanager/pages/${pageId}/edit/seo`}
+        isPublished={pageForm.isPublished}
+        saving={isSavingPage}
+        onDuplicate={handleDuplicate}
+        onSaveDraft={() => {
+          setPageForm({ ...pageForm, isPublished: false });
+          document.getElementById("hidden-submit-page-btn")?.click();
+        }}
+        onPublish={() => {
+          setPageForm({ ...pageForm, isPublished: true });
+          document.getElementById("hidden-submit-page-btn")?.click();
+        }}
+      >
+        <Button onClick={handleOpenAddModal} className="ml-2 bg-primary text-primary-foreground hover:bg-primary/95">
+          <Plus className="w-4 h-4 mr-2" /> Add Audio Book
+        </Button>
+      </PageActionBar>
+
+      {/* Hidden form trigger for page save */}
+      <form onSubmit={handlePageSave} className="hidden">
+        <button id="hidden-submit-page-btn" type="submit"></button>
+      </form>
 
       <Tabs defaultValue="list" className="space-y-6">
         <TabsList className="bg-muted p-1 rounded-lg">

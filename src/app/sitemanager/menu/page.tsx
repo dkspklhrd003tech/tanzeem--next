@@ -24,34 +24,34 @@ import { buildTree, flattenTree, type MenuItem } from "@/components/sitemanager/
 type Location = "header" | "footer" | "social";
 
 const LOCATIONS: { id: Location; label: string; desc: string }[] = [
-  { id: "header", label: "Header Menu",  desc: "Primary navigation shown in the site header" },
-  { id: "footer", label: "Footer Menu",  desc: "Quick links shown in the site footer" },
+  { id: "header", label: "Header Menu", desc: "Primary navigation shown in the site header" },
+  { id: "footer", label: "Footer Menu", desc: "Quick links shown in the site footer" },
   { id: "social", label: "Social Links", desc: "Social media icons in the footer" },
 ];
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 export default function MenuBuilderPage() {
   const { toast } = useToast();
-  const [location, setLocation]     = useState<Location>("header");
-  const [flatItems, setFlatItems]   = useState<MenuItem[]>([]);
-  const [loading, setLoading]       = useState(true);
-  const [saving, setSaving]         = useState(false);
-  const [saved, setSaved]           = useState(false);
-  const [view, setView]             = useState<"build" | "preview">("build");
-  const [resetOpen, setResetOpen]   = useState(false);
+  const [location, setLocation] = useState<Location>("header");
+  const [flatItems, setFlatItems] = useState<MenuItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [view, setView] = useState<"build" | "preview">("build");
+  const [resetOpen, setResetOpen] = useState(false);
 
   // Left sidebar
-  const [pageSearch,   setPageSearch]   = useState("");
-  const [publishedPages, setPublished]  = useState<{ id: string; title: string; slug: string }[]>([]);
+  const [pageSearch, setPageSearch] = useState("");
+  const [publishedPages, setPublished] = useState<{ id: string; title: string; slug: string }[]>([]);
 
   // Modal
-  const [modalOpen,   setModalOpen]   = useState(false);
-  const [editTarget,  setEditTarget]  = useState<MenuItem | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editTarget, setEditTarget] = useState<MenuItem | null>(null);
   const [modalParent, setModalParent] = useState<string | null>(null);
 
   // Custom link form
   const [customLabel, setCustomLabel] = useState("");
-  const [customUrl,   setCustomUrl]   = useState("");
+  const [customUrl, setCustomUrl] = useState("");
 
   // ── Load items ──────────────────────────────────────────────────────────────
   const load = useCallback(async (loc: Location) => {
@@ -74,7 +74,7 @@ export default function MenuBuilderPage() {
     fetch("/api/sitemanager/pages?limit=200&sort=az&status=published")
       .then(r => r.ok ? r.json() : null)
       .then(d => setPublished(d?.pages ?? []))
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   // ── Tree derived from flat ──────────────────────────────────────────────────
@@ -124,14 +124,14 @@ export default function MenuBuilderPage() {
   // ── Add page from sidebar ───────────────────────────────────────────────────
   const addPage = (page: { title: string; slug: string }) => {
     const newItem: MenuItem = {
-      id:          `new-${crypto.randomUUID()}`,
-      label:       page.title,
-      url:         `/${page.slug}`,
-      parentId:    null,
-      order:       flatItems.filter(i => !i.parentId).length,
+      id: `new-${crypto.randomUUID()}`,
+      label: page.title,
+      url: `/${page.slug}`,
+      parentId: null,
+      order: flatItems.filter(i => !i.parentId).length,
       isOpenInNew: false,
-      isVisible:   true,
-      menuType:    location,
+      isVisible: true,
+      menuType: location,
     };
     setFlatItems(prev => [...prev, newItem]);
     setSaved(false);
@@ -142,14 +142,14 @@ export default function MenuBuilderPage() {
   const addCustomLink = () => {
     if (!customLabel.trim()) return;
     const newItem: MenuItem = {
-      id:          `new-${crypto.randomUUID()}`,
-      label:       customLabel.trim(),
-      url:         customUrl.trim() || null,
-      parentId:    null,
-      order:       flatItems.filter(i => !i.parentId).length,
+      id: `new-${crypto.randomUUID()}`,
+      label: customLabel.trim(),
+      url: customUrl.trim() || null,
+      parentId: null,
+      order: flatItems.filter(i => !i.parentId).length,
       isOpenInNew: customUrl.startsWith("http"),
-      isVisible:   true,
-      menuType:    location,
+      isVisible: true,
+      menuType: location,
     };
     setFlatItems(prev => [...prev, newItem]);
     setCustomLabel("");
@@ -167,14 +167,14 @@ export default function MenuBuilderPage() {
     } else {
       // Add new
       const newItem: MenuItem = {
-        id:          `new-${crypto.randomUUID()}`,
-        label:       data.label!,
-        url:         data.url ?? null,
-        parentId:    modalParent ?? null,
-        order:       flatItems.filter(i => i.parentId === (modalParent ?? null)).length,
+        id: `new-${crypto.randomUUID()}`,
+        label: data.label!,
+        url: data.url ?? null,
+        parentId: modalParent ?? null,
+        order: flatItems.filter(i => i.parentId === (modalParent ?? null)).length,
         isOpenInNew: data.isOpenInNew ?? false,
-        isVisible:   data.isVisible ?? true,
-        menuType:    location,
+        isVisible: data.isVisible ?? true,
+        menuType: location,
       };
       setFlatItems(prev => [...prev, newItem]);
     }
@@ -198,7 +198,7 @@ export default function MenuBuilderPage() {
       {/* ── Header ── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-xl font-bold">Menu Builder</h1>
+          <h1 className="text-xl font-bold">Header</h1>
           <p className="text-sm text-muted-foreground mt-0.5">Drag items to reorder · Nest up to 3 levels deep</p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">

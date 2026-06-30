@@ -1,6 +1,6 @@
 export default function QuranicCirclesLoading() {
   return (
-    <div className="container max-w-5xl mx-auto px-4 py-10">
+    <div className="container max-w-5xl mx-auto py-10">
       <div className="mb-8 space-y-2">
         <div className="h-3 w-32 bg-muted rounded-full animate-pulse" />
         <div className="h-9 w-80 bg-muted rounded-lg animate-pulse" />

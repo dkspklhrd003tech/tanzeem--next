@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { videos, activityLogs } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth";
@@ -60,7 +61,9 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const user = await getCurrentUser(request);
-    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     const data = await request.json();
     if (!data.title || !data.slug) {
@@ -80,6 +83,9 @@ export async function POST(request: NextRequest) {
       duration: data.duration,
       categoryId: data.categoryId,
       speakerId: data.speakerId,
+      episodeNumber: data.episodeNumber,
+      eventLocation: data.eventLocation,
+      tags: data.tags,
       isPublished: data.isPublished ?? false,
       isFeatured: data.isFeatured ?? false,
       metaTitle: data.metaTitle,
@@ -102,22 +108,26 @@ export async function POST(request: NextRequest) {
       details: JSON.stringify({ title: data.title }),
     });
 
+    revalidatePath("/", "layout");
     return NextResponse.json({ video: newVideo }, { status: 201 });
   } catch (error) {
     console.error("Create video error:", error);
+    revalidatePath("/", "layout");
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
 export async function PATCH(request: NextRequest) {
     try {
         const user = await getCurrentUser(request);
-        if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        if (!user) revalidatePath("/", "layout");
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
         const body = await request.json();
         const { orders } = body; // Expected: [{ id: string, order: number }, ...]
 
         if (!orders || !Array.isArray(orders)) {
-            return NextResponse.json({ error: "Invalid orders data" }, { status: 400 });
+            revalidatePath("/", "layout");
+    return NextResponse.json({ error: "Invalid orders data" }, { status: 400 });
         }
 
         // Multiple updates in a transaction
@@ -127,9 +137,12 @@ export async function PATCH(request: NextRequest) {
             }
         });
 
-        return NextResponse.json({ success: true, message: "Videos reordered successfully" });
+        revalidatePath("/", "layout");
+    return NextResponse.json({ success: true, message: "Videos reordered successfully" });
     } catch (error) {
         console.error("Patch videos error:", error);
-        return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+        revalidatePath("/", "layout");
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
 }
+

@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import {
   Plus, Search, Filter, Trash2, Globe2, EyeOff, Edit2,
   Eye, Copy, MoreHorizontal, CheckSquare, Square,
-  RefreshCw, X, Bell, LayoutGrid, Upload, Image as ImageIcon, AlertCircle
+  RefreshCw, X, Bell, LayoutGrid, Upload, Image as ImageIcon, AlertCircle, LayoutList
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -173,6 +173,7 @@ export default function PagesListPage() {
   const [bulkOp, setBulkOp] = useState<string | null>(null);
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [showNotification, setShowNotification] = useState(true);
+  const [viewMode, setViewMode] = useState<"list" | "grid">("list");
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -256,7 +257,7 @@ export default function PagesListPage() {
   }, [router, toast]);
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto p-6 min-h-screen text-slate-100 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 rounded-2xl border border-slate-900/60 shadow-2xl relative overflow-hidden">
+    <div className="space-y-6 max-w-7xl mx-auto p-6 min-h-screen text-slate-200 bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 rounded-2xl border border-slate-900/60 shadow-2xl relative overflow-hidden">
       {/* Ambient decorative glowing spots */}
       <div className="absolute top-[-10%] left-[-10%] w-[45%] h-[45%] bg-[#0d5844]/8 rounded-full blur-[140px] pointer-events-none" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[45%] h-[45%] bg-indigo-950/20 rounded-full blur-[140px] pointer-events-none" />
@@ -415,7 +416,7 @@ export default function PagesListPage() {
             placeholder="Search pages by title or slug…"
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="pl-10 pr-9 bg-slate-950/60 border-slate-800/80 text-slate-100 placeholder:text-slate-500 rounded-xl focus:border-emerald-500/40 focus:ring-emerald-500/10 transition-all duration-300 shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]"
+            className="pl-10 pr-9 bg-slate-950/60 border-slate-800/80 text-slate-200 placeholder:text-slate-500 rounded-xl focus:border-emerald-500/40 focus:ring-emerald-500/10 transition-all duration-300 shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]"
           />
           {search && (
             <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300">
@@ -447,6 +448,14 @@ export default function PagesListPage() {
             <SelectItem value="za" className="focus:bg-primary focus:text-emerald-300 font-medium">Title Z–A</SelectItem>
           </SelectContent>
         </Select>
+        <div className="flex bg-slate-950/60 border border-slate-800/80 rounded-xl p-1">
+          <Button variant="ghost" size="icon" onClick={() => setViewMode("list")} className={cn("h-8 w-8 rounded-lg transition-all", viewMode === "list" ? "bg-slate-800 text-emerald-400" : "text-slate-500 hover:text-slate-300")}>
+            <LayoutList className="h-4 w-4" />
+          </Button>
+          <Button variant="ghost" size="icon" onClick={() => setViewMode("grid")} className={cn("h-8 w-8 rounded-lg transition-all", viewMode === "grid" ? "bg-slate-800 text-emerald-400" : "text-slate-500 hover:text-slate-300")}>
+            <LayoutGrid className="h-4 w-4" />
+          </Button>
+        </div>
         <Button variant="ghost" size="icon" onClick={() => mutate()} className="bg-slate-950/60 border border-slate-800/80 hover:bg-slate-900/60 hover:text-emerald-400 rounded-xl text-slate-400 p-2 shrink-0 transition-all duration-300">
           <RefreshCw className="h-4 w-4" />
         </Button>
@@ -528,166 +537,274 @@ export default function PagesListPage() {
               </div>
 
               {/* Rows */}
-              <div className="divide-y divide-slate-900 min-w-[700px]">
-                {rows.map((row: any) => {
-                  const isSelected = selected.has(row.id);
-                  return (
-                    <div
-                      key={row.id}
-                      className={cn(
-                        "flex items-center gap-4 px-6 py-3.5 transition-all duration-300 group border-l-2 border-transparent",
-                        isSelected
-                          ? "bg-emerald-500/5 border-l-emerald-500"
-                          : "hover:bg-slate-900/30 hover:border-l-slate-800"
-                      )}
-                    >
-                      <button onClick={() => toggleOne(row.id)} className="transition-transform active:scale-95">
-                        {isSelected ? (
-                          <CheckSquare className="h-4.5 w-4.5 text-emerald-400 filter drop-shadow-[0_0_4px_rgba(52,211,153,0.3)]" />
-                        ) : (
-                          <Square className="h-4.5 w-4.5 text-slate-600 group-hover:text-slate-400" />
+              {viewMode === "list" ? (
+                <div className="divide-y divide-slate-900 min-w-[700px]">
+                  {rows.map((row: any) => {
+                    const isSelected = selected.has(row.id);
+                    return (
+                      <div
+                        key={row.id}
+                        className={cn(
+                          "flex items-center gap-4 px-6 py-3.5 transition-all duration-300 group border-l-2 border-transparent",
+                          isSelected
+                            ? "bg-emerald-500/5 border-l-emerald-500"
+                            : "hover:bg-slate-900/30 hover:border-l-slate-800"
                         )}
-                      </button>
-
-                      <div className="flex-1 min-w-0">
-                        <Link
-                          href={`/sitemanager/pages/${row.id}/edit`}
-                          className="text-sm font-bold text-slate-100 hover:text-emerald-400 transition-colors truncate block filter drop-shadow-sm"
-                        >
-                          {row.title}
-                        </Link>
-                        {row.authorName && (
-                          <p className="text-[10px] text-slate-500/80 mt-0.5 font-medium">by {row.authorName}</p>
-                        )}
-                      </div>
-
-                      <div className="hidden sm:flex items-center gap-1.5 w-60">
-                        <span className="text-xs text-slate-400 font-mono truncate select-all">/{row.slug}</span>
-                        <button
-                          onClick={() => copySlug(row.slug, toast)}
-                          className="opacity-0 group-hover:opacity-100 transition-opacity text-slate-500 hover:text-slate-300 p-0.5 hover:bg-slate-800/60 rounded"
-                          title="Copy Slug"
-                        >
-                          <Copy className="h-3 w-3" />
+                      >
+                        <button onClick={() => toggleOne(row.id)} className="transition-transform active:scale-95">
+                          {isSelected ? (
+                            <CheckSquare className="h-4.5 w-4.5 text-emerald-400 filter drop-shadow-[0_0_4px_rgba(52,211,153,0.3)]" />
+                          ) : (
+                            <Square className="h-4.5 w-4.5 text-slate-600 group-hover:text-slate-400" />
+                          )}
                         </button>
-                      </div>
 
-                      {/* Interactive Status Selector Dropdown */}
-                      <div className="w-32 flex justify-center">
-                        <Select
-                          value={row.isPublished ? "active" : "draft"}
-                          onValueChange={async (newVal) => {
-                            const active = newVal === "active";
-                            try {
-                              const res = await fetch(`/api/sitemanager/pages/${row.id}`, {
-                                method: "PUT",
-                                headers: { "Content-Type": "application/json" },
-                                body: JSON.stringify({ isPublished: active })
-                              });
-                              if (res.ok) {
-                                toast({
-                                  title: active ? "Page Status: Active" : "Page Status: Draft",
-                                  description: `"${row.title}" is now ${active ? "visible" : "hidden (draft)"} on the frontend.`
-                                });
-                                mutate();
-                              } else {
-                                toast({ variant: "destructive", title: "Error", description: "Failed to update page status." });
-                              }
-                            } catch {
-                              toast({ variant: "destructive", title: "Network error. Please try again." });
-                            }
-                          }}
-                        >
-                          <SelectTrigger size="xs" className={cn(
-                            "h-6 w-28 text-[10px] font-black uppercase rounded-full border-none focus:ring-0 focus:ring-offset-0 px-2 cursor-pointer transition-all duration-300 select-none",
-                            row.isPublished
-                              ? "bg-primary text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/20 shadow-[0_0_12px_rgba(16,185,129,0.1)]"
-                              : "bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 border border-amber-500/20 shadow-[0_0_12px_rgba(245,158,11,0.1)]"
-                          )}>
-                            <SelectValue>
-                              <span className="flex items-center gap-1.5 justify-center w-full">
-                                <span className={cn(
-                                  "w-1.5 h-1.5 rounded-full shrink-0",
-                                  row.isPublished
-                                    ? "bg-emerald-400 shadow-[0_0_6px_rgba(16,185,129,0.8)] animate-pulse"
-                                    : "bg-amber-500 shadow-[0_0_6px_rgba(245,158,11,0.8)] animate-pulse"
-                                )} />
-                                {row.isPublished ? "Active" : "Draft"}
-                              </span>
-                            </SelectValue>
-                          </SelectTrigger>
-                          <SelectContent className="bg-slate-950 border-slate-900 text-slate-100 min-w-[130px] rounded-xl shadow-2xl z-50">
-                            <SelectItem value="active" className="text-[10px] font-black uppercase tracking-wider text-emerald-400 focus:bg-primary focus:text-emerald-300 cursor-pointer py-2">
-                              Active
-                            </SelectItem>
-                            <SelectItem value="draft" className="text-[10px] font-black uppercase tracking-wider text-amber-400 focus:bg-amber-500/10 focus:text-amber-300 cursor-pointer py-2">
-                              Draft (Hide)
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <div className="hidden md:block w-24">
-                        <span className="text-xs text-slate-400 capitalize font-medium">{row.template ?? "default"}</span>
-                      </div>
-
-                      <div className="hidden lg:block w-28">
-                        <span className="text-xs text-slate-500 font-medium">{row.updatedAt ? timeAgo(row.updatedAt) : "—"}</span>
-                      </div>
-
-                      <div className="w-36 flex items-center justify-end gap-1 pr-2">
-                        {/* Edit */}
-                        <Button
-                          asChild
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 text-slate-400 hover:text-emerald-400 hover:bg-primary rounded-lg transition-all duration-200"
-                          title="Edit Page"
-                        >
-                          <Link href={`/sitemanager/pages/${row.id}/edit`}>
-                            <Edit2 className="h-4 w-4" />
+                        <div className="flex-1 min-w-0">
+                          <Link
+                            href={`/sitemanager/pages/${row.id}/edit`}
+                            className="text-sm font-bold text-slate-200 hover:text-emerald-400 transition-colors truncate block filter drop-shadow-sm"
+                          >
+                            {row.title}
                           </Link>
-                        </Button>
+                          {row.authorName && (
+                            <p className="text-[10px] text-slate-500/80 mt-0.5 font-medium">by {row.authorName}</p>
+                          )}
+                        </div>
 
-                        {/* View */}
-                        <Button
-                          asChild
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 text-slate-400 hover:text-indigo-400 hover:bg-indigo-500/10 rounded-lg transition-all duration-200"
-                          title="View Live"
-                        >
-                          <a href={`/${row.slug}`} target="_blank" rel="noopener noreferrer">
-                            <Eye className="h-4 w-4" />
-                          </a>
-                        </Button>
+                        <div className="hidden sm:flex items-center gap-1.5 w-60">
+                          <span className="text-xs text-slate-400 font-mono truncate select-all">/{row.slug}</span>
+                          <button
+                            onClick={() => copySlug(row.slug, toast)}
+                            className="opacity-0 group-hover:opacity-100 transition-opacity text-slate-500 hover:text-slate-300 p-0.5 hover:bg-slate-800/60 rounded"
+                            title="Copy Slug"
+                          >
+                            <Copy className="h-3 w-3" />
+                          </button>
+                        </div>
 
-                        {/* Duplicate */}
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => doDuplicate(row)}
-                          className="h-8 w-8 text-slate-400 hover:text-cyan-400 hover:bg-cyan-500/10 rounded-lg transition-all duration-200"
-                          title="Duplicate Page"
-                        >
-                          <Copy className="h-4 w-4" />
-                        </Button>
+                        {/* Interactive Status Selector Dropdown */}
+                        <div className="w-32 flex justify-center">
+                          <Select
+                            value={row.isPublished ? "active" : "draft"}
+                            onValueChange={async (newVal) => {
+                              const active = newVal === "active";
+                              try {
+                                const res = await fetch(`/api/sitemanager/pages/${row.id}`, {
+                                  method: "PUT",
+                                  headers: { "Content-Type": "application/json" },
+                                  body: JSON.stringify({ isPublished: active })
+                                });
+                                if (res.ok) {
+                                  toast({
+                                    title: active ? "Page Status: Active" : "Page Status: Draft",
+                                    description: `"${row.title}" is now ${active ? "visible" : "hidden (draft)"} on the frontend.`
+                                  });
+                                  mutate();
+                                } else {
+                                  toast({ variant: "destructive", title: "Error", description: "Failed to update page status." });
+                                }
+                              } catch {
+                                toast({ variant: "destructive", title: "Network error. Please try again." });
+                              }
+                            }}
+                          >
+                            <SelectTrigger size="xs" className={cn(
+                              "h-6 w-28 text-[10px] font-black uppercase rounded-full border-none focus:ring-0 focus:ring-offset-0 px-2 cursor-pointer transition-all duration-300 select-none",
+                              row.isPublished
+                                ? "bg-primary text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/20 shadow-[0_0_12px_rgba(16,185,129,0.1)]"
+                                : "bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 border border-amber-500/20 shadow-[0_0_12px_rgba(245,158,11,0.1)]"
+                            )}>
+                              <SelectValue>
+                                <span className="flex items-center gap-1.5 justify-center w-full">
+                                  <span className={cn(
+                                    "w-1.5 h-1.5 rounded-full shrink-0",
+                                    row.isPublished
+                                      ? "bg-emerald-400 shadow-[0_0_6px_rgba(16,185,129,0.8)] animate-pulse"
+                                      : "bg-amber-500 shadow-[0_0_6px_rgba(245,158,11,0.8)] animate-pulse"
+                                  )} />
+                                  {row.isPublished ? "Active" : "Draft"}
+                                </span>
+                              </SelectValue>
+                            </SelectTrigger>
+                            <SelectContent className="bg-slate-950 border-slate-900 text-slate-200 min-w-[130px] rounded-xl shadow-2xl z-50">
+                              <SelectItem value="active" className="text-[10px] font-black uppercase tracking-wider text-emerald-400 focus:bg-primary focus:text-emerald-300 cursor-pointer py-2">
+                                Active
+                              </SelectItem>
+                              <SelectItem value="draft" className="text-[10px] font-black uppercase tracking-wider text-amber-400 focus:bg-amber-500/10 focus:text-amber-300 cursor-pointer py-2">
+                                Draft (Hide)
+                              </SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
 
-                        {/* Delete */}
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => setDeleting(row.id)}
-                          className="h-8 w-8 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all duration-200"
-                          title="Delete Page"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                        <div className="hidden md:block w-24">
+                          <span className="text-xs text-slate-400 capitalize font-medium">{row.template ?? "default"}</span>
+                        </div>
+
+                        <div className="hidden lg:block w-28">
+                          <span className="text-xs text-slate-500 font-medium">{row.updatedAt ? timeAgo(row.updatedAt) : "—"}</span>
+                        </div>
+
+                        <div className="w-36 flex items-center justify-end gap-1 pr-2">
+                          {/* Edit */}
+                          <Button
+                            asChild
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-slate-400 hover:text-emerald-400 hover:bg-primary rounded-lg transition-all duration-200"
+                            title="Edit Page"
+                          >
+                            <Link href={`/sitemanager/pages/${row.id}/edit`}>
+                              <Edit2 className="h-4 w-4" />
+                            </Link>
+                          </Button>
+
+                          {/* View */}
+                          <Button
+                            asChild
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-slate-400 hover:text-indigo-400 hover:bg-indigo-500/10 rounded-lg transition-all duration-200"
+                            title="View Live"
+                          >
+                            <a href={`/${row.slug}`} target="_blank" rel="noopener noreferrer">
+                              <Eye className="h-4 w-4" />
+                            </a>
+                          </Button>
+
+                          {/* Duplicate */}
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => doDuplicate(row)}
+                            className="h-8 w-8 text-slate-400 hover:text-cyan-400 hover:bg-cyan-500/10 rounded-lg transition-all duration-200"
+                            title="Duplicate Page"
+                          >
+                            <Copy className="h-4 w-4" />
+                          </Button>
+
+                          {/* Delete */}
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setDeleting(row.id)}
+                            className="h-8 w-8 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all duration-200"
+                            title="Delete Page"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
-              </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 p-6">
+                  {rows.map((row: any) => {
+                    const isSelected = selected.has(row.id);
+                    return (
+                      <div
+                        key={row.id}
+                        className={cn(
+                          "relative flex flex-col rounded-2xl border p-4 bg-slate-950/40 backdrop-blur-md transition-all duration-300 shadow-sm",
+                          isSelected
+                            ? "border-emerald-500 bg-emerald-500/5 shadow-[0_0_15px_rgba(16,185,129,0.15)]"
+                            : "border-slate-800/80 hover:border-slate-700 hover:bg-slate-900/60"
+                        )}
+                      >
+                        <div className="flex justify-between items-start mb-3">
+                          <button onClick={() => toggleOne(row.id)} className="transition-transform active:scale-95 shrink-0 pt-0.5">
+                            {isSelected ? (
+                              <CheckSquare className="h-5 w-5 text-emerald-400 filter drop-shadow-[0_0_4px_rgba(52,211,153,0.3)]" />
+                            ) : (
+                              <Square className="h-5 w-5 text-slate-600 hover:text-slate-400" />
+                            )}
+                          </button>
+
+                          <Select
+                            value={row.isPublished ? "active" : "draft"}
+                            onValueChange={async (newVal) => {
+                              const active = newVal === "active";
+                              try {
+                                const res = await fetch(`/api/sitemanager/pages/${row.id}`, {
+                                  method: "PUT",
+                                  headers: { "Content-Type": "application/json" },
+                                  body: JSON.stringify({ isPublished: active })
+                                });
+                                if (res.ok) {
+                                  toast({
+                                    title: active ? "Page Status: Active" : "Page Status: Draft",
+                                    description: `"${row.title}" is now ${active ? "visible" : "hidden (draft)"} on the frontend.`
+                                  });
+                                  mutate();
+                                } else {
+                                  toast({ variant: "destructive", title: "Error", description: "Failed to update page status." });
+                                }
+                              } catch {
+                                toast({ variant: "destructive", title: "Network error. Please try again." });
+                              }
+                            }}
+                          >
+                            <SelectTrigger size="xs" className={cn(
+                              "h-6 w-24 text-[9px] font-black uppercase rounded-full border-none focus:ring-0 focus:ring-offset-0 px-2 cursor-pointer transition-all duration-300 select-none",
+                              row.isPublished
+                                ? "bg-primary text-emerald-400 hover:bg-emerald-500/20 border border-emerald-500/20 shadow-[0_0_12px_rgba(16,185,129,0.1)]"
+                                : "bg-amber-500/10 text-amber-500 hover:bg-amber-500/20 border border-amber-500/20 shadow-[0_0_12px_rgba(245,158,11,0.1)]"
+                            )}>
+                              <SelectValue>
+                                <span className="flex items-center gap-1.5 justify-center w-full">
+                                  {row.isPublished ? "Active" : "Draft"}
+                                </span>
+                              </SelectValue>
+                            </SelectTrigger>
+                            <SelectContent className="bg-slate-950 border-slate-900 text-slate-200 min-w-[130px] rounded-xl shadow-2xl z-50">
+                              <SelectItem value="active" className="text-[10px] font-black uppercase tracking-wider text-emerald-400 focus:bg-primary focus:text-emerald-300 cursor-pointer py-2">
+                                Active
+                              </SelectItem>
+                              <SelectItem value="draft" className="text-[10px] font-black uppercase tracking-wider text-amber-400 focus:bg-amber-500/10 focus:text-amber-300 cursor-pointer py-2">
+                                Draft (Hide)
+                              </SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div className="flex-1">
+                          <Link href={`/sitemanager/pages/${row.id}/edit`} className="font-bold text-slate-200 hover:text-emerald-400 transition-colors line-clamp-2 mb-1 filter drop-shadow-sm">
+                            {row.title}
+                          </Link>
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-[11px] text-slate-400 font-mono truncate bg-slate-950/60 px-1.5 py-0.5 rounded">/{row.slug}</span>
+                            <button onClick={() => copySlug(row.slug, toast)} className="text-slate-500 hover:text-slate-300 p-0.5 hover:bg-slate-800/60 rounded transition-colors" title="Copy Slug">
+                              <Copy className="h-3 w-3" />
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="mt-4 pt-3 border-t border-slate-800/60 flex items-center justify-between text-[11px]">
+                          <div className="flex flex-col text-slate-500 font-medium">
+                            <span>{row.template ?? "default"}</span>
+                            <span>{row.updatedAt ? timeAgo(row.updatedAt) : "—"}</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Button asChild variant="ghost" size="icon" className="h-7 w-7 text-slate-400 hover:text-emerald-400 hover:bg-primary rounded-lg transition-all" title="Edit Page">
+                              <Link href={`/sitemanager/pages/${row.id}/edit`}><Edit2 className="h-3.5 w-3.5" /></Link>
+                            </Button>
+                            <Button asChild variant="ghost" size="icon" className="h-7 w-7 text-slate-400 hover:text-indigo-400 hover:bg-indigo-500/10 rounded-lg transition-all" title="View Live">
+                              <a href={`/${row.slug}`} target="_blank" rel="noopener noreferrer"><Eye className="h-3.5 w-3.5" /></a>
+                            </Button>
+                            <Button variant="ghost" size="icon" onClick={() => doDuplicate(row)} className="h-7 w-7 text-slate-400 hover:text-cyan-400 hover:bg-cyan-500/10 rounded-lg transition-all" title="Duplicate Page">
+                              <Copy className="h-3 w-3" />
+                            </Button>
+                            <Button variant="ghost" size="icon" onClick={() => setDeleting(row.id)} className="h-7 w-7 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all" title="Delete Page">
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           )}
         </CardContent>

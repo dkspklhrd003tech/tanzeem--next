@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { pages, activityLogs, users } from "@/db/schema";
+import { pages, activityLogs, users, pageSections } from "@/db/schema";
 import { eq, or, like, desc, asc, and, not, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 
@@ -166,6 +166,21 @@ export async function POST(request: NextRequest) {
       details:    `Created page "${data.title.trim()}"`,
       createdAt:  new Date(),
     });
+
+    // Copy sections if duplicating
+    if (data.duplicateFromId) {
+      const oldSections = await db.select().from(pageSections).where(eq(pageSections.pageId, data.duplicateFromId));
+      if (oldSections.length > 0) {
+        const newSections = oldSections.map(s => ({
+          ...s,
+          id: crypto.randomUUID(),
+          pageId: pageId,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        }));
+        await db.insert(pageSections).values(newSections);
+      }
+    }
 
     const slug = data.slug.trim();
     try {
