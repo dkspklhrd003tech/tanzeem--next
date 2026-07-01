@@ -113,14 +113,14 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
 
                     {/* Text Content */}
                     <div className="flex-1 flex flex-col justify-center relative z-10">
-                        <p className="text-white mb-2 text-xs">About Us</p>
+                        <p className="text-[#222222] mb-2 text-xs">About Us</p>
                         <h2
                             id="about-heading"
                             className="text-2xl md:text-3xl font-bold text-white mb-3"
                         >
                             {aboutTitle}
                         </h2>
-                        <p className="text-white leading-relaxed text-sm md:text-base mb-6 max-w-3xl">
+                        <p className="text-[#222222] leading-relaxed text-sm md:text-base mb-6 max-w-3xl">
                             {aboutDesc}
                         </p>
                         <div>
