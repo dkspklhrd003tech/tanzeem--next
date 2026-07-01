@@ -83,17 +83,17 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
     }, []);
 
     return (
-        <section ref={sectionRef} aria-labelledby="about-heading" className="relative py-20 bg-background overflow-hidden perspective-1000">
+        <section ref={sectionRef} aria-labelledby="about-heading" className="relative py-20 overflow-hidden perspective-1000">
             <CinematicBackground />
-            <div className="container max-w-7xl mx-auto relative z-10">
+            <div className="max-w-7xl mx-auto relative z-10">
 
                 {/* ── About Card ── */}
                 <div
                     ref={aboutRef}
-                    className="relative bg-gradient-to-br from-[#0a4233] to-[#04241b] border border-primary/20 rounded-2xl mb-20 p-8 md:p-12 flex flex-col md:flex-row gap-8 md:gap-12 items-center md:items-start shadow-2xl overflow-hidden group"
+                    className="relative border border-primary/20 rounded-2xl mb-20 flex flex-col md:flex-row gap-8 md:gap-12 items-center md:items-start overflow-hidden"
                 >
                     <div className="absolute inset-0 bg-[url('/noise.png')] opacity-20 mix-blend-overlay pointer-events-none" />
-                    <div className="absolute inset-0 bg-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-1000 pointer-events-none" />
+                    <div className="absolute inset-0 bg-primary/10 transition-opacity duration-1000 pointer-events-none" />
                     {/* Logo Panel */}
                     <motion.div
                         whileHover={{ scale: 1.05, rotateY: 10 }}
@@ -127,7 +127,7 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
                             <Link
                                 href={btnLink}
                                 className={cn(
-                                    "inline-flex items-center gap-3 border border-primary/50 bg-primary/10 text-primary-foreground backdrop-blur-md",
+                                    "inline-flex items-center gap-3 border border-primary/50 bg-primary text-primary-foreground backdrop-blur-md",
                                     "px-8 py-3.5 rounded-full text-sm font-bold tracking-wide uppercase",
                                     "hover:bg-primary hover:border-primary transition-all duration-500 hover:shadow-[0_0_30px_rgba(16,185,129,0.3)]",
                                     "focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2 group/btn"
