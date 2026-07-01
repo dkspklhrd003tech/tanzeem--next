@@ -207,8 +207,9 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
                                     <Link
                                         href={`/books/${book.id}`}
                                         className={cn(
-                                            "inline-flex items-center justify-center gap-2 w-[260px] border border-primary/20 bg-card backdrop-blur-sm px-6 py-3.5 rounded-full text-xs font-bold uppercase tracking-widest shadow-sm hover:shadow-primary/20",
-                                            "hover:bg-primary hover:text-primary-foreground hover:border-primary transition-all duration-500 group/btn",
+                                            "group inline-flex items-center gap-3 border border-primary/50 bg-primary text-primary-foreground backdrop-blur-md",
+                                            "px-8 py-3.5 rounded-full text-sm font-bold tracking-wide uppercase shadow-lg",
+                                            "hover:bg-primary hover:border-primary transition-all duration-500 hover:shadow-[0_0_30px_rgba(16,185,129,0.3)]",
                                             "focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
                                         )}
                                     >

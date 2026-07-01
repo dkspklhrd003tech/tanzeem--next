@@ -194,7 +194,7 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
                                         <Link
                                             href={`/${leader.slug}`}
                                             className={cn(
-                                                "inline-flex items-center gap-2 bg-transparent border border-[#222222] text-[#222222]",
+                                                "inline-flex items-center gap-2 bg-transparent border-1 border-![#222222] text-[#222222]",
                                                 "px-4 py-2 rounded-full text-xs font-bold",
                                                 "hover:bg-primary hover:text-primary-foreground",
                                                 "transition-all duration-200",

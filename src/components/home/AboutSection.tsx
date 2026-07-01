@@ -34,7 +34,9 @@ export function AboutSection() {
           className="flex items-center justify-between mb-8"
         >
           <div>
-            <p className="text-primary text-sm font-semibold tracking-wider uppercase mb-1">— Tanzeem Spotlight</p>
+            <p className="!text-center w-full text-primary text-sm font-semibold tracking-wider uppercase mb-1">
+              — Tanzeem Spotlight
+            </p>
             <h2 className="text-2xl md:text-3xl font-bold text-foreground">
               Programs & Initiatives
             </h2>

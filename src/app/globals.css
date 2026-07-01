@@ -257,9 +257,6 @@
 }
 
 /* ─── Base Styles ─────────────────────────────────────────────────────────── */
-* {
-  border-color: var(--border);
-}
 
 body {
   background-color: var(--background);
@@ -334,7 +331,7 @@ span,
 p {
   font-family: Helvetica, Arial, sans-serif;
   direction: ltr;
-  text-align: left;
+  /* text-align: left; */
 }
 
 /* Enforce Jameel Noori Nastaleeq, Noto Nastaliq Urdu and RTL layout for Urdu/Arabic text */
