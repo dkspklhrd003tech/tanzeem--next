@@ -248,13 +248,18 @@ export default async function DynamicPage({ params }: PageProps) {
 
   if (!page || !page.isPublished) notFound();
 
-  const sections = await db.query.pageSections.findMany({
-    where: and(
-      eq(pageSections.pageId, page.id),
-      eq(pageSections.isActive, true)
-    ),
-    orderBy: (s, { asc }) => [asc(s.order)],
-  });
+  let sections: any[] = [];
+  try {
+    sections = await db.query.pageSections.findMany({
+      where: and(
+        eq(pageSections.pageId, page.id),
+        eq(pageSections.isActive, true)
+      ),
+      orderBy: (s, { asc }) => [asc(s.order)],
+    });
+  } catch (err) {
+    console.error(`Failed to fetch pageSections for ${page.id}:`, err);
+  }
 
   // Build JSON-LD for this page
   const webpage = webPageJsonLd({
@@ -287,8 +292,14 @@ export default async function DynamicPage({ params }: PageProps) {
 
   let mediaGridData: any[] = [];
   if (page.id === '56f118be-bcad-42a0-a60a-37300adc8a39' || page.slug === 'audios-by-category') {
-    const rawCategories = await db.select().from(audioCategories).orderBy(desc(audioCategories.order));
-    const allAudio = await db.select().from(audio);
+    let rawCategories: any[] = [];
+    let allAudio: any[] = [];
+    try {
+      rawCategories = await db.select().from(audioCategories).orderBy(desc(audioCategories.order));
+      allAudio = await db.select().from(audio);
+    } catch (err) {
+      console.error("Failed to fetch audio categories or audio:", err);
+    }
 
     mediaGridData = rawCategories
       .filter(cat => !cat.parentId)
@@ -333,8 +344,14 @@ export default async function DynamicPage({ params }: PageProps) {
         };
       });
   } else if (page.id === 'e34f44a9-bd26-4433-a962-250991321181' || page.slug === 'videos-by-category') {
-    const rawCategories = await db.select().from(videoCategories).orderBy(desc(videoCategories.order));
-    const allVideos = await db.select().from(videos);
+    let rawCategories: any[] = [];
+    let allVideos: any[] = [];
+    try {
+      rawCategories = await db.select().from(videoCategories).orderBy(desc(videoCategories.order));
+      allVideos = await db.select().from(videos);
+    } catch (err) {
+      console.error("Failed to fetch video categories or videos:", err);
+    }
 
     mediaGridData = rawCategories
       .filter(cat => !cat.parentId)

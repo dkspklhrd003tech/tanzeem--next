@@ -3,13 +3,25 @@ import { pages, settings } from "@/db/schema";
 import { eq, or } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { MagazineClientView } from "./MagazineClientView";
-
 export async function MagazineFrontendView({ pageId, slug }: { pageId: string, slug: string }) {
-  const [page] = await db.select().from(pages).where(or(eq(pages.id, pageId), eq(pages.slug, slug))).limit(1);
+  let page;
+  let setting;
+
+  try {
+    const result = await db.select().from(pages).where(or(eq(pages.id, pageId), eq(pages.slug, slug))).limit(1);
+    page = result[0];
+  } catch (error) {
+    console.error("Failed to fetch magazine page:", error);
+  }
 
   if (!page || !page.isPublished) notFound();
 
-  const [setting] = await db.select().from(settings).where(eq(settings.key, `magazine_links_${page.id}`)).limit(1);
+  try {
+    const result = await db.select().from(settings).where(eq(settings.key, `magazine_links_${page.id}`)).limit(1);
+    setting = result[0];
+  } catch (error) {
+    console.error("Failed to fetch magazine settings:", error);
+  }
 
   let links = [];
   if (setting && setting.value) {
