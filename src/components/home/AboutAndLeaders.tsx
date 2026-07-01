@@ -181,7 +181,7 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
                                         <p className="text-primary font-bold text-xs uppercase tracking-widest mb-1">
                                             {leader.designation || "Leader"}
                                         </p>
-                                        <h3 className="text-xl md:text-2xl font-bold text-black mb-3">
+                                        <h3 className="text-xl md:text-2xl font-bold text-[#222222] mb-3">
                                             {leader.name}
                                         </h3>
                                         {leader.bio && (
@@ -194,7 +194,7 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
                                         <Link
                                             href={`/${leader.slug}`}
                                             className={cn(
-                                                "inline-flex items-center gap-2 bg-transparent border border-primary text-primary",
+                                                "inline-flex items-center gap-2 bg-transparent border border-[#222222] text-[#222222]",
                                                 "px-4 py-2 rounded-full text-xs font-bold",
                                                 "hover:bg-primary hover:text-primary-foreground",
                                                 "transition-all duration-200",
@@ -203,7 +203,7 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
                                         >
                                             {leader.designation?.toLowerCase().includes("founder")
                                                 ? "About Founder"
-                                                : "Learn More"}
+                                                : "About Ameer"}
                                             <ArrowRight className="w-3 h-3" aria-hidden="true" />
                                         </Link>
                                     </div>
