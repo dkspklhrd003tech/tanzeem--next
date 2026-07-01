@@ -14,29 +14,34 @@ export const metadata = buildMetadata({
 });
 
 export default async function BooksByCategoryPage() {
-  // Fetch all published categories that have at least one book
-  const cats = await db
-    .select({
-      id: bookCategories.id,
-      name: bookCategories.name,
-      slug: bookCategories.slug,
-      description: bookCategories.description,
-      coverImage: bookCategories.coverImage,
-    })
-    .from(bookCategories)
-    .orderBy(asc(bookCategories.order), asc(bookCategories.name));
+  let cats: any[] = [];
+  let countMap: Record<string, number> = {};
 
-  // Count books per category
-  const countRows = await db
-    .select({ categoryId: books.categoryId, total: count() })
-    .from(books)
-    .where(eq(books.isPublished, true))
-    .groupBy(books.categoryId);
+  try {
+    cats = await db
+      .select({
+        id: bookCategories.id,
+        name: bookCategories.name,
+        slug: bookCategories.slug,
+        description: bookCategories.description,
+        coverImage: bookCategories.coverImage,
+      })
+      .from(bookCategories)
+      .orderBy(asc(bookCategories.order), asc(bookCategories.name));
 
-  const countMap = countRows.reduce<Record<string, number>>((acc, r) => {
-    if (r.categoryId) acc[r.categoryId] = Number(r.total);
-    return acc;
-  }, {});
+    const countRows = await db
+      .select({ categoryId: books.categoryId, total: count() })
+      .from(books)
+      .where(eq(books.isPublished, true))
+      .groupBy(books.categoryId);
+
+    countMap = countRows.reduce<Record<string, number>>((acc, r) => {
+      if (r.categoryId) acc[r.categoryId] = Number(r.total);
+      return acc;
+    }, {});
+  } catch (error) {
+    console.warn("Could not fetch book categories from DB during build. Using fallback.");
+  }
 
   // Fallback static categories shown when DB has no categories yet
   const FALLBACK = [

@@ -9,10 +9,14 @@ export const revalidate = 3600;
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  let speaker = await db.select().from(speakers).where(eq(speakers.slug, slug)).limit(1).then(res => res[0]);
-
-  if (!speaker) {
-    speaker = await db.select().from(speakers).where(eq(speakers.slug, `audios-by-speaker/${slug}`)).limit(1).then(res => res[0]);
+  let speaker: any = null;
+  try {
+    speaker = await db.select().from(speakers).where(eq(speakers.slug, slug)).limit(1).then(res => res[0]);
+    if (!speaker) {
+      speaker = await db.select().from(speakers).where(eq(speakers.slug, `audios-by-speaker/${slug}`)).limit(1).then(res => res[0]);
+    }
+  } catch (error) {
+    console.warn("DB error in generateMetadata:", error);
   }
 
   if (!speaker) return {};
@@ -28,21 +32,33 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 export default async function SpeakerAudiosPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
 
-  let speaker = await db.select().from(speakers).where(eq(speakers.slug, slug)).limit(1).then(res => res[0]);
-
-  if (!speaker) {
-    speaker = await db.select().from(speakers).where(eq(speakers.slug, `audios-by-speaker/${slug}`)).limit(1).then(res => res[0]);
+  let speaker: any = null;
+  let audios: any[] = [];
+  try {
+    speaker = await db.select().from(speakers).where(eq(speakers.slug, slug)).limit(1).then(res => res[0]);
+    if (!speaker) {
+      speaker = await db.select().from(speakers).where(eq(speakers.slug, `audios-by-speaker/${slug}`)).limit(1).then(res => res[0]);
+    }
+    if (speaker) {
+      audios = await db
+        .select()
+        .from(audio)
+        .where(eq(audio.speakerId, speaker.id))
+        .orderBy(desc(audio.createdAt));
+    }
+  } catch (error) {
+    console.warn("DB error in SpeakerAudiosPage:", error);
   }
 
   if (!speaker) {
-    notFound();
+    return (
+      <main className="min-h-screen bg-background">
+        <div className="container mx-auto py-12">
+          <p className="text-center text-muted-foreground">Speaker not found or database is unreachable.</p>
+        </div>
+      </main>
+    );
   }
-
-  const audios = await db
-    .select()
-    .from(audio)
-    .where(eq(audio.speakerId, speaker.id))
-    .orderBy(desc(audio.createdAt));
 
   const crumbs = [
     { name: "Home", path: "/" },

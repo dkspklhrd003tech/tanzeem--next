@@ -20,11 +20,15 @@ async function findPageBySlug(slug: string) {
   if (!slug.startsWith("organization/")) {
     candidates.push(`organization/${slug}`);
   }
-  for (const candidate of candidates) {
-    const page = await db.query.pages.findFirst({
-      where: eq(pages.slug, candidate),
-    });
-    if (page) return page;
+  try {
+    for (const candidate of candidates) {
+      const page = await db.query.pages.findFirst({
+        where: eq(pages.slug, candidate),
+      });
+      if (page) return page;
+    }
+  } catch (error) {
+    console.warn("DB error in findPageBySlug:", error);
   }
   return null;
 }
@@ -154,9 +158,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   let page = await findPageBySlug(slug);
 
   if (!page && SEED_DATA[slug]) {
-    const user = await db.query.users.findFirst();
-    if (user) {
-      try {
+    try {
+      const user = await db.query.users.findFirst();
+      if (user) {
         await db.insert(pages).values({
           id: crypto.randomUUID(),
           title: SEED_DATA[slug].title,
@@ -181,10 +185,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
           createdAt: new Date(),
           updatedAt: new Date(),
         });
-      } catch (err) {
-        console.warn(`Concurrent seeding insert for slug '${slug}' caught:`, err);
+        page = await findPageBySlug(slug);
       }
-      page = await findPageBySlug(slug);
+    } catch (err) {
+      console.warn(`Concurrent seeding insert for slug '${slug}' caught:`, err);
     }
   }
 
@@ -208,9 +212,9 @@ export default async function DynamicPage({ params }: PageProps) {
   let page = await findPageBySlug(slug);
 
   if (!page && SEED_DATA[slug]) {
-    const user = await db.query.users.findFirst();
-    if (user) {
-      try {
+    try {
+      const user = await db.query.users.findFirst();
+      if (user) {
         await db.insert(pages).values({
           id: crypto.randomUUID(),
           title: SEED_DATA[slug].title,
@@ -235,10 +239,10 @@ export default async function DynamicPage({ params }: PageProps) {
           createdAt: new Date(),
           updatedAt: new Date(),
         });
-      } catch (err) {
-        console.warn(`Concurrent seeding insert for slug '${slug}' caught:`, err);
+        page = await findPageBySlug(slug);
       }
-      page = await findPageBySlug(slug);
+    } catch (err) {
+      console.warn(`Concurrent seeding insert for slug '${slug}' caught:`, err);
     }
   }
 

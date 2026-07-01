@@ -9,10 +9,14 @@ export const revalidate = 3600;
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  let speaker = await db.select().from(speakers).where(eq(speakers.slug, slug)).limit(1).then(res => res[0]);
-
-  if (!speaker) {
-    speaker = await db.select().from(speakers).where(eq(speakers.slug, `videos-by-speakers/${slug}`)).limit(1).then(res => res[0]);
+  let speaker: any = null;
+  try {
+    speaker = await db.select().from(speakers).where(eq(speakers.slug, slug)).limit(1).then(res => res[0]);
+    if (!speaker) {
+      speaker = await db.select().from(speakers).where(eq(speakers.slug, `videos-by-speakers/${slug}`)).limit(1).then(res => res[0]);
+    }
+  } catch (error) {
+    console.warn("DB error in generateMetadata:", error);
   }
 
   if (!speaker) return {};
@@ -28,21 +32,35 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 export default async function SpeakerVideosPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
 
-  let speaker = await db.select().from(speakers).where(eq(speakers.slug, slug)).limit(1).then(res => res[0]);
-
-  if (!speaker) {
-    speaker = await db.select().from(speakers).where(eq(speakers.slug, `videos-by-speakers/${slug}`)).limit(1).then(res => res[0]);
+  let speaker: any = null;
+  let vids: any[] = [];
+  try {
+    speaker = await db.select().from(speakers).where(eq(speakers.slug, slug)).limit(1).then(res => res[0]);
+    if (!speaker) {
+      speaker = await db.select().from(speakers).where(eq(speakers.slug, `videos-by-speakers/${slug}`)).limit(1).then(res => res[0]);
+    }
+    if (speaker) {
+      vids = await db
+        .select()
+        .from(videos)
+        .where(eq(videos.speakerId, speaker.id))
+        .orderBy(desc(videos.createdAt));
+    }
+  } catch (error) {
+    console.warn("DB error in SpeakerVideosPage:", error);
   }
 
   if (!speaker) {
-    notFound();
+    // If DB is unreachable or speaker doesn't exist, we can't show videos.
+    // Instead of throwing a 404, we just render an empty state so the build doesn't crash.
+    return (
+      <main className="min-h-screen bg-background">
+        <div className="container mx-auto py-12">
+          <p className="text-center text-muted-foreground">Speaker not found or database is unreachable.</p>
+        </div>
+      </main>
+    );
   }
-
-  const vids = await db
-    .select()
-    .from(videos)
-    .where(eq(videos.speakerId, speaker.id))
-    .orderBy(desc(videos.createdAt));
 
   const crumbs = [
     { name: "Home", path: "/" },
