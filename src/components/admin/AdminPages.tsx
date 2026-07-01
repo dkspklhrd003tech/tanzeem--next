@@ -34,6 +34,7 @@ import { GlobalBannerManager } from "./GlobalBannerManager";
 import { SiteIdentityManager } from "./SiteIdentityManager";
 import { FooterManager } from "./FooterManager";
 import { SEOManager } from "./SEOManager";
+import { ActivityManager } from "./ActivityManager";
 
 interface AdminPagesProps {
   section: string;
@@ -639,6 +640,11 @@ export function AdminPages({ section }: AdminPagesProps) {
   // Media Section
   if (section === "media") {
     return <MediaLibrary />;
+  }
+
+  // Activity Section
+  if (section === "activity") {
+    return <ActivityManager />;
   }
 
   // Default: Coming Soon

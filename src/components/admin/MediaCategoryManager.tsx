@@ -103,6 +103,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
 
   // Media Item states inside Sub Category
   const [editingMedia, setEditingMedia] = useState<{ item: MediaItem, subId: string } | null>(null);
+  const [isSavingItem, setIsSavingItem] = useState(false);
 
   // --- Main Category Handlers ---
   const addMainCategory = async (title: string, code: string, imageUrl: string) => {
@@ -264,6 +265,12 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
   };
 
   const saveMediaItem = async (subId: string, item: MediaItem) => {
+    if (!item.title.trim()) {
+      toast.error("Please enter a Title for this media file.");
+      return;
+    }
+    
+    setIsSavingItem(true);
     try {
       const isNew = item.id === "new";
       const payload = {
@@ -335,7 +342,10 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
       setEditingMedia(null);
       toast.success("Saved media item");
     } catch (err: any) {
+      console.error("Save media error:", err);
       toast.error(err.message || "Failed to save media item");
+    } finally {
+      setIsSavingItem(false);
     }
   };
 
@@ -925,8 +935,12 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                 }}>Save Card Changes</Button>
               )}
               {editingMedia && (
-                <Button type="button" onClick={() => saveMediaItem(editingMedia.subId, editingMedia.item)}>
-                  {editingMedia.item.id === "new" ? "Save New Item" : "Update Item"}
+                <Button type="button" disabled={isSavingItem} onClick={() => saveMediaItem(editingMedia.subId, editingMedia.item)}>
+                  {isSavingItem ? (
+                    <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Saving...</>
+                  ) : (
+                    editingMedia.item.id === "new" ? "Save New Item" : "Update Item"
+                  )}
                 </Button>
               )}
             </div>

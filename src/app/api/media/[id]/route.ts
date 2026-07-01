@@ -6,6 +6,38 @@ import { eq } from "drizzle-orm";
 import { unlink } from "fs/promises";
 import { join } from "path";
 
+export async function GET(
+  request: NextRequest,
+  context: { params: Promise<{ id: string }> }
+) {
+  try {
+    const { id } = await context.params;
+    
+    const [item] = await db.select({
+      id: media.id,
+      fileData: media.fileData,
+      mimeType: media.mimeType,
+      filename: media.filename
+    }).from(media).where(eq(media.id, id)).limit(1);
+
+    if (!item || !item.fileData) {
+      return new NextResponse("Not Found", { status: 404 });
+    }
+
+    return new NextResponse(item.fileData, {
+      status: 200,
+      headers: {
+        "Content-Type": item.mimeType || "application/octet-stream",
+        "Cache-Control": "public, max-age=31536000, immutable",
+        "Content-Disposition": `inline; filename="${item.filename}"`,
+      }
+    });
+  } catch (error) {
+    console.error("GET media error:", error);
+    return new NextResponse("Internal server error", { status: 500 });
+  }
+}
+
 export async function DELETE(
   request: NextRequest,
   context: { params: Promise<{ id: string }> }

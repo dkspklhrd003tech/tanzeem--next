@@ -7,10 +7,11 @@ import { motion } from "framer-motion";
 import {
   ArrowLeft, Save, Send, Eye, Trash2, Copy,
   ChevronDown, ChevronUp, Clock, AlertCircle, Check,
-  LayoutTemplate, FileText, SlidersHorizontal,
+  LayoutTemplate, FileText, SlidersHorizontal, Search
 } from "lucide-react";
 import { PageActionBar } from "@/components/admin/PageActionBar";
 import { PageSectionBuilder } from "@/components/admin/PageSectionBuilder";
+import PageSeoManager from "@/components/admin/PageSeoManager";
 import { useEditor, EditorContent } from "@tiptap/react";
 import { StarterKit } from "@tiptap/starter-kit";
 import { Underline } from "@tiptap/extension-underline";
@@ -225,8 +226,8 @@ export function PageForm({ mode, initialData, parentPages = [] }: PageFormProps)
   const [showDelete, setShowDelete] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const autoSaveRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  // "content" = rich text editor tab, "sections" = section builder tab
-  const [activeTab, setActiveTab] = useState<"content" | "sections">("content");
+  // "content" = rich text editor tab, "sections" = section builder tab, "seo" = SEO Center
+  const [activeTab, setActiveTab] = useState<"content" | "sections" | "seo">("content");
   // Sections are managed by PageSectionBuilder internally; we only need to
   // trigger a DB persist on explicit save (draft / publish).
   const sectionsRef = useRef<any[]>([]);
@@ -468,6 +469,19 @@ export function PageForm({ mode, initialData, parentPages = [] }: PageFormProps)
                     Dynamic
                   </span>
                 </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("seo")}
+                  className={cn(
+                    "flex items-center gap-2 px-5 py-3 text-sm font-medium border-b-2 transition-colors",
+                    activeTab === "seo"
+                      ? "border-primary text-primary"
+                      : "border-transparent text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  <Search className="h-4 w-4" />
+                  SEO Center
+                </button>
               </div>
 
               {activeTab === "content" && (
@@ -504,45 +518,23 @@ export function PageForm({ mode, initialData, parentPages = [] }: PageFormProps)
                   )}
                 </CardContent>
               )}
+              {activeTab === "seo" && (
+                <CardContent className="px-5 pb-6 pt-4">
+                  {mode === "create" ? (
+                    <div className="text-center py-10 border-2 border-dashed border-border rounded-xl bg-muted/30">
+                      <Search className="h-8 w-8 text-muted-foreground/40 mx-auto mb-3" />
+                      <p className="text-sm font-medium text-muted-foreground">Save the page first</p>
+                      <p className="text-xs text-muted-foreground/70 mt-1">
+                        Click "Save Draft" or "Publish" to create the page, then you can configure SEO.
+                      </p>
+                    </div>
+                  ) : (
+                    <PageSeoManager pageId={initialData!.id} hideHeader={true} />
+                  )}
+                </CardContent>
+              )}
             </Card>
           )}
-
-          {/* SEO */}
-          <Card>
-            <button type="button" onClick={() => setSeoOpen(v => !v)}
-              className="w-full flex items-center justify-between px-5 py-3.5 text-left hover:bg-muted/30 transition-colors rounded-t-xl">
-              <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">SEO & Meta</span>
-              {seoOpen ? <ChevronUp className="h-4 w-4 text-muted-foreground" /> : <ChevronDown className="h-4 w-4 text-muted-foreground" />}
-            </button>
-            {seoOpen && (
-              <CardContent className="px-5 pb-5 pt-0 space-y-4 border-t border-border">
-                <div>
-                  <div className="flex items-center justify-between mb-1.5">
-                    <Label htmlFor="metaTitle" className="text-xs font-medium">Meta Title</Label>
-                    {charCount(form.metaTitle, 70)}
-                  </div>
-                  <Input id="metaTitle" placeholder="Defaults to page title if empty" value={form.metaTitle}
-                    onChange={e => set("metaTitle", e.target.value)}
-                    className={cn(errors.metaTitle && "border-destructive")} />
-                  {errors.metaTitle && <p className="text-xs text-destructive mt-1">{errors.metaTitle}</p>}
-                </div>
-                <div>
-                  <div className="flex items-center justify-between mb-1.5">
-                    <Label htmlFor="metaDesc" className="text-xs font-medium">Meta Description</Label>
-                    {charCount(form.metaDescription, 160)}
-                  </div>
-                  <Textarea id="metaDesc" rows={3} placeholder="160 character summary for search engines"
-                    value={form.metaDescription} onChange={e => set("metaDescription", e.target.value)}
-                    className={cn("resize-none text-sm", errors.metaDescription && "border-destructive")} />
-                  {errors.metaDescription && <p className="text-xs text-destructive mt-1">{errors.metaDescription}</p>}
-                </div>
-                <div>
-                  <Label htmlFor="metaKw" className="text-xs font-medium mb-1.5 block">Meta Keywords</Label>
-                  <Input id="metaKw" placeholder="keyword1, keyword2, keyword3" value={form.metaKeywords} onChange={e => set("metaKeywords", e.target.value)} />
-                </div>
-              </CardContent>
-            )}
-          </Card>
         </div>
 
         {/* Right col — settings */}

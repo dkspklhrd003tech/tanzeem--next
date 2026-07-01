@@ -3,7 +3,7 @@ import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { videos, activityLogs } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth";
-import { eq } from "drizzle-orm";
+import { eq, ne, and } from "drizzle-orm";
 
 export async function GET(
     request: NextRequest,
@@ -47,6 +47,7 @@ export async function PUT(
         await db.update(videos).set({
             title: data.title ?? existing.title,
             slug: data.slug ?? existing.slug,
+
             description: data.description ?? existing.description,
             videoUrl: data.videoUrl ?? existing.videoUrl,
             embedUrl: data.embedUrl ?? existing.embedUrl,

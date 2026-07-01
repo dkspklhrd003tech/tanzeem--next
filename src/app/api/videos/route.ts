@@ -72,10 +72,19 @@ export async function POST(request: NextRequest) {
 
     const videoId = crypto.randomUUID();
 
+    let finalSlug = data.slug;
+    const existingSlug = await db.query.videos.findFirst({
+      where: eq(videos.slug, finalSlug),
+    });
+    
+    if (existingSlug) {
+      finalSlug = `${finalSlug}-${crypto.randomUUID().split("-")[0]}`;
+    }
+
     await db.insert(videos).values({
       id: videoId,
       title: data.title,
-      slug: data.slug,
+      slug: finalSlug,
       description: data.description,
       videoUrl: data.videoUrl,
       embedUrl: data.embedUrl,

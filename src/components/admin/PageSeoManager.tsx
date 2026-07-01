@@ -21,9 +21,10 @@ interface PageSeoManagerProps {
   pageId?: string;
   endpoint?: string;
   backHref?: string;
+  hideHeader?: boolean;
 }
 
-export default function PageSeoManager({ pageId, endpoint, backHref }: PageSeoManagerProps) {
+export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader }: PageSeoManagerProps) {
   const router = useRouter();
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
@@ -121,34 +122,36 @@ export default function PageSeoManager({ pageId, endpoint, backHref }: PageSeoMa
 
   return (
     <div className="space-y-6 max-w-[1400px] mx-auto pb-24">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-4 rounded-xl border border-border sticky top-4 z-10 shadow-sm">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" asChild>
-            <Link href={backHref || `/sitemanager/pages/${pageId}/edit`}>
-              <ArrowLeft className="h-5 w-5" />
-            </Link>
-          </Button>
-          <div>
-            <h1 className="text-xl font-bold flex items-center gap-2">
-              <Bot className="h-6 w-6 text-emerald-500" />
-              SEO Center
-            </h1>
-            <p className="text-sm text-muted-foreground">
-              Editing: <span className="font-medium text-foreground">{page.title || page.name}</span>
-            </p>
+      {/* Header (conditionally hidden if embedded) */}
+      {!hideHeader && (
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-4 rounded-xl border border-border sticky top-4 z-10 shadow-sm">
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" size="icon" asChild>
+              <Link href={backHref || `/sitemanager/pages/${pageId}/edit`}>
+                <ArrowLeft className="h-5 w-5" />
+              </Link>
+            </Button>
+            <div>
+              <h1 className="text-xl font-bold flex items-center gap-2">
+                <Bot className="h-6 w-6 text-emerald-500" />
+                SEO Center
+              </h1>
+              <p className="text-sm text-muted-foreground">
+                Editing: <span className="font-medium text-foreground">{page.title || page.name}</span>
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={() => router.push(`/${page.slug}`)}>
+              <SearchCode className="w-4 h-4 mr-2" /> Live Preview
+            </Button>
+            <Button onClick={handleSave} disabled={saving} className="bg-emerald-600 hover:bg-emerald-700 text-white">
+              <Save className="w-4 h-4 mr-2" />
+              {saving ? "Saving..." : "Save All SEO"}
+            </Button>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={() => router.push(`/${page.slug}`)}>
-            <SearchCode className="w-4 h-4 mr-2" /> Live Preview
-          </Button>
-          <Button onClick={handleSave} disabled={saving} className="bg-emerald-600 hover:bg-emerald-700 text-white">
-            <Save className="w-4 h-4 mr-2" />
-            {saving ? "Saving..." : "Save All SEO"}
-          </Button>
-        </div>
-      </div>
+      )}
 
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Sidebar Nav (replaces tabs) */}

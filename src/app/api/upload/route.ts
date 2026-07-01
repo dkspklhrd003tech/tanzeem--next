@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
-import { join, extname } from "path";
+import { extname } from "path";
 import { v4 as uuidv4 } from "uuid";
 import { db } from "@/db";
 import { media } from "@/db/schema";
@@ -73,28 +72,18 @@ export async function POST(req: NextRequest) {
       .toLowerCase();
     const uniqueFilename = `${uuidv4()}-${safeName}`;
 
-    // Save to /public/<folder>/ so Next.js static serving continues to work
-    const publicDir = join(process.cwd(), "public", folder);
-    await mkdir(publicDir, { recursive: true });
-    await writeFile(join(publicDir, uniqueFilename), buffer);
-
-    const publicUrl = `/${folder}/${uniqueFilename}`;
-
-    // Persist a media record to the database (best-effort — we still return success
-    // even if the DB insert fails, so the upload itself is never lost)
-    let mediaId: string | null = null;
+    let uploadedBy: string | undefined;
     try {
-      mediaId = uuidv4();
+      const user = await getCurrentUser(req);
+      if (user) uploadedBy = user.id;
+    } catch {
+      // not authenticated — skip
+    }
 
-      // Resolve uploader (optional — works without auth for legacy callers)
-      let uploadedBy: string | undefined;
-      try {
-        const user = await getCurrentUser(req);
-        if (user) uploadedBy = user.id;
-      } catch {
-        // not authenticated — skip
-      }
+    const mediaId = uuidv4();
+    const publicUrl = `/api/media/${mediaId}`;
 
+    try {
       await db.insert(media).values({
         id: mediaId,
         filename: uniqueFilename,
@@ -109,7 +98,11 @@ export async function POST(req: NextRequest) {
         uploadedBy: uploadedBy ?? null,
       });
     } catch (dbError) {
-      console.error("[upload] DB record insert failed (non-fatal):", dbError);
+      console.error("[upload] DB record insert failed:", dbError);
+      return NextResponse.json(
+        { success: false, error: "Failed to save file to database" },
+        { status: 500 }
+      );
     }
 
     return NextResponse.json({

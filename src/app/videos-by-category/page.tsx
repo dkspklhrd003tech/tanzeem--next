@@ -47,12 +47,6 @@ export default async function VideosByCategoryPage() {
   return (
     <main className="min-h-screen bg-background">
       <div className="container mx-auto py-10 md:py-16">
-        <div className="text-center mb-10">
-          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">View Videos by Category</h1>
-          <p className="text-lg text-foreground-muted max-w-2xl mx-auto">
-            Explore our Islamic video collection organised by category.
-          </p>
-        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
           {display.map((cat) => {
             const href = cat.slug ? `/videos-by-category/${cat.slug}` : "#";

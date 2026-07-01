@@ -79,9 +79,12 @@ export default async function AudiosBySpeakersPage() {
                   )}
                 </div>
                 <div className="p-4 flex items-center justify-center bg-card">
-                  <h3 className="text-[17px] font-medium text-foreground text-center line-clamp-1">
+                  <h2 className="text-[17px] font-medium text-foreground text-center line-clamp-1">
                     {sp.name}
-                  </h3>
+                    <span className="text-sm font-normal text-primary bg-muted px-3 py-1 rounded-full">
+                      {sp.count} Audios
+                    </span>
+                  </h2>
                 </div>
               </Link>
             );

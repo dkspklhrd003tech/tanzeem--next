@@ -59,7 +59,7 @@ export default async function CategoryVideosPage({ params }: { params: Promise<{
   });
 
   let directVideos: any[] = [];
-  
+
   // Only fetch direct videos if we are inside a sub-category
   if (mainCat.parentId !== null) {
     directVideos = await db
@@ -80,15 +80,6 @@ export default async function CategoryVideosPage({ params }: { params: Promise<{
   return (
     <main className="min-h-screen bg-background">
       <div className="container mx-auto py-10 md:py-16">
-        <div className="text-center mb-10">
-          <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">{mainCat.name}</h1>
-          {mainCat.description && (
-            <p className="text-lg text-foreground-muted max-w-2xl mx-auto">
-              {mainCat.description}
-            </p>
-          )}
-        </div>
-
         {subCategoriesWithVideos.length === 0 && directVideos.length === 0 ? (
           <div className="text-center py-20 border border-dashed rounded-xl">
             <p className="text-foreground-muted">No content found in this category.</p>
