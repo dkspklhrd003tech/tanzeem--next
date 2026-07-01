@@ -69,9 +69,9 @@ export function MissionAndVideos({ videos, settings }: MissionProps) {
                 <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-[100px]" aria-hidden="true" />
                 <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-black/20 rounded-full translate-y-1/2 -translate-x-1/2 blur-[80px]" aria-hidden="true" />
 
-                <div className="container max-w-5xl mx-auto relative z-10 px-4">
+                <div className="max-w-4xl mx-auto relative z-10 px-4">
                     <div className="space-y-6">
-                        <h2 ref={textRef} className="text-3xl md:text-4xl lg:text-5xl font-black text-white leading-tight md:leading-snug drop-shadow-lg tracking-tight">
+                        <h2 ref={textRef} className="text-2xl md:text-3xl lg:text-4xl font-black text-white leading-tight md:leading-snug drop-shadow-lg tracking-tight">
                             &ldquo;{missionText}&rdquo;
                         </h2>
                     </div>
@@ -85,7 +85,7 @@ export function MissionAndVideos({ videos, settings }: MissionProps) {
 
                     <div className="mb-16 text-center">
                         <p className="text-primary font-bold tracking-widest uppercase text-xs mb-3">Featured</p>
-                        <h2 id="videos-heading" className="text-4xl md:text-5xl font-black text-foreground drop-shadow-sm">
+                        <h2 id="videos-heading" className="text-3xl md:text-4xl font-black text-foreground drop-shadow-sm">
                             Regular Video Broadcasts
                         </h2>
                     </div>
@@ -93,9 +93,11 @@ export function MissionAndVideos({ videos, settings }: MissionProps) {
                     <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         {videos.length > 0 ? videos.map((vid, i) => {
                             const card = (
-                                <>
+                                <div className="flex flex-col h-full bg-card/40 backdrop-blur-md rounded-[1.5rem] border border-border/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-primary/10 hover:border-primary/30 hover:-translate-y-3 transition-all duration-700 overflow-hidden relative group/inner">
+                                    <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/80 opacity-0 group-hover/inner:opacity-100 transition-opacity duration-700 pointer-events-none z-10" />
+
                                     {/* Image Container — 348x195 aspect ratio */}
-                                    <div className="relative w-full overflow-hidden bg-muted/30" style={{ aspectRatio: '348 / 195' }}>
+                                    <div className="relative w-full overflow-hidden" style={{ aspectRatio: '348 / 195' }}>
                                         {vid.thumbnailUrl ? (
                                             <img
                                                 src={vid.thumbnailUrl}
@@ -117,19 +119,19 @@ export function MissionAndVideos({ videos, settings }: MissionProps) {
 
                                         {/* Play Button Overlay */}
                                         <div className="absolute inset-0 flex items-center justify-center transform scale-50 opacity-0 group-hover:scale-100 group-hover:opacity-100 transition-all duration-500 ease-out pointer-events-none z-20" aria-hidden="true">
-                                            <div className="bg-primary/90 backdrop-blur-md p-4 rounded-full shadow-[0_0_30px_rgba(16,185,129,0.5)] text-white">
+                                            <div className="bg-primary/90 backdrop-blur-md p-4 rounded-full shadow-[0_0_30px_rgba(224,232,237,0.5)] text-white">
                                                 <Play className="w-8 h-8 fill-current translate-x-0.5" />
                                             </div>
                                         </div>
                                     </div>
 
                                     {/* Content */}
-                                    <div className="p-6 flex-1 flex flex-col justify-center items-center text-center bg-card/60 backdrop-blur-md transition-colors duration-500 relative z-10">
-                                        <h3 className="font-bold text-foreground text-lg md:text-xl line-clamp-2 leading-tight group-hover:text-primary transition-colors duration-500">
+                                    <div className="p-6 flex-1 flex flex-col justify-center items-center text-center transition-colors duration-500 relative z-20">
+                                        <h3 className="font-bold text-foreground text-md md:text-lg line-clamp-2 leading-tight group-hover/inner:text-white transition-colors duration-500">
                                             {vid.title}
                                         </h3>
                                     </div>
-                                </>
+                                </div>
                             );
 
                             if (vid.videoUrl) {

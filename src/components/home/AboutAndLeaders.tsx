@@ -84,7 +84,7 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
 
     return (
         <section ref={sectionRef} aria-labelledby="about-heading" className="relative py-20 overflow-hidden perspective-1000 bg-[#E0E8ED]">
-            <CinematicBackground />
+            {/* <CinematicBackground /> */}
             <div className="max-w-7xl mx-auto relative z-10">
 
                 {/* ── About Card ── */}

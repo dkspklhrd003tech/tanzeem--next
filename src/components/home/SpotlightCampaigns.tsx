@@ -58,7 +58,7 @@ export function SpotlightCampaigns({ campaigns }: { campaigns: HomeCampaign[] })
 
                 <div ref={headerRef} className="mb-10 text-center">
                     <p className="text-primary font-bold tracking-widest uppercase text-xs mb-3">Tanzeem Spotlight</p>
-                    <h2 id="spotlight-heading" className="text-4xl md:text-5xl font-black text-foreground drop-shadow-sm">
+                    <h2 id="spotlight-heading" className="text-3xl md:text-4xl font-black text-foreground drop-shadow-sm">
                         Campaigns &amp; Events
                     </h2>
                 </div>
@@ -88,14 +88,14 @@ export function SpotlightCampaigns({ campaigns }: { campaigns: HomeCampaign[] })
                                     )}
 
                                     {/* Link Icon Overlay */}
-                                    <div className="absolute top-4 right-4 bg-black/40 backdrop-blur-md p-3 rounded-full transform translate-y-4 opacity-0 group-hover/inner:translate-y-0 group-hover/inner:opacity-100 transition-all duration-500 ease-out z-20" aria-hidden="true">
+                                    <div className="absolute top-4 right-4 bg-black/40 hover backdrop-blur-md p-3 rounded-full transform translate-y-4 opacity-0 group-hover/inner:translate-y-0 group-hover/inner:opacity-100 transition-all duration-500 ease-out z-20" aria-hidden="true">
                                         <ArrowUpRight className="w-5 h-5 text-white" />
                                     </div>
                                 </div>
 
                                 {/* Content */}
                                 <div className="p-6 flex-1 flex flex-col justify-center items-center text-center transition-colors duration-500 relative z-20">
-                                    <h3 className="font-bold text-foreground text-xl md:text-2xl line-clamp-2 leading-tight group-hover/inner:text-white transition-colors duration-500">
+                                    <h3 className="font-bold text-foreground text-md md:text-lg line-clamp-2 leading-tight group-hover/inner:text-white transition-colors duration-500">
                                         {campaign.title}
                                     </h3>
                                 </div>

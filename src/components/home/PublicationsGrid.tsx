@@ -80,7 +80,7 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
                     <div className="pub-header flex flex-col md:flex-row justify-between items-start md:items-center mb-16 gap-6">
                         <div>
                             <p className="text-primary font-bold tracking-widest uppercase text-xs mb-3">Our Magazines</p>
-                            <h2 id="magazines-heading" className="text-4xl md:text-5xl font-black text-foreground drop-shadow-sm max-w-3xl">
+                            <h2 id="magazines-heading" className="text-3xl md:text-4xl font-black text-foreground drop-shadow-sm max-w-3xl">
                                 Books And Literature Of Tanzeem-e-Islami &amp; Anjuman Khuddam Ul Quran
                             </h2>
                         </div>
@@ -160,7 +160,7 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
                     <div className="pub-header flex flex-col md:flex-row justify-between items-start md:items-center mb-16 gap-6">
                         <div>
                             <p className="text-primary font-bold tracking-widest uppercase text-xs mb-3">Our Books</p>
-                            <h2 id="books-heading" className="text-4xl md:text-5xl font-black text-foreground drop-shadow-sm max-w-3xl">
+                            <h2 id="books-heading" className="text-3xl md:text-4xl font-black text-foreground drop-shadow-sm max-w-3xl">
                                 Message of Iqamat ud Din &amp; Ruju llul Quran Through Our Periodicals.
                             </h2>
                         </div>
