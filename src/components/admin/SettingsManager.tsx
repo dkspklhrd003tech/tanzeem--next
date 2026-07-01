@@ -165,7 +165,7 @@ export function SettingsManager() {
             <div className="pb-4 border-b border-border mb-6">
                 <h1 className="text-3xl font-bold text-foreground tracking-tight flex items-center gap-3">
                     <Settings className="w-8 h-8 text-primary" />
-                    Site Configuration Hub
+                    Tanzeem Settings
                 </h1>
                 <p className="text-sm text-foreground-muted mt-1">Manage global interface settings, brand identity, and monitor the live support Inbox in real-time.</p>
             </div>
@@ -232,6 +232,13 @@ export function SettingsManager() {
                         className="rounded-none px-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground hover:bg-muted px-4 py-2"
                     >
                         <Lock className="w-4 h-4" /> Login Auth
+                    </TabsTrigger>
+
+                    <TabsTrigger
+                        value="css"
+                        className="rounded-none px-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground hover:bg-muted px-4 py-2"
+                    >
+                        <Palette className="w-4 h-4" /> Global CSS
                     </TabsTrigger>
                 </TabsList>
 
@@ -754,6 +761,43 @@ export function SettingsManager() {
                             >
                                 <Button disabled={isSaving} className="bg-[#0d5844] hover:bg-[#0a4636] text-[#fefefc] rounded-xl px-10 font-bold shadow-md transition-all active:scale-95">
                                     {isSaving ? "Saving..." : "Save Login Settings"}
+                                </Button>
+                            </ConfirmDialog>
+                        </div>
+                    </div>
+                </TabsContent>
+
+                {/* GLOBAL CSS TAB */}
+                <TabsContent value="css" className="animate-in fade-in-50 duration-500">
+                    <div className="bg-card border border-border rounded-xl p-6 shadow-sm space-y-6">
+                        <div>
+                            <h2 className="text-xl font-bold mb-2 flex items-center gap-2">
+                                <Palette className="w-5 h-5 text-primary" />
+                                Global CSS Overrides
+                            </h2>
+                            <p className="text-xs text-muted-foreground">
+                                Write custom CSS to override styles across the entire frontend and backend. These styles will be injected with maximum priority.
+                            </p>
+                        </div>
+                        
+                        <div className="space-y-2">
+                            <textarea
+                                value={settings.global_css || ""}
+                                onChange={(e) => handleSettingChange('global_css', e.target.value)}
+                                className="w-full h-96 p-4 font-mono text-sm bg-slate-950 text-slate-100 rounded-lg border border-border focus:ring-2 focus:ring-primary focus:outline-none resize-y"
+                                placeholder="/* Add your custom CSS here */&#10;body {&#10;  /* overrides */&#10;}"
+                                spellCheck="false"
+                            />
+                        </div>
+
+                        <div className="flex justify-end pt-4">
+                            <ConfirmDialog
+                                title="Save Global CSS"
+                                description="Are you sure you want to apply these CSS changes? Incorrect CSS might break the site layout."
+                                onConfirm={() => saveSettings()}
+                            >
+                                <Button disabled={isSaving} className="bg-[#0d5844] hover:bg-[#0a4636] text-[#fefefc] rounded-xl px-10 font-bold shadow-md transition-all active:scale-95">
+                                    {isSaving ? "Saving..." : "Save CSS Overrides"}
                                 </Button>
                             </ConfirmDialog>
                         </div>

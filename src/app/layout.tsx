@@ -90,11 +90,22 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  let globalCss = "";
+  try {
+    const { eq } = await import("drizzle-orm");
+    const res = await db.select().from(settings).where(eq(settings.key, "global_css"));
+    if (res && res.length > 0 && res[0].value) {
+      globalCss = res[0].value;
+    }
+  } catch (error) {
+    console.warn("Could not fetch global_css during RootLayout rendering");
+  }
+
   return (
     <html lang="en" data-scroll-behavior="smooth" suppressHydrationWarning>
       <head>
@@ -105,6 +116,9 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&display=swap"
           rel="stylesheet"
         />
+        {globalCss && (
+          <style dangerouslySetInnerHTML={{ __html: globalCss }} />
+        )}
         {/* Google tag (gtag.js) */}
         <Script
           async
