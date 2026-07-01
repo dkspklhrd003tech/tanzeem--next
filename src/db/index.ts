@@ -18,7 +18,7 @@ const poolConnection =
           uri: process.env.DATABASE_URL,
           ssl: { rejectUnauthorized: false },
           waitForConnections: true,
-          connectionLimit: 10,
+          connectionLimit: 2,
           queueLimit: 100,
           connectTimeout: 30000,
         }
@@ -30,7 +30,7 @@ const poolConnection =
           database: process.env.DB_NAME || "tanzeemnxt_db",
           ssl: (process.env.DB_SSL === 'true' || process.env.DB_SSL === 'True') ? { rejectUnauthorized: false } : undefined,
           waitForConnections: true,
-          connectionLimit: 10,
+          connectionLimit: 2,
           queueLimit: 100,
           connectTimeout: 30000,
         }

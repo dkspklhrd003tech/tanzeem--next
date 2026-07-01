@@ -110,13 +110,15 @@ export function LatestPressReleases({ items }: Props) {
               </div>
               <div className="relative z-10 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-primary mb-4 bg-primary/10 w-fit px-3 py-1 rounded-full">
                 <Calendar className="h-3.5 w-3.5" aria-hidden="true" />
-                {item.publishedAt
-                  ? new Date(item.publishedAt).toLocaleDateString("en-PK", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })
-                  : "\u2014"}
+                <span suppressHydrationWarning>
+                  {item.publishedAt
+                    ? new Date(item.publishedAt).toLocaleDateString("en-PK", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })
+                    : "\u2014"}
+                </span>
               </div>
               <h3 className="font-bold text-foreground text-xl leading-snug line-clamp-2 relative z-10 group-hover:text-primary transition-colors duration-500">{item.title}</h3>
               {item.excerpt && (
