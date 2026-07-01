@@ -137,7 +137,7 @@ export function UserManagement() {
         }
     };
 
-    const [deletingUser, setDeletingUser] = useState<{id: string, name: string | null} | null>(null);
+    const [deletingUser, setDeletingUser] = useState<{ id: string, name: string | null } | null>(null);
 
     const handleDelete = async (id: string, name: string | null) => {
         setDeletingUser(null);
@@ -172,7 +172,7 @@ export function UserManagement() {
                 </div>
                 <button
                     onClick={() => handleOpenModal()}
-                    className="flex items-center gap-2 bg-primary text-primary-foreground py-2 rounded-lg hover:bg-primary-dark transition-colors"
+                    className="flex items-center gap-2 bg-primary text-primary-foreground py-2 px-3 rounded-lg hover:bg-primary-dark transition-colors"
                 >
                     <Plus className="w-4 h-4" />
                     Add User
@@ -238,7 +238,7 @@ export function UserManagement() {
                                                     <Edit2 className="w-4 h-4" />
                                                 </button>
                                                 <button
-                                                    onClick={() => setDeletingUser({id: user.id, name: user.name})}
+                                                    onClick={() => setDeletingUser({ id: user.id, name: user.name })}
                                                     className="p-2 text-foreground-light hover:text-destructive transition-colors hover:bg-destructive/10 rounded-md"
                                                     title="Delete User"
                                                 >
