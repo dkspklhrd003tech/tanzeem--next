@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Edit2, Trash2, Shield, User as UserIcon, X } from "lucide-react";
+import { Plus, Edit2, Trash2, Shield, User as UserIcon, X, Eye, EyeOff, KeyRound } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -30,8 +30,19 @@ export function UserManagement() {
         role: "editor",
         isActive: true,
     });
+    const [showPassword, setShowPassword] = useState(false);
     const { toast } = useToast();
 
+    const generatePassword = () => {
+        const length = 16;
+        const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+~`|}{[]:;?><,./-=";
+        let retVal = "";
+        for (let i = 0, n = charset.length; i < length; ++i) {
+            retVal += charset.charAt(Math.floor(Math.random() * n));
+        }
+        setFormData(prev => ({ ...prev, password: retVal }));
+        setShowPassword(true);
+    };
     useEffect(() => {
         fetchUsers();
     }, []);
@@ -75,6 +86,7 @@ export function UserManagement() {
                 isActive: true,
             });
         }
+        setShowPassword(false);
         setIsModalOpen(true);
     };
 
@@ -307,17 +319,37 @@ export function UserManagement() {
                                 </div>
 
                                 <div className="space-y-1">
-                                    <label className="text-sm font-medium text-foreground">
-                                        Password {editingUser && <span className="text-foreground-muted font-normal">(Leave blank to keep unchanged)</span>}
-                                    </label>
-                                    <input
-                                        type="password"
-                                        required={!editingUser}
-                                        value={formData.password}
-                                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                                        className="w-full px-3 py-2 bg-background border border-border rounded-lg text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary"
-                                        placeholder="••••••••"
-                                    />
+                                    <div className="flex items-center justify-between">
+                                        <label className="text-sm font-medium text-foreground">
+                                            Password {editingUser && <span className="text-foreground-muted font-normal">(Leave blank to keep unchanged)</span>}
+                                        </label>
+                                        <button
+                                            type="button"
+                                            onClick={generatePassword}
+                                            className="text-xs text-primary hover:text-primary/80 flex items-center gap-1 transition-colors font-medium"
+                                        >
+                                            <KeyRound className="w-3 h-3" />
+                                            Auto-generate
+                                        </button>
+                                    </div>
+                                    <div className="relative">
+                                        <input
+                                            type={showPassword ? "text" : "password"}
+                                            required={!editingUser}
+                                            value={formData.password}
+                                            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                                            className="w-full pl-3 pr-10 py-2 bg-background border border-border rounded-lg text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary font-mono"
+                                            placeholder="••••••••"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground-muted hover:text-foreground transition-colors"
+                                            title={showPassword ? "Hide password" : "Show password"}
+                                        >
+                                            {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                        </button>
+                                    </div>
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-4 pt-2">
