@@ -115,7 +115,7 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
                         <p className="text-[#222222] mb-2 text-xs">About Us</p>
                         <h2
                             id="about-heading"
-                            className="text-2xl md:text-3xl font-bold text-white mb-3"
+                            className="text-2xl md:text-3xl font-bold mb-3"
                         >
                             {aboutTitle}
                         </h2>
