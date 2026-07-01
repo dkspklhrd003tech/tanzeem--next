@@ -125,7 +125,7 @@ export function LatestPressReleases({ items }: Props) {
                 <p className="mt-4 text-sm text-foreground-muted line-clamp-3 leading-relaxed relative z-10">{item.excerpt}</p>
               )}
               <div className="mt-auto pt-6 w-full flex items-center gap-2 text-sm font-semibold text-primary relative z-10">
-                <span>Read full release</span>
+                <span>Read Press Release</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </div>
             </button>
