@@ -36,10 +36,15 @@ import { settings } from "@/db/schema";
 import { inArray } from "drizzle-orm";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const settingsRows = await db
-    .select()
-    .from(settings)
-    .where(inArray(settings.key, ["site_favicon", "site_name", "site_description"]));
+  let settingsRows: any[] = [];
+  try {
+    settingsRows = await db
+      .select()
+      .from(settings)
+      .where(inArray(settings.key, ["site_favicon", "site_name", "site_description"]));
+  } catch (error) {
+    console.warn("Could not fetch settings from DB during metadata generation (likely build time). Using defaults.");
+  }
 
   const settingsMap = Object.fromEntries(settingsRows.map((r) => [r.key, r.value]));
 
