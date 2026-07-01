@@ -6,28 +6,36 @@ import { count, eq, asc, desc, isNull } from "drizzle-orm";
 export const dynamic = "force-dynamic";
 
 export default async function VideosByCategoryPage() {
-  const cats = await db
-    .select({
-      id: videoCategories.id,
-      name: videoCategories.name,
-      slug: videoCategories.slug,
-      description: videoCategories.description,
-      imageUrl: videoCategories.imageUrl,
-    })
-    .from(videoCategories)
-    .where(isNull(videoCategories.parentId))
-    .orderBy(desc(videoCategories.order), asc(videoCategories.name));
+  let cats: any[] = [];
+  let countRows: any[] = [];
+  let countMap: Record<string, number> = {};
 
-  const countRows = await db
-    .select({ categoryId: videos.categoryId, total: count() })
-    .from(videos)
-    .where(eq(videos.isPublished, true))
-    .groupBy(videos.categoryId);
+  try {
+    cats = await db
+      .select({
+        id: videoCategories.id,
+        name: videoCategories.name,
+        slug: videoCategories.slug,
+        description: videoCategories.description,
+        imageUrl: videoCategories.imageUrl,
+      })
+      .from(videoCategories)
+      .where(isNull(videoCategories.parentId))
+      .orderBy(desc(videoCategories.order), asc(videoCategories.name));
 
-  const countMap = countRows.reduce<Record<string, number>>((acc, row) => {
-    if (row.categoryId) acc[row.categoryId] = Number(row.total);
-    return acc;
-  }, {});
+    countRows = await db
+      .select({ categoryId: videos.categoryId, total: count() })
+      .from(videos)
+      .where(eq(videos.isPublished, true))
+      .groupBy(videos.categoryId);
+
+    countMap = countRows.reduce<Record<string, number>>((acc, row) => {
+      if (row.categoryId) acc[row.categoryId] = Number(row.total);
+      return acc;
+    }, {});
+  } catch (error) {
+    console.error("Failed to fetch video categories:", error);
+  }
 
   const FALLBACK = [
     { id: "f1", name: "Bayan-ul-Quran", slug: "", description: "Quran commentary video series", imageUrl: null, count: 0 },
