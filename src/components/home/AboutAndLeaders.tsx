@@ -83,26 +83,25 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
     }, []);
 
     return (
-        <section ref={sectionRef} aria-labelledby="about-heading" className="relative py-20 overflow-hidden perspective-1000">
+        <section ref={sectionRef} aria-labelledby="about-heading" className="relative py-20 overflow-hidden perspective-1000 bg-[#E0E8ED]">
             <CinematicBackground />
             <div className="max-w-7xl mx-auto relative z-10">
 
                 {/* ── About Card ── */}
                 <div
                     ref={aboutRef}
-                    className="relative border border-primary/20 rounded-2xl mb-20 flex flex-col md:flex-row gap-8 md:gap-12 items-center md:items-start overflow-hidden"
+                    className="relative mb-20 flex flex-col md:flex-row gap-8 md:gap-12 items-center md:items-start overflow-hidden"
                 >
-                    <div className="absolute inset-0 bg-[url('/noise.png')] opacity-20 mix-blend-overlay pointer-events-none" />
-                    <div className="absolute inset-0 bg-primary/10 transition-opacity duration-1000 pointer-events-none" />
+                    <div className="absolute inset-0 opacity-20 pointer-events-none" />
+                    <div className="absolute inset-0 transition-opacity duration-1000 pointer-events-none" />
                     {/* Logo Panel */}
                     <motion.div
-                        whileHover={{ scale: 1.05, rotateY: 10 }}
-                        className="w-32 h-32 md:w-48 md:h-48 shrink-0 border border-primary/30 rounded-2xl overflow-hidden bg-black/40 backdrop-blur-md flex items-center justify-center shadow-[0_0_40px_rgba(16,185,129,0.15)] relative z-10"
+                        className="w-32 h-32 md:w-48 md:h-48 bg-white rounded-2xl overflow-hidden flex items-center justify-center shadow-[0_0_40px_rgba(16,185,129,0.15)] relative z-10"
                     >
                         <img
                             src={aboutImage}
                             alt="Tanzeem-e-Islami logo"
-                            className="w-full h-full object-contain p-4 drop-shadow-xl"
+                            className="w-full h-full object-contain"
                             onError={(e) => {
                                 const t = e.currentTarget;
                                 if (!t.src.includes("/logo.png")) t.src = "/logo.png";
@@ -120,7 +119,7 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
                         >
                             {aboutTitle}
                         </h2>
-                        <p className="text-[#222222] leading-relaxed text-sm md:text-base mb-6 max-w-3xl">
+                        <p className="text-[#222222] leading-relaxed text-sm md:text-base mb-6">
                             {aboutDesc}
                         </p>
                         <div>
@@ -152,11 +151,11 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
                             <div
                                 key={leader.id}
                                 role="listitem"
-                                className="leader-card group bg-card/40 backdrop-blur-xl border border-border/50 rounded-2xl p-6 shadow-lg hover:shadow-primary/5 hover:border-primary/30 transition-all duration-700 flex flex-col md:flex-row gap-6 relative overflow-hidden"
+                                className="leader-card group bg-white border border-border/50 rounded-2xl p-6 shadow-lg transition-all duration-700 flex flex-col md:flex-row gap-6 relative overflow-hidden"
                             >
-                                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+                                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent transition-opacity duration-700 pointer-events-none" />
                                 {/* Photo */}
-                                <div className="w-full md:w-44 aspect-square rounded-xl overflow-hidden shrink-0 bg-black/50 border border-white/5 relative z-10">
+                                <div className="w-full md:w-44 aspect-square rounded-xl overflow-hidden shrink-0 border border-white/2 relative z-10">
                                     {leader.avatar ? (
                                         <img
                                             src={leader.avatar}
@@ -182,7 +181,7 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
                                         <p className="text-primary font-bold text-xs uppercase tracking-widest mb-1">
                                             {leader.designation || "Leader"}
                                         </p>
-                                        <h3 className="text-xl md:text-2xl font-bold text-foreground mb-3">
+                                        <h3 className="text-xl md:text-2xl font-bold text-black mb-3">
                                             {leader.name}
                                         </h3>
                                         {leader.bio && (

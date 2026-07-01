@@ -8,14 +8,14 @@
 
 :root {
   /* ── Brand Greens (primary identity — kept from project) ── */
-  --primary: #0d5844;
+  --primary: #008ECA;
   --primary-foreground: #fefefc;
-  --primary-light: #007a4d;
-  --primary-dark: #003d25;
+  --primary-light: #51a1c4;
+  --primary-dark: #007db3;
 
   /* ── Accent Blue (CTA / interactive — from tanzeem.org extraction) ── */
-  --accent-blue: #0088cc;
-  --accent-blue-hover: #0077b5;
+  --accent-blue: #008ECA;
+  --accent-blue-hover: #007db3;
   --accent-blue-light: #e6f3ff;
 
   /* ── Accent Gold ── */
@@ -276,7 +276,6 @@ h4,
 h5,
 h6 {
   font-family: var(--font-heading);
-  color: #108ece;
   font-weight: 700;
 }
 
@@ -937,7 +936,7 @@ button,
 /* ── Popover / Dropdown menus ── */
 .sitemanager-admin-layout.admin-light [data-slot="popover-content"],
 .sitemanager-admin-layout.admin-light [role="menu"],
-.sitemanager-admin-layout.admin-light [data-radix-popper-content-wrapper] > div {
+.sitemanager-admin-layout.admin-light [data-radix-popper-content-wrapper]>div {
   background-color: #ffffff !important;
   border-color: #e2e8f0 !important;
   color: #0f172a !important;
@@ -1010,7 +1009,7 @@ button,
   border-color: #e2e8f0 !important;
 }
 
-.sitemanager-admin-layout.admin-light .divide-border > * + * {
+.sitemanager-admin-layout.admin-light .divide-border>*+* {
   border-color: #e2e8f0 !important;
 }
 
