@@ -14,27 +14,34 @@ export const metadata = buildMetadata({
 });
 
 export default async function VideosBySpeakersPage() {
-  const speakerRows = await db
-    .select({
-      id: speakers.id,
-      name: speakers.name,
-      slug: speakers.slug,
-      bio: speakers.bio,
-      imageUrl: speakers.avatar,
-    })
-    .from(speakers)
-    .orderBy(asc(speakers.name));
+  let speakerRows: any[] = [];
+  let countMap: Record<string, number> = {};
 
-  const countRows = await db
-    .select({ speakerId: videos.speakerId, total: count() })
-    .from(videos)
-    .where(eq(videos.isPublished, true))
-    .groupBy(videos.speakerId);
+  try {
+    speakerRows = await db
+      .select({
+        id: speakers.id,
+        name: speakers.name,
+        slug: speakers.slug,
+        bio: speakers.bio,
+        imageUrl: speakers.avatar,
+      })
+      .from(speakers)
+      .orderBy(asc(speakers.name));
 
-  const countMap = countRows.reduce<Record<string, number>>((acc, r) => {
-    if (r.speakerId) acc[r.speakerId] = Number(r.total);
-    return acc;
-  }, {});
+    const countRows = await db
+      .select({ speakerId: videos.speakerId, total: count() })
+      .from(videos)
+      .where(eq(videos.isPublished, true))
+      .groupBy(videos.speakerId);
+
+    countMap = countRows.reduce<Record<string, number>>((acc, r) => {
+      if (r.speakerId) acc[r.speakerId] = Number(r.total);
+      return acc;
+    }, {});
+  } catch (error) {
+    console.warn("Could not fetch videos from DB during build. Using fallback.");
+  }
 
   const FALLBACK = [
     { id: "s1", name: "Dr. Israr Ahmed", slug: "dr-israr-ahmed", bio: "Founder of Tanzeem-e-Islami", count: 0 },
