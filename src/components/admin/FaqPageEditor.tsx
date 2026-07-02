@@ -327,6 +327,7 @@ export default function FaqPageEditor({ pageId, initialPageData }: FaqPageEditor
     const matchesTab =
       selectedCategoryTab === "all" ||
       itemCat === selectedCategoryTab.toLowerCase() ||
+      itemCat === "all";
     return matchesSearch && matchesTab;
   }).sort((a, b) => {
     // English first, then Urdu, then by order
