@@ -8,7 +8,9 @@
 
 :root {
   /* ── Brand Greens (primary identity — kept from project) ── */
-  --primary: #008ECA;
+  --primary: #0d5844;
+  /* --primary: red; */
+  --primary-light: color-mix(in srgb, var(--primary) 10%, white);
   --primary-foreground: #fefefc;
   --primary-light: #51a1c4;
   --primary-dark: #007db3;
