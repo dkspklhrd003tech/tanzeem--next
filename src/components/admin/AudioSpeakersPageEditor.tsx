@@ -307,7 +307,7 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
             <div className="overflow-y-auto p-6 flex-1 space-y-4">
               <div className="space-y-2"><Label>Name</Label><Input value={speakerFormData.name} onChange={e => setSpeakerFormData({ ...speakerFormData, name: e.target.value, slug: editingSpeakerId ? speakerFormData.slug : slugify(e.target.value) })} /></div>
               <div className="space-y-2"><Label>Slug</Label><Input value={speakerFormData.slug} onChange={e => setSpeakerFormData({ ...speakerFormData, slug: e.target.value })} /></div>
-              <div className="space-y-2"><Label>Bio</Label><Textarea value={speakerFormData.bio} onChange={e => setSpeakerFormData({ ...speakerFormData, bio: e.target.value })} /></div>
+              <div className="space-y-2"><Label>Urdu Name</Label><Input value={speakerFormData.bio} onChange={e => setSpeakerFormData({ ...speakerFormData, bio: e.target.value })} className="text-center font-bold text-lg" dir="rtl" style={{ fontFamily: "'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', serif" }} placeholder="اردو نام" /></div>
               <div className="space-y-2">
                 <Label>Speaker Photo</Label>
                 <ImageUploader value={speakerFormData.avatar || ""} onChange={(url) => setSpeakerFormData(prev => ({ ...prev, avatar: url }))} aspectRatio={1} />
