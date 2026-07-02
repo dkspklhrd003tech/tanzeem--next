@@ -64,7 +64,7 @@
   --secondary-foreground: #222222;
 
   /* ── Destructive ── */
-  --destructive: #cb2027;
+  --destructive: #ff0008;
   --destructive-foreground: #fefefc;
 
   /* ── Muted ── */
@@ -777,4 +777,3 @@ button,
   --destructive: #dc2626;
   --destructive-foreground: #ffffff;
 }
-

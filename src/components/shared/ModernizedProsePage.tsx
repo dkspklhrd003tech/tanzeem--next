@@ -220,7 +220,8 @@ export function ModernizedProsePage({
                     prose-li:text-slate-600  prose-li:mb-2
                     prose-ul:list-disc prose-ul:pl-6 prose-ul:mb-6
                     prose-ol:list-decimal prose-ol:pl-6 prose-ol:mb-6
-                    prose-blockquote:italic prose-blockquote:border-l-4 prose-blockquote:border-[#c8a84e] prose-blockquote:pl-6 prose-blockquote:text-slate-700  prose-blockquote:bg-slate-50  prose-blockquote:py-4 prose-blockquote:pr-4 prose-blockquote:rounded-r-2xl"
+                    prose-blockquote:italic prose-blockquote:border-l-4 prose-blockquote:border-[#c8a84e] prose-blockquote:pl-6 prose-blockquote:text-slate-700  prose-blockquote:bg-slate-50  prose-blockquote:py-4 prose-blockquote:pr-4 prose-blockquote:rounded-r-2xl
+                    [&>*]:[unicode-bidi:plaintext] [&>*]:text-start"
                 >
                   {featuredImage && template === "leader" && (
                     <div className="w-full max-w-xs mx-auto md:ml-0 md:mr-8 md:float-left md:w-[320px] md:mb-4 mb-6 rounded-3xl overflow-hidden shadow-mid border border-slate-200/50 bg-slate-100">

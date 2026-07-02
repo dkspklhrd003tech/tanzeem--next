@@ -51,6 +51,7 @@ export function MissionAndVideos({ videos, settings }: MissionProps) {
                     duration: 1.2,
                     stagger: 0.1,
                     ease: "power3.out",
+                    clearProps: "all",
                     scrollTrigger: { trigger: gridRef.current, start: "top 80%" }
                 }
             );
@@ -93,7 +94,7 @@ export function MissionAndVideos({ videos, settings }: MissionProps) {
                     <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         {videos.length > 0 ? videos.map((vid, i) => {
                             const card = (
-                                <div className="flex flex-col h-full bg-card/40 backdrop-blur-md rounded-[1.5rem] border border-border/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] hover:shadow-primary/10 hover:border-primary/30 hover:-translate-y-3 transition-all duration-700 overflow-hidden relative group/inner">
+                                <div className="flex flex-col h-full bg-card/40 backdrop-blur-md rounded-[1.5rem] border border-border/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] group-hover:shadow-primary/10 group-hover:border-primary/30 group-hover:-translate-y-3 transition-all duration-700 overflow-hidden relative group/inner">
                                     <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/80 opacity-0 group-hover/inner:opacity-100 transition-opacity duration-700 pointer-events-none z-10" />
 
                                     {/* Image Container — 348x195 aspect ratio */}
@@ -143,8 +144,7 @@ export function MissionAndVideos({ videos, settings }: MissionProps) {
                                         rel="noopener noreferrer"
                                         aria-label={`${vid.title} \u2014 opens video in new tab`}
                                         className={cn(
-                                            "video-card group relative flex flex-col rounded-[1.5rem] border border-border/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)]",
-                                            "hover:shadow-primary/10 hover:border-primary/40 hover:-translate-y-3 transition-all duration-700 overflow-hidden",
+                                            "video-card group relative flex flex-col",
                                             "focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
                                         )}
                                     >
@@ -156,7 +156,7 @@ export function MissionAndVideos({ videos, settings }: MissionProps) {
                             return (
                                 <div
                                     key={vid.id}
-                                    className="video-card group relative flex flex-col rounded-[1.5rem] border border-border/50 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-700 overflow-hidden"
+                                    className="video-card group relative flex flex-col"
                                 >
                                     {card}
                                 </div>

@@ -123,7 +123,7 @@ export function FAQPageClient({ initialItems, pageTitle, pageExcerpt }: FAQPageC
                     exit={{ opacity: 0, y: -15 }}
                     transition={{ duration: 0.2, delay: Math.min(idx * 0.05, 0.4) }}
                     className={cn(
-                      "bg-card border rounded-2xl overflow-hidden transition-all shadow-sm hover:border-green-500 duration-300",
+                      "bg-card border rounded-2xl overflow-hidden transition-all shadow-sm duration-300",
                       isExpanded
                         ? "border-primary/40 ring-1 ring-primary/10 shadow-md bg-gradient-to-b from-card to-primary/5"
                         : "border-border/60 hover:border-primary/30"

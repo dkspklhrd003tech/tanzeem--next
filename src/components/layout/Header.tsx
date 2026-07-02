@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Search, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -342,23 +342,25 @@ export function Header() {
   );
 }
 
-function getMenuItemClass(isTopLevel: boolean) {
+function getMenuItemClass(isTopLevel: boolean, isActive: boolean = false) {
   return cn(
     "transition-colors focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2",
     isTopLevel
-      ? "flex items-center gap-1 py-2 px-3 text-[14px] font-medium text-[#222222] hover:text-primary"
-      : "flex w-full items-center justify-between px-5 py-2.5 text-[14px] text-[#222222] hover:bg-primary hover:text-primary-foreground border-b border-border/30 last:border-0 group"
+      ? cn("flex items-center gap-1 py-2 px-3 text-[14px] font-medium hover:text-primary", isActive ? "text-primary" : "text-[#222222]")
+      : cn("flex w-full items-center justify-between px-5 py-2.5 text-[14px] hover:bg-primary hover:text-primary-foreground border-b border-border/30 last:border-0 group", isActive ? "text-primary bg-primary/5" : "text-[#222222]")
   );
 }
 
 function DesktopMenuItem({ item, depth = 0 }: { item: MenuNode; depth?: number }) {
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
   const isTopLevel = depth === 0;
 
-  const className = getMenuItemClass(isTopLevel);
+  const { href, isExternal, isOpenInNew } = resolveMenuLink(item.url, item.isOpenInNew);
+  const isActive = !!href && pathname === href;
+  const className = getMenuItemClass(isTopLevel, isActive);
 
   if (!item.children || item.children.length === 0) {
-    const { href, isExternal, isOpenInNew } = resolveMenuLink(item.url, item.isOpenInNew);
     if (!href) return null; // unsafe/sanitized away
 
     if (isExternal) {
@@ -384,7 +386,6 @@ function DesktopMenuItem({ item, depth = 0 }: { item: MenuNode; depth?: number }
       {item.url ? (
         // Parent has its own URL → render as a link with a dropdown caret.
         (() => {
-          const { href, isExternal, isOpenInNew } = resolveMenuLink(item.url, item.isOpenInNew);
           if (!href) return null;
           const sharedProps = {
             "aria-haspopup": true as const,
@@ -442,14 +443,18 @@ function DesktopMenuItem({ item, depth = 0 }: { item: MenuNode; depth?: number }
 
 function MobileNavItem({ item, onClose, depth = 0 }: { item: MenuNode, onClose: () => void, depth?: number }) {
   const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
+
+  const { href, isExternal, isOpenInNew } = resolveMenuLink(item.url, item.isOpenInNew);
+  const isActive = !!href && pathname === href;
 
   if (!item.children || item.children.length === 0) {
-    const { href, isExternal, isOpenInNew } = resolveMenuLink(item.url, item.isOpenInNew);
     if (!href) return null;
 
     const className = cn(
       "block py-3 font-medium hover:text-primary transition-colors",
-      depth === 0 ? "px-4" : "text-sm text-foreground-muted"
+      depth === 0 ? "px-4" : "text-sm",
+      isActive ? "text-primary" : (depth === 0 ? "text-foreground" : "text-foreground-muted")
     );
     if (isExternal) {
       return (
