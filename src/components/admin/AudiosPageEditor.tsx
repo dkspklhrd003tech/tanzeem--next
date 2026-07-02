@@ -467,7 +467,7 @@ export default function AudiosPageEditor({ pageId, initialPageData }: { pageId: 
                 <Video className="h-5 w-5 text-primary" />
                 {editingCatId ? "Edit Category" : "Add Category"}
               </h2>
-              <Button variant="ghost" size="icon" onClick={() => setIsCatModalOpen(false)} className="rounded-full">×</Button>
+              <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsCatModalOpen(false)}>×</Button>
             </div>
             <div className="p-6 flex-1 space-y-4">
               <div className="space-y-2"><Label>Name</Label><Input value={catFormData.name} onChange={e => setCatFormData({ ...catFormData, name: e.target.value, slug: editingCatId ? catFormData.slug : slugify(e.target.value) })} /></div>
@@ -495,7 +495,7 @@ export default function AudiosPageEditor({ pageId, initialPageData }: { pageId: 
                 <Video className="h-5 w-5 text-primary" />
                 {editingAudioId ? "Edit Audio Card" : "Add Audio Card"}
               </h2>
-              <Button variant="ghost" size="icon" onClick={() => setIsAudioModalOpen(false)} className="rounded-full">×</Button>
+              <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsAudioModalOpen(false)}>×</Button>
             </div>
             <div className="overflow-y-auto p-6 flex-1 space-y-4">
               <div className="grid grid-cols-2 gap-4">

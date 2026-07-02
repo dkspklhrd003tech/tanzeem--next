@@ -35,9 +35,10 @@ export function ImageUploader({
   onAltChange,
   aspectRatio = 16 / 9,
   freeCrop = false,
+  disableCrop = false,
   label,
   className,
-}: ImageUploaderProps & { freeCrop?: boolean }) {
+}: ImageUploaderProps & { freeCrop?: boolean; disableCrop?: boolean }) {
   const [image, setImage] = useState<string | null>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
@@ -72,9 +73,46 @@ export function ImageUploader({
       }
 
       const reader = new FileReader();
-      reader.addEventListener("load", () => {
-        setImage(reader.result as string);
-        setIsCropping(true);
+      reader.addEventListener("load", async () => {
+        const result = reader.result as string;
+        setImage(result);
+        
+        if (disableCrop) {
+          // Direct upload without cropping
+          setIsUploading(true);
+          try {
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("type", "uploads");
+
+            const res = await fetch("/api/upload", {
+              method: "POST",
+              body: formData,
+            });
+
+            if (!res.ok) throw new Error("Upload failed");
+
+            const data = await res.json();
+            onChange(data.url, isControlled ? (altValue ?? "") : localAltValue);
+            setImage(null);
+
+            toast({
+              title: "Success",
+              description: "Image uploaded successfully.",
+            });
+          } catch (error) {
+            console.error("Upload error:", error);
+            toast({
+              variant: "destructive",
+              title: "Error",
+              description: "Failed to upload image. Please try again.",
+            });
+          } finally {
+            setIsUploading(false);
+          }
+        } else {
+          setIsCropping(true);
+        }
       });
       reader.readAsDataURL(file);
     }

@@ -309,9 +309,7 @@ export function SermonsManager() {
                             <h2 className="text-xl font-bold">
                                 {editingSermon ? "Edit Sermon" : "Add New Sermon"}
                             </h2>
-                            <Button variant="ghost" size="icon" onClick={() => setIsModalOpen(false)}>
-                                ×
-                            </Button>
+                            <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsModalOpen(false)}>×</Button>
                         </div>
 
                         {/* Scrollable Form Body */}

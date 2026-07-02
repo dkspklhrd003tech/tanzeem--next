@@ -642,9 +642,7 @@ export default function FaqPageEditor({ pageId, initialPageData }: FaqPageEditor
               <h2 className="text-xl font-bold">
                 {editingFaq ? "Edit FAQ Item" : "Add FAQ Item"}
               </h2>
-              <Button variant="ghost" size="icon" onClick={() => setIsFaqModalOpen(false)}>
-                ×
-              </Button>
+              <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsFaqModalOpen(false)}>×</Button>
             </div>
 
             <div className="overflow-y-auto p-6 flex-1">

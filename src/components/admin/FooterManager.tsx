@@ -112,7 +112,7 @@ export function FooterManager() {
     fetchFooterMenu();
   }, [fetchSettings, fetchFooterMenu]);
 
-  // Save Tanzeem Settings
+  // Save Settings
   const handleSaveSettings = async () => {
     setSavingSettings(true);
     try {
@@ -743,12 +743,12 @@ function LinkEditorForm({
   isSaving: boolean;
 }) {
   const [form, setForm] = useState<Partial<MenuItem>>(link);
-  const [pages, setPages] = useState<{id: string, title: string, slug: string}[]>([]);
+  const [pages, setPages] = useState<{ id: string, title: string, slug: string }[]>([]);
 
   useEffect(() => {
     fetch("/api/pages").then(r => r.json()).then(d => {
-      if(d.pages) setPages(d.pages);
-    }).catch(() => {});
+      if (d.pages) setPages(d.pages);
+    }).catch(() => { });
   }, []);
 
   const set = (k: keyof MenuItem, v: any) => setForm((p) => ({ ...p, [k]: v }));
@@ -771,19 +771,19 @@ function LinkEditorForm({
           <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" /></svg>
           Quick Link to Existing Page
         </Label>
-        <select 
+        <select
           className="w-full h-8 px-2 rounded-md border border-primary/30 text-[11px] bg-background focus:ring-1 focus:ring-primary focus:outline-none"
           onChange={(e) => {
-              const p = pages.find(x => x.id === e.target.value);
-              if(p) {
-                setForm(prev => ({
-                  ...prev,
-                  label: p.title,
-                  url: p.slug.startsWith('/') ? p.slug : `/${p.slug}`,
-                  isOpenInNew: false
-                }));
-              }
-              e.target.value = "";
+            const p = pages.find(x => x.id === e.target.value);
+            if (p) {
+              setForm(prev => ({
+                ...prev,
+                label: p.title,
+                url: p.slug.startsWith('/') ? p.slug : `/${p.slug}`,
+                isOpenInNew: false
+              }));
+            }
+            e.target.value = "";
           }}
         >
           <option value="">— Select a Page to auto-fill —</option>

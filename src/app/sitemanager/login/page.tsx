@@ -114,12 +114,14 @@ function LoginForm() {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   useEffect(() => {
-    // Fetch Login Settings
-    fetch("/api/settings?group=login")
+    // Fetch Settings
+    fetch("/api/settings")
       .then(res => res.json())
       .then(data => {
-        if (data.settings?.login) {
-          setSettings(data.settings.login);
+        if (data.settings) {
+          const loginSettings = data.settings.login || {};
+          const identitySettings = data.settings.general || {};
+          setSettings({ ...identitySettings, ...loginSettings });
         }
       })
       .catch(err => console.error("Failed to load settings:", err));
@@ -257,13 +259,13 @@ function LoginForm() {
       >
         <div className="bg-white/95 backdrop-blur-xl rounded-3xl shadow-[0_0_50px_rgba(13,88,68,0.3)] overflow-hidden border border-white/20">
 
-          <div className="p-8 pb-10">
+          <div className="p-6">
             {/* Logo area */}
             <div className="flex flex-col items-center mb-8">
-              {settings.login_logo ? (
-                <img src={settings.login_logo} alt="Logo" className="w-20 h-20 rounded-2xl shadow-xl mb-5 object-cover" />
+              {settings.login_logo || settings.site_logo ? (
+                <img src={settings.login_logo || settings.site_logo} alt="Logo" className="max-w-[120px] h-auto mb-5 object-contain" />
               ) : (
-                <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center shadow-lg mb-5">
+                <div className="w-16 h-16 bg-primary rounded-xl flex items-center justify-center shadow-lg mb-5">
                   <span className="text-white font-bold text-3xl leading-none">ت</span>
                 </div>
               )}
@@ -299,7 +301,6 @@ function LoginForm() {
                         className={cn(
                           "w-full h-11 pl-10 pr-4 rounded-xl border text-sm transition-all",
                           "bg-gray-50 text-gray-900 placeholder:text-gray-400",
-                          "border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20",
                           error && "border-red-400 focus:border-red-400 focus:ring-red-200"
                         )}
                       />
@@ -309,6 +310,9 @@ function LoginForm() {
                   <div>
                     <div className="flex items-center justify-between mb-1.5">
                       <label className="block text-sm font-semibold text-gray-700">Password</label>
+                      <button type="button" onClick={() => { setMode("forgot"); setError(null); setSuccess(null); }} className="cursor-pointer text-xs text-primary hover:text-primary/80 font-bold transition-colors">
+                        Forgot password?
+                      </button>
                     </div>
                     <div className="relative">
                       <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -318,15 +322,11 @@ function LoginForm() {
                         className={cn(
                           "w-full h-11 pl-10 pr-10 rounded-xl border text-sm transition-all",
                           "bg-gray-50 text-gray-900 placeholder:text-gray-400",
-                          "border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20",
                           error && "border-red-400 focus:border-red-400 focus:ring-red-200"
                         )}
                       />
                       <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
-                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                      </button>
-                      <button type="button" onClick={() => { setMode("forgot"); setError(null); setSuccess(null); }} className="cursor-pointer text-right text-xs text-primary hover:text-primary/80 font-bold transition-colors">
-                        Forgot password?
+                        {showPassword ? <EyeOff className="h-5 w-5 text-primary" /> : <Eye className="h-5 w-5 text-primary" />}
                       </button>
                     </div>
                     <PasswordStrengthBar password={password} />
@@ -344,7 +344,7 @@ function LoginForm() {
 
                   <button
                     type="submit" disabled={isLoading || !email || !password}
-                    className="w-full h-12 mt-2 rounded-xl font-bold text-sm text-white transition-all bg-primary hover:bg-primary/80 focus:ring-2 focus:ring-primary/40 disabled:opacity-90 flex items-center justify-center gap-2 shadow-lg shadow-primary/30"
+                    className="w-full h-12 mt-2 rounded-xl font-bold text-sm text-white transition-all bg-primary hover:bg-primary/90 focus:ring-2 focus:ring-primary/40 flex items-center justify-center gap-2 shadow-lg shadow-primary/30"
                   >
                     {isLoading ? <><Loader2 className="h-4 w-4 animate-spin" /> Authenticating...</> : "Sign In Securely"}
                   </button>
@@ -452,9 +452,9 @@ function LoginForm() {
             </AnimatePresence>
 
             {/* Configurable Footer Text */}
-            <p className="mt-8 text-center text-xs font-medium text-gray-400">
+            <p className="mt-6 text-center text-xs font-medium text-gray-500">
               {settings.login_footer_text || (
-                <a href="/" className="hover:text-primary transition-colors">← Back to website</a>
+                <a href="/" className="hover:text-primary transition-colors">← Back to Website</a>
               )}
             </p>
           </div>

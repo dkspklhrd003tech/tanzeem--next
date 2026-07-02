@@ -136,7 +136,7 @@ export function SiteIdentityManager() {
               <ImageUploader 
                 value={settings.site_logo} 
                 onChange={(url) => setSettings({ ...settings, site_logo: url })} 
-                freeCrop={true}
+                disableCrop={true}
               />
             </div>
             <div className="space-y-2">

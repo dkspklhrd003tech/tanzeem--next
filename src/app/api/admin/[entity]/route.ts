@@ -52,7 +52,7 @@ function revalidateEntityPaths(entity: string) {
             revalidatePath("/videos-by-category");
             revalidatePath("/videos-by-speakers");
         }
-        revalidatePath("/");
+        revalidatePath("/", "layout");
     } catch (e) {
         console.error("Revalidation failed:", e);
     }

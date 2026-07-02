@@ -6,6 +6,7 @@ import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { PageBanner } from "./PageBanner";
 import { PersistentAudioPlayer } from "@/components/audio/PersistentAudioPlayer";
+import { ShareSidebar } from "@/components/shared/ShareSidebar";
 import { useSettings } from "@/hooks/use-settings";
 
 interface MainLayoutProps {
@@ -60,6 +61,7 @@ export function MainLayout({ children }: MainLayoutProps) {
       </main>
 
       {!isSiteManager && <Footer />}
+      {!isSiteManager && <ShareSidebar />}
       {!isSiteManager && <PersistentAudioPlayer />}
     </div>
   );

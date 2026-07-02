@@ -1176,9 +1176,7 @@ export default function SocialMediaPageEditor({ pageId, initialPageData }: Socia
               <h2 className="text-lg font-bold flex items-center gap-2">
                 {editingAccount ? "Edit Social Account" : "Add New Social Account"}
               </h2>
-              <Button variant="ghost" size="icon" onClick={() => setIsAccountModalOpen(false)} className="rounded-full">
-                ×
-              </Button>
+              <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsAccountModalOpen(false)}>×</Button>
             </div>
 
             <div className="overflow-y-auto p-5 flex-1">
@@ -1315,9 +1313,7 @@ export default function SocialMediaPageEditor({ pageId, initialPageData }: Socia
               <h2 className="text-lg font-bold flex items-center gap-2">
                 {editingPlatform ? "Edit Platform Tab" : "Add Platform Tab"}
               </h2>
-              <Button variant="ghost" size="icon" onClick={() => setIsPlatformModalOpen(false)} className="rounded-full">
-                ×
-              </Button>
+              <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsPlatformModalOpen(false)}>×</Button>
             </div>
 
             <div className="p-5">

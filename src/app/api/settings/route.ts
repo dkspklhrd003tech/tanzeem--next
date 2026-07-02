@@ -3,6 +3,7 @@ import { db } from "@/lib/db";
 import { settings, activityLogs } from "@/db/schema";
 import { asc, eq } from "drizzle-orm";
 import { getCurrentUser } from "@/lib/auth";
+import { revalidatePath } from "next/cache";
 
 // GET - Get all settings
 export async function GET() {
@@ -77,6 +78,8 @@ export async function PUT(request: NextRequest) {
       entityType: "settings",
       details: JSON.stringify({ keys: Object.keys(settingsToUpdate) }),
     });
+
+    revalidatePath("/", "layout");
 
     return NextResponse.json({ success: true, settings: results });
   } catch (error: any) {

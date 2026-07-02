@@ -884,9 +884,7 @@ export default function AudioBooksPageEditor({ pageId, initialPageData }: AudioB
                 <FileText className="h-5 w-5 text-primary" />
                 {editingItem ? "Edit audio book Details" : "New audio book Details"}
               </h2>
-              <Button variant="ghost" size="icon" onClick={() => setIsModalOpen(false)} className="rounded-full">
-                ×
-              </Button>
+              <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsModalOpen(false)}>×</Button>
             </div>
 
             <div className="overflow-y-auto p-6 flex-1">

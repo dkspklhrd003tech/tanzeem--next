@@ -165,7 +165,7 @@ export function SettingsManager() {
             <div className="pb-4 border-b border-border mb-6">
                 <h1 className="text-3xl font-bold text-foreground tracking-tight flex items-center gap-3">
                     <Settings className="w-8 h-8 text-primary" />
-                    Tanzeem Settings
+                    Settings
                 </h1>
                 <p className="text-sm text-foreground-muted mt-1">Manage global interface settings, brand identity, and monitor the live support Inbox in real-time.</p>
             </div>
@@ -779,7 +779,7 @@ export function SettingsManager() {
                                 Write custom CSS to override styles across the entire frontend and backend. These styles will be injected with maximum priority.
                             </p>
                         </div>
-                        
+
                         <div className="space-y-2">
                             <textarea
                                 value={settings.global_css || ""}

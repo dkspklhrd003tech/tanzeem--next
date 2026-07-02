@@ -250,7 +250,7 @@ export function DarseQuranManager() {
                     <div className="bg-card w-full max-w-2xl border border-border rounded-xl shadow-lg relative overflow-hidden flex flex-col max-h-[90vh]">
                         <div className="p-6 border-b border-border flex justify-between items-center bg-muted/30">
                             <h2 className="text-xl font-bold">{editingEvent ? "Edit Event" : "Create New Event"}</h2>
-                            <Button variant="ghost" size="icon" onClick={() => setIsModalOpen(false)}>×</Button>
+                            <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsModalOpen(false)}>×</Button>
                         </div>
 
                         <div className="overflow-y-auto p-6 flex-1">

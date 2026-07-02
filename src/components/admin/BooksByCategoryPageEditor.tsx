@@ -554,7 +554,7 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
                 <FileText className="h-5 w-5 text-primary" />
                 {editingCatId ? "Edit Category" : "Add Category"}
               </h2>
-              <Button variant="ghost" size="icon" onClick={() => setIsCatModalOpen(false)} className="rounded-full">×</Button>
+              <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsCatModalOpen(false)}>×</Button>
             </div>
             <div className="overflow-y-auto p-6 flex-1 space-y-4">
               <div className="space-y-2"><Label>Name</Label><Input value={catFormData.name} onChange={e => setCatFormData({ ...catFormData, name: e.target.value, slug: editingCatId ? catFormData.slug : slugify(e.target.value) })} /></div>
@@ -594,7 +594,7 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
                 <FileText className="h-5 w-5 text-primary" />
                 {editingBookId ? "Edit Book" : "Add Book"}
               </h2>
-              <Button variant="ghost" size="icon" onClick={() => setIsBookModalOpen(false)} className="rounded-full">×</Button>
+              <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsBookModalOpen(false)}>×</Button>
             </div>
             <div className="overflow-y-auto p-6 flex-1 space-y-4">
               <div className="space-y-2"><Label>Title</Label><Input value={bookFormData.title} onChange={e => setBookFormData({ ...bookFormData, title: e.target.value, slug: editingBookId ? bookFormData.slug : slugify(e.target.value) })} /></div>

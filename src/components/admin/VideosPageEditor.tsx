@@ -487,7 +487,7 @@ export default function VideosPageEditor({ pageId, initialPageData }: { pageId: 
                 <Video className="h-5 w-5 text-primary" />
                 {editingCatId ? "Edit Category" : "Add Category"}
               </h2>
-              <Button variant="ghost" size="icon" onClick={() => setIsCatModalOpen(false)} className="rounded-full">×</Button>
+              <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsCatModalOpen(false)}>×</Button>
             </div>
             <div className="p-6 flex-1 space-y-4">
               <div className="space-y-2"><Label>Name</Label><Input value={catFormData.name} onChange={e => setCatFormData({ ...catFormData, name: e.target.value, slug: editingCatId ? catFormData.slug : slugify(e.target.value) })} /></div>
@@ -513,7 +513,7 @@ export default function VideosPageEditor({ pageId, initialPageData }: { pageId: 
                 <User className="h-5 w-5 text-primary" />
                 {editingSpeakerId ? "Edit Speaker" : "Add Speaker"}
               </h2>
-              <Button variant="ghost" size="icon" onClick={() => setIsSpeakerModalOpen(false)} className="rounded-full">×</Button>
+              <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsSpeakerModalOpen(false)}>×</Button>
             </div>
             <div className="overflow-y-auto p-6 flex-1 space-y-4">
               <div className="space-y-2"><Label>Name</Label><Input value={speakerFormData.name} onChange={e => setSpeakerFormData({ ...speakerFormData, name: e.target.value, slug: editingSpeakerId ? speakerFormData.slug : slugify(e.target.value) })} /></div>
@@ -547,7 +547,7 @@ export default function VideosPageEditor({ pageId, initialPageData }: { pageId: 
                 <Video className="h-5 w-5 text-primary" />
                 {editingVideoId ? "Edit Video" : "Add Video"}
               </h2>
-              <Button variant="ghost" size="icon" onClick={() => setIsVideoModalOpen(false)} className="rounded-full">×</Button>
+              <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsVideoModalOpen(false)}>×</Button>
             </div>
             <div className="overflow-y-auto p-6 flex-1 space-y-4">
               <div className="grid grid-cols-2 gap-4">

@@ -118,7 +118,7 @@ const NAV_ITEMS: NavItem[] = [
   { title: "Jummah Venues", href: "/sitemanager/khitabat-addresses", icon: MapPin },
   { title: "Sermons", href: "/sitemanager/sermons", icon: Mic },
   // ── System ───────────────────────────────────────────────────────────────
-  { title: "Tanzeem Settings", href: "/sitemanager/settings", icon: Settings },
+  { title: "Settings", href: "/sitemanager/settings", icon: Settings },
   { title: "Activity Log", href: "/sitemanager/activity", icon: History, superAdminOnly: true },
 ];
 
@@ -257,6 +257,7 @@ function Sidebar({
   onCollapse,
   onMobileClose,
   user,
+  siteLogo,
   onLogout,
 }: {
   isCollapsed: boolean;
@@ -264,6 +265,7 @@ function Sidebar({
   onCollapse: () => void;
   onMobileClose: () => void;
   user: AdminUser | null;
+  siteLogo?: string;
   onLogout: () => void;
 }) {
   const isSuperAdmin = user?.role === "super_admin" || user?.role === "SUPER_ADMIN";
@@ -316,9 +318,13 @@ function Sidebar({
                 transition={{ duration: 0.15 }}
                 className="flex items-center gap-2.5 overflow-hidden"
               >
-                <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shrink-0">
-                  <span className="text-primary-foreground font-bold text-lg leading-none">ت</span>
-                </div>
+                {siteLogo ? (
+                  <img src={siteLogo} alt="Site Logo" className="w-auto h-8 object-contain shrink-0" />
+                ) : (
+                  <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shrink-0">
+                    <span className="text-primary-foreground font-bold text-lg leading-none">ت</span>
+                  </div>
+                )}
                 <div className="leading-tight">
                   <p className="text-sm font-bold text-sidebar-foreground">Tanzeem</p>
                   <p className="text-[10px] text-sidebar-foreground/50 uppercase tracking-wide">Site Manager</p>
@@ -331,9 +337,13 @@ function Sidebar({
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center mx-auto"
+                className={cn("w-auto h-8 flex items-center justify-center mx-auto overflow-visible", !siteLogo && "w-8 h-8 rounded-lg bg-primary overflow-hidden")}
               >
-                <span className="text-primary-foreground font-bold text-lg leading-none">ت</span>
+                {siteLogo ? (
+                  <img src={siteLogo} alt="Site Logo" className="w-auto h-8 object-contain" />
+                ) : (
+                  <span className="text-primary-foreground font-bold text-lg leading-none">ت</span>
+                )}
               </motion.div>
             )}
           </AnimatePresence>
@@ -576,6 +586,18 @@ export default function SiteManagerLayout({
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [user, setUser] = useState<AdminUser | null>(null);
   const [isUserLoading, setIsUserLoading] = useState(true);
+  const [siteLogo, setSiteLogo] = useState<string | undefined>();
+
+  useEffect(() => {
+    fetch("/api/settings?group=general")
+      .then(res => res.json())
+      .then(data => {
+        if (data.settings?.general?.site_logo) {
+          setSiteLogo(data.settings.general.site_logo);
+        }
+      })
+      .catch(err => console.error("Failed to load identity settings:", err));
+  }, []);
 
 
   // Load current user — redirect to login if not authenticated
@@ -641,6 +663,7 @@ export default function SiteManagerLayout({
             onCollapse={() => setIsCollapsed((c) => !c)}
             onMobileClose={() => setIsMobileOpen(false)}
             user={user}
+            siteLogo={siteLogo}
             onLogout={handleLogout}
           />
         </Suspense>
