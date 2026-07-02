@@ -27,13 +27,13 @@ export function FaqStyles() {
         }
 
         /* ---- highlighted Urdu paragraph ---- */
-        .urdu-arabic-text {
-            font-family: "Noto Nastaliq Urdu", "Jameel Noori Nastaleeq", "Nafees Nastaleeq", serif;
-            font-size: 20px;
-            text-align: right;
-            direction: rtl;
-            line-height: 2.2;
-        }
+        // .urdu-arabic-text {
+        //     font-family: "Noto Nastaliq Urdu", "Jameel Noori Nastaleeq", "Nafees Nastaleeq", serif;
+        //     font-size: 20px;
+        //     text-align: right;
+        //     direction: rtl;
+        //     line-height: 2.2;
+        // }
 
         .faq-answer p.urdu,
         .faq-answer-inner p.urdu {
