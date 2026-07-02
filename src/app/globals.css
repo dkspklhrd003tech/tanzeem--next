@@ -12,7 +12,6 @@
   /* --primary: red; */
   --primary-light: color-mix(in srgb, var(--primary) 10%, white);
   --primary-foreground: #fefefc;
-  --primary-light: #51a1c4;
   --primary-dark: #007db3;
 
   /* ── Accent Blue (CTA / interactive — from tanzeem.org extraction) ── */
