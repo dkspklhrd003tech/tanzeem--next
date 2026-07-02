@@ -31,17 +31,18 @@ export function FAQPageClient({ initialItems, pageTitle, pageExcerpt }: FAQPageC
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
-  // Extract unique categories from items
-  const categories = [
-    "all",
-    ...Array.from(new Set(initialItems.map((item) => item.category || "General")))
-  ];
+  const getCategory = (cat?: string) => (cat === "General" ? "English" : cat) || "English";
+
+  // Fixed categories list (User wants exactly these to always show)
+  const categories = ["all", "English", "Urdu"];
 
   // Filter items based on search and category
   const filteredItems = initialItems.filter((item) => {
+    const itemCat = getCategory(item.category).toLowerCase();
     const matchesCategory =
       selectedCategory === "all" ||
-      (item.category || "General").toLowerCase() === selectedCategory.toLowerCase();
+      itemCat === selectedCategory.toLowerCase() ||
+      itemCat === "all";
 
     const matchesSearch =
       item.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -86,7 +87,7 @@ export function FAQPageClient({ initialItems, pageTitle, pageExcerpt }: FAQPageC
                     : "bg-muted/50 text-muted-foreground border-border/50 hover:bg-muted hover:text-foreground"
                 )}
               >
-                {cat === "all" ? "All Categories" : cat}
+                {cat === "all" ? "All" : cat}
               </button>
             ))}
           </div>

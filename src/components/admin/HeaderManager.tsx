@@ -85,7 +85,7 @@ function SortableMenuRow({
   savingItem,
   saveMenuItem,
   setEditingItem,
-  flatMenu,
+  parentOptions,
 }: {
   item: MenuItem;
   depth: number;
@@ -98,7 +98,7 @@ function SortableMenuRow({
   savingItem: boolean;
   saveMenuItem: any;
   setEditingItem: any;
-  flatMenu: MenuItem[];
+  parentOptions: (MenuItem & { depth?: number })[];
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: item.id });
@@ -115,10 +115,10 @@ function SortableMenuRow({
     <>
       <div
         ref={setNodeRef}
-        style={style}
+        style={{ ...style, marginLeft: depth > 0 ? `${depth * 1.5}rem` : undefined }}
         className={cn(
           "flex items-center gap-2 px-3 py-2 rounded-lg border border-border bg-card hover:bg-muted/40 transition-colors group",
-          depth > 0 && "ml-6 border-l-2 border-l-primary/20"
+          depth > 0 && "border-l-2 border-l-primary/20"
         )}
       >
         {/* Drag handle */}
@@ -192,10 +192,13 @@ function SortableMenuRow({
       
       {/* Inline Editor */}
       {editingItem && editingItem.id === item.id && (
-        <div className={cn("mt-2 mb-4 animate-in fade-in slide-in-from-top-2", depth > 0 && "ml-6")}>
+        <div 
+          className="mt-2 mb-4 animate-in fade-in slide-in-from-top-2"
+          style={{ marginLeft: depth > 0 ? `${depth * 1.5}rem` : undefined }}
+        >
           <MenuItemFormRender
             item={editingItem}
-            parentOptions={flatMenu.filter(m => !m.parentId)}
+            parentOptions={parentOptions}
             onSave={saveMenuItem}
             onCancel={() => setEditingItem(null)}
             isSaving={savingItem}
@@ -218,7 +221,7 @@ function SortableMenuRow({
           savingItem={savingItem}
           saveMenuItem={saveMenuItem}
           setEditingItem={setEditingItem}
-          flatMenu={flatMenu}
+          parentOptions={parentOptions}
         />
       ))}
     </>
@@ -234,7 +237,7 @@ function MenuItemForm({
   isSaving,
 }: {
   item: Partial<MenuItem>;
-  parentOptions: MenuItem[];
+  parentOptions: (MenuItem & { depth?: number })[];
   onSave: (data: Partial<MenuItem>) => void;
   onCancel: () => void;
   isSaving: boolean;
@@ -330,7 +333,7 @@ function MenuItemForm({
               .filter((p) => p.id !== form.id)
               .map((p) => (
                 <option key={p.id} value={p.id}>
-                  {p.label}
+                  {p.depth ? "—".repeat(p.depth) + " " : ""}{p.label}
                 </option>
               ))}
           </select>
@@ -478,26 +481,78 @@ export function HeaderManager() {
   }
 
   async function handleDragEnd(event: DragEndEvent) {
-    const { active, over } = event;
-    if (!over || active.id === over.id) return;
+    const { active, over, delta } = event;
+    if (!active) return;
 
     setMenuTree((prev) => {
       const flat = flattenTree(prev);
       const oi = flat.findIndex((x) => x.id === active.id);
-      const ni = flat.findIndex((x) => x.id === over.id);
-      if (oi === -1 || ni === -1) return prev;
-      const reordered = arrayMove(flat, oi, ni).map((item, idx) => ({
-        ...item,
-        order: idx,
-      }));
-      // Persist reorder
-      reordered.forEach((item) => {
-        fetch(`/api/menus/${item.id}`, {
+      if (oi === -1) return prev;
+      
+      const ni = over ? flat.findIndex((x) => x.id === over.id) : oi;
+      let reordered = arrayMove(flat, oi, ni);
+      const item = reordered[ni];
+      let newParentId = item.parentId;
+
+      // Smart hierarchy resolution based on drop position and horizontal drag
+      if (ni === 0) {
+        newParentId = null; // Forced to root if at the very top
+      } else {
+        const prevItem = reordered[ni - 1];
+        
+        if (delta.x > 30) {
+          // Indent: become child of the item directly above
+          if (prevItem.id !== item.id) {
+            newParentId = prevItem.id;
+          }
+        } else if (delta.x < -30) {
+          // Outdent: become sibling of prevItem's parent
+          if (prevItem.parentId) {
+            const prevItemParent = flat.find(x => x.id === prevItem.parentId);
+            newParentId = prevItemParent ? prevItemParent.parentId : null;
+          } else {
+            newParentId = null;
+          }
+        } else {
+          // Same level (vertical drag): become sibling of the item directly above
+          newParentId = prevItem.parentId;
+        }
+      }
+
+      // Prevent cyclic dependencies (cannot make a parent a child of its own child)
+      const isDescendant = (childId: string | null, parentId: string): boolean => {
+        if (!childId) return false;
+        if (childId === parentId) return true;
+        const child = flat.find(x => x.id === childId);
+        return child ? isDescendant(child.parentId, parentId) : false;
+      };
+
+      if (isDescendant(newParentId, item.id)) {
+        newParentId = item.parentId; // Revert to safe parent
+      }
+
+      let parentChanged = false;
+      if (newParentId !== item.parentId) {
+        item.parentId = newParentId;
+        parentChanged = true;
+      }
+
+      // Re-assign sequential order
+      reordered = reordered.map((it, idx) => ({ ...it, order: idx }));
+
+      // Persist changes
+      reordered.forEach((it) => {
+        const payload: any = { order: it.order };
+        if (parentChanged && it.id === item.id) {
+          payload.parentId = it.parentId;
+        }
+        fetch(`/api/menus/${it.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ order: item.order }),
+          body: JSON.stringify(payload),
         });
       });
+      
       return buildTree(reordered);
     });
   }
@@ -529,7 +584,18 @@ export function HeaderManager() {
     return roots;
   }
 
-  const topLevelItems = flatMenu.filter((m) => !m.parentId);
+  const generateParentOptions = (items: MenuItem[], depth = 0): (MenuItem & { depth?: number })[] => {
+    const result: (MenuItem & { depth?: number })[] = [];
+    for (const item of items) {
+      result.push({ ...item, depth });
+      if (item.children && depth < 2) { // Allow up to depth 2 (level 3 parent)
+        result.push(...generateParentOptions(item.children, depth + 1));
+      }
+    }
+    return result;
+  };
+  
+  const parentOptions = generateParentOptions(menuTree);
 
   return (
     <div className="space-y-8">
@@ -591,7 +657,7 @@ export function HeaderManager() {
             <div className="mb-4 animate-in fade-in slide-in-from-top-2">
               <MenuItemForm
                 item={editingItem}
-                parentOptions={topLevelItems}
+                parentOptions={parentOptions}
                 onSave={saveMenuItem}
                 onCancel={() => setEditingItem(null)}
                 isSaving={savingItem}
@@ -634,7 +700,7 @@ export function HeaderManager() {
                       savingItem={savingItem}
                       saveMenuItem={saveMenuItem}
                       setEditingItem={setEditingItem}
-                      flatMenu={flatMenu}
+                      parentOptions={parentOptions}
                     />
                   ))}
                 </div>

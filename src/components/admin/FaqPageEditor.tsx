@@ -54,7 +54,7 @@ interface FaqPageEditorProps {
 const defaultFaqFormData = {
   question: "",
   answer: "",
-  category: "General",
+  category: "English",
   order: 0,
   isPublished: true,
 };
@@ -182,7 +182,7 @@ export default function FaqPageEditor({ pageId, initialPageData }: FaqPageEditor
       setFaqFormData({
         question: faq.question,
         answer: faq.answer,
-        category: faq.category || "General",
+        category: faq.category || "English",
         order: faq.order,
         isPublished: faq.isPublished,
       });
@@ -307,17 +307,22 @@ export default function FaqPageEditor({ pageId, initialPageData }: FaqPageEditor
     }
   };
 
-  // Categories helper
-  const categories = ["all", ...Array.from(new Set(faqs.map(f => f.category || "General")))];
+  const getCategory = (cat?: string) => (cat === "General" ? "English" : cat) || "English";
+
+  // Fixed categories list (User wants exactly these to always show)
+  const categories = ["all", "English", "Urdu"];
 
   // Filtered lists
   const filteredFaqs = faqs.filter(faq => {
     const matchesSearch =
       faq.question.toLowerCase().includes(faqSearch.toLowerCase()) ||
       faq.answer.toLowerCase().includes(faqSearch.toLowerCase());
+      
+    const itemCat = getCategory(faq.category).toLowerCase();
     const matchesTab =
       selectedCategoryTab === "all" ||
-      (faq.category || "General").toLowerCase() === selectedCategoryTab.toLowerCase();
+      itemCat === selectedCategoryTab.toLowerCase() ||
+      itemCat === "all";
     return matchesSearch && matchesTab;
   });
 
@@ -347,7 +352,7 @@ export default function FaqPageEditor({ pageId, initialPageData }: FaqPageEditor
           <Plus className="w-4 h-4 mr-2" /> Add FAQ Item
         </Button>
       </PageActionBar>
-      
+
       {/* Hidden button for triggering page save since the action bar is outside the form */}
       <form onSubmit={handlePageSave} className="hidden">
         <button id="hidden-submit-page-btn" type="submit"></button>
@@ -390,7 +395,7 @@ export default function FaqPageEditor({ pageId, initialPageData }: FaqPageEditor
                       : "bg-muted text-muted-foreground border-border hover:bg-card hover:text-foreground"
                   )}
                 >
-                  {cat === "all" ? "All Categories" : cat}
+                  {cat === "all" ? "All" : cat}
                 </button>
               ))}
             </div>
@@ -467,7 +472,7 @@ export default function FaqPageEditor({ pageId, initialPageData }: FaqPageEditor
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <Badge variant="outline" className="capitalize">
-                            {faq.category || "General"}
+                            {getCategory(faq.category)}
                           </Badge>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
@@ -644,14 +649,18 @@ export default function FaqPageEditor({ pageId, initialPageData }: FaqPageEditor
               <form id="faq-item-form" onSubmit={handleFaqSubmit} className="space-y-5">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="faq-category">Category <span className="text-destructive">*</span></Label>
-                    <Input
+                    <Label htmlFor="faq-category">Language Category <span className="text-destructive">*</span></Label>
+                    <select
                       id="faq-category"
                       required
-                      placeholder="e.g. General, Belief, Programs, Membership"
                       value={faqFormData.category}
                       onChange={(e) => setFaqFormData(prev => ({ ...prev, category: e.target.value }))}
-                    />
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                    >
+                      <option value="All">All</option>
+                      <option value="English">English</option>
+                      <option value="Urdu">Urdu</option>
+                    </select>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="faq-order">Display Order Index <span className="text-destructive">*</span></Label>
