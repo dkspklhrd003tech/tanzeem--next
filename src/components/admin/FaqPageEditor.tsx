@@ -20,6 +20,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { FaqStyles } from "@/components/faq/FaqStyles";
 
 interface PageRecord {
   id: string;
@@ -328,6 +329,7 @@ export default function FaqPageEditor({ pageId, initialPageData }: FaqPageEditor
 
   return (
     <div className="space-y-6 max-w-7xl">
+      <FaqStyles />
       <PageActionBar
         mode="edit"
         title={pageForm.title}
@@ -465,9 +467,9 @@ export default function FaqPageEditor({ pageId, initialPageData }: FaqPageEditor
                             {faq.question}
                           </p>
                           <div
-                            className="text-xs text-muted-foreground line-clamp-1 mt-1 font-normal prose max-w-none"
+                            className="text-xs text-muted-foreground line-clamp-1 mt-1 font-normal"
                             dir="auto"
-                            dangerouslySetInnerHTML={{ __html: faq.answer }}
+                            dangerouslySetInnerHTML={{ __html: faq.answer.replace(/<[^>]*>?/gm, '') }}
                           />
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">

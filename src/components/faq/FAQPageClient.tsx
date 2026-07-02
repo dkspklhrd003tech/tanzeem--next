@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Search, HelpCircle, BookOpen, Layers, Info, CheckCircle2, ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+import { FaqStyles } from "./FaqStyles";
 
 export interface FAQItem {
   id: string;
@@ -57,6 +58,7 @@ export function FAQPageClient({ initialItems, pageTitle, pageExcerpt }: FAQPageC
 
   return (
     <div className="bg-background min-h-screen pb-20">
+      <FaqStyles />
 
       {/* Main Content Area */}
       <div className="max-w-7xl mx-auto -mt-10 relative z-20">
@@ -159,12 +161,7 @@ export function FAQPageClient({ initialItems, pageTitle, pageExcerpt }: FAQPageC
                           transition={{ duration: 0.25, ease: "easeInOut" }}
                         >
                           <div
-                            className={cn(
-                              "px-6 pb-6 pt-1 text-[#222222] prose  max-w-none text-sm md:text-base leading-relaxed border-t border-border/30",
-                              isUrduA && "font-nastaleeq text-right leading-loose"
-                            )}
-                            dir={isUrduA ? "rtl" : "ltr"}
-                            style={isUrduA ? { fontFamily: "'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', serif" } : undefined}
+                            className="p-6 text-[#222222] max-w-none text-sm md:text-base leading-relaxed faq-answer faq-answer-inner"
                             dangerouslySetInnerHTML={{ __html: item.answer }}
                           />
                         </motion.div>
