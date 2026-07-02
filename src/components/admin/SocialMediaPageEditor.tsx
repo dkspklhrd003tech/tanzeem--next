@@ -73,6 +73,7 @@ interface PlatformItem {
   slug: string;
   iconUrl?: string | null;
   themeColor?: string | null;
+  anchorTag?: string | null;
   order: number;
   isActive: boolean;
 }
@@ -106,6 +107,7 @@ const defaultPlatformForm = {
   name: "",
   slug: "",
   iconUrl: "globe",
+  anchorTag: "",
   themeColor: "#0d5844",
   isActive: true,
 };
@@ -495,6 +497,7 @@ export default function SocialMediaPageEditor({ pageId, initialPageData }: Socia
       name: item.name,
       slug: item.slug,
       iconUrl: item.iconUrl || "globe",
+      anchorTag: item.anchorTag || "",
       themeColor: item.themeColor || "#0d5844",
       isActive: item.isActive,
     });
@@ -525,6 +528,7 @@ export default function SocialMediaPageEditor({ pageId, initialPageData }: Socia
         name: platformFormData.name,
         slug: platformFormData.slug,
         iconUrl: platformFormData.iconUrl,
+        anchorTag: platformFormData.anchorTag,
         themeColor: platformFormData.themeColor,
         isActive: platformFormData.isActive,
       };
@@ -1348,6 +1352,18 @@ export default function SocialMediaPageEditor({ pageId, initialPageData }: Socia
                     className="font-mono text-xs"
                   />
                   {platformErrors.slug && <p className="text-xs text-destructive">{platformErrors.slug}</p>}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="plat-anchor">Optional Anchor Tag</Label>
+                  <Input
+                    id="plat-anchor"
+                    value={platformFormData.anchorTag || ""}
+                    onChange={(e) => setPlatformFormData(prev => ({ ...prev, anchorTag: e.target.value }))}
+                    placeholder="e.g. youtube (leave blank to use slug)"
+                    className="font-mono text-xs"
+                  />
+                  <p className="text-[10px] text-muted-foreground">Used for #hashtag linking. If empty, the slug will be used.</p>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">

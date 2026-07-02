@@ -31,6 +31,7 @@ async function HomeContent() {
   let featuredVideos: any[] = [];
   let latestPress: any[] = [];
   let siteSettings: any[] = [];
+  let platforms: any[] = [];
 
   try {
     activeSliders = await db
@@ -106,6 +107,21 @@ async function HomeContent() {
       }]
     : activeSliders;
 
+  if (settingsMap.homepage_social_links) {
+    try {
+      platforms = JSON.parse(settingsMap.homepage_social_links);
+    } catch (e) {
+      console.error("Failed to parse homepage_social_links", e);
+    }
+  } else {
+    // legacy fallback
+    platforms = [];
+    if (settingsMap.youtube_url) platforms.push({ id: "youtube", name: "YouTube", slug: "youtube", url: settingsMap.youtube_url, themeColor: "#dc2626" });
+    if (settingsMap.facebook_url) platforms.push({ id: "facebook", name: "Facebook", slug: "facebook", url: settingsMap.facebook_url, themeColor: "#2563eb" });
+    if (settingsMap.twitter_url) platforms.push({ id: "twitter", name: "X (Twitter)", slug: "twitter", url: settingsMap.twitter_url, themeColor: "#000000" });
+    if (settingsMap.whatsapp_url) platforms.push({ id: "whatsapp", name: "WhatsApp", slug: "whatsapp", url: settingsMap.whatsapp_url, themeColor: "#22c55e" });
+  }
+
   return (
     <>
       <BackToTop />
@@ -137,7 +153,7 @@ async function HomeContent() {
       <PublicationsGrid booksData={featuredBooks} magazinesData={featuredMagazines} />
 
       {/* 7. Social Connect Banner */}
-      <CTA settings={settingsMap} />
+      <CTA platforms={platforms} />
     </>
   );
 }

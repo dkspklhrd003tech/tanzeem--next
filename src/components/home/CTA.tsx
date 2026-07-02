@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Youtube, Facebook } from "lucide-react";
+import { Youtube, Facebook, Globe } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
@@ -11,8 +11,19 @@ if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
 
+type PlatformRecord = {
+  id: string;
+  name: string;
+  slug?: string;
+  icon?: string;
+  url?: string;
+  iconUrl?: string | null;
+  themeColor?: string | null;
+  color?: string | null;
+};
+
 type CTAProps = {
-  settings: Record<string, string>;
+  platforms: PlatformRecord[];
 };
 
 // ── SVG icon components ───────────────────────────────────────────────────────
@@ -48,76 +59,20 @@ function TelegramIcon() {
   );
 }
 
-// ── Platform definitions ──────────────────────────────────────────────────────
-type Platform = {
-  id: string;
-  name: string;
-  settingsKey: string;
-  fallbackUrl: string;
-  color: string;
-  Icon: () => React.ReactElement;
+const iconMap: Record<string, any> = {
+  youtube: () => <Youtube className="h-7 w-7" aria-hidden="true" />,
+  facebook: () => <Facebook className="h-7 w-7" aria-hidden="true" />,
+  instagram: InstagramIcon,
+  whatsapp: WhatsappIcon,
+  telegram: TelegramIcon,
+  twitter: TwitterIcon,
+  x: TwitterIcon,
 };
 
-const PLATFORMS: Platform[] = [
-  {
-    id: "youtube",
-    name: "YouTube",
-    settingsKey: "youtube_url",
-    fallbackUrl: "https://youtube.com/@tanzeemeislami",
-    color: "bg-red-600 hover:bg-red-700",
-    Icon: () => <Youtube className="h-7 w-7" aria-hidden="true" />,
-  },
-  {
-    id: "facebook",
-    name: "Facebook",
-    settingsKey: "facebook_url",
-    fallbackUrl: "https://facebook.com/tanzeemeislami",
-    color: "bg-[#4267b2] hover:bg-[#365899]",
-    Icon: () => <Facebook className="h-7 w-7" aria-hidden="true" />,
-  },
-  {
-    id: "instagram",
-    name: "Instagram",
-    settingsKey: "instagram_url",
-    fallbackUrl: "https://instagram.com/tanzeemeislami",
-    color: "bg-gradient-to-br from-[#f09433] via-[#e6683c] via-[#dc2743] via-[#cc2366] to-[#bc1888] hover:opacity-90",
-    Icon: InstagramIcon,
-  },
-  {
-    id: "whatsapp",
-    name: "WhatsApp",
-    settingsKey: "whatsapp_url",
-    fallbackUrl: "https://wa.me/+924235869501",
-    color: "bg-[#25d366] hover:bg-[#1ebe5d]",
-    Icon: WhatsappIcon,
-  },
-  {
-    id: "telegram",
-    name: "Telegram",
-    settingsKey: "telegram_url",
-    fallbackUrl: "https://t.me/tanzeemeislami",
-    color: "bg-[#2CA5E0] hover:bg-[#229ED9]",
-    Icon: TelegramIcon,
-  },
-  {
-    id: "twitter",
-    name: "X (Twitter)",
-    settingsKey: "twitter_url",
-    fallbackUrl: "https://twitter.com/tanzeemeislami",
-    color: "bg-black hover:bg-gray-800",
-    Icon: TwitterIcon,
-  },
-];
-
-export function CTA({ settings }: CTAProps) {
+export function CTA({ platforms }: CTAProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const iconsRef = useRef<HTMLDivElement>(null);
-
-  // Only render platforms that have a configured URL or a fallback
-  const platforms = PLATFORMS.filter(
-    (p) => settings[p.settingsKey] || p.fallbackUrl
-  );
 
   useEffect(() => {
     if (!sectionRef.current || !headerRef.current || !iconsRef.current) return;
@@ -183,32 +138,37 @@ export function CTA({ settings }: CTAProps) {
 
         <div ref={iconsRef} className="flex flex-wrap items-center justify-center gap-6 md:gap-10">
           {platforms.map((platform, i) => {
-            const href = settings[platform.settingsKey] || platform.fallbackUrl;
+            const slugOrIcon = platform.slug || platform.icon || "globe";
+            const href = platform.url || `/social-media#${slugOrIcon}`;
+            const Icon = iconMap[slugOrIcon.toLowerCase()] || (() => <Globe className="h-7 w-7" aria-hidden="true" />);
+            const originalColor = platform.themeColor || platform.color || "#0d5844";
+            
             return (
               <a
                 key={platform.id}
                 href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label={`${platform.name} — opens in new tab`}
+                aria-label={`${platform.name} — social media page`}
                 className={cn(
                   "social-link flex flex-col items-center gap-4 group relative",
                   "focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-4"
                 )}
               >
                 {/* Glow Effect */}
-                <div className={cn("absolute inset-0 rounded-full blur-xl opacity-0 group-hover:opacity-40 transition-opacity duration-500 pointer-events-none", platform.color.split(' ')[0])} />
+                <div 
+                  className="absolute inset-0 rounded-full blur-xl opacity-0 group-hover:opacity-40 transition-opacity duration-500 pointer-events-none" 
+                  style={{ backgroundColor: originalColor }}
+                />
 
                 <div
                   className={cn(
                     "relative w-20 h-20 md:w-24 md:h-24 rounded-[1.5rem] flex items-center justify-center",
                     "text-white shadow-[0_10px_30px_rgba(0,0,0,0.2)] transition-all duration-500",
-                    "group-hover:-translate-y-3 group-hover:shadow-[0_20px_40px_rgba(0,0,0,0.3)] group-hover:rotate-6",
-                    platform.color
+                    "group-hover:-translate-y-3 group-hover:shadow-[0_20px_40px_rgba(0,0,0,0.3)] group-hover:rotate-6"
                   )}
+                  style={{ backgroundColor: originalColor }}
                 >
                   <div className="scale-[1.2] transition-transform duration-500 group-hover:scale-[1.3] drop-shadow-md">
-                    <platform.Icon />
+                    <Icon />
                   </div>
                 </div>
                 <p className="text-white font-bold text-sm text-center tracking-wide group-hover:text-white/100 text-white/70 transition-colors duration-500">

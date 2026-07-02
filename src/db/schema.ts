@@ -674,6 +674,7 @@ export const socialPlatforms = mysqlTable("social_platforms", {
     id: varchar("id", { length: 191 }).primaryKey(),
     name: varchar("name", { length: 191 }).notNull(),
     slug: varchar("slug", { length: 191 }).notNull().unique(),
+    anchorTag: varchar("anchor_tag", { length: 50 }),
     iconUrl: text("icon_url"),
     themeColor: varchar("theme_color", { length: 50 }),
     order: int("order").default(0).notNull(),

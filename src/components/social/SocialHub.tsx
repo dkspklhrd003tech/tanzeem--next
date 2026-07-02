@@ -27,6 +27,7 @@ interface Platform {
   slug: string;
   iconUrl?: string | null;
   themeColor?: string | null;
+  anchorTag?: string | null;
 }
 
 interface Account {
@@ -65,6 +66,22 @@ export function SocialHub({ initialPlatforms, initialAccounts, layout = "horizon
   const [currentLayout, setCurrentLayout] = useState<"horizontal" | "vertical">(layout);
   const [activeTab, setActiveTab] = useState(initialPlatforms[0]?.id || "");
   const sliderRef = useRef<HTMLDivElement>(null);
+
+  // Parse hash on mount to select active tab
+  useEffect(() => {
+    const hash = window.location.hash.replace("#", "");
+    if (hash) {
+      // Find platform by slug or name matching the hash
+      const matched = initialPlatforms.find(p => 
+        (p.anchorTag && p.anchorTag.toLowerCase() === hash.toLowerCase()) ||
+        p.slug.toLowerCase() === hash.toLowerCase() || 
+        p.name.toLowerCase().includes(hash.toLowerCase())
+      );
+      if (matched) {
+        setActiveTab(matched.id);
+      }
+    }
+  }, [initialPlatforms]);
 
   // Keep state in sync if parent prop changes
   useEffect(() => {
@@ -145,10 +162,18 @@ export function SocialHub({ initialPlatforms, initialAccounts, layout = "horizon
           const isActive = activeTab === platform.id;
           const originalColor = platform.themeColor || "#0d5844";
 
+          const anchor = platform.anchorTag || platform.slug.toLowerCase();
+
           return (
-            <button
+            <a
               key={platform.id}
-              onClick={() => setActiveTab(platform.id)}
+              id={anchor}
+              href={`#${anchor}`}
+              onClick={(e) => {
+                e.preventDefault();
+                setActiveTab(platform.id);
+                window.history.pushState(null, "", `#${anchor}`);
+              }}
               style={
                 isActive
                   ? {
@@ -169,7 +194,7 @@ export function SocialHub({ initialPlatforms, initialAccounts, layout = "horizon
             >
               <Icon className="w-4 h-4 shrink-0" />
               <span>{platform.name}</span>
-            </button>
+            </a>
           );
         })}
       </div>

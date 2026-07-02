@@ -83,11 +83,6 @@ const menuItems: any[] = [
     icon: Newspaper,
     items: [
       {
-        title: "Audio",
-        icon: Headphones,
-        href: "/sitemanager?section=audio",
-      },
-      {
         title: "Videos",
         icon: Video,
         href: "/sitemanager?section=videos",
@@ -127,6 +122,27 @@ const menuItems: any[] = [
         title: "Campaigns",
         icon: Mic,
         href: "/sitemanager?section=campaigns",
+      },
+    ],
+  },
+  {
+    title: "Audios",
+    icon: Headphones,
+    items: [
+      {
+        title: "Audios By Speaker",
+        icon: Mic,
+        href: "/sitemanager?section=audios-by-speaker",
+      },
+      {
+        title: "Audios By Category",
+        icon: Folder,
+        href: "/sitemanager?section=audios-by-category",
+      },
+      {
+        title: "Audio Books",
+        icon: BookOpen,
+        href: "/sitemanager?section=audio-books",
       },
     ],
   },

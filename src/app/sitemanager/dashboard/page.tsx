@@ -134,9 +134,9 @@ function KpiCard({
   title, icon: Icon, iconColor, metrics, rows, rowKeys, rowLabel,
 }: {
   title: string;
-  icon: React.ElementType;
+  icon: React.ElementType<{ className?: string }>;
   iconColor: string;
-  metrics: { label: string; value: number | string; icon: React.ElementType; }[];
+  metrics: { label: string; value: number | string; icon: React.ElementType<{ className?: string }>; }[];
   rows: Record<string, any>[];
   rowKeys: { key: string; label: string; isBar?: boolean; barColor?: string }[];
   rowLabel: string;

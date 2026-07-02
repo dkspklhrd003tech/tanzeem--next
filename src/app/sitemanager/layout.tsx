@@ -65,9 +65,10 @@ import { AdminUser, AuthContext } from "@/hooks/use-admin-auth";
 
 interface NavItem {
   title: string;
-  href: string;
+  href?: string;
   icon: React.ComponentType<{ className?: string }>;
   superAdminOnly?: boolean;
+  subItems?: { title: string; href: string }[];
 }
 
 
@@ -76,6 +77,42 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { title: "Dashboard", href: "/sitemanager/dashboard", icon: LayoutDashboard },
+  {
+    title: "Audios",
+    icon: Headphones,
+    subItems: [
+      { title: "Audios By Speaker", href: "/sitemanager/pages/audios-by-speaker/edit" },
+      { title: "Audios By Category", href: "/sitemanager/pages/audios-by-category/edit" },
+    ],
+  },
+  {
+    title: "Videos",
+    icon: Video,
+    subItems: [
+      { title: "Videos By Speakers", href: "/sitemanager/pages/videos-by-speakers/edit" },
+      { title: "Videos By Category", href: "/sitemanager/pages/videos-by-category/edit" },
+    ],
+  },
+  {
+    title: "Books",
+    icon: BookOpen,
+    subItems: [
+      { title: "Audio Books", href: "/sitemanager/pages/audio-books/edit" },
+      { title: "Books By Category", href: "/sitemanager/pages/books-by-category/edit" },
+    ],
+  },
+  {
+    title: "Magazines",
+    icon: Newspaper,
+    subItems: [
+      { title: "Meesaq", href: "/sitemanager/pages/meesaq/edit" },
+      { title: "Hikmat-e-Quran", href: "/sitemanager/pages/hikmat-e-quran/edit" },
+      { title: "Nida-e-Khilafat", href: "/sitemanager/pages/nida-e-khilafat/edit" },
+      { title: "Perspective", href: "/sitemanager/pages/perspective/edit" },
+    ],
+  },
+  { title: "Press Releases", href: "/sitemanager/pages/press-releases/edit", icon: FileText },
+  { title: "Khitab-e-Jum'ah (Audio)", href: "/sitemanager/pages/khitab-e-jumah-audio/edit", icon: Headphones },
   { title: "Pages", href: "/sitemanager/pages", icon: FileText },
   // ── Content ──────────────────────────────────────────────────────────────
   { title: "Jummah Venues", href: "/sitemanager/khitabat-addresses", icon: MapPin },
@@ -107,18 +144,78 @@ function SidebarNavItem({
   isCollapsed: boolean;
 }) {
   const pathname = usePathname();
-  const isActive = item.href === "/sitemanager/dashboard"
-    ? pathname === "/sitemanager/dashboard"
-    : pathname === item.href || pathname.startsWith(item.href + "/");
+  const isActive = item.href
+    ? (item.href === "/sitemanager/dashboard"
+      ? pathname === "/sitemanager/dashboard"
+      : pathname === item.href || pathname.startsWith(item.href + "/"))
+    : !!item.subItems?.some(sub => pathname === sub.href || pathname.startsWith(sub.href + "/"));
+
+  const [isOpen, setIsOpen] = useState(isActive);
+
+  if (item.subItems) {
+    const btnContent = (
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className={cn(
+          "group flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition-all duration-150",
+          isActive
+            ? "bg-primary text-white shadow-sm"
+            : isOpen
+              ? "bg-primary/80 text-white"
+              : "text-sidebar-foreground hover:bg-primary/80 hover:text-white active:text-white focus:text-white"
+        )}
+      >
+        <div className="flex items-center gap-3">
+          <item.icon className={cn("h-5 w-5 shrink-0 transition-colors", (isActive || isOpen) ? "text-white" : "text-sidebar-foreground group-hover:text-white group-active:text-white")} />
+          {!isCollapsed && <span className="truncate text-sm font-medium">{item.title}</span>}
+        </div>
+        {!isCollapsed && <ChevronLeft className={cn("h-4 w-4 transition-transform", isOpen ? "-rotate-90" : "")} />}
+      </button>
+    );
+
+    return (
+      <div className="space-y-1">
+        {isCollapsed ? (
+          <Tooltip>
+            <TooltipTrigger asChild>{btnContent}</TooltipTrigger>
+            <TooltipContent side="right">{item.title}</TooltipContent>
+          </Tooltip>
+        ) : btnContent}
+
+        {!isCollapsed && isOpen && (
+          <ul className="mt-1 ml-4 space-y-1 border-l border-sidebar-border/50">
+            {item.subItems.map((sub) => {
+              const isSubActive = pathname === sub.href || pathname.startsWith(sub.href + "/");
+              return (
+                <li key={sub.href}>
+                  <Link
+                    href={sub.href}
+                    className={cn(
+                      "block rounded-lg px-3 py-2 text-sm transition-colors ml-2",
+                      isSubActive
+                        ? "bg-primary text-primary-foreground font-medium shadow-sm"
+                        : "text-sidebar-foreground hover:bg-primary/50 hover:text-white"
+                    )}
+                  >
+                    {sub.title}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        )}
+      </div>
+    );
+  }
 
   const linkContent = (
     <Link
-      href={item.href}
+      href={item.href!}
       className={cn(
         "group flex items-center gap-3 rounded-lg px-3 py-2.5 transition-all duration-150",
         isActive
           ? "bg-primary text-white shadow-sm"
-          : "text-sidebar-foreground hover:bg-primary/80 hover:text-white active:text-white focus:text-white"
+          : "text-sidebar-foreground hover:bg-primary/80 hover:text-white active:text-white active:bg-primary/80 focus:text-white"
       )}
     >
       <item.icon
@@ -131,7 +228,7 @@ function SidebarNavItem({
       />
 
       {!isCollapsed && (
-        <span className="truncate text-sm font-medium text-inherit">
+        <span className="truncate text-sm font-medium">
           {item.title}
         </span>
       )}
@@ -255,7 +352,7 @@ function Sidebar({
           <TooltipProvider delayDuration={0}>
             <ul className="space-y-0.5">
               {visibleItems.map((item) => (
-                <li key={item.href}>
+                <li key={item.title}>
                   <SidebarNavItem item={item} isCollapsed={isCollapsed} />
                 </li>
               ))}
