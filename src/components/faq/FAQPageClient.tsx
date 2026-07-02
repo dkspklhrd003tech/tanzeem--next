@@ -86,7 +86,7 @@ export function FAQPageClient({ initialItems, pageTitle, pageExcerpt }: FAQPageC
                   "text-xs md:text-sm px-4 py-2 rounded-full border font-medium transition-all whitespace-nowrap capitalize",
                   selectedCategory === cat
                     ? "bg-primary text-primary-foreground border-primary shadow-sm"
-                    : "bg-muted/50 text-muted-foreground border-border/50 hover:bg-muted hover:text-foreground"
+                    : "bg-muted/50 text-primary border-primary/50 hover:bg-primary/70 hover:text-white"
                 )}
               >
                 {cat === "all" ? "All" : cat}
