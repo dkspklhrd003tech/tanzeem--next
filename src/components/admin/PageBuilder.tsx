@@ -53,7 +53,7 @@ export function PageBuilder({ pageId }: { pageId: string }) {
 
       <div className="space-y-4">
         {sections.map((section, index) => (
-          <div key={section.id} className="border border-border p-4 rounded-lg flex items-start gap-4 bg-white dark:bg-background-dark">
+          <div key={section.id} className="border border-border p-4 rounded-lg flex items-start gap-4 bg-white ">
             <div className="cursor-grab text-gray-400 mt-2">
               <GripVertical className="h-5 w-5" />
             </div>

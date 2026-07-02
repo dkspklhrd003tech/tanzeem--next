@@ -139,8 +139,8 @@ function SortableCard({ id, item, onEdit, onDelete }: SortableItemProps) {
             className={cn(
               "text-[10px] px-2.5 py-0.5 font-semibold uppercase tracking-wider rounded-md",
               isAudio
-                ? "bg-green-500/10 text-green-600 dark:text-green-400 border-green-500/20"
-                : "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"
+                ? "bg-green-500/10 text-green-600  border-green-500/20"
+                : "bg-emerald-500/10 text-emerald-600  border-emerald-500/20"
             )}
           >
             {isAudio ? "MP3 Audio" : "Written Statement"}

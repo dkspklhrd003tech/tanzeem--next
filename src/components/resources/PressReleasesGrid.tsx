@@ -243,8 +243,8 @@ export function PressReleasesGrid({ initialItems }: PressReleasesGridProps) {
                         className={cn(
                           "text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full border",
                           hasPdf
-                            ? "bg-red-50/50 dark:bg-primary/20 text-primary dark:text-primary border-primary/50 dark:border-primary/30"
-                            : "bg-emerald-50/50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400 border-emerald-200/50 dark:border-emerald-900/30"
+                            ? "bg-red-50/50  text-primary  border-primary/50 "
+                            : "bg-emerald-50/50  text-emerald-600  border-emerald-200/50 "
                         )}
                       >
                       </span>
@@ -368,12 +368,12 @@ export function PressReleasesGrid({ initialItems }: PressReleasesGridProps) {
               </div>
 
               {/* Modal Body / Viewer */}
-              <div className="flex-1 bg-zinc-100 dark:bg-zinc-950 overflow-y-auto p-4 md:p-6 flex justify-center items-stretch">
+              <div className="flex-1 bg-zinc-100  overflow-y-auto p-4 md:p-6 flex justify-center items-stretch">
                 {selectedItem.pdfUrl ? (
                   // PDF Viewer using iframe/object
                   <div className="relative w-full h-full rounded-2xl overflow-hidden border border-border shadow-md bg-white">
                     {pdfLoading && (
-                      <div className="absolute inset-0 bg-white dark:bg-zinc-900 flex flex-col items-center justify-center z-20">
+                      <div className="absolute inset-0 bg-white  flex flex-col items-center justify-center z-20">
                         <Loader2 className="h-10 w-10 text-primary animate-spin mb-3" />
                         <p className="text-sm font-medium text-foreground-muted">Loading PDF Document...</p>
                       </div>
@@ -387,10 +387,10 @@ export function PressReleasesGrid({ initialItems }: PressReleasesGridProps) {
                   </div>
                 ) : (
                   // Text Statement styled as a professional official A4 sheet
-                  <div className="w-full max-w-3xl bg-white dark:bg-zinc-900 shadow-xl border border-zinc-200/80 dark:border-zinc-800/80 rounded-2xl p-8 md:p-12 text-zinc-800 dark:text-zinc-200 overflow-y-auto mx-auto flex flex-col">
+                  <div className="w-full max-w-3xl bg-white  shadow-xl border border-zinc-200/80  rounded-2xl p-8 md:p-12 text-zinc-800  overflow-y-auto mx-auto flex flex-col">
                     {/* Letterhead Emblem placeholder / Letterhead top */}
-                    <div className="border-b-2 border-emerald-800 dark:border-emerald-600 pb-5 mb-8 text-center">
-                      <h3 className="font-amiri text-2xl font-extrabold text-emerald-800 dark:text-emerald-500 tracking-wide">
+                    <div className="border-b-2 border-emerald-800  pb-5 mb-8 text-center">
+                      <h3 className="font-amiri text-2xl font-extrabold text-emerald-800  tracking-wide">
                         TANZEEM-E-ISLAMI
                       </h3>
                       <p className="text-xs uppercase tracking-widest text-muted-foreground mt-1">
@@ -420,7 +420,7 @@ export function PressReleasesGrid({ initialItems }: PressReleasesGridProps) {
 
                     {/* Content Body */}
                     <div
-                      className="prose prose-emerald dark:prose-invert max-w-none text-base leading-relaxed text-justify space-y-4"
+                      className="prose prose-emerald  max-w-none text-base leading-relaxed text-justify space-y-4"
                       dangerouslySetInnerHTML={{ __html: selectedItem.content }}
                     />
 

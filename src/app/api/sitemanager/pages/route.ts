@@ -132,24 +132,30 @@ export async function POST(request: NextRequest) {
     const pageId = crypto.randomUUID();
     const isPublished = Boolean(data.isPublished);
 
+    let originalPage = null;
+    if (data.duplicateFromId) {
+      const results = await db.select().from(pages).where(eq(pages.id, data.duplicateFromId)).limit(1);
+      originalPage = results[0] || null;
+    }
+
     await db.insert(pages).values({
       id:              pageId,
       title:           data.title.trim(),
       slug:            data.slug.trim(),
-      content:         data.content ?? "",
-      excerpt:         data.excerpt ?? null,
-      featuredImage:   data.featuredImage ?? null,
-      template:        data.template ?? "default",
-      parentId:        data.parentId ?? null,
-      order:           data.order ?? 0,
+      content:         data.content || originalPage?.content || "",
+      excerpt:         data.excerpt || originalPage?.excerpt || null,
+      featuredImage:   data.featuredImage || originalPage?.featuredImage || null,
+      template:        data.template || originalPage?.template || "default",
+      parentId:        data.parentId || originalPage?.parentId || null,
+      order:           data.order || originalPage?.order || 0,
       isPublished,
-      showInMenu:      data.showInMenu ?? false,
-      metaTitle:       data.metaTitle ?? null,
-      metaDescription: data.metaDescription ?? null,
-      metaKeywords:    data.metaKeywords ?? null,
+      showInMenu:      data.showInMenu || originalPage?.showInMenu || false,
+      metaTitle:       data.metaTitle || originalPage?.metaTitle || null,
+      metaDescription: data.metaDescription || originalPage?.metaDescription || null,
+      metaKeywords:    data.metaKeywords || originalPage?.metaKeywords || null,
       canonicalUrl:    null,
       ogImage:         null,
-      schemaType:      "WebPage",
+      schemaType:      originalPage?.schemaType || "WebPage",
       noIndex:         false,
       authorId:        user.id,
       publishedAt:     isPublished ? new Date() : null,

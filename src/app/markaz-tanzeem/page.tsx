@@ -14,7 +14,7 @@ export default function MarkazTanzeemPage() {
   return (
     <main className="min-h-screen bg-background">
       <div className="container mx-auto py-12 md:py-16">
-        <article className="prose prose-lg dark:prose-invert max-w-4xl mx-auto">
+        <article className="prose prose-lg  max-w-4xl mx-auto">
           <h1>Markaz Tanzeem-e-Islami</h1>
           <p className="lead text-xl text-muted-foreground mb-8">
             The central headquarters of Tanzeem-e-Islami, located in Lahore, Pakistan.

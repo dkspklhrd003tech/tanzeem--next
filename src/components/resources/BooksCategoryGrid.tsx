@@ -182,11 +182,11 @@ export function BooksCategoryGrid({ categoryName, initialItems }: BooksCategoryG
                 </div>
               </div>
 
-              <div className="flex-1 bg-zinc-100 dark:bg-zinc-950 overflow-hidden flex justify-center items-stretch">
+              <div className="flex-1 bg-zinc-100  overflow-hidden flex justify-center items-stretch">
                 {selectedItem.fileUrl ? (
                   <div className="relative w-full h-full bg-white">
                     {pdfLoading && (
-                      <div className="absolute inset-0 bg-white dark:bg-zinc-900 flex flex-col items-center justify-center z-20">
+                      <div className="absolute inset-0 bg-white  flex flex-col items-center justify-center z-20">
                         <Loader2 className="h-10 w-10 text-primary animate-spin mb-3" />
                         <p className="text-sm font-medium text-foreground-muted">Loading PDF Document...</p>
                       </div>

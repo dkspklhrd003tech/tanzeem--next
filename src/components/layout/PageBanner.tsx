@@ -97,7 +97,7 @@ export function PageBanner({ settings }: PageBannerProps) {
 
       {/* Arabesque geometric watermark */}
       <div
-        className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none bg-repeat bg-center"
+        className="absolute inset-0 opacity-[0.03]  pointer-events-none bg-repeat bg-center"
         style={{ backgroundImage: `url('/images/pattern-arabesque.png')`, backgroundSize: '180px' }}
       />
 

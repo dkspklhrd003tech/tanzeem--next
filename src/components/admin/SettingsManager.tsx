@@ -283,13 +283,13 @@ export function SettingsManager() {
                         {/* Real-time stat cards */}
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-4">
                             {[
-                                { label: "SEO Score", value: "82/100", icon: Search, color: "text-emerald-600", bg: "bg-emerald-50 dark:bg-emerald-950/30", border: "border-emerald-200 dark:border-emerald-800" },
-                                { label: "GEO", value: "Enabled", icon: Brain, color: "text-violet-600", bg: "bg-violet-50 dark:bg-violet-950/30", border: "border-violet-200 dark:border-violet-800" },
-                                { label: "AEO", value: "Partial", icon: Bot, color: "text-blue-600", bg: "bg-blue-50 dark:bg-blue-950/30", border: "border-blue-200 dark:border-blue-800" },
-                                { label: "Indexing", value: "Active", icon: Zap, color: "text-amber-600", bg: "bg-amber-50 dark:bg-amber-950/30", border: "border-amber-200 dark:border-amber-800" },
-                                { label: "Clicks", value: "4.2K", icon: MousePointerClick, color: "text-sky-600", bg: "bg-sky-50 dark:bg-sky-950/30", border: "border-sky-200 dark:border-sky-800" },
-                                { label: "Visits", value: "18.7K", icon: Eye, color: "text-pink-600", bg: "bg-pink-50 dark:bg-pink-950/30", border: "border-pink-200 dark:border-pink-800" },
-                                { label: "Avg. Visit", value: "3m 12s", icon: TrendingUp, color: "text-teal-600", bg: "bg-teal-50 dark:bg-teal-950/30", border: "border-teal-200 dark:border-teal-800" },
+                                { label: "SEO Score", value: "82/100", icon: Search, color: "text-emerald-600", bg: "bg-emerald-50 ", border: "border-emerald-200 " },
+                                { label: "GEO", value: "Enabled", icon: Brain, color: "text-violet-600", bg: "bg-violet-50 ", border: "border-violet-200 " },
+                                { label: "AEO", value: "Partial", icon: Bot, color: "text-blue-600", bg: "bg-blue-50 ", border: "border-blue-200 " },
+                                { label: "Indexing", value: "Active", icon: Zap, color: "text-amber-600", bg: "bg-amber-50 ", border: "border-amber-200 " },
+                                { label: "Clicks", value: "4.2K", icon: MousePointerClick, color: "text-sky-600", bg: "bg-sky-50 ", border: "border-sky-200 " },
+                                { label: "Visits", value: "18.7K", icon: Eye, color: "text-pink-600", bg: "bg-pink-50 ", border: "border-pink-200 " },
+                                { label: "Avg. Visit", value: "3m 12s", icon: TrendingUp, color: "text-teal-600", bg: "bg-teal-50 ", border: "border-teal-200 " },
                             ].map((card) => (
                                 <div key={card.label} className={`flex flex-col items-center justify-center p-4 rounded-xl border ${card.bg} ${card.border} gap-2 shadow-sm`}>
                                     <card.icon className={`w-5 h-5 ${card.color}`} />
@@ -357,15 +357,15 @@ export function SettingsManager() {
                                 </h3>
                                 <p className="text-sm text-muted-foreground">Generative Engine Optimization and Answer Engine Optimization settings per page.</p>
                                 <div className="flex gap-3">
-                                    <div className="flex-1 p-3 rounded-lg bg-violet-50 dark:bg-violet-950/30 border border-violet-200 dark:border-violet-800 text-center">
+                                    <div className="flex-1 p-3 rounded-lg bg-violet-50  border border-violet-200  text-center">
                                         <Brain className="w-5 h-5 text-violet-600 mx-auto mb-1" />
-                                        <p className="text-xs font-semibold text-violet-700 dark:text-violet-300">GEO Summaries</p>
+                                        <p className="text-xs font-semibold text-violet-700 ">GEO Summaries</p>
                                         <p className="text-lg font-bold text-violet-600">3/12</p>
                                         <p className="text-[10px] text-muted-foreground">Pages configured</p>
                                     </div>
-                                    <div className="flex-1 p-3 rounded-lg bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 text-center">
+                                    <div className="flex-1 p-3 rounded-lg bg-blue-50  border border-blue-200  text-center">
                                         <Bot className="w-5 h-5 text-blue-600 mx-auto mb-1" />
-                                        <p className="text-xs font-semibold text-blue-700 dark:text-blue-300">AEO FAQs</p>
+                                        <p className="text-xs font-semibold text-blue-700 ">AEO FAQs</p>
                                         <p className="text-lg font-bold text-blue-600">5/12</p>
                                         <p className="text-[10px] text-muted-foreground">Pages configured</p>
                                     </div>

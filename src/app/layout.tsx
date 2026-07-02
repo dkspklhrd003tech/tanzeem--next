@@ -5,7 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { MainLayout } from "@/components/layout";
 import Script from "next/script";
 import { organisationJsonLd, SITE_URL, SITE_NAME } from "@/lib/seo";
-import { ShareSidebar } from "@/components/shared/ShareSidebar";
+
 
 // ── Heading font: Plus Jakarta Sans (matched from tanzeem.org extraction) ──
 const plusJakartaSans = Plus_Jakarta_Sans({
@@ -144,7 +144,7 @@ export default async function RootLayout({
         className={`${plusJakartaSans.variable} ${kumbhSans.variable} ${amiri.variable} antialiased bg-background text-foreground font-body`}
       >
         <MainLayout>{children}</MainLayout>
-        <ShareSidebar />
+
         <Toaster />
       </body>
     </html>

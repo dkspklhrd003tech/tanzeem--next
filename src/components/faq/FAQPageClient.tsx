@@ -159,7 +159,7 @@ export function FAQPageClient({ initialItems, pageTitle, pageExcerpt }: FAQPageC
                         >
                           <div
                             className={cn(
-                              "px-6 pb-6 pt-1 text-[#222222] prose dark:prose-invert max-w-none text-sm md:text-base leading-relaxed border-t border-border/30",
+                              "px-6 pb-6 pt-1 text-[#222222] prose  max-w-none text-sm md:text-base leading-relaxed border-t border-border/30",
                               isUrduA && "font-nastaleeq text-right leading-loose"
                             )}
                             dir={isUrduA ? "rtl" : "ltr"}

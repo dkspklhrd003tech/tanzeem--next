@@ -102,7 +102,7 @@ export function SermonDetail({ sermon }: SermonDetailProps) {
             {/* Description */}
             {description && (
                 <div
-                    className="prose prose-lg dark:prose-invert max-w-none mt-8"
+                    className="prose prose-lg  max-w-none mt-8"
                     dangerouslySetInnerHTML={{ __html: description }}
                 />
             )}

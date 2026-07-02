@@ -68,7 +68,7 @@ export function LeaderBio({
                 )}
                 {bio && (
                   <div
-                    className="prose prose-base dark:prose-invert max-w-none
+                    className="prose prose-base  max-w-none
                       prose-p:text-foreground-muted prose-p:leading-relaxed
                       prose-headings:text-foreground prose-a:text-primary
                       prose-strong:text-foreground"

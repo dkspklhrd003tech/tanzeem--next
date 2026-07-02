@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, createContext, useContext, Suspense } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
@@ -58,9 +58,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useAdminTheme } from "@/hooks/use-theme";
+
 
 // ─── Types ────────────────────────────────────────────────────────────────────
+import { AdminUser, AuthContext } from "@/hooks/use-admin-auth";
 
 interface NavItem {
   title: string;
@@ -69,23 +70,7 @@ interface NavItem {
   superAdminOnly?: boolean;
 }
 
-interface AdminUser {
-  id: string;
-  name: string | null;
-  email: string;
-  role: string;
-  avatar: string | null;
-}
 
-// ─── Auth Context ─────────────────────────────────────────────────────────────
-
-interface AuthContextValue {
-  user: AdminUser | null;
-  isLoading: boolean;
-}
-
-const AuthContext = createContext<AuthContextValue>({ user: null, isLoading: true });
-export const useAdminAuth = () => useContext(AuthContext);
 
 // ─── Navigation Items ─────────────────────────────────────────────────────────
 
@@ -130,20 +115,25 @@ function SidebarNavItem({
     <Link
       href={item.href}
       className={cn(
-        "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-150 group",
+        "group flex items-center gap-3 rounded-lg px-3 py-2.5 transition-all duration-150",
         isActive
           ? "bg-primary text-white shadow-sm"
-          : "text-sidebar-foreground hover:bg-primary/10 hover:text-white"
+          : "text-sidebar-foreground hover:bg-primary/80 hover:text-white active:text-white focus:text-white"
       )}
     >
       <item.icon
         className={cn(
           "h-5 w-5 shrink-0 transition-colors",
-          isActive ? "text-white" : "text-white group-hover:text-white"
+          isActive
+            ? "text-white"
+            : "text-sidebar-foreground group-hover:text-white group-active:text-white"
         )}
       />
+
       {!isCollapsed && (
-        <span className="text-sm font-medium truncate">{item.title}</span>
+        <span className="truncate text-sm font-medium text-inherit">
+          {item.title}
+        </span>
       )}
     </Link>
   );
@@ -360,15 +350,11 @@ function TopHeader({
   onMobileMenuOpen,
   user,
   onLogout,
-  theme,
-  onThemeToggle,
 }: {
   isSidebarCollapsed: boolean;
   onMobileMenuOpen: () => void;
   user: AdminUser | null;
   onLogout: () => void;
-  theme: "dark" | "light";
-  onThemeToggle: () => void;
 }) {
   const breadcrumbs = useBreadcrumbs();
   const userInitials = user?.name
@@ -429,52 +415,6 @@ function TopHeader({
             <Bell className="h-5 w-5" />
             <span className="absolute top-2 right-2 w-1 h-1 bg-red-500 rounded-full" />
           </Button>
-
-          {/* Dark / Light theme toggle */}
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <button
-                onClick={onThemeToggle}
-                aria-label={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
-                className={cn(
-                  "relative w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300",
-                  "border border-border hover:border-primary/40",
-                  theme === "dark"
-                    ? "bg-slate-800 hover:bg-slate-700 text-amber-400"
-                    : "bg-amber-50 hover:bg-amber-100 text-amber-500"
-                )}
-              >
-                <AnimatePresence mode="wait" initial={false}>
-                  {theme === "dark" ? (
-                    <motion.span
-                      key="sun"
-                      initial={{ rotate: -90, opacity: 0, scale: 0.5 }}
-                      animate={{ rotate: 0, opacity: 1, scale: 1 }}
-                      exit={{ rotate: 90, opacity: 0, scale: 0.5 }}
-                      transition={{ duration: 0.2 }}
-                      className="absolute"
-                    >
-                      <Sun className="h-[15px] w-[15px]" />
-                    </motion.span>
-                  ) : (
-                    <motion.span
-                      key="moon"
-                      initial={{ rotate: 90, opacity: 0, scale: 0.5 }}
-                      animate={{ rotate: 0, opacity: 1, scale: 1 }}
-                      exit={{ rotate: -90, opacity: 0, scale: 0.5 }}
-                      transition={{ duration: 0.2 }}
-                      className="absolute"
-                    >
-                      <Moon className="h-[18px] w-[18px]" />
-                    </motion.span>
-                  )}
-                </AnimatePresence>
-              </button>
-            </TooltipTrigger>
-            <TooltipContent side="bottom" className="font-medium">
-              {theme === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
-            </TooltipContent>
-          </Tooltip>
 
           {/* User dropdown */}
           <DropdownMenu>
@@ -539,7 +479,7 @@ export default function SiteManagerLayout({
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [user, setUser] = useState<AdminUser | null>(null);
   const [isUserLoading, setIsUserLoading] = useState(true);
-  const { theme, toggleTheme } = useAdminTheme();
+
 
   // Load current user — redirect to login if not authenticated
   useEffect(() => {
@@ -581,7 +521,7 @@ export default function SiteManagerLayout({
     );
   }
 
-  const isDark = theme === "dark";
+  const isDark = false; // Forced Light Mode
 
   return (
     <AuthContext.Provider value={{ user, isLoading: isUserLoading }}>
@@ -620,8 +560,6 @@ export default function SiteManagerLayout({
             onMobileMenuOpen={() => setIsMobileOpen(true)}
             user={user}
             onLogout={handleLogout}
-            theme={theme}
-            onThemeToggle={toggleTheme}
           />
 
           {/* Page content */}

@@ -34,7 +34,7 @@ export default async function OnlineCoursesPage() {
     return (
       <main className="min-h-screen bg-background">
         <div className="container mx-auto py-6 md:py-8 max-w-4xl">
-          <div className="prose prose-lg dark:prose-invert max-w-none mx-auto"
+          <div className="prose prose-lg  max-w-none mx-auto"
             dangerouslySetInnerHTML={{ __html: getCleanContent(page.content) }}
           />
         </div>
@@ -45,7 +45,7 @@ export default async function OnlineCoursesPage() {
   return (
     <main className="min-h-screen bg-background">
       <div className="container mx-auto py-6 md:py-8">
-        <article className="prose prose-lg dark:prose-invert max-w-4xl mx-auto">
+        <article className="prose prose-lg  max-w-4xl mx-auto">
           <h1>Online Courses</h1>
           <p className="lead text-xl text-muted-foreground mb-8">
             Study Islamic sciences, Quranic tafseer, and spiritual development through our structured online

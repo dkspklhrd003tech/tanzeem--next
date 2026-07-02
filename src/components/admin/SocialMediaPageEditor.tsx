@@ -163,7 +163,7 @@ function SortableAccountCard({ id, account, platformName, onEdit, onDelete }: So
             className={cn(
               "text-[10px] px-2 py-0.5 font-bold uppercase tracking-wider rounded-md",
               account.isActive
-                ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20"
+                ? "bg-emerald-500/10 text-emerald-600  border-emerald-500/20"
                 : "bg-muted text-muted-foreground"
             )}
           >

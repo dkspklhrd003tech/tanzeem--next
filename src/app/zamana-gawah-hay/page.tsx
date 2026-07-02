@@ -6,7 +6,7 @@ export default function ZamanaGawahHayPage() {
   return (
     <main className="min-h-screen bg-background">
       <div className="container mx-auto py-12 md:py-16">
-        <article className="prose prose-lg dark:prose-invert max-w-4xl mx-auto">
+        <article className="prose prose-lg  max-w-4xl mx-auto">
           <h1>Zamana Gawah Hai</h1>
           <p className="lead text-xl text-muted-foreground mb-8">
             A landmark television program by Dr. Israr Ahmed that addressed contemporary issues from an Islamic perspective.

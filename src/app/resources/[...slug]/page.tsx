@@ -304,7 +304,7 @@ export default async function ResourceSubPage({ params, searchParams }: Props) {
           {pr.featuredImage && (
             <img src={pr.featuredImage} alt={pr.title} className="w-full aspect-video rounded-xl object-cover mb-8 shadow-lg" />
           )}
-          <div className="prose prose-lg dark:prose-invert max-w-none" dangerouslySetInnerHTML={{ __html: pr.content || pr.excerpt || "" }} />
+          <div className="prose prose-lg  max-w-none" dangerouslySetInnerHTML={{ __html: pr.content || pr.excerpt || "" }} />
         </article>
       </div>
     );

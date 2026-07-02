@@ -71,7 +71,7 @@ export default async function OrganizationPage() {
       <main className="min-h-screen bg-background">
         <div className="container mx-auto py-6 md:py-8 max-w-4xl">
           <div
-            className="prose prose-lg dark:prose-invert max-w-none mx-auto"
+            className="prose prose-lg  max-w-none mx-auto"
             dangerouslySetInnerHTML={{ __html: getCleanContent(page.content) }}
           />
         </div>

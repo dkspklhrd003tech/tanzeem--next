@@ -28,7 +28,7 @@ export default async function RujuIlalQuranPage() {
     return (
       <main className="min-h-screen bg-background">
         <div className="container mx-auto py-6 md:py-8">
-          <div className="prose prose-lg dark:prose-invert max-w-4xl mx-auto"
+          <div className="prose prose-lg  max-w-4xl mx-auto"
             dangerouslySetInnerHTML={{ __html: getCleanContent(page.content) }}
           />
         </div>
@@ -39,7 +39,7 @@ export default async function RujuIlalQuranPage() {
   return (
     <main className="min-h-screen bg-background">
       <div className="container mx-auto py-6 md:py-8">
-        <article className="prose prose-lg dark:prose-invert max-w-4xl mx-auto">
+        <article className="prose prose-lg  max-w-4xl mx-auto">
           <h1>Ruju Ilal Quran</h1>
           <p className="lead text-xl text-muted-foreground mb-8">
             Return to the Quran — a movement to revive the Quranic spirit and implement its teachings in individual and collective life.

@@ -6,7 +6,7 @@ export default function AmeerSayMulaqatPage() {
   return (
     <main className="min-h-screen bg-background">
       <div className="container mx-auto py-12 md:py-16">
-        <article className="prose prose-lg dark:prose-invert max-w-4xl mx-auto">
+        <article className="prose prose-lg  max-w-4xl mx-auto">
           <h1>Ameer Say Mulaqat</h1>
           <p className="lead text-xl text-muted-foreground mb-8">
             A unique program where the Ameer of Tanzeem-e-Islami engages directly with the audience on various topics.

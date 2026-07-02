@@ -41,12 +41,12 @@ export function RedirectPage({ title, url }: RedirectPageProps) {
   }, [url]);
 
   return (
-    <main className="min-h-screen bg-[#fafaf9] dark:bg-[#070707] flex flex-col">
+    <main className="min-h-screen bg-[#fafaf9]  flex flex-col">
       {/* Dynamic site banner */}
       <PageBanner settings={settings} />
 
       <div className="flex-1 flex items-center justify-center py-16 px-4">
-        <div className="bg-white dark:bg-[#111111] border border-border/80 rounded-2xl p-8 max-w-md w-full text-center shadow-xl space-y-6 relative overflow-hidden">
+        <div className="bg-white  border border-border/80 rounded-2xl p-8 max-w-md w-full text-center shadow-xl space-y-6 relative overflow-hidden">
           {/* Subtle accent border */}
           <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-primary via-emerald-500 to-primary" />
 
@@ -57,11 +57,11 @@ export function RedirectPage({ title, url }: RedirectPageProps) {
 
           <div className="py-4 flex flex-col items-center justify-center">
             {blocked ? (
-              <div className="bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 rounded-xl p-4 text-xs max-w-sm mb-4">
+              <div className="bg-amber-500/10 border border-amber-500/20 text-amber-600  rounded-xl p-4 text-xs max-w-sm mb-4">
                 Your browser blocked the automatic redirect. Please click the button below to proceed.
               </div>
             ) : (
-              <div className="flex items-center gap-3 text-emerald-600 dark:text-emerald-400 font-medium text-sm">
+              <div className="flex items-center gap-3 text-emerald-600  font-medium text-sm">
                 <Loader2 className="h-4 w-4 animate-spin" />
                 Opening in a new tab...
               </div>

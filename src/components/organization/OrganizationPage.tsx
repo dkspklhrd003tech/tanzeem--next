@@ -260,7 +260,7 @@ function OurHistory({ data }: { data: HistoryState }) {
             )}
             {data.body && (
               <div
-                className="prose prose-base dark:prose-invert max-w-none prose-p:text-foreground-muted prose-p:leading-relaxed"
+                className="prose prose-base  max-w-none prose-p:text-foreground-muted prose-p:leading-relaxed"
                 dangerouslySetInnerHTML={{ __html: data.body }}
               />
             )}
@@ -322,7 +322,7 @@ function MissionStatement({ data }: { data: MissionStatementState }) {
           )}
           {data.body && (
             <div
-              className="prose prose-base dark:prose-invert max-w-none prose-p:text-foreground-muted prose-p:leading-relaxed"
+              className="prose prose-base  max-w-none prose-p:text-foreground-muted prose-p:leading-relaxed"
               dangerouslySetInnerHTML={{ __html: data.body }}
             />
           )}
@@ -382,7 +382,7 @@ function LeaderBio({ data }: { data: LeaderState }) {
                 )}
                 {data.bio && (
                   <div
-                    className="prose prose-base dark:prose-invert max-w-none
+                    className="prose prose-base  max-w-none
                       prose-p:text-foreground-muted prose-p:leading-relaxed
                       prose-headings:text-foreground prose-a:text-primary
                       prose-strong:text-foreground"

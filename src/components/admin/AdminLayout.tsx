@@ -55,7 +55,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { useTheme } from "next-themes";
+
 
 const menuItems: any[] = [
   {
@@ -274,7 +274,6 @@ interface AdminLayoutProps {
 
 export function AdminLayout({ children, currentSection, onExitAdmin }: AdminLayoutProps) {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
-  const { theme, setTheme } = useTheme();
   const pathname = usePathname();
 
   return (

@@ -17,7 +17,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/ui/empty-state";
 import { cn } from "@/lib/utils";
-import { useAdminAuth } from "../layout";
+import { useAdminAuth } from "@/hooks/use-admin-auth";
 
 // ─── Fetcher ──────────────────────────────────────────────────────────────────
 const fetcher = (url: string) => fetch(url).then((r) => r.json());

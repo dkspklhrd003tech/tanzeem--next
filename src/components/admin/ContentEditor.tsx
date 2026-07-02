@@ -447,10 +447,10 @@ function PdfUploader({ value = "", onChange }: PdfUploaderProps) {
   return (
     <div className="space-y-3">
       {value ? (
-        <div className="flex items-center justify-between p-3 border border-emerald-500/30 bg-emerald-50/50 dark:bg-emerald-950/10 rounded-xl">
+        <div className="flex items-center justify-between p-3 border border-emerald-500/30 bg-emerald-50/50  rounded-xl">
           <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-8 h-8 rounded-lg bg-red-100 dark:bg-red-950/40 flex items-center justify-center flex-shrink-0">
-              <FileText className="h-4 w-4 text-red-600 dark:text-red-400" />
+            <div className="w-8 h-8 rounded-lg bg-red-100  flex items-center justify-center flex-shrink-0">
+              <FileText className="h-4 w-4 text-red-600 " />
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-xs font-semibold text-foreground truncate">Attached PDF</p>
@@ -551,10 +551,10 @@ function AudioUploader({ value = "", onChange }: AudioUploaderProps) {
   return (
     <div className="space-y-3">
       {value ? (
-        <div className="flex items-center justify-between p-3 border border-emerald-500/30 bg-emerald-50/50 dark:bg-emerald-950/10 rounded-xl">
+        <div className="flex items-center justify-between p-3 border border-emerald-500/30 bg-emerald-50/50  rounded-xl">
           <div className="flex items-center gap-2.5 min-w-0 flex-1">
-            <div className="w-8 h-8 rounded-lg bg-emerald-100 dark:bg-emerald-950/40 flex items-center justify-center flex-shrink-0">
-              <Upload className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+            <div className="w-8 h-8 rounded-lg bg-emerald-100  flex items-center justify-center flex-shrink-0">
+              <Upload className="h-4 w-4 text-emerald-600 " />
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-xs font-semibold text-foreground truncate">Attached Audio</p>

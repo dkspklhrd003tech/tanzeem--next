@@ -78,7 +78,7 @@ export default async function HistoryOfTanzeemPage() {
           </div>
         </div>
 
-        <div className="prose prose-lg dark:prose-invert max-w-none text-muted-foreground space-y-6">
+        <div className="prose prose-lg  max-w-none text-muted-foreground space-y-6">
           {content.hero.content.split('\n').map((para, i) => {
             if (!para.trim()) return null;
             return <p key={i} dangerouslySetInnerHTML={{ __html: para }} />;
@@ -140,7 +140,7 @@ export default async function HistoryOfTanzeemPage() {
 
           {/* RAFEEQAH Card */}
           <div className="bg-card rounded-2xl p-8 border shadow-sm flex flex-col items-center">
-            <div className="mb-6 text-emerald-800 dark:text-emerald-500">
+            <div className="mb-6 text-emerald-800 ">
               {/* Female Icon representation */}
               <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M12 11c-2.8 0-5 2.2-5 5v5h10v-5c0-2.8-2.2-5-5-5z"></path>
@@ -163,8 +163,8 @@ export default async function HistoryOfTanzeemPage() {
         </div>
 
         {/* Bottom Note */}
-        <div className="mt-12 bg-amber-50/50 dark:bg-amber-950/20 rounded-xl p-6 max-w-4xl mx-auto text-left border border-amber-100 dark:border-amber-900/30">
-          <p className="text-amber-800 dark:text-amber-200/80 text-sm whitespace-pre-line font-medium">
+        <div className="mt-12 bg-amber-50/50  rounded-xl p-6 max-w-4xl mx-auto text-left border border-amber-100 ">
+          <p className="text-amber-800  text-sm whitespace-pre-line font-medium">
             {content.joinUs.note}
           </p>
         </div>

@@ -179,10 +179,10 @@ export function MagazineClientView({ links }: { links: MagazineLink[] }) {
               </div>
 
               {/* Modal Body / Viewer */}
-              <div className="flex-1 bg-zinc-100 dark:bg-zinc-950 p-4 md:p-6 flex justify-center items-stretch relative">
+              <div className="flex-1 bg-zinc-100  p-4 md:p-6 flex justify-center items-stretch relative">
                 <div className="relative w-full h-full rounded-2xl overflow-hidden border border-border shadow-md bg-white">
                   {pdfLoading && (
-                    <div className="absolute inset-0 bg-white dark:bg-zinc-900 flex flex-col items-center justify-center z-20">
+                    <div className="absolute inset-0 bg-white  flex flex-col items-center justify-center z-20">
                       <Loader2 className="h-10 w-10 text-primary animate-spin mb-3" />
                       <p className="text-sm font-medium text-muted-foreground">Loading Document...</p>
                     </div>

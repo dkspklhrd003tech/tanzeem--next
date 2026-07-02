@@ -93,7 +93,7 @@ export default async function EventDetailPage({ params }: Props) {
 
           {/* Description */}
           {event.description && (
-            <div className="prose prose-lg dark:prose-invert max-w-none mb-8">
+            <div className="prose prose-lg  max-w-none mb-8">
               <p>{event.description}</p>
             </div>
           )}
@@ -101,7 +101,7 @@ export default async function EventDetailPage({ params }: Props) {
           {/* Content */}
           {event.content && (
             <div
-              className="prose prose-lg dark:prose-invert max-w-none mb-8"
+              className="prose prose-lg  max-w-none mb-8"
               dangerouslySetInnerHTML={{ __html: event.content }}
             />
           )}

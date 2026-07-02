@@ -72,7 +72,7 @@ export function ImageText({
             )}
             {body && (
               <div
-                className="prose prose-base dark:prose-invert max-w-none
+                className="prose prose-base  max-w-none
                   prose-p:text-foreground-muted prose-p:leading-relaxed
                   prose-a:text-primary prose-headings:text-foreground
                   prose-strong:text-foreground prose-blockquote:border-primary"

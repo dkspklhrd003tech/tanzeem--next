@@ -97,7 +97,7 @@ export function ModernizedProsePage({
   const displayTitle = title;
 
   return (
-    <div className="min-h-screen bg-slate-50/50 dark:bg-[#0a0a0a]">
+    <div className="min-h-screen bg-slate-50/50 ">
       {/* ── Gorgeous Hero Header ── */}
       <div className="relative overflow-hidden bg-primary text-white pt-24 pb-20 md:pt-28 md:pb-28">
         {/* Global Banner Background Image */}
@@ -119,7 +119,7 @@ export function ModernizedProsePage({
 
         {/* Arabesque geometric watermark */}
         <div
-          className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none bg-repeat bg-center"
+          className="absolute inset-0 opacity-[0.03]  pointer-events-none bg-repeat bg-center"
           style={{ backgroundImage: `url('/images/pattern-arabesque.png')`, backgroundSize: '180px' }}
         />
         <div className="container relative z-20 px-4 text-center">
@@ -189,19 +189,19 @@ export function ModernizedProsePage({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="bg-white dark:bg-[#121212] rounded-3xl border border-slate-200/80 dark:border-zinc-800/80 p-8 md:p-6 shadow-mid3 relative overflow-hidden"
+              className="bg-white  rounded-3xl border border-slate-200/80  p-8 md:p-6 shadow-mid3 relative overflow-hidden"
             >
               {/* Subtle Arabesque Watermark inside the card */}
               <div className="absolute inset-0 opacity-[0.01] pointer-events-none bg-repeat bg-center" style={{ backgroundImage: `url('/images/pattern-arabesque.png')` }} />
 
               {/* Leader Template Centered Title & Dates */}
               {template === "leader" && (
-                <div className="text-center mb-6 border-b border-slate-100 dark:border-zinc-800/80">
-                  <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight mb-2">
+                <div className="text-center mb-6 border-b border-slate-100 ">
+                  <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900  tracking-tight mb-2">
                     {title}
                   </h2>
                   {excerpt && (
-                    <h3 className="text-center !text-emerald-700 dark:text-emerald-500 font-bold uppercase tracking-wider text-sm md:text-base">
+                    <h3 className="text-center !text-emerald-700  font-bold uppercase tracking-wider text-sm md:text-base">
                       {excerpt}
                     </h3>
                   )}
@@ -211,16 +211,16 @@ export function ModernizedProsePage({
               {/* Page Content Renderer */}
               {cleanContent ? (
                 <article
-                  className="prose prose-lg prose-emerald dark:prose-invert max-w-none 
-                    prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-slate-800 dark:prose-headings:text-zinc-100
+                  className="prose prose-lg prose-emerald  max-w-none 
+                    prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-slate-800 
                     prose-h2:text-2xl prose-h2:border-l-4 prose-h2:border-primary prose-h2:pl-3 prose-h2:mt-10 prose-h2:mb-4
                     prose-h3:text-xl prose-h3:font-semibold prose-h3:mt-8 prose-h3:mb-3
-                    prose-p:text-slate-600 dark:prose-p:text-zinc-300 prose-p:leading-relaxed prose-p:mb-6
-                    prose-strong:text-slate-800 dark:prose-strong:text-zinc-100 prose-strong:font-bold
-                    prose-li:text-slate-600 dark:prose-li:text-zinc-300 prose-li:mb-2
+                    prose-p:text-slate-600  prose-p:leading-relaxed prose-p:mb-6
+                    prose-strong:text-slate-800  prose-strong:font-bold
+                    prose-li:text-slate-600  prose-li:mb-2
                     prose-ul:list-disc prose-ul:pl-6 prose-ul:mb-6
                     prose-ol:list-decimal prose-ol:pl-6 prose-ol:mb-6
-                    prose-blockquote:italic prose-blockquote:border-l-4 prose-blockquote:border-[#c8a84e] prose-blockquote:pl-6 prose-blockquote:text-slate-700 dark:prose-blockquote:text-zinc-300 prose-blockquote:bg-slate-50 dark:prose-blockquote:bg-zinc-900/50 prose-blockquote:py-4 prose-blockquote:pr-4 prose-blockquote:rounded-r-2xl"
+                    prose-blockquote:italic prose-blockquote:border-l-4 prose-blockquote:border-[#c8a84e] prose-blockquote:pl-6 prose-blockquote:text-slate-700  prose-blockquote:bg-slate-50  prose-blockquote:py-4 prose-blockquote:pr-4 prose-blockquote:rounded-r-2xl"
                 >
                   {featuredImage && template === "leader" && (
                     <div className="w-full max-w-xs mx-auto md:ml-0 md:mr-8 md:float-left md:w-[320px] md:mb-4 mb-6 rounded-3xl overflow-hidden shadow-mid border border-slate-200/50 bg-slate-100">
@@ -242,7 +242,7 @@ export function ModernizedProsePage({
 
             {/* Accordion List Component */}
             {accordionItems && accordionItems.length > 0 && (
-              <div className="bg-white dark:bg-[#121212] rounded-3xl border border-slate-200/80 dark:border-zinc-800/80 p-6 md:p-8 shadow-sm">
+              <div className="bg-white  rounded-3xl border border-slate-200/80  p-6 md:p-8 shadow-sm">
                 <Accordion heading="Interactive In-Depth Explorer" items={accordionItems} />
               </div>
             )}

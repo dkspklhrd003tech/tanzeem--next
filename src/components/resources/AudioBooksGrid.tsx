@@ -308,12 +308,12 @@ export function AudioBooksGrid({ initialItems }: AudioBooksGridProps) {
               </div>
 
               {/* Modal Body / Viewer */}
-              <div className="bg-zinc-50 dark:bg-zinc-900 p-6 md:p-8 flex flex-col justify-center items-center">
+              <div className="bg-zinc-50  p-6 md:p-8 flex flex-col justify-center items-center">
                 
                 {/* Audio Player */}
                 {selectedItem.audioUrl ? (
-                  <div className="w-full bg-white dark:bg-zinc-950 rounded-xl p-6 shadow-md border border-border">
-                    <h3 className="font-semibold text-lg text-center mb-6 text-emerald-800 dark:text-emerald-500">
+                  <div className="w-full bg-white  rounded-xl p-6 shadow-md border border-border">
+                    <h3 className="font-semibold text-lg text-center mb-6 text-emerald-800 ">
                       Now Playing
                     </h3>
                     <audio
@@ -335,10 +335,10 @@ export function AudioBooksGrid({ initialItems }: AudioBooksGridProps) {
 
                 {/* Content description if any */}
                 {selectedItem.content && selectedItem.content !== "<p></p>" && (
-                  <div className="w-full mt-6 bg-white dark:bg-zinc-950 rounded-xl p-6 shadow-md border border-border">
+                  <div className="w-full mt-6 bg-white  rounded-xl p-6 shadow-md border border-border">
                     <h4 className="font-semibold mb-3">Description</h4>
                     <div 
-                      className="prose prose-sm dark:prose-invert max-w-none text-muted-foreground line-clamp-4"
+                      className="prose prose-sm  max-w-none text-muted-foreground line-clamp-4"
                       dangerouslySetInnerHTML={{ __html: selectedItem.content }} 
                     />
                   </div>
