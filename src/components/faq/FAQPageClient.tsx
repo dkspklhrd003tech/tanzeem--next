@@ -50,6 +50,16 @@ export function FAQPageClient({ initialItems, pageTitle, pageExcerpt }: FAQPageC
       item.answer.toLowerCase().includes(searchQuery.toLowerCase());
 
     return matchesCategory && matchesSearch;
+  }).sort((a, b) => {
+    // English first, then Urdu, then by order
+    const catA = getCategory(a.category).toLowerCase();
+    const catB = getCategory(b.category).toLowerCase();
+    
+    if (catA === 'english' && catB !== 'english') return -1;
+    if (catA !== 'english' && catB === 'english') return 1;
+    
+    // Within the same category, sort by order
+    return a.order - b.order;
   });
 
   const toggleExpand = (id: string) => {

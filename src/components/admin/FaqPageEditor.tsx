@@ -264,14 +264,18 @@ export default function FaqPageEditor({ pageId, initialPageData }: FaqPageEditor
   };
 
   const handleReorder = async (faq: FaqItem, direction: "up" | "down") => {
-    const currentIndex = faqs.findIndex(f => f.id === faq.id);
+    // Only reorder within the same category to maintain independent ordering
+    const targetCategory = getCategory(faq.category);
+    const categoryFaqs = faqs.filter(f => getCategory(f.category) === targetCategory).sort((a, b) => a.order - b.order);
+    
+    const currentIndex = categoryFaqs.findIndex(f => f.id === faq.id);
     if (currentIndex === -1) return;
 
     const targetIndex = direction === "up" ? currentIndex - 1 : currentIndex + 1;
-    if (targetIndex < 0 || targetIndex >= faqs.length) return;
+    if (targetIndex < 0 || targetIndex >= categoryFaqs.length) return;
 
-    const currentFaq = faqs[currentIndex];
-    const targetFaq = faqs[targetIndex];
+    const currentFaq = categoryFaqs[currentIndex];
+    const targetFaq = categoryFaqs[targetIndex];
 
     // Swap orders
     const tempOrder = currentFaq.order;
@@ -323,8 +327,17 @@ export default function FaqPageEditor({ pageId, initialPageData }: FaqPageEditor
     const matchesTab =
       selectedCategoryTab === "all" ||
       itemCat === selectedCategoryTab.toLowerCase() ||
-      itemCat === "all";
     return matchesSearch && matchesTab;
+  }).sort((a, b) => {
+    // English first, then Urdu, then by order
+    const catA = getCategory(a.category).toLowerCase();
+    const catB = getCategory(b.category).toLowerCase();
+    
+    if (catA === 'english' && catB !== 'english') return -1;
+    if (catA !== 'english' && catB === 'english') return 1;
+    
+    // Within the same category, sort by order
+    return a.order - b.order;
   });
 
   return (
@@ -694,6 +707,7 @@ export default function FaqPageEditor({ pageId, initialPageData }: FaqPageEditor
                     content={faqFormData.answer}
                     onChange={(content) => setFaqFormData(prev => ({ ...prev, answer: content }))}
                     placeholder="Enter FAQ answer details..."
+                    defaultToUrdu={faqFormData.category === "Urdu"}
                   />
                   {faqErrors.answer && <p className="text-xs text-destructive">{faqErrors.answer}</p>}
                 </div>

@@ -46,6 +46,7 @@ interface RichTextEditorProps {
   onChange: (content: string) => void;
   placeholder?: string;
   className?: string;
+  defaultToUrdu?: boolean;
 }
 
 const MenuButton = ({
@@ -92,6 +93,7 @@ export function RichTextEditor({
   onChange,
   placeholder,
   className,
+  defaultToUrdu = false,
 }: RichTextEditorProps) {
   const [showHTML, setShowHTML] = useState(false);
   const [htmlValue, setHtmlValue] = useState(content);
@@ -142,6 +144,15 @@ export function RichTextEditor({
       setHtmlValue(content);
     }
   }, [content, editor, showHTML]);
+
+  useEffect(() => {
+    if (!editor) return;
+    if (defaultToUrdu) {
+      editor.chain().focus().setTextAlign("right").setFontFamily("'Scheherazade New', 'Noto Nastaliq Urdu', serif").run();
+    } else {
+      editor.chain().focus().setTextAlign("left").unsetFontFamily().run();
+    }
+  }, [editor, defaultToUrdu]);
 
   if (!editor) return null;
 
