@@ -4,6 +4,66 @@ import { v4 as uuidv4 } from "uuid";
 import { db } from "@/db";
 import { media } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth";
+import ffmpeg from "fluent-ffmpeg";
+import ffmpegPath from "ffmpeg-static";
+import ffprobePath from "ffprobe-static";
+import fs from "fs/promises";
+import path from "path";
+import os from "os";
+
+// Initialize ffmpeg paths safely
+if (ffmpegPath) ffmpeg.setFfmpegPath(ffmpegPath as string);
+if (ffprobePath && ffprobePath.path) ffmpeg.setFfprobePath(ffprobePath.path as string);
+
+async function compressAudio(inputBuffer: any): Promise<any> {
+  return new Promise(async (resolve, reject) => {
+    const tempInput = path.join(os.tmpdir(), `${uuidv4()}_input.mp3`);
+    const tempOutput = path.join(os.tmpdir(), `${uuidv4()}_output.mp3`);
+
+    try {
+      await fs.writeFile(tempInput, inputBuffer);
+
+      ffmpeg.ffprobe(tempInput, (err, metadata) => {
+        if (err) {
+          fs.unlink(tempInput).catch(() => {});
+          return reject(err);
+        }
+
+        const duration = metadata.format.duration;
+        if (!duration) {
+          fs.unlink(tempInput).catch(() => {});
+          return reject(new Error("Could not determine audio duration"));
+        }
+
+        // Target size: 3.8 MB (to safely be under 4MB) = 3.8 * 1024 * 1024 * 8 bits
+        const targetBits = 3.8 * 1024 * 1024 * 8;
+        let targetBitrate = Math.floor(targetBits / duration / 1000); // in kbps
+
+        if (targetBitrate > 128) targetBitrate = 128;
+        if (targetBitrate < 16) targetBitrate = 16; 
+
+        ffmpeg(tempInput)
+          .audioCodec("libmp3lame")
+          .audioBitrate(`${targetBitrate}k`)
+          .on("end", async () => {
+            const outBuffer = await fs.readFile(tempOutput);
+            await fs.unlink(tempInput).catch(() => {});
+            await fs.unlink(tempOutput).catch(() => {});
+            resolve(outBuffer);
+          })
+          .on("error", async (err) => {
+            await fs.unlink(tempInput).catch(() => {});
+            await fs.unlink(tempOutput).catch(() => {});
+            reject(err);
+          })
+          .save(tempOutput);
+      });
+    } catch (error) {
+      await fs.unlink(tempInput).catch(() => {});
+      reject(error);
+    }
+  });
+}
 
 // Allowed MIME types and their mapped categories
 const ALLOWED_TYPES: Record<string, string> = {
@@ -62,7 +122,20 @@ export async function POST(req: NextRequest) {
     const folder = mimeFolder ?? (typeHint === "slider" ? "sliders" : typeHint === "cover" ? "covers" : "uploads");
 
     const bytes = await file.arrayBuffer();
-    const buffer = Buffer.from(bytes);
+    let buffer: any = Buffer.from(bytes);
+    let finalSize = file.size;
+
+    if ((mimeType === "audio/mpeg" || mimeType === "audio/mp3") && file.size > 4 * 1024 * 1024) {
+      try {
+        console.log(`[upload] Compressing audio file: ${file.name} (${Math.round(file.size / 1024 / 1024)}MB)`);
+        buffer = await compressAudio(buffer);
+        finalSize = buffer.length;
+        console.log(`[upload] Compression complete. New size: ${Math.round(finalSize / 1024 / 1024 * 100) / 100}MB`);
+      } catch (err) {
+        console.error("[upload] Failed to compress audio:", err);
+        // Fallback to uncompressed if it fails
+      }
+    }
 
     // Build a safe unique filename
     const ext = extname(file.name) || "";
@@ -89,7 +162,7 @@ export async function POST(req: NextRequest) {
         filename: uniqueFilename,
         originalName: file.name,
         mimeType,
-        size: file.size,
+        size: finalSize,
         url: publicUrl,
         thumbnailUrl: null,
         altText: null,
@@ -112,7 +185,7 @@ export async function POST(req: NextRequest) {
       filename: uniqueFilename,
       originalName: file.name,
       mimeType,
-      size: file.size,
+      size: finalSize,
     });
   } catch (error: any) {
     console.error("[upload] Upload error:", error);

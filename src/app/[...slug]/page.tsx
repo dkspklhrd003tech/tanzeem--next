@@ -1,6 +1,6 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect, permanentRedirect } from "next/navigation";
 import { db } from "@/db";
-import { pages, pageSections, audioCategories, videoCategories, audio, videos } from "@/db/schema";
+import { pages, pageSections, audioCategories, videoCategories, audio, videos, speakers, bookCategories } from "@/db/schema";
 import { eq, and, desc } from "drizzle-orm";
 import { Metadata } from "next";
 import crypto from "crypto";
@@ -246,7 +246,30 @@ export default async function DynamicPage({ params }: PageProps) {
     }
   }
 
-  if (!page || !page.isPublished) notFound();
+  if (!page || !page.isPublished) {
+    // ── Legacy URL Redirect Fallback ───────────────────────────────────────────────
+    // If the generic page is not found, check if the slug matches a legacy root-level 
+    // taxonomy (speaker, audio/video/book category) and 301 redirect to the new route.
+    
+    // Check Speakers
+    const speakerMatch = await db.query.speakers.findFirst({ where: eq(speakers.slug, slug) });
+    if (speakerMatch) permanentRedirect(`/audios-by-speaker/${speakerMatch.slug}`);
+    
+    // Check Audio Categories
+    const audioCatMatch = await db.query.audioCategories.findFirst({ where: eq(audioCategories.slug, slug) });
+    if (audioCatMatch) permanentRedirect(`/audio/${audioCatMatch.slug}`);
+    
+    // Check Video Categories
+    const videoCatMatch = await db.query.videoCategories.findFirst({ where: eq(videoCategories.slug, slug) });
+    if (videoCatMatch) permanentRedirect(`/videos-by-category/${videoCatMatch.slug}`);
+    
+    // Check Book Categories
+    const bookCatMatch = await db.query.bookCategories.findFirst({ where: eq(bookCategories.slug, slug) });
+    if (bookCatMatch) permanentRedirect(`/books-by-category/${bookCatMatch.slug}`);
+
+    // If no legacy mapping is found, return 404
+    notFound();
+  }
 
   let sections: any[] = [];
   try {

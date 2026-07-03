@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { PageRecord } from "@/components/sitemanager/PageForm";
 import { ImageUploader } from "@/components/admin/ImageUploader";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -102,6 +103,7 @@ function SortableSpeakerCard({ speaker, onClick, onEdit, onDelete }: { speaker: 
 }
 
 export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { pageId: string, initialPageData: PageRecord }) {
+  const router = useRouter();
   const { toast } = useToast();
   const [pageForm, setPageForm] = useState<PageRecord>({ ...initialPageData });
   const [isSavingPage, setIsSavingPage] = useState(false);
@@ -112,16 +114,7 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
 
   const [activeSpeaker, setActiveSpeaker] = useState<SpeakerItem | null>(null);
 
-  // Speaker Modal
-  const [isSpeakerModalOpen, setIsSpeakerModalOpen] = useState(false);
-  const [speakerFormData, setSpeakerFormData] = useState({ name: "", slug: "", bio: "", avatar: "", type: "audio", order: 0, customFields: {} as Record<string, any> });
-  const [editingSpeakerId, setEditingSpeakerId] = useState<string | null>(null);
   const [deletingSpeaker, setDeletingSpeaker] = useState<SpeakerItem | null>(null);
-
-  // Audio Modal
-  const [isAudioModalOpen, setIsAudioModalOpen] = useState(false);
-  const [audioFormData, setAudioFormData] = useState({ title: "", slug: "", audioUrl: "", isPublished: true, isNew: false, customFields: {} as Record<string, any> });
-  const [editingAudioId, setEditingAudioId] = useState<string | null>(null);
   const [deletingAudio, setDeletingAudio] = useState<AudioItem | null>(null);
 
   const [isUploading, setIsUploading] = useState(false);
@@ -161,43 +154,7 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
     finally { setIsSavingPage(false); }
   };
 
-  const handleSpeakerSave = async () => {
-    if (!speakerFormData.name || !speakerFormData.slug) return;
-    try {
-      const url = editingSpeakerId ? `/api/admin/speakers/${editingSpeakerId}` : "/api/admin/speakers";
-      const method = editingSpeakerId ? "PUT" : "POST";
-      const payload = { ...speakerFormData, type: "audio" };
-      const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || "Failed");
-      toast({ title: "Success", description: "Speaker saved" });
-      setIsSpeakerModalOpen(false);
-      fetchData();
-    } catch (e: any) { toast({ variant: "destructive", title: "Error", description: e.message }); }
-  };
 
-  const handleSpeakerDelete = async (item: SpeakerItem) => {
-    try {
-      await fetch(`/api/admin/speakers/${item.id}`, { method: "DELETE" });
-      fetchData();
-      toast({ title: "Speaker deleted" });
-      if (activeSpeaker?.id === item.id) setActiveSpeaker(null);
-    } catch (e) { toast({ variant: "destructive", title: "Failed to delete" }); }
-    finally { setDeletingSpeaker(null); }
-  };
-
-  const handleAudioSave = async () => {
-    if (!audioFormData.title || !audioFormData.slug) return;
-    try {
-      const url = editingAudioId ? `/api/admin/audio/${editingAudioId}` : "/api/admin/audio";
-      const method = editingAudioId ? "PUT" : "POST";
-      const payload = { ...audioFormData, speakerId: activeSpeaker?.id };
-      const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || "Failed");
-      toast({ title: "Success", description: "Audio saved" });
-      setIsAudioModalOpen(false);
-      fetchData();
-    } catch (e: any) { toast({ variant: "destructive", title: "Error", description: e.message }); }
-  };
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -230,32 +187,17 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
     toast({ title: "Order saved", description: "The new sorting order has been saved automatically." });
   };
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, setter: (url: string) => void) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    // 40MB limit for audio files
-    const MAX_AUDIO_SIZE = 40 * 1024 * 1024;
-    if (file.size > MAX_AUDIO_SIZE) {
-      toast({ variant: "destructive", title: "File too large", description: "Audio files must be under 40MB." });
-      // Clear the input
-      e.target.value = '';
-      return;
-    }
-
-    setIsUploading(true);
-    const formData = new FormData();
-    formData.append("file", file);
+  const handleSpeakerDelete = async (item: SpeakerItem) => {
     try {
-      const res = await fetch("/api/upload", { method: "POST", body: formData });
-      const data = await res.json();
-      if (data.url) setter(data.url);
-      else throw new Error("Upload failed");
-    } catch (err) { toast({ variant: "destructive", title: "Upload Error" }); }
-    finally { setIsUploading(false); }
+      await fetch(`/api/admin/speakers/${item.id}`, { method: "DELETE" });
+      fetchData();
+      toast({ title: "Speaker deleted" });
+      if (activeSpeaker?.id === item.id) setActiveSpeaker(null);
+    } catch (e) { toast({ variant: "destructive", title: "Failed to delete" }); }
+    finally { setDeletingSpeaker(null); }
   };
 
-  const activeAudios = audiosList.filter(a => a.speakerId === activeSpeaker?.id);
+  const activeAudios = audiosList.filter(a => a.speakerId === activeSpeaker?.id).sort((a: any, b: any) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
 
   return (
     <div className="space-y-6 max-w-7xl">
@@ -310,7 +252,7 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
           <TabsContent value="speakers" className="space-y-6">
             <div className="flex justify-between items-center">
               <h2 className="text-xl font-bold">Audio Speakers</h2>
-              <Button size="sm" onClick={() => { setEditingSpeakerId(null); setSpeakerFormData({ name: "", slug: "", bio: "", avatar: "", type: "audio", order: 0 }); setIsSpeakerModalOpen(true); }}>
+              <Button size="sm" onClick={() => router.push("/sitemanager/media/speaker/new")}>
                 <Plus className="w-4 h-4 mr-1" /> Add Speaker
               </Button>
             </div>
@@ -325,11 +267,7 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
                         key={speaker.id}
                         speaker={speaker}
                         onClick={() => setActiveSpeaker(speaker)}
-                        onEdit={(s) => {
-                          setEditingSpeakerId(s.id);
-                          setSpeakerFormData({ name: s.name, slug: s.slug, bio: s.bio || "", avatar: s.avatar || "", type: "audio", order: s.order || 0, customFields: s.customFields || {} });
-                          setIsSpeakerModalOpen(true);
-                        }}
+                        onEdit={(s) => router.push(`/sitemanager/media/speaker/${s.id}`)}
                         onDelete={(s) => setDeletingSpeaker(s)}
                       />
                     ))}
@@ -360,7 +298,7 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
             <TabsContent value="audios" className="space-y-6">
               <div className="flex justify-between items-center">
                 <h2 className="text-xl font-bold">Speaker Audios</h2>
-                <Button size="sm" onClick={() => { setEditingAudioId(null); setAudioFormData({ title: "", slug: "", audioUrl: "", isPublished: true, isNew: false }); setIsAudioModalOpen(true); }}>
+                <Button size="sm" onClick={() => router.push(`/sitemanager/media/audio/new?speaker=${activeSpeaker.id}`)}>
                   <Plus className="w-4 h-4 mr-1" /> Add Audio
                 </Button>
               </div>
@@ -375,7 +313,7 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
                       <p className="text-xs text-muted-foreground break-all">{audio.audioUrl || "No URL"}</p>
                     </div>
                     <div className="flex gap-2 justify-end mt-4">
-                      <Button variant="ghost" size="sm" onClick={() => { setEditingAudioId(audio.id); setAudioFormData({ title: audio.title, slug: audio.slug, audioUrl: audio.audioUrl || "", isPublished: audio.isPublished, isNew: audio.isNew || false, customFields: audio.customFields || {} }); setIsAudioModalOpen(true); }}><Pencil className="w-4 h-4" /></Button>
+                      <Button variant="ghost" size="sm" onClick={() => router.push(`/sitemanager/media/audio/${audio.id}`)}><Pencil className="w-4 h-4" /></Button>
                       <Button variant="ghost" size="sm" onClick={() => { setDeletingAudio(audio); }} className="text-red-500"><Trash2 className="w-4 h-4" /></Button>
                     </div>
                   </div>
@@ -391,80 +329,7 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
         )}
       </Tabs>
 
-      {/* Speaker Modal */}
-      {isSpeakerModalOpen && (
-        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-card w-full max-w-md border border-border rounded-2xl shadow-xl relative overflow-hidden flex flex-col max-h-[90vh]">
-            <div className="p-6 border-b border-border flex justify-between items-center bg-muted/20">
-              <h2 className="text-xl font-bold">{editingSpeakerId ? "Edit Speaker" : "Add Speaker"}</h2>
-              <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsSpeakerModalOpen(false)}>×</Button>
-            </div>
-            <div className="overflow-y-auto p-6 flex-1 space-y-4">
-              <div className="space-y-2"><Label>Name</Label><Input value={speakerFormData.name} onChange={e => setSpeakerFormData({ ...speakerFormData, name: e.target.value, slug: editingSpeakerId ? speakerFormData.slug : slugify(e.target.value) })} /></div>
-              <div className="space-y-2"><Label>Slug</Label><Input value={speakerFormData.slug} onChange={e => setSpeakerFormData({ ...speakerFormData, slug: e.target.value })} /></div>
-              <div className="space-y-2"><Label>Urdu Name</Label><Input value={speakerFormData.bio} onChange={e => setSpeakerFormData({ ...speakerFormData, bio: e.target.value })} className="text-center font-bold text-lg" dir="rtl" style={{ fontFamily: "'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', serif" }} placeholder="اردو نام" /></div>
-              <div className="space-y-2"><Label>Display Order</Label><Input type="number" value={speakerFormData.order} onChange={e => setSpeakerFormData({ ...speakerFormData, order: parseInt(e.target.value) || 0 })} /></div>
-              <div className="space-y-2">
-                <Label>Speaker Photo</Label>
-                <ImageUploader value={speakerFormData.avatar || ""} onChange={(url) => setSpeakerFormData(prev => ({ ...prev, avatar: url }))} aspectRatio={1} />
-              </div>
-              <CustomFieldRenderer
-                entityType="speaker"
-                values={speakerFormData.customFields}
-                onChange={(key, val) => setSpeakerFormData(prev => ({ ...prev, customFields: { ...prev.customFields, [key]: val } }))}
-              />
-              <CustomFieldBuilder entityType="speaker" />
-            </div>
-            <div className="p-6 border-t border-border bg-muted/20 flex justify-end gap-3">
-              <Button variant="outline" onClick={() => setIsSpeakerModalOpen(false)} className="bg-destructive text-white hover:bg-destructive/80">Cancel</Button>
-              <Button onClick={handleSpeakerSave} className="bg-primary text-white hover:bg-primary/80">{editingSpeakerId ? "Update" : "Save"}</Button>
-            </div>
-          </div>
-        </div>
-      )}
 
-      {/* Audio Modal */}
-      {isAudioModalOpen && (
-        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-card w-full max-w-md border border-border rounded-2xl shadow-xl relative overflow-hidden flex flex-col max-h-[90vh]">
-            <div className="p-6 border-b border-border flex justify-between items-center bg-muted/20">
-              <h2 className="text-xl font-bold">{editingAudioId ? "Edit Audio" : "Add Audio"}</h2>
-              <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsAudioModalOpen(false)}>×</Button>
-            </div>
-            <div className="overflow-y-auto p-6 flex-1 space-y-4">
-              <div className="space-y-2"><Label>Title</Label><Input value={audioFormData.title} onChange={e => setAudioFormData({ ...audioFormData, title: e.target.value, slug: editingAudioId ? audioFormData.slug : slugify(e.target.value) })} /></div>
-              <div className="space-y-2"><Label>Slug</Label><Input value={audioFormData.slug} onChange={e => setAudioFormData({ ...audioFormData, slug: e.target.value })} /></div>
-              <div className="space-y-2">
-                <Label>Audio File or URL (MP3)</Label>
-                <div className="flex gap-2">
-                  <Input value={audioFormData.audioUrl} onChange={e => setAudioFormData({ ...audioFormData, audioUrl: e.target.value })} placeholder="https://... or upload" />
-                  <div className="relative">
-                    <Button type="button" variant="secondary" className="whitespace-nowrap" disabled={isUploading}>
-                      {isUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <UploadCloud className="w-4 h-4 mr-2" />}
-                      Upload MP3
-                    </Button>
-                    <input type="file" accept="audio/mp3,audio/mpeg" className="absolute inset-0 opacity-0 cursor-pointer" onChange={e => handleFileUpload(e, (url) => setAudioFormData(prev => ({ ...prev, audioUrl: url })))} disabled={isUploading} />
-                  </div>
-                </div>
-              </div>
-              <div className="flex items-center space-x-2 pt-2">
-                <input type="checkbox" id="isNewAudio" checked={audioFormData.isNew} onChange={e => setAudioFormData({ ...audioFormData, isNew: e.target.checked })} className="rounded border-gray-300" />
-                <Label htmlFor="isNewAudio" className="cursor-pointer">Mark as "New"</Label>
-              </div>
-              <CustomFieldRenderer
-                entityType="audio"
-                values={audioFormData.customFields}
-                onChange={(key, val) => setAudioFormData(prev => ({ ...prev, customFields: { ...prev.customFields, [key]: val } }))}
-              />
-              <CustomFieldBuilder entityType="audio" />
-            </div>
-            <div className="p-6 border-t border-border bg-muted/20 flex justify-end gap-3">
-              <Button variant="outline" onClick={() => setIsAudioModalOpen(false)} className="bg-destructive text-white hover:bg-destructive/80">Cancel</Button>
-              <Button onClick={handleAudioSave} className="bg-primary text-white hover:bg-primary/80">{editingAudioId ? "Update" : "Save"}</Button>
-            </div>
-          </div>
-        </div>
-      )}
 
       <ConfirmDialog open={!!deletingSpeaker} title="Delete Speaker" description="Are you sure you want to delete this speaker?" onConfirm={() => deletingSpeaker && handleSpeakerDelete(deletingSpeaker)} onOpenChange={(open) => !open && setDeletingSpeaker(null)} />
       <ConfirmDialog open={!!deletingAudio} title="Delete Audio" description="Are you sure you want to delete this audio?" onConfirm={async () => { if (deletingAudio) { await fetch(`/api/admin/audio/${deletingAudio.id}`, { method: 'DELETE' }); fetchData(); setDeletingAudio(null); } }} onOpenChange={(open) => !open && setDeletingAudio(null)} />

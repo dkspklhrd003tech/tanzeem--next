@@ -118,6 +118,37 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
   const [activeTab, setActiveTab] = useState<string>("");
   const [pendingAction, setPendingAction] = useState<{ title: string, desc: string, action: () => Promise<void> | void } | null>(null);
 
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      const oldIndex = categories.findIndex((c) => c.id === active.id);
+      const newIndex = categories.findIndex((c) => c.id === over.id);
+
+      const newCategories = arrayMove(categories, oldIndex, newIndex);
+      const updatedCategories = newCategories.map((c, idx) => ({ ...c, order: idx }));
+      setCategories(updatedCategories);
+
+      try {
+        await Promise.all(
+          updatedCategories.map(cat => 
+            fetch(`/api/${mediaType}-categories/${cat.id}`, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ order: cat.order })
+            })
+          )
+        );
+      } catch (err) {
+        toast.error("Failed to save new order");
+      }
+    }
+  };
+
   React.useEffect(() => {
     fetchData();
   }, [mediaType]);

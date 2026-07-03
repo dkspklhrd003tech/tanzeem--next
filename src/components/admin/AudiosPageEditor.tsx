@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
@@ -163,21 +164,8 @@ export default function AudiosPageEditor({ pageId, initialPageData }: { pageId: 
 
   const [activeCategory, setActiveCategory] = useState<CategoryItem | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
 
-  // Modals
-  const [isCatModalOpen, setIsCatModalOpen] = useState(false);
-  const [catFormData, setCatFormData] = useState({ name: "", slug: "", description: "" });
-  const [editingCatId, setEditingCatId] = useState<string | null>(null);
-
-  const [isSpeakerModalOpen, setIsSpeakerModalOpen] = useState(false);
-  const [speakerFormData, setSpeakerFormData] = useState({ name: "", slug: "", bio: "", avatar: "" });
-  const [editingSpeakerId, setEditingSpeakerId] = useState<string | null>(null);
-
-  const [isAudioModalOpen, setIsAudioModalOpen] = useState(false);
-  const [audioFormData, setaudioFormData] = useState({ title: "", slug: "", description: "", audioUrl: "", thumbnailUrl: "", speakerId: "", isPublished: true });
-  const [editingAudioId, seteditingAudioId] = useState<string | null>(null);
-
-  const [isUploading, setIsUploading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   const [deletingCat, setDeletingCat] = useState<CategoryItem | null>(null);
@@ -245,87 +233,7 @@ export default function AudiosPageEditor({ pageId, initialPageData }: { pageId: 
     }
   };
 
-  // --- Category CRUD ---
-  const handleCatSave = async () => {
-    if (!catFormData.name || !catFormData.slug) return;
-    try {
-      const url = editingCatId ? `/api/admin/audio-categories/${editingCatId}` : "/api/admin/audio-categories";
-      const method = editingCatId ? "PUT" : "POST";
-      const payload: any = { ...catFormData };
 
-      const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.error || "Failed");
-      }
-      toast({ title: "Success", description: "Category saved" });
-      setIsCatModalOpen(false);
-      fetchData();
-    } catch (e: any) {
-      toast({ variant: "destructive", title: "Error", description: e.message || "Save failed." });
-    }
-  };
-
-  const handleCatDelete = async (item: CategoryItem) => {
-    try {
-      await fetch(`/api/admin/audio-categories/${item.id}`, { method: "DELETE" });
-      fetchData();
-      toast({ title: "Category deleted" });
-    } catch (e) { toast({ variant: "destructive", title: "Failed to delete category" }); }
-    finally { setDeletingCat(null); }
-  };
-
-  // --- Speaker CRUD ---
-  const handleSpeakerSave = async () => {
-    if (!speakerFormData.name || !speakerFormData.slug) return;
-    try {
-      const url = editingSpeakerId ? `/api/admin/speakers/${editingSpeakerId}` : "/api/admin/speakers";
-      const method = editingSpeakerId ? "PUT" : "POST";
-      const payload: any = { ...speakerFormData };
-
-      const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.error || "Failed");
-      }
-      toast({ title: "Success", description: "Speaker saved" });
-      setIsSpeakerModalOpen(false);
-      fetchData();
-    } catch (e: any) {
-      toast({ variant: "destructive", title: "Error", description: e.message || "Save failed." });
-    }
-  };
-
-  const handleSpeakerDelete = async (item: SpeakerItem) => {
-    try {
-      await fetch(`/api/admin/speakers/${item.id}`, { method: "DELETE" });
-      fetchData();
-      toast({ title: "Speaker deleted" });
-    } catch (e) { toast({ variant: "destructive", title: "Failed to delete speaker" }); }
-    finally { setDeletingSpeaker(null); }
-  };
-
-  // --- Video CRUD ---
-  const handleVideoSave = async () => {
-    if (!audioFormData.title || !audioFormData.slug) return;
-    try {
-      const url = editingAudioId ? `/api/admin/audio/${editingAudioId}` : "/api/admin/audio";
-      const method = editingAudioId ? "PUT" : "POST";
-      const payload: any = { ...audioFormData, categoryId: activeCategory?.id || null };
-      if (!editingAudioId) payload.order = audioList.filter(v => v.categoryId === activeCategory?.id).length;
-
-      const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.error || "Failed");
-      }
-      toast({ title: "Success", description: "Audio Card saved" });
-      setIsAudioModalOpen(false);
-      fetchData();
-    } catch (e: any) {
-      toast({ variant: "destructive", title: "Error", description: e.message || "Save failed." });
-    }
-  };
 
   const handleVideoDelete = async (item: AudioItem) => {
     try {
@@ -380,11 +288,11 @@ export default function AudiosPageEditor({ pageId, initialPageData }: { pageId: 
         }}
       >
         {!activeCategory ? (
-          <Button onClick={() => { setEditingCatId(null); setCatFormData({ name: "", slug: "", description: "" }); setIsCatModalOpen(true); }} className="ml-2 bg-primary text-primary-foreground hover:bg-primary/95">
+          <Button onClick={() => router.push("/sitemanager/media/category/new?type=audio-categories")} className="ml-2 bg-primary text-primary-foreground hover:bg-primary/95">
             <Plus className="w-4 h-4 mr-2" /> Add Category
           </Button>
         ) : (
-          <Button onClick={() => { seteditingAudioId(null); setaudioFormData({ title: "", slug: "", description: "", audioUrl: "", thumbnailUrl: "", speakerId: "", isPublished: true }); setIsAudioModalOpen(true); }} className="ml-2 bg-primary text-primary-foreground hover:bg-primary/95">
+          <Button onClick={() => router.push(`/sitemanager/media/audio/new?category=${activeCategory.id}`)} className="ml-2 bg-primary text-primary-foreground hover:bg-primary/95">
             <Plus className="w-4 h-4 mr-2" /> Add Audio Card
           </Button>
         )}
@@ -418,7 +326,7 @@ export default function AudiosPageEditor({ pageId, initialPageData }: { pageId: 
                 {filteredCategories.map(cat => (
                   <SortableCategoryCard key={cat.id} id={cat.id} item={cat} onClick={setActiveCategory}
                     videoCount={audioList.filter(b => b.categoryId === cat.id).length}
-                    onEdit={(item: any) => { setEditingCatId(item.id); setCatFormData({ name: item.name, slug: item.slug, description: item.description || "" }); setIsCatModalOpen(true); }}
+                    onEdit={(item: any) => router.push(`/sitemanager/media/category/${item.id}?type=audio-categories`)}
                     onDelete={(item: CategoryItem) => setDeletingCat(item)} />
                 ))}
               </div>
@@ -431,7 +339,7 @@ export default function AudiosPageEditor({ pageId, initialPageData }: { pageId: 
                     {activeVideos.map(vid => (
                       <SortableAudioCard key={vid.id} id={vid.id} item={vid}
                         speakerName={speakersList.find(s => s.id === vid.speakerId)?.name}
-                        onEdit={(item: any) => { seteditingAudioId(item.id); setaudioFormData({ title: item.title, slug: item.slug, description: item.description || "", audioUrl: item.audioUrl || "", thumbnailUrl: item.thumbnailUrl || "", speakerId: item.speakerId || "", isPublished: item.isPublished }); setIsAudioModalOpen(true); }}
+                        onEdit={(item: any) => router.push(`/sitemanager/media/audio/${item.id}`)}
                         onDelete={(item: AudioItem) => setDeletingVideo(item)} />
                     ))}
                     {activeVideos.length === 0 && <div className="col-span-full py-10 text-center text-muted-foreground border border-dashed rounded-xl">No videos found in this category.</div>}
@@ -458,103 +366,7 @@ export default function AudiosPageEditor({ pageId, initialPageData }: { pageId: 
         </TabsContent>
       </Tabs>
 
-      {/* Category Modal */}
-      {isCatModalOpen && (
-        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-card w-full max-w-md border border-border rounded-2xl shadow-xl relative overflow-hidden flex flex-col">
-            <div className="p-6 border-b border-border flex justify-between items-center bg-muted/20">
-              <h2 className="text-xl font-bold flex items-center gap-2">
-                <Video className="h-5 w-5 text-primary" />
-                {editingCatId ? "Edit Category" : "Add Category"}
-              </h2>
-              <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsCatModalOpen(false)}>×</Button>
-            </div>
-            <div className="p-6 flex-1 space-y-4">
-              <div className="space-y-2"><Label>Name</Label><Input value={catFormData.name} onChange={e => setCatFormData({ ...catFormData, name: e.target.value, slug: editingCatId ? catFormData.slug : slugify(e.target.value) })} /></div>
-              <div className="space-y-2"><Label>Slug</Label><Input value={catFormData.slug} onChange={e => setCatFormData({ ...catFormData, slug: e.target.value })} /></div>
-              <div className="space-y-2"><Label>Description</Label><Textarea value={catFormData.description} onChange={e => setCatFormData({ ...catFormData, description: e.target.value })} /></div>
-            </div>
-            <div className="p-6 border-t border-border bg-muted/20 flex justify-end gap-3">
-              <Button variant="outline" onClick={() => setIsCatModalOpen(false)} className="bg-destructive text-white hover:bg-destructive/80">Cancel</Button>
-              <Button onClick={handleCatSave} className="bg-primary text-white hover:bg-primary/80">
-                {editingCatId ? "Update Category" : "Save Category"}
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
 
-
-
-      {/* Video Modal */}
-      {isAudioModalOpen && (
-        <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-card w-full max-w-xl border border-border rounded-2xl shadow-xl relative overflow-hidden flex flex-col max-h-[90vh]">
-            <div className="p-6 border-b border-border flex justify-between items-center bg-muted/20">
-              <h2 className="text-xl font-bold flex items-center gap-2">
-                <Video className="h-5 w-5 text-primary" />
-                {editingAudioId ? "Edit Audio Card" : "Add Audio Card"}
-              </h2>
-              <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsAudioModalOpen(false)}>×</Button>
-            </div>
-            <div className="overflow-y-auto p-6 flex-1 space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2 col-span-2"><Label>Title</Label><Input value={audioFormData.title} onChange={e => setaudioFormData({ ...audioFormData, title: e.target.value, slug: editingAudioId ? audioFormData.slug : slugify(e.target.value) })} /></div>
-                <div className="space-y-2 col-span-2"><Label>Slug</Label><Input value={audioFormData.slug} onChange={e => setaudioFormData({ ...audioFormData, slug: e.target.value })} /></div>
-
-                <div className="space-y-2 col-span-2">
-                  <Label>Audio URL</Label>
-                  <div className="flex gap-2">
-                    <Input placeholder="https://..." value={audioFormData.audioUrl} onChange={e => setaudioFormData({ ...audioFormData, audioUrl: e.target.value })} className="flex-1" />
-                    <div className="relative">
-                      <Button type="button" variant="outline" className="w-32 overflow-hidden relative">
-                        <UploadCloud className="w-4 h-4 mr-2" /> Upload MP3
-                        <input
-                          type="file"
-                          accept="audio/*"
-                          className="absolute inset-0 opacity-0 cursor-pointer"
-                          onChange={async (e) => {
-                            if (!e.target.files?.length) return;
-                            const file = e.target.files[0];
-                            const fd = new FormData();
-                            fd.append("file", file);
-                            try {
-                              const toastId = toast({ title: "Uploading...", description: "Please wait..." }).id;
-                              const res = await fetch("/api/upload", { method: "POST", body: fd });
-                              const data = await res.json();
-                              if (data.url) {
-                                setaudioFormData({ ...audioFormData, audioUrl: data.url });
-                                toast({ title: "Upload successful", description: "Audio URL applied" });
-                              }
-                            } catch (err) {
-                              toast({ variant: "destructive", title: "Upload failed" });
-                            }
-                          }}
-                        />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="space-y-2 col-span-2">
-                  <Label>Thumbnail</Label>
-                  <ImageUploader
-                    value={audioFormData.thumbnailUrl}
-                    onChange={(url) => setaudioFormData(prev => ({ ...prev, thumbnailUrl: url }))}
-                    aspectRatio={16 / 9}
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="p-6 border-t border-border bg-muted/20 flex justify-end gap-3">
-              <Button variant="outline" onClick={() => setIsAudioModalOpen(false)} className="bg-destructive text-white hover:bg-destructive/80">Cancel</Button>
-              <Button onClick={handleVideoSave} className="bg-primary text-white hover:bg-primary/80">
-                {editingAudioId ? "Update Audio Card" : "Save Audio Card"}
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Delete Dialogs */}
       <ConfirmDialog
@@ -562,15 +374,15 @@ export default function AudiosPageEditor({ pageId, initialPageData }: { pageId: 
         onOpenChange={(open) => !open && setDeletingCat(null)}
         title="Delete Category"
         description={`Are you sure you want to delete the category "${deletingCat?.name}"?`}
-        onConfirm={() => deletingCat && handleCatDelete(deletingCat)}
+        onConfirm={async () => { if (deletingCat) { await fetch(`/api/admin/audio-categories/${deletingCat.id}`, { method: 'DELETE' }); fetchData(); setDeletingCat(null); } }}
       />
-      <ConfirmDialog
-        open={!!deletingSpeaker}
-        onOpenChange={(open) => !open && setDeletingSpeaker(null)}
-        title="Delete Speaker"
-        description={`Are you sure you want to delete "${deletingSpeaker?.name}"?`}
-        onConfirm={() => deletingSpeaker && handleSpeakerDelete(deletingSpeaker)}
-      />
+        <ConfirmDialog
+          open={!!deletingSpeaker}
+          onOpenChange={(open) => !open && setDeletingSpeaker(null)}
+          title="Delete Speaker"
+          description={`Are you sure you want to delete "${deletingSpeaker?.name}"?`}
+          onConfirm={async () => { if (deletingSpeaker) { await fetch(`/api/admin/speakers/${deletingSpeaker.id}`, { method: 'DELETE' }); fetchData(); setDeletingSpeaker(null); } }}
+        />
       <ConfirmDialog
         open={!!deletingVideo}
         onOpenChange={(open) => !open && setDeletingVideo(null)}
