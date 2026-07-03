@@ -32,7 +32,7 @@ export default async function CategoryVideosPage({ params }: { params: Promise<{
   if (subCatIds.length > 0) {
     allVideos = await db
       .select({
-        id: videos.id,
+        id: videos.slug,
         title: videos.title,
         description: videos.description,
         videoUrl: videos.videoUrl,
@@ -64,7 +64,7 @@ export default async function CategoryVideosPage({ params }: { params: Promise<{
   if (mainCat.parentId !== null) {
     directVideos = await db
       .select({
-        id: videos.id,
+        id: videos.slug,
         title: videos.title,
         description: videos.description,
         videoUrl: videos.videoUrl,

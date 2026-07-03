@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Play, PlayCircle, X, Headphones, Video } from "lucide-react";
+import { motion } from "framer-motion";
+import { Play, Headphones, Video } from "lucide-react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 interface MediaItem {
@@ -37,7 +38,6 @@ interface NestedCategoryGridProps {
 export function NestedCategoryGrid({ heading, style = "capsule", categories = [] }: NestedCategoryGridProps) {
   const [activeTabId, setActiveTabId] = useState<string>(categories[0]?.id || "");
   const [activeSubCat, setActiveSubCat] = useState<SubCategory | null>(null);
-  const [activeMedia, setActiveMedia] = useState<MediaItem | null>(null);
 
   const activeMainCat = categories.find(c => c.id === activeTabId) || categories[0];
 
@@ -160,10 +160,12 @@ export function NestedCategoryGrid({ heading, style = "capsule", categories = []
                         </div>
                       </div>
                       <Button
-                        onClick={() => setActiveMedia(item)}
+                        asChild
                         className="shrink-0 w-full sm:w-auto rounded-full bg-primary hover:bg-primary/90 text-primary-foreground"
                       >
-                        <Play className="w-4 h-4 mr-2" /> Play Now
+                        <Link href={style === "image_card" ? `/videos/${item.id}` : `/audio/${item.id}`}>
+                          <Play className="w-4 h-4 mr-2" /> Play Now
+                        </Link>
                       </Button>
                     </div>
                   </li>
@@ -178,67 +180,6 @@ export function NestedCategoryGrid({ heading, style = "capsule", categories = []
           </motion.div>
         )}
       </div>
-
-      {/* Media Player Modal */}
-      <AnimatePresence>
-        {activeMedia && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
-          >
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-card rounded-2xl overflow-hidden shadow-2xl max-w-3xl w-full relative"
-            >
-              <button
-                onClick={() => setActiveMedia(null)}
-                className="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center rounded-full bg-black/50 text-white hover:bg-black transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
-
-              <div className="p-6 md:p-8 space-y-6">
-                <div className="flex items-center gap-3">
-                  <PlayCircle className="w-8 h-8 text-primary" />
-                  <h3 className="text-2xl font-bold">
-                    {activeMedia.code ? `${activeMedia.code} | ` : ""}{activeMedia.title}
-                  </h3>
-                </div>
-
-                <div className="bg-muted rounded-xl overflow-hidden aspect-video flex items-center justify-center border">
-                  {/* Basic Media Player rendering */}
-                  {activeMedia.mediaUrl.includes('youtube.com') || activeMedia.mediaUrl.includes('youtu.be') ? (
-                    <iframe
-                      className="w-full h-full"
-                      src={activeMedia.mediaUrl.replace('watch?v=', 'embed/').replace('youtu.be/', 'youtube.com/embed/')}
-                      allowFullScreen
-                    ></iframe>
-                  ) : activeMedia.mediaUrl.endsWith('.mp4') || activeMedia.mediaUrl.endsWith('.webm') ? (
-                    <video src={activeMedia.mediaUrl} controls className="w-full h-full" autoPlay />
-                  ) : activeMedia.mediaUrl.endsWith('.mp3') || activeMedia.mediaUrl.endsWith('.wav') ? (
-                    <audio src={activeMedia.mediaUrl} controls className="w-full max-w-md mx-auto" autoPlay />
-                  ) : (
-                    <div className="text-center p-6">
-                      <p className="text-muted-foreground mb-4">Cannot embed this media URL directly.</p>
-                      <a href={activeMedia.mediaUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-semibold">
-                        Open in new tab
-                      </a>
-                    </div>
-                  )}
-                </div>
-
-                {activeMedia.description && (
-                  <p className="text-muted-foreground">{activeMedia.description}</p>
-                )}
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </section>
   );
 }

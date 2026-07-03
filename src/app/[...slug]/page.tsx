@@ -311,7 +311,7 @@ export default async function DynamicPage({ params }: PageProps) {
             title: subCat.name,
             code: subCat.code,
             mediaItems: allAudio.filter(a => a.categoryId === subCat.id).map(a => ({
-              id: a.id,
+              id: a.slug,
               title: a.title,
               mediaUrl: a.audioUrl,
               description: a.description,
@@ -320,7 +320,7 @@ export default async function DynamicPage({ params }: PageProps) {
           }));
 
         const directMedia = allAudio.filter(a => a.categoryId === mainCat.id).map(a => ({
-          id: a.id,
+          id: a.slug,
           title: a.title,
           mediaUrl: a.audioUrl,
           description: a.description,
@@ -364,7 +364,7 @@ export default async function DynamicPage({ params }: PageProps) {
             image: subCat.imageUrl,
             code: subCat.code,
             mediaItems: allVideos.filter(v => v.categoryId === subCat.id).map(v => ({
-              id: v.id,
+              id: v.slug,
               title: v.title,
               mediaUrl: v.videoUrl || v.embedUrl,
               embedUrl: v.embedUrl,
@@ -374,7 +374,7 @@ export default async function DynamicPage({ params }: PageProps) {
           }));
 
         const directMedia = allVideos.filter(v => v.categoryId === mainCat.id).map(v => ({
-          id: v.id,
+          id: v.slug,
           title: v.title,
           mediaUrl: v.videoUrl || v.embedUrl,
           embedUrl: v.embedUrl,

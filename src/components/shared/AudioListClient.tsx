@@ -1,11 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Play } from "lucide-react";
+import Link from "next/link";
 
 export function AudioListClient({ audios }: { audios: any[] }) {
-  const [activeAudio, setActiveAudio] = useState<any>(null);
 
   if (audios.length === 0) {
     return (
@@ -19,8 +17,8 @@ export function AudioListClient({ audios }: { audios: any[] }) {
     <>
       <div className="space-y-4">
         {audios.map((a: any) => (
-          <div key={a.id} 
-               onClick={() => setActiveAudio(a)}
+          <Link key={a.id} 
+               href={`/audio/${a.slug}`}
                className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-xl border border-border/50 hover:border-primary/50 bg-card hover:bg-muted/50 transition-colors cursor-pointer group shadow-sm hover:shadow-md">
             <div>
               <div className="flex items-center gap-2 mb-1">
@@ -39,28 +37,10 @@ export function AudioListClient({ audios }: { audios: any[] }) {
                 <Play className="w-5 h-5 ml-0.5" />
               </button>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
 
-      <Dialog open={!!activeAudio} onOpenChange={(o) => !o && setActiveAudio(null)}>
-        <DialogContent className="sm:max-w-md bg-slate-950/90 backdrop-blur-xl border-slate-800">
-          <DialogHeader>
-            <DialogTitle className="text-slate-200">{activeAudio?.title}</DialogTitle>
-          </DialogHeader>
-          <div className="py-8 flex flex-col items-center">
-            <div className="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(var(--primary),0.3)]">
-               <Play className="w-10 h-10 text-primary ml-1" />
-            </div>
-            {activeAudio?.audioUrl && (
-              <audio controls autoPlay className="w-full outline-none">
-                <source src={activeAudio.audioUrl} type="audio/mpeg" />
-                Your browser does not support the audio element.
-              </audio>
-            )}
-          </div>
-        </DialogContent>
-      </Dialog>
     </>
   );
 }

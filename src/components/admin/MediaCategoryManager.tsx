@@ -12,6 +12,24 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { ImageUploader } from "./ImageUploader";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  rectSortingStrategy,
+  useSortable,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { GripVertical } from "lucide-react";
 
 interface MediaItem {
   id: string;
@@ -46,6 +64,48 @@ interface MediaCategoryManagerProps {
   data: string; // Ignored, legacy
   onChange: (val: string) => void; // Ignored, legacy
   mediaType: "audio" | "video";
+}
+
+function SortableCategoryCard({ cat, onClick, onEdit, onDelete }: { cat: MainCategory, onClick: () => void, onEdit: (c: MainCategory) => void, onDelete: (c: MainCategory) => void }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: cat.id });
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    zIndex: isDragging ? 10 : 1,
+    opacity: isDragging ? 0.8 : 1,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} className="group relative flex flex-col bg-card border border-border rounded-xl overflow-hidden hover:border-primary/50 transition-all cursor-pointer shadow-sm hover:shadow-md" onClick={onClick}>
+      <div {...attributes} {...listeners} className="absolute top-2 left-2 z-20 p-1.5 bg-background/80 backdrop-blur rounded-md border shadow-sm cursor-grab active:cursor-grabbing hover:bg-background transition-colors text-muted-foreground hover:text-foreground">
+        <GripVertical className="w-4 h-4" />
+      </div>
+      <div className="aspect-video bg-muted relative overflow-hidden">
+        {cat.image ? (
+          <img src={cat.image} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt={cat.title} />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-muted-foreground"><ImageIcon className="w-10 h-10 opacity-20" /></div>
+        )}
+        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+          <span className="text-white font-medium bg-black/50 px-4 py-2 rounded-full text-sm">View Sub-categories</span>
+        </div>
+      </div>
+      <div className="p-4 flex items-start justify-between">
+        <div>
+          <h5 className="font-bold text-foreground text-lg">{cat.code ? `${cat.code} | ` : ""}{cat.title}</h5>
+          <p className="text-xs text-muted-foreground mt-1">{cat.subCategories?.length || 0} Sub-categories</p>
+        </div>
+        <div className="flex items-center gap-1">
+          <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary z-10" onClick={(e) => { e.stopPropagation(); onEdit(cat); }}>
+            <Edit className="w-4 h-4" />
+          </Button>
+          <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive z-10" onClick={(e) => { e.stopPropagation(); onDelete(cat); }}>
+            <Trash2 className="w-4 h-4" />
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
@@ -232,7 +292,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
       ));
       toast.success("Sub category deleted");
     } catch (err) {
-      toast.error("Failed to delete sub category");
+      toast.error("Failed to delete main category");
     }
   };
 
@@ -406,62 +466,27 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
         </div>
       ) : !activeTab ? (
         <div className="space-y-6 animate-in fade-in">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {categories.map((cat, i) => (
-              <div
-                key={cat.id || `cat-${i}`}
-                className="group relative flex flex-col bg-card border border-border rounded-xl overflow-hidden hover:border-primary/50 transition-all cursor-pointer shadow-sm hover:shadow-md"
-                onClick={() => setActiveTab(cat.id)}
-              >
-                <div className="aspect-video bg-muted relative overflow-hidden">
-                  {cat.image ? (
-                    <img src={cat.image} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt={cat.title} />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-muted-foreground"><ImageIcon className="w-10 h-10 opacity-20" /></div>
-                  )}
-                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <span className="text-white font-medium bg-black/50 px-4 py-2 rounded-full text-sm">View Sub-categories</span>
-                  </div>
-                </div>
-                <div className="p-4 flex items-start justify-between">
-                  <div>
-                    <h5 className="font-bold text-foreground text-lg">{cat.code ? `${cat.code} | ` : ""}{cat.title}</h5>
-                    <p className="text-xs text-muted-foreground mt-1">{cat.subCategories?.length || 0} Sub-categories</p>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 text-muted-foreground hover:text-primary z-10"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setEditingMainCat(cat);
-                      }}
-                    >
-                      <Edit className="w-4 h-4" />
-                    </Button>
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 text-muted-foreground hover:text-destructive z-10"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setPendingAction({
-                          title: "Delete Main Category",
-                          desc: "Are you sure you want to delete this main category and all its contents?",
-                          action: async () => await removeMainCategory(cat.id)
-                        });
-                      }}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </div>
+          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+            <SortableContext items={categories.map(c => c.id)} strategy={rectSortingStrategy}>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {categories.map((cat) => (
+                  <SortableCategoryCard
+                    key={cat.id}
+                    cat={cat}
+                    onClick={() => setActiveTab(cat.id)}
+                    onEdit={(c) => setEditingMainCat(c)}
+                    onDelete={(c) => {
+                      setPendingAction({
+                        title: "Delete Main Category",
+                        desc: "Are you sure you want to delete this main category and all its contents?",
+                        action: async () => await removeMainCategory(c.id)
+                      });
+                    }}
+                  />
+                ))}
               </div>
-            ))}
-          </div>
+            </SortableContext>
+          </DndContext>
         </div>
       ) : activeCategory ? (
         <div className="space-y-6 animate-in fade-in slide-in-from-right-4">

@@ -14,6 +14,24 @@ import { PageRecord } from "@/components/sitemanager/PageForm";
 import { ImageUploader } from "@/components/admin/ImageUploader";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import PageSeoManager from "./PageSeoManager";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  rectSortingStrategy,
+  useSortable,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { GripVertical } from "lucide-react";
 
 function slugify(text: string) {
   return text.toLowerCase().trim()
@@ -41,6 +59,43 @@ interface VideoItem {
   speakerId?: string;
   isPublished: boolean;
   isNew?: boolean;
+}
+
+function SortableSpeakerCard({ speaker, onClick, onEdit, onDelete }: { speaker: SpeakerItem, onClick: () => void, onEdit: (s: SpeakerItem) => void, onDelete: (s: SpeakerItem) => void }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: speaker.id });
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    zIndex: isDragging ? 10 : 1,
+    opacity: isDragging ? 0.8 : 1,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} className="relative cursor-pointer group flex flex-col bg-card rounded-2xl border border-border overflow-hidden hover:border-primary/50 transition-colors shadow-sm" onClick={onClick}>
+      <div {...attributes} {...listeners} className="absolute top-2 left-2 z-20 p-1.5 bg-background/80 backdrop-blur rounded-md border shadow-sm cursor-grab active:cursor-grabbing hover:bg-background transition-colors text-muted-foreground hover:text-foreground">
+        <GripVertical className="w-4 h-4" />
+      </div>
+      <div className="aspect-square bg-muted relative border-b border-border">
+        {speaker.avatar ? (
+          <img src={speaker.avatar} alt={speaker.name} className="w-full h-full object-cover" />
+        ) : (
+          <div className="absolute inset-0 flex items-center justify-center text-muted-foreground/50">
+            <User className="w-10 h-10" />
+          </div>
+        )}
+      </div>
+      <div className="p-4">
+        <div className="flex justify-between items-start mb-2">
+          <h3 className="font-bold text-base line-clamp-1 group-hover:text-primary pl-1">{speaker.name}</h3>
+          <div className="flex gap-1" onClick={e => e.stopPropagation()}>
+            <Button variant="ghost" size="icon" className="h-6 w-6 text-green-500" onClick={() => onEdit(speaker)}><Pencil className="w-3 h-3" /></Button>
+            <Button variant="ghost" size="icon" className="h-6 w-6 text-red-500" onClick={() => onDelete(speaker)}><Trash2 className="w-3 h-3" /></Button>
+          </div>
+        </div>
+        <p className="text-xs font-nastaleeq text-muted-foreground line-clamp-2" dir="rtl">{speaker.bio}</p>
+      </div>
+    </div>
+  );
 }
 
 export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { pageId: string, initialPageData: PageRecord }) {
@@ -141,6 +196,37 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
     } catch (e: any) { toast({ variant: "destructive", title: "Error", description: e.message }); }
   };
 
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+
+    setSpeakersList((items) => {
+      const oldIndex = items.findIndex((i) => i.id === active.id);
+      const newIndex = items.findIndex((i) => i.id === over.id);
+      const newArray = arrayMove(items, oldIndex, newIndex);
+
+      // Save order in background
+      newArray.forEach((item, index) => {
+        if (item.order !== index) {
+          item.order = index;
+          fetch(`/api/admin/speakers/${item.id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ...item, order: index }),
+          }).catch(console.error);
+        }
+      });
+
+      return newArray;
+    });
+    toast({ title: "Order saved", description: "The new sorting order has been saved automatically." });
+  };
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, setter: (url: string) => void) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -218,31 +304,25 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
             {isLoading ? (
               <div className="flex justify-center py-10"><Loader2 className="w-6 h-6 animate-spin text-primary" /></div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {speakersList.map(speaker => (
-                  <div key={speaker.id} onClick={() => setActiveSpeaker(speaker)} className="cursor-pointer group flex flex-col bg-card rounded-2xl border border-border overflow-hidden hover:border-primary/50 transition-colors">
-                    <div className="aspect-square bg-muted relative border-b border-border">
-                      {speaker.avatar ? (
-                        <img src={speaker.avatar} alt={speaker.name} className="w-full h-full object-cover" />
-                      ) : (
-                        <div className="absolute inset-0 flex items-center justify-center text-muted-foreground/50">
-                          <User className="w-10 h-10" />
-                        </div>
-                      )}
-                    </div>
-                    <div className="p-4">
-                      <div className="flex justify-between items-start mb-2">
-                        <h3 className="font-bold text-base line-clamp-1 group-hover:text-primary">{speaker.name}</h3>
-                        <div className="flex gap-1" onClick={e => e.stopPropagation()}>
-                          <Button variant="ghost" size="icon" className="h-6 w-6 text-green-500" onClick={() => { setEditingSpeakerId(speaker.id); setSpeakerFormData({ name: speaker.name, slug: speaker.slug, bio: speaker.bio || "", avatar: speaker.avatar || "", type: "video", order: speaker.order || 0 }); setIsSpeakerModalOpen(true); }}><Pencil className="w-3 h-3" /></Button>
-                          <Button variant="ghost" size="icon" className="h-6 w-6 text-red-500" onClick={() => setDeletingSpeaker(speaker)}><Trash2 className="w-3 h-3" /></Button>
-                        </div>
-                      </div>
-                      <p className="text-xs text-muted-foreground line-clamp-2">{speaker.bio}</p>
-                    </div>
+              <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                <SortableContext items={speakersList.map(s => s.id)} strategy={rectSortingStrategy}>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                    {speakersList.map(speaker => (
+                      <SortableSpeakerCard
+                        key={speaker.id}
+                        speaker={speaker}
+                        onClick={() => setActiveSpeaker(speaker)}
+                        onEdit={(s) => {
+                          setEditingSpeakerId(s.id);
+                          setSpeakerFormData({ name: s.name, slug: s.slug, bio: s.bio || "", avatar: s.avatar || "", type: "video", order: s.order || 0 });
+                          setIsSpeakerModalOpen(true);
+                        }}
+                        onDelete={(s) => setDeletingSpeaker(s)}
+                      />
+                    ))}
                   </div>
-                ))}
-              </div>
+                </SortableContext>
+              </DndContext>
             )}
           </TabsContent>
         )}

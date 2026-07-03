@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/dialog";
 
 type VideoItem = {
   id: string;
@@ -57,7 +56,6 @@ export function VideoListing({
   const router = useRouter();
   const [, startTransition] = useTransition();
   const [q, setQ] = useState(searchQuery);
-  const [activeVideo, setActiveVideo] = useState<VideoItem | null>(null);
 
   const activeCat = categories.find(c => c.slug === activeCategorySlug);
   const activeMainCatId = activeCat?.parentId || activeCat?.id || null;
@@ -127,7 +125,7 @@ export function VideoListing({
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
           {items.map((item, i) => (
             <motion.div key={item.id} initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: (i % 8) * 0.04 }}>
-              <div onClick={() => setActiveVideo(item)} className="group block bg-card border border-border rounded-xl overflow-hidden hover:shadow-mid transition-all hover:-translate-y-1 cursor-pointer">
+              <Link href={`/videos/${item.slug}`} className="group block bg-card border border-border rounded-xl overflow-hidden hover:shadow-mid transition-all hover:-translate-y-1 cursor-pointer w-full">
                 <div className="relative aspect-video bg-muted overflow-hidden">
                   {item.thumbnailUrl ? (
                     <img src={item.thumbnailUrl} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -155,7 +153,7 @@ export function VideoListing({
                     </span>
                   )}
                 </div>
-              </div>
+              </Link>
             </motion.div>
           ))}
         </div>
@@ -169,33 +167,6 @@ export function VideoListing({
         </div>
       )}
 
-      <Dialog open={!!activeVideo} onOpenChange={(o) => !o && setActiveVideo(null)}>
-        <DialogContent className="sm:max-w-4xl bg-slate-950/95 backdrop-blur-xl border-slate-800 p-0 overflow-hidden shadow-2xl">
-          <DialogTitle className="sr-only">{activeVideo?.title || "Video Player"}</DialogTitle>
-          <DialogDescription className="sr-only">Video player for the selected lecture.</DialogDescription>
-          <div className="aspect-video w-full bg-black relative">
-            {activeVideo?.embedUrl ? (
-              <iframe
-                src={activeVideo.embedUrl}
-                className="w-full h-full absolute inset-0 border-0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-            ) : activeVideo?.videoUrl ? (
-              <video controls autoPlay className="w-full h-full absolute inset-0" preload="metadata">
-                <source src={activeVideo.videoUrl} type="video/mp4" />
-                <source src={activeVideo.videoUrl} type="video/webm" />
-              </video>
-            ) : (
-              <div className="absolute inset-0 flex items-center justify-center text-white/50 font-medium">No Media Provided</div>
-            )}
-          </div>
-          <div className="p-5 border-t border-slate-800/60 bg-slate-950/50">
-            <h3 className="text-xl font-bold text-white">{activeVideo?.title}</h3>
-            {activeVideo?.description && <p className="text-sm text-slate-400 mt-2 leading-relaxed">{activeVideo.description}</p>}
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

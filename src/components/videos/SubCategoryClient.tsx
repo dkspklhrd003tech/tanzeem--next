@@ -1,8 +1,6 @@
 "use client";
 
-import { useState } from "react";
 import { PlayCircle, Video, X } from "lucide-react";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
@@ -26,7 +24,6 @@ type SubCategory = {
 };
 
 export function SubCategoryClient({ subCategories, directVideos = [] }: { subCategories: SubCategory[], directVideos?: VideoItem[] }) {
-  const [activeVideo, setActiveVideo] = useState<VideoItem | null>(null);
 
   function formatDuration(secs: number | null) {
     if (!secs) return null;
@@ -43,10 +40,10 @@ export function SubCategoryClient({ subCategories, directVideos = [] }: { subCat
       {directVideos.length > 0 && subCategories.length === 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {directVideos.map((video) => (
-            <button
+            <Link
+              href={`/videos/${video.id}`}
               key={video.id}
-              onClick={() => setActiveVideo(video)}
-              className="group text-left bg-card border border-border hover:border-primary/50 hover:shadow-md transition-all duration-300 rounded-xl overflow-hidden flex flex-col"
+              className="group text-left bg-card border border-border hover:border-primary/50 hover:shadow-md transition-all duration-300 rounded-xl overflow-hidden flex flex-col block w-full"
             >
               <div className="w-full aspect-video bg-muted relative overflow-hidden">
                 {video.thumbnailUrl ? (
@@ -71,7 +68,7 @@ export function SubCategoryClient({ subCategories, directVideos = [] }: { subCat
                   <p className="text-xs text-foreground-muted mt-2 line-clamp-2">{video.description}</p>
                 )}
               </div>
-            </button>
+            </Link>
           ))}
         </div>
       )}
@@ -87,9 +84,9 @@ export function SubCategoryClient({ subCategories, directVideos = [] }: { subCat
                 className="group flex flex-col items-center bg-transparent transition-all duration-300 text-left outline-none opacity-100"
               >
                 {playVideo ? (
-                  <button
-                    onClick={() => setActiveVideo(playVideo)}
-                    className="w-full aspect-video rounded-xl overflow-hidden bg-card border shadow-md group-hover:shadow-xl border-border group-hover:border-primary/40 transition-all duration-500 relative mb-4"
+                  <Link
+                    href={`/videos/${playVideo.id}`}
+                    className="w-full aspect-video rounded-xl overflow-hidden bg-card border shadow-md group-hover:shadow-xl border-border group-hover:border-primary/40 transition-all duration-500 relative mb-4 block"
                   >
                     {sub.imageUrl ? (
                       <img
@@ -105,7 +102,7 @@ export function SubCategoryClient({ subCategories, directVideos = [] }: { subCat
                     <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                       <PlayCircle className="w-12 h-12 text-white drop-shadow-lg" />
                     </div>
-                  </button>
+                  </Link>
                 ) : (
                   <Link
                     href={`/videos-by-category/${sub.slug}`}
@@ -141,39 +138,6 @@ export function SubCategoryClient({ subCategories, directVideos = [] }: { subCat
       )}
 
 
-
-      {/* Video Player Modal */}
-      <Dialog open={!!activeVideo} onOpenChange={(o) => !o && setActiveVideo(null)}>
-        <DialogContent className="sm:max-w-4xl bg-slate-950/95 backdrop-blur-xl border-slate-800 p-0 overflow-hidden shadow-2xl">
-          <DialogTitle className="sr-only">{activeVideo?.title || "Video Player"}</DialogTitle>
-          <div className="aspect-video w-full bg-black relative">
-            {activeVideo?.embedUrl ? (
-              <iframe
-                src={activeVideo.embedUrl}
-                className="w-full h-full absolute inset-0 border-0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
-            ) : activeVideo?.videoUrl ? (
-              <video controls autoPlay className="w-full h-full absolute inset-0" preload="metadata">
-                <source src={activeVideo.videoUrl} type="video/mp4" />
-                <source src={activeVideo.videoUrl} type="video/webm" />
-              </video>
-            ) : (
-              <div className="absolute inset-0 flex items-center justify-center text-white/50 font-medium">No Media Provided</div>
-            )}
-          </div>
-          <div className="p-5 border-t border-slate-800/60 bg-slate-950/50 flex justify-between items-start gap-4">
-            <div>
-              <h3 className="text-xl font-bold text-white">{activeVideo?.title}</h3>
-              {activeVideo?.description && <p className="text-sm text-slate-400 mt-2 leading-relaxed">{activeVideo.description}</p>}
-            </div>
-            <button onClick={() => setActiveVideo(null)} className="text-slate-400 hover:text-white bg-white/10 hover:bg-white/20 p-2 rounded-full transition-colors shrink-0">
-              <X className="w-5 h-5" />
-            </button>
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
