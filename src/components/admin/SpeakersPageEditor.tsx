@@ -167,6 +167,16 @@ export default function SpeakersPageEditor({ pageId, initialPageData, mediaConte
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, setter: (url: string) => void) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    // 40MB limit for files
+    const MAX_FILE_SIZE = 40 * 1024 * 1024;
+    if (file.size > MAX_FILE_SIZE) {
+      toast({ variant: "destructive", title: "File too large", description: "Files must be under 40MB." });
+      // Clear the input
+      e.target.value = '';
+      return;
+    }
+
     setIsUploading(true);
     const formData = new FormData();
     formData.append("file", file);

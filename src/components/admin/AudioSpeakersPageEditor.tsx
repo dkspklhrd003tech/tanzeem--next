@@ -143,6 +143,16 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, setter: (url: string) => void) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    // 40MB limit for audio files
+    const MAX_AUDIO_SIZE = 40 * 1024 * 1024;
+    if (file.size > MAX_AUDIO_SIZE) {
+      toast({ variant: "destructive", title: "File too large", description: "Audio files must be under 40MB." });
+      // Clear the input
+      e.target.value = '';
+      return;
+    }
+
     setIsUploading(true);
     const formData = new FormData();
     formData.append("file", file);

@@ -894,6 +894,15 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                               onChange={async (e) => {
                                 if (!e.target.files?.length) return;
                                 const file = e.target.files[0];
+
+                                // 40MB limit for files
+                                const MAX_FILE_SIZE = 40 * 1024 * 1024;
+                                if (file.size > MAX_FILE_SIZE) {
+                                  toast.error("File is too large. Please select a file under 40MB.");
+                                  e.target.value = '';
+                                  return;
+                                }
+
                                 const fd = new FormData();
                                 fd.append("file", file);
                                 try {
