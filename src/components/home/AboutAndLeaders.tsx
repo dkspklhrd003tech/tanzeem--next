@@ -112,7 +112,7 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
 
                     {/* Text Content */}
                     <div className="flex-1 flex flex-col justify-center relative z-10">
-                        <p className="text-[#222222] mb-2 text-xs">About Us</p>
+                        <p className="sub_title">About Us</p>
                         <h2
                             id="about-heading"
                             className="text-2xl md:text-3xl font-bold mb-3"
@@ -178,7 +178,7 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
                                 {/* Content */}
                                 <div className="flex flex-col justify-between relative z-10">
                                     <div>
-                                        <p className="text-primary font-bold text-xs uppercase tracking-widest mb-1">
+                                        <p className="sub_title">
                                             {leader.designation || "Leader"}
                                         </p>
                                         <h3 className="text-xl md:text-2xl font-bold text-[#222222] mb-3">

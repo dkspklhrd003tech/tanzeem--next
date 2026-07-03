@@ -185,7 +185,7 @@ function FooterColumn({ column }: { column: MenuNode }) {
           const resolved = resolveMenuLink(link.url, link.isOpenInNew);
           if (!resolved.href) return null;
           const content = (
-            <span className="text-white hover:text-[#108ece] hover:font-semibold transition-colors text-sm focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2 rounded-sm">
+            <span className="text-white hover:underline transition-colors text-sm focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2 rounded-sm">
               {link.label}
             </span>
           );

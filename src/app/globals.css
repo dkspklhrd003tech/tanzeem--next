@@ -276,7 +276,14 @@ h6 {
   font-family: var(--font-heading);
   font-weight: 700;
 }
-
+@layer components {
+  .sub_title {
+    @apply text-primary font-bold text-xs uppercase tracking-widest mb-1;
+  }
+  .spotlight_heading{
+    @apply text-3xl md:text-4xl font-black text-foreground;
+  }
+}
 /* Type scale utilities */
 .text-display {
   font-size: var(--text-display);
