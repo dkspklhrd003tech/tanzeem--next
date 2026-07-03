@@ -125,7 +125,7 @@ export function LatestPressReleases({ items }: Props) {
                 <p className="mt-4 text-sm text-foreground-muted line-clamp-3 leading-relaxed relative z-10">{item.excerpt}</p>
               )}
               <div className={cn(
-                "mt-auto self-start inline-flex items-center gap-3 border border-primary/50 bg-primary-light text-[#222222] backdrop-blur-md mt-4",
+                "mt-auto self-start inline-flex items-center gap-3 border border-primary/50 text-[#222222] hover:text-white backdrop-blur-md mt-4",
                 "px-4 py-1 rounded-full text-sm font-bold tracking-wide uppercase shadow-lg",
                 "hover:bg-primary hover:border-primary hover:text-primary-foreground transition-all duration-500 hover:shadow-[0_0_30px_rgba(16,185,129,0.3)]",
                 "focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
