@@ -19,6 +19,7 @@ export interface MagazineLink {
   title: string;
   url: string;
   isActive: boolean;
+  isNew?: boolean;
 }
 
 interface SortableLinkItemProps {
@@ -26,9 +27,10 @@ interface SortableLinkItemProps {
   onEdit: (link: MagazineLink) => void;
   onDelete: (id: string) => void;
   onToggleActive: (id: string, active: boolean) => void;
+  onToggleNew: (id: string, isNew: boolean) => void;
 }
 
-function SortableLinkItem({ link, onEdit, onDelete, onToggleActive }: SortableLinkItemProps) {
+function SortableLinkItem({ link, onEdit, onDelete, onToggleActive, onToggleNew }: SortableLinkItemProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: link.id });
   const style = { transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 };
 
@@ -38,13 +40,28 @@ function SortableLinkItem({ link, onEdit, onDelete, onToggleActive }: SortableLi
         <GripVertical className="h-5 w-5" />
       </div>
       <div className="flex-1 min-w-0">
-        <h4 className="font-semibold text-sm truncate">{link.title}</h4>
+        <div className="flex items-center gap-2">
+          <h4 className="font-semibold text-sm truncate">{link.title}</h4>
+          {link.isNew && (
+            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500 text-white tracking-wide shrink-0">
+              NEW
+            </span>
+          )}
+        </div>
         <div className="flex items-center gap-2 mt-1">
           <ExternalLink className="h-3 w-3 text-muted-foreground" />
           <p className="text-xs text-muted-foreground truncate max-w-md">{link.url}</p>
         </div>
       </div>
-      <div className="flex items-center gap-3 shrink-0">
+      <div className="flex items-center gap-4 shrink-0">
+        <div className="flex items-center gap-2">
+          <Label className="text-xs cursor-pointer text-muted-foreground">New</Label>
+          <Switch
+            checked={!!link.isNew}
+            onCheckedChange={(c) => onToggleNew(link.id, c)}
+            className="data-[state=checked]:bg-emerald-500"
+          />
+        </div>
         <div className="flex items-center gap-2">
           <Label className="text-xs cursor-pointer">{link.isActive ? "Active" : "Hidden"}</Label>
           <Switch checked={link.isActive} onCheckedChange={(c) => onToggleActive(link.id, c)} />
@@ -172,6 +189,12 @@ export default function MagazineLinksEditor({ pageId, title }: { pageId: string,
     saveToDb(updated);
   };
 
+  const handleToggleNew = (id: string, isNew: boolean) => {
+    const updated = links.map(l => l.id === id ? { ...l, isNew } : l);
+    setLinks(updated);
+    saveToDb(updated);
+  };
+
   if (isLoading) {
     return <div className="p-8 text-center"><RefreshCw className="h-6 w-6 animate-spin mx-auto text-primary" /></div>;
   }
@@ -268,6 +291,7 @@ export default function MagazineLinksEditor({ pageId, title }: { pageId: string,
                       onEdit={handleEdit}
                       onDelete={handleDelete}
                       onToggleActive={handleToggleActive}
+                      onToggleNew={handleToggleNew}
                     />
                   ))}
                 </div>

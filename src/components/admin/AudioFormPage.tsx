@@ -88,8 +88,20 @@ export default function AudioFormPage({ id, speakerIdParam = "", categoryIdParam
     formPayload.append("file", file);
     try {
       const res = await fetch("/api/upload", { method: "POST", body: formPayload });
+      if (!res.ok) {
+        let errMessage = "Upload failed";
+        try {
+          const text = await res.text();
+          if (text.startsWith("<")) {
+            errMessage = res.status === 413 ? "File is too large for the server to process." : `Server Error (${res.status})`;
+          } else {
+            const data = JSON.parse(text);
+            errMessage = data.error || errMessage;
+          }
+        } catch(e) { }
+        throw new Error(errMessage);
+      }
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Upload failed");
       setFormData(prev => ({ ...prev, audioUrl: data.url }));
       toast({ title: "Uploaded", description: "Audio file uploaded." });
     } catch (err: any) {

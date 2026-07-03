@@ -4,57 +4,77 @@ import { v4 as uuidv4 } from "uuid";
 import { db } from "@/db";
 import { media } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth";
-import ffmpeg from "fluent-ffmpeg";
-import ffmpegPath from "ffmpeg-static";
-import ffprobePath from "ffprobe-static";
-import fs from "fs/promises";
-import path from "path";
-import os from "os";
 
-// Initialize ffmpeg paths safely
-if (ffmpegPath) ffmpeg.setFfmpegPath(ffmpegPath as string);
-if (ffprobePath && ffprobePath.path) ffmpeg.setFfprobePath(ffprobePath.path as string);
+// ── ffmpeg is loaded LAZILY so the route doesn't crash if binaries are missing
+// on the live server (cPanel, shared host, etc.)
+let ffmpegReady = false;
+let ffmpegModule: any = null;
 
-async function compressAudio(inputBuffer: any): Promise<any> {
+async function initFfmpeg(): Promise<boolean> {
+  if (ffmpegReady) return true;
+  try {
+    const [ffmpeg, ffmpegStatic, ffprobeStatic, fsP, pathM, osM] =
+      await Promise.all([
+        import("fluent-ffmpeg"),
+        import("ffmpeg-static"),
+        import("ffprobe-static"),
+        import("fs/promises"),
+        import("path"),
+        import("os"),
+      ]);
+    const bin = ffmpegStatic.default ?? ffmpegStatic;
+    const probe = ffprobeStatic.default ?? ffprobeStatic;
+    if (bin) ffmpeg.default.setFfmpegPath(bin as string);
+    if (probe?.path) ffmpeg.default.setFfprobePath(probe.path as string);
+    ffmpegModule = { ffmpeg: ffmpeg.default, fs: fsP, path: pathM, os: osM };
+    ffmpegReady = true;
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+async function compressAudio(inputBuffer: Buffer): Promise<Buffer> {
+  const ok = await initFfmpeg();
+  if (!ok || !ffmpegModule) throw new Error("ffmpeg not available");
+
+  const { ffmpeg, fs, path, os } = ffmpegModule;
+  const tempInput = path.join(os.tmpdir(), `${uuidv4()}_input.mp3`);
+  const tempOutput = path.join(os.tmpdir(), `${uuidv4()}_output.mp3`);
+
   return new Promise(async (resolve, reject) => {
-    const tempInput = path.join(os.tmpdir(), `${uuidv4()}_input.mp3`);
-    const tempOutput = path.join(os.tmpdir(), `${uuidv4()}_output.mp3`);
-
     try {
       await fs.writeFile(tempInput, inputBuffer);
-
-      ffmpeg.ffprobe(tempInput, (err, metadata) => {
+      ffmpeg.ffprobe(tempInput, (err: any, metadata: any) => {
         if (err) {
           fs.unlink(tempInput).catch(() => {});
           return reject(err);
         }
-
-        const duration = metadata.format.duration;
+        const duration = metadata?.format?.duration;
         if (!duration) {
           fs.unlink(tempInput).catch(() => {});
           return reject(new Error("Could not determine audio duration"));
         }
-
-        // Target size: 3.8 MB (to safely be under 4MB) = 3.8 * 1024 * 1024 * 8 bits
         const targetBits = 3.8 * 1024 * 1024 * 8;
-        let targetBitrate = Math.floor(targetBits / duration / 1000); // in kbps
-
+        let targetBitrate = Math.floor(targetBits / duration / 1000);
         if (targetBitrate > 128) targetBitrate = 128;
-        if (targetBitrate < 16) targetBitrate = 16; 
+        if (targetBitrate < 16) targetBitrate = 16;
 
         ffmpeg(tempInput)
           .audioCodec("libmp3lame")
           .audioBitrate(`${targetBitrate}k`)
           .on("end", async () => {
-            const outBuffer = await fs.readFile(tempOutput);
-            await fs.unlink(tempInput).catch(() => {});
-            await fs.unlink(tempOutput).catch(() => {});
-            resolve(outBuffer);
+            try {
+              const outBuffer = await fs.readFile(tempOutput);
+              await fs.unlink(tempInput).catch(() => {});
+              await fs.unlink(tempOutput).catch(() => {});
+              resolve(outBuffer);
+            } catch (e) { reject(e); }
           })
-          .on("error", async (err) => {
+          .on("error", async (e: any) => {
             await fs.unlink(tempInput).catch(() => {});
             await fs.unlink(tempOutput).catch(() => {});
-            reject(err);
+            reject(e);
           })
           .save(tempOutput);
       });
@@ -65,40 +85,43 @@ async function compressAudio(inputBuffer: any): Promise<any> {
   });
 }
 
-// Allowed MIME types and their mapped categories
+// ── Allowed MIME types ──────────────────────────────────────────────────────
 const ALLOWED_TYPES: Record<string, string> = {
-  // Images
-  "image/jpeg": "images",
-  "image/jpg": "images",
-  "image/png": "images",
-  "image/webp": "images",
-  "image/gif": "images",
-  "image/svg+xml": "images",
-  // Documents
+  "image/jpeg":      "images",
+  "image/jpg":       "images",
+  "image/png":       "images",
+  "image/webp":      "images",
+  "image/gif":       "images",
+  "image/svg+xml":   "images",
   "application/pdf": "documents",
-  // Audio
-  "audio/mpeg": "audio",
-  "audio/mp3": "audio",
-  "audio/ogg": "audio",
-  "audio/wav": "audio",
-  "audio/x-wav": "audio",
-  "audio/aac": "audio",
-  // Video
-  "video/mp4": "videos",
-  "video/mpeg": "videos",
-  "video/ogg": "videos",
-  "video/webm": "videos",
+  "audio/mpeg":      "audio",
+  "audio/mp3":       "audio",
+  "audio/ogg":       "audio",
+  "audio/wav":       "audio",
+  "audio/x-wav":     "audio",
+  "audio/aac":       "audio",
+  "video/mp4":       "videos",
+  "video/mpeg":      "videos",
+  "video/ogg":       "videos",
+  "video/webm":      "videos",
   "video/quicktime": "videos",
 };
 
-// 200 MB max size
-const MAX_FILE_SIZE = 200 * 1024 * 1024;
+const MAX_FILE_SIZE = 200 * 1024 * 1024; // 200 MB
 
 export async function POST(req: NextRequest) {
   try {
-    const formData = await req.formData();
+    let formData: FormData;
+    try {
+      formData = await req.formData();
+    } catch {
+      return NextResponse.json(
+        { success: false, error: "Could not parse form data — ensure Content-Type is multipart/form-data" },
+        { status: 400 }
+      );
+    }
+
     const file = formData.get("file") as File | null;
-    // Optional: caller can hint type, but we derive from mimeType
     const typeHint = (formData.get("type") as string) || "general";
 
     if (!file) {
@@ -116,28 +139,29 @@ export async function POST(req: NextRequest) {
     }
 
     const mimeType = file.type || "application/octet-stream";
-
-    // Determine storage subfolder from MIME type (or caller hint as fallback)
     const mimeFolder = ALLOWED_TYPES[mimeType];
     const folder = mimeFolder ?? (typeHint === "slider" ? "sliders" : typeHint === "cover" ? "covers" : "uploads");
 
     const bytes = await file.arrayBuffer();
-    let buffer: any = Buffer.from(bytes);
+    let buffer: Buffer = Buffer.from(bytes);
     let finalSize = file.size;
 
-    if ((mimeType === "audio/mpeg" || mimeType === "audio/mp3") && file.size > 4 * 1024 * 1024) {
+    // ── Audio compression (best-effort, skipped if ffmpeg unavailable) ───────
+    const isAudio = mimeType === "audio/mpeg" || mimeType === "audio/mp3";
+    if (isAudio && file.size > 4 * 1024 * 1024) {
       try {
-        console.log(`[upload] Compressing audio file: ${file.name} (${Math.round(file.size / 1024 / 1024)}MB)`);
-        buffer = await compressAudio(buffer);
+        console.log(`[upload] Compressing audio: ${file.name} (${(file.size / 1024 / 1024).toFixed(1)}MB)`);
+        const compressed = await compressAudio(buffer);
+        buffer = compressed as Buffer;
         finalSize = buffer.length;
-        console.log(`[upload] Compression complete. New size: ${Math.round(finalSize / 1024 / 1024 * 100) / 100}MB`);
+        console.log(`[upload] Compressed to ${(finalSize / 1024 / 1024).toFixed(2)}MB`);
       } catch (err) {
-        console.error("[upload] Failed to compress audio:", err);
-        // Fallback to uncompressed if it fails
+        console.warn("[upload] ffmpeg compression skipped:", String(err).slice(0, 120));
+        // Continue with the original uncompressed buffer
       }
     }
 
-    // Build a safe unique filename
+    // ── Build unique filename ─────────────────────────────────────────────────
     const ext = extname(file.name) || "";
     const safeName = file.name
       .replace(/[^a-zA-Z0-9.\-_]/g, "-")
@@ -170,10 +194,10 @@ export async function POST(req: NextRequest) {
         fileData: buffer,
         uploadedBy: uploadedBy ?? null,
       });
-    } catch (dbError) {
-      console.error("[upload] DB record insert failed:", dbError);
+    } catch (dbError: any) {
+      console.error("[upload] DB insert failed:", dbError?.message ?? dbError);
       return NextResponse.json(
-        { success: false, error: "Failed to save file to database" },
+        { success: false, error: "Failed to save file to database: " + (dbError?.message ?? "unknown error") },
         { status: 500 }
       );
     }
@@ -188,9 +212,9 @@ export async function POST(req: NextRequest) {
       size: finalSize,
     });
   } catch (error: any) {
-    console.error("[upload] Upload error:", error);
+    console.error("[upload] Unhandled error:", error);
     return NextResponse.json(
-      { success: false, error: "Failed to upload file" },
+      { success: false, error: error?.message ?? "Failed to upload file" },
       { status: 500 }
     );
   }
