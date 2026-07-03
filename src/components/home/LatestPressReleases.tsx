@@ -71,7 +71,6 @@ export function LatestPressReleases({ items }: Props) {
     return () => ctx.revert();
   }, []);
 
-  if (!items.length) return null;
 
   return (
     <section ref={sectionRef} aria-labelledby="press-heading" className="py-10 px-6 bg-primary-light relative overflow-hidden perspective-1000 border-t border-border/20">
@@ -95,7 +94,7 @@ export function LatestPressReleases({ items }: Props) {
           </Link>
         </div>
         <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {items.map((item, i) => (
+          {items.length > 0 ? items.map((item, i) => (
             <button
               key={item.id}
               type="button"
@@ -135,8 +134,16 @@ export function LatestPressReleases({ items }: Props) {
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </div>
             </button>
-          ))}
+          )) : null}
+          {items.length === 0 && (
+            <div className="col-span-full py-16 text-center text-muted-foreground">
+              <FileText className="w-12 h-12 mx-auto mb-4 opacity-20" />
+              <p className="font-semibold">No press releases published yet.</p>
+              <p className="text-sm mt-1">Add and publish press releases from the CMS to display them here.</p>
+            </div>
+          )}
         </div>
+
       </div>
 
       <Dialog open={!!selected} onOpenChange={(o) => !o && closeDialog()}>
@@ -151,6 +158,7 @@ export function LatestPressReleases({ items }: Props) {
           />
         </DialogContent>
       </Dialog>
-    </section >
+    </section>
+
   );
 }
