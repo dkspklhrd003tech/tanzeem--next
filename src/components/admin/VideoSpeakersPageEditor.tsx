@@ -14,6 +14,8 @@ import { PageRecord } from "@/components/sitemanager/PageForm";
 import { ImageUploader } from "@/components/admin/ImageUploader";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import PageSeoManager from "./PageSeoManager";
+import { CustomFieldBuilder } from "./CustomFieldBuilder";
+import { CustomFieldRenderer } from "./CustomFieldRenderer";
 import {
   DndContext,
   closestCenter,
@@ -48,6 +50,7 @@ interface SpeakerItem {
   avatar?: string;
   type?: string;
   order?: number;
+  customFields?: any;
 }
 
 interface VideoItem {
@@ -59,6 +62,7 @@ interface VideoItem {
   speakerId?: string;
   isPublished: boolean;
   isNew?: boolean;
+  customFields?: any;
 }
 
 function SortableSpeakerCard({ speaker, onClick, onEdit, onDelete }: { speaker: SpeakerItem, onClick: () => void, onEdit: (s: SpeakerItem) => void, onDelete: (s: SpeakerItem) => void }) {
@@ -111,13 +115,13 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
 
   // Speaker Modal
   const [isSpeakerModalOpen, setIsSpeakerModalOpen] = useState(false);
-  const [speakerFormData, setSpeakerFormData] = useState({ name: "", slug: "", bio: "", avatar: "", type: "video", order: 0 });
+  const [speakerFormData, setSpeakerFormData] = useState({ name: "", slug: "", bio: "", avatar: "", type: "video", order: 0, customFields: {} as Record<string, any> });
   const [editingSpeakerId, setEditingSpeakerId] = useState<string | null>(null);
   const [deletingSpeaker, setDeletingSpeaker] = useState<SpeakerItem | null>(null);
 
   // Video Modal
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
-  const [videoFormData, setVideoFormData] = useState({ title: "", slug: "", videoUrl: "", embedUrl: "", isPublished: true, isNew: false });
+  const [videoFormData, setVideoFormData] = useState({ title: "", slug: "", videoUrl: "", embedUrl: "", isPublished: true, isNew: false, customFields: {} as Record<string, any> });
   const [editingVideoId, setEditingVideoId] = useState<string | null>(null);
   const [deletingVideo, setDeletingVideo] = useState<VideoItem | null>(null);
 
@@ -314,7 +318,7 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
                         onClick={() => setActiveSpeaker(speaker)}
                         onEdit={(s) => {
                           setEditingSpeakerId(s.id);
-                          setSpeakerFormData({ name: s.name, slug: s.slug, bio: s.bio || "", avatar: s.avatar || "", type: "video", order: s.order || 0 });
+                          setSpeakerFormData({ name: s.name, slug: s.slug, bio: s.bio || "", avatar: s.avatar || "", type: "video", order: s.order || 0, customFields: s.customFields || {} });
                           setIsSpeakerModalOpen(true);
                         }}
                         onDelete={(s) => setDeletingSpeaker(s)}
@@ -362,7 +366,7 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
                       <p className="text-xs text-muted-foreground break-all">{video.videoUrl || video.embedUrl || "No URL"}</p>
                     </div>
                     <div className="flex gap-2 justify-end mt-4">
-                      <Button variant="ghost" size="sm" onClick={() => { setEditingVideoId(video.id); setVideoFormData({ title: video.title, slug: video.slug, videoUrl: video.videoUrl || "", embedUrl: video.embedUrl || "", isPublished: video.isPublished, isNew: video.isNew || false }); setIsVideoModalOpen(true); }}><Pencil className="w-4 h-4" /></Button>
+                      <Button variant="ghost" size="sm" onClick={() => { setEditingVideoId(video.id); setVideoFormData({ title: video.title, slug: video.slug, videoUrl: video.videoUrl || "", embedUrl: video.embedUrl || "", isPublished: video.isPublished, isNew: video.isNew || false, customFields: video.customFields || {} }); setIsVideoModalOpen(true); }}><Pencil className="w-4 h-4" /></Button>
                       <Button variant="ghost" size="sm" onClick={() => { setDeletingVideo(video); }} className="text-red-500"><Trash2 className="w-4 h-4" /></Button>
                     </div>
                   </div>
@@ -395,6 +399,12 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
                 <Label>Speaker Photo</Label>
                 <ImageUploader value={speakerFormData.avatar || ""} onChange={(url) => setSpeakerFormData(prev => ({ ...prev, avatar: url }))} aspectRatio={1} />
               </div>
+              <CustomFieldRenderer
+                entityType="speaker"
+                values={speakerFormData.customFields}
+                onChange={(key, val) => setSpeakerFormData(prev => ({ ...prev, customFields: { ...prev.customFields, [key]: val } }))}
+              />
+              <CustomFieldBuilder entityType="speaker" />
             </div>
             <div className="p-6 border-t border-border bg-muted/20 flex justify-end gap-3">
               <Button variant="outline" onClick={() => setIsSpeakerModalOpen(false)}>Cancel</Button>
@@ -436,6 +446,12 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
                 <input type="checkbox" id="isNewVideo" checked={videoFormData.isNew} onChange={e => setVideoFormData({ ...videoFormData, isNew: e.target.checked })} className="rounded border-gray-300" />
                 <Label htmlFor="isNewVideo" className="cursor-pointer">Mark as "New"</Label>
               </div>
+              <CustomFieldRenderer
+                entityType="video"
+                values={videoFormData.customFields}
+                onChange={(key, val) => setVideoFormData(prev => ({ ...prev, customFields: { ...prev.customFields, [key]: val } }))}
+              />
+              <CustomFieldBuilder entityType="video" />
             </div>
             <div className="p-6 border-t border-border bg-muted/20 flex justify-end gap-3">
               <Button variant="outline" onClick={() => setIsVideoModalOpen(false)}>Cancel</Button>

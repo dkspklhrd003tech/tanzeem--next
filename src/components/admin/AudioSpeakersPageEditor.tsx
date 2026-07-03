@@ -14,6 +14,8 @@ import { PageRecord } from "@/components/sitemanager/PageForm";
 import { ImageUploader } from "@/components/admin/ImageUploader";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import PageSeoManager from "./PageSeoManager";
+import { CustomFieldBuilder } from "./CustomFieldBuilder";
+import { CustomFieldRenderer } from "./CustomFieldRenderer";
 import {
   DndContext,
   closestCenter,
@@ -48,6 +50,7 @@ interface SpeakerItem {
   avatar?: string;
   type?: string;
   order?: number;
+  customFields?: any;
 }
 
 interface AudioItem {
@@ -58,6 +61,7 @@ interface AudioItem {
   speakerId?: string;
   isPublished: boolean;
   isNew?: boolean;
+  customFields?: any;
 }
 
 function SortableSpeakerCard({ speaker, onClick, onEdit, onDelete }: { speaker: SpeakerItem, onClick: () => void, onEdit: (s: SpeakerItem) => void, onDelete: (s: SpeakerItem) => void }) {
@@ -110,13 +114,13 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
 
   // Speaker Modal
   const [isSpeakerModalOpen, setIsSpeakerModalOpen] = useState(false);
-  const [speakerFormData, setSpeakerFormData] = useState({ name: "", slug: "", bio: "", avatar: "", type: "audio", order: 0 });
+  const [speakerFormData, setSpeakerFormData] = useState({ name: "", slug: "", bio: "", avatar: "", type: "audio", order: 0, customFields: {} as Record<string, any> });
   const [editingSpeakerId, setEditingSpeakerId] = useState<string | null>(null);
   const [deletingSpeaker, setDeletingSpeaker] = useState<SpeakerItem | null>(null);
 
   // Audio Modal
   const [isAudioModalOpen, setIsAudioModalOpen] = useState(false);
-  const [audioFormData, setAudioFormData] = useState({ title: "", slug: "", audioUrl: "", isPublished: true, isNew: false });
+  const [audioFormData, setAudioFormData] = useState({ title: "", slug: "", audioUrl: "", isPublished: true, isNew: false, customFields: {} as Record<string, any> });
   const [editingAudioId, setEditingAudioId] = useState<string | null>(null);
   const [deletingAudio, setDeletingAudio] = useState<AudioItem | null>(null);
 
@@ -323,7 +327,7 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
                         onClick={() => setActiveSpeaker(speaker)}
                         onEdit={(s) => {
                           setEditingSpeakerId(s.id);
-                          setSpeakerFormData({ name: s.name, slug: s.slug, bio: s.bio || "", avatar: s.avatar || "", type: "audio", order: s.order || 0 });
+                          setSpeakerFormData({ name: s.name, slug: s.slug, bio: s.bio || "", avatar: s.avatar || "", type: "audio", order: s.order || 0, customFields: s.customFields || {} });
                           setIsSpeakerModalOpen(true);
                         }}
                         onDelete={(s) => setDeletingSpeaker(s)}
@@ -371,7 +375,7 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
                       <p className="text-xs text-muted-foreground break-all">{audio.audioUrl || "No URL"}</p>
                     </div>
                     <div className="flex gap-2 justify-end mt-4">
-                      <Button variant="ghost" size="sm" onClick={() => { setEditingAudioId(audio.id); setAudioFormData({ title: audio.title, slug: audio.slug, audioUrl: audio.audioUrl || "", isPublished: audio.isPublished, isNew: audio.isNew || false }); setIsAudioModalOpen(true); }}><Pencil className="w-4 h-4" /></Button>
+                      <Button variant="ghost" size="sm" onClick={() => { setEditingAudioId(audio.id); setAudioFormData({ title: audio.title, slug: audio.slug, audioUrl: audio.audioUrl || "", isPublished: audio.isPublished, isNew: audio.isNew || false, customFields: audio.customFields || {} }); setIsAudioModalOpen(true); }}><Pencil className="w-4 h-4" /></Button>
                       <Button variant="ghost" size="sm" onClick={() => { setDeletingAudio(audio); }} className="text-red-500"><Trash2 className="w-4 h-4" /></Button>
                     </div>
                   </div>
@@ -404,10 +408,16 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
                 <Label>Speaker Photo</Label>
                 <ImageUploader value={speakerFormData.avatar || ""} onChange={(url) => setSpeakerFormData(prev => ({ ...prev, avatar: url }))} aspectRatio={1} />
               </div>
+              <CustomFieldRenderer
+                entityType="speaker"
+                values={speakerFormData.customFields}
+                onChange={(key, val) => setSpeakerFormData(prev => ({ ...prev, customFields: { ...prev.customFields, [key]: val } }))}
+              />
+              <CustomFieldBuilder entityType="speaker" />
             </div>
             <div className="p-6 border-t border-border bg-muted/20 flex justify-end gap-3">
-              <Button variant="outline" onClick={() => setIsSpeakerModalOpen(false)}>Cancel</Button>
-              <Button onClick={handleSpeakerSave} className="bg-primary text-primary-foreground">{editingSpeakerId ? "Update" : "Save"}</Button>
+              <Button variant="outline" onClick={() => setIsSpeakerModalOpen(false)} className="bg-destructive text-white hover:bg-destructive/80">Cancel</Button>
+              <Button onClick={handleSpeakerSave} className="bg-primary text-white hover:bg-primary/80">{editingSpeakerId ? "Update" : "Save"}</Button>
             </div>
           </div>
         </div>
@@ -441,6 +451,12 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
                 <input type="checkbox" id="isNewAudio" checked={audioFormData.isNew} onChange={e => setAudioFormData({ ...audioFormData, isNew: e.target.checked })} className="rounded border-gray-300" />
                 <Label htmlFor="isNewAudio" className="cursor-pointer">Mark as "New"</Label>
               </div>
+              <CustomFieldRenderer
+                entityType="audio"
+                values={audioFormData.customFields}
+                onChange={(key, val) => setAudioFormData(prev => ({ ...prev, customFields: { ...prev.customFields, [key]: val } }))}
+              />
+              <CustomFieldBuilder entityType="audio" />
             </div>
             <div className="p-6 border-t border-border bg-muted/20 flex justify-end gap-3">
               <Button variant="outline" onClick={() => setIsAudioModalOpen(false)}>Cancel</Button>

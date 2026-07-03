@@ -68,6 +68,7 @@ export async function POST(req: NextRequest) {
       description: body.description,
       order: body.order || 0,
       isActive: body.isActive ?? true,
+      customFields: body.customFields || null,
       createdAt: new Date(),
       updatedAt: new Date()
     });

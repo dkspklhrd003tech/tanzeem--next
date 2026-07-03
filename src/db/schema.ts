@@ -212,6 +212,7 @@ export const audio = mysqlTable("audio", {
     isNew: boolean("is_new").default(false).notNull(),
     metaTitle: varchar("meta_title", { length: 255 }),
     metaDescription: text("meta_description"),
+    customFields: json("custom_fields"),
     authorId: varchar("author_id", { length: 191 }).notNull(),
     publishedAt: timestamp("published_at"),
     ...timestamps,
@@ -231,6 +232,7 @@ export const audioCategories = mysqlTable("audio_categories", {
     code: varchar("code", { length: 50 }),
     description: text("description"),
     imageUrl: text("image_url"),
+    customFields: json("custom_fields"),
     order: int("order").default(0).notNull(),
     isActive: boolean("is_active").default(true).notNull(),
     ...timestamps,
@@ -265,6 +267,7 @@ export const videos = mysqlTable("videos", {
     isNew: boolean("is_new").default(false).notNull(),
     metaTitle: varchar("meta_title", { length: 255 }),
     metaDescription: text("meta_description"),
+    customFields: json("custom_fields"),
     authorId: varchar("author_id", { length: 191 }).notNull(),
     publishedAt: timestamp("published_at"),
     ...timestamps,
@@ -284,6 +287,7 @@ export const videoCategories = mysqlTable("video_categories", {
     code: varchar("code", { length: 50 }),
     description: text("description"),
     imageUrl: text("image_url"),
+    customFields: json("custom_fields"),
     order: int("order").default(0).notNull(),
     isActive: boolean("is_active").default(true).notNull(),
     ...timestamps,
@@ -335,6 +339,7 @@ export const speakers = mysqlTable("speakers", {
     metaDescription: text("meta_description"),
     metaKeywords: text("meta_keywords"),
     seoData: json("seo_data"),
+    customFields: json("custom_fields"),
     order: int("order").default(0).notNull(),
     ...timestamps,
 });
@@ -851,3 +856,22 @@ export const khitabatJummahAddresses = mysqlTable("khitabat_e_jummah_addresses",
 
 
 
+
+// ============================================
+// CUSTOM FIELD DEFINITIONS (DYNAMIC FIELDS)
+// ============================================
+
+export const customFieldDefinitions = mysqlTable("custom_field_definitions", {
+    id: varchar("id", { length: 191 }).primaryKey(),
+    entityType: varchar("entity_type", { length: 100 }).notNull(), // 'speaker', 'audio', 'video', 'audio_category', 'video_category'
+    label: varchar("label", { length: 255 }).notNull(),
+    fieldKey: varchar("field_key", { length: 191 }).notNull(),
+    fieldType: varchar("field_type", { length: 50 }).notNull(), // 'text', 'textarea', 'number', 'url', 'date', 'toggle', 'select', 'file'
+    options: json("options"), // Array of strings or {label, value} if type is 'select'
+    isRequired: boolean("is_required").default(false).notNull(),
+    placeholder: text("placeholder"),
+    helpText: text("help_text"),
+    orderIndex: int("order_index").default(0).notNull(),
+    isActive: boolean("is_active").default(true).notNull(),
+    ...timestamps,
+});

@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { db } from "@/lib/db";
-import { videos } from "@/db/schema";
+import { videos, customFieldDefinitions } from "@/db/schema";
 import { eq, and, ne, desc } from "drizzle-orm";
 import { VideoDetailPage } from "@/components/resources/VideoDetailPage";
 import { buildMetadata, videoJsonLd, breadcrumbJsonLd } from "@/lib/seo";
@@ -37,6 +37,8 @@ export default async function VideoDetailRoute({ params }: Props) {
   });
   if (!item) notFound();
 
+  const customFieldSchema = await db.select().from(customFieldDefinitions).where(eq(customFieldDefinitions.entityType, "video"));
+
   const related = await db.query.videos.findMany({
     where: and(
       eq(videos.isPublished, true),
@@ -68,7 +70,7 @@ export default async function VideoDetailRoute({ params }: Props) {
     <main className="min-h-screen bg-background">
       <script id="jsonld-video" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} />
       <script id="jsonld-video-bc" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(bc) }} />
-      <VideoDetailPage item={item} related={related} />
+      <VideoDetailPage item={item} related={related} customFieldSchema={customFieldSchema} />
     </main>
   );
 }

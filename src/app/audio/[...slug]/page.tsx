@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { db } from "@/lib/db";
-import { audio } from "@/db/schema";
+import { audio, customFieldDefinitions } from "@/db/schema";
 import { eq, and, ne, desc } from "drizzle-orm";
 import { AudioPlayerPage } from "@/components/resources/AudioPlayerPage";
 import { buildMetadata, audioJsonLd, breadcrumbJsonLd } from "@/lib/seo";
@@ -38,6 +38,8 @@ export default async function AudioDetailPage({ params }: Props) {
 
   if (!item) notFound();
 
+  const customFieldSchema = await db.select().from(customFieldDefinitions).where(eq(customFieldDefinitions.entityType, "audio"));
+
   // Related lectures — same category or speaker, exclude current
   const related = await db.query.audio.findMany({
     where: and(
@@ -70,7 +72,7 @@ export default async function AudioDetailPage({ params }: Props) {
     <main className="min-h-screen bg-background">
       <script id="jsonld-audio" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} />
       <script id="jsonld-audio-bc" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(bc) }} />
-      <AudioPlayerPage item={item} related={related} />
+      <AudioPlayerPage item={item} related={related} customFieldSchema={customFieldSchema} />
     </main>
   );
 }

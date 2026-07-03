@@ -11,6 +11,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { ImageUploader } from "./ImageUploader";
 import { toast } from "sonner";
+import { CustomFieldRenderer } from "./CustomFieldRenderer";
+import { CustomFieldBuilder } from "./CustomFieldBuilder";
 import { cn } from "@/lib/utils";
 import {
   DndContext,
@@ -40,6 +42,7 @@ interface MediaItem {
   code?: string;
   slug?: string;
   tags?: string;
+  customFields?: any;
 }
 
 interface SubCategory {
@@ -48,6 +51,7 @@ interface SubCategory {
   image?: string;
   code?: string;
   order?: number;
+  customFields?: any;
   mediaItems: MediaItem[];
 }
 
@@ -136,6 +140,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
           image: subCat.imageUrl || "",
           code: subCat.code || "",
           order: subCat.order || 0,
+          customFields: subCat.customFields || {},
           mediaItems: (mediaType === "audio" ? subCat.audioFiles : subCat.videos)?.map((item: any) => ({
             id: item.id,
             title: item.title,
@@ -144,7 +149,8 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
             description: item.description || "",
             code: item.code || item.episodeNumber || "",
             slug: item.slug || "",
-            tags: item.tags || ""
+            tags: item.tags || "",
+            customFields: item.customFields || {}
           })) || []
         })) || []).sort((a: any, b: any) => (a.order || 0) - (b.order || 0))
       })).sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
@@ -242,6 +248,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
         image: "",
         code: "",
         order: 0,
+        customFields: {},
         mediaItems: [],
       };
 
@@ -251,7 +258,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
 
       setEditingSubCat({ cat: newSub, mainId });
       setEditingMedia({
-        item: { id: "new", title: "", slug: "", mediaUrl: "", embedUrl: "", description: "" },
+        item: { id: "new", title: "", slug: "", mediaUrl: "", embedUrl: "", description: "", customFields: {} },
         subId: newSub.id
       });
     } catch (err) {
@@ -268,7 +275,8 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
           name: updatedSub.title,
           imageUrl: updatedSub.image,
           code: updatedSub.code,
-          order: updatedSub.order || 0
+          order: updatedSub.order || 0,
+          customFields: updatedSub.customFields || {}
         })
       });
 
@@ -305,6 +313,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
       mediaUrl: "",
       embedUrl: "",
       description: "",
+      customFields: {},
     };
     setEditingMedia({ item: newItem, subId });
   };
@@ -347,8 +356,8 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
         isPublished: true,
         slug: item.slug || (item.title.toLowerCase().replace(/[^a-z0-9]+/g, "-") + "-" + Date.now()),
         ...(mediaType === "audio"
-          ? { audioUrl: item.mediaUrl || "", code: item.code }
-          : { videoUrl: item.mediaUrl || "", embedUrl: formatEmbedUrl(item.embedUrl || ""), episodeNumber: item.code })
+          ? { audioUrl: item.mediaUrl || "", code: item.code, customFields: item.customFields }
+          : { videoUrl: item.mediaUrl || "", embedUrl: formatEmbedUrl(item.embedUrl || ""), episodeNumber: item.code, customFields: item.customFields })
       };
 
       let finalId = item.id;
@@ -518,7 +527,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                   }
                   setEditingSubCat({ cat: genSub, mainId: activeCategory.id });
                   setEditingMedia({
-                    item: { id: "new", title: "", slug: "", mediaUrl: "", embedUrl: "", description: "" },
+                    item: { id: "new", title: "", slug: "", mediaUrl: "", embedUrl: "", description: "", customFields: {} },
                     subId: genSub.id
                   });
                 }}>
@@ -549,7 +558,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                     onClick={() => {
                       setEditingSubCat({ cat: sub, mainId: activeCategory.id });
                       setEditingMedia({
-                        item: { id: "new", title: "", slug: "", mediaUrl: "", embedUrl: "", description: "" },
+                        item: { id: "new", title: "", slug: "", mediaUrl: "", embedUrl: "", description: "", customFields: {} },
                         subId: sub.id
                       });
                     }}
@@ -580,7 +589,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                             e.stopPropagation();
                             setEditingSubCat({ cat: sub, mainId: activeCategory.id });
                             setEditingMedia({
-                              item: { id: "new", title: "", slug: "", mediaUrl: "", embedUrl: "", description: "" },
+                              item: { id: "new", title: "", slug: "", mediaUrl: "", embedUrl: "", description: "", customFields: {} },
                               subId: sub.id
                             });
                           }}
@@ -809,6 +818,17 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                   </div>
                 </div>
               )}
+              
+              {!editingSubCat.cat.id.endsWith("_direct") && (
+                <>
+                  <CustomFieldRenderer
+                    entityType={`${mediaType}_category`}
+                    values={editingSubCat.cat.customFields || {}}
+                    onChange={(key, val) => setEditingSubCat({ ...editingSubCat, cat: { ...editingSubCat.cat, customFields: { ...(editingSubCat.cat.customFields || {}), [key]: val } } })}
+                  />
+                  <CustomFieldBuilder entityType={`${mediaType}_category`} />
+                </>
+              )}
 
               {/* Items List */}
               <div className="space-y-4 pt-4 border-t">
@@ -973,6 +993,13 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                           <p className="text-[10px] text-muted-foreground">If an embedded URL is provided, it will be used by the player instead of the Video File URL.</p>
                         </div>
                       )}
+                      
+                      <CustomFieldRenderer
+                        entityType={mediaType}
+                        values={editingMedia.item.customFields || {}}
+                        onChange={(key, val) => setEditingMedia({ ...editingMedia, item: { ...editingMedia.item, customFields: { ...(editingMedia.item.customFields || {}), [key]: val } } })}
+                      />
+                      <CustomFieldBuilder entityType={mediaType} />
 
                     </div>
                   </div>

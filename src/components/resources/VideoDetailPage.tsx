@@ -18,6 +18,7 @@ type VideoItem = {
   viewCount: number;
   category: { id: string; name: string; slug: string } | null;
   speaker: { id: string; name: string; slug: string; bio: string | null; avatar: string | null } | null;
+  customFields?: any;
 };
 
 function formatDuration(secs: number | null) {
@@ -36,7 +37,7 @@ function toEmbedSrc(videoUrl: string, embedUrl: string | null): string | null {
   return null;
 }
 
-export function VideoDetailPage({ item, related }: { item: VideoItem; related: VideoItem[] }) {
+export function VideoDetailPage({ item, related, customFieldSchema = [] }: { item: VideoItem; related: VideoItem[]; customFieldSchema?: any[] }) {
   const embedSrc = toEmbedSrc(item.videoUrl, item.embedUrl);
 
   const handleShare = () => {
@@ -97,6 +98,36 @@ export function VideoDetailPage({ item, related }: { item: VideoItem; related: V
             <div className="bg-card border border-border rounded-xl p-5">
               <h2 className="text-sm font-semibold uppercase tracking-wide text-foreground-muted mb-3">Description</h2>
               <p className="text-foreground-muted leading-relaxed text-sm">{item.description}</p>
+            </div>
+          )}
+
+          {/* Dynamic Custom Fields */}
+          {customFieldSchema.length > 0 && Object.keys(item.customFields || {}).length > 0 && (
+            <div className="bg-card border border-border rounded-xl p-5 space-y-4">
+              <h2 className="text-sm font-semibold uppercase tracking-wide text-foreground-muted mb-2">Additional Information</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {customFieldSchema.map((field) => {
+                  const val = item.customFields?.[field.fieldKey];
+                  if (val === undefined || val === null || val === "") return null;
+                  
+                  return (
+                    <div key={field.id} className="space-y-1">
+                      <p className="text-xs text-foreground-muted uppercase tracking-wider">{field.label}</p>
+                      {field.fieldType === "url" || field.fieldType === "file" ? (
+                        <a href={val} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline break-all">
+                          {val}
+                        </a>
+                      ) : field.fieldType === "toggle" ? (
+                        <p className="text-sm font-medium">{val ? "Yes" : "No"}</p>
+                      ) : (
+                        <p className="text-sm font-medium" dir={typeof val === 'string' && /[\u0600-\u06FF]/.test(val) ? "rtl" : "ltr"}>
+                          {val}
+                        </p>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           )}
         </div>

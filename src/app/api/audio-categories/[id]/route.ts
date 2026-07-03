@@ -16,6 +16,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
       description: body.description,
       order: body.order,
       isActive: body.isActive,
+      customFields: body.customFields,
       updatedAt: new Date()
     }).where(eq(audioCategories.id, id));
     

@@ -475,8 +475,8 @@ export default function AudiosPageEditor({ pageId, initialPageData }: { pageId: 
               <div className="space-y-2"><Label>Description</Label><Textarea value={catFormData.description} onChange={e => setCatFormData({ ...catFormData, description: e.target.value })} /></div>
             </div>
             <div className="p-6 border-t border-border bg-muted/20 flex justify-end gap-3">
-              <Button variant="outline" onClick={() => setIsCatModalOpen(false)}>Cancel</Button>
-              <Button onClick={handleCatSave} className="bg-primary text-primary-foreground hover:bg-primary/95">
+              <Button variant="outline" onClick={() => setIsCatModalOpen(false)} className="bg-destructive text-white hover:bg-destructive/80">Cancel</Button>
+              <Button onClick={handleCatSave} className="bg-primary text-white hover:bg-primary/80">
                 {editingCatId ? "Update Category" : "Save Category"}
               </Button>
             </div>
@@ -547,8 +547,8 @@ export default function AudiosPageEditor({ pageId, initialPageData }: { pageId: 
               </div>
             </div>
             <div className="p-6 border-t border-border bg-muted/20 flex justify-end gap-3">
-              <Button variant="outline" onClick={() => setIsAudioModalOpen(false)}>Cancel</Button>
-              <Button onClick={handleVideoSave} className="bg-primary text-primary-foreground">
+              <Button variant="outline" onClick={() => setIsAudioModalOpen(false)} className="bg-destructive text-white hover:bg-destructive/80">Cancel</Button>
+              <Button onClick={handleVideoSave} className="bg-primary text-white hover:bg-primary/80">
                 {editingAudioId ? "Update Audio Card" : "Save Audio Card"}
               </Button>
             </div>
