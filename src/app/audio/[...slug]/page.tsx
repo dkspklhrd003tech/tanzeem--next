@@ -8,10 +8,11 @@ import { buildMetadata, audioJsonLd, breadcrumbJsonLd } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
-type Props = { params: Promise<{ slug: string }> };
+type Props = { params: Promise<{ slug: string[] }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug: slugArray } = await params;
+  const slug = slugArray.join("/");
   const item = await db.query.audio.findFirst({
     where: and(eq(audio.slug, slug), eq(audio.isPublished, true)),
     with: { speaker: true, category: true },
@@ -27,7 +28,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function AudioDetailPage({ params }: Props) {
-  const { slug } = await params;
+  const { slug: slugArray } = await params;
+  const slug = slugArray.join("/");
 
   const item = await db.query.audio.findFirst({
     where: and(eq(audio.slug, slug), eq(audio.isPublished, true)),

@@ -8,10 +8,11 @@ import { buildMetadata, videoJsonLd, breadcrumbJsonLd } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
-type Props = { params: Promise<{ slug: string }> };
+type Props = { params: Promise<{ slug: string[] }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params;
+  const { slug: slugArray } = await params;
+  const slug = slugArray.join("/");
   const item = await db.query.videos.findFirst({
     where: and(eq(videos.slug, slug), eq(videos.isPublished, true)),
     with: { speaker: true, category: true },
@@ -27,7 +28,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function VideoDetailRoute({ params }: Props) {
-  const { slug } = await params;
+  const { slug: slugArray } = await params;
+  const slug = slugArray.join("/");
 
   const item = await db.query.videos.findFirst({
     where: and(eq(videos.slug, slug), eq(videos.isPublished, true)),
