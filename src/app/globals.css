@@ -289,8 +289,8 @@ h6 {
 }
 div[role="dialog"] button svg,
 header svg {
-    width: 24px;
-    height: auto;
+    width: 24px !important;
+    height: auto !important;
 }
 /* Type scale utilities */
 .text-display {

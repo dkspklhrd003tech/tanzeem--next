@@ -88,7 +88,7 @@ export function Hero({ slidesData = [] }: { slidesData?: any[] }) {
       className="relative w-full overflow-hidden bg-background-secondary flex justify-center focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
     >
       {/* Edge-to-Edge Hero Container */}
-      <div className="relative w-full aspect-[1920/450] overflow-hidden group">
+      <div className="relative w-full h-[200px] md:h-[auto] aspect-[1920/450] overflow-hidden group">
 
         <AnimatePresence mode="wait">
           <motion.div
@@ -127,7 +127,7 @@ export function Hero({ slidesData = [] }: { slidesData?: any[] }) {
                 <img
                   src={displaySlides[current].imageUrl}
                   alt={displaySlides[current].title || ""}
-                  className="w-full h-full object-contain"
+                  className="w-full h-full object-cover md:object-contain"
                   onError={(e) => {
                     const target = e.currentTarget;
                     target.style.display = "none";
