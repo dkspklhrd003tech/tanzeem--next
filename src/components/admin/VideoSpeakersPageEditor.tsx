@@ -407,8 +407,8 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
               <CustomFieldBuilder entityType="speaker" />
             </div>
             <div className="p-6 border-t border-border bg-muted/20 flex justify-end gap-3">
-              <Button variant="outline" onClick={() => setIsSpeakerModalOpen(false)}>Cancel</Button>
-              <Button onClick={handleSpeakerSave} className="bg-primary text-primary-foreground">{editingSpeakerId ? "Update" : "Save"}</Button>
+              <Button variant="outline" onClick={() => setIsSpeakerModalOpen(false)} className="bg-destructive text-white hover:bg-destructive/80">Cancel</Button>
+              <Button onClick={handleSpeakerSave} className="bg-primary text-white hover:bg-primary/80">{editingSpeakerId ? "Update" : "Save"}</Button>
             </div>
           </div>
         </div>
@@ -454,8 +454,8 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
               <CustomFieldBuilder entityType="video" />
             </div>
             <div className="p-6 border-t border-border bg-muted/20 flex justify-end gap-3">
-              <Button variant="outline" onClick={() => setIsVideoModalOpen(false)}>Cancel</Button>
-              <Button onClick={handleVideoSave} className="bg-primary text-primary-foreground">{editingVideoId ? "Update" : "Save"}</Button>
+              <Button variant="outline" onClick={() => setIsVideoModalOpen(false)} className="bg-destructive text-white hover:bg-destructive/80">Cancel</Button>
+              <Button onClick={handleVideoSave} className="bg-primary text-white hover:bg-primary/80">{editingVideoId ? "Update" : "Save"}</Button>
             </div>
           </div>
         </div>

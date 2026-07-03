@@ -715,7 +715,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
               />
             </div>
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setIsAddingMainCat(false)}>Cancel</Button>
+              <Button type="button" variant="outline" onClick={() => setIsAddingMainCat(false)} className="bg-destructive text-white hover:bg-destructive/80">Cancel</Button>
               <Button type="button" onClick={() => {
                 const form = document.getElementById('addMainCatForm') as HTMLFormElement;
                 if (!form.checkValidity()) { form.reportValidity(); return; }
@@ -725,7 +725,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                   desc: "Are you sure you want to create this new main category?",
                   action: () => addMainCategory(formData.get("title") as string, formData.get("code") as string, newMainCatImage)
                 });
-              }}>Create Tab</Button>
+              }} className="bg-primary text-white hover:bg-primary/80">Create Tab</Button>
             </DialogFooter>
           </form>
         </DialogContent>
@@ -764,7 +764,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                 />
               </div>
               <DialogFooter>
-                <Button type="button" variant="outline" onClick={() => setEditingMainCat(null)}>Cancel</Button>
+                <Button type="button" variant="outline" onClick={() => setEditingMainCat(null)} className="bg-destructive text-white hover:bg-destructive/80">Cancel</Button>
                 <Button type="button" onClick={() => {
                   if (!editingMainCat.title) {
                     toast.error("Tab name is required");
@@ -778,7 +778,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                       setEditingMainCat(null);
                     }
                   });
-                }}>Save Changes</Button>
+                }} className="bg-primary text-white hover:bg-primary/80">Save Changes</Button>
               </DialogFooter>
             </div>
           )}
@@ -1008,8 +1008,8 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
             </div>
           )}
           <DialogFooter className="border-t pt-4">
-            <div className="pt-2 flex justify-end gap-4">
-              <Button variant="outline" onClick={() => setEditingSubCat(null)}>Close</Button>
+            <div className="pt-2 flex justify-end gap-4 w-full">
+              <Button variant="outline" onClick={() => setEditingSubCat(null)} className="bg-destructive text-white hover:bg-destructive/80">Close</Button>
               {editingSubCat && !editingSubCat.cat.id.endsWith('_direct') && (
                 <Button onClick={() => {
                   setPendingAction({
@@ -1017,10 +1017,10 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                     desc: "Are you sure you want to save changes to this sub-category?",
                     action: () => saveSubCategory(editingSubCat.mainId, editingSubCat.cat)
                   });
-                }}>Save Card Changes</Button>
+                }} className="bg-primary text-white hover:bg-primary/80">Save Card Changes</Button>
               )}
               {editingMedia && (
-                <Button type="button" disabled={isSavingItem} onClick={() => saveMediaItem(editingMedia.subId, editingMedia.item)}>
+                <Button type="button" disabled={isSavingItem} onClick={() => saveMediaItem(editingMedia.subId, editingMedia.item)} className="bg-primary text-white hover:bg-primary/80">
                   {isSavingItem ? (
                     <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Saving...</>
                   ) : (

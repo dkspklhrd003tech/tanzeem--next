@@ -459,8 +459,8 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
               <CustomFieldBuilder entityType="audio" />
             </div>
             <div className="p-6 border-t border-border bg-muted/20 flex justify-end gap-3">
-              <Button variant="outline" onClick={() => setIsAudioModalOpen(false)}>Cancel</Button>
-              <Button onClick={handleAudioSave} className="bg-primary text-primary-foreground">{editingAudioId ? "Update" : "Save"}</Button>
+              <Button variant="outline" onClick={() => setIsAudioModalOpen(false)} className="bg-destructive text-white hover:bg-destructive/80">Cancel</Button>
+              <Button onClick={handleAudioSave} className="bg-primary text-white hover:bg-primary/80">{editingAudioId ? "Update" : "Save"}</Button>
             </div>
           </div>
         </div>
