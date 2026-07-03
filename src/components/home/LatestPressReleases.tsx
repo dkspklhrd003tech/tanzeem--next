@@ -74,13 +74,13 @@ export function LatestPressReleases({ items }: Props) {
   if (!items.length) return null;
 
   return (
-    <section ref={sectionRef} aria-labelledby="press-heading" className="py-10 bg-card relative overflow-hidden perspective-1000 border-t border-border/20">
-      <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent pointer-events-none" />
+    <section ref={sectionRef} aria-labelledby="press-heading" className="py-10 px-6 bg-primary-light relative overflow-hidden perspective-1000 border-t border-border/20">
+      <div className="absolute pointer-events-none" />
       <div className="container max-w-7xl mx-auto relative z-10">
         <div ref={headerRef} className="flex flex-col md:flex-row items-start md:items-end justify-between mb-16 gap-6">
           <div>
             <p className="text-primary font-bold tracking-widest uppercase text-xs mb-3">News & Updates</p>
-            <h2 id="press-heading" className="text-3xl md:text-4xl font-black text-foreground drop-shadow-sm">Latest Press Releases</h2>
+            <h2 id="press-heading" className="spotlight_heading">Latest Press Releases</h2>
           </div>
           <Link
             href="/resources/press-releases"

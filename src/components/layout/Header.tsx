@@ -177,7 +177,7 @@ export function Header() {
       {/* Main Navigation */}
       <motion.header
         className={cn(
-          "sticky top-0 z-50 transition-all duration-300 bg-card border-b border-border",
+          "sticky top-0 z-50 transition-all duration-300 ps-2 pe-4 bg-card border-b border-border",
           isScrolled && "shadow-md"
         )}
         initial={{ y: -100 }}

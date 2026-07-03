@@ -61,7 +61,7 @@ export function Footer() {
   }
 
   return (
-    <footer className="bg-background-dark text-white/70">
+    <footer className="bg-background-dark text-white/70 px-6">
       {/* Main Footer */}
       <div className="container mx-auto py-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8">
