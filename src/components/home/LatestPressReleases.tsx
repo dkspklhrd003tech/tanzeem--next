@@ -4,6 +4,7 @@ import { useState, useCallback } from "react";
 import Link from "next/link";
 import { Calendar, ArrowRight, FileText } from "lucide-react";
 import { useEffect, useRef } from "react";
+import { cn } from "@/lib/utils";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -18,7 +19,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+
 
 export type PressReleaseItem = {
   id: string;
@@ -100,7 +101,7 @@ export function LatestPressReleases({ items }: Props) {
               type="button"
               onClick={() => openDialog(item)}
               className={cn(
-                "press-card group relative flex flex-col bg-background/60 backdrop-blur-md border border-border/50 rounded-[1.5rem] p-8 text-left w-full shadow-sm",
+                "press-card group relative flex flex-col bg-background/60 backdrop-blur-md border border-border/50 rounded-[1.5rem] p-6 text-left w-full shadow-sm",
                 "hover:shadow-[0_10px_40px_rgba(16,185,129,0.1)] hover:border-primary/40 hover:-translate-y-2 transition-all duration-700 cursor-pointer overflow-hidden",
                 "focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
               )}
@@ -124,7 +125,12 @@ export function LatestPressReleases({ items }: Props) {
               {item.excerpt && (
                 <p className="mt-4 text-sm text-foreground-muted line-clamp-3 leading-relaxed relative z-10">{item.excerpt}</p>
               )}
-              <div className="mt-auto pt-6 w-full flex items-center gap-2 text-sm font-semibold text-primary relative z-10">
+              <div className={cn(
+                "mt-auto self-start inline-flex items-center gap-3 border border-primary/50 bg-primary-light text-[#222222] backdrop-blur-md mt-4",
+                "px-4 py-1 rounded-full text-sm font-bold tracking-wide uppercase shadow-lg",
+                "hover:bg-primary hover:border-primary hover:text-primary-foreground transition-all duration-500 hover:shadow-[0_0_30px_rgba(16,185,129,0.3)]",
+                "focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
+              )}>
                 <span>Read Press Release</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
               </div>
@@ -145,6 +151,6 @@ export function LatestPressReleases({ items }: Props) {
           />
         </DialogContent>
       </Dialog>
-    </section>
+    </section >
   );
 }
