@@ -27,7 +27,7 @@ export default async function AudiosBySpeakersPage() {
         imageUrl: speakers.avatar,
       })
       .from(speakers)
-      .orderBy(asc(speakers.name));
+      .orderBy(asc(speakers.order), asc(speakers.name));
 
     const countRows = await db
       .select({ speakerId: audio.speakerId, total: count() })

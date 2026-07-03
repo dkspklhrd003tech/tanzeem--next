@@ -29,6 +29,7 @@ interface SpeakerItem {
   bio?: string;
   avatar?: string;
   type?: string;
+  order?: number;
 }
 
 interface VideoItem {
@@ -55,7 +56,7 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
 
   // Speaker Modal
   const [isSpeakerModalOpen, setIsSpeakerModalOpen] = useState(false);
-  const [speakerFormData, setSpeakerFormData] = useState({ name: "", slug: "", bio: "", avatar: "", type: "video" });
+  const [speakerFormData, setSpeakerFormData] = useState({ name: "", slug: "", bio: "", avatar: "", type: "video", order: 0 });
   const [editingSpeakerId, setEditingSpeakerId] = useState<string | null>(null);
   const [deletingSpeaker, setDeletingSpeaker] = useState<SpeakerItem | null>(null);
 
@@ -80,8 +81,8 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
       ]);
       if (spRes.ok) {
         const items = (await spRes.json()).items || [];
-        // Only show video speakers
-        setSpeakersList(items.filter((s: any) => s.type !== "audio"));
+        // Only show video speakers, sorted by order
+        setSpeakersList(items.filter((s: any) => s.type !== "audio").sort((a: any, b: any) => (a.order || 0) - (b.order || 0)));
       }
       if (viRes.ok) setVideosList((await viRes.json()).items || []);
     } catch (e) { console.error(e); }
@@ -210,7 +211,7 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
           <TabsContent value="speakers" className="space-y-6">
             <div className="flex justify-between items-center">
               <h2 className="text-xl font-bold">Video Speakers</h2>
-              <Button size="sm" onClick={() => { setEditingSpeakerId(null); setSpeakerFormData({ name: "", slug: "", bio: "", avatar: "", type: "video" }); setIsSpeakerModalOpen(true); }}>
+              <Button size="sm" onClick={() => { setEditingSpeakerId(null); setSpeakerFormData({ name: "", slug: "", bio: "", avatar: "", type: "video", order: 0 }); setIsSpeakerModalOpen(true); }}>
                 <Plus className="w-4 h-4 mr-1" /> Add Speaker
               </Button>
             </div>
@@ -233,7 +234,7 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
                       <div className="flex justify-between items-start mb-2">
                         <h3 className="font-bold text-base line-clamp-1 group-hover:text-primary">{speaker.name}</h3>
                         <div className="flex gap-1" onClick={e => e.stopPropagation()}>
-                          <Button variant="ghost" size="icon" className="h-6 w-6 text-green-500" onClick={() => { setEditingSpeakerId(speaker.id); setSpeakerFormData({ name: speaker.name, slug: speaker.slug, bio: speaker.bio || "", avatar: speaker.avatar || "", type: "video" }); setIsSpeakerModalOpen(true); }}><Pencil className="w-3 h-3" /></Button>
+                          <Button variant="ghost" size="icon" className="h-6 w-6 text-green-500" onClick={() => { setEditingSpeakerId(speaker.id); setSpeakerFormData({ name: speaker.name, slug: speaker.slug, bio: speaker.bio || "", avatar: speaker.avatar || "", type: "video", order: speaker.order || 0 }); setIsSpeakerModalOpen(true); }}><Pencil className="w-3 h-3" /></Button>
                           <Button variant="ghost" size="icon" className="h-6 w-6 text-red-500" onClick={() => setDeletingSpeaker(speaker)}><Trash2 className="w-3 h-3" /></Button>
                         </div>
                       </div>
@@ -309,6 +310,7 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
               <div className="space-y-2"><Label>Name</Label><Input value={speakerFormData.name} onChange={e => setSpeakerFormData({ ...speakerFormData, name: e.target.value, slug: editingSpeakerId ? speakerFormData.slug : slugify(e.target.value) })} /></div>
               <div className="space-y-2"><Label>Slug</Label><Input value={speakerFormData.slug} onChange={e => setSpeakerFormData({ ...speakerFormData, slug: e.target.value })} /></div>
               <div className="space-y-2"><Label>Urdu Name</Label><Input value={speakerFormData.bio} onChange={e => setSpeakerFormData({ ...speakerFormData, bio: e.target.value })} className="text-center font-bold text-lg" dir="rtl" style={{ fontFamily: "'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', serif" }} placeholder="اردو نام" /></div>
+              <div className="space-y-2"><Label>Display Order</Label><Input type="number" value={speakerFormData.order} onChange={e => setSpeakerFormData({ ...speakerFormData, order: parseInt(e.target.value) || 0 })} /></div>
               <div className="space-y-2">
                 <Label>Speaker Photo</Label>
                 <ImageUploader value={speakerFormData.avatar || ""} onChange={(url) => setSpeakerFormData(prev => ({ ...prev, avatar: url }))} aspectRatio={1} />

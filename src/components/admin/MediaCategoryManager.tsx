@@ -29,6 +29,7 @@ interface SubCategory {
   title: string;
   image?: string;
   code?: string;
+  order?: number;
   mediaItems: MediaItem[];
 }
 
@@ -37,6 +38,7 @@ interface MainCategory {
   title: string;
   code?: string;
   image?: string;
+  order?: number;
   subCategories: SubCategory[];
 }
 
@@ -67,11 +69,13 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
         title: mainCat.name,
         code: mainCat.code || "",
         image: mainCat.imageUrl || "",
-        subCategories: mainCat.subCategories?.map((subCat: any) => ({
+        order: mainCat.order || 0,
+        subCategories: (mainCat.subCategories?.map((subCat: any) => ({
           id: subCat.id,
           title: subCat.name,
           image: subCat.imageUrl || "",
           code: subCat.code || "",
+          order: subCat.order || 0,
           mediaItems: (mediaType === "audio" ? subCat.audioFiles : subCat.videos)?.map((item: any) => ({
             id: item.id,
             title: item.title,
@@ -82,9 +86,8 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
             slug: item.slug || "",
             tags: item.tags || ""
           })) || []
-        })) || []
-      }));
-      setCategories(mapped);
+        })) || []).sort((a: any, b: any) => (a.order || 0) - (b.order || 0))
+      })).sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
       setCategories(mapped);
     } catch (err) {
       toast.error("Failed to load categories");
@@ -120,6 +123,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
         title,
         code,
         image: imageUrl,
+        order: 0,
         subCategories: [],
       };
       setCategories([...categories, newCat]);
@@ -151,10 +155,11 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
         body: JSON.stringify({
           name: updatedCat.title,
           code: updatedCat.code,
-          imageUrl: updatedCat.image
+          imageUrl: updatedCat.image,
+          order: updatedCat.order || 0
         })
       });
-      setCategories(categories.map(c => c.id === updatedCat.id ? updatedCat : c));
+      setCategories(categories.map(c => c.id === updatedCat.id ? updatedCat : c).sort((a, b) => (a.order || 0) - (b.order || 0)));
       toast.success("Main tab saved");
     } catch (err) {
       toast.error("Failed to save main tab");
@@ -176,6 +181,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
         title: `New Sub Category`,
         image: "",
         code: "",
+        order: 0,
         mediaItems: [],
       };
 
@@ -201,14 +207,15 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
         body: JSON.stringify({
           name: updatedSub.title,
           imageUrl: updatedSub.image,
-          code: updatedSub.code
+          code: updatedSub.code,
+          order: updatedSub.order || 0
         })
       });
 
       setCategories(categories.map(c =>
         c.id === mainId ? {
           ...c,
-          subCategories: c.subCategories.map(s => s.id === updatedSub.id ? updatedSub : s)
+          subCategories: c.subCategories.map(s => s.id === updatedSub.id ? updatedSub : s).sort((a, b) => (a.order || 0) - (b.order || 0))
         } : c
       ));
       toast.success("Sub category saved");
@@ -707,6 +714,14 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                 />
               </div>
               <div className="space-y-2">
+                <Label>Display Order</Label>
+                <Input
+                  type="number"
+                  value={editingMainCat.order || 0}
+                  onChange={(e) => setEditingMainCat({ ...editingMainCat, order: parseInt(e.target.value) || 0 })}
+                />
+              </div>
+              <div className="space-y-2">
                 <Label>Featured Image (16:9 Ratio)</Label>
                 <ImageUploader
                   value={editingMainCat.image || ""}
@@ -755,6 +770,15 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                     <Input
                       value={editingSubCat.cat.title}
                       onChange={(e) => setEditingSubCat({ ...editingSubCat, cat: { ...editingSubCat.cat, title: e.target.value } })}
+                      onBlur={() => saveSubCategory(editingSubCat.mainId, editingSubCat.cat)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Display Order</Label>
+                    <Input
+                      type="number"
+                      value={editingSubCat.cat.order || 0}
+                      onChange={(e) => setEditingSubCat({ ...editingSubCat, cat: { ...editingSubCat.cat, order: parseInt(e.target.value) || 0 } })}
                       onBlur={() => saveSubCategory(editingSubCat.mainId, editingSubCat.cat)}
                     />
                   </div>

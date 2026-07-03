@@ -151,6 +151,8 @@ export async function GET(
         let results;
         if (entity === "press-releases") {
             results = await db.select().from(table).orderBy(table.orderIndex, desc(table.publishedAt)).limit(100);
+        } else if (entity === "speakers") {
+            results = await db.select().from(table).orderBy(table.order, desc(table.createdAt)).limit(100);
         } else {
             results = await db.select().from(table).orderBy(desc((table as any).updatedAt || (table as any).id)).limit(100);
         }

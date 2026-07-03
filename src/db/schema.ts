@@ -335,6 +335,7 @@ export const speakers = mysqlTable("speakers", {
     metaDescription: text("meta_description"),
     metaKeywords: text("meta_keywords"),
     seoData: json("seo_data"),
+    order: int("order").default(0).notNull(),
     ...timestamps,
 });
 

@@ -29,6 +29,7 @@ interface SpeakerItem {
   bio?: string;
   avatar?: string;
   type?: string;
+  order?: number;
 }
 
 interface AudioItem {
@@ -45,7 +46,7 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
   const { toast } = useToast();
   const [pageForm, setPageForm] = useState<PageRecord>({ ...initialPageData });
   const [isSavingPage, setIsSavingPage] = useState(false);
-  
+
   const [speakersList, setSpeakersList] = useState<SpeakerItem[]>([]);
   const [audiosList, setAudiosList] = useState<AudioItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -54,7 +55,7 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
 
   // Speaker Modal
   const [isSpeakerModalOpen, setIsSpeakerModalOpen] = useState(false);
-  const [speakerFormData, setSpeakerFormData] = useState({ name: "", slug: "", bio: "", avatar: "", type: "audio" });
+  const [speakerFormData, setSpeakerFormData] = useState({ name: "", slug: "", bio: "", avatar: "", type: "audio", order: 0 });
   const [editingSpeakerId, setEditingSpeakerId] = useState<string | null>(null);
   const [deletingSpeaker, setDeletingSpeaker] = useState<SpeakerItem | null>(null);
 
@@ -79,8 +80,8 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
       ]);
       if (spRes.ok) {
         const items = (await spRes.json()).items || [];
-        // Only show audio speakers
-        setSpeakersList(items.filter((s: any) => s.type !== "video"));
+        // Only show audio speakers, sorted by order
+        setSpeakersList(items.filter((s: any) => s.type !== "video").sort((a: any, b: any) => (a.order || 0) - (b.order || 0)));
       }
       if (auRes.ok) setAudiosList((await auRes.json()).items || []);
     } catch (e) { console.error(e); }
@@ -108,7 +109,7 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
       const method = editingSpeakerId ? "PUT" : "POST";
       const payload = { ...speakerFormData, type: "audio" };
       const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-      if (!res.ok) throw new Error((await res.json().catch(()=>({}))).error || "Failed");
+      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || "Failed");
       toast({ title: "Success", description: "Speaker saved" });
       setIsSpeakerModalOpen(false);
       fetchData();
@@ -132,7 +133,7 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
       const method = editingAudioId ? "PUT" : "POST";
       const payload = { ...audioFormData, speakerId: activeSpeaker?.id };
       const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-      if (!res.ok) throw new Error((await res.json().catch(()=>({}))).error || "Failed");
+      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || "Failed");
       toast({ title: "Success", description: "Audio saved" });
       setIsAudioModalOpen(false);
       fetchData();
@@ -209,7 +210,7 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
           <TabsContent value="speakers" className="space-y-6">
             <div className="flex justify-between items-center">
               <h2 className="text-xl font-bold">Audio Speakers</h2>
-              <Button size="sm" onClick={() => { setEditingSpeakerId(null); setSpeakerFormData({ name: "", slug: "", bio: "", avatar: "", type: "audio" }); setIsSpeakerModalOpen(true); }}>
+              <Button size="sm" onClick={() => { setEditingSpeakerId(null); setSpeakerFormData({ name: "", slug: "", bio: "", avatar: "", type: "audio", order: 0 }); setIsSpeakerModalOpen(true); }}>
                 <Plus className="w-4 h-4 mr-1" /> Add Speaker
               </Button>
             </div>
@@ -232,11 +233,11 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
                       <div className="flex justify-between items-start mb-2">
                         <h3 className="font-bold text-base line-clamp-1 group-hover:text-primary">{speaker.name}</h3>
                         <div className="flex gap-1" onClick={e => e.stopPropagation()}>
-                          <Button variant="ghost" size="icon" className="h-6 w-6 text-green-500" onClick={() => { setEditingSpeakerId(speaker.id); setSpeakerFormData({ name: speaker.name, slug: speaker.slug, bio: speaker.bio || "", avatar: speaker.avatar || "", type: "audio" }); setIsSpeakerModalOpen(true); }}><Pencil className="w-3 h-3" /></Button>
+                          <Button variant="ghost" size="icon" className="h-6 w-6 text-green-500" onClick={() => { setEditingSpeakerId(speaker.id); setSpeakerFormData({ name: speaker.name, slug: speaker.slug, bio: speaker.bio || "", avatar: speaker.avatar || "", type: "audio", order: speaker.order || 0 }); setIsSpeakerModalOpen(true); }}><Pencil className="w-3 h-3" /></Button>
                           <Button variant="ghost" size="icon" className="h-6 w-6 text-red-500" onClick={() => setDeletingSpeaker(speaker)}><Trash2 className="w-3 h-3" /></Button>
                         </div>
                       </div>
-                      <p className="text-xs text-muted-foreground line-clamp-2">{speaker.bio}</p>
+                      <p className="text-xs font-nastaleeq text-muted-foreground line-clamp-2">{speaker.bio}</p>
                     </div>
                   </div>
                 ))}
@@ -308,6 +309,7 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
               <div className="space-y-2"><Label>Name</Label><Input value={speakerFormData.name} onChange={e => setSpeakerFormData({ ...speakerFormData, name: e.target.value, slug: editingSpeakerId ? speakerFormData.slug : slugify(e.target.value) })} /></div>
               <div className="space-y-2"><Label>Slug</Label><Input value={speakerFormData.slug} onChange={e => setSpeakerFormData({ ...speakerFormData, slug: e.target.value })} /></div>
               <div className="space-y-2"><Label>Urdu Name</Label><Input value={speakerFormData.bio} onChange={e => setSpeakerFormData({ ...speakerFormData, bio: e.target.value })} className="text-center font-bold text-lg" dir="rtl" style={{ fontFamily: "'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', serif" }} placeholder="اردو نام" /></div>
+              <div className="space-y-2"><Label>Display Order</Label><Input type="number" value={speakerFormData.order} onChange={e => setSpeakerFormData({ ...speakerFormData, order: parseInt(e.target.value) || 0 })} /></div>
               <div className="space-y-2">
                 <Label>Speaker Photo</Label>
                 <ImageUploader value={speakerFormData.avatar || ""} onChange={(url) => setSpeakerFormData(prev => ({ ...prev, avatar: url }))} aspectRatio={1} />
@@ -359,7 +361,7 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
       )}
 
       <ConfirmDialog open={!!deletingSpeaker} title="Delete Speaker" description="Are you sure you want to delete this speaker?" onConfirm={() => deletingSpeaker && handleSpeakerDelete(deletingSpeaker)} onOpenChange={(open) => !open && setDeletingSpeaker(null)} />
-      <ConfirmDialog open={!!deletingAudio} title="Delete Audio" description="Are you sure you want to delete this audio?" onConfirm={async () => { if(deletingAudio){ await fetch(`/api/admin/audio/${deletingAudio.id}`, {method:'DELETE'}); fetchData(); setDeletingAudio(null); } }} onOpenChange={(open) => !open && setDeletingAudio(null)} />
+      <ConfirmDialog open={!!deletingAudio} title="Delete Audio" description="Are you sure you want to delete this audio?" onConfirm={async () => { if (deletingAudio) { await fetch(`/api/admin/audio/${deletingAudio.id}`, { method: 'DELETE' }); fetchData(); setDeletingAudio(null); } }} onOpenChange={(open) => !open && setDeletingAudio(null)} />
     </div>
   );
 }

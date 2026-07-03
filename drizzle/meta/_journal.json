@@ -15,6 +15,13 @@
       "when": 1782722773985,
       "tag": "0001_left_leper_queen",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1783055742161,
+      "tag": "0002_talented_glorian",
+      "breakpoints": true
     }
   ]
 }
