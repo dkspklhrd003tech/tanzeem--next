@@ -18,7 +18,7 @@ function slugify(text: string) {
     .replace(/^-+|-+$/g, "");
 }
 
-export default function AudioFormPage({ id, speakerIdParam = "" }: { id: string, speakerIdParam?: string }) {
+export default function AudioFormPage({ id, speakerIdParam = "", categoryIdParam = "" }: { id: string, speakerIdParam?: string, categoryIdParam?: string }) {
   const router = useRouter();
   const { toast } = useToast();
   const isNew = id === "new";
@@ -33,6 +33,7 @@ export default function AudioFormPage({ id, speakerIdParam = "" }: { id: string,
     slug: "",
     audioUrl: "",
     speakerId: speakerIdParam || "",
+    categoryId: categoryIdParam || "",
     isPublished: true,
     isNewAudio: false,
     customFields: {} as Record<string, any>
@@ -60,6 +61,7 @@ export default function AudioFormPage({ id, speakerIdParam = "" }: { id: string,
             slug: data.item.slug || "",
             audioUrl: data.item.audioUrl || "",
             speakerId: data.item.speakerId || speakerIdParam || "",
+            categoryId: data.item.categoryId || categoryIdParam || "",
             isPublished: data.item.isPublished ?? true,
             isNewAudio: data.item.isNew ?? false,
             customFields: data.item.customFields || {}
@@ -68,7 +70,7 @@ export default function AudioFormPage({ id, speakerIdParam = "" }: { id: string,
       })
       .catch(err => console.error("Failed to load audio:", err))
       .finally(() => setIsLoading(false));
-  }, [id, isNew, speakerIdParam]);
+  }, [id, isNew, speakerIdParam, categoryIdParam]);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
