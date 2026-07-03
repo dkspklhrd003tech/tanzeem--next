@@ -276,13 +276,21 @@ h6 {
   font-family: var(--font-heading);
   font-weight: 700;
 }
-@layer components {
-  .sub_title {
-    @apply text-primary font-bold text-xs uppercase tracking-widest mb-1;
-  }
-  .spotlight_heading{
-    @apply text-3xl md:text-4xl font-black text-foreground;
-  }
+@theme {
+  /* Ensure --color-primary and --color-foreground are defined here if they are custom */
+}
+
+@utility sub_title {
+  @apply text-primary font-bold text-xs uppercase tracking-widest mb-1;
+}
+
+@utility spotlight_heading {
+  @apply text-2xl md:text-3xl md:text-4xl font-black text-foreground;
+}
+div[role="dialog"] button svg,
+header svg {
+    width: 24px;
+    height: auto;
 }
 /* Type scale utilities */
 .text-display {

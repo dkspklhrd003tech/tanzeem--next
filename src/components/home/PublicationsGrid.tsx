@@ -72,7 +72,7 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
     }, []);
 
     return (
-        <div className="bg-background overflow-hidden perspective-1000">
+        <div className="bg-background px-6 overflow-hidden perspective-1000">
             {/* 1. Our Magazines Section */}
             <section ref={section1Ref} aria-labelledby="magazines-heading" className="relative py-10 border-t border-border/20">
                 <div className="absolute inset-0 bg-gradient-to-b from-card/30 to-background pointer-events-none" />
@@ -98,7 +98,7 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
                         </Link>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                         {magazinesData.length > 0 ? magazinesData.map((mag, i) => (
                             <div
                                 key={mag.id}
@@ -107,7 +107,7 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
                                 <div className="relative mb-6">
 
                                     <div className={cn(
-                                        "relative w-[260px] h-[360px] rounded-[1.5rem] overflow-hidden border border-border/50 bg-card shadow-[0_8px_30px_rgb(0,0,0,0.04)]",
+                                        "relative w-[180px] md:w-[260px] h-[auto] rounded-[1.5rem] overflow-hidden border border-border/50 bg-card shadow-[0_8px_30px_rgb(0,0,0,0.04)]",
                                         "group-hover:shadow-[0_20px_40px_rgba(16,185,129,0.15)] group-hover:-translate-y-3 transition-all duration-700",
                                         "ring-1 ring-white/10 group-hover:ring-primary/30 group-hover:rotate-1"
                                     )}>
@@ -132,9 +132,9 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
                                     <Link
                                         href={`/magazines/${mag.id}`}
                                         className={cn(
-                                            "group inline-flex items-center gap-3 border border-primary/50 bg-primary-light text-[#222222] backdrop-blur-md",
-                                            "px-8 py-3.5 rounded-full text-sm font-bold tracking-wide uppercase shadow-lg",
-                                            "hover:bg-primary hover:border-primary hover:text-primary-foreground transition-all duration-500 hover:shadow-[0_0_30px_rgba(16,185,129,0.3)]",
+                                            "group inline-flex items-center gap-3 border border-primary/50 bg-primary text-primary-foreground backdrop-blur-md",
+                                            "px-4 md:px-8 py-3.5 rounded-full text-sm font-bold tracking-wide uppercase shadow-lg",
+                                            "hover:bg-primary hover:border-primary transition-all duration-500 hover:shadow-[0_0_30px_rgba(16,185,129,0.3)]",
                                             "focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
                                         )}
                                     >
@@ -178,7 +178,7 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
                         </Link>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                         {booksData.length > 0 ? booksData.map((book, i) => (
                             <div
                                 key={book.id}
@@ -188,7 +188,7 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
                                     <div className="absolute -inset-6 bg-primary/10 rounded-[3rem] opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-2xl" aria-hidden="true" />
 
                                     <div className={cn(
-                                        "relative w-[260px] h-[360px] rounded-[1.5rem] overflow-hidden border border-border/50 bg-card shadow-[0_8px_30px_rgb(0,0,0,0.04)]",
+                                        "relative w-[180px] md:w-[260px] h-[auto] rounded-[1.5rem] overflow-hidden border border-border/50 bg-card shadow-[0_8px_30px_rgb(0,0,0,0.04)]",
                                         "group-hover:shadow-[0_20px_40px_rgba(16,185,129,0.15)] group-hover:-translate-y-3 transition-all duration-700",
                                         "ring-1 ring-white/10 group-hover:ring-primary/30 group-hover:-rotate-1"
                                     )}>
@@ -207,9 +207,9 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
                                     <Link
                                         href={`/books/${book.id}`}
                                         className={cn(
-                                            "group inline-flex items-center gap-3 border border-primary/50 bg-primary-light text-[#222222] backdrop-blur-md",
-                                            "px-8 py-3.5 rounded-full text-sm font-bold tracking-wide uppercase shadow-lg",
-                                            "hover:bg-primary hover:border-primary hover:text-primary-foreground transition-all duration-500 hover:shadow-[0_0_30px_rgba(16,185,129,0.3)]",
+                                            "group inline-flex items-center gap-3 border border-primary/50 bg-primary text-primary-foreground backdrop-blur-md",
+                                            "px-4 md:px-8 py-3.5 rounded-full text-sm font-bold tracking-wide uppercase shadow-lg",
+                                            "hover:bg-primary hover:border-primary transition-all duration-500 hover:shadow-[0_0_30px_rgba(16,185,129,0.3)]",
                                             "focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
                                         )}
                                     >

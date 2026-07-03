@@ -83,14 +83,14 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
     }, []);
 
     return (
-        <section ref={sectionRef} aria-labelledby="about-heading" className="relative py-20 overflow-hidden perspective-1000 bg-primary-light">
+        <section ref={sectionRef} aria-labelledby="about-heading" className="relative px-6 py-8 md:py-20 overflow-hidden perspective-1000 bg-primary-light">
             {/* <CinematicBackground /> */}
             <div className="max-w-7xl mx-auto relative z-10">
 
                 {/* ── About Card ── */}
                 <div
                     ref={aboutRef}
-                    className="relative mb-20 flex flex-col md:flex-row gap-8 md:gap-12 items-center md:items-start overflow-hidden"
+                    className="relative mb-10 md:mb-20 flex flex-col md:flex-row gap-8 md:gap-12 items-center md:items-start overflow-hidden"
                 >
                     <div className="absolute inset-0 opacity-20 pointer-events-none" />
                     <div className="absolute inset-0 transition-opacity duration-1000 pointer-events-none" />

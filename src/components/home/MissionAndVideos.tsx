@@ -70,7 +70,7 @@ export function MissionAndVideos({ videos, settings }: MissionProps) {
                 <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-[100px]" aria-hidden="true" />
                 <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-black/20 rounded-full translate-y-1/2 -translate-x-1/2 blur-[80px]" aria-hidden="true" />
 
-                <div className="max-w-4xl mx-auto relative z-10 px-4">
+                <div className="max-w-4xl mx-auto relative z-10 px-6 ">
                     <div className="space-y-6">
                         <h2 ref={textRef} className="text-2xl md:text-3xl lg:text-4xl font-black text-white leading-tight md:leading-snug drop-shadow-lg tracking-tight">
                             &ldquo;{missionText}&rdquo;
@@ -82,9 +82,9 @@ export function MissionAndVideos({ videos, settings }: MissionProps) {
             {/* 2. Featured Videos Grid — Spotlight-style layout */}
             <div className="py-10 border-t border-border/20 bg-background relative">
                 <div className="absolute inset-0 bg-gradient-to-t from-background to-card/30 pointer-events-none" />
-                <div className="container max-w-7xl mx-auto relative z-10">
+                <div className="container max-w-7xl mx-auto relative z-10 px-6">
 
-                    <div className="mb-16 text-center">
+                    <div className="mb-6 md:mb-10 text-center">
                         <p className="text-primary font-bold tracking-widest uppercase text-xs mb-3">Featured</p>
                         <h2 id="videos-heading" className="spotlight_heading">
                             Regular Video Broadcasts
