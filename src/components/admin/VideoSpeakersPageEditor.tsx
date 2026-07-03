@@ -214,19 +214,17 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
       const newIndex = items.findIndex((i) => i.id === over.id);
       const newArray = arrayMove(items, oldIndex, newIndex);
 
-      // Save order in background
-      newArray.forEach((item, index) => {
-        if (item.order !== index) {
-          item.order = index;
-          fetch(`/api/admin/speakers/${item.id}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ ...item, order: index }),
-          }).catch(console.error);
-        }
-      });
+      // Save order in background using bulk PATCH
+      const reordered = newArray.map((item, idx) => ({ ...item, order: idx }));
+      fetch("/api/admin/speakers", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          orders: reordered.map((i) => ({ id: i.id, orderIndex: i.order }))
+        }),
+      }).catch(console.error);
 
-      return newArray;
+      return reordered;
     });
     toast({ title: "Order saved", description: "The new sorting order has been saved automatically." });
   };

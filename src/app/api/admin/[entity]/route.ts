@@ -150,11 +150,11 @@ export async function GET(
 
         let results;
         if (entity === "press-releases") {
-            results = await db.select().from(table).orderBy(table.orderIndex, desc(table.publishedAt)).limit(100);
+            results = await db.select().from(table).orderBy((table as any).orderIndex || (table as any).order || (table as any).id, desc(table.publishedAt)).limit(100);
         } else if (entity === "speakers") {
-            results = await db.select().from(table).orderBy(table.order, desc(table.createdAt)).limit(100);
+            results = await db.select().from(table).orderBy((table as any).order || (table as any).id, desc((table as any).name || (table as any).id)).limit(100);
         } else {
-            results = await db.select().from(table).orderBy(desc((table as any).updatedAt || (table as any).id)).limit(100);
+            results = await db.select().from(table).orderBy(desc((table as any).updatedAt || (table as any).createdAt || (table as any).id)).limit(100);
         }
 
         return NextResponse.json({ items: results });
@@ -265,7 +265,8 @@ export async function PATCH(
         await db.transaction(async (tx) => {
             for (const item of orders) {
                 const updateFields: Record<string, any> = {};
-                if (entity === "social-platforms" || entity === "social-accounts" || entity === "book-categories" || entity === "books") {
+                // Dynamically check if the table has 'order' or 'orderIndex'
+                if ((table as any).order) {
                     updateFields.order = item.orderIndex;
                 } else {
                     updateFields.orderIndex = item.orderIndex;
