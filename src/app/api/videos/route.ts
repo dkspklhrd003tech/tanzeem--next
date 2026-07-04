@@ -119,10 +119,10 @@ export async function POST(request: NextRequest) {
 
     revalidatePath("/", "layout");
     return NextResponse.json({ video: newVideo }, { status: 201 });
-  } catch (error) {
+  } catch (error: any) {
     console.error("Create video error:", error);
     revalidatePath("/", "layout");
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ error: error?.message || "Internal server error" }, { status: 500 });
   }
 }
 export async function PATCH(request: NextRequest) {

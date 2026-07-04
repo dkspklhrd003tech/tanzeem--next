@@ -120,14 +120,14 @@ export function CTA({ platforms }: CTAProps) {
         }}
       />
 
-      <div className="container mx-auto relative z-20 px-4">
+      <div className="container mx-auto relative z-20">
         <div ref={headerRef} className="text-center mb-16">
           <p className="text-white/60 text-xs font-bold tracking-[0.3em] uppercase mb-4">
-            Stay Connected
+            Connect with Tanzeem
           </p>
           <h2
             id="social-heading"
-            className="text-4xl md:text-5xl font-black text-white drop-shadow-lg tracking-tight"
+            className="text-3xl md:text-5xl font-black text-white drop-shadow-lg tracking-tight"
           >
             Follow Us On Social Media
           </h2>
@@ -142,7 +142,7 @@ export function CTA({ platforms }: CTAProps) {
             const href = platform.url || `/social-media#${slugOrIcon}`;
             const Icon = iconMap[slugOrIcon.toLowerCase()] || (() => <Globe className="h-7 w-7" aria-hidden="true" />);
             const originalColor = platform.themeColor || platform.color || "#0d5844";
-            
+
             return (
               <a
                 key={platform.id}
@@ -154,8 +154,8 @@ export function CTA({ platforms }: CTAProps) {
                 )}
               >
                 {/* Glow Effect */}
-                <div 
-                  className="absolute inset-0 rounded-full blur-xl opacity-0 group-hover:opacity-40 transition-opacity duration-500 pointer-events-none" 
+                <div
+                  className="absolute inset-0 rounded-full blur-xl opacity-0 group-hover:opacity-40 transition-opacity duration-500 pointer-events-none"
                   style={{ backgroundColor: originalColor }}
                 />
 

@@ -78,10 +78,10 @@ export async function PUT(
 
         revalidatePath("/", "layout");
         return NextResponse.json({ message: "Video updated successfully" });
-    } catch (error) {
+    } catch (error: any) {
         console.error("Update video error:", error);
         revalidatePath("/", "layout");
-        return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+        return NextResponse.json({ error: error?.message || "Internal server error" }, { status: 500 });
     }
 }
 
@@ -119,9 +119,9 @@ export async function DELETE(
 
         revalidatePath("/", "layout");
         return NextResponse.json({ message: "Video deleted successfully" });
-    } catch (error) {
+    } catch (error: any) {
         console.error("Delete video error:", error);
         revalidatePath("/", "layout");
-        return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+        return NextResponse.json({ error: error?.message || "Internal server error" }, { status: 500 });
     }
 }

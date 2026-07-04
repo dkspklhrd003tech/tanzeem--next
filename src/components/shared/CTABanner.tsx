@@ -23,8 +23,7 @@ export function CTABanner({
 }: CTABannerProps) {
   return (
     <section
-      className="py-16 md:py-10 relative overflow-hidden"
-      style={{ backgroundColor }}
+      className="py- bg-primary/95 relative overflow-hidden perspective-1000 shadow-[0_0_50px_rgba(16,185,129,0.3)] z-10"
     >
       {backgroundImage && (
         <div

@@ -83,7 +83,7 @@ export default async function AudioBookDetailsPage({ params }: PageProps) {
 
             <div className="container mx-auto py-10 px-4">
                 <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl border border-border overflow-hidden flex flex-col md:flex-row">
-                    
+
                     {/* Left: Image */}
                     <div className="w-full md:w-1/3 bg-muted relative aspect-[3/4] md:aspect-auto">
                         {selectedItem.featuredImage ? (
@@ -141,7 +141,7 @@ export default async function AudioBookDetailsPage({ params }: PageProps) {
                             )}
                         </div>
 
-                        {/* Content / Excerpt */}
+                        {/* Content / Excerpt
                         <div className="flex-1">
                             {selectedItem.content && selectedItem.content !== "<p></p>" ? (
                                 <div 
@@ -153,7 +153,7 @@ export default async function AudioBookDetailsPage({ params }: PageProps) {
                                     {selectedItem.excerpt}
                                 </p>
                             ) : null}
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             </div>
