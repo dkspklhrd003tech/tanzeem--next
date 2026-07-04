@@ -271,19 +271,50 @@ export function FeaturedVideos() {
         }
     };
 
+    // Extracts YouTube video ID from any known YouTube URL format
+    const extractYouTubeId = (rawUrl: string): string | null => {
+        if (!rawUrl || !rawUrl.trim()) return null;
+        try {
+            // Normalise: add protocol if missing so URL() can parse it
+            const urlStr = rawUrl.trim().startsWith('http') ? rawUrl.trim() : `https://${rawUrl.trim()}`;
+            const parsed = new URL(urlStr);
+            const host = parsed.hostname.replace(/^(www\.|m\.|music\.)/, '');
+
+            // youtu.be/VIDEO_ID
+            if (host === 'youtu.be') {
+                const id = parsed.pathname.split('/')[1]?.split('?')[0];
+                return id?.length === 11 ? id : null;
+            }
+
+            // youtube.com/shorts/VIDEO_ID
+            if (host === 'youtube.com') {
+                const parts = parsed.pathname.split('/').filter(Boolean);
+                if (parts[0] === 'shorts' && parts[1]?.length === 11) return parts[1];
+                if (parts[0] === 'embed' && parts[1]?.length === 11) return parts[1];
+                if (parts[0] === 'v' && parts[1]?.length === 11) return parts[1];
+                // ?v=VIDEO_ID
+                const v = parsed.searchParams.get('v');
+                return v?.length === 11 ? v : null;
+            }
+        } catch {
+            // URL() threw — fall back to regex below
+        }
+
+        // Last-resort regex for edge cases
+        const m = rawUrl.match(/(?:v=|\/)([\w-]{11})(?:[?&]|$)/);
+        return m ? m[1] : null;
+    };
+
     // Auto-generate generic thumbnail from Youtube if provided link
     const extractYTThumbnail = () => {
-        const url = formData.videoUrl;
-        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-        const match = url.match(regExp);
-        if (match && match[2].length === 11) {
-            const ytid = match[2];
+        const ytid = extractYouTubeId(formData.videoUrl);
+        if (ytid) {
             const mq = `https://img.youtube.com/vi/${ytid}/mqdefault.jpg`;
             setPreviewUrl(mq);
             setFormData(prev => ({ ...prev, thumbnailUrl: mq }));
-            toast({ title: "Thumbnail Generated", description: "Successfully ripped standard YouTube Thumbnail." });
+            toast({ title: "Thumbnail Generated", description: "Successfully fetched YouTube thumbnail." });
         } else {
-            toast({ title: "Invalid Link", description: "Could not parse YouTube ID.", variant: "destructive" });
+            toast({ title: "Invalid Link", description: "Could not extract a YouTube video ID from the provided URL.", variant: "destructive" });
         }
     };
 
