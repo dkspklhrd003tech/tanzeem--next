@@ -94,8 +94,8 @@ export function MissionAndVideos({ videos, settings }: MissionProps) {
                     <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         {videos.length > 0 ? videos.map((vid, i) => {
                             const card = (
-                                <div className="flex flex-col h-full bg-card/40 backdrop-blur-md rounded-[1.5rem] border border-border/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] group-hover:shadow-primary/10 group-hover:border-primary/30 group-hover:-translate-y-3 transition-all duration-700 overflow-hidden relative group/inner border border-primary-light hover:cursor-pointer">
-                                    <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/80 opacity-0 group-hover/inner:opacity-100 transition-opacity duration-700 pointer-events-none z-10" />
+                                <div className="flex flex-col h-full bg-card/40 backdrop-blur-md rounded-[1.5rem] border border-border/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] group-hover:shadow-primary/30 group-hover:border-primary/30 group-hover:-translate-y-3 transition-all duration-700 overflow-hidden relative group/inner border border-primary-light hover:cursor-pointer">
+                                    <div className="absolute inset-0 bg-primary-light opacity-0 transition-opacity duration-700 pointer-events-none z-10" />
 
                                     {/* Image Container — 348x195 aspect ratio */}
                                     <div className="relative w-full overflow-hidden" style={{ aspectRatio: '348 / 195' }}>
@@ -118,17 +118,22 @@ export function MissionAndVideos({ videos, settings }: MissionProps) {
                                         {/* Overlay Gradient */}
                                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" aria-hidden="true" />
 
+                                        {/* Play Button Overlay <div className="absolute inset-0 flex items-center justify-center transform scale-50 opacity-0 group-hover:scale-100 group-hover:opacity-100 transition-all duration-500 ease-out pointer-events-none z-20" aria-hidden="true"> <div className="bg-primary/90 backdrop-blur-md p-4 rounded-full shadow-[0_0_30px_rgba(224,232,237,0.5)] text-white"> <Play className="w-8 h-8 fill-current translate-x-0.5" /> </div> </div> */}
+
                                         {/* Play Button Overlay */}
-                                        <div className="absolute inset-0 flex items-center justify-center transform scale-50 opacity-0 group-hover:scale-100 group-hover:opacity-100 transition-all duration-500 ease-out pointer-events-none z-20" aria-hidden="true">
-                                            <div className="bg-primary/90 backdrop-blur-md p-4 rounded-full shadow-[0_0_30px_rgba(224,232,237,0.5)] text-white">
-                                                <Play className="w-8 h-8 fill-current translate-x-0.5" />
+                                        <div
+                                            className="absolute inset-0 flex items-center justify-center transform scale-50 opacity-0 group-hover:scale-100 group-hover:opacity-100 transition-all duration-500 ease-out pointer-events-none z-20"
+                                            aria-hidden="true"
+                                        >
+                                            <div className="bg-white/95 backdrop-blur-md p-4 rounded-full shadow-[0_0_30px_rgba(13,88,68,0.4)]">
+                                                <Play className="w-8 h-8 fill-current text-primary translate-x-0.5" />
                                             </div>
                                         </div>
                                     </div>
 
                                     {/* Content */}
-                                    <div className="p-6 flex-1 flex flex-col justify-center items-center text-center transition-colors duration-500 relative z-20">
-                                        <h3 className="font-bold text-foreground text-md md:text-lg line-clamp-2 leading-tight group-hover/inner:text-white transition-colors duration-500">
+                                    <div className="p-6 flex-1 flex flex-col justify-center items-center text-center duration-500 relative z-20">
+                                        <h3 className="font-bold text-foreground text-md md:text-lg line-clamp-2 leading-tight duration-500">
                                             {vid.title}
                                         </h3>
                                     </div>

@@ -89,7 +89,7 @@ export function SpotlightCampaigns({ campaigns }: { campaigns: HomeCampaign[] })
                                     )}
 
                                     {/* Link Icon Overlay */}
-                                    <div className="absolute top-4 right-4 bg-black/40 hover backdrop-blur-md p-3 rounded-full transform translate-y-4 opacity-0 group-hover/inner:translate-y-0 group-hover/inner:opacity-100 transition-all duration-500 ease-out z-20" aria-hidden="true">
+                                    <div className="absolute top-4 right-4 bg-primary-light/40 hover backdrop-blur-md p-3 rounded-full transform translate-y-4 opacity-0 group-hover/inner:translate-y-0 group-hover/inner:opacity-100 transition-all duration-500 ease-out z-20" aria-hidden="true">
                                         <ArrowUpRight className="w-5 h-5 text-white" />
                                     </div>
                                 </div>
