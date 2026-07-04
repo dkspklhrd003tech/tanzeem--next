@@ -72,7 +72,7 @@ export default function SpeakerFormPage({ id, type = "audio" }: { id: string, ty
         body: JSON.stringify(formData)
       });
       if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || "Failed to save");
-      toast({ title: "Success", description: "Speaker saved successfully." });
+      toast({ title: "Success", description: "Speaker Saved Successfully." });
       router.back();
     } catch (e: any) {
       toast({ variant: "destructive", title: "Error", description: e.message });
@@ -105,47 +105,47 @@ export default function SpeakerFormPage({ id, type = "audio" }: { id: string, ty
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <Label>Name <span className="text-destructive">*</span></Label>
-            <Input 
-              value={formData.name} 
-              onChange={e => setFormData({ ...formData, name: e.target.value, slug: isNew ? slugify(e.target.value) : formData.slug })} 
+            <Input
+              value={formData.name}
+              onChange={e => setFormData({ ...formData, name: e.target.value, slug: isNew ? slugify(e.target.value) : formData.slug })}
             />
           </div>
           <div className="space-y-2">
             <Label>Slug <span className="text-destructive">*</span></Label>
-            <Input 
-              value={formData.slug} 
-              onChange={e => setFormData({ ...formData, slug: e.target.value })} 
+            <Input
+              value={formData.slug}
+              onChange={e => setFormData({ ...formData, slug: e.target.value })}
             />
           </div>
         </div>
 
         <div className="space-y-2">
           <Label>Urdu Name</Label>
-          <Input 
-            value={formData.bio} 
-            onChange={e => setFormData({ ...formData, bio: e.target.value })} 
-            className="text-right font-bold text-lg" 
-            dir="rtl" 
-            style={{ fontFamily: "'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', serif" }} 
-            placeholder="اردو نام" 
+          <Input
+            value={formData.bio}
+            onChange={e => setFormData({ ...formData, bio: e.target.value })}
+            className="text-right font-bold text-lg"
+            dir="rtl"
+            style={{ fontFamily: "'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', serif" }}
+            placeholder="اردو نام"
           />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <Label>Display Order</Label>
-            <Input 
-              type="number" 
-              value={formData.order} 
-              onChange={e => setFormData({ ...formData, order: parseInt(e.target.value) || 0 })} 
+            <Input
+              type="number"
+              value={formData.order}
+              onChange={e => setFormData({ ...formData, order: parseInt(e.target.value) || 0 })}
             />
           </div>
           <div className="space-y-2">
             <Label>Speaker Photo</Label>
-            <ImageUploader 
-              value={formData.avatar || ""} 
-              onChange={(url) => setFormData(prev => ({ ...prev, avatar: url }))} 
-              aspectRatio={1} 
+            <ImageUploader
+              value={formData.avatar || ""}
+              onChange={(url) => setFormData(prev => ({ ...prev, avatar: url }))}
+              aspectRatio={1}
             />
           </div>
         </div>

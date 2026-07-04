@@ -462,9 +462,9 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
           {!activeCategory ? (
             // CATEGORIES GRID
             isLoading ? (
-              <div className="flex items-center justify-center py-20 text-muted-foreground"><Loader2 className="w-6 h-6 animate-spin text-primary mr-2" /> Loading categories...</div>
+              <div className="flex items-center justify-center py-20 text-muted-foreground"><Loader2 className="w-6 h-6 animate-spin text-primary mr-2" /> Loading Books...</div>
             ) : filteredCategories.length === 0 ? (
-              <div className="bg-card rounded-2xl border p-12 text-center text-muted-foreground">No categories found.</div>
+              <div className="bg-card rounded-2xl border p-12 text-center text-muted-foreground">No Books Found.</div>
             ) : (
               <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleCatDragEnd}>
                 <SortableContext items={filteredCategories.map(c => c.id)} strategy={rectSortingStrategy}>
@@ -630,7 +630,7 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
         onOpenChange={(open) => !open && setDeletingCat(null)}
         title="Delete Category"
         description={`Are you sure you want to delete the category "${deletingCat?.name}"? All books inside will also be removed.`}
-        onConfirm={() => deletingCat && handleCatDelete(deletingCat)}
+        onConfirm={() => { if (deletingCat) handleCatDelete(deletingCat); }}
       />
 
       {/* Delete Book Confirmation */}
@@ -639,7 +639,7 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
         onOpenChange={(open) => !open && setDeletingBook(null)}
         title="Delete Book"
         description={`Are you sure you want to delete "${deletingBook?.title}"?`}
-        onConfirm={() => deletingBook && handleBookDelete(deletingBook)}
+        onConfirm={() => { if (deletingBook) handleBookDelete(deletingBook); }}
       />
     </div>
   );

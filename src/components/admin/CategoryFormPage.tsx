@@ -73,7 +73,7 @@ export default function CategoryFormPage({ id, type = "audio-categories" }: { id
         body: JSON.stringify(formData)
       });
       if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || "Failed to save");
-      toast({ title: "Success", description: "Category saved successfully." });
+      toast({ title: "Success", description: "Category Saved Successfully." });
       router.back();
     } catch (e: any) {
       toast({ variant: "destructive", title: "Error", description: e.message });
@@ -106,52 +106,52 @@ export default function CategoryFormPage({ id, type = "audio-categories" }: { id
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <Label>Name <span className="text-destructive">*</span></Label>
-            <Input 
-              value={formData.name} 
-              onChange={e => setFormData({ ...formData, name: e.target.value, slug: isNew ? slugify(e.target.value) : formData.slug })} 
+            <Input
+              value={formData.name}
+              onChange={e => setFormData({ ...formData, name: e.target.value, slug: isNew ? slugify(e.target.value) : formData.slug })}
             />
           </div>
           <div className="space-y-2">
             <Label>Slug <span className="text-destructive">*</span></Label>
-            <Input 
-              value={formData.slug} 
-              onChange={e => setFormData({ ...formData, slug: e.target.value })} 
+            <Input
+              value={formData.slug}
+              onChange={e => setFormData({ ...formData, slug: e.target.value })}
             />
           </div>
         </div>
 
         <div className="space-y-2">
           <Label>Description</Label>
-          <Textarea 
-            value={formData.description} 
-            onChange={e => setFormData({ ...formData, description: e.target.value })} 
+          <Textarea
+            value={formData.description}
+            onChange={e => setFormData({ ...formData, description: e.target.value })}
           />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="space-y-2">
             <Label>Code / ID (Optional)</Label>
-            <Input 
-              value={formData.code} 
-              onChange={e => setFormData({ ...formData, code: e.target.value })} 
+            <Input
+              value={formData.code}
+              onChange={e => setFormData({ ...formData, code: e.target.value })}
             />
           </div>
           <div className="space-y-2">
             <Label>Display Order</Label>
-            <Input 
-              type="number" 
-              value={formData.order} 
-              onChange={e => setFormData({ ...formData, order: parseInt(e.target.value) || 0 })} 
+            <Input
+              type="number"
+              value={formData.order}
+              onChange={e => setFormData({ ...formData, order: parseInt(e.target.value) || 0 })}
             />
           </div>
         </div>
 
         <div className="space-y-2">
           <Label>Category Image</Label>
-          <ImageUploader 
-            value={formData.imageUrl || ""} 
-            onChange={(url) => setFormData(prev => ({ ...prev, imageUrl: url }))} 
-            aspectRatio={16/9} 
+          <ImageUploader
+            value={formData.imageUrl || ""}
+            onChange={(url) => setFormData(prev => ({ ...prev, imageUrl: url }))}
+            aspectRatio={16 / 9}
           />
         </div>
 

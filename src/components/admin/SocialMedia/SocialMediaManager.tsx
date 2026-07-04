@@ -118,7 +118,7 @@ export function SocialMediaManager() {
 
       if (!res.ok) throw new Error("Failed to save platform");
 
-      toast({ title: "Success", description: "Platform saved successfully." });
+      toast({ title: "Success", description: "Platform Saved Successfully." });
       setPlatformDialogOpen(false);
       fetchData();
     } catch (error: any) {

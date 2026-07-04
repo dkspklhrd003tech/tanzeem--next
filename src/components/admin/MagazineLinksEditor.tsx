@@ -14,9 +14,17 @@ import Link from "next/link";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 
+function slugify(text: string) {
+  return text.toLowerCase().trim()
+    .replace(/[^\w\s-]/g, "")
+    .replace(/[\s_]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 export interface MagazineLink {
   id: string;
   title: string;
+  slug?: string;
   url: string;
   isActive: boolean;
   isNew?: boolean;
@@ -41,7 +49,7 @@ function SortableLinkItem({ link, onEdit, onDelete, onToggleActive, onToggleNew 
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <h4 className="font-semibold text-sm truncate">{link.title}</h4>
+          <h4 className="font-semibold text-sm truncate text-primary">{link.title}</h4>
           {link.isNew && (
             <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500 text-white tracking-wide shrink-0">
               NEW
@@ -55,7 +63,7 @@ function SortableLinkItem({ link, onEdit, onDelete, onToggleActive, onToggleNew 
       </div>
       <div className="flex items-center gap-4 shrink-0">
         <div className="flex items-center gap-2">
-          <Label className="text-xs cursor-pointer text-muted-foreground">New</Label>
+          <Label className="text-xs cursor-pointer text-[#222222]">New Tab</Label>
           <Switch
             checked={!!link.isNew}
             onCheckedChange={(c) => onToggleNew(link.id, c)}
@@ -67,10 +75,10 @@ function SortableLinkItem({ link, onEdit, onDelete, onToggleActive, onToggleNew 
           <Switch checked={link.isActive} onCheckedChange={(c) => onToggleActive(link.id, c)} />
         </div>
         <div className="flex items-center gap-1 bg-muted/50 p-1 rounded-lg">
-          <Button variant="ghost" size="icon" className="h-8 w-8 hover:text-primary hover:bg-primary/10" onClick={() => onEdit(link)}>
+          <Button variant="ghost" size="icon" className="h-8 w-8 text-white bg-primary hover:bg-primary" onClick={() => onEdit(link)}>
             <Edit2 className="h-4 w-4" />
           </Button>
-          <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10" onClick={() => onDelete(link.id)}>
+          <Button variant="ghost" size="icon" className="h-8 w-8 text-white bg-destructive hover:bg-destructive" onClick={() => onDelete(link.id)}>
             <Trash2 className="h-4 w-4" />
           </Button>
         </div>
@@ -87,8 +95,9 @@ export default function MagazineLinksEditor({ pageId, title }: { pageId: string,
 
   const [editingLink, setEditingLink] = useState<MagazineLink | null>(null);
   const [newTitle, setNewTitle] = useState("");
+  const [newSlug, setNewSlug] = useState("");
   const [newUrl, setNewUrl] = useState("");
-  const [linkType, setLinkType] = useState<"url" | "pdf">("url");
+  const [linkType, setLinkType] = useState<"url" | "pdf">("pdf");
 
   const settingsKey = `magazine_links_${pageId}`;
 
@@ -125,7 +134,7 @@ export default function MagazineLinksEditor({ pageId, title }: { pageId: string,
         })
       });
       if (res.ok) {
-        toast({ title: "Saved successfully!" });
+        toast({ title: "Saved Successfully!" });
       } else {
         toast({ variant: "destructive", title: "Failed to save" });
       }
@@ -150,19 +159,20 @@ export default function MagazineLinksEditor({ pageId, title }: { pageId: string,
 
   const handleAddOrUpdate = () => {
     if (!newTitle.trim() || !newUrl.trim()) {
-      toast({ variant: "destructive", title: "Title and URL are required" });
+      toast({ variant: "destructive", title: "Title and URL/PDF are required" });
       return;
     }
-    
+
     let updated: MagazineLink[];
     if (editingLink) {
-      updated = links.map(l => l.id === editingLink.id ? { ...l, title: newTitle, url: newUrl } : l);
+      updated = links.map(l => l.id === editingLink.id ? { ...l, title: newTitle, slug: newSlug || slugify(newTitle), url: newUrl } : l);
       setEditingLink(null);
     } else {
-      updated = [{ id: crypto.randomUUID(), title: newTitle, url: newUrl, isActive: true }, ...links];
+      updated = [{ id: crypto.randomUUID(), title: newTitle, slug: newSlug || slugify(newTitle), url: newUrl, isActive: true }, ...links];
     }
     setLinks(updated);
     setNewTitle("");
+    setNewSlug("");
     setNewUrl("");
     saveToDb(updated);
   };
@@ -170,6 +180,7 @@ export default function MagazineLinksEditor({ pageId, title }: { pageId: string,
   const handleEdit = (link: MagazineLink) => {
     setEditingLink(link);
     setNewTitle(link.title);
+    setNewSlug(link.slug || slugify(link.title));
     setNewUrl(link.url);
     setLinkType(link.url.endsWith(".pdf") ? "pdf" : "url");
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -221,27 +232,33 @@ export default function MagazineLinksEditor({ pageId, title }: { pageId: string,
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="grid md:grid-cols-2 gap-4">
+          <div className="grid md:grid-cols-2 gap-4 mb-4">
             <div>
               <Label className="mb-1.5 block">Title</Label>
-              <Input placeholder="e.g. 06 MESSAQ | June - 2026" value={newTitle} onChange={e => setNewTitle(e.target.value)} />
+              <Input placeholder="e.g. 06 MESSAQ | June - 2026" value={newTitle} onChange={e => { setNewTitle(e.target.value); setNewSlug(slugify(e.target.value)); }} />
             </div>
+            <div>
+              <Label className="mb-1.5 block">Slug</Label>
+              <Input placeholder="e.g. 06-meesaq-june-2026" value={newSlug} onChange={e => setNewSlug(e.target.value)} />
+            </div>
+          </div>
+          <div className="grid md:grid-cols-1 gap-4">
             <div>
               <Label className="mb-1.5 block">Link Source</Label>
               <div className="flex gap-2 p-1 bg-muted rounded-lg w-fit mb-3">
-                <button
-                  type="button"
-                  onClick={() => setLinkType("url")}
-                  className={cn("px-3 py-1.5 text-xs font-medium rounded-md transition-all", linkType === "url" ? "bg-background shadow-sm" : "text-muted-foreground")}
-                >
-                  External URL
-                </button>
                 <button
                   type="button"
                   onClick={() => setLinkType("pdf")}
                   className={cn("px-3 py-1.5 text-xs font-medium rounded-md transition-all", linkType === "pdf" ? "bg-background shadow-sm" : "text-muted-foreground")}
                 >
                   Upload PDF
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setLinkType("url")}
+                  className={cn("px-3 py-1.5 text-xs font-medium rounded-md transition-all", linkType === "url" ? "bg-background shadow-sm" : "text-muted-foreground")}
+                >
+                  External URL
                 </button>
               </div>
 
@@ -254,7 +271,7 @@ export default function MagazineLinksEditor({ pageId, title }: { pageId: string,
           </div>
           <div className="flex gap-2 mt-4">
             <Button onClick={handleAddOrUpdate} disabled={isSaving} className="bg-primary hover:bg-primary/90 text-primary-foreground">
-              {isSaving ? "Saving..." : editingLink ? "Update Link" : "Add Link"}
+              {isSaving ? "Saving..." : editingLink ? "Update Magazine" : "Add Magazine"}
             </Button>
             {editingLink && (
               <Button variant="outline" onClick={() => { setEditingLink(null); setNewTitle(""); setNewUrl(""); }}>
@@ -269,16 +286,16 @@ export default function MagazineLinksEditor({ pageId, title }: { pageId: string,
         <CardHeader className="flex flex-row items-center justify-between pb-4">
           <div>
             <CardTitle className="text-lg">Existing Links</CardTitle>
-            <p className="text-xs text-muted-foreground mt-1">Drag and drop to reorder</p>
+            <p className="text-xs text-muted-foreground mt-1">Drag to Reorder</p>
           </div>
           <div className="text-xs font-semibold bg-primary/10 text-primary px-3 py-1 rounded-full">
-            {links.length} Link(s)
+            {links.length} Magazine(s)
           </div>
         </CardHeader>
         <CardContent>
           {links.length === 0 ? (
             <div className="text-center py-12 border-2 border-dashed border-border rounded-xl">
-              <p className="text-sm text-muted-foreground">No links added yet.</p>
+              <p className="text-sm text-muted-foreground">No Magazines Added.</p>
             </div>
           ) : (
             <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>

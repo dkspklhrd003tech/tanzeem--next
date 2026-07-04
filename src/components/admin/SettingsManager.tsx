@@ -157,7 +157,7 @@ export function SettingsManager() {
     };
 
     if (isLoading) {
-        return <div className="p-8 text-center text-muted-foreground animate-pulse">Loading Configuration Engine...</div>;
+        return <div className="p-8 text-center text-muted-foreground animate-pulse">Loading Settings...</div>;
     }
 
     return (

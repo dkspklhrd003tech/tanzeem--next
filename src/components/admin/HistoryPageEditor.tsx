@@ -110,7 +110,7 @@ export default function HistoryPageEditor({ pageId, initialPageData }: { pageId:
       });
 
       if (res.ok) {
-        toast({ title: "Page content saved successfully." });
+        toast({ title: "Page content Saved Successfully." });
       } else {
         const errorData = await res.json().catch(() => null);
         const errMsg = errorData?.error || JSON.stringify(errorData?.errors) || res.statusText;

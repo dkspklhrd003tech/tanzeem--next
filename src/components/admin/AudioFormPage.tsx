@@ -25,7 +25,7 @@ export default function AudioFormPage({ id, speakerIdParam = "", categoryIdParam
   const [isLoading, setIsLoading] = useState(!isNew);
   const [isSaving, setIsSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  
+
   const [speakers, setSpeakers] = useState<any[]>([]);
 
   const [formData, setFormData] = useState({
@@ -98,7 +98,7 @@ export default function AudioFormPage({ id, speakerIdParam = "", categoryIdParam
             const data = JSON.parse(text);
             errMessage = data.error || errMessage;
           }
-        } catch(e) { }
+        } catch (e) { }
         throw new Error(errMessage);
       }
       const data = await res.json();
@@ -120,7 +120,7 @@ export default function AudioFormPage({ id, speakerIdParam = "", categoryIdParam
     try {
       // Map isNewAudio to isNew for API compat
       const payload = { ...formData, isNew: formData.isNewAudio };
-      
+
       const url = isNew ? "/api/admin/audio" : `/api/admin/audio/${id}`;
       const method = isNew ? "POST" : "PUT";
       const res = await fetch(url, {
@@ -129,7 +129,7 @@ export default function AudioFormPage({ id, speakerIdParam = "", categoryIdParam
         body: JSON.stringify(payload)
       });
       if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || "Failed to save");
-      toast({ title: "Success", description: "Audio saved successfully." });
+      toast({ title: "Success", description: "Audio Saved Successfully." });
       router.back();
     } catch (e: any) {
       toast({ variant: "destructive", title: "Error", description: e.message });
@@ -162,16 +162,16 @@ export default function AudioFormPage({ id, speakerIdParam = "", categoryIdParam
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <Label>Title <span className="text-destructive">*</span></Label>
-            <Input 
-              value={formData.title} 
-              onChange={e => setFormData({ ...formData, title: e.target.value, slug: isNew ? slugify(e.target.value) : formData.slug })} 
+            <Input
+              value={formData.title}
+              onChange={e => setFormData({ ...formData, title: e.target.value, slug: isNew ? slugify(e.target.value) : formData.slug })}
             />
           </div>
           <div className="space-y-2">
             <Label>Slug <span className="text-destructive">*</span></Label>
-            <Input 
-              value={formData.slug} 
-              onChange={e => setFormData({ ...formData, slug: e.target.value })} 
+            <Input
+              value={formData.slug}
+              onChange={e => setFormData({ ...formData, slug: e.target.value })}
             />
           </div>
         </div>
@@ -196,22 +196,22 @@ export default function AudioFormPage({ id, speakerIdParam = "", categoryIdParam
         <div className="space-y-2">
           <Label>Audio File or URL (MP3)</Label>
           <div className="flex gap-2">
-            <Input 
-              value={formData.audioUrl} 
-              onChange={e => setFormData({ ...formData, audioUrl: e.target.value })} 
-              placeholder="https://... or upload" 
+            <Input
+              value={formData.audioUrl}
+              onChange={e => setFormData({ ...formData, audioUrl: e.target.value })}
+              placeholder="https://... or upload"
             />
             <div className="relative">
               <Button type="button" variant="secondary" className="whitespace-nowrap" disabled={isUploading}>
                 {isUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <UploadCloud className="w-4 h-4 mr-2" />}
                 Upload MP3
               </Button>
-              <input 
-                type="file" 
-                accept="audio/mp3,audio/mpeg" 
-                className="absolute inset-0 opacity-0 cursor-pointer" 
-                onChange={handleFileUpload} 
-                disabled={isUploading} 
+              <input
+                type="file"
+                accept="audio/mp3,audio/mpeg"
+                className="absolute inset-0 opacity-0 cursor-pointer"
+                onChange={handleFileUpload}
+                disabled={isUploading}
               />
             </div>
           </div>
@@ -219,22 +219,22 @@ export default function AudioFormPage({ id, speakerIdParam = "", categoryIdParam
 
         <div className="flex items-center space-x-6 pt-2">
           <div className="flex items-center space-x-2">
-            <input 
-              type="checkbox" 
-              id="isNewAudio" 
-              checked={formData.isNewAudio} 
-              onChange={e => setFormData({ ...formData, isNewAudio: e.target.checked })} 
-              className="rounded border-gray-300 w-4 h-4 text-primary" 
+            <input
+              type="checkbox"
+              id="isNewAudio"
+              checked={formData.isNewAudio}
+              onChange={e => setFormData({ ...formData, isNewAudio: e.target.checked })}
+              className="rounded border-gray-300 w-4 h-4 text-primary"
             />
             <Label htmlFor="isNewAudio" className="cursor-pointer">Mark as "New"</Label>
           </div>
           <div className="flex items-center space-x-2">
-            <input 
-              type="checkbox" 
-              id="isPublished" 
-              checked={formData.isPublished} 
-              onChange={e => setFormData({ ...formData, isPublished: e.target.checked })} 
-              className="rounded border-gray-300 w-4 h-4 text-primary" 
+            <input
+              type="checkbox"
+              id="isPublished"
+              checked={formData.isPublished}
+              onChange={e => setFormData({ ...formData, isPublished: e.target.checked })}
+              className="rounded border-gray-300 w-4 h-4 text-primary"
             />
             <Label htmlFor="isPublished" className="cursor-pointer">Published</Label>
           </div>

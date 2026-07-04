@@ -13,7 +13,7 @@ interface PageProps {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     const { slug } = await params;
-    
+
     // We fetch the 4 known magazine setting keys
     const settingKeys = [
         "magazine_links_31c629e7-cad9-41e8-8c3f-ca442337925c", // meesaq
@@ -23,18 +23,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     ];
 
     const result = await db.select().from(settings).where(inArray(settings.key, settingKeys));
-    
+
     let targetLink: any = null;
     for (const row of result) {
         if (row.value) {
             try {
                 const links = JSON.parse(row.value);
-                const match = links.find((l: any) => l.id === slug && l.isActive);
+                const match = links.find((l: any) => (l.slug === slug || l.id === slug) && l.isActive);
                 if (match) {
                     targetLink = match;
                     break;
                 }
-            } catch {}
+            } catch { }
         }
     }
 
@@ -59,18 +59,18 @@ export default async function MagazineDetailsPage({ params }: PageProps) {
     ];
 
     const result = await db.select().from(settings).where(inArray(settings.key, settingKeys));
-    
+
     let targetLink: any = null;
     for (const row of result) {
         if (row.value) {
             try {
                 const links = JSON.parse(row.value);
-                const match = links.find((l: any) => l.id === slug && l.isActive);
+                const match = links.find((l: any) => (l.slug === slug || l.id === slug) && l.isActive);
                 if (match) {
                     targetLink = match;
                     break;
                 }
-            } catch {}
+            } catch { }
         }
     }
 
@@ -83,13 +83,6 @@ export default async function MagazineDetailsPage({ params }: PageProps) {
             {/* Header / Actions Bar */}
             <div className="border-b bg-background sticky top-[72px] z-40 shadow-sm">
                 <div className="container mx-auto px-4 py-4 flex flex-wrap items-center justify-between gap-4">
-                    <Button variant="ghost" size="sm" asChild className="text-muted-foreground hover:text-foreground">
-                        {/* We could use history.back() but linking to /magazines is safer */}
-                        <Link href="/magazines">
-                            <ArrowLeft className="w-4 h-4 mr-2" />
-                            Back to Magazines
-                        </Link>
-                    </Button>
                     <div className="flex items-center gap-2">
                         {targetLink.url.endsWith(".pdf") && (
                             <Button asChild variant="outline" size="sm" className="h-8">

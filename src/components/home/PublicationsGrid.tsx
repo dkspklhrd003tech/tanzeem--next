@@ -130,7 +130,7 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
 
                                 <div className="text-center z-10 w-full">
                                     <Link
-                                        href={`/magazines/${mag.id}`}
+                                        href={`/magazines/${mag.slug}`}
                                         className={cn(
                                             "group inline-flex items-center gap-3 border border-primary/50 text-[#222222] hover:text-white backdrop-blur-md",
                                             "px-4 md:px-8 py-3.5 rounded-full text-sm font-bold tracking-wide uppercase shadow-lg",
@@ -205,7 +205,7 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
 
                                 <div className="text-center z-10 w-full">
                                     <Link
-                                        href={`/books/${book.id}`}
+                                        href={`/books/${book.slug}`}
                                         className={cn(
                                             "group inline-flex items-center gap-3 border border-primary/50  text-[#222222] hover:text-white ackdrop-blur-md",
                                             "px-4 md:px-8 py-3.5 rounded-full text-sm font-bold tracking-wide uppercase shadow-lg",

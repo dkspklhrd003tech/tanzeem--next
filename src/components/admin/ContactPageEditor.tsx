@@ -144,7 +144,7 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
         } else {
           setLocations([...locations, saved]);
         }
-        toast({ title: "Location saved successfully" });
+        toast({ title: "Location Saved Successfully" });
         setIsLocationDialogOpen(false);
       } else {
         toast({ variant: "destructive", title: "Failed to save location" });

@@ -221,7 +221,7 @@ export function HomeSlidersManagement() {
                     }
                 })
             });
-            toast({ title: "Success", description: "Fixed banner saved successfully." });
+            toast({ title: "Success", description: "Fixed banner Saved Successfully." });
         } catch (e) {
             toast({ variant: "destructive", title: "Error", description: "Failed to save fixed banner." });
         } finally {

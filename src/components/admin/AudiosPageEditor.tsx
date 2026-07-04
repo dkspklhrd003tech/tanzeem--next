@@ -318,9 +318,9 @@ export default function AudiosPageEditor({ pageId, initialPageData }: { pageId: 
         <TabsContent value="list" className="space-y-6">
           {!activeCategory ? (
             isLoading ? (
-              <div className="flex items-center justify-center py-20 text-muted-foreground"><Loader2 className="w-6 h-6 animate-spin text-primary mr-2" /> Loading categories...</div>
+              <div className="flex items-center justify-center py-20 text-muted-foreground"><Loader2 className="w-6 h-6 animate-spin text-primary mr-2" /> Loading Audios...</div>
             ) : filteredCategories.length === 0 ? (
-              <div className="bg-card rounded-2xl border p-12 text-center text-muted-foreground">No categories found.</div>
+              <div className="bg-card rounded-2xl border p-12 text-center text-muted-foreground">No Audios Found.</div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {filteredCategories.map(cat => (
@@ -376,19 +376,19 @@ export default function AudiosPageEditor({ pageId, initialPageData }: { pageId: 
         description={`Are you sure you want to delete the category "${deletingCat?.name}"?`}
         onConfirm={async () => { if (deletingCat) { await fetch(`/api/admin/audio-categories/${deletingCat.id}`, { method: 'DELETE' }); fetchData(); setDeletingCat(null); } }}
       />
-        <ConfirmDialog
-          open={!!deletingSpeaker}
-          onOpenChange={(open) => !open && setDeletingSpeaker(null)}
-          title="Delete Speaker"
-          description={`Are you sure you want to delete "${deletingSpeaker?.name}"?`}
-          onConfirm={async () => { if (deletingSpeaker) { await fetch(`/api/admin/speakers/${deletingSpeaker.id}`, { method: 'DELETE' }); fetchData(); setDeletingSpeaker(null); } }}
-        />
+      <ConfirmDialog
+        open={!!deletingSpeaker}
+        onOpenChange={(open) => !open && setDeletingSpeaker(null)}
+        title="Delete Speaker"
+        description={`Are you sure you want to delete "${deletingSpeaker?.name}"?`}
+        onConfirm={async () => { if (deletingSpeaker) { await fetch(`/api/admin/speakers/${deletingSpeaker.id}`, { method: 'DELETE' }); fetchData(); setDeletingSpeaker(null); } }}
+      />
       <ConfirmDialog
         open={!!deletingVideo}
         onOpenChange={(open) => !open && setDeletingVideo(null)}
         title="Delete Video"
         description={`Are you sure you want to delete "${deletingVideo?.title}"?`}
-        onConfirm={() => deletingVideo && handleVideoDelete(deletingVideo)}
+        onConfirm={() => { if (deletingVideo) handleVideoDelete(deletingVideo); }}
       />
     </div>
   );

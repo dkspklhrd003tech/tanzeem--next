@@ -135,7 +135,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
 
       try {
         await Promise.all(
-          updatedCategories.map(cat => 
+          updatedCategories.map(cat =>
             fetch(`/api/${mediaType}-categories/${cat.id}`, {
               method: "PUT",
               headers: { "Content-Type": "application/json" },
@@ -376,7 +376,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
       toast.error("Please enter a Title for this media file.");
       return;
     }
-    
+
     setIsSavingItem(true);
     try {
       const isNew = item.id === "new";
@@ -502,7 +502,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
         </div>
       ) : categories.length === 0 ? (
         <div className="p-12 border-2 border-dashed rounded-xl text-center text-muted-foreground">
-          No categories found. Click "Add Main Tab" to get started.
+          No Media found. Click "Add Main Tab" to get started.
         </div>
       ) : !activeTab ? (
         <div className="space-y-6 animate-in fade-in">
@@ -849,7 +849,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                   </div>
                 </div>
               )}
-              
+
               {!editingSubCat.cat.id.endsWith("_direct") && (
                 <>
                   <CustomFieldRenderer
@@ -1024,7 +1024,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                           <p className="text-[10px] text-muted-foreground">If an embedded URL is provided, it will be used by the player instead of the Video File URL.</p>
                         </div>
                       )}
-                      
+
                       <CustomFieldRenderer
                         entityType={mediaType}
                         values={editingMedia.item.customFields || {}}

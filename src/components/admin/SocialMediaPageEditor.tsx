@@ -450,7 +450,7 @@ export default function SocialMediaPageEditor({ pageId, initialPageData }: Socia
       setLastSavedPage(new Date());
       toast({
         title: "Success",
-        description: "Page settings saved successfully.",
+        description: "Page settings Saved Successfully.",
       });
     } catch (error) {
       console.error(error);
@@ -949,7 +949,7 @@ export default function SocialMediaPageEditor({ pageId, initialPageData }: Socia
                   {isLoadingAccounts ? (
                     <div className="flex items-center justify-center py-20 text-muted-foreground gap-2">
                       <Loader2 className="w-6 h-6 animate-spin text-primary" />
-                      <span>Loading cards...</span>
+                      <span>Loading Social Media...</span>
                     </div>
                   ) : activeAccounts.length === 0 ? (
                     <div className="border border-dashed border-border rounded-2xl p-12 text-center text-muted-foreground">
@@ -1435,7 +1435,7 @@ export default function SocialMediaPageEditor({ pageId, initialPageData }: Socia
       <ConfirmDialog
         open={!!deletingPlatformItem}
         onOpenChange={(open) => !open && setDeletingPlatformItem(null)}
-        onConfirm={() => deletingPlatformItem && handleDeletePlatform(deletingPlatformItem.id)}
+        onConfirm={() => { if (deletingPlatformItem) handleDeletePlatform(deletingPlatformItem.id); }}
         title="Delete Platform Tab?"
         description={`This will permanently delete the "${deletingPlatformItem?.name}" platform tab and remove all associated cards. This action is irreversible.`}
       />
@@ -1443,7 +1443,7 @@ export default function SocialMediaPageEditor({ pageId, initialPageData }: Socia
       <ConfirmDialog
         open={!!deletingAccountItem}
         onOpenChange={(open) => !open && setDeletingAccountItem(null)}
-        onConfirm={() => deletingAccountItem && handleDeleteAccount(deletingAccountItem.id)}
+        onConfirm={() => { if (deletingAccountItem) handleDeleteAccount(deletingAccountItem.id); }}
         title="Delete Social Card?"
         description={`Are you sure you want to delete the card for "${deletingAccountItem?.title}"?`}
       />

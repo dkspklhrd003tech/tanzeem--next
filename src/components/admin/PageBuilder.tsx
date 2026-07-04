@@ -38,7 +38,7 @@ export function PageBuilder({ pageId }: { pageId: string }) {
     // In a real implementation, this would POST to /api/admin/pages/[pageId]/sections
     setTimeout(() => {
       setLoading(false);
-      alert('Sections saved successfully!');
+      alert('Sections Saved Successfully!');
     }, 1000);
   };
 
