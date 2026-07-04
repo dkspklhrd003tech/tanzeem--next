@@ -1,24 +1,36 @@
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
-import { videos, activityLogs } from "@/db/schema";
+import { videos, videoCategories, speakers, activityLogs } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth";
-import { eq } from "drizzle-orm";
+import { eq, leftJoin } from "drizzle-orm";
 
+// GET - Single video by ID (uses explicit joins to avoid Drizzle mode:"default" lateral alias bug)
 export async function GET(
     request: NextRequest,
     { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-        const resolvedParams = await params;
-        const video = await db.query.videos.findFirst({
-            where: eq(videos.id, resolvedParams.id),
-            with: { category: true, speaker: true, author: { columns: { id: true, name: true } } },
-        });
+        const { id } = await params;
 
-        if (!video) {
+        const rows = await db
+            .select()
+            .from(videos)
+            .leftJoin(videoCategories, eq(videos.categoryId, videoCategories.id))
+            .leftJoin(speakers, eq(videos.speakerId, speakers.id))
+            .where(eq(videos.id, id))
+            .limit(1);
+
+        if (rows.length === 0) {
             return NextResponse.json({ error: "Video not found" }, { status: 404 });
         }
+
+        const row = rows[0];
+        const video = {
+            ...row.videos,
+            category: row.videoCategories ?? null,
+            speaker: row.speakers ?? null,
+        };
 
         return NextResponse.json({ video });
     } catch (error) {
@@ -27,6 +39,7 @@ export async function GET(
     }
 }
 
+// PUT - Update video
 export async function PUT(
     request: NextRequest,
     { params }: { params: Promise<{ id: string }> }
@@ -38,42 +51,46 @@ export async function PUT(
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const resolvedParams = await params;
+        const { id } = await params;
         const data = await request.json();
 
-        const existing = await db.query.videos.findFirst({
-            where: eq(videos.id, resolvedParams.id),
-        });
+        const existing = await db
+            .select()
+            .from(videos)
+            .where(eq(videos.id, id))
+            .limit(1);
 
-        if (!existing) {
+        if (existing.length === 0) {
             revalidatePath("/", "layout");
             return NextResponse.json({ error: "Video not found" }, { status: 404 });
         }
 
+        const current = existing[0];
+
         await db.update(videos).set({
-            title: data.title ?? existing.title,
-            slug: data.slug ?? existing.slug,
-            description: data.description ?? existing.description,
-            videoUrl: data.videoUrl ?? existing.videoUrl,
-            embedUrl: data.embedUrl ?? existing.embedUrl,
-            thumbnailUrl: data.thumbnailUrl ?? existing.thumbnailUrl,
-            duration: data.duration ?? existing.duration,
-            categoryId: data.categoryId ?? existing.categoryId,
-            speakerId: data.speakerId ?? existing.speakerId,
-            isPublished: data.isPublished ?? existing.isPublished,
-            isFeatured: data.isFeatured ?? existing.isFeatured,
-            metaTitle: data.metaTitle ?? existing.metaTitle,
-            metaDescription: data.metaDescription ?? existing.metaDescription,
+            title: data.title ?? current.title,
+            slug: data.slug ?? current.slug,
+            description: data.description ?? current.description,
+            videoUrl: data.videoUrl ?? current.videoUrl,
+            embedUrl: data.embedUrl ?? current.embedUrl,
+            thumbnailUrl: data.thumbnailUrl ?? current.thumbnailUrl,
+            duration: data.duration ?? current.duration,
+            categoryId: data.categoryId ?? current.categoryId,
+            speakerId: data.speakerId ?? current.speakerId,
+            isPublished: data.isPublished ?? current.isPublished,
+            isFeatured: data.isFeatured ?? current.isFeatured,
+            metaTitle: data.metaTitle ?? current.metaTitle,
+            metaDescription: data.metaDescription ?? current.metaDescription,
             updatedAt: new Date(),
-        }).where(eq(videos.id, resolvedParams.id));
+        }).where(eq(videos.id, id));
 
         await db.insert(activityLogs).values({
             id: crypto.randomUUID(),
             userId: user.id,
             action: "update",
             entityType: "video",
-            entityId: resolvedParams.id,
-            details: JSON.stringify({ title: data.title || existing.title }),
+            entityId: id,
+            details: JSON.stringify({ title: data.title || current.title }),
         });
 
         revalidatePath("/", "layout");
@@ -85,6 +102,7 @@ export async function PUT(
     }
 }
 
+// DELETE - Remove video
 export async function DELETE(
     request: NextRequest,
     { params }: { params: Promise<{ id: string }> }
@@ -96,25 +114,30 @@ export async function DELETE(
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
         }
 
-        const resolvedParams = await params;
-        const existing = await db.query.videos.findFirst({
-            where: eq(videos.id, resolvedParams.id),
-        });
+        const { id } = await params;
 
-        if (!existing) {
+        const existing = await db
+            .select()
+            .from(videos)
+            .where(eq(videos.id, id))
+            .limit(1);
+
+        if (existing.length === 0) {
             revalidatePath("/", "layout");
             return NextResponse.json({ error: "Video not found" }, { status: 404 });
         }
 
-        await db.delete(videos).where(eq(videos.id, resolvedParams.id));
+        const current = existing[0];
+
+        await db.delete(videos).where(eq(videos.id, id));
 
         await db.insert(activityLogs).values({
             id: crypto.randomUUID(),
             userId: user.id,
             action: "delete",
             entityType: "video",
-            entityId: resolvedParams.id,
-            details: JSON.stringify({ title: existing.title }),
+            entityId: id,
+            details: JSON.stringify({ title: current.title }),
         });
 
         revalidatePath("/", "layout");

@@ -1,9 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
-import { videos, activityLogs } from "@/db/schema";
+import { videos, videoCategories, speakers, activityLogs } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth";
-import { eq, or, like, desc, count, and } from "drizzle-orm";
+import { eq, or, like, desc, count, and, asc, leftJoin } from "drizzle-orm";
+
+// ─── shared helper ────────────────────────────────────────────────────────────
+// Builds a plain object from a joined row, matching the shape the frontend expects.
+function mapVideoRow(row: {
+  videos: typeof videos.$inferSelect;
+  videoCategories: typeof videoCategories.$inferSelect | null;
+  speakers: typeof speakers.$inferSelect | null;
+}) {
+  return {
+    ...row.videos,
+    category: row.videoCategories ?? null,
+    speaker: row.speakers ?? null,
+  };
+}
 
 // GET - List all videos
 export async function GET(request: NextRequest) {
@@ -35,22 +49,25 @@ export async function GET(request: NextRequest) {
 
     const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
 
+    // Use explicit left joins instead of db.query relational `with` to avoid
+    // Drizzle mode:"default" lateral-join alias bug (videos_category / videos_speaker).
     const [videosData, totalResult] = await Promise.all([
-      db.query.videos.findMany({
-        where: whereClause,
-        with: {
-          category: true,
-          speaker: true,
-          author: { columns: { id: true, name: true } },
-        },
-        orderBy: [videos.order, desc(videos.createdAt)],
-        limit,
-        offset,
-      }),
+      db
+        .select()
+        .from(videos)
+        .leftJoin(videoCategories, eq(videos.categoryId, videoCategories.id))
+        .leftJoin(speakers, eq(videos.speakerId, speakers.id))
+        .where(whereClause)
+        .orderBy(asc(videos.order), desc(videos.createdAt))
+        .limit(limit)
+        .offset(offset),
       db.select({ count: count() }).from(videos).where(whereClause),
     ]);
 
-    return NextResponse.json({ videos: videosData, total: totalResult[0].count });
+    return NextResponse.json({
+      videos: videosData.map(mapVideoRow),
+      total: totalResult[0].count,
+    });
   } catch (error) {
     console.error("Get videos error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
@@ -69,15 +86,20 @@ export async function POST(request: NextRequest) {
     if (!data.title || !data.slug) {
       return NextResponse.json({ error: "Title and slug are required" }, { status: 400 });
     }
+    if (!data.videoUrl) {
+      return NextResponse.json({ error: "Video URL is required" }, { status: 400 });
+    }
 
     const videoId = crypto.randomUUID();
 
     let finalSlug = data.slug;
-    const existingSlug = await db.query.videos.findFirst({
-      where: eq(videos.slug, finalSlug),
-    });
-    
-    if (existingSlug) {
+    const existingSlug = await db
+      .select({ id: videos.id })
+      .from(videos)
+      .where(eq(videos.slug, finalSlug))
+      .limit(1);
+
+    if (existingSlug.length > 0) {
       finalSlug = `${finalSlug}-${crypto.randomUUID().split("-")[0]}`;
     }
 
@@ -103,10 +125,16 @@ export async function POST(request: NextRequest) {
       publishedAt: data.isPublished ? new Date() : null,
     });
 
-    const newVideo = await db.query.videos.findFirst({
-      where: eq(videos.id, videoId),
-      with: { category: true, speaker: true },
-    });
+    // Re-fetch with explicit joins — avoids the lateral-join alias bug
+    const rows = await db
+      .select()
+      .from(videos)
+      .leftJoin(videoCategories, eq(videos.categoryId, videoCategories.id))
+      .leftJoin(speakers, eq(videos.speakerId, speakers.id))
+      .where(eq(videos.id, videoId))
+      .limit(1);
+
+    const newVideo = rows.length > 0 ? mapVideoRow(rows[0]) : null;
 
     await db.insert(activityLogs).values({
       id: crypto.randomUUID(),
@@ -125,35 +153,36 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: error?.message || "Internal server error" }, { status: 500 });
   }
 }
+
+// PATCH - Reorder videos
 export async function PATCH(request: NextRequest) {
-    try {
-        const user = await getCurrentUser(request);
-        if (!user) {
-            revalidatePath("/", "layout");
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-        }
-
-        const body = await request.json();
-        const { orders } = body; // Expected: [{ id: string, order: number }, ...]
-
-        if (!orders || !Array.isArray(orders)) {
-            revalidatePath("/", "layout");
-            return NextResponse.json({ error: "Invalid orders data" }, { status: 400 });
-        }
-
-        // Multiple updates in a transaction
-        await db.transaction(async (tx) => {
-            for (const item of orders) {
-                await tx.update(videos).set({ order: item.order }).where(eq(videos.id, item.id));
-            }
-        });
-
-        revalidatePath("/", "layout");
-        return NextResponse.json({ success: true, message: "Videos reordered successfully" });
-    } catch (error) {
-        console.error("Patch videos error:", error);
-        revalidatePath("/", "layout");
-        return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  try {
+    const user = await getCurrentUser(request);
+    if (!user) {
+      revalidatePath("/", "layout");
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-}
 
+    const body = await request.json();
+    const { orders } = body; // Expected: [{ id: string, order: number }, ...]
+
+    if (!orders || !Array.isArray(orders)) {
+      revalidatePath("/", "layout");
+      return NextResponse.json({ error: "Invalid orders data" }, { status: 400 });
+    }
+
+    // Multiple updates in a transaction
+    await db.transaction(async (tx) => {
+      for (const item of orders) {
+        await tx.update(videos).set({ order: item.order }).where(eq(videos.id, item.id));
+      }
+    });
+
+    revalidatePath("/", "layout");
+    return NextResponse.json({ success: true, message: "Videos reordered successfully" });
+  } catch (error) {
+    console.error("Patch videos error:", error);
+    revalidatePath("/", "layout");
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  }
+}
