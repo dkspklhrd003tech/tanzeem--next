@@ -22,6 +22,13 @@
       "when": 1783055742161,
       "tag": "0002_talented_glorian",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1783147233108,
+      "tag": "0003_daily_the_order",
+      "breakpoints": true
     }
   ]
 }

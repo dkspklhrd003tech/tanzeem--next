@@ -128,15 +128,17 @@ export async function POST(request: NextRequest) {
 export async function PATCH(request: NextRequest) {
     try {
         const user = await getCurrentUser(request);
-        if (!user) revalidatePath("/", "layout");
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        if (!user) {
+            revalidatePath("/", "layout");
+            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+        }
 
         const body = await request.json();
         const { orders } = body; // Expected: [{ id: string, order: number }, ...]
 
         if (!orders || !Array.isArray(orders)) {
             revalidatePath("/", "layout");
-    return NextResponse.json({ error: "Invalid orders data" }, { status: 400 });
+            return NextResponse.json({ error: "Invalid orders data" }, { status: 400 });
         }
 
         // Multiple updates in a transaction
@@ -147,11 +149,11 @@ export async function PATCH(request: NextRequest) {
         });
 
         revalidatePath("/", "layout");
-    return NextResponse.json({ success: true, message: "Videos reordered successfully" });
+        return NextResponse.json({ success: true, message: "Videos reordered successfully" });
     } catch (error) {
         console.error("Patch videos error:", error);
         revalidatePath("/", "layout");
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+        return NextResponse.json({ error: "Internal server error" }, { status: 500 });
     }
 }
 
