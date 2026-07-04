@@ -11,23 +11,7 @@ export function Hero({ slidesData = [] }: { slidesData?: any[] }) {
   const [isPaused, setIsPaused] = useState(false);
   const regionRef = useRef<HTMLElement>(null);
 
-  // Fallbacks in case database is empty or still initializing
-  const fallbackSlides = [
-    {
-      id: "fallback-1",
-      imageUrl: "/media/slide1.jpg",
-      title: "Ramadan Special",
-      linkUrl: "/events/ramadan"
-    },
-    {
-      id: "fallback-2",
-      imageUrl: "/media/slide2.jpg",
-      title: "Tanzeem e Islami",
-      linkUrl: "/organization/introduction"
-    }
-  ];
-
-  const displaySlides = slidesData.length > 0 ? slidesData : fallbackSlides;
+  const displaySlides = slidesData;
 
   const nextSlide = useCallback(() => {
     setCurrent((prev) => (prev + 1) % displaySlides.length);

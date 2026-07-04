@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         if (row.value) {
             try {
                 const links = JSON.parse(row.value);
-                const match = links.find((l: any) => (l.slug === slug || l.id === slug) && l.isActive);
+                const match = links.find((l: any) => l.slug === slug && l.isActive);
                 if (match) {
                     targetLink = match;
                     break;
@@ -65,7 +65,7 @@ export default async function MagazineDetailsPage({ params }: PageProps) {
         if (row.value) {
             try {
                 const links = JSON.parse(row.value);
-                const match = links.find((l: any) => (l.slug === slug || l.id === slug) && l.isActive);
+                const match = links.find((l: any) => l.slug === slug && l.isActive);
                 if (match) {
                     targetLink = match;
                     break;

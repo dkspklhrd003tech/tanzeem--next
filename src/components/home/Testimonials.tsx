@@ -11,23 +11,8 @@ export function Testimonials({
   booksData?: any[],
   magazinesData?: any[]
 }) {
-  // Fallbacks if db is empty so it still looks good
-  const fallbackMagazines = [
-    { title: "Hikmat-e-Quran", subtitle: "Monthly", coverUrl: "/media/mag-hikmat.jpg", href: "/resources/magazines" },
-    { title: "Meesaq", subtitle: "Quarterly", coverUrl: "/media/mag-meesaq.jpg", href: "/resources/magazines" },
-    { title: "Nida-e-Khilafat", subtitle: "Monthly", coverUrl: "/media/mag-nida.jpg", href: "/resources/magazines" },
-    { title: "Shabab Magazine", subtitle: "Youth", coverUrl: "/media/mag-shabab.jpg", href: "/resources/magazines" },
-  ];
-
-  const fallbackBooks = [
-    { title: "Bayan-ul-Quran", author: "Dr. Israr Ahmed", coverUrl: "/media/book-bayan.jpg", category: "Quran Studies" },
-    { title: "Minhaj-ul-Inqilab", author: "Dr. Israr Ahmed", coverUrl: "/media/book-minhaj.jpg", category: "Deen-e-Islam" },
-    { title: "Musalmano Par Quran Ke Haqooq", author: "Dr. Israr Ahmed", coverUrl: "/media/book-haqooq.jpg", category: "Sunnat o Seerat" },
-    { title: "Asaan Arbi Grammar", author: "Lutf-ur-Rehman", coverUrl: "/media/book-arbi.jpg", category: "Arbi Grammar" },
-  ];
-
-  const displayMagazines = magazinesData.length >= 4 ? magazinesData.slice(0, 4) : fallbackMagazines;
-  const displayBooks = booksData.length >= 4 ? booksData.slice(0, 4) : fallbackBooks;
+  const displayMagazines = magazinesData;
+  const displayBooks = booksData;
 
   return (
     <>

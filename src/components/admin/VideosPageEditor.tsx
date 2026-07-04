@@ -583,21 +583,21 @@ export default function VideosPageEditor({ pageId, initialPageData }: { pageId: 
         onOpenChange={(open) => !open && setDeletingCat(null)}
         title="Delete Category"
         description={`Are you sure you want to delete the category "${deletingCat?.name}"?`}
-        onConfirm={() => deletingCat && handleCatDelete(deletingCat)}
+        onConfirm={() => { if (deletingCat) handleCatDelete(deletingCat); }}
       />
       <ConfirmDialog
         open={!!deletingSpeaker}
         onOpenChange={(open) => !open && setDeletingSpeaker(null)}
         title="Delete Speaker"
         description={`Are you sure you want to delete "${deletingSpeaker?.name}"?`}
-        onConfirm={() => deletingSpeaker && handleSpeakerDelete(deletingSpeaker)}
+        onConfirm={() => { if (deletingSpeaker) handleSpeakerDelete(deletingSpeaker); }}
       />
       <ConfirmDialog
         open={!!deletingVideo}
         onOpenChange={(open) => !open && setDeletingVideo(null)}
         title="Delete Video"
         description={`Are you sure you want to delete "${deletingVideo?.title}"?`}
-        onConfirm={() => deletingVideo && handleVideoDelete(deletingVideo)}
+        onConfirm={() => { if (deletingVideo) handleVideoDelete(deletingVideo); }}
       />
     </div>
   );
