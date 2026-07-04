@@ -144,11 +144,7 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
                                 </div>
 
                             </div>
-                        )) : (
-                            Array(4).fill(0).map((_, i) => (
-                                <div key={i} className="w-[240px] h-[332px] mx-auto bg-muted/30 animate-pulse rounded-2xl border border-border" aria-hidden="true" />
-                            ))
-                        )}
+                        )) : null}
                     </div>
                 </div>
             </section>
@@ -218,11 +214,7 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
                                     </Link>
                                 </div>
                             </div>
-                        )) : (
-                            Array(4).fill(0).map((_, i) => (
-                                <div key={i} className="w-[240px] h-[332px] mx-auto bg-muted/30 animate-pulse rounded-2xl border border-border" aria-hidden="true" />
-                            ))
-                        )}
+                        )) : null}
                     </div>
                 </div>
             </section>

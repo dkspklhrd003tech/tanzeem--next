@@ -210,24 +210,7 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
                                 </div>
                             </div>
                         ))
-                    ) : (
-                        /* Skeleton fallbacks */
-                        [0, 1].map((i) => (
-                            <div
-                                key={i}
-                                className="bg-card border border-border rounded-xl p-6 shadow-sm flex animate-pulse gap-6"
-                                aria-hidden="true"
-                            >
-                                <div className="w-44 aspect-square bg-muted rounded-lg shrink-0" />
-                                <div className="flex-1 space-y-4 py-2">
-                                    <div className="h-3 bg-muted rounded w-1/4" />
-                                    <div className="h-6 bg-muted rounded w-3/4" />
-                                    <div className="h-16 bg-muted rounded w-full" />
-                                    <div className="h-8 bg-muted rounded w-28" />
-                                </div>
-                            </div>
-                        ))
-                    )}
+                    ) : null}
                 </div>
             </div>
         </section>

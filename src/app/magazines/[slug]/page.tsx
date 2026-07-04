@@ -82,7 +82,7 @@ export default async function MagazineDetailsPage({ params }: PageProps) {
         <main className="min-h-screen bg-zinc-50/50">
             {/* Header / Actions Bar */}
             <div className="border-b bg-background sticky top-[72px] z-40 shadow-sm">
-                <div className="container mx-auto px-4 py-4 flex flex-wrap items-center justify-between gap-4">
+                <div className="max-w-5xl mx-auto py-4 flex flex-wrap items-center justify-between gap-4">
                     <div className="flex items-center gap-2">
                         {targetLink.url.endsWith(".pdf") && (
                             <Button asChild variant="outline" size="sm" className="h-8">

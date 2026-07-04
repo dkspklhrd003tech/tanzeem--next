@@ -135,13 +135,7 @@ export function LatestPressReleases({ items }: Props) {
               </div>
             </button>
           )) : null}
-          {items.length === 0 && (
-            <div className="col-span-full py-16 text-center text-muted-foreground">
-              <FileText className="w-12 h-12 mx-auto mb-4 opacity-20" />
-              <p className="font-semibold">No press releases published yet.</p>
-              <p className="text-sm mt-1">Add and publish press releases from the CMS to display them here.</p>
-            </div>
-          )}
+          {items.length === 0 && null}
         </div>
 
       </div>

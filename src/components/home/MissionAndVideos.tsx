@@ -161,18 +161,7 @@ export function MissionAndVideos({ videos, settings }: MissionProps) {
                                     {card}
                                 </div>
                             );
-                        }) : (
-                            // Premium Skeleton placeholders
-                            Array(4).fill(0).map((_, i) => (
-                                <div key={i} className="flex flex-col h-full bg-card rounded-[2rem] border border-border overflow-hidden shadow-sm animate-pulse" aria-hidden="true">
-                                    <div className="w-full bg-muted" style={{ aspectRatio: '348 / 195' }} />
-                                    <div className="p-8 space-y-3">
-                                        <div className="h-5 bg-muted rounded-full w-3/4 mx-auto" />
-                                        <div className="h-5 bg-muted rounded-full w-1/2 mx-auto" />
-                                    </div>
-                                </div>
-                            ))
-                        )}
+                        }) : null}
                     </div>
                 </div>
             </div>
