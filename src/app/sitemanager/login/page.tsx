@@ -262,8 +262,8 @@ function LoginForm() {
           <div className="p-6">
             {/* Logo area */}
             <div className="flex flex-col items-center mb-8">
-              {settings.login_logo || settings.site_logo ? (
-                <img src={settings.login_logo || settings.site_logo} alt="Logo" className="max-w-[120px] h-auto mb-5 object-contain" />
+              {settings.site_logo && settings.site_logo !== "null" && settings.site_logo !== "undefined" && settings.site_logo.trim() !== "" ? (
+                <img src={settings.site_logo} alt="Site Logo" className="max-w-[120px] h-auto mb-5 object-contain" />
               ) : (
                 <div className="w-16 h-16 bg-primary rounded-xl flex items-center justify-center shadow-lg mb-5">
                   <span className="text-white font-bold text-3xl leading-none">ت</span>
