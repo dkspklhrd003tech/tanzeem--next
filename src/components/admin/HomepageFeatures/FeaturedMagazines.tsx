@@ -206,7 +206,7 @@ export function FeaturedMagazines() {
         }
     };
 
-    const [deletingMagazine, setDeletingMagazine] = useState<{id: string, title: string} | null>(null);
+    const [deletingMagazine, setDeletingMagazine] = useState<{ id: string, title: string } | null>(null);
 
     const handleDelete = async (id: string, title: string) => {
         setDeletingMagazine(null);
@@ -247,7 +247,7 @@ export function FeaturedMagazines() {
                         <thead className="bg-muted/50 text-foreground-muted border-b border-border">
                             <tr>
                                 <th className="py-3 w-10"></th>
-                                <th className="py-3">Cover</th>
+                                <th className="py-3">Book Cover</th>
                                 <th className="py-3">Details</th>
                                 <th className="py-3">Homepage Feature</th>
                                 <th className="py-3 text-right">Actions</th>

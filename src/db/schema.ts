@@ -434,6 +434,9 @@ export const events = mysqlTable("events", {
     description: text("description"),
     content: text("content"),
     thumbnailUrl: text("thumbnail_url"),
+    videoUrl: text("video_url"),
+    pdfUrl: text("pdf_url"),
+    categoryId: varchar("category_id", { length: 191 }),
     startDate: timestamp("start_date").notNull(),
     endDate: timestamp("end_date"),
     location: varchar("location", { length: 255 }),
@@ -445,12 +448,30 @@ export const events = mysqlTable("events", {
     registrationUrl: text("registration_url"),
     metaTitle: varchar("meta_title", { length: 255 }),
     metaDescription: text("meta_description"),
+    customFields: json("custom_fields"),
     authorId: varchar("author_id", { length: 191 }).notNull(),
+    ...timestamps,
+});
+
+export const eventCategories = mysqlTable("event_categories", {
+    id: varchar("id", { length: 191 }).primaryKey(),
+    parentId: varchar("parent_id", { length: 191 }),
+    name: varchar("name", { length: 191 }).notNull(),
+    slug: varchar("slug", { length: 191 }).notNull().unique(),
+    description: text("description"),
+    imageUrl: text("image_url"),
+    order: int("order").default(0).notNull(),
+    isActive: boolean("is_active").default(true).notNull(),
     ...timestamps,
 });
 
 export const eventsRelations = relations(events, ({ one }) => ({
     author: one(users, { fields: [events.authorId], references: [users.id] }),
+    category: one(eventCategories, { fields: [events.categoryId], references: [eventCategories.id] }),
+}));
+
+export const eventCategoriesRelations = relations(eventCategories, ({ many }) => ({
+    events: many(events),
 }));
 
 // ============================================
@@ -500,12 +521,39 @@ export const services = mysqlTable("services", {
     content: text("content"),
     icon: varchar("icon", { length: 100 }),
     imageUrl: text("image_url"),
+    thumbnailUrl: text("thumbnail_url"),
+    videoUrl: text("video_url"),
+    pdfUrl: text("pdf_url"),
+    categoryId: varchar("category_id", { length: 191 }),
+    customFields: json("custom_fields"),
     order: int("order").default(0).notNull(),
     isPublished: boolean("is_published").default(true).notNull(),
     metaTitle: varchar("meta_title", { length: 255 }),
     metaDescription: text("meta_description"),
+    authorId: varchar("author_id", { length: 191 }).default("admin").notNull(),
     ...timestamps,
 });
+
+export const serviceCategories = mysqlTable("service_categories", {
+    id: varchar("id", { length: 191 }).primaryKey(),
+    parentId: varchar("parent_id", { length: 191 }),
+    name: varchar("name", { length: 191 }).notNull(),
+    slug: varchar("slug", { length: 191 }).notNull().unique(),
+    description: text("description"),
+    imageUrl: text("image_url"),
+    order: int("order").default(0).notNull(),
+    isActive: boolean("is_active").default(true).notNull(),
+    ...timestamps,
+});
+
+export const servicesRelations = relations(services, ({ one }) => ({
+    category: one(serviceCategories, { fields: [services.categoryId], references: [serviceCategories.id] }),
+    author: one(users, { fields: [services.authorId], references: [users.id] }),
+}));
+
+export const serviceCategoriesRelations = relations(serviceCategories, ({ many }) => ({
+    services: many(services),
+}));
 
 // ============================================
 // SERMONS
@@ -875,3 +923,48 @@ export const customFieldDefinitions = mysqlTable("custom_field_definitions", {
     isActive: boolean("is_active").default(true).notNull(),
     ...timestamps,
 });
+
+// ============================================
+// CAMPAIGNS (GENERIC)
+// ============================================
+
+export const campaigns = mysqlTable("campaigns", {
+    id: varchar("id", { length: 191 }).primaryKey(),
+    title: varchar("title", { length: 255 }).notNull(),
+    slug: varchar("slug", { length: 191 }).notNull().unique(),
+    description: text("description"),
+    content: text("content"),
+    thumbnailUrl: text("thumbnail_url"),
+    videoUrl: text("video_url"),
+    pdfUrl: text("pdf_url"),
+    categoryId: varchar("category_id", { length: 191 }),
+    customFields: json("custom_fields"),
+    startsAt: timestamp("starts_at"),
+    endsAt: timestamp("ends_at"),
+    isPublished: boolean("is_published").default(true).notNull(),
+    metaTitle: varchar("meta_title", { length: 255 }),
+    metaDescription: text("meta_description"),
+    authorId: varchar("author_id", { length: 191 }).notNull(),
+    ...timestamps,
+});
+
+export const campaignCategories = mysqlTable("campaign_categories", {
+    id: varchar("id", { length: 191 }).primaryKey(),
+    parentId: varchar("parent_id", { length: 191 }),
+    name: varchar("name", { length: 191 }).notNull(),
+    slug: varchar("slug", { length: 191 }).notNull().unique(),
+    description: text("description"),
+    imageUrl: text("image_url"),
+    order: int("order").default(0).notNull(),
+    isActive: boolean("is_active").default(true).notNull(),
+    ...timestamps,
+});
+
+export const campaignsRelations = relations(campaigns, ({ one }) => ({
+    author: one(users, { fields: [campaigns.authorId], references: [users.id] }),
+    category: one(campaignCategories, { fields: [campaigns.categoryId], references: [campaignCategories.id] }),
+}));
+
+export const campaignCategoriesRelations = relations(campaignCategories, ({ many }) => ({
+    campaigns: many(campaigns),
+}));

@@ -6,7 +6,7 @@ import { getCurrentUser, getSession } from "@/lib/auth";
 
 /** Keys that belong to the header group (consumed by Header.tsx + admin HeaderManager). */
 const HEADER_KEYS = [
-  "site_logo",
+  "header_logo",
   "site_name",
   "site_tagline",
   "youtube_url",

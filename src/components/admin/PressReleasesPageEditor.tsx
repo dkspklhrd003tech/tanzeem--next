@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import {
-  Plus, Pencil, Trash2, Search, FileText, ExternalLink, Sparkles,
+  Plus, Pencil, Trash2, Search, FileText, Sparkles,
   Settings2, Check, AlertCircle, UploadCloud, Loader2, ArrowLeft,
   GripVertical, Calendar
 } from "lucide-react";
@@ -20,6 +20,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { PdfUploader } from "@/components/admin/PdfUploader";
 
 // DnD Kit imports
 import {
@@ -930,24 +931,11 @@ export default function PressReleasesPageEditor({ pageId, initialPageData }: Pre
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="pdfUrl">PDF URL Reference <span className="text-destructive">*</span></Label>
-                  <div className="flex gap-2">
-                    <Input
-                      id="pdfUrl"
-                      required
-                      value={formData.pdfUrl}
-                      onChange={(e) => setFormData(prev => ({ ...prev, pdfUrl: e.target.value }))}
-                      className="font-mono"
-                      placeholder="https://your-server.com/uploads/..."
-                    />
-                    {formData.pdfUrl && (
-                      <Button variant="outline" size="icon" asChild>
-                        <a href={formData.pdfUrl} target="_blank" rel="noreferrer" title="Open File">
-                          <ExternalLink className="h-4 w-4" />
-                        </a>
-                      </Button>
-                    )}
-                  </div>
+                  <Label>PDF Document <span className="text-destructive">*</span></Label>
+                  <PdfUploader
+                    value={formData.pdfUrl}
+                    onChange={(url) => setFormData(prev => ({ ...prev, pdfUrl: url }))}
+                  />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

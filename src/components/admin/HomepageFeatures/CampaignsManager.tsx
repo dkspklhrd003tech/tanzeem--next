@@ -294,7 +294,7 @@ export function CampaignsManager() {
         }
     };
 
-    const [deletingCampaign, setDeletingCampaign] = useState<{id: string, title: string} | null>(null);
+    const [deletingCampaign, setDeletingCampaign] = useState<{ id: string, title: string } | null>(null);
 
     const handleDelete = async (id: string, title: string) => {
         setDeletingCampaign(null);
@@ -356,7 +356,7 @@ export function CampaignsManager() {
                                 <thead className="bg-muted/50 text-foreground font-semibold text-xs uppercase tracking-wider border-b border-border">
                                     <tr>
                                         <th className="px-6 py-4 w-12">Order</th>
-                                        <th className="px-6 py-4">Visual asset</th>
+                                        <th className="px-6 py-4">Thumbnails</th>
                                         <th className="px-6 py-4">Campaign Details</th>
                                         <th className="px-6 py-4">Priority</th>
                                         <th className="px-6 py-4">Status</th>

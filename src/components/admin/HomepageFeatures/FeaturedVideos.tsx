@@ -416,7 +416,7 @@ export function FeaturedVideos() {
                                 <thead className="bg-muted/50 text-foreground font-semibold text-xs uppercase tracking-wider border-b border-border">
                                     <tr>
                                         <th className="px-6 py-4 w-10" />
-                                        <th className="px-6 py-4">Cover Frame</th>
+                                        <th className="px-6 py-4">Thumbnails</th>
                                         <th className="px-6 py-4">Broadcast Title</th>
                                         <th className="px-6 py-4">Direct Link</th>
                                         <th className="px-6 py-4 text-right">Actions</th>

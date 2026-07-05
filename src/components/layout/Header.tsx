@@ -31,8 +31,8 @@ export function Header() {
   // Single shared source of truth for nav + settings (SWR-deduped across components).
   const { items: navigation, isLoading: navLoading } = useNavigation("main", true);
   const { settings } = useSettings();
-  const logoSrc = (settings.site_logo && settings.site_logo !== "null" && settings.site_logo !== "undefined" && settings.site_logo.trim() !== "")
-    ? settings.site_logo
+  const logoSrc = (settings.header_logo && settings.header_logo !== "null" && settings.header_logo !== "undefined" && settings.header_logo.trim() !== "")
+    ? settings.header_logo
     : "/tanzeem-logo.webp";
 
   const handleSearchSubmit = (e: React.FormEvent) => {

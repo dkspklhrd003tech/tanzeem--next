@@ -704,16 +704,6 @@ export function SettingsManager() {
                                     />
                                     <p className="text-xs text-muted-foreground mt-2">Upload a high-quality background for the login page (1920x1080 recommended).</p>
                                 </div>
-
-                                <div>
-                                    <label className="text-sm font-medium block mb-2">Login Form Logo</label>
-                                    <ImageUploader
-                                        value={settings.login_logo || ""}
-                                        onChange={(url) => handleSettingChange('login_logo', url)}
-                                        freeCrop={true}
-                                    />
-                                    <p className="text-xs text-muted-foreground mt-2">Upload your full brand logo for the login form center.</p>
-                                </div>
                             </div>
 
                             <div className="space-y-6">

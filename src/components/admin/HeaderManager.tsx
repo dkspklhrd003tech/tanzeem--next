@@ -42,7 +42,7 @@ interface MenuItem {
 }
 
 interface HeaderSettings {
-  site_logo: string;
+  header_logo: string;
   site_name: string;
   header_cta_text: string;
   header_cta_url: string;
@@ -58,7 +58,7 @@ interface HeaderSettings {
 }
 
 const DEFAULTS: HeaderSettings = {
-  site_logo: "",
+  header_logo: "",
   site_name: "Tanzeem-e-Islami",
   header_cta_text: "Join Tanzeem",
   header_cta_url: "/join",
@@ -613,8 +613,8 @@ export function HeaderManager() {
             <div className="space-y-2">
               <Label className="text-xs font-semibold uppercase tracking-wide">Site Logo</Label>
               <ImageUploader
-                value={form.site_logo}
-                onChange={(url) => set("site_logo", url)}
+                value={form.header_logo}
+                onChange={(url) => set("header_logo", url)}
                 aspectRatio={2}
               />
               <p className="text-[10px] text-muted-foreground">Recommended: SVG or WEBP, transparent bg</p>
