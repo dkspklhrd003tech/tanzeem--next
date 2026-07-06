@@ -51,24 +51,28 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
                 const header = sec.querySelector(".pub-header");
                 const cards = sec.querySelectorAll(".pub-card");
 
-                gsap.fromTo(header,
-                    { opacity: 0, y: 30 },
-                    {
-                        opacity: 1, y: 0, duration: 1, ease: "power3.out",
-                        scrollTrigger: { trigger: sec, start: "top 80%" }
-                    }
-                );
+                if (header) {
+                    gsap.fromTo(header,
+                        { opacity: 0, y: 30 },
+                        {
+                            opacity: 1, y: 0, duration: 1, ease: "power3.out",
+                            scrollTrigger: { trigger: sec, start: "top 80%" }
+                        }
+                    );
+                }
 
-                gsap.fromTo(cards,
-                    { opacity: 0, y: 60, scale: 0.95, rotateY: 10 },
-                    {
-                        opacity: 1, y: 0, scale: 1, rotateY: 0,
-                        duration: 1,
-                        stagger: 0.15,
-                        ease: "back.out(1.2)",
-                        scrollTrigger: { trigger: sec, start: "top 70%" }
-                    }
-                );
+                if (cards && cards.length > 0) {
+                    gsap.fromTo(cards,
+                        { opacity: 0, y: 60, scale: 0.95, rotateY: 10 },
+                        {
+                            opacity: 1, y: 0, scale: 1, rotateY: 0,
+                            duration: 1,
+                            stagger: 0.15,
+                            ease: "back.out(1.2)",
+                            scrollTrigger: { trigger: sec, start: "top 70%" }
+                        }
+                    );
+                }
             });
         });
 
