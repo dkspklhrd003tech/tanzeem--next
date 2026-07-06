@@ -44,6 +44,7 @@ function slugify(text: string) {
 interface CategoryItem {
   id: string;
   name: string;
+  urduName?: string;
   slug: string;
   description?: string;
   coverImage?: string;
@@ -177,7 +178,7 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
   const [isLoading, setIsLoading] = useState(true);
 
   const [isCatModalOpen, setIsCatModalOpen] = useState(false);
-  const [catFormData, setCatFormData] = useState({ name: "", slug: "", description: "", coverImage: "" });
+  const [catFormData, setCatFormData] = useState({ name: "", urduName: "", slug: "", description: "", coverImage: "" });
   const [editingCatId, setEditingCatId] = useState<string | null>(null);
 
   const [isBookModalOpen, setIsBookModalOpen] = useState(false);
@@ -440,7 +441,7 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
         </div>
         <div className="flex items-center gap-2">
           {!activeCategory ? (
-            <Button onClick={() => { setEditingCatId(null); setCatFormData({ name: "", slug: "", description: "", coverImage: "" }); setIsCatModalOpen(true); }}>
+            <Button onClick={() => { setEditingCatId(null); setCatFormData({ name: "", urduName: "", slug: "", description: "", coverImage: "" }); setIsCatModalOpen(true); }}>
               <Plus className="w-4 h-4 mr-2" /> Add Category
             </Button>
           ) : (
@@ -472,7 +473,7 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
                     {filteredCategories.map(cat => (
                       <SortableCategoryCard key={cat.id} id={cat.id} item={cat} onClick={setActiveCategory}
                         bookCount={books.filter(b => b.categoryId === cat.id).length}
-                        onEdit={(item: any) => { setEditingCatId(item.id); setCatFormData({ name: item.name, slug: item.slug, description: item.description || "", coverImage: item.coverImage || "" }); setIsCatModalOpen(true); }}
+                        onEdit={(item: any) => { setEditingCatId(item.id); setCatFormData({ name: item.name, urduName: item.urduName || "", slug: item.slug, description: item.description || "", coverImage: item.coverImage || "" }); setIsCatModalOpen(true); }}
                         onDelete={(item: CategoryItem) => setDeletingCat(item)} />
                     ))}
                   </div>
@@ -558,6 +559,7 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
             </div>
             <div className="overflow-y-auto p-6 flex-1 space-y-4">
               <div className="space-y-2"><Label>Name</Label><Input value={catFormData.name} onChange={e => setCatFormData({ ...catFormData, name: e.target.value, slug: editingCatId ? catFormData.slug : slugify(e.target.value) })} /></div>
+              <div className="space-y-2"><Label>Urdu Name (Optional)</Label><Input value={catFormData.urduName} onChange={e => setCatFormData({ ...catFormData, urduName: e.target.value })} dir="rtl" /></div>
               <div className="space-y-2"><Label>Slug</Label><Input value={catFormData.slug} onChange={e => setCatFormData({ ...catFormData, slug: e.target.value })} /></div>
               <div className="space-y-2"><Label>Description</Label><Textarea value={catFormData.description} onChange={e => setCatFormData({ ...catFormData, description: e.target.value })} /></div>
               <div className="space-y-2">

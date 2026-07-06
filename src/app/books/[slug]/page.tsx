@@ -7,6 +7,7 @@ import { eq, and, ne, asc, desc } from "drizzle-orm";
 import { BookOpen, Download, Share2, ArrowLeft, FileText } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { buildMetadata, bookJsonLd, breadcrumbJsonLd } from "@/lib/seo";
+import { ClientShareButton } from "@/components/shared/ClientShareButton";
 
 export const dynamic = "force-dynamic";
 
@@ -99,13 +100,7 @@ export default async function BookDetailPage({ params }: Props) {
                 Download PDF
               </a>
             )}
-            <button
-              onClick={() => typeof navigator !== "undefined" && navigator.clipboard?.writeText(window.location.href)}
-              className="w-full flex items-center justify-center gap-2 border border-border rounded-full px-6 py-2.5 text-sm text-foreground-muted hover:border-primary hover:text-primary transition-colors"
-            >
-              <Share2 className="h-4 w-4" />
-              Share
-            </button>
+            <ClientShareButton />
           </div>
 
           {/* Details */}
@@ -143,6 +138,21 @@ export default async function BookDetailPage({ params }: Props) {
               <div>
                 <h2 className="text-sm font-semibold uppercase tracking-wide text-foreground-muted mb-2">About this Book</h2>
                 <p className="text-foreground-muted leading-relaxed text-sm">{book.description}</p>
+              </div>
+            )}
+
+            {book.fileUrl && (
+              <div className="mt-8">
+                <h2 className="text-sm font-semibold uppercase tracking-wide text-foreground-muted mb-4">Read Book</h2>
+                <div className="w-full h-[85vh] rounded-2xl overflow-hidden border border-border shadow-xl bg-white relative">
+                  <iframe
+                    src={`${book.fileUrl}#toolbar=1`}
+                    className="w-full h-full border-none"
+                    title={book.title}
+                    allow="autoplay; fullscreen"
+                    loading="lazy"
+                  />
+                </div>
               </div>
             )}
           </div>

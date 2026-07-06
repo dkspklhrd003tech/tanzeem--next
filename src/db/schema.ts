@@ -386,6 +386,7 @@ export const booksRelations = relations(books, ({ one }) => ({
 export const bookCategories = mysqlTable("book_categories", {
     id: varchar("id", { length: 191 }).primaryKey(),
     name: varchar("name", { length: 191 }).notNull(),
+    urduName: varchar("urdu_name", { length: 191 }),
     slug: varchar("slug", { length: 191 }).notNull().unique(),
     description: text("description"),
     coverImage: text("cover_image"),

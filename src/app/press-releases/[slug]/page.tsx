@@ -78,7 +78,14 @@ export default async function PressReleaseDetailsPage({ params }: PageProps) {
                         </Link>
                     </Button>
                     <div className="flex items-center gap-2">
-                        {/* We will rely on browser's native print for now or client-side print button */}
+                        {selectedItem.pdfUrl && (
+                            <Button asChild variant="outline" size="sm" className="h-8">
+                                <a href={selectedItem.pdfUrl} download={`${selectedItem.slug || 'press-release'}.pdf`}>
+                                    <Download className="w-4 h-4 mr-2" />
+                                    Download PDF
+                                </a>
+                            </Button>
+                        )}
                     </div>
                 </div>
             </div>

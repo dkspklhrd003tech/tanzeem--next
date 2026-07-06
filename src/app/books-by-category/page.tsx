@@ -93,16 +93,6 @@ export default async function BooksByCategoryPage() {
             );
           })}
         </div>
-
-        {/* CTA to full books listing */}
-        <div className="mt-10">
-          <Link
-            href="/books"
-            className="inline-flex items-center gap-2 bg-primary text-primary-foreground rounded-full px-6 py-2.5 text-sm font-semibold hover:bg-primary-dark transition-colors"
-          >
-            Browse All Books →
-          </Link>
-        </div>
       </div>
     </main>
   );
