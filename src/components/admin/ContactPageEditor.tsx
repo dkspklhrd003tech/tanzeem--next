@@ -11,23 +11,29 @@ import Link from "next/link";
 import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Checkbox } from "@/components/ui/checkbox";
 
 type AddressDetail = {
   id: string;
   title: string;
   titleValue?: string;
   titleValueUrl?: string;
+  titleValueUrlNewTab?: boolean;
   naibAmeer?: string;
-  naibAmeerUrl?: string;
   address: string;
   addressUrl?: string;
+  addressUrlNewTab?: boolean;
   phone: string;
   phoneUrl?: string;
+  phoneUrlNewTab?: boolean;
   mobile?: string;
   mobileUrl?: string;
+  mobileUrlNewTab?: boolean;
   email: string;
   emailUrl?: string;
+  emailUrlNewTab?: boolean;
   mapUrl: string;
+  mapUrlNewTab?: boolean;
 };
 
 type LocationRow = {
@@ -396,7 +402,6 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
                       titleValue: "",
                       titleValueUrl: "",
                       naibAmeer: "",
-                      naibAmeerUrl: "",
                       address: "",
                       addressUrl: "",
                       phone: "",
@@ -452,33 +457,35 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
                         </div>
                         <div>
                           <Label className="text-xs text-muted-foreground">Title Value URL</Label>
-                          <Input className="h-8" placeholder="https://" value={detail.titleValueUrl || ""} onChange={(e) => {
+                          <Input className="h-8 mb-1" placeholder="https://" value={detail.titleValueUrl || ""} onChange={(e) => {
                             const newDetails = [...editingLocation.details!];
                             newDetails[index].titleValueUrl = e.target.value;
                             setEditingLocation({ ...editingLocation, details: newDetails });
                           }} />
+                          <div className="flex items-center gap-1.5 mt-2">
+                            <Checkbox 
+                              id={`titleValueUrlNewTab-${detail.id}`} 
+                              checked={detail.titleValueUrlNewTab !== false} 
+                              onCheckedChange={(checked) => {
+                                const newDetails = [...editingLocation.details!];
+                                newDetails[index].titleValueUrlNewTab = checked === true;
+                                setEditingLocation({ ...editingLocation, details: newDetails });
+                              }}
+                            />
+                            <Label htmlFor={`titleValueUrlNewTab-${detail.id}`} className="text-[10px] text-muted-foreground cursor-pointer">Open in new tab</Label>
+                          </div>
                         </div>
                       </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-3">
-                      <div className="space-y-2">
-                        <div>
-                          <Label className="text-xs">Naib Ameer</Label>
-                          <Input className="h-8" value={detail.naibAmeer || ""} onChange={(e) => {
-                            const newDetails = [...editingLocation.details!];
-                            newDetails[index].naibAmeer = e.target.value;
-                            setEditingLocation({ ...editingLocation, details: newDetails });
-                          }} />
-                        </div>
-                        <div>
-                          <Label className="text-xs text-muted-foreground">Naib Ameer URL</Label>
-                          <Input className="h-8" placeholder="https://" value={detail.naibAmeerUrl || ""} onChange={(e) => {
-                            const newDetails = [...editingLocation.details!];
-                            newDetails[index].naibAmeerUrl = e.target.value;
-                            setEditingLocation({ ...editingLocation, details: newDetails });
-                          }} />
-                        </div>
+                      <div>
+                        <Label className="text-xs">Naib Ameer</Label>
+                        <Input className="h-8" value={detail.naibAmeer || ""} onChange={(e) => {
+                          const newDetails = [...editingLocation.details!];
+                          newDetails[index].naibAmeer = e.target.value;
+                          setEditingLocation({ ...editingLocation, details: newDetails });
+                        }} />
                       </div>
 
                       <div className="space-y-2">
@@ -492,11 +499,23 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
                         </div>
                         <div>
                           <Label className="text-xs text-muted-foreground">Postal Address URL</Label>
-                          <Input className="h-8" placeholder="https://" value={detail.addressUrl || ""} onChange={(e) => {
+                          <Input className="h-8 mb-1" placeholder="https://" value={detail.addressUrl || ""} onChange={(e) => {
                             const newDetails = [...editingLocation.details!];
                             newDetails[index].addressUrl = e.target.value;
                             setEditingLocation({ ...editingLocation, details: newDetails });
                           }} />
+                          <div className="flex items-center gap-1.5 mt-2">
+                            <Checkbox 
+                              id={`addressUrlNewTab-${detail.id}`} 
+                              checked={detail.addressUrlNewTab !== false} 
+                              onCheckedChange={(checked) => {
+                                const newDetails = [...editingLocation.details!];
+                                newDetails[index].addressUrlNewTab = checked === true;
+                                setEditingLocation({ ...editingLocation, details: newDetails });
+                              }}
+                            />
+                            <Label htmlFor={`addressUrlNewTab-${detail.id}`} className="text-[10px] text-muted-foreground cursor-pointer">Open in new tab</Label>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -513,11 +532,23 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
                         </div>
                         <div>
                           <Label className="text-xs text-muted-foreground">Phone URL</Label>
-                          <Input className="h-8" placeholder="tel:" value={detail.phoneUrl || ""} onChange={(e) => {
+                          <Input className="h-8 mb-1" placeholder="tel:" value={detail.phoneUrl || ""} onChange={(e) => {
                             const newDetails = [...editingLocation.details!];
                             newDetails[index].phoneUrl = e.target.value;
                             setEditingLocation({ ...editingLocation, details: newDetails });
                           }} />
+                          <div className="flex items-center gap-1.5 mt-2">
+                            <Checkbox 
+                              id={`phoneUrlNewTab-${detail.id}`} 
+                              checked={detail.phoneUrlNewTab !== false} 
+                              onCheckedChange={(checked) => {
+                                const newDetails = [...editingLocation.details!];
+                                newDetails[index].phoneUrlNewTab = checked === true;
+                                setEditingLocation({ ...editingLocation, details: newDetails });
+                              }}
+                            />
+                            <Label htmlFor={`phoneUrlNewTab-${detail.id}`} className="text-[10px] text-muted-foreground cursor-pointer">Open in new tab</Label>
+                          </div>
                         </div>
                       </div>
                       <div className="space-y-2">
@@ -531,11 +562,23 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
                         </div>
                         <div>
                           <Label className="text-xs text-muted-foreground">Mob URL</Label>
-                          <Input className="h-8" placeholder="tel: or https://wa.me/" value={detail.mobileUrl || ""} onChange={(e) => {
+                          <Input className="h-8 mb-1" placeholder="tel: or https://wa.me/" value={detail.mobileUrl || ""} onChange={(e) => {
                             const newDetails = [...editingLocation.details!];
                             newDetails[index].mobileUrl = e.target.value;
                             setEditingLocation({ ...editingLocation, details: newDetails });
                           }} />
+                          <div className="flex items-center gap-1.5 mt-2">
+                            <Checkbox 
+                              id={`mobileUrlNewTab-${detail.id}`} 
+                              checked={detail.mobileUrlNewTab !== false} 
+                              onCheckedChange={(checked) => {
+                                const newDetails = [...editingLocation.details!];
+                                newDetails[index].mobileUrlNewTab = checked === true;
+                                setEditingLocation({ ...editingLocation, details: newDetails });
+                              }}
+                            />
+                            <Label htmlFor={`mobileUrlNewTab-${detail.id}`} className="text-[10px] text-muted-foreground cursor-pointer">Open in new tab</Label>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -552,20 +595,44 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
                         </div>
                         <div>
                           <Label className="text-xs text-muted-foreground">Email URL</Label>
-                          <Input className="h-8" placeholder="mailto:" value={detail.emailUrl || ""} onChange={(e) => {
+                          <Input className="h-8 mb-1" placeholder="mailto:" value={detail.emailUrl || ""} onChange={(e) => {
                             const newDetails = [...editingLocation.details!];
                             newDetails[index].emailUrl = e.target.value;
                             setEditingLocation({ ...editingLocation, details: newDetails });
                           }} />
+                          <div className="flex items-center gap-1.5 mt-2">
+                            <Checkbox 
+                              id={`emailUrlNewTab-${detail.id}`} 
+                              checked={detail.emailUrlNewTab !== false} 
+                              onCheckedChange={(checked) => {
+                                const newDetails = [...editingLocation.details!];
+                                newDetails[index].emailUrlNewTab = checked === true;
+                                setEditingLocation({ ...editingLocation, details: newDetails });
+                              }}
+                            />
+                            <Label htmlFor={`emailUrlNewTab-${detail.id}`} className="text-[10px] text-muted-foreground cursor-pointer">Open in new tab</Label>
+                          </div>
                         </div>
                       </div>
                       <div>
                         <Label className="text-xs">Pin Location (URL)</Label>
-                        <Input className="h-8" placeholder="https://maps..." value={detail.mapUrl} onChange={(e) => {
+                        <Input className="h-8 mb-1" placeholder="https://maps..." value={detail.mapUrl} onChange={(e) => {
                           const newDetails = [...editingLocation.details!];
                           newDetails[index].mapUrl = e.target.value;
                           setEditingLocation({ ...editingLocation, details: newDetails });
                         }} />
+                        <div className="flex items-center gap-1.5 mt-2">
+                          <Checkbox 
+                            id={`mapUrlNewTab-${detail.id}`} 
+                            checked={detail.mapUrlNewTab !== false} 
+                            onCheckedChange={(checked) => {
+                              const newDetails = [...editingLocation.details!];
+                              newDetails[index].mapUrlNewTab = checked === true;
+                              setEditingLocation({ ...editingLocation, details: newDetails });
+                            }}
+                          />
+                          <Label htmlFor={`mapUrlNewTab-${detail.id}`} className="text-[10px] text-muted-foreground cursor-pointer">Open in new tab</Label>
+                        </div>
                       </div>
                     </div>
                   </div>

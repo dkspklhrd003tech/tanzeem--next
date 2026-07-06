@@ -183,35 +183,27 @@ export function ModernizedProsePage({
                 />
               </motion.div>
             )}
+            {/* Subtle Arabesque Watermark inside the card */}
+            <div className="absolute inset-0 opacity-[0.01] pointer-events-none bg-repeat bg-center" style={{ backgroundImage: `url('/images/pattern-arabesque.png')` }} />
 
-            {/* Prose Card container */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="bg-white  rounded-3xl border border-slate-200/80  p-8 md:p-6 shadow-mid3 relative overflow-hidden"
-            >
-              {/* Subtle Arabesque Watermark inside the card */}
-              <div className="absolute inset-0 opacity-[0.01] pointer-events-none bg-repeat bg-center" style={{ backgroundImage: `url('/images/pattern-arabesque.png')` }} />
+            {/* Leader Template Centered Title & Dates */}
+            {template === "leader" && (
+              <div className="text-center mb-6 border-b border-slate-100 ">
+                <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900  tracking-tight mb-2">
+                  {title}
+                </h2>
+                {excerpt && (
+                  <h3 className="text-center !text-emerald-700  font-bold uppercase tracking-wider text-sm md:text-base">
+                    {excerpt}
+                  </h3>
+                )}
+              </div>
+            )}
 
-              {/* Leader Template Centered Title & Dates */}
-              {template === "leader" && (
-                <div className="text-center mb-6 border-b border-slate-100 ">
-                  <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900  tracking-tight mb-2">
-                    {title}
-                  </h2>
-                  {excerpt && (
-                    <h3 className="text-center !text-emerald-700  font-bold uppercase tracking-wider text-sm md:text-base">
-                      {excerpt}
-                    </h3>
-                  )}
-                </div>
-              )}
-
-              {/* Page Content Renderer */}
-              {cleanContent ? (
-                <article
-                  className="prose prose-lg prose-emerald  max-w-none 
+            {/* Page Content Renderer */}
+            {cleanContent ? (
+              <article
+                className="prose prose-lg prose-emerald  max-w-none 
                     prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-slate-800 
                     prose-h2:text-2xl prose-h2:border-l-4 prose-h2:border-primary prose-h2:pl-3 prose-h2:mt-10 prose-h2:mb-4
                     prose-h3:text-xl prose-h3:font-semibold prose-h3:mt-8 prose-h3:mb-3
@@ -222,24 +214,23 @@ export function ModernizedProsePage({
                     prose-ol:list-decimal prose-ol:pl-6 prose-ol:mb-6
                     prose-blockquote:italic prose-blockquote:border-l-4 prose-blockquote:border-[#c8a84e] prose-blockquote:pl-6 prose-blockquote:text-slate-700  prose-blockquote:bg-slate-50  prose-blockquote:py-4 prose-blockquote:pr-4 prose-blockquote:rounded-r-2xl
                     [&>*]:[unicode-bidi:plaintext] [&>*]:text-start"
-                >
-                  {featuredImage && template === "leader" && (
-                    <div className="w-full max-w-xs mx-auto md:ml-0 md:mr-8 md:float-left md:w-[320px] md:mb-4 mb-6 rounded-3xl overflow-hidden shadow-mid border border-slate-200/50 bg-slate-100">
-                      <img
-                        src={featuredImage}
-                        alt={title}
-                        className="w-full h-auto object-contain"
-                      />
-                    </div>
-                  )}
-                  <div dangerouslySetInnerHTML={{ __html: cleanContent }} />
-                </article>
-              ) : (
-                <div className="text-center py-12 text-muted-foreground italic">
-                  No content available for this page yet. Edit this page in the Site Manager.
-                </div>
-              )}
-            </motion.div>
+              >
+                {featuredImage && template === "leader" && (
+                  <div className="w-full max-w-xs mx-auto md:ml-0 md:mr-8 md:float-left md:w-[320px] md:mb-4 mb-6 rounded-3xl overflow-hidden shadow-mid border border-slate-200/50 bg-slate-100">
+                    <img
+                      src={featuredImage}
+                      alt={title}
+                      className="w-full h-auto object-contain"
+                    />
+                  </div>
+                )}
+                <div dangerouslySetInnerHTML={{ __html: cleanContent }} />
+              </article>
+            ) : (
+              <div className="text-center py-12 text-muted-foreground italic">
+                No content available for this page yet. Edit this page in the Site Manager.
+              </div>
+            )}
 
             {/* Accordion List Component */}
             {accordionItems && accordionItems.length > 0 && (
@@ -254,23 +245,27 @@ export function ModernizedProsePage({
       </div>
 
       {/* ── Stats Section (Conditional) ── */}
-      {stats && stats.length > 0 && (
-        <div className="mt-16 border-t border-slate-200/50">
-          <StatsGrid stats={stats} />
-        </div>
-      )}
+      {
+        stats && stats.length > 0 && (
+          <div className="mt-10 border-t border-slate-200/50">
+            <StatsGrid stats={stats} />
+          </div>
+        )
+      }
 
       {/* ── Footer CTA Banner (Conditional) ── */}
-      {ctaHeading && ctaButtonLabel && ctaButtonUrl && (
-        <div className="mt-16">
-          <CTABanner
-            heading={ctaHeading}
-            subheading={ctaSubheading || ""}
-            buttonLabel={ctaButtonLabel}
-            buttonUrl={ctaButtonUrl}
-          />
-        </div>
-      )}
+      {
+        ctaHeading && ctaButtonLabel && ctaButtonUrl && (
+          <div className="mt-16">
+            <CTABanner
+              heading={ctaHeading}
+              subheading={ctaSubheading || ""}
+              buttonLabel={ctaButtonLabel}
+              buttonUrl={ctaButtonUrl}
+            />
+          </div>
+        )
+      }
     </div>
   );
 }

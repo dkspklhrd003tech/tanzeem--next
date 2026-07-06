@@ -13,17 +13,22 @@ export type AddressDetail = {
   title: string;
   titleValue?: string;
   titleValueUrl?: string;
+  titleValueUrlNewTab?: boolean;
   naibAmeer?: string;
-  naibAmeerUrl?: string;
   address: string;
   addressUrl?: string;
+  addressUrlNewTab?: boolean;
   phone: string;
   phoneUrl?: string;
+  phoneUrlNewTab?: boolean;
   mobile?: string;
   mobileUrl?: string;
+  mobileUrlNewTab?: boolean;
   email: string;
   emailUrl?: string;
+  emailUrlNewTab?: boolean;
   mapUrl: string;
+  mapUrlNewTab?: boolean;
 };
 
 /** Shape of a row from the `locations` table. */
@@ -210,17 +215,17 @@ export function ContactSection({
               transition={{ duration: 0.6, delay: 0.2 }}
               className="lg:col-span-7 flex flex-col h-full"
             >
-              <div className="bg-card/80 backdrop-blur-xl border border-border/50 rounded-[2rem] p-8 md:p-10 shadow-xl shadow-black/5 h-full flex flex-col">
-                <div className="mb-8 flex items-center justify-between flex-wrap gap-4">
+              <div className="bg-card/80 backdrop-blur-xl border border-border/50 rounded-[2rem] p-4 md:p-6 shadow-xl shadow-black/5 h-full flex flex-col">
+                <div className="mb-4 flex items-center justify-between flex-wrap gap-4">
                   <div>
-                    <h2 className="text-2xl font-bold tracking-tight mb-2">Our Locations</h2>
+                    <h3 className="text-2xl font-bold mb-2 text-foreground">Our Locations</h3>
                     <p className="text-sm text-muted-foreground font-medium">Find a branch near you.</p>
                   </div>
                 </div>
 
                 {/* Tab buttons - Cinematic Pills */}
                 <div
-                  className="flex flex-wrap gap-2 mb-8 bg-muted/50 p-1.5 rounded-2xl"
+                  className="flex flex-wrap gap-2 mb-4 bg-slate-200 p-1.5 rounded-xl"
                   role="tablist"
                   aria-label="Branch locations"
                 >
@@ -233,7 +238,7 @@ export function ContactSection({
                       className={cn(
                         "px-5 py-2.5 text-sm font-semibold rounded-xl transition-all duration-300",
                         activeSlug === branch.slug
-                          ? "bg-background text-foreground shadow-sm shadow-black/5 ring-1 ring-border/50"
+                          ? "bg-primary text-white shadow-sm shadow-black/5 ring-1 ring-border/50"
                           : "text-muted-foreground hover:text-foreground hover:bg-background/50"
                       )}
                     >
@@ -243,187 +248,174 @@ export function ContactSection({
                 </div>
 
                 {/* Active branch details panel */}
-                <div
-                  role="tabpanel"
-                  className="flex-1 bg-muted/20 rounded-2xl p-6 md:p-8 border border-border/40 relative overflow-hidden group"
-                >
-                  <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity pointer-events-none">
-                    <MapPin className="w-40 h-40" />
-                  </div>
-
-                  <h3 className="text-2xl font-bold mb-6 text-foreground">{activeBranch.name}</h3>
-
-                  {/* Legacy fields if no details array exists */}
-                  {(!activeBranch.details || activeBranch.details.length === 0) && (
-                    <dl className="grid grid-cols-1 sm:grid-cols-[140px_1fr] gap-y-5 gap-x-4 text-sm relative z-10">
-                      {activeBranch.city && (
-                        <>
-                          <dt className="font-semibold text-muted-foreground flex items-center gap-2">
-                            <MapPin className="w-4 h-4 text-primary" /> City
-                          </dt>
-                          <dd className="text-foreground font-medium">{activeBranch.city}</dd>
-                        </>
-                      )}
-                      {activeBranch.address && (
-                        <>
-                          <dt className="font-semibold text-muted-foreground flex items-center gap-2">
-                            <MapPin className="w-4 h-4 text-primary opacity-0" /> Address
-                          </dt>
-                          <dd className="text-foreground font-medium leading-relaxed max-w-md">
-                            <a href={`https://maps.google.com/?q=${encodeURIComponent(activeBranch.address)}`} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors flex items-start gap-1">
-                              {activeBranch.address}
-                            </a>
-                          </dd>
-                        </>
-                      )}
-                      {activeBranch.phone && (
-                        <>
-                          <dt className="font-semibold text-muted-foreground flex items-center gap-2">
-                            <Phone className="w-4 h-4 text-primary" /> Phone
-                          </dt>
-                          <dd>
-                            <a
-                              href={`tel:${activeBranch.phone.replace(/[^+\d]/g, "")}`}
-                              target="_blank" rel="noopener noreferrer"
-                              className="text-foreground font-medium hover:text-primary transition-colors inline-flex items-center gap-1"
-                            >
-                              {activeBranch.phone}
-                            </a>
-                          </dd>
-                        </>
-                      )}
-                      {activeBranch.email && (
-                        <>
-                          <dt className="font-semibold text-muted-foreground flex items-center gap-2">
-                            <Mail className="w-4 h-4 text-primary" /> Email
-                          </dt>
-                          <dd>
-                            <a
-                              href={`mailto:${activeBranch.email}`}
-                              target="_blank" rel="noopener noreferrer"
-                              className="text-foreground font-medium hover:text-primary transition-colors inline-flex items-center gap-1"
-                            >
-                              {activeBranch.email}
-                            </a>
-                          </dd>
-                        </>
-                      )}
-                    </dl>
-                  )}
-
-                  {/* Multiple Addresses Grid */}
-                  {activeBranch.details && activeBranch.details.length > 0 && (
-                    <div className="grid grid-cols-1 gap-4 relative z-10">
-                      {activeBranch.details.map(detail => (
-                        <div key={detail.id} className="bg-[#cccccc] rounded-sm p-5 text-[#333333] text-sm md:text-base space-y-2 shadow-inner border border-black/5">
-                          {detail.title && (
-                            <div className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
-                              <div className="font-bold sm:w-[160px] shrink-0 text-black">{detail.title}</div>
-                              <div className="flex-1">
-                                {detail.titleValueUrl ? (
-                                  <a href={detail.titleValueUrl} target="_blank" rel="noopener noreferrer" className="text-[#0000ee] hover:underline break-all font-medium">
-                                    {detail.titleValue || ""}
-                                  </a>
-                                ) : (
-                                  detail.titleValue || ""
-                                )}
-                              </div>
-                            </div>
-                          )}
-                          {detail.naibAmeer && (
-                            <div className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
-                              <div className="font-bold sm:w-[160px] shrink-0 text-black">Naib Ameer</div>
-                              <div className="flex-1">
-                                {detail.naibAmeerUrl ? (
-                                  <a href={detail.naibAmeerUrl} target="_blank" rel="noopener noreferrer" className="text-[#0000ee] hover:underline break-all font-medium">
-                                    {detail.naibAmeer}
-                                  </a>
-                                ) : (
-                                  detail.naibAmeer
-                                )}
-                              </div>
-                            </div>
-                          )}
-                          {detail.address && (
-                            <div className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
-                              <div className="font-bold sm:w-[160px] shrink-0 text-black">Postal Address:</div>
-                              <div className="flex-1">
-                                {detail.addressUrl ? (
-                                  <a href={detail.addressUrl} target="_blank" rel="noopener noreferrer" className="text-[#0000ee] hover:underline break-all font-medium">
-                                    {detail.address}
-                                  </a>
-                                ) : (
-                                  detail.address
-                                )}
-                              </div>
-                            </div>
-                          )}
-                          {detail.phone && (
-                            <div className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
-                              <div className="font-bold sm:w-[160px] shrink-0 text-black">Phone:</div>
-                              <div className="flex-1">
-                                {detail.phoneUrl ? (
-                                  <a href={detail.phoneUrl} target="_blank" rel="noopener noreferrer" className="text-[#0000ee] hover:underline break-all font-medium">
-                                    {detail.phone}
-                                  </a>
-                                ) : (
-                                  detail.phone
-                                )}
-                              </div>
-                            </div>
-                          )}
-                          {detail.mobile && (
-                            <div className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
-                              <div className="font-bold sm:w-[160px] shrink-0 text-black">Mob:</div>
-                              <div className="flex-1">
-                                {detail.mobileUrl ? (
-                                  <a href={detail.mobileUrl} target="_blank" rel="noopener noreferrer" className="text-[#0000ee] hover:underline break-all font-medium">
-                                    {detail.mobile}
-                                  </a>
-                                ) : (
-                                  detail.mobile
-                                )}
-                              </div>
-                            </div>
-                          )}
-                          {detail.email && (
-                            <div className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
-                              <div className="font-bold sm:w-[160px] shrink-0 text-black">Email:</div>
-                              <div className="flex-1">
-                                <a href={detail.emailUrl || `mailto:${detail.email}`} className="text-[#0000ee] hover:underline break-all font-medium">{detail.email}</a>
-                              </div>
-                            </div>
-                          )}
-                          {detail.mapUrl && (
-                            <div className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
-                              <div className="font-bold sm:w-[160px] shrink-0 text-black">Pin Location:</div>
-                              <div className="flex-1 truncate">
-                                <a href={detail.mapUrl} target="_blank" rel="noopener noreferrer" className="text-[#0000ee] hover:underline break-all font-medium">
-                                  {detail.mapUrl}
-                                </a>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  {!activeBranch.phone && !activeBranch.city && (
-                    <p className="text-sm text-muted-foreground mt-8 bg-background p-4 rounded-xl border border-border/50 flex items-start gap-3">
-                      <span className="flex-1">
-                        Full contact details for this branch will be available soon.
-                        Please email <a href="mailto:markaz@tanzeem.org" className="text-primary hover:underline font-medium">markaz@tanzeem.org</a> for assistance.
-                      </span>
-                    </p>
-                  )}
+                <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-10 transition-opacity pointer-events-none">
+                  <MapPin className="w-40 h-40" />
                 </div>
+
+                {/* Legacy fields if no details array exists */}
+                {(!activeBranch.details || activeBranch.details.length === 0) && (
+                  <dl className="grid grid-cols-1 sm:grid-cols-[140px_1fr] gap-y-5 gap-x-4 text-sm relative z-10">
+                    {activeBranch.city && (
+                      <>
+                        <dt className="font-semibold text-muted-foreground flex items-center gap-2">
+                          <MapPin className="w-4 h-4 text-primary" /> City
+                        </dt>
+                        <dd className="text-foreground font-medium">{activeBranch.city}</dd>
+                      </>
+                    )}
+                    {activeBranch.address && (
+                      <>
+                        <dt className="font-semibold text-muted-foreground flex items-center gap-2">
+                          <MapPin className="w-4 h-4 text-primary opacity-0" /> Address
+                        </dt>
+                        <dd className="text-foreground font-medium leading-relaxed max-w-md">
+                          <a href={`https://maps.google.com/?q=${encodeURIComponent(activeBranch.address)}`} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition-colors flex items-start gap-1">
+                            {activeBranch.address}
+                          </a>
+                        </dd>
+                      </>
+                    )}
+                    {activeBranch.phone && (
+                      <>
+                        <dt className="font-semibold text-muted-foreground flex items-center gap-2">
+                          <Phone className="w-4 h-4 text-primary" /> Phone
+                        </dt>
+                        <dd>
+                          <a
+                            href={`tel:${activeBranch.phone.replace(/[^+\d]/g, "")}`}
+                            target="_blank" rel="noopener noreferrer"
+                            className="text-foreground font-medium hover:text-primary transition-colors inline-flex items-center gap-1"
+                          >
+                            {activeBranch.phone}
+                          </a>
+                        </dd>
+                      </>
+                    )}
+                    {activeBranch.email && (
+                      <>
+                        <dt className="font-semibold text-muted-foreground flex items-center gap-2">
+                          <Mail className="w-4 h-4 text-primary" /> Email
+                        </dt>
+                        <dd>
+                          <a
+                            href={`mailto:${activeBranch.email}`}
+                            target="_blank" rel="noopener noreferrer"
+                            className="text-foreground font-medium hover:text-primary transition-colors inline-flex items-center gap-1"
+                          >
+                            {activeBranch.email}
+                          </a>
+                        </dd>
+                      </>
+                    )}
+                  </dl>
+                )}
+
+                {/* Multiple Addresses Grid */}
+                {activeBranch.details && activeBranch.details.length > 0 && (
+                  <div className="grid grid-cols-1 gap-4 relative z-10">
+                    {activeBranch.details.map(detail => (
+                      <div key={detail.id} className="bg-primary-light/50 rounded-sm p-5 text-[#222222] text-sm md:text-base space-y-2 shadow-inner border border-black/5">
+                        {detail.title && (
+                          <div className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
+                            <div className="font-bold sm:w-[160px] shrink-0 text-black">{detail.title}</div>
+                            <div className="flex-1">
+                              {detail.titleValueUrl ? (
+                                <a href={detail.titleValueUrl} target={detail.titleValueUrlNewTab !== false ? "_blank" : "_self"} rel={detail.titleValueUrlNewTab !== false ? "noopener noreferrer" : undefined} className="hover: text-[#222222] hover:text-primary break-all font-medium">
+                                  {detail.titleValue || ""}
+                                </a>
+                              ) : (
+                                detail.titleValue || ""
+                              )}
+                            </div>
+                          </div>
+                        )}
+                        {detail.naibAmeer && (
+                          <div className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
+                            <div className="font-bold sm:w-[160px] shrink-0 text-black">Naib Ameer</div>
+                            <div className="flex-1">
+                              {detail.naibAmeer}
+                            </div>
+                          </div>
+                        )}
+                        {detail.address && (
+                          <div className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
+                            <div className="font-bold sm:w-[160px] shrink-0 text-black">Postal Address:</div>
+                            <div className="flex-1">
+                              {detail.addressUrl ? (
+                                <a href={detail.addressUrl} target={detail.addressUrlNewTab !== false ? "_blank" : "_self"} rel={detail.addressUrlNewTab !== false ? "noopener noreferrer" : undefined} className="hover: text-[#222222] hover:text-primary break-all font-medium">
+                                  {detail.address}
+                                </a>
+                              ) : (
+                                detail.address
+                              )}
+                            </div>
+                          </div>
+                        )}
+                        {detail.phone && (
+                          <div className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
+                            <div className="font-bold sm:w-[160px] shrink-0 text-black">Phone:</div>
+                            <div className="flex-1">
+                              {detail.phoneUrl ? (
+                                <a href={detail.phoneUrl} target={detail.phoneUrlNewTab !== false ? "_blank" : "_self"} rel={detail.phoneUrlNewTab !== false ? "noopener noreferrer" : undefined} className="hover: text-[#222222] hover:text-primary break-all font-medium">
+                                  {detail.phone}
+                                </a>
+                              ) : (
+                                detail.phone
+                              )}
+                            </div>
+                          </div>
+                        )}
+                        {detail.mobile && (
+                          <div className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
+                            <div className="font-bold sm:w-[160px] shrink-0 text-black">Mob:</div>
+                            <div className="flex-1">
+                              {detail.mobileUrl ? (
+                                <a href={detail.mobileUrl} target={detail.mobileUrlNewTab !== false ? "_blank" : "_self"} rel={detail.mobileUrlNewTab !== false ? "noopener noreferrer" : undefined} className="hover: text-[#222222] hover:text-primary break-all font-medium">
+                                  {detail.mobile}
+                                </a>
+                              ) : (
+                                detail.mobile
+                              )}
+                            </div>
+                          </div>
+                        )}
+                        {detail.email && (
+                          <div className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
+                            <div className="font-bold sm:w-[160px] shrink-0 text-black">Email:</div>
+                            <div className="flex-1">
+                              <a href={detail.emailUrl || `mailto:${detail.email}`} target={detail.emailUrlNewTab !== false ? "_blank" : "_self"} rel={detail.emailUrlNewTab !== false ? "noopener noreferrer" : undefined} className="hover: text-[#222222] hover:text-primary break-all font-medium">{detail.email}</a>
+                            </div>
+                          </div>
+                        )}
+                        {detail.mapUrl && (
+                          <div className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
+                            <div className="font-bold sm:w-[160px] shrink-0 text-black">Pin Location:</div>
+                            <div className="flex-1 truncate">
+                              <a href={detail.mapUrl} target={detail.mapUrlNewTab !== false ? "_blank" : "_self"} rel={detail.mapUrlNewTab !== false ? "noopener noreferrer" : undefined} className="hover: text-[#222222] hover:text-primary break-all font-medium">
+                                {detail.mapUrl}
+                              </a>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {!activeBranch.phone && !activeBranch.city && (
+                  <p className="text-sm text-muted-foreground mt-8 bg-background p-4 rounded-xl border border-border/50 flex items-start gap-3">
+                    <span className="flex-1">
+                      Full contact details for this branch will be available soon.
+                      Please email <a href="mailto:markaz@tanzeem.org" className="text-primary hover:underline font-medium">markaz@tanzeem.org</a> for assistance.
+                    </span>
+                  </p>
+                )}
               </div>
             </motion.div>
           )}
 
         </div>
       </div>
-    </section>
+    </section >
   );
 }

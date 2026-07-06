@@ -40,7 +40,7 @@ const SEED_DATA: Record<string, { title: string; content: string; excerpt: strin
     excerpt: "The historical context and need for an Islamic revolutionary organization.",
     content: `
       <div class="space-y-6">
-        <p class="text-xl md:text-2xl font-normal leading-relaxed text-[#222222] text-center max-w-3xl mx-auto mb-6">
+        <p class="text-xl  font-normal bg-primary-light p-6 rounded-sm text-center max-w-3xl mx-auto mb-10">
           The essence of what we call the "Islamic revolutionary thought" consists of the idea that <strong>it is not enough to practice Islam in one's individual life but that the teachings of the Qur'an and those of the Sunnah of Prophet Muhammad (SAW) must also be implemented in their totality in the social, cultural, juristic, political, and the economic spheres of life..</strong>
         </p>
         <p class="text-lg leading-relaxed text-[#222222]">
@@ -250,19 +250,19 @@ export default async function DynamicPage({ params }: PageProps) {
     // ── Legacy URL Redirect Fallback ───────────────────────────────────────────────
     // If the generic page is not found, check if the slug matches a legacy root-level 
     // taxonomy (speaker, audio/video/book category) and 301 redirect to the new route.
-    
+
     // Check Speakers
     const speakerMatch = await db.query.speakers.findFirst({ where: eq(speakers.slug, slug) });
     if (speakerMatch) permanentRedirect(`/audios-by-speaker/${speakerMatch.slug}`);
-    
+
     // Check Audio Categories
     const audioCatMatch = await db.query.audioCategories.findFirst({ where: eq(audioCategories.slug, slug) });
     if (audioCatMatch) permanentRedirect(`/audio/${audioCatMatch.slug}`);
-    
+
     // Check Video Categories
     const videoCatMatch = await db.query.videoCategories.findFirst({ where: eq(videoCategories.slug, slug) });
     if (videoCatMatch) permanentRedirect(`/videos-by-category/${videoCatMatch.slug}`);
-    
+
     // Check Book Categories
     const bookCatMatch = await db.query.bookCategories.findFirst({ where: eq(bookCategories.slug, slug) });
     if (bookCatMatch) permanentRedirect(`/books-by-category/${bookCatMatch.slug}`);

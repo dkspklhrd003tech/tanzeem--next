@@ -105,7 +105,7 @@ export function PageBanner({ settings }: PageBannerProps) {
       <div className="container relative z-20 px-4">
         <h1
           className={cn(
-            "text-4xl md:text-5xl lg:text-6xl font-bold mb-4 drop-shadow-lg line-clamp-1",
+            "text-4xl md:text-5xl lg:text-6xl font-bold pt-4 pb-4 drop-shadow-lg line-clamp-1",
             titleLoading && "animate-pulse",
           )}
           style={{ color: textColor }}
