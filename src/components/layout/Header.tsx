@@ -177,7 +177,7 @@ export function Header() {
       {/* Main Navigation */}
       <motion.header
         className={cn(
-          "sticky top-0 z-50 transition-all duration-300 ps-2 pe-4 bg-card border-b border-border",
+          "sticky top-0 z-50 transition-all duration-300 px-4 bg-card border-b border-border",
           isScrolled && "shadow-md"
         )}
         initial={{ y: -100 }}
@@ -308,7 +308,7 @@ export function Header() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-start justify-center pt-32"
+              className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-start justify-center pt-32 px-8"
               onClick={() => setIsSearchOpen(false)}
             >
               <motion.div

@@ -145,7 +145,7 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
                 {/* ── Leader Cards ── */}
                 <div
                     ref={leadersRef}
-                    className="grid grid-cols-1 md:grid-cols-2 gap-8"
+                    className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-8"
                     role="list"
                     aria-label="Leadership team"
                 >
@@ -154,16 +154,16 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
                             <div
                                 key={leader.id}
                                 role="listitem"
-                                className="leader-card group bg-white border border-border/50 rounded-2xl p-6 shadow-lg transition-all duration-700 flex flex-col md:flex-row gap-6 relative overflow-hidden"
+                                className="leader-card group bg-white border border-border/50 rounded-2xl p-6 shadow-lg transition-all duration-700 flex flex-col md:flex-col lg:flex-row gap-6 relative overflow-hidden"
                             >
-                                <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent transition-opacity duration-700 pointer-events-none" />
+                                
                                 {/* Photo */}
-                                <div className="w-full md:w-44 aspect-square rounded-xl overflow-hidden shrink-0 border border-white/2 relative z-10">
+                                <div className="md:w-44 rounded-xl overflow-hidden shrink-0 border border-white/2 relative z-10">
                                     {leader.avatar ? (
                                         <img
                                             src={leader.avatar}
                                             alt={leader.name}
-                                            className="w-full h-full object-cover"
+                                            className="w-full"
                                             onError={(e) => {
                                                 e.currentTarget.style.display = "none";
                                             }}
