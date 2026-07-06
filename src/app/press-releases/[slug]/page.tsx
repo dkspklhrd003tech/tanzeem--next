@@ -5,8 +5,9 @@ import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { CTABanner } from "@/components/shared/CTABanner";
 import Link from "next/link";
-import { ArrowLeft, Printer, Download, Share2 } from "lucide-react";
+import { ArrowLeft, Printer, Download, Share2, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ClientShareButton } from "@/components/shared/ClientShareButton";
 
 interface PageProps {
     params: Promise<{ slug: string }>;
@@ -68,29 +69,34 @@ export default async function PressReleaseDetailsPage({ params }: PageProps) {
 
     return (
         <main className="min-h-screen bg-zinc-50/50">
-            {/* Header / Actions Bar */}
-            <div className="border-b bg-background sticky top-[72px] z-40">
-                <div className="container mx-auto px-4 py-4 flex flex-wrap items-center justify-between gap-4">
-                    <Button variant="ghost" size="sm" asChild className="text-muted-foreground hover:text-foreground">
-                        <Link href="/press-releases">
-                            <ArrowLeft className="w-4 h-4 mr-2" />
-                            Back to Press Releases
-                        </Link>
-                    </Button>
-                    <div className="flex items-center gap-2">
-                        {selectedItem.pdfUrl && (
-                            <Button asChild variant="outline" size="sm" className="h-8">
-                                <a href={selectedItem.pdfUrl} download={`${selectedItem.slug || 'press-release'}.pdf`}>
-                                    <Download className="w-4 h-4 mr-2" />
-                                    Download PDF
-                                </a>
-                            </Button>
-                        )}
+
+            <div className="container mx-auto py-8 px-4 flex flex-col items-center">
+                <div className="w-full max-w-5xl z-40 mb-4">
+                    <div className="flex flex-wrap items-center justify-between gap-4">
+                        <div className="flex flex-col gap-2 max-w-[70%]">
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-semibold tracking-widest uppercase bg-[#E8F0EC] text-[#0A5C36] w-fit">
+                                <Calendar className="w-3.5 h-3.5" />
+                                {formattedDate}
+                            </span>
+                            <div className="flex items-start gap-3">
+                                <h1 className="text-lg md:text-xl font-semibold text-foreground line-clamp-2">
+                                    {selectedItem.title}
+                                </h1>
+                                <ClientShareButton variant="icon" className="-mt-1" />
+                            </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            {selectedItem.pdfUrl && (
+                                <Button asChild variant="outline" size="sm" className="h-8">
+                                    <a href={selectedItem.pdfUrl} download={`${selectedItem.slug || 'press-release'}.pdf`}>
+                                        <Download className="w-4 h-4 mr-2" />
+                                        Download Press Release
+                                    </a>
+                                </Button>
+                            )}
+                        </div>
                     </div>
                 </div>
-            </div>
-
-            <div className="container mx-auto py-10 px-4 flex justify-center">
                 {selectedItem.pdfUrl ? (
                     <div className="w-full max-w-5xl h-[85vh] rounded-2xl overflow-hidden border border-border shadow-xl bg-white">
                         <iframe

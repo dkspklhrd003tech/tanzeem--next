@@ -598,7 +598,6 @@ export default function OrganizationPageClient() {
 
   return (
     <main className="min-h-screen bg-background">
-      <HeroBanner data={state.heroBanner} />
       <OurHistory data={state.history} />
       <MissionStatement data={state.missionStatement} />
       <LeaderBio data={state.founder} />

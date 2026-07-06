@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useNavigation } from "@/hooks/use-navigation";
 import { cn } from "@/lib/utils";
 
 interface PageBannerProps {
@@ -12,6 +13,19 @@ interface PageBannerProps {
 
 export function PageBanner({ settings }: PageBannerProps) {
   const pathname = usePathname();
+  const { items: navigation } = useNavigation("main", true);
+
+  const flattenedMenu = useMemo(() => {
+    const flat: Array<{ label: string; url: string }> = [];
+    const traverse = (nodes: any[]) => {
+      for (const node of nodes) {
+        if (node.url) flat.push({ label: node.label, url: node.url });
+        if (node.children) traverse(node.children);
+      }
+    };
+    traverse(navigation);
+    return flat;
+  }, [navigation]);
 
   // Resolve the page title and image from the DB (not just the slug).
   const [pageTitle, setPageTitle] = useState<string | null>(null);
@@ -49,20 +63,29 @@ export function PageBanner({ settings }: PageBannerProps) {
   }, [slug]);
 
   // Banner settings come from the DB (seeded in seed-settings.ts).
-  const textColor =
-    settings?.banner_text_color || "#ffffff";
-  const separator =
-    settings?.banner_breadcrumb_separator || "/";
-  const showBreadcrumbs =
-    settings?.banner_show_breadcrumbs !== "false";
+  const textColor = settings?.banner_text_color || "#ffffff";
+  const separator = settings?.banner_breadcrumb_separator || "/";
+  const showBreadcrumbs = settings?.banner_show_breadcrumbs !== "false";
 
   // Build breadcrumb segments from the pathname.
   const pathSegments = pathname?.split("/").filter(Boolean) ?? [];
   const breadcrumbs = pathSegments.map((segment, index) => {
-    const href = "/" + pathSegments.slice(0, index + 1).join("/");
+    let href = "/" + pathSegments.slice(0, index + 1).join("/");
     const label = segment
       .replace(/-/g, " ")
       .replace(/\b\w/g, (l) => l.toUpperCase());
+
+    // Try to find a matching menu link for this breadcrumb
+    const match = flattenedMenu.find((m) => m.label.toLowerCase() === label.toLowerCase());
+    if (match && match.url) {
+      href = match.url;
+    } else {
+      // Hardcoded fallbacks for specific known parent paths that differ from the menu link
+      if (segment === "books") href = "/books-by-category";
+      if (segment === "videos") href = "/videos-by-category";
+      if (segment === "audio") href = "/audios-by-speaker";
+    }
+
     return { label, href };
   });
 

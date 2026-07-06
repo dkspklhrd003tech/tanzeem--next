@@ -58,9 +58,10 @@ export default async function OrganizationPage() {
 
   // ── CMS full page with sections ───────────────────────────────────────────
   if (page && sections.length > 0) {
+    const filteredSections = sections.filter((s) => s.type !== "hero");
     return (
       <main className="min-h-screen bg-background">
-        <DynamicPageContent sections={sections} />
+        <DynamicPageContent sections={filteredSections} />
       </main>
     );
   }

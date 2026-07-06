@@ -34,8 +34,8 @@ async function findPageBySlug(slug: string) {
 }
 
 // ── Seed Data for Dynamic Pages ───────────────────────────────────────────────
-const SEED_DATA: Record<string, { title: string; content: string; excerpt: string }> = {
-  "background": {
+const SEED_DATA: Record<string, { title: string; content: string; excerpt: string; template?: string }> = {
+  "organization/background": {
     title: "Background",
     excerpt: "The historical context and need for an Islamic revolutionary organization.",
     content: `
@@ -55,7 +55,7 @@ const SEED_DATA: Record<string, { title: string; content: string; excerpt: strin
       </div>
     `
   },
-  "mission-statement": {
+  "organization/mission-statement": {
     title: "Mission Statement",
     excerpt: "The defined purpose and mission of Tanzeem-e-Islami.",
     content: `
@@ -74,7 +74,7 @@ const SEED_DATA: Record<string, { title: string; content: string; excerpt: strin
       </div>
     `
   },
-  "our-ideology": {
+  "organization/our-ideology": {
     title: "Our Ideology",
     excerpt: "An overview of the core ideology that forms the foundation of Tanzeem-e-Islami.",
     content: `
@@ -85,7 +85,7 @@ const SEED_DATA: Record<string, { title: string; content: string; excerpt: strin
       </div>
     `
   },
-  "our-ideology/basic-belief": {
+  "organization/our-ideology/basic-belief": {
     title: "Basic Belief",
     excerpt: "The basic theological and ideological beliefs of Tanzeem-e-Islami.",
     content: `
@@ -95,7 +95,7 @@ const SEED_DATA: Record<string, { title: string; content: string; excerpt: strin
       </div>
     `
   },
-  "our-ideology/our-obligations": {
+  "organization/our-ideology/our-obligations": {
     title: "Our Obligations",
     excerpt: "The critical obligations of Muslims regarding the establishment of Deen.",
     content: `
@@ -109,7 +109,7 @@ const SEED_DATA: Record<string, { title: string; content: string; excerpt: strin
       </div>
     `
   },
-  "our-ideology/methodology": {
+  "organization/our-ideology/methodology": {
     title: "Methodology",
     excerpt: "The prophetic methodology for Islamic revolution and reform.",
     content: `
@@ -126,13 +126,39 @@ const SEED_DATA: Record<string, { title: string; content: string; excerpt: strin
       </div>
     `
   },
-  "our-ideology/foundation": {
+  "organization/our-ideology/foundation": {
     title: "Foundation",
     excerpt: "The historical foundation and establishment of Tanzeem-e-Islami.",
     content: `
       <div class="space-y-6">
         <p class="text-lg leading-relaxed text-[#222222]">The foundation of Tanzeem-e-Islami was laid in 1975 by Dr. Israr Ahmed along with a small group of dedicated companions who felt the urgent need for a structured effort to re-establish the Islamic system in Pakistan and beyond.</p>
         <p class="text-lg leading-relaxed text-[#222222]">The foundation stone was laid with a commitment to listen and obey (Bai'ah) the Ameer in all matters conforming to the Shari'ah, restoring the early Islamic model of organization.</p>
+      </div>
+    `
+  },
+  "organization/the-founder": {
+    title: "Dr. Israr Ahmed",
+    excerpt: "APRIL 26, 1932 – APRIL 14, 2010",
+    template: "leader",
+    content: `
+      <div class="space-y-6">
+        <p class="text-lg leading-relaxed text-[#222222]">Dr. Israr Ahmad, the second son of a government servant, was born on April 26, 1932 in Hisar (a district of East Punjab, now a part of Haryana) in India. He graduated from King Edward Medical College (Lahore) in 1954 and later received his masters in Islamic Studies from the University of Karachi in 1965. He came under the influence of Allama Iqbal and Maulana Abul A\`la Maududi as a young student, worked briefly for Muslim Student’s Federation in the Independence Movement and, following the creation of Pakistan in 1947, for the Islami Jami\`yat-e-Talaba and then for the Jama\`at-e-Islami.</p>
+        <p class="text-lg leading-relaxed text-[#222222]">Dr. Israr Ahmad resigned from the Jama\`at in April 1957 because of its involvement in the electoral politics, which he believed was irreconcilable with the revolutionary methodology adopted by the Jama’at in the pre-1947 period. While still a student and an activist of the Islami Jami\`yat-e-Talaba, Dr. Israr Ahmad gained considerable fame and eminence as a Mudarris (or teacher) of the Holy Qur’an.</p>
+        <p class="text-lg leading-relaxed text-[#222222]">Even after resigning from the Jama\`at, he continued to give Qur’anic lectures in different cities of Pakistan, and especially after 1965 he has, according to his own disclosure, invested the better part of his physical and intellectual abilities in the learning and teaching of the Qur’an’ic wisdom.</p>
+        <p class="text-lg leading-relaxed text-[#222222]">Dr. Israr Ahmad wrote an extremely significant tract in 1967 in which he explained his basic thought — that an Islamic Renaissance is possible only by revitalizing the Iman (true faith and conviction) among the Muslims, particularly their intelligentsia. The revitalization of Iman, in turn, is possible only by the propagation of the Qur’an’ic teachings and the study of the Qur’an in modern terms.</p>
+      </div>
+    `
+  },
+  "organization/the-ameer": {
+    title: "Shujauddin Shaikh",
+    excerpt: "AMEER (2020 – PRESENT)",
+    template: "leader",
+    content: `
+      <div class="space-y-6">
+        <p class="text-lg leading-relaxed text-[#222222]">Mohtaram Shujauddin Shaikh is the current Ameer (leader) of Tanzeem-e-Islami, who assumed the responsibility in 2020 following the resignation of Hafiz Akif Saeed on health grounds. Born on September 29, 1974, he has been an active member of the organization for over two decades, contributing significantly to its educational, organizational, and propagation activities across Pakistan and internationally.</p>
+        <p class="text-lg leading-relaxed text-[#222222]">Before assuming the leadership, he served in various key capacities within Tanzeem-e-Islami, including as the Nazim of different regions and as a prominent speaker of Quranic lectures. He has gained widespread recognition for his articulation of Islamic teachings in the context of contemporary socio-political and economic challenges.</p>
+        <p class="text-lg leading-relaxed text-[#222222]">Under his leadership, Tanzeem-e-Islami has significantly expanded its digital outreach, utilizing modern media platforms to broadcast Quranic education, lectures, and organizational messages to a global audience. He remains committed to the core vision of the founder, Dr. Israr Ahmed, focusing on individual reform (Tazkiyah) and collective struggle for the establishment of the Islamic system (Khilafah).</p>
+        <p class="text-lg leading-relaxed text-[#222222]">He regularly delivers the Friday Sermon (Khitab-e-Jum'ah) at the central Quran Academy in Lahore and travels extensively to engage with different chapters of the organization and the broader Muslim community, emphasizing unity and disciplined effort.</p>
       </div>
     `
   }
@@ -168,7 +194,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
           content: SEED_DATA[slug].content,
           excerpt: SEED_DATA[slug].excerpt,
           featuredImage: null,
-          template: "default",
+          template: SEED_DATA[slug].template || "default",
           parentId: null,
           order: 0,
           isPublished: true,
@@ -222,7 +248,7 @@ export default async function DynamicPage({ params }: PageProps) {
           content: SEED_DATA[slug].content,
           excerpt: SEED_DATA[slug].excerpt,
           featuredImage: null,
-          template: "default",
+          template: SEED_DATA[slug].template || "default",
           parentId: null,
           order: 0,
           isPublished: true,
@@ -490,6 +516,16 @@ export default async function DynamicPage({ params }: PageProps) {
     ctaSubheading = "Learn about Dr. Israr Ahmed, the visionary founder of Tanzeem-e-Islami.";
     ctaButtonLabel = "The Founder";
     ctaButtonUrl = "/organization/the-founder";
+  } else if (normalizedSlug === "the-founder") {
+    ctaHeading = "Meet Our Ameer";
+    ctaSubheading = "Discover the current Ameer of Tanzeem-e-Islami and read his profile.";
+    ctaButtonLabel = "The Ameer";
+    ctaButtonUrl = "/organization/the-ameer";
+  } else if (normalizedSlug === "the-ameer") {
+    ctaHeading = "Explore Our Ideology";
+    ctaSubheading = "Learn about the beliefs and principles that guide our work.";
+    ctaButtonLabel = "Our Ideology";
+    ctaButtonUrl = "/organization/our-ideology";
   }
 
   if (page.template === "redirect") {
