@@ -37,6 +37,7 @@ interface ModernizedProsePageProps {
   ctaSubheading?: string;
   ctaButtonLabel?: string;
   ctaButtonUrl?: string;
+  children?: React.ReactNode;
 }
 
 export function ModernizedProsePage({
@@ -53,7 +54,8 @@ export function ModernizedProsePage({
   ctaHeading,
   ctaSubheading,
   ctaButtonLabel,
-  ctaButtonUrl
+  ctaButtonUrl,
+  children
 }: ModernizedProsePageProps) {
   const pathname = usePathname() || "";
 
@@ -237,10 +239,11 @@ export function ModernizedProsePage({
               </div>
             )}
           </div>
-
-
         </div>
       </div>
+
+      {/* ── Custom Appended Content ── */}
+      {children}
 
       {/* ── Stats Section (Conditional) ── */}
       {

@@ -18,10 +18,12 @@ export function MainLayout({ children }: MainLayoutProps) {
   const isSiteManager = pathname?.startsWith("/sitemanager");
   const isHome = pathname === "/";
   const isOrgOrIdeology =
+    (pathname?.startsWith("/organization/") && pathname !== "/organization") ||
+    pathname === "/the-founder" ||
+    pathname === "/the-ameer" ||
     pathname === "/background" ||
     pathname === "/mission-statement" ||
-    pathname === "/the-founder" ||
-    pathname === "/the-ameer";
+    pathname === "/our-ideology";
 
   // Shared settings — SWR-deduped across Header / Footer / MainLayout / PageBanner.
   const { settings, isLoading } = useSettings();

@@ -738,11 +738,10 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
               <Input name="title" required placeholder="e.g. Dars-e-Quran" />
             </div>
             <div className="space-y-2">
-              <Label>Featured Image (16:9 Ratio)</Label>
+              <Label>Featured Image</Label>
               <ImageUploader
                 value={newMainCatImage}
                 onChange={setNewMainCatImage}
-                aspectRatio={16 / 9}
               />
             </div>
             <DialogFooter>

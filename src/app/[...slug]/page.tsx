@@ -1,6 +1,6 @@
 import { notFound, redirect, permanentRedirect } from "next/navigation";
 import { db } from "@/db";
-import { pages, pageSections, audioCategories, videoCategories, audio, videos, speakers, bookCategories } from "@/db/schema";
+import { pages, pageSections, audioCategories, videoCategories, audio, videos, speakers, bookCategories, books } from "@/db/schema";
 import { eq, and, desc } from "drizzle-orm";
 import { Metadata } from "next";
 import crypto from "crypto";
@@ -9,6 +9,8 @@ import { buildMetadata, webPageJsonLd, breadcrumbJsonLd } from "@/lib/seo";
 import { ModernizedProsePage } from "@/components/shared/ModernizedProsePage";
 import { RedirectPage } from "@/components/shared/RedirectPage";
 import { NestedCategoryGrid } from "@/components/shared/NestedCategoryGrid";
+import { MediaCardGrid } from "@/components/shared/MediaCardGrid";
+import { PublicationGrid } from "@/components/shared/PublicationGrid";
 
 // ── Slug resolver — handles prefix mismatches (e.g. DB has "our-ideology"
 //    but route provides "organization/our-ideology") ────────────────────────────
@@ -332,7 +334,9 @@ export default async function DynamicPage({ params }: PageProps) {
 
   const ldId = slug.replace(/\//g, "-");
 
-  // Map specialized configurations for dynamic subpages
+  const normalizedSlug = slug.replace(/^organization\//, "");
+
+  // ── Custom Section State ────────────────────────────────────────────────────
   let stats: any = undefined;
   let accordionItems: any = undefined;
   let ideologyCards: any = undefined;
@@ -340,6 +344,43 @@ export default async function DynamicPage({ params }: PageProps) {
   let ctaSubheading: string | undefined = undefined;
   let ctaButtonLabel: string | undefined = undefined;
   let ctaButtonUrl: string | undefined = undefined;
+  let founderMedia: any = null;
+
+  if (normalizedSlug === "the-founder") {
+    try {
+      const speaker = await db.query.speakers.findFirst({
+        where: eq(speakers.slug, "dr-israr-ahmad")
+      });
+
+      if (speaker) {
+        const latestAudios = await db.query.audio.findMany({
+          where: eq(audio.speakerId, speaker.id),
+          orderBy: [desc(audio.createdAt)],
+          limit: 4
+        });
+        
+        const latestVideos = await db.query.videos.findMany({
+          where: eq(videos.speakerId, speaker.id),
+          orderBy: [desc(videos.createdAt)],
+          limit: 4
+        });
+
+        const latestBooks = await db.query.books.findMany({
+          where: eq(books.isPublished, true),
+          orderBy: [desc(books.createdAt)],
+          limit: 4
+        });
+
+        founderMedia = {
+          audios: latestAudios,
+          videos: latestVideos,
+          books: latestBooks
+        };
+      }
+    } catch (e) {
+      console.error("Failed fetching founder media", e);
+    }
+  }
 
   let mediaGridData: any[] = [];
   if (page.id === '56f118be-bcad-42a0-a60a-37300adc8a39' || page.slug === 'audios-by-category') {
@@ -451,8 +492,6 @@ export default async function DynamicPage({ params }: PageProps) {
         };
       });
   }
-
-  const normalizedSlug = slug.replace(/^organization\//, "");
 
   if (normalizedSlug === "background") {
     ctaHeading = "Learn About Our Mission";
@@ -573,7 +612,46 @@ export default async function DynamicPage({ params }: PageProps) {
           ctaSubheading={ctaSubheading}
           ctaButtonLabel={ctaButtonLabel}
           ctaButtonUrl={ctaButtonUrl}
-        />
+        >
+          {founderMedia && (
+            <div className="space-y-4">
+              {founderMedia.audios.length > 0 && (
+                <MediaCardGrid 
+                  heading="Latest Audios" 
+                  items={founderMedia.audios.map((a: any) => ({
+                    title: a.title,
+                    image: a.thumbnailUrl || '/images/default-audio.jpg',
+                    type: 'audio',
+                    link: `/audios/${a.slug}`
+                  }))}
+                  columns={4}
+                />
+              )}
+              {founderMedia.videos.length > 0 && (
+                <MediaCardGrid 
+                  heading="Latest Videos" 
+                  items={founderMedia.videos.map((v: any) => ({
+                    title: v.title,
+                    image: v.thumbnailUrl || '/images/default-video.jpg',
+                    type: 'video',
+                    link: `/videos/${v.slug}`
+                  }))}
+                  columns={4}
+                />
+              )}
+              {founderMedia.books.length > 0 && (
+                <PublicationGrid 
+                  heading="Latest Books" 
+                  publications={founderMedia.books.map((b: any) => ({
+                    title: b.title,
+                    cover: b.coverImage || '/images/default-book.jpg',
+                    link: `/books/${b.slug}`
+                  }))}
+                />
+              )}
+            </div>
+          )}
+        </ModernizedProsePage>
       )}
     </>
   );

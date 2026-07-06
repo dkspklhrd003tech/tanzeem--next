@@ -1,8 +1,15 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import Cropper from "react-easy-crop";
-import { Upload, X, Check, Image as ImageIcon, Loader2, Crop as CropIcon } from "lucide-react";
+import {
+  Upload,
+  X,
+  Check,
+  Image as ImageIcon,
+  Loader2,
+  Crop as CropIcon,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -33,12 +40,14 @@ export function ImageUploader({
   onChange,
   altValue,
   onAltChange,
-  aspectRatio = 16 / 9,
   freeCrop = true,
   disableCrop = false,
   label,
   className,
-}: ImageUploaderProps & { freeCrop?: boolean; disableCrop?: boolean }) {
+}: ImageUploaderProps & {
+  freeCrop?: boolean;
+  disableCrop?: boolean;
+}): React.ReactNode {
   const [image, setImage] = useState<string | null>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
@@ -46,27 +55,33 @@ export function ImageUploader({
   const [isCropping, setIsCropping] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [detectedAspect, setDetectedAspect] = useState<number | null>(null);
-  
+
   // Use controlled altValue (via onAltChange) or local state
   const isControlled = typeof onAltChange === "function";
   const [localAltValue, setLocalAltValue] = useState(altValue ?? "");
   const [showAltInput, setShowAltInput] = useState(true);
-  
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
 
-  const onCropComplete = useCallback((_croppedArea: any, croppedAreaPixels: any) => {
-    setCroppedAreaPixels(croppedAreaPixels);
-  }, []);
+  const onCropComplete = useCallback(
+    (_croppedArea: any, croppedAreaPixels: any) => {
+      setCroppedAreaPixels(croppedAreaPixels);
+    },
+    [],
+  );
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0];
-      
+
       // Auto-fill alt text
       const baseName = file.name.replace(/\.[^/.]+$/, "");
-      const cleanedName = baseName.split(/[-_]+/).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
-      
+      const cleanedName = baseName
+        .split(/[-_]+/)
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(" ");
+
       setLocalAltValue(cleanedName);
       setShowAltInput(true);
       if (isControlled) {
@@ -77,14 +92,18 @@ export function ImageUploader({
       reader.addEventListener("load", async () => {
         const result = reader.result as string;
         setImage(result);
-        
+
         const img = new Image();
         img.onload = () => {
           setDetectedAspect(img.width / img.height);
         };
         img.src = result;
-        
-        if (disableCrop) {
+
+        const isSvg =
+          file.type === "image/svg+xml" ||
+          file.name.toLowerCase().endsWith(".svg");
+
+        if (disableCrop || isSvg) {
           // Direct upload without cropping
           setIsUploading(true);
           try {
@@ -136,7 +155,7 @@ export function ImageUploader({
 
   const getCroppedImg = async (
     imageSrc: string,
-    pixelCrop: any
+    pixelCrop: any,
   ): Promise<Blob | null> => {
     const image = await createImage(imageSrc);
     const canvas = document.createElement("canvas");
@@ -156,13 +175,17 @@ export function ImageUploader({
       0,
       0,
       pixelCrop.width,
-      pixelCrop.height
+      pixelCrop.height,
     );
 
     return new Promise((resolve) => {
-      canvas.toBlob((blob) => {
-        resolve(blob);
-      }, "image/jpeg");
+      canvas.toBlob(
+        (blob) => {
+          resolve(blob);
+        },
+        "image/webp",
+        0.9,
+      );
     });
   };
 
@@ -175,7 +198,7 @@ export function ImageUploader({
       if (!croppedBlob) throw new Error("Failed to crop image");
 
       const formData = new FormData();
-      formData.append("file", croppedBlob, "upload.jpg");
+      formData.append("file", croppedBlob, "upload.webp");
       formData.append("type", "uploads");
 
       const res = await fetch("/api/upload", {
@@ -218,15 +241,21 @@ export function ImageUploader({
       <div
         className={cn(
           "relative border-2 border-dashed border-border rounded-xl overflow-hidden group transition-all",
-          !value && "hover:border-primary/50 cursor-pointer p-8 flex flex-col items-center justify-center",
-          value && "aspect-video"
+          !value &&
+          "hover:border-primary/50 cursor-pointer p-8 flex flex-col items-center justify-center",
+          value &&
+          "p-4 min-h-[150px] flex items-center justify-center bg-zinc-50/50",
         )}
         onClick={() => !value && fileInputRef.current?.click()}
       >
         {value ? (
           <>
-            <img src={value} alt={isControlled ? (altValue ?? "") : localAltValue} className="w-full h-full object-contain" />
-            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+            <img
+              src={value}
+              alt={isControlled ? (altValue ?? "") : localAltValue}
+              className="w-auto h-auto max-h-[300px] object-contain rounded-lg"
+            />
+            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 rounded-xl">
               <Button
                 variant="secondary"
                 size="sm"
@@ -254,8 +283,12 @@ export function ImageUploader({
             <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">
               <Upload className="h-6 w-6 text-primary" />
             </div>
-            <p className="text-sm font-medium">Click to upload or drag and drop</p>
-            <p className="text-xs text-foreground-muted mt-1">WebP, PNG & SVG (max. 50KB)</p>
+            <p className="text-sm font-medium">
+              Click to upload or drag and drop
+            </p>
+            <p className="text-xs text-foreground-muted mt-1">
+              WebP, PNG & SVG (max. 50KB)
+            </p>
           </>
         )}
 
@@ -271,7 +304,12 @@ export function ImageUploader({
       {value && (
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <Label htmlFor="alt-text" className="text-xs font-medium text-foreground-muted uppercase tracking-wider">Alternative Text</Label>
+            <Label
+              htmlFor="alt-text"
+              className="text-xs font-medium text-foreground-muted uppercase tracking-wider"
+            >
+              Alternative Text
+            </Label>
           </div>
           <Input
             id="alt-text"
@@ -284,7 +322,10 @@ export function ImageUploader({
       )}
 
       {/* Cropping Modal */}
-      <Dialog open={isCropping} onOpenChange={(open) => !open && !isUploading && setIsCropping(false)}>
+      <Dialog
+        open={isCropping}
+        onOpenChange={(open) => !open && !isUploading && setIsCropping(false)}
+      >
         <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden rounded-2xl">
           <DialogHeader className="p-6 pb-0">
             <DialogTitle className="flex items-center gap-2">
@@ -313,8 +354,12 @@ export function ImageUploader({
           <div className="p-6 space-y-6">
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <Label className="text-xs font-medium text-foreground-muted uppercase tracking-wider">Zoom Level</Label>
-                <span className="text-xs font-bold text-primary">{Math.round(zoom * 100)}%</span>
+                <Label className="text-xs font-medium text-foreground-muted uppercase tracking-wider">
+                  Zoom Level
+                </Label>
+                <span className="text-xs font-bold text-primary">
+                  {Math.round(zoom * 100)}%
+                </span>
               </div>
               <Slider
                 value={[zoom]}
