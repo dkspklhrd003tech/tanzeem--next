@@ -3,8 +3,9 @@
 import { Share2, Check } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 
-export function ClientShareButton() {
+export function ClientShareButton({ className, variant = "default" }: { className?: string, variant?: "default" | "icon" }) {
   const [copied, setCopied] = useState(false);
   const { toast } = useToast();
 
@@ -20,10 +21,16 @@ export function ClientShareButton() {
   return (
     <button
       onClick={handleShare}
-      className="w-full flex items-center justify-center gap-2 border border-border rounded-full px-6 py-2.5 text-sm text-foreground-muted hover:border-primary hover:text-primary transition-colors"
+      title="Share"
+      className={cn(
+        "flex items-center justify-center gap-2 transition-colors",
+        variant === "default" && "w-full border border-border rounded-full px-6 py-2.5 text-sm text-foreground-muted hover:border-primary hover:text-primary",
+        variant === "icon" && "text-foreground-muted hover:text-primary p-2 rounded-full hover:bg-muted",
+        className
+      )}
     >
-      {copied ? <Check className="h-4 w-4 text-green-500" /> : <Share2 className="h-4 w-4" />}
-      {copied ? "Copied" : "Share"}
+      {copied ? <Check className="h-5 w-5 text-green-500" /> : <Share2 className="h-5 w-5" />}
+      {variant === "default" && (copied ? "Copied" : "Share")}
     </button>
   );
 }

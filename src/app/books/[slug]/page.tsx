@@ -75,87 +75,74 @@ export default async function BookDetailPage({ params }: Props) {
           Back to Books Library
         </Link>
 
-        <div className="grid md:grid-cols-3 gap-10">
-
-          {/* Cover */}
-          <div className="md:col-span-1 flex flex-col items-center gap-4">
-            <div className="w-48 md:w-full max-w-xs rounded-xl overflow-hidden border border-border shadow-deep" style={{ aspectRatio: "3/4" }}>
-              {book.coverImage ? (
-                <img src={book.coverImage} alt={book.title} className="w-full h-full object-cover" />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-primary/5">
-                  <BookOpen className="h-16 w-16 text-primary/20" />
-                </div>
+        <div className="space-y-5">
+          <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
+            <div className="space-y-3">
+              {book.category && (
+                <Badge variant="outline" className="text-primary border-primary/30">{book.category.name}</Badge>
               )}
+              <div className="flex flex-wrap items-center gap-3">
+                <h1 className="text-2xl md:text-3xl font-bold text-foreground leading-snug">{book.title}</h1>
+                <ClientShareButton variant="icon" />
+              </div>
             </div>
 
-            {/* Actions */}
             {book.fileUrl && (
               <a
                 href={book.fileUrl}
                 download
-                className="w-full flex items-center justify-center gap-2 bg-primary text-primary-foreground rounded-full px-6 py-3 text-sm font-semibold hover:bg-primary-dark transition-colors"
+                className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground rounded-full px-6 py-2.5 text-sm font-semibold hover:bg-primary-dark transition-colors shrink-0"
               >
                 <Download className="h-4 w-4" />
                 Download PDF
               </a>
             )}
-            <ClientShareButton />
           </div>
 
-          {/* Details */}
-          <div className="md:col-span-2 space-y-5">
-            {book.category && (
-              <Badge variant="outline" className="text-primary border-primary/30">{book.category.name}</Badge>
+          {/* Meta grid */}
+          <dl className="grid grid-cols-2 gap-y-3 gap-x-6 text-sm border border-border rounded-xl p-5 bg-card">
+            {book.authorName && (
+              <>
+                <dt className="font-semibold text-foreground-muted">Author</dt>
+                <dd className="text-foreground">{book.authorName}</dd>
+              </>
             )}
-            <h1 className="text-2xl md:text-3xl font-bold text-foreground leading-snug">{book.title}</h1>
+            <dt className="font-semibold text-foreground-muted">Language</dt>
+            <dd className="text-foreground capitalize">{book.language}</dd>
+            {book.pages && (
+              <>
+                <dt className="font-semibold text-foreground-muted">Pages</dt>
+                <dd className="text-foreground">{book.pages}</dd>
+              </>
+            )}
+            {book.downloadCount > 0 && (
+              <>
+                <dt className="font-semibold text-foreground-muted">Downloads</dt>
+                <dd className="text-foreground">{book.downloadCount.toLocaleString()}</dd>
+              </>
+            )}
+          </dl>
 
-            {/* Meta grid */}
-            <dl className="grid grid-cols-2 gap-y-3 gap-x-6 text-sm border border-border rounded-xl p-5 bg-card">
-              {book.authorName && (
-                <>
-                  <dt className="font-semibold text-foreground-muted">Author</dt>
-                  <dd className="text-foreground">{book.authorName}</dd>
-                </>
-              )}
-              <dt className="font-semibold text-foreground-muted">Language</dt>
-              <dd className="text-foreground capitalize">{book.language}</dd>
-              {book.pages && (
-                <>
-                  <dt className="font-semibold text-foreground-muted">Pages</dt>
-                  <dd className="text-foreground">{book.pages}</dd>
-                </>
-              )}
-              {book.downloadCount > 0 && (
-                <>
-                  <dt className="font-semibold text-foreground-muted">Downloads</dt>
-                  <dd className="text-foreground">{book.downloadCount.toLocaleString()}</dd>
-                </>
-              )}
-            </dl>
+          {book.description && (
+            <div>
+              <h2 className="text-sm font-semibold uppercase tracking-wide text-foreground-muted mb-2">About this Book</h2>
+              <p className="text-foreground-muted leading-relaxed text-sm">{book.description}</p>
+            </div>
+          )}
 
-            {book.description && (
-              <div>
-                <h2 className="text-sm font-semibold uppercase tracking-wide text-foreground-muted mb-2">About this Book</h2>
-                <p className="text-foreground-muted leading-relaxed text-sm">{book.description}</p>
+          {book.fileUrl && (
+            <div className="mt-8">
+              <div className="w-full h-[85vh] rounded-2xl overflow-hidden border border-border shadow-xl bg-white relative">
+                <iframe
+                  src={`${book.fileUrl}#toolbar=1`}
+                  className="w-full h-full border-none"
+                  title={book.title}
+                  allow="autoplay; fullscreen"
+                  loading="lazy"
+                />
               </div>
-            )}
-
-            {book.fileUrl && (
-              <div className="mt-8">
-                <h2 className="text-sm font-semibold uppercase tracking-wide text-foreground-muted mb-4">Read Book</h2>
-                <div className="w-full h-[85vh] rounded-2xl overflow-hidden border border-border shadow-xl bg-white relative">
-                  <iframe
-                    src={`${book.fileUrl}#toolbar=1`}
-                    className="w-full h-full border-none"
-                    title={book.title}
-                    allow="autoplay; fullscreen"
-                    loading="lazy"
-                  />
-                </div>
-              </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
 
         {/* Related */}
