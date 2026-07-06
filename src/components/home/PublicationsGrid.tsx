@@ -18,6 +18,8 @@ type BookRecord = {
     fileUrl: string | null;
     coverImage: string | null;
     slug: string;
+    buttonText?: string | null;
+    buttonUrl?: string | null;
 };
 
 type MagazineRecord = {
@@ -27,6 +29,8 @@ type MagazineRecord = {
     coverImage: string | null;
     slug: string;
     issueNumber: string | null;
+    buttonText?: string | null;
+    buttonUrl?: string | null;
 };
 
 type PublicationsProps = {
@@ -130,7 +134,7 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
 
                                 <div className="text-center z-10 w-full">
                                     <Link
-                                        href={`/magazines/${mag.slug}`}
+                                        href={mag.buttonUrl || `/magazines/${mag.slug}`}
                                         className={cn(
                                             "group inline-flex items-center gap-3 border border-primary/50 text-[#222222] hover:text-white backdrop-blur-md",
                                             "px-4 md:px-8 py-3.5 rounded-full text-sm font-bold tracking-wide uppercase shadow-lg",
@@ -138,7 +142,7 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
                                             "focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
                                         )}
                                     >
-                                        More {mag.title}
+                                        {mag.buttonText || `More ${mag.title}`}
                                         <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" aria-hidden="true" />
                                     </Link>
                                 </div>
@@ -201,7 +205,7 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
 
                                 <div className="text-center z-10 w-full">
                                     <Link
-                                        href={`/books/${book.slug}`}
+                                        href={book.buttonUrl || `/books/${book.slug}`}
                                         className={cn(
                                             "group inline-flex items-center gap-3 border border-primary/50  text-[#222222] hover:text-white ackdrop-blur-md",
                                             "px-4 md:px-8 py-3.5 rounded-full text-sm font-bold tracking-wide uppercase shadow-lg",
@@ -209,7 +213,7 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
                                             "focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
                                         )}
                                     >
-                                        {book.title}
+                                        {book.buttonText || book.title}
                                         <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" aria-hidden="true" />
                                     </Link>
                                 </div>

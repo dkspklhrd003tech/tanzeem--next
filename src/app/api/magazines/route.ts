@@ -34,6 +34,8 @@ export async function POST(req: NextRequest) {
             coverImage: body.coverImage || null,
             isFeatured: body.isFeatured || false,
             isPublished: true,
+            buttonText: body.buttonText || null,
+            buttonUrl: body.buttonUrl || null,
             authorId: user.id,
         } as any);
 

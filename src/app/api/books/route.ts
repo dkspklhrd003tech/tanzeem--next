@@ -85,6 +85,8 @@ export async function POST(request: NextRequest) {
       isFeatured: data.isFeatured ?? false,
       metaTitle: data.metaTitle,
       metaDescription: data.metaDescription,
+      buttonText: data.buttonText,
+      buttonUrl: data.buttonUrl,
       authorId: user.id,
       publishedAt: data.isPublished ? new Date() : null,
     });

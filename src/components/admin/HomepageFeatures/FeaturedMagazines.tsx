@@ -82,6 +82,8 @@ export function FeaturedMagazines() {
         issueNumber: "",
         coverImage: "",
         isFeatured: true,
+        buttonText: "",
+        buttonUrl: "",
     });
 
     const { toast } = useToast();
@@ -155,6 +157,8 @@ export function FeaturedMagazines() {
                 issueNumber: item.issueNumber || "Current Issue",
                 coverImage: item.coverImage || "",
                 isFeatured: item.isFeatured,
+                buttonText: item.buttonText || "",
+                buttonUrl: item.buttonUrl || "",
             });
         } else {
             setEditingItem(null);
@@ -164,6 +168,8 @@ export function FeaturedMagazines() {
                 issueNumber: "Current Issue",
                 coverImage: "",
                 isFeatured: true,
+                buttonText: "",
+                buttonUrl: "",
             });
         }
         setPreviewUrl(null);
@@ -323,6 +329,17 @@ export function FeaturedMagazines() {
                                         <option value="true">Featured</option>
                                         <option value="false">Hidden</option>
                                     </select>
+                                </div>
+                            </div>
+                            
+                            <div className="flex gap-4">
+                                <div className="flex-1 space-y-2">
+                                    <label className="text-sm font-semibold text-foreground">Button Text (Optional)</label>
+                                    <input type="text" value={formData.buttonText} onChange={e => setFormData({ ...formData, buttonText: e.target.value })} className="w-full py-2.5 border border-border rounded-xl bg-background text-foreground focus:ring-2 focus:ring-primary/20 transition-all outline-none" placeholder="e.g. More Nida e Khilafat" />
+                                </div>
+                                <div className="flex-1 space-y-2">
+                                    <label className="text-sm font-semibold text-foreground">Button URL (Optional)</label>
+                                    <input type="text" value={formData.buttonUrl} onChange={e => setFormData({ ...formData, buttonUrl: e.target.value })} className="w-full py-2.5 border border-border rounded-xl bg-background text-foreground focus:ring-2 focus:ring-primary/20 transition-all outline-none" placeholder="e.g. /magazines/nida-e-khilafat" />
                                 </div>
                             </div>
 

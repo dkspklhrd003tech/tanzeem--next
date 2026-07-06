@@ -372,6 +372,8 @@ export const books = mysqlTable("books", {
     metaTitle: varchar("meta_title", { length: 255 }),
     metaDescription: text("meta_description"),
     authorId: varchar("author_id", { length: 191 }).notNull(),
+    buttonText: varchar("button_text", { length: 100 }),
+    buttonUrl: text("button_url"),
     publishedAt: timestamp("published_at"),
     ...timestamps,
 });
@@ -416,6 +418,8 @@ export const magazines = mysqlTable("magazines", {
     metaTitle: varchar("meta_title", { length: 255 }),
     metaDescription: text("meta_description"),
     authorId: varchar("author_id", { length: 191 }).notNull(),
+    buttonText: varchar("button_text", { length: 100 }),
+    buttonUrl: text("button_url"),
     ...timestamps,
 });
 
