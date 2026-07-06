@@ -1,11 +1,19 @@
 import Link from "next/link";
 import { db } from "@/lib/db";
-import { videoCategories, videos } from "@/db/schema";
+import { audioCategories, audio } from "@/db/schema";
 import { count, eq, asc, desc, isNull } from "drizzle-orm";
+import { buildMetadata } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
-export default async function VideosByCategoryPage() {
+export const metadata = buildMetadata({
+  title: "Audios by Category",
+  description: "Browse Islamic audio lectures organized by categories.",
+  path: "/audios-by-category",
+  keywords: ["Islamic audio", "audio lectures", "Tanzeem audio categories"],
+});
+
+export default async function AudiosByCategoryPage() {
   let cats: any[] = [];
   let countRows: any[] = [];
   let countMap: Record<string, number> = {};
@@ -13,28 +21,28 @@ export default async function VideosByCategoryPage() {
   try {
     cats = await db
       .select({
-        id: videoCategories.id,
-        name: videoCategories.name,
-        slug: videoCategories.slug,
-        description: videoCategories.description,
-        imageUrl: videoCategories.imageUrl,
+        id: audioCategories.id,
+        name: audioCategories.name,
+        slug: audioCategories.slug,
+        description: audioCategories.description,
+        imageUrl: audioCategories.imageUrl,
       })
-      .from(videoCategories)
-      .where(isNull(videoCategories.parentId))
-      .orderBy(desc(videoCategories.order), asc(videoCategories.name));
+      .from(audioCategories)
+      .where(isNull(audioCategories.parentId))
+      .orderBy(desc(audioCategories.order), asc(audioCategories.name));
 
     countRows = await db
-      .select({ categoryId: videos.categoryId, total: count() })
-      .from(videos)
-      .where(eq(videos.isPublished, true))
-      .groupBy(videos.categoryId);
+      .select({ categoryId: audio.categoryId, total: count() })
+      .from(audio)
+      .where(eq(audio.isPublished, true))
+      .groupBy(audio.categoryId);
 
     countMap = countRows.reduce<Record<string, number>>((acc, row) => {
       if (row.categoryId) acc[row.categoryId] = Number(row.total);
       return acc;
     }, {});
   } catch (error) {
-    console.error("Failed to fetch video categories:", error);
+    console.error("Failed to fetch audio categories:", error);
   }
 
   const display = cats.map((c) => ({ ...c, count: countMap[c.id] ?? 0 }));
@@ -44,7 +52,7 @@ export default async function VideosByCategoryPage() {
       <div className="container mx-auto py-10 md:py-16">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
           {display.map((cat) => {
-            const href = cat.slug ? `/videos-by-category/${cat.slug}` : "#";
+            const href = cat.slug ? `/audios-by-category/${cat.slug}` : "#";
             return (
               <Link
                 key={cat.id}
@@ -74,7 +82,7 @@ export default async function VideosByCategoryPage() {
                     {cat.name}
                   </h3>
                   <span className="text-xs font-normal text-primary bg-primary/10 px-3 py-1 rounded-full mt-2 inline-block">
-                    {cat.count} Videos
+                    {cat.count} Audios
                   </span>
                   {cat.description && (
                     <p className="text-sm text-foreground-muted mt-2 line-clamp-2 max-w-xs mx-auto">{cat.description}</p>

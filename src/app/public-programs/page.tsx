@@ -7,19 +7,6 @@ export const dynamic = "force-dynamic";
 const SLUG = "public-programs";
 const DEFAULT_TITLE = "Public Programs | Tanzeem-e-Islami";
 const DEFAULT_DESC = "Community programs and weekly gatherings.";
-const FALLBACK_CARDS = [
-  {
-    title: "Quranic Circles",
-    href: "/public-programs/quranic-circles",
-    description: "Weekly study circles across Pakistan",
-  },
-  {
-    title: "Khitabat-e-Jummah Addresses",
-    href: "/public-programs/khitabat-e-jummah",
-    description: "Archived Friday addresses",
-  },
-];
-
 export async function generateMetadata() {
   const { page } = await getCmsPage(SLUG);
   return generatePageMetadata(page, DEFAULT_TITLE, DEFAULT_DESC);
@@ -49,6 +36,6 @@ export default async function PublicProgramsPage() {
   }
 
   return (
-    <HubLanding title="Public Programs" subtitle={DEFAULT_DESC} cards={FALLBACK_CARDS} />
+    <HubLanding title="Public Programs" subtitle={DEFAULT_DESC} cards={[]} />
   );
 }

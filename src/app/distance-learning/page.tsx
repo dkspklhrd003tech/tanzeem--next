@@ -6,12 +6,7 @@ export const dynamic = "force-dynamic";
 const SLUG = "distance-learning";
 const DEFAULT_TITLE = "Distance Learning | Tanzeem-e-Islami";
 const DEFAULT_DESC = "Study the Quran, Hadith, and Islamic sciences from anywhere in the world through our distance learning programs.";
-const FALLBACK_CARDS = [
-  { title: "Bayan-ul-Quran", href: "/resources/bayan-ul-quran", description: "Comprehensive Quran commentary and study program" },
-  { title: "Dars-e-Quran", href: "/darse-quran", description: "Systematic Quran study circles" },
-  { title: "Online Courses", href: "/online-courses", description: "Structured online Islamic education courses" },
-  { title: "Quran Academies", href: "/quranic-circles", description: "Quranic education and training programs" },
-];
+
 
 export async function generateMetadata() {
   const { page } = await getCmsPage(SLUG);
@@ -62,18 +57,6 @@ export default async function DistanceLearningPage() {
           <p>A simplified Quran study program designed for beginners and those with limited time.</p>
         </article>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-5xl mx-auto">
-          {FALLBACK_CARDS.map((card) => (
-            <a
-              key={card.href}
-              href={card.href}
-              className="group bg-card rounded-xl p-6 shadow-sm border border-border hover:shadow-md transition-all duration-300 hover:-translate-y-1"
-            >
-              <h3 className="text-lg font-semibold mb-2 text-foreground group-hover:text-primary transition-colors">
-                {card.title}
-              </h3>
-              <p className="text-sm text-muted-foreground">{card.description}</p>
-            </a>
-          ))}
         </div>
       </div>
     </main>

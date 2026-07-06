@@ -43,14 +43,7 @@ export default async function VideosBySpeakersPage() {
     console.warn("Could not fetch videos from DB during build. Using fallback.");
   }
 
-  const FALLBACK = [
-    { id: "s1", name: "Dr. Israr Ahmed", slug: "dr-israr-ahmed", bio: "Founder of Tanzeem-e-Islami", count: 0 },
-    { id: "s2", name: "Mohtaram Shujauddin Shaikh", slug: "shujauddin-shaikh", bio: "Current Ameer of Tanzeem-e-Islami", count: 0 },
-  ];
-
-  const display = speakerRows.length > 0
-    ? speakerRows.map((s) => ({ ...s, count: countMap[s.id] ?? 0 }))
-    : FALLBACK;
+  const display = speakerRows.map((s) => ({ ...s, count: countMap[s.id] ?? 0 }));
 
   return (
     <main className="min-h-screen bg-muted/20 py-10">
@@ -83,13 +76,13 @@ export default async function VideosBySpeakersPage() {
                     </div>
                   )}
                 </div>
-                <div className="p-4 flex items-center justify-center bg-card">
-                  <h2 className="text-[17px] font-medium text-foreground text-center line-clamp-1">
+                <div className="p-4 flex flex-col items-center justify-center bg-card">
+                  <h2 className="text-[17px] font-medium text-foreground text-center line-clamp-1 mb-2">
                     {sp.name}
-                    <span className="text-sm font-normal text-primary bg-muted px-3 py-1 rounded-full">
-                      {sp.count} Videos
-                    </span>
                   </h2>
+                  <span className="text-sm font-normal text-primary bg-primary/10 px-3 py-1 rounded-full">
+                    {sp.count} Videos
+                  </span>
                 </div>
               </Link>
             );

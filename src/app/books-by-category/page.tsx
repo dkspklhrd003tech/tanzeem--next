@@ -43,21 +43,7 @@ export default async function BooksByCategoryPage() {
     console.warn("Could not fetch book categories from DB during build. Using fallback.");
   }
 
-  // Fallback static categories shown when DB has no categories yet
-  const FALLBACK = [
-    { id: "f1", name: "Tafseer & Quranic Studies", slug: "tafseer", description: "Books on Quranic commentary and sciences", coverImage: null, count: 0 },
-    { id: "f2", name: "Hadith & Sunnah", slug: "hadith", description: "Collections and explanations of Hadith", coverImage: null, count: 0 },
-    { id: "f3", name: "Islamic Theology (Aqeedah)", slug: "aqeedah", description: "Books on Islamic beliefs and creed", coverImage: null, count: 0 },
-    { id: "f4", name: "Seerah & Islamic History", slug: "seerah", description: "Biography of Prophet (SAW) and Islamic history", coverImage: null, count: 0 },
-    { id: "f5", name: "Contemporary Issues", slug: "contemporary", description: "Islamic perspectives on modern challenges", coverImage: null, count: 0 },
-    { id: "f6", name: "Spirituality & Tazkiyah", slug: "spirituality", description: "Books on spiritual purification", coverImage: null, count: 0 },
-    { id: "f7", name: "Fiqh & Islamic Law", slug: "fiqh", description: "Islamic jurisprudence", coverImage: null, count: 0 },
-    { id: "f8", name: "Children's Literature", slug: "children", description: "Islamic books for young readers", coverImage: null, count: 0 },
-  ];
-
-  const display = cats.length > 0
-    ? cats.map((c) => ({ ...c, count: countMap[c.id] ?? 0 }))
-    : FALLBACK;
+  const display = cats.map((c) => ({ ...c, count: countMap[c.id] ?? 0 }));
 
   return (
     <main className="min-h-screen bg-background">

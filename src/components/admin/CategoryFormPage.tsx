@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { ImageUploader } from "@/components/admin/ImageUploader";
 import { CustomFieldBuilder } from "@/components/admin/CustomFieldBuilder";
 import { CustomFieldRenderer } from "@/components/admin/CustomFieldRenderer";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 function slugify(text: string) {
   return text.toLowerCase().trim()
@@ -95,10 +96,16 @@ export default function CategoryFormPage({ id, type = "audio-categories" }: { id
         <h1 className="text-2xl font-bold">{isNew ? "Add Category" : "Edit Category"}</h1>
         <div className="ml-auto flex gap-2">
           <Button variant="outline" onClick={() => router.back()} className="bg-destructive text-white hover:bg-destructive/80">Cancel</Button>
-          <Button onClick={handleSave} disabled={isSaving} className="bg-primary text-white hover:bg-primary/80">
-            {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-            {isNew ? "Create" : "Save Changes"}
-          </Button>
+          <ConfirmDialog
+            title={isNew ? "Create Category" : "Save Changes"}
+            description={`Are you sure you want to ${isNew ? "create this new category" : "save changes to this category"}?`}
+            onConfirm={handleSave}
+          >
+            <Button disabled={isSaving} className="bg-primary text-white hover:bg-primary/80">
+              {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+              {isNew ? "Create" : "Save Changes"}
+            </Button>
+          </ConfirmDialog>
         </div>
       </div>
 

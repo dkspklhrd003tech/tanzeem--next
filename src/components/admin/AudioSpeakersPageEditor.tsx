@@ -278,13 +278,21 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
 
         {!activeSpeaker && (
           <TabsContent value="settings">
-            <form onSubmit={handlePageSave} className="space-y-6 max-w-2xl">
+            <form className="space-y-6 max-w-2xl">
               <Card>
                 <CardHeader><CardTitle>Page SEO</CardTitle></CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-2"><Label>Title</Label><Input value={pageForm.title} onChange={e => setPageForm({ ...pageForm, title: e.target.value })} /></div>
                   <div className="space-y-2"><Label>Slug</Label><Input value={pageForm.slug} onChange={e => setPageForm({ ...pageForm, slug: e.target.value })} /></div>
-                  <Button type="submit" disabled={isSavingPage}>{isSavingPage ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : "Save Settings"}</Button>
+                  <ConfirmDialog
+                    title="Save Settings"
+                    description="Are you sure you want to save these page settings?"
+                    onConfirm={handlePageSave}
+                  >
+                    <Button type="button" disabled={isSavingPage}>
+                      {isSavingPage ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : "Save Settings"}
+                    </Button>
+                  </ConfirmDialog>
                 </CardContent>
               </Card>
             </form>

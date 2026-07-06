@@ -61,23 +61,6 @@ const DEFAULT_SETTINGS: Record<string, string> = {
   contact_email_office: "info@tanzeem.org",
 };
 
-/** Markaz fallback shown while locations table is empty / being seeded. */
-const MARKAZ_FALLBACK: LocationRow = {
-  id: "markaz-fallback",
-  name: "Markaz / مرکز",
-  slug: "markaz",
-  city: "Lahore",
-  country: "Pakistan",
-  address:
-    "Dar ul Islam, Markaz Tanzeem-e-Islami, Multan Road, Chung Lahore 53800",
-  phone: "(042) 35473375-78",
-  email: "markaz@tanzeem.org",
-  details: null,
-  isActive: true,
-};
-
-// ── Component ─────────────────────────────────────────────────────────────────
-
 export function ContactSection({
   contactSettings = {},
   locationRows = [],
@@ -85,12 +68,10 @@ export function ContactSection({
   // Merge DB settings over fallback defaults
   const s = { ...DEFAULT_SETTINGS, ...contactSettings };
 
-  // Use DB locations or fall back to just Markaz so the UI is never empty
-  const branches: LocationRow[] =
-    locationRows.length > 0 ? locationRows : [MARKAZ_FALLBACK];
+  const branches: LocationRow[] = locationRows;
 
-  const [activeSlug, setActiveSlug] = useState<string>(branches[0].slug);
-  const activeBranch = branches.find((b) => b.slug === activeSlug) ?? branches[0];
+  const [activeSlug, setActiveSlug] = useState<string>(branches.length > 0 ? branches[0].slug : "");
+  const activeBranch = branches.find((b) => b.slug === activeSlug) ?? branches[0] ?? null;
 
   // ── Top 3 info cards (driven by settings) ──────────────────────────────────
   const infoCards = [
@@ -207,7 +188,7 @@ export function ContactSection({
           </motion.div>
 
           {/* Branches Side */}
-          {branches.length > 0 && (
+          {branches.length > 0 && activeBranch && (
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}

@@ -36,13 +36,16 @@ export function BackToTop() {
     }
 
     return (
-        <Button
-            onClick={scrollToTop}
-            className="fixed bottom-6 right-6 z-50 rounded-full w-11 h-11 shadow-lg bg-primary hover:bg-primary-dark text-primary-foreground flex items-center justify-center transition-all duration-300"
-            size="icon"
-            aria-label="Back to top"
-        >
-            <ArrowUp className="w-7 h-7" />
-        </Button>
+        <div className="fixed bottom-6 right-6 z-50">
+            <span className="absolute inline-flex h-full w-full rounded-full bg-primary opacity-50 animate-ping"></span>
+            <Button
+                onClick={scrollToTop}
+                className="relative rounded-full w-12 h-12 shadow-lg bg-primary hover:bg-primary/90 text-primary-foreground flex items-center justify-center transition-all duration-300"
+                size="icon"
+                aria-label="Back to top"
+            >
+                <ArrowUp className="w-6 h-6" />
+            </Button>
+        </div>
     );
 }

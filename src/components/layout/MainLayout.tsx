@@ -8,6 +8,7 @@ import { PageBanner } from "./PageBanner";
 import { PersistentAudioPlayer } from "@/components/audio/PersistentAudioPlayer";
 import { ShareSidebar } from "@/components/shared/ShareSidebar";
 import { useSettings } from "@/hooks/use-settings";
+import { ScrollProgress } from "@/components/ui/scroll-progress";
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -52,6 +53,7 @@ export function MainLayout({ children }: MainLayoutProps) {
 
   return (
     <div className="min-h-screen flex flex-col">
+      {!isSiteManager && <ScrollProgress />}
       {!isSiteManager && <Header />}
 
       {!isSiteManager && !isHome && !isOrgOrIdeology && (
