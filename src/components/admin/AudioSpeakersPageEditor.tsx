@@ -329,7 +329,7 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
 
 
 
-      <ConfirmDialog open={!!deletingSpeaker} title="Delete Speaker" description="Are you sure you want to delete this speaker?" onConfirm={() => deletingSpeaker && handleSpeakerDelete(deletingSpeaker)} onOpenChange={(open) => !open && setDeletingSpeaker(null)} />
+      <ConfirmDialog open={!!deletingSpeaker} title="Delete Speaker" description="Are you sure you want to delete this speaker?" onConfirm={async () => { if (deletingSpeaker) await handleSpeakerDelete(deletingSpeaker) }} onOpenChange={(open) => !open && setDeletingSpeaker(null)} />
       <ConfirmDialog open={!!deletingAudio} title="Delete Audio" description="Are you sure you want to delete this audio?" onConfirm={async () => { if (deletingAudio) { await fetch(`/api/admin/audio/${deletingAudio.id}`, { method: 'DELETE' }); fetchData(); setDeletingAudio(null); } }} onOpenChange={(open) => !open && setDeletingAudio(null)} />
     </div>
   );

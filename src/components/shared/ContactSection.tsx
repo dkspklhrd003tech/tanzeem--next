@@ -11,9 +11,18 @@ import { cn } from "@/lib/utils";
 export type AddressDetail = {
   id: string;
   title: string;
+  titleValue?: string;
+  titleValueUrl?: string;
+  naibAmeer?: string;
+  naibAmeerUrl?: string;
   address: string;
+  addressUrl?: string;
   phone: string;
+  phoneUrl?: string;
+  mobile?: string;
+  mobileUrl?: string;
   email: string;
+  emailUrl?: string;
   mapUrl: string;
 };
 
@@ -304,51 +313,97 @@ export function ContactSection({
 
                   {/* Multiple Addresses Grid */}
                   {activeBranch.details && activeBranch.details.length > 0 && (
-                    <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 relative z-10">
+                    <div className="grid grid-cols-1 gap-4 relative z-10">
                       {activeBranch.details.map(detail => (
-                        <div key={detail.id} className="bg-background rounded-xl p-5 border border-border/50 shadow-sm hover:shadow-md transition-shadow">
-                          <h4 className="font-bold text-foreground text-lg mb-3 pb-2 border-b border-border/50">{detail.title || "Office"}</h4>
-                          <div className="space-y-3 text-sm">
-                            {detail.address && (
-                              <div className="flex items-start gap-2">
-                                <MapPin className="w-4 h-4 text-primary mt-0.5 shrink-0" />
-                                <a
-                                  href={detail.mapUrl || `https://maps.google.com/?q=${encodeURIComponent(detail.address)}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="text-muted-foreground hover:text-primary font-medium transition-colors"
-                                >
-                                  {detail.address}
+                        <div key={detail.id} className="bg-[#cccccc] rounded-sm p-5 text-[#333333] text-sm md:text-base space-y-2 shadow-inner border border-black/5">
+                          {detail.title && (
+                            <div className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
+                              <div className="font-bold sm:w-[160px] shrink-0 text-black">{detail.title}</div>
+                              <div className="flex-1">
+                                {detail.titleValueUrl ? (
+                                  <a href={detail.titleValueUrl} target="_blank" rel="noopener noreferrer" className="text-[#0000ee] hover:underline break-all font-medium">
+                                    {detail.titleValue || ""}
+                                  </a>
+                                ) : (
+                                  detail.titleValue || ""
+                                )}
+                              </div>
+                            </div>
+                          )}
+                          {detail.naibAmeer && (
+                            <div className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
+                              <div className="font-bold sm:w-[160px] shrink-0 text-black">Naib Ameer</div>
+                              <div className="flex-1">
+                                {detail.naibAmeerUrl ? (
+                                  <a href={detail.naibAmeerUrl} target="_blank" rel="noopener noreferrer" className="text-[#0000ee] hover:underline break-all font-medium">
+                                    {detail.naibAmeer}
+                                  </a>
+                                ) : (
+                                  detail.naibAmeer
+                                )}
+                              </div>
+                            </div>
+                          )}
+                          {detail.address && (
+                            <div className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
+                              <div className="font-bold sm:w-[160px] shrink-0 text-black">Postal Address:</div>
+                              <div className="flex-1">
+                                {detail.addressUrl ? (
+                                  <a href={detail.addressUrl} target="_blank" rel="noopener noreferrer" className="text-[#0000ee] hover:underline break-all font-medium">
+                                    {detail.address}
+                                  </a>
+                                ) : (
+                                  detail.address
+                                )}
+                              </div>
+                            </div>
+                          )}
+                          {detail.phone && (
+                            <div className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
+                              <div className="font-bold sm:w-[160px] shrink-0 text-black">Phone:</div>
+                              <div className="flex-1">
+                                {detail.phoneUrl ? (
+                                  <a href={detail.phoneUrl} target="_blank" rel="noopener noreferrer" className="text-[#0000ee] hover:underline break-all font-medium">
+                                    {detail.phone}
+                                  </a>
+                                ) : (
+                                  detail.phone
+                                )}
+                              </div>
+                            </div>
+                          )}
+                          {detail.mobile && (
+                            <div className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
+                              <div className="font-bold sm:w-[160px] shrink-0 text-black">Mob:</div>
+                              <div className="flex-1">
+                                {detail.mobileUrl ? (
+                                  <a href={detail.mobileUrl} target="_blank" rel="noopener noreferrer" className="text-[#0000ee] hover:underline break-all font-medium">
+                                    {detail.mobile}
+                                  </a>
+                                ) : (
+                                  detail.mobile
+                                )}
+                              </div>
+                            </div>
+                          )}
+                          {detail.email && (
+                            <div className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
+                              <div className="font-bold sm:w-[160px] shrink-0 text-black">Email:</div>
+                              <div className="flex-1">
+                                <a href={detail.emailUrl || `mailto:${detail.email}`} className="text-[#0000ee] hover:underline break-all font-medium">{detail.email}</a>
+                              </div>
+                            </div>
+                          )}
+                          {detail.mapUrl && (
+                            <div className="flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
+                              <div className="font-bold sm:w-[160px] shrink-0 text-black">Pin Location:</div>
+                              <div className="flex-1 truncate">
+                                <a href={detail.mapUrl} target="_blank" rel="noopener noreferrer" className="text-[#0000ee] hover:underline break-all font-medium">
+                                  {detail.mapUrl}
                                 </a>
                               </div>
-                            )}
-                            {detail.phone && (
-                              <div className="flex items-start gap-2">
-                                <Phone className="w-4 h-4 text-primary mt-0.5 shrink-0" />
-                                <a
-                                  href={`tel:${detail.phone.replace(/[^+\d]/g, "")}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="text-muted-foreground hover:text-primary font-medium transition-colors"
-                                >
-                                  {detail.phone}
-                                </a>
-                              </div>
-                            )}
-                            {detail.email && (
-                              <div className="flex items-start gap-2">
-                                <Mail className="w-4 h-4 text-primary mt-0.5 shrink-0" />
-                                <a
-                                  href={`mailto:${detail.email}`}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="text-muted-foreground hover:text-primary font-medium transition-colors"
-                                >
-                                  {detail.email}
-                                </a>
-                              </div>
-                            )}
-                          </div>
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>

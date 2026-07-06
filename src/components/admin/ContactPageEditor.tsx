@@ -15,9 +15,18 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 type AddressDetail = {
   id: string;
   title: string;
+  titleValue?: string;
+  titleValueUrl?: string;
+  naibAmeer?: string;
+  naibAmeerUrl?: string;
   address: string;
+  addressUrl?: string;
   phone: string;
+  phoneUrl?: string;
+  mobile?: string;
+  mobileUrl?: string;
   email: string;
+  emailUrl?: string;
   mapUrl: string;
 };
 
@@ -68,6 +77,11 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
             contact_phone: "+92 (42) 35473375-78",
             contact_email: "markaz@tanzeem.org",
             contact_email_office: "info@tanzeem.org",
+            contact_heading: "Get in touch with",
+            contact_subheading: "Muntazim Ala Halqa Majaz",
+            contact_phone_url: "",
+            contact_email_url: "",
+            contact_address_url: "",
           });
         }
         if (locationsData?.locations) {
@@ -206,25 +220,67 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
               <CardDescription>Main contact details shown at the top of the contact page.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div>
-                <Label>Main Address</Label>
-                <Input value={settings.footer_address || ""} onChange={(e) => handleSettingChange("footer_address", e.target.value)} />
+              <div className="pt-4 border-t border-border mt-4">
+                <h4 className="font-semibold mb-3">Main Header Section</h4>
+                <div className="space-y-4">
+                  <div>
+                    <Label>Top Small Heading</Label>
+                    <Input value={settings.contact_heading || ""} onChange={(e) => handleSettingChange("contact_heading", e.target.value)} placeholder="e.g. Get in touch with" />
+                  </div>
+                  <div>
+                    <Label>Main Large Heading</Label>
+                    <Input value={settings.contact_subheading || ""} onChange={(e) => handleSettingChange("contact_subheading", e.target.value)} placeholder="e.g. Muntazim Ala Halqa Majaz" />
+                  </div>
+                </div>
               </div>
-              <div>
-                <Label>Primary Phone</Label>
-                <Input value={settings.contact_phone || ""} onChange={(e) => handleSettingChange("contact_phone", e.target.value)} />
+
+              <div className="pt-4 border-t border-border mt-4">
+                <h4 className="font-semibold mb-3">Contact Cards</h4>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 gap-2 ">
+                    <div>
+                      <Label>Primary Phone</Label>
+                      <Input value={settings.contact_phone || ""} onChange={(e) => handleSettingChange("contact_phone", e.target.value)} />
+                    </div>
+                    <div>
+                      <Label>Phone Link URL (Optional)</Label>
+                      <Input value={settings.contact_phone_url || ""} onChange={(e) => handleSettingChange("contact_phone_url", e.target.value)} placeholder="e.g. tel:+923001234567" />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 gap-2">
+                    <div>
+                      <Label>General Email</Label>
+                      <Input value={settings.contact_email || ""} onChange={(e) => handleSettingChange("contact_email", e.target.value)} />
+                    </div>
+                    <div>
+                      <Label>Email Link URL (Optional)</Label>
+                      <Input value={settings.contact_email_url || ""} onChange={(e) => handleSettingChange("contact_email_url", e.target.value)} placeholder="e.g. mailto:test@tanzeem.org" />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 gap-2">
+                    <div>
+                      <Label>Main Address</Label>
+                      <Input value={settings.footer_address || ""} onChange={(e) => handleSettingChange("footer_address", e.target.value)} />
+                    </div>
+                    <div>
+                      <Label>Address Link URL (Optional)</Label>
+                      <Input value={settings.contact_address_url || ""} onChange={(e) => handleSettingChange("contact_address_url", e.target.value)} placeholder="e.g. https://maps.google.com/..." />
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div>
-                <Label>WhatsApp Number</Label>
-                <Input value={settings.whatsapp_number || ""} onChange={(e) => handleSettingChange("whatsapp_number", e.target.value)} />
-              </div>
-              <div>
-                <Label>General Email</Label>
-                <Input value={settings.contact_email || ""} onChange={(e) => handleSettingChange("contact_email", e.target.value)} />
-              </div>
-              <div>
-                <Label>Office Email</Label>
-                <Input value={settings.contact_email_office || ""} onChange={(e) => handleSettingChange("contact_email_office", e.target.value)} />
+              <div className="pt-4 border-t border-border mt-4">
+                <h4 className="font-semibold mb-3">Legacy Footer Details</h4>
+                <div className="space-y-4">
+                  <div>
+                    <Label>WhatsApp Number</Label>
+                    <Input value={settings.whatsapp_number || ""} onChange={(e) => handleSettingChange("whatsapp_number", e.target.value)} />
+                  </div>
+                  <div>
+                    <Label>Office Email</Label>
+                    <Input value={settings.contact_email_office || ""} onChange={(e) => handleSettingChange("contact_email_office", e.target.value)} />
+                  </div>
+                </div>
               </div>
               <ConfirmDialog
                 title="Save Contact Details"
@@ -337,9 +393,18 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
                     const newDetails = [...(editingLocation?.details || []), {
                       id: crypto.randomUUID(),
                       title: "",
+                      titleValue: "",
+                      titleValueUrl: "",
+                      naibAmeer: "",
+                      naibAmeerUrl: "",
                       address: "",
+                      addressUrl: "",
                       phone: "",
+                      phoneUrl: "",
+                      mobile: "",
+                      mobileUrl: "",
                       email: "",
+                      emailUrl: "",
                       mapUrl: ""
                     }];
                     setEditingLocation({ ...editingLocation, details: newDetails });
@@ -367,50 +432,141 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
                       <Trash2 className="h-4 w-4" />
                     </Button>
 
-                    <div className="pr-8">
-                      <Label className="text-xs">Office/Detail Title (e.g., Head Office)</Label>
-                      <Input className="h-8" value={detail.title} onChange={(e) => {
-                        const newDetails = [...editingLocation.details!];
-                        newDetails[index].title = e.target.value;
-                        setEditingLocation({ ...editingLocation, details: newDetails });
-                      }} />
-                    </div>
-
-                    <div>
-                      <Label className="text-xs">Full Address</Label>
-                      <Input className="h-8" value={detail.address} onChange={(e) => {
-                        const newDetails = [...editingLocation.details!];
-                        newDetails[index].address = e.target.value;
-                        setEditingLocation({ ...editingLocation, details: newDetails });
-                      }} />
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <Label className="text-xs">Title Label (e.g. Lahore Chung)</Label>
+                        <Input className="h-8" value={detail.title} onChange={(e) => {
+                          const newDetails = [...editingLocation.details!];
+                          newDetails[index].title = e.target.value;
+                          setEditingLocation({ ...editingLocation, details: newDetails });
+                        }} />
+                      </div>
+                      <div className="space-y-2">
+                        <div>
+                          <Label className="text-xs">Title Value</Label>
+                          <Input className="h-8" value={detail.titleValue || ""} onChange={(e) => {
+                            const newDetails = [...editingLocation.details!];
+                            newDetails[index].titleValue = e.target.value;
+                            setEditingLocation({ ...editingLocation, details: newDetails });
+                          }} />
+                        </div>
+                        <div>
+                          <Label className="text-xs text-muted-foreground">Title Value URL</Label>
+                          <Input className="h-8" placeholder="https://" value={detail.titleValueUrl || ""} onChange={(e) => {
+                            const newDetails = [...editingLocation.details!];
+                            newDetails[index].titleValueUrl = e.target.value;
+                            setEditingLocation({ ...editingLocation, details: newDetails });
+                          }} />
+                        </div>
+                      </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-3">
-                      <div>
-                        <Label className="text-xs">Phone</Label>
-                        <Input className="h-8" value={detail.phone} onChange={(e) => {
-                          const newDetails = [...editingLocation.details!];
-                          newDetails[index].phone = e.target.value;
-                          setEditingLocation({ ...editingLocation, details: newDetails });
-                        }} />
+                      <div className="space-y-2">
+                        <div>
+                          <Label className="text-xs">Naib Ameer</Label>
+                          <Input className="h-8" value={detail.naibAmeer || ""} onChange={(e) => {
+                            const newDetails = [...editingLocation.details!];
+                            newDetails[index].naibAmeer = e.target.value;
+                            setEditingLocation({ ...editingLocation, details: newDetails });
+                          }} />
+                        </div>
+                        <div>
+                          <Label className="text-xs text-muted-foreground">Naib Ameer URL</Label>
+                          <Input className="h-8" placeholder="https://" value={detail.naibAmeerUrl || ""} onChange={(e) => {
+                            const newDetails = [...editingLocation.details!];
+                            newDetails[index].naibAmeerUrl = e.target.value;
+                            setEditingLocation({ ...editingLocation, details: newDetails });
+                          }} />
+                        </div>
                       </div>
-                      <div>
-                        <Label className="text-xs">Email</Label>
-                        <Input className="h-8" value={detail.email} onChange={(e) => {
-                          const newDetails = [...editingLocation.details!];
-                          newDetails[index].email = e.target.value;
-                          setEditingLocation({ ...editingLocation, details: newDetails });
-                        }} />
+
+                      <div className="space-y-2">
+                        <div>
+                          <Label className="text-xs">Postal Address</Label>
+                          <Input className="h-8" value={detail.address} onChange={(e) => {
+                            const newDetails = [...editingLocation.details!];
+                            newDetails[index].address = e.target.value;
+                            setEditingLocation({ ...editingLocation, details: newDetails });
+                          }} />
+                        </div>
+                        <div>
+                          <Label className="text-xs text-muted-foreground">Postal Address URL</Label>
+                          <Input className="h-8" placeholder="https://" value={detail.addressUrl || ""} onChange={(e) => {
+                            const newDetails = [...editingLocation.details!];
+                            newDetails[index].addressUrl = e.target.value;
+                            setEditingLocation({ ...editingLocation, details: newDetails });
+                          }} />
+                        </div>
                       </div>
                     </div>
 
-                    <div>
-                      <Label className="text-xs">Google Maps URL</Label>
-                      <Input className="h-8" placeholder="https://maps.google.com/..." value={detail.mapUrl} onChange={(e) => {
-                        const newDetails = [...editingLocation.details!];
-                        newDetails[index].mapUrl = e.target.value;
-                        setEditingLocation({ ...editingLocation, details: newDetails });
-                      }} />
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="space-y-2">
+                        <div>
+                          <Label className="text-xs">Phone</Label>
+                          <Input className="h-8" value={detail.phone} onChange={(e) => {
+                            const newDetails = [...editingLocation.details!];
+                            newDetails[index].phone = e.target.value;
+                            setEditingLocation({ ...editingLocation, details: newDetails });
+                          }} />
+                        </div>
+                        <div>
+                          <Label className="text-xs text-muted-foreground">Phone URL</Label>
+                          <Input className="h-8" placeholder="tel:" value={detail.phoneUrl || ""} onChange={(e) => {
+                            const newDetails = [...editingLocation.details!];
+                            newDetails[index].phoneUrl = e.target.value;
+                            setEditingLocation({ ...editingLocation, details: newDetails });
+                          }} />
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <div>
+                          <Label className="text-xs">Mob (WhatsApp)</Label>
+                          <Input className="h-8" value={detail.mobile || ""} onChange={(e) => {
+                            const newDetails = [...editingLocation.details!];
+                            newDetails[index].mobile = e.target.value;
+                            setEditingLocation({ ...editingLocation, details: newDetails });
+                          }} />
+                        </div>
+                        <div>
+                          <Label className="text-xs text-muted-foreground">Mob URL</Label>
+                          <Input className="h-8" placeholder="tel: or https://wa.me/" value={detail.mobileUrl || ""} onChange={(e) => {
+                            const newDetails = [...editingLocation.details!];
+                            newDetails[index].mobileUrl = e.target.value;
+                            setEditingLocation({ ...editingLocation, details: newDetails });
+                          }} />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="space-y-2">
+                        <div>
+                          <Label className="text-xs">Email</Label>
+                          <Input className="h-8" value={detail.email} onChange={(e) => {
+                            const newDetails = [...editingLocation.details!];
+                            newDetails[index].email = e.target.value;
+                            setEditingLocation({ ...editingLocation, details: newDetails });
+                          }} />
+                        </div>
+                        <div>
+                          <Label className="text-xs text-muted-foreground">Email URL</Label>
+                          <Input className="h-8" placeholder="mailto:" value={detail.emailUrl || ""} onChange={(e) => {
+                            const newDetails = [...editingLocation.details!];
+                            newDetails[index].emailUrl = e.target.value;
+                            setEditingLocation({ ...editingLocation, details: newDetails });
+                          }} />
+                        </div>
+                      </div>
+                      <div>
+                        <Label className="text-xs">Pin Location (URL)</Label>
+                        <Input className="h-8" placeholder="https://maps..." value={detail.mapUrl} onChange={(e) => {
+                          const newDetails = [...editingLocation.details!];
+                          newDetails[index].mapUrl = e.target.value;
+                          setEditingLocation({ ...editingLocation, details: newDetails });
+                        }} />
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -446,7 +602,11 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
         onOpenChange={(open) => !open && setDeletingLocationId(null)}
         title="Delete Branch"
         description="Are you sure you want to permanently delete this branch location?"
-        onConfirm={() => deletingLocationId && deleteLocation(deletingLocationId)}
+        onConfirm={() => {
+          if (deletingLocationId) {
+            return deleteLocation(deletingLocationId);
+          }
+        }}
       />
     </div>
   );
