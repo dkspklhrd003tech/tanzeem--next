@@ -194,8 +194,6 @@ function HeroBanner({ data }: { data: HeroBannerState }) {
         <div className="absolute inset-0 z-0 bg-primary" aria-hidden="true" />
       )}
 
-      {/* Overlay */}
-      <div className="absolute inset-0 z-10 bg-primary" aria-hidden="true" />
 
       {/* Decorative Islamic geometry – right side */}
       {data.decorativeImage && (

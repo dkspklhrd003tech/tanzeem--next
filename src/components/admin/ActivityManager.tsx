@@ -72,28 +72,28 @@ export function ActivityManager() {
               <AreaChart data={trafficData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                 <defs>
                   <linearGradient id="colorViews" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
                   </linearGradient>
                   <linearGradient id="colorVisitors" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3}/>
-                    <stop offset="95%" stopColor="#6366f1" stopOpacity={0}/>
+                    <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#6366f1" stopOpacity={0} />
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
-                <XAxis 
-                  dataKey="date" 
-                  axisLine={false} 
-                  tickLine={false} 
+                <XAxis
+                  dataKey="date"
+                  axisLine={false}
+                  tickLine={false}
                   tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
                   dy={10}
                 />
-                <YAxis 
-                  axisLine={false} 
-                  tickLine={false} 
+                <YAxis
+                  axisLine={false}
+                  tickLine={false}
                   tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
                 />
-                <Tooltip 
+                <Tooltip
                   contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', borderRadius: '8px' }}
                   itemStyle={{ color: 'hsl(var(--foreground))' }}
                 />
@@ -107,7 +107,7 @@ export function ActivityManager() {
 
       {/* Activity & Pages Grid */}
       <div className="grid lg:grid-cols-2 gap-6">
-        
+
         {/* Recent Activity */}
         <Card className="border-border/60 shadow-sm flex flex-col h-full bg-[#030b15] border-[#1e293b]">
           <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -133,8 +133,8 @@ export function ActivityManager() {
                       <div className={cn(
                         "w-2 h-2 rounded-full ring-4 ring-[#030b15]",
                         activity.action.toLowerCase().includes('create') ? "bg-emerald-500" :
-                        activity.action.toLowerCase().includes('delete') ? "bg-red-500" :
-                        "bg-blue-500"
+                          activity.action.toLowerCase().includes('delete') ? "bg-red-500" :
+                            "bg-blue-500"
                       )} />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -180,7 +180,7 @@ export function ActivityManager() {
             ) : (
               <div className="space-y-4">
                 {recentPages.map((page: any) => (
-                  <Link href={`/sitemanager/pages/${page.id}/edit`} key={page.id} className="block group">
+                  <Link href={`/sitemanager/pages/${page.title}/edit`} key={page.title} className="block group">
                     <div className="flex items-center justify-between p-4 rounded-xl border border-[#1e293b] bg-[#0f172a]/50 hover:bg-[#1e293b]/50 transition-colors">
                       <div className="min-w-0 flex-1 pr-4">
                         <p className="text-sm font-medium text-slate-200 truncate group-hover:text-emerald-400 transition-colors">

@@ -218,10 +218,10 @@ export default function PagesListPage() {
     setSelected(s);
   };
 
-  const doDelete = useCallback(async (id: string) => {
-    await fetch(`/api/sitemanager/pages/${id}`, { method: "DELETE" });
+  const doDelete = useCallback(async (title: string) => {
+    await fetch(`/api/sitemanager/pages/${title}`, { method: "DELETE" });
     toast({ title: "Page deleted successfully." });
-    setSelected(prev => { const s = new Set(prev); s.delete(id); return s; });
+    setSelected(prev => { const s = new Set(prev); s.delete(title); return s; });
     mutate();
   }, [mutate, toast]);
 
@@ -250,7 +250,7 @@ export default function PagesListPage() {
     const json = await res.json();
     if (res.ok) {
       toast({ title: "Page duplicated successfully." });
-      router.push(`/sitemanager/pages/${json.page.id}/edit`);
+      router.push(`/sitemanager/pages/${json.page.title}/edit`);
     } else {
       toast({ variant: "destructive", title: json.error ?? "Duplicate failed." });
     }
@@ -283,37 +283,6 @@ export default function PagesListPage() {
           </Link>
         </Button>
       </div>
-
-      {/* Admin Notification */}
-      {showNotification && (
-        <Alert className="relative z-10 bg-emerald-50 border-emerald-500/20 text-emerald-800 p-4 shadow-[0_4px_30px_rgba(0,0,0,0.2)] rounded-xl flex items-center justify-between gap-4 backdrop-blur-md">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center shrink-0 border border-emerald-500/20 shadow-[0_0_15px_rgba(16,185,129,0.15)] animate-pulse">
-              <Bell className="h-4.5 w-4.5 text-primary" />
-            </div>
-            <div>
-              <AlertTitle className="text-xs font-black uppercase tracking-widest text-primary">Admin Notification</AlertTitle>
-              <AlertDescription className="text-xs text-emerald-700 mt-0.5 leading-relaxed font-medium">
-                The dynamic, state-driven Organization Page is ready to configure.
-              </AlertDescription>
-            </div>
-          </div>
-          <div className="flex items-center gap-2 shrink-0">
-            <Button asChild size="sm" className="bg-emerald-100 hover:bg-emerald-500/25 text-emerald-700 font-bold text-xs h-8 px-4 rounded-full border border-emerald-500/30 transition-all shadow-[0_0_12px_rgba(16,185,129,0.1)]">
-              <Link href="/sitemanager/pages/organization/edit">
-                Configure Page
-              </Link>
-            </Button>
-            <button
-              onClick={handleDismissNotification}
-              className="text-muted-foreground hover:text-red-600 hover:bg-red-500/10 p-1.5 rounded-full transition-colors shrink-0"
-              title="Dismiss Notification"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          </div>
-        </Alert>
-      )}
 
       {/* Global Page Banner Background Image Uploader */}
       <Card className="relative z-10 bg-card backdrop-blur-md border border-border shadow-2xl overflow-hidden rounded-2xl">
@@ -372,13 +341,10 @@ export default function PagesListPage() {
             <div className="relative overflow-hidden bg-primary text-foreground py-10 rounded-xl flex flex-col items-center justify-center text-center w-full min-h-[140px] shadow-inner border border-primary/20">
               {/* Dynamic BG Image */}
               {bannerBgImage ? (
-                <>
-                  <div
-                    className="absolute inset-0 z-0 bg-contain bg-center"
-                    style={{ backgroundImage: `url('${bannerBgImage}')` }}
-                  />
-                  <div className="absolute inset-0 z-10 bg-black/40 pointer-events-none" />
-                </>
+                <div
+                  className="absolute inset-0 z-0 bg-contain bg-center"
+                  style={{ backgroundImage: `url('${bannerBgImage}')` }}
+                />
               ) : null}
 
               {/* Ambient Overlay Patterns */}
@@ -561,7 +527,7 @@ export default function PagesListPage() {
 
                         <div className="flex-1 min-w-0">
                           <Link
-                            href={`/sitemanager/pages/${row.id}/edit`}
+                            href={`/sitemanager/pages/${row.title}/edit`}
                             className="text-sm font-bold text-foreground hover:text-primary transition-colors truncate block filter drop-shadow-sm"
                           >
                             {row.title}
@@ -589,7 +555,7 @@ export default function PagesListPage() {
                             onValueChange={async (newVal) => {
                               const active = newVal === "active";
                               try {
-                                const res = await fetch(`/api/sitemanager/pages/${row.id}`, {
+                                const res = await fetch(`/api/sitemanager/pages/${row.title}`, {
                                   method: "PUT",
                                   headers: { "Content-Type": "application/json" },
                                   body: JSON.stringify({ isPublished: active })
@@ -654,7 +620,7 @@ export default function PagesListPage() {
                             className="h-8 w-8 text-muted-foreground hover:text-white hover:bg-primary rounded-lg transition-all duration-200"
                             title="Edit Page"
                           >
-                            <Link href={`/sitemanager/pages/${row.id}/edit`}>
+                            <Link href={`/sitemanager/pages/${row.title}/edit`}>
                               <Edit2 className="h-4 w-4" />
                             </Link>
                           </Button>
@@ -724,7 +690,7 @@ export default function PagesListPage() {
                             onValueChange={async (newVal) => {
                               const active = newVal === "active";
                               try {
-                                const res = await fetch(`/api/sitemanager/pages/${row.id}`, {
+                                const res = await fetch(`/api/sitemanager/pages/${row.title}`, {
                                   method: "PUT",
                                   headers: { "Content-Type": "application/json" },
                                   body: JSON.stringify({ isPublished: active })
@@ -767,7 +733,7 @@ export default function PagesListPage() {
                         </div>
 
                         <div className="flex-1">
-                          <Link href={`/sitemanager/pages/${row.id}/edit`} className="font-bold text-foreground hover:text-primary transition-colors line-clamp-2 mb-1 filter drop-shadow-sm">
+                          <Link href={`/sitemanager/pages/${row.title}/edit`} className="font-bold text-foreground hover:text-primary transition-colors line-clamp-2 mb-1 filter drop-shadow-sm">
                             {row.title}
                           </Link>
                           <div className="flex items-center gap-1.5">
@@ -785,7 +751,7 @@ export default function PagesListPage() {
                           </div>
                           <div className="flex items-center gap-1">
                             <Button asChild variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-white hover:bg-primary rounded-lg transition-all" title="Edit Page">
-                              <Link href={`/sitemanager/pages/${row.id}/edit`}><Edit2 className="h-3.5 w-3.5" /></Link>
+                              <Link href={`/sitemanager/pages/${row.title}/edit`}><Edit2 className="h-3.5 w-3.5" /></Link>
                             </Button>
                             <Button variant="ghost" size="icon" onClick={() => window.open(`/${row.slug}`, '_blank', 'noopener,noreferrer')} className="h-7 w-7 text-muted-foreground hover:text-indigo-600 hover:bg-indigo-500/10 rounded-lg transition-all" title="View Live">
                               <Eye className="h-3.5 w-3.5" />

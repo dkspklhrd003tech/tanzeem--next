@@ -45,7 +45,6 @@ function revalidateEntityPaths(entity: string) {
             revalidatePath("/");
         } else if (entity === "book-categories" || entity === "books") {
             revalidatePath("/books-by-category");
-            revalidatePath("/books");
         }
         revalidatePath("/", "layout");
     } catch (e) {

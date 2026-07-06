@@ -33,13 +33,6 @@ export function PageHero({ title, subtitle, backgroundImage }: PageHeroProps) {
         />
       )}
 
-      {/* Dark overlay */}
-      <div
-        className="absolute inset-0 z-10"
-        style={{ backgroundColor: "var(--primary)" }}
-        aria-hidden="true"
-      />
-
       {/* Content */}
       <motion.div
         className="container relative z-20 px-4 py-16"

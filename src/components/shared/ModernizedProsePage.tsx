@@ -107,8 +107,6 @@ export function ModernizedProsePage({
               className="absolute inset-0 z-0 bg-contain bg-center transition-transform"
               style={{ backgroundImage: `url('${bgImage}')` }}
             />
-            {/* Overlay to ensure readability on dynamic background image */}
-            <div className="absolute inset-0 z-10 bg-black/40 pointer-events-none" />
           </>
         )}
 
