@@ -119,9 +119,10 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
                         >
                             {aboutTitle}
                         </h2>
-                        <p className="text-[#222222] leading-relaxed text-sm md:text-base mb-6">
-                            {aboutDesc}
-                        </p>
+                        <div 
+                            className="text-[#222222] leading-relaxed text-sm md:text-base mb-6 prose prose-sm md:prose-base max-w-none prose-p:my-2"
+                            dangerouslySetInnerHTML={{ __html: aboutDesc }}
+                        />
                         <div>
                             <Link
                                 href={btnLink}
