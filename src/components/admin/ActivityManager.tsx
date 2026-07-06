@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { PageSpinner } from "@/components/ui/spinner";
 import { Activity, Clock, FileText, ArrowRight, TrendingUp } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";

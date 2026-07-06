@@ -30,7 +30,7 @@ export default function EditPagePage({ params }: { params: Promise<{ id: string 
     if (id === "organization") return;
 
     Promise.all([
-      fetch(`/api/sitemanager/pages/${title}`),
+      fetch(`/api/sitemanager/pages/${id}`),
       fetch("/api/sitemanager/pages?limit=100&sort=az"),
     ]).then(async ([pageRes, listRes]) => {
       if (!pageRes.ok) { setNotFound(true); return; }

@@ -30,6 +30,8 @@ export async function GET(
         "Content-Type": item.mimeType || "application/octet-stream",
         "Cache-Control": "public, max-age=31536000, immutable",
         "Content-Disposition": `inline; filename="${item.filename}"`,
+        "Content-Length": item.fileData.length.toString(),
+        "Accept-Ranges": "bytes",
       }
     });
   } catch (error) {
