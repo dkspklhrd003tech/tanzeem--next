@@ -44,12 +44,6 @@ export default async function BooksCategoryPage({ params }: { params: Promise<{ 
     <main className="min-h-screen bg-background">
       <div className="container mx-auto py-6 md:py-8">
         <div className="max-w-7xl mx-auto">
-          <div className="mb-8">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-3">{category.name}</h2>
-            {category.description && (
-              <p className="text-lg text-muted-foreground">{category.description}</p>
-            )}
-          </div>
           <BooksCategoryGrid categoryName={category.name} initialItems={items} />
         </div>
       </div>
