@@ -132,7 +132,7 @@ export function LeaderProfiles() {
         }
     };
 
-    const [deletingLeader, setDeletingLeader] = useState<{id: string, name: string} | null>(null);
+    const [deletingLeader, setDeletingLeader] = useState<{ id: string, name: string } | null>(null);
 
     const handleDelete = async (id: string, name: string) => {
         setDeletingLeader(null);
@@ -279,7 +279,7 @@ export function LeaderProfiles() {
                                                     type="text"
                                                     value={formData.name}
                                                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                                    className="w-full py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                                                    className="w-full px-2 py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                                                     placeholder="Dr. Israr Ahmed"
                                                     required
                                                 />
@@ -290,7 +290,7 @@ export function LeaderProfiles() {
                                                     type="text"
                                                     value={formData.designation}
                                                     onChange={(e) => setFormData({ ...formData, designation: e.target.value })}
-                                                    className="w-full py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                                                    className="w-full px-2 py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                                                     placeholder="The Founder"
                                                 />
                                             </div>
@@ -304,7 +304,7 @@ export function LeaderProfiles() {
                                                 type="text"
                                                 value={formData.buttonName}
                                                 onChange={(e) => setFormData({ ...formData, buttonName: e.target.value })}
-                                                className="w-full py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                                                className="w-full px-2 py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                                                 placeholder="e.g. About Founder"
                                             />
                                         </div>
@@ -314,7 +314,7 @@ export function LeaderProfiles() {
                                                 type="text"
                                                 value={formData.buttonUrl}
                                                 onChange={(e) => setFormData({ ...formData, buttonUrl: e.target.value })}
-                                                className="w-full py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                                                className="w-full px-2 py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                                                 placeholder="e.g. /dr-israr-ahmed"
                                             />
                                         </div>

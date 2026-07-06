@@ -157,6 +157,7 @@ async function HomeContent() {
           title: p.title,
           excerpt: p.excerpt,
           content: p.content,
+          slug: p.slug,
           publishedAt: p.publishedAt,
         }))}
       />

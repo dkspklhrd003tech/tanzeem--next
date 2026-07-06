@@ -11,13 +11,6 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
 }
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
 
@@ -26,6 +19,7 @@ export type PressReleaseItem = {
   title: string;
   excerpt?: string | null;
   content: string;
+  slug: string;
   publishedAt?: Date | string | null;
 };
 
@@ -34,11 +28,6 @@ type Props = {
 };
 
 export function LatestPressReleases({ items }: Props) {
-  const [selected, setSelected] = useState<PressReleaseItem | null>(null);
-
-  const openDialog = useCallback((item: PressReleaseItem) => setSelected(item), []);
-  const closeDialog = useCallback(() => setSelected(null), []);
-
   const sectionRef = useRef<HTMLElement>(null);
   const headerRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLDivElement>(null);
@@ -82,7 +71,7 @@ export function LatestPressReleases({ items }: Props) {
             <h2 id="press-heading" className="spotlight_heading">Latest Press Releases</h2>
           </div>
           <Link
-            href="/resources/press-releases"
+            href="/press-releases"
             className={cn(
               "group inline-flex items-center gap-3 border border-primary/50 bg-primary text-primary-foreground backdrop-blur-md",
               "px-8 py-3.5 rounded-full text-sm font-bold tracking-wide uppercase shadow-lg",
@@ -95,10 +84,9 @@ export function LatestPressReleases({ items }: Props) {
         </div>
         <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {items.length > 0 ? items.map((item, i) => (
-            <button
+            <Link
               key={item.id}
-              type="button"
-              onClick={() => openDialog(item)}
+              href={`/press-releases/${item.slug || item.id}`}
               className={cn(
                 "press-card group relative flex flex-col bg-background/60 backdrop-blur-md border border-border/50 rounded-[1.5rem] p-6 text-left w-full shadow-sm",
                 "hover:shadow-[0_10px_40px_rgba(16,185,129,0.1)] hover:border-primary/40 hover:-translate-y-2 transition-all duration-700 cursor-pointer overflow-hidden",
@@ -124,7 +112,7 @@ export function LatestPressReleases({ items }: Props) {
               {item.excerpt && (
                 <p className="mt-4 text-sm text-foreground-muted line-clamp-3 leading-relaxed relative z-10">{item.excerpt}</p>
               )}
-              <div className={cn(
+              {/* <div className={cn(
                 "mt-auto self-start inline-flex items-center gap-3 border border-primary/50 text-[#222222] hover:text-white backdrop-blur-md mt-4",
                 "px-4 py-1 rounded-full text-sm font-bold tracking-wide uppercase shadow-lg",
                 "hover:bg-primary hover:border-primary hover:text-primary-foreground transition-all duration-500 hover:shadow-[0_0_30px_rgba(16,185,129,0.3)]",
@@ -132,26 +120,13 @@ export function LatestPressReleases({ items }: Props) {
               )}>
                 <span>Read Press Release</span>
                 <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-              </div>
-            </button>
+              </div> */}
+            </Link>
           )) : null}
           {items.length === 0 && null}
         </div>
 
       </div>
-
-      <Dialog open={!!selected} onOpenChange={(o) => !o && closeDialog()}>
-        <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto bg-card/95 backdrop-blur-xl border-border/50 shadow-2xl rounded-2xl">
-          <DialogHeader>
-            <DialogTitle>{selected?.title}</DialogTitle>
-            <DialogDescription className="sr-only">Full text of the selected press release.</DialogDescription>
-          </DialogHeader>
-          <div
-            className="prose prose-sm max-w-none dynamic-content"
-            dangerouslySetInnerHTML={{ __html: selected?.content || "" }}
-          />
-        </DialogContent>
-      </Dialog>
     </section>
 
   );

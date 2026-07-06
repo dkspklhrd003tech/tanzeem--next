@@ -133,7 +133,7 @@ export function AboutMissionSettings() {
                                 type="text"
                                 value={settings.homepage_about_title}
                                 onChange={(e) => setSettings({ ...settings, homepage_about_title: e.target.value })}
-                                className="w-full py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                                className="w-full px-2 py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                                 placeholder="Tanzeem-e-Islami"
                                 required
                             />
@@ -169,7 +169,7 @@ export function AboutMissionSettings() {
                                     type="text"
                                     value={settings.homepage_about_button_text}
                                     onChange={(e) => setSettings({ ...settings, homepage_about_button_text: e.target.value })}
-                                    className="w-full py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                                    className="w-full px-2 py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                                     placeholder="About Tanzeem"
                                 />
                             </div>
@@ -179,7 +179,7 @@ export function AboutMissionSettings() {
                                     type="text"
                                     value={settings.homepage_about_button_link}
                                     onChange={(e) => setSettings({ ...settings, homepage_about_button_link: e.target.value })}
-                                    className="w-full py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                                    className="w-full px-2 py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                                     placeholder="/about"
                                 />
                             </div>

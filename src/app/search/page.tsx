@@ -262,11 +262,11 @@ export default async function SearchPage({ searchParams }: Props) {
                 name="q"
                 defaultValue={searchTerm}
                 placeholder="Search resources, topics, or speakers..."
-                className="pl-12 h-12 text-md bg-[#fefefc] border-border rounded-xl"
+                className="pl-12 h-12 text-md bg-[#fefefc] border-border rounded-md"
                 autoFocus
               />
             </div>
-            <Button type="submit" className="h-12 px-6 bg-primary hover:bg-primary/95 text-white font-semibold rounded-xl">
+            <Button type="submit" className="h-12 px-6 bg-primary hover:bg-primary/95 text-white font-semibold rounded-md">
               Search
             </Button>
           </form>
@@ -284,7 +284,7 @@ export default async function SearchPage({ searchParams }: Props) {
         {/* Search Results list */}
         {searchTerm ? (
           results.length > 0 ? (
-            <div className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 space-y-4">
               {results.map((item) => (
                 <div
                   key={`${item.type}-${item.id}`}
@@ -306,20 +306,15 @@ export default async function SearchPage({ searchParams }: Props) {
                       </span>
                     )}
                   </div>
-                  <h3 className="text-lg font-bold text-foreground hover:text-primary mb-2">
+                  <h3 className="text-lg font-bold text-foreground hover:text-primary mb-2 line-clamp-3">
                     <Link href={item.link}>{item.title}</Link>
                   </h3>
-                  {item.description && (
-                    <p className="text-sm text-foreground-muted leading-relaxed line-clamp-2">
-                      {item.description}
-                    </p>
-                  )}
-                  <div className="mt-4 flex justify-end">
+                  <div className="mt-4 flex justify-start">
                     <Link
                       href={item.link}
-                      className="text-sm font-semibold text-primary p-2 border border-[#0d5844] rounded-xl flex items-center gap-1 group"
+                      className="text-sm font-semibold text-primary p-2 border border-[#0d5844] rounded-sm flex items-center gap-1 group"
                     >
-                      Explore {item.title}
+                      Explore {getTypeName(item.type)}
                       <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
                     </Link>
                   </div>

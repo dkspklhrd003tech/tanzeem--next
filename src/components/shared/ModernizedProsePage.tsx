@@ -125,7 +125,7 @@ export function ModernizedProsePage({
         <div className="container relative z-20 px-4 text-center">
           <h1
             className={cn(
-              "text-4xl md:text-5xl lg:text-6xl font-bold mb-4 drop-shadow-lg",
+              "text-4xl md:text-5xl lg:text-6xl font-bold mb-4 drop-shadow-lg line-clamp-1",
               titleLoading && "animate-pulse",
             )}
             style={{ color: textColor }}

@@ -80,8 +80,6 @@ interface PressReleasesPageEditorProps {
 const defaultFormData = {
   title: "",
   slug: "",
-  content: "PDF Document Attached",
-  excerpt: "",
   pdfUrl: "",
   isPublished: true,
   publishedAt: "",
@@ -427,8 +425,6 @@ export default function PressReleasesPageEditor({ pageId, initialPageData }: Pre
         publishedAt: new Date().toISOString().split("T")[0],
         metaTitle: cleanedTitle,
         metaDescription: `Press Release: ${cleanedTitle}`,
-        content: "PDF Document Attached",
-        excerpt: "",
       });
       setFormErrors({});
       setIsModalOpen(true);
@@ -455,8 +451,6 @@ export default function PressReleasesPageEditor({ pageId, initialPageData }: Pre
     setFormData({
       title: item.title,
       slug: item.slug,
-      content: item.content || "PDF Document Attached",
-      excerpt: item.excerpt || "",
       pdfUrl: item.pdfUrl || "",
       isPublished: item.isPublished,
       publishedAt: item.publishedAt ? new Date(item.publishedAt).toISOString().split("T")[0] : "",
@@ -502,8 +496,6 @@ export default function PressReleasesPageEditor({ pageId, initialPageData }: Pre
       const payload: Record<string, any> = {
         title: formData.title,
         slug: formData.slug,
-        content: formData.content || "PDF Document Attached",
-        excerpt: formData.excerpt || null,
         pdfUrl: formData.pdfUrl || null,
         isPublished: formData.isPublished,
         publishedAt: formData.publishedAt ? new Date(formData.publishedAt).toISOString() : null,
@@ -959,17 +951,6 @@ export default function PressReleasesPageEditor({ pageId, initialPageData }: Pre
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="excerpt">Excerpt Summary</Label>
-                  <Textarea
-                    id="excerpt"
-                    value={formData.excerpt}
-                    rows={2}
-                    onChange={(e) => setFormData(prev => ({ ...prev, excerpt: e.target.value }))}
-                    placeholder="Short description summarizing this press release..."
-                  />
-                </div>
-
                 <div className="border border-border/80 rounded-xl p-4 bg-muted/10 space-y-3">
                   <span className="text-sm font-bold text-foreground">SEO Information</span>
 
@@ -1016,7 +997,9 @@ export default function PressReleasesPageEditor({ pageId, initialPageData }: Pre
         onOpenChange={(open) => !open && setDeletingItem(null)}
         title="Delete Press Release"
         description={`Are you sure you want to permanently delete "${deletingItem?.title}"? This action cannot be undone.`}
-        onConfirm={() => deletingItem && handleDeleteItem(deletingItem.id)}
+        onConfirm={() => {
+          if (deletingItem) handleDeleteItem(deletingItem.id);
+        }}
       />
 
     </div>

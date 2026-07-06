@@ -438,7 +438,7 @@ export function CampaignsManager() {
                                                 type="text"
                                                 value={formData.title}
                                                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                                className="w-full py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                                                className="w-full px-2 py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                                                 placeholder="e.g. Free Palestine Campaign"
                                                 required
                                             />
@@ -450,7 +450,7 @@ export function CampaignsManager() {
                                                 type="text"
                                                 value={formData.linkUrl}
                                                 onChange={(e) => setFormData({ ...formData, linkUrl: e.target.value })}
-                                                className="w-full py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                                                className="w-full px-2 py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
                                                 placeholder="/initiatives/palestine or https://..."
                                             />
                                         </div>

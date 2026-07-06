@@ -160,12 +160,12 @@ export function PressReleasesGrid({ initialItems }: PressReleasesGridProps) {
                     </div>
 
                     {/* Card Action Footer */}
-                    <div className="flex items-center justify-between pt-4 mt-5 border-t border-border/50">
+                    {/* <div className="flex items-center justify-between pt-4 mt-5 border-t border-border/50">
                       <span className="text-xs font-semibold text-primary flex items-center gap-1 group-hover:gap-2 transition-all duration-200">
                         {hasPdf ? "Read PR" : "Read PR"}
                         <ChevronRight className="h-4 w-4" />
                       </span>
-                    </div>
+                    </div> */}
                   </div>
                 </motion.div>
               </Link>

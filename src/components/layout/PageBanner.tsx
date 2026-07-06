@@ -105,12 +105,12 @@ export function PageBanner({ settings }: PageBannerProps) {
       <div className="container relative z-20 px-4">
         <h1
           className={cn(
-            "text-4xl md:text-5xl lg:text-6xl font-bold mb-4 drop-shadow-lg",
+            "text-4xl md:text-5xl lg:text-6xl font-bold mb-4 drop-shadow-lg line-clamp-1",
             titleLoading && "animate-pulse",
           )}
           style={{ color: textColor }}
         >
-          {displayTitle}
+          {displayTitle.length > 25 ? displayTitle.substring(0, 25) + "..." : displayTitle}
         </h1>
 
         {showBreadcrumbs && breadcrumbs.length > 0 && (
@@ -129,16 +129,18 @@ export function PageBanner({ settings }: PageBannerProps) {
                   <span
                     className="opacity-80"
                     style={{ color: textColor }}
+                    title={crumb.label}
                   >
-                    {crumb.label}
+                    {crumb.label.length > 40 ? crumb.label.substring(0, 25) + "..." : crumb.label}
                   </span>
                 ) : (
                   <Link
                     href={crumb.href}
                     className="hover:text-primary transition-colors"
                     style={{ color: textColor }}
+                    title={crumb.label}
                   >
-                    {crumb.label}
+                    {crumb.label.length > 40 ? crumb.label.substring(0, 40) + "..." : crumb.label}
                   </Link>
                 )}
               </div>
