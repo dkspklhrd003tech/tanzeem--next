@@ -51,17 +51,15 @@ export function JoinCTA({
             <h2
               className="text-2xl md:text-3xl lg:text-4xl font-bold leading-tight"
               style={{ color: textColor }}
-            >
-              {heading}
-            </h2>
+              dangerouslySetInnerHTML={{ __html: heading }}
+            />
           )}
           {subheading && (
-            <p
+            <div
               className="text-base md:text-lg leading-relaxed opacity-80"
               style={{ color: textColor }}
-            >
-              {subheading}
-            </p>
+              dangerouslySetInnerHTML={{ __html: subheading }}
+            />
           )}
           {buttonUrl && buttonLabel && (
             <div>

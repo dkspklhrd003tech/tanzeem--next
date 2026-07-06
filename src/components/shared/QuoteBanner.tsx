@@ -45,7 +45,7 @@ export function QuoteBanner({
             className="text-xl md:text-2xl lg:text-3xl font-bold leading-relaxed md:leading-relaxed drop-shadow-sm"
             style={{ color: textColor }}
           >
-            &ldquo;{quote}&rdquo;
+            &ldquo;{quote.replace(/<[^>]+>/g, '')}&rdquo;
           </p>
           {attribution && (
             <footer

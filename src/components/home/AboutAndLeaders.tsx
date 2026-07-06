@@ -20,6 +20,8 @@ type TeamMember = {
     bio: string | null;
     avatar: string | null;
     slug: string;
+    buttonName?: string | null;
+    buttonUrl?: string | null;
 };
 
 type AboutProps = {
@@ -119,8 +121,8 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
                         >
                             {aboutTitle}
                         </h2>
-                        <div 
-                            className="text-[#222222] leading-relaxed text-sm md:text-base mb-6 prose prose-sm md:prose-base max-w-none prose-p:my-2"
+                        <div
+                            className="text-[#222222] leading-relaxed text-sm md:text-base mb-6 max-w-none prose-p:my-2"
                             dangerouslySetInnerHTML={{ __html: aboutDesc }}
                         />
                         <div>
@@ -193,7 +195,7 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
                                     </div>
                                     <div className="mt-4">
                                         <Link
-                                            href={`/${leader.slug}`}
+                                            href={leader.buttonUrl || `/${leader.slug}`}
                                             className={cn(
                                                 "inline-flex items-center gap-2 bg-transparent border-1 border-![#222222] text-[#222222]",
                                                 "px-4 py-2 rounded-full text-xs font-bold",
@@ -202,9 +204,9 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
                                                 "focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
                                             )}
                                         >
-                                            {leader.designation?.toLowerCase().includes("founder")
+                                            {leader.buttonName || (leader.designation?.toLowerCase().includes("founder")
                                                 ? "About Founder"
-                                                : "About Ameer"}
+                                                : "About Ameer")}
                                             <ArrowRight className="w-3 h-3" aria-hidden="true" />
                                         </Link>
                                     </div>

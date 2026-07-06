@@ -15,6 +15,8 @@ type TeamMember = {
     designation: string | null;
     bio: string | null;
     avatar: string | null;
+    buttonName: string | null;
+    buttonUrl: string | null;
     order: number;
     isActive: boolean;
 };
@@ -33,6 +35,8 @@ export function LeaderProfiles() {
         designation: "",
         bio: "",
         avatar: "",
+        buttonName: "",
+        buttonUrl: "",
         order: 0,
         isActive: true,
     });
@@ -65,6 +69,8 @@ export function LeaderProfiles() {
                 designation: member.designation || "",
                 bio: member.bio || "",
                 avatar: member.avatar || "",
+                buttonName: member.buttonName || "",
+                buttonUrl: member.buttonUrl || "",
                 order: member.order,
                 isActive: member.isActive,
             });
@@ -75,6 +81,8 @@ export function LeaderProfiles() {
                 designation: "",
                 bio: "",
                 avatar: "",
+                buttonName: "",
+                buttonUrl: "",
                 order: team.length,
                 isActive: true,
             });
@@ -286,6 +294,29 @@ export function LeaderProfiles() {
                                                     placeholder="The Founder"
                                                 />
                                             </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div className="space-y-2">
+                                            <label className="text-sm font-semibold text-foreground">Button Name</label>
+                                            <input
+                                                type="text"
+                                                value={formData.buttonName}
+                                                onChange={(e) => setFormData({ ...formData, buttonName: e.target.value })}
+                                                className="w-full py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                                                placeholder="e.g. About Founder"
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label className="text-sm font-semibold text-foreground">Button URL</label>
+                                            <input
+                                                type="text"
+                                                value={formData.buttonUrl}
+                                                onChange={(e) => setFormData({ ...formData, buttonUrl: e.target.value })}
+                                                className="w-full py-2.5 rounded-xl border border-border bg-background text-foreground focus:ring-2 focus:ring-primary/20 outline-none transition-all"
+                                                placeholder="e.g. /dr-israr-ahmed"
+                                            />
                                         </div>
                                     </div>
 

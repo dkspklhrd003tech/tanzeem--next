@@ -104,7 +104,7 @@ export function AboutMissionSettings() {
                 <ConfirmDialog
                     title="Save Homepage Settings"
                     description="Are you sure you want to update the About and Mission sections on the homepage?"
-                    onConfirm={() => document.getElementById("about-mission-form")?.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }))}
+                    onConfirm={() => { document.getElementById("about-mission-form")?.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true })); }}
                 >
                     <button
                         type="button"

@@ -26,6 +26,8 @@ export async function PUT(
             designation: body.designation,
             bio: body.bio,
             avatar: body.avatar,
+            buttonName: body.buttonName,
+            buttonUrl: body.buttonUrl,
             email: body.email,
             phone: body.phone,
             order: body.order,

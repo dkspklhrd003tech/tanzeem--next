@@ -73,7 +73,7 @@ export function MissionAndVideos({ videos, settings }: MissionProps) {
                 <div className="max-w-4xl mx-auto relative z-10 px-6 md:px-0 ">
                     <div className="space-y-6">
                         <h2 ref={textRef} className="text-2xl md:text-3xl lg:text-4xl font-black text-white leading-tight md:leading-snug drop-shadow-lg tracking-tight">
-                            &ldquo;{missionText}&rdquo;
+                            &ldquo;{missionText.replace(/<[^>]+>/g, '')}&rdquo;
                         </h2>
                     </div>
                 </div>

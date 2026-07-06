@@ -490,6 +490,8 @@ export const teamMembers = mysqlTable("team_members", {
     designation: varchar("designation", { length: 191 }),
     bio: text("bio"),
     avatar: text("avatar"),
+    buttonName: varchar("button_name", { length: 191 }),
+    buttonUrl: varchar("button_url", { length: 255 }),
     email: varchar("email", { length: 191 }),
     phone: varchar("phone", { length: 50 }),
     order: int("order").default(0).notNull(),

@@ -29,11 +29,13 @@ const DEFAULT_DATA = {
     heading: "Join Us",
     subheading: "Any Male Or Female Muslim Can Join Tanzeem-E-Islami By Giving A Pledge\n(Or Baiy'ah) Of Obedience.",
     rafeeq: {
+      heading: "RAFEEQ",
       landline: "+92-42-35473375-78",
       email: "markaz@tanzeem.org",
       address: "Dar ul Islam, Markaz Tanzeem-e-Islami, Multan Road, Chung Lahore."
     },
     rafeeqah: {
+      heading: "RAFEEQAH",
       landline: "+92-42-35869501-03",
       email: "khwateen@tanzeem.org",
       address: "Office Tanzeem-e-Islami Halqa Khwateen 36-K, Model Town, Lahore."
@@ -64,13 +66,12 @@ export default async function HistoryOfTanzeemPage() {
   return (
     <main className="min-h-screen bg-background flex flex-col">
       {/* Hero Section */}
-      <section className="container mx-auto px-4 py-16 md:py-24 max-w-5xl">
-        <h1 className="text-4xl md:text-5xl font-bold text-center mb-12">{content.hero.heading}</h1>
-        
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 mb-12">
+      <section className="mx-auto px-4 md:py-12 max-w-7xl">
+
+        <div className="gap-8 mb-12">
           <div className="md:col-span-5 md:col-start-7">
             <h3 className="font-bold text-lg mb-2">{content.hero.quoteTitle}</h3>
-            <div className="bg-muted/30 p-8 rounded-lg relative">
+            <div className="bg-primary-light p-6 rounded-lg relative">
               <p className="text-muted-foreground leading-relaxed italic">
                 {content.hero.quoteText}
               </p>
@@ -87,11 +88,11 @@ export default async function HistoryOfTanzeemPage() {
       </section>
 
       {/* Dark Banner Section */}
-      <section className="w-full bg-[#1A1814] relative py-20 overflow-hidden">
+      <section className="w-full bg-primary relative py-20 overflow-hidden">
         {/* Decorative background pattern - simplified for this implementation */}
         <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at center, #ffffff 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
         <div className="container mx-auto px-4 relative z-10 text-center">
-          <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold text-white max-w-4xl mx-auto leading-tight">
+          <h2 className="text-2xl md:text-4xl font-bold text-white max-w-4xl mx-auto leading-tight">
             {content.banner.text}
           </h2>
         </div>
@@ -125,7 +126,7 @@ export default async function HistoryOfTanzeemPage() {
               </svg>
             </div>
             <h3 className="text-xl font-bold uppercase tracking-widest mb-6 underline decoration-2 underline-offset-4">{content.joinUs.rafeeq.heading || "RAFEEQ"}</h3>
-            
+
             <div className="space-y-3 text-sm mb-8 w-full text-left">
               <p><strong className="text-foreground">Landline:</strong> <span className="text-muted-foreground">{content.joinUs.rafeeq.landline}</span></p>
               <p><strong className="text-foreground">Email:</strong> <span className="text-muted-foreground">{content.joinUs.rafeeq.email}</span></p>
@@ -148,7 +149,7 @@ export default async function HistoryOfTanzeemPage() {
               </svg>
             </div>
             <h3 className="text-xl font-bold uppercase tracking-widest mb-6 underline decoration-2 underline-offset-4">{content.joinUs.rafeeqah.heading || "RAFEEQAH"}</h3>
-            
+
             <div className="space-y-3 text-sm mb-8 w-full text-left">
               <p><strong className="text-foreground">Landline:</strong> <span className="text-muted-foreground">{content.joinUs.rafeeqah.landline}</span></p>
               <p><strong className="text-foreground">Email:</strong> <span className="text-muted-foreground">{content.joinUs.rafeeqah.email}</span></p>

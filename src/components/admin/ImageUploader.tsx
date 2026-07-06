@@ -34,7 +34,7 @@ export function ImageUploader({
   altValue,
   onAltChange,
   aspectRatio = 16 / 9,
-  freeCrop = false,
+  freeCrop = true,
   disableCrop = false,
   label,
   className,
@@ -45,6 +45,7 @@ export function ImageUploader({
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<any>(null);
   const [isCropping, setIsCropping] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [detectedAspect, setDetectedAspect] = useState<number | null>(null);
   
   // Use controlled altValue (via onAltChange) or local state
   const isControlled = typeof onAltChange === "function";
@@ -76,6 +77,12 @@ export function ImageUploader({
       reader.addEventListener("load", async () => {
         const result = reader.result as string;
         setImage(result);
+        
+        const img = new Image();
+        img.onload = () => {
+          setDetectedAspect(img.width / img.height);
+        };
+        img.src = result;
         
         if (disableCrop) {
           // Direct upload without cropping
@@ -295,7 +302,7 @@ export function ImageUploader({
                 image={image}
                 crop={crop}
                 zoom={zoom}
-                aspect={freeCrop ? undefined : aspectRatio}
+                aspect={freeCrop ? (detectedAspect || aspectRatio) : aspectRatio}
                 onCropChange={setCrop}
                 onCropComplete={onCropComplete}
                 onZoomChange={setZoom}

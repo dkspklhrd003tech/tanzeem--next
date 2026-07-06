@@ -37,6 +37,8 @@ export async function POST(request: Request) {
             designation: body.designation || null,
             bio: body.bio || null,
             avatar: body.avatar || null,
+            buttonName: body.buttonName || null,
+            buttonUrl: body.buttonUrl || null,
             email: body.email || null,
             phone: body.phone || null,
             order: body.order || 0,
