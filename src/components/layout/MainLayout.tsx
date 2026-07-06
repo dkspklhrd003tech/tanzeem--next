@@ -21,7 +21,9 @@ export function MainLayout({ children }: MainLayoutProps) {
     pathname?.startsWith("/organization") ||
     pathname?.startsWith("/our-ideology") ||
     pathname === "/background" ||
-    pathname === "/mission-statement";
+    pathname === "/mission-statement" ||
+    pathname === "/the-founder" ||
+    pathname === "/the-ameer";
 
   // Shared settings — SWR-deduped across Header / Footer / MainLayout / PageBanner.
   const { settings, isLoading } = useSettings();

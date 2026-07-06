@@ -507,7 +507,7 @@ export function CampaignsManager() {
                                 <ConfirmDialog
                                     title={editingCampaign ? "Update Campaign" : "Launch Campaign"}
                                     description={`Are you sure you want to ${editingCampaign ? "update" : "launch"} this spotlight asset?`}
-                                    onConfirm={() => document.getElementById("campaignForm")?.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }))}
+                                    onConfirm={() => { document.getElementById("campaignForm")?.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true })); }}
                                 >
                                     <button
                                         type="button"
@@ -531,7 +531,9 @@ export function CampaignsManager() {
                 onOpenChange={(open) => !open && setDeletingCampaign(null)}
                 title="Delete Campaign"
                 description={`Are you sure you want to permanently delete the campaign "${deletingCampaign?.title}"? This cannot be undone.`}
-                onConfirm={() => deletingCampaign && handleDelete(deletingCampaign.id, deletingCampaign.title)}
+                onConfirm={() => {
+                    if (deletingCampaign) handleDelete(deletingCampaign.id, deletingCampaign.title);
+                }}
             />
         </div>
     );

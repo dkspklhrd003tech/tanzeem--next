@@ -296,7 +296,9 @@ export default async function DynamicPage({ params }: PageProps) {
   const crumbs = [
     { name: "Home", path: "/" },
     ...slugArray.map((seg, i) => ({
-      name: seg.charAt(0).toUpperCase() + seg.slice(1).replace(/-/g, " "),
+      name: seg
+        .replace(/-/g, " ")
+        .replace(/\b\w/g, (l) => l.toUpperCase()),
       path: "/" + slugArray.slice(0, i + 1).join("/"),
     })),
   ];
