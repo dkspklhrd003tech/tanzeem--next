@@ -204,7 +204,10 @@ export function FeaturedBooks() {
                 body: JSON.stringify(isEditing ? formData : { ...formData, slug }),
             });
 
-            if (!res.ok) throw new Error("API Route Blocked");
+            if (!res.ok) {
+                const errData = await res.json().catch(() => null);
+                throw new Error(errData?.error || "API Route Blocked");
+            }
             toast({ title: "Success!", description: "Featured book saved." });
             closeModal();
             fetchBooks();

@@ -39,54 +39,66 @@ async function HomeContent() {
       .from(homeSliders)
       .where(eq(homeSliders.isActive, true))
       .orderBy(desc(homeSliders.order), desc(homeSliders.createdAt));
+  } catch (error) { console.error("Failed to fetch sliders:", error); }
 
+  try {
     featuredBooks = await db
       .select()
       .from(books)
       .where(eq(books.isFeatured, true))
       .orderBy(asc(books.order), desc(books.createdAt))
       .limit(4);
+  } catch (error) { console.error("Failed to fetch books:", error); }
 
+  try {
     featuredMagazines = await db
       .select()
       .from(magazines)
       .where(eq(magazines.isFeatured, true))
       .orderBy(asc(magazines.order), desc(magazines.createdAt))
       .limit(4);
+  } catch (error) { console.error("Failed to fetch magazines:", error); }
 
+  try {
     activeCampaigns = await db
       .select()
       .from(homeCampaigns)
       .where(eq(homeCampaigns.isActive, true))
       .orderBy(desc(homeCampaigns.order), desc(homeCampaigns.createdAt));
+  } catch (error) { console.error("Failed to fetch campaigns:", error); }
 
+  try {
     team = await db
       .select()
       .from(teamMembers)
       .where(eq(teamMembers.isActive, true))
       .orderBy(desc(teamMembers.order), desc(teamMembers.createdAt));
+  } catch (error) { console.error("Failed to fetch team members:", error); }
 
+  try {
     featuredVideos = await db
       .select()
       .from(videos)
       .where(eq(videos.isFeatured, true))
       .orderBy(asc(videos.order), desc(videos.createdAt))
       .limit(8);
+  } catch (error) { console.error("Failed to fetch videos:", error); }
 
+  try {
     latestPress = await db
       .select()
       .from(pressReleases)
       .where(eq(pressReleases.isPublished, true))
       .orderBy(desc(pressReleases.publishedAt), desc(pressReleases.createdAt))
       .limit(3);
+  } catch (error) { console.error("Failed to fetch press releases:", error); }
 
+  try {
     siteSettings = await db
       .select()
       .from(settings)
       .where(eq(settings.group, "homepage"));
-  } catch (error) {
-    console.error("Database query failed on homepage:", error);
-  }
+  } catch (error) { console.error("Failed to fetch settings:", error); }
 
   // Map settings array to an object map for easy prop passing
   const settingsMap = siteSettings.reduce((acc, curr) => {

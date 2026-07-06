@@ -201,7 +201,10 @@ export function FeaturedMagazines() {
                 body: JSON.stringify(formData),
             });
 
-            if (!res.ok) throw new Error("API Route Blocked");
+            if (!res.ok) {
+                const errData = await res.json().catch(() => null);
+                throw new Error(errData?.error || "API Route Blocked");
+            }
             toast({ title: "Success!", description: "Featured magazine saved." });
             closeModal();
             fetchMagazines();
