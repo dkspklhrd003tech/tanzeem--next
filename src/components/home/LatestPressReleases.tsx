@@ -82,13 +82,8 @@ export function LatestPressReleases({ items }: Props) {
             View all <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
           </Link>
         </div>
-<<<<<<< Updated upstream
-        <div ref={gridRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {items.length > 0 ? items.map((item, i) => (
-=======
         <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {items.length > 0 ? items.slice(0, 6).map((item, i) => (
->>>>>>> Stashed changes
             <Link
               key={item.id}
               href={`/press-releases/${item.slug || item.id}`}
