@@ -140,8 +140,8 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
     finally { setIsLoading(false); }
   };
 
-  const handlePageSave = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handlePageSave = async (e?: React.FormEvent) => {
+    e?.preventDefault();
     setIsSavingPage(true);
     try {
       await fetch(`/api/sitemanager/pages/${pageId}`, {

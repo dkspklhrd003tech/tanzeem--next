@@ -115,6 +115,9 @@ const NAV_ITEMS: NavItem[] = [
   { title: "Khitab-e-Jum'ah (Audio)", href: "/sitemanager/pages/khitab-e-jumah-audio/edit", icon: Headphones },
   { title: "Pages", href: "/sitemanager/pages", icon: FileText },
   // ── Content ──────────────────────────────────────────────────────────────
+  { title: "Campaigns", href: "/sitemanager/pages/campaigns/edit", icon: Megaphone },
+  { title: "Events", href: "/sitemanager/pages/events/edit", icon: Calendar },
+  { title: "Services", href: "/sitemanager/pages/services/edit", icon: Sparkles },
   { title: "Jummah Venues", href: "/sitemanager/khitabat-addresses", icon: MapPin },
   { title: "Sermons", href: "/sitemanager/sermons", icon: Mic },
   // ── System ───────────────────────────────────────────────────────────────

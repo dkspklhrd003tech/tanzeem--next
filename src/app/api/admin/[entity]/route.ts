@@ -24,6 +24,8 @@ import {
     videoCategories,
     audioCategories,
     speakers,
+    campaigns,
+    services,
 } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { getCurrentUser } from "@/lib/auth";
@@ -68,7 +70,9 @@ const entityMap: Record<string, any> = {
     "press-releases": pressReleases,
     "audio-books": audioBooks,
     magazines,
-    campaigns: homeCampaigns,
+    "home-campaigns": homeCampaigns,
+    campaigns: campaigns,
+    services: services,
     locations,
     sermons,
     // ── New entities (Phase 4) ───────────────────────────────────────────────
@@ -93,7 +97,9 @@ const REQUIRED_FIELDS: Record<string, string[]> = {
     "press-releases": ["title", "content", "slug"],
     "audio-books": ["title", "content", "slug"],
     magazines: ["title", "slug"],
+    "home-campaigns": ["title", "slug"],
     campaigns: ["title", "slug"],
+    services: ["title", "slug"],
     events: ["title", "slug", "startDate"],
     sermons: ["title", "slug"],
     faqs: ["question", "answer"],
@@ -220,7 +226,7 @@ export async function POST(
         };
 
         // Add authorId if the table expects it
-        if (entity === "posts" || entity === "audio" || entity === "videos" || entity === "books" || entity === "press-releases" || entity === "audio-books" || entity === "magazines" || entity === "campaigns" || entity === "sermons") {
+        if (entity === "posts" || entity === "audio" || entity === "videos" || entity === "books" || entity === "press-releases" || entity === "audio-books" || entity === "magazines" || entity === "campaigns" || entity === "home-campaigns" || entity === "sermons" || entity === "services" || entity === "events") {
             insertData.authorId = user?.id || "system";
         }
 

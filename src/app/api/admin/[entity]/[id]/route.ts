@@ -23,6 +23,8 @@ import {
     bookCategories,
     audioCategories,
     speakers,
+    campaigns,
+    services,
 } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { getCurrentUser } from "@/lib/auth";
@@ -62,7 +64,9 @@ const entityMap: Record<string, any> = {
     "press-releases": pressReleases,
     "audio-books": audioBooks,
     magazines,
-    campaigns: homeCampaigns,
+    "home-campaigns": homeCampaigns,
+    campaigns: campaigns,
+    services: services,
     locations,
     sermons,
     faqs: faqItems,

@@ -40,6 +40,7 @@ export function ImageUploader({
   onChange,
   altValue,
   onAltChange,
+  aspectRatio,
   freeCrop = true,
   disableCrop = false,
   label,

@@ -19,6 +19,9 @@ import AudiosPageEditor from "@/components/admin/AudiosPageEditor";
 import AudioSpeakersPageEditor from "@/components/admin/AudioSpeakersPageEditor";
 import VideoSpeakersPageEditor from "@/components/admin/VideoSpeakersPageEditor";
 import HistoryPageEditor from "@/components/admin/HistoryPageEditor";
+import CampaignsPageEditor from "@/components/admin/CampaignsPageEditor";
+import EventsPageEditor from "@/components/admin/EventsPageEditor";
+import ServicesPageEditor from "@/components/admin/ServicesPageEditor";
 
 export default function EditPagePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -109,6 +112,18 @@ export default function EditPagePage({ params }: { params: Promise<{ id: string 
 
   if (page.id === "07d5dfdd-1c18-4de6-80b5-54ea7f0570bd" || page.slug === "history-of-tanzeem-e-islami") {
     return <HistoryPageEditor pageId={page.id} initialPageData={page} />;
+  }
+
+  if (page.slug === "campaigns") {
+    return <CampaignsPageEditor pageId={page.id} initialPageData={page} />;
+  }
+
+  if (page.slug === "events") {
+    return <EventsPageEditor pageId={page.id} initialPageData={page} />;
+  }
+
+  if (page.slug === "services") {
+    return <ServicesPageEditor pageId={page.id} initialPageData={page} />;
   }
 
   const magazineIds = [

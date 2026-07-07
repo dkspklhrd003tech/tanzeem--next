@@ -32,7 +32,7 @@ export function CTABanner({
         />
       )}
 
-      <div className="container px-4 mx-auto relative z-10">
+      <div className="container px-4 py-6 mx-auto relative z-10">
         <div className="max-w-4xl mx-auto text-center space-y-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}

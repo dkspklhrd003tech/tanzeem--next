@@ -5,7 +5,6 @@ import { SpotlightCampaigns } from "@/components/home/SpotlightCampaigns";
 import { MissionAndVideos } from "@/components/home/MissionAndVideos";
 import { PublicationsGrid } from "@/components/home/PublicationsGrid";
 import { CTA } from "@/components/home/CTA";
-import { BackToTop } from "@/components/ui/back-to-top";
 import { db } from "@/db";
 import { homeSliders, books, magazines, teamMembers, homeCampaigns, videos, settings, pressReleases } from "@/db/schema";
 import { LatestPressReleases } from "@/components/home/LatestPressReleases";
@@ -136,8 +135,6 @@ async function HomeContent() {
 
   return (
     <>
-      <BackToTop />
-
       {/* 1. Hero Slider (Pass Dynamic payload) */}
       <Hero slidesData={finalSliders} />
 
