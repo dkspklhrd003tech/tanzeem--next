@@ -29,7 +29,7 @@ async function createFtpClient(): Promise<Client> {
     const user     = process.env.FTP_USER     ?? "";
     const password = process.env.FTP_PASSWORD ?? "";
     const port     = parseInt(process.env.FTP_PORT ?? "21", 10);
-    const secure   = process.env.FTP_SECURE === "true";
+    const secure   = process.env.FTP_SECURE !== "false"; // Default to true
 
     console.log(`[FTP] Connecting → host=${host} port=${port} secure=${secure}`);
 
@@ -47,12 +47,18 @@ async function createFtpClient(): Promise<Client> {
         console.log("[FTP] Connected successfully.");
     } catch (err: any) {
         client.close();
-        // Surface the REAL error so it shows in upload toast and server logs
+        let hint = "";
+        if (err?.code === 530) {
+            hint = " → HINT: Auth/TLS handshake failed. Verify FTP_USER/FTP_PASSWORD in Vercel env vars. Ensure the username format matches exactly what Hostinger expects.";
+        } else if (err?.code === 450) {
+            hint = " → HINT: Target directory missing/not writable, or disk quota exceeded on the server.";
+        }
+
         console.error("[FTP] Connection failed:", {
             message: err?.message,
             code:    err?.code,
         });
-        throw new Error(`FTP connection failed: ${err?.message ?? "unknown error"} (code: ${err?.code ?? "?"})`);
+        throw new Error(`FTP connection failed: ${err?.message ?? "unknown error"} (code: ${err?.code ?? "?"})${hint}`);
     }
 
     return client;
