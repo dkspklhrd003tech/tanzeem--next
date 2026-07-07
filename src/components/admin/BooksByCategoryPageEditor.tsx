@@ -29,6 +29,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { PageRecord } from "@/components/sitemanager/PageForm";
 import { ImageUploader } from "@/components/admin/ImageUploader";
+import { useChunkedUpload } from "@/hooks/useChunkedUpload";
 
 function slugify(text: string) {
   return text.toLowerCase().trim()
@@ -376,21 +377,24 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
     }
   };
 
+  const { uploadFile: chunkedUpload } = useChunkedUpload();
+
   const handlePdfUploadDirectly = async (file: File) => {
     if (file.type !== "application/pdf") {
       toast({ variant: "destructive", title: "Invalid file type", description: "Please upload a valid PDF document." });
       return;
     }
+    const MAX_FILE_SIZE = 100 * 1024 * 1024;
+    if (file.size > MAX_FILE_SIZE) {
+      toast({ variant: "destructive", title: "File too large", description: "Files must be under 100MB." });
+      return;
+    }
     setIsUploading(true);
     try {
-      const formDataObj = new FormData();
-      formDataObj.append("file", file);
-      formDataObj.append("type", "uploads");
+      const data = await chunkedUpload(file, {
+        onProgress: (pct) => console.log(`[BooksByCategory] Upload progress: ${pct}%`),
+      });
 
-      const res = await fetch("/api/upload", { method: "POST", body: formDataObj });
-      if (!res.ok) throw new Error("Upload failed");
-
-      const data = await res.json();
       const baseName = file.name.replace(/\.[^/.]+$/, "");
       const cleanedTitle = baseName.split(/[-_]+/).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
 

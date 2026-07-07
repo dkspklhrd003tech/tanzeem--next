@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { useChunkedUpload } from "@/hooks/useChunkedUpload";
 import { CustomFieldBuilder } from "@/components/admin/CustomFieldBuilder";
 import { CustomFieldRenderer } from "@/components/admin/CustomFieldRenderer";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -72,6 +73,8 @@ export default function AudioFormPage({ id, speakerIdParam = "", categoryIdParam
       .finally(() => setIsLoading(false));
   }, [id, isNew, speakerIdParam, categoryIdParam]);
 
+  const { uploadFile: chunkedUpload } = useChunkedUpload();
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -84,27 +87,14 @@ export default function AudioFormPage({ id, speakerIdParam = "", categoryIdParam
     }
 
     setIsUploading(true);
-    const formPayload = new FormData();
-    formPayload.append("file", file);
     try {
-      const res = await fetch("/api/upload", { method: "POST", body: formPayload });
-      if (!res.ok) {
-        let errMessage = "Upload failed";
-        try {
-          const text = await res.text();
-          if (text.startsWith("<")) {
-            errMessage = res.status === 413 ? "File is too large for the server to process." : `Server Error (${res.status})`;
-          } else {
-            const data = JSON.parse(text);
-            errMessage = data.error || errMessage;
-          }
-        } catch (e) { }
-        throw new Error(errMessage);
-      }
-      const data = await res.json();
+      const data = await chunkedUpload(file, {
+        onProgress: (pct) => console.log(`[AudioFormPage] Upload progress: ${pct}%`),
+      });
       setFormData(prev => ({ ...prev, audioUrl: data.url }));
       toast({ title: "Uploaded", description: "Audio file uploaded." });
     } catch (err: any) {
+      console.error("[AudioFormPage] Chunked upload threw:", err);
       toast({ variant: "destructive", title: "Upload error", description: err.message });
     } finally {
       setIsUploading(false);

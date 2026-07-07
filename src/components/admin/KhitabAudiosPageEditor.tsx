@@ -16,6 +16,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { useChunkedUpload } from "@/hooks/useChunkedUpload";
 
 import {
   DndContext, closestCenter, KeyboardSensor, PointerSensor,
@@ -352,26 +353,23 @@ export default function KhitabAudiosPageEditor({ pageId, initialPageData }: { pa
     }
   };
 
+  const { uploadFile: chunkedUpload } = useChunkedUpload();
+
   const handleAudioUploadDirectly = async (file: File) => {
     if (!file.type.startsWith("audio/")) {
       toast({ variant: "destructive", title: "Invalid file type", description: "Please upload a valid audio file." });
       return;
     }
+    const MAX_AUDIO_MB = 100;
+    if (file.size > MAX_AUDIO_MB * 1024 * 1024) {
+      toast({ variant: "destructive", title: "File too large", description: `Audio file must be under ${MAX_AUDIO_MB}MB. Current file: ${(file.size / 1024 / 1024).toFixed(1)}MB.` });
+      return;
+    }
     setIsUploading(true);
     try {
-      const formDataObj = new FormData();
-      formDataObj.append("file", file);
-      formDataObj.append("type", "uploads");
-
-      const res = await fetch("/api/upload", { method: "POST", body: formDataObj });
-      const contentType = res.headers.get("content-type") || "";
-      if (!contentType.includes("application/json")) {
-        const text = await res.text();
-        console.error("[KhitabAudiosPageEditor] Non-JSON upload response:", res.status, text.slice(0, 500));
-        throw new Error(`Upload failed (HTTP ${res.status}). Server returned non-JSON — check server logs.`);
-      }
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || `Upload failed (HTTP ${res.status})`);
+      const data = await chunkedUpload(file, {
+        onProgress: (pct) => console.log(`[KhitabAudiosPageEditor] Upload progress: ${pct}%`),
+      });
 
       const baseName = file.name.replace(/\.[^/.]+$/, "");
       const cleanedTitle = baseName.split(/[-_]+/).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
@@ -403,20 +401,16 @@ export default function KhitabAudiosPageEditor({ pageId, initialPageData }: { pa
       toast({ variant: "destructive", title: "Invalid file type", description: "Please upload a valid audio file." });
       return;
     }
+    const MAX_AUDIO_MB = 100;
+    if (file.size > MAX_AUDIO_MB * 1024 * 1024) {
+      toast({ variant: "destructive", title: "File too large", description: `Audio must be under ${MAX_AUDIO_MB}MB. File is ${(file.size / 1024 / 1024).toFixed(1)}MB.` });
+      return;
+    }
     setIsUploading(true);
     try {
-      const formDataObj = new FormData();
-      formDataObj.append("file", file);
-      formDataObj.append("type", "uploads");
-      const res = await fetch("/api/upload", { method: "POST", body: formDataObj });
-      const contentType = res.headers.get("content-type") || "";
-      if (!contentType.includes("application/json")) {
-        const text = await res.text();
-        console.error("[KhitabAudiosPageEditor modal] Non-JSON upload response:", res.status, text.slice(0, 500));
-        throw new Error(`Upload failed (HTTP ${res.status}). Server returned non-JSON — check server logs.`);
-      }
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || `Upload failed (HTTP ${res.status})`);
+      const data = await chunkedUpload(file, {
+        onProgress: (pct) => console.log(`[KhitabAudiosPageEditor modal] Upload progress: ${pct}%`),
+      });
       setKhitabAudioFormData(prev => ({ ...prev, audioUrl: data.url }));
       toast({ title: "Audio Uploaded Successfully" });
     } catch (err: any) {

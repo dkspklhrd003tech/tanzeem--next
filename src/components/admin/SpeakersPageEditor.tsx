@@ -12,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PageRecord } from "@/components/sitemanager/PageForm";
 import { ImageUploader } from "@/components/admin/ImageUploader";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { useChunkedUpload } from "@/hooks/useChunkedUpload";
 import PageSeoManager from "./PageSeoManager";
 
 function slugify(text: string) {

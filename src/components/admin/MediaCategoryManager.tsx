@@ -32,6 +32,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { GripVertical } from "lucide-react";
+import { useChunkedUpload } from "@/hooks/useChunkedUpload";
 
 interface MediaItem {
   id: string;
@@ -117,6 +118,8 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<string>("");
   const [pendingAction, setPendingAction] = useState<{ title: string, desc: string, action: () => Promise<void> | void } | null>(null);
+
+  const { uploadFile: chunkedUpload } = useChunkedUpload();
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -982,16 +985,18 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                                 fd.append("file", file);
                                 try {
                                   toast.loading("Uploading...");
-                                  const res = await fetch("/api/upload", { method: "POST", body: fd });
-                                  const data = await res.json();
+                                  const data = await chunkedUpload(file, {
+                                    onProgress: (pct) => console.log(`[MediaCategoryManager] Upload progress: ${pct}%`),
+                                  });
                                   toast.dismiss();
                                   if (data.url) {
                                     setEditingMedia({ ...editingMedia, item: { ...editingMedia.item, mediaUrl: data.url } });
                                     toast.success("File URL applied");
                                   }
-                                } catch (err) {
+                                } catch (err: any) {
                                   toast.dismiss();
-                                  toast.error("Upload failed");
+                                  console.error("[MediaCategoryManager] Upload error:", err);
+                                  toast.error("Upload failed: " + (err.message || "Unknown error"));
                                 }
                               }}
                             />
