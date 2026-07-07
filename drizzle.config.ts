@@ -1,13 +1,20 @@
 import { defineConfig } from "drizzle-kit";
 import * as dotenv from "dotenv";
+import * as path from "path";
 
-dotenv.config({ path: ".env.production" });
+// Usage:
+//   npm run db:push          → pushes to PRODUCTION (default)
+//   npm run db:push:local    → pushes to LOCAL database
+// Controlled by DB_ENV environment variable set in package.json scripts
+const envFile = process.env.DB_ENV === "local" ? ".env.local" : ".env.production";
+dotenv.config({ path: path.resolve(process.cwd(), envFile) });
+
+console.log(`[drizzle] Using env: ${envFile} → DB: ${process.env.DB_NAME}@${process.env.DB_HOST}`);
 
 export default defineConfig({
     schema: "./src/db/schema.ts",
     out: "./drizzle",
     dialect: "mysql",
-    // Using URL string to bypass the Drizzle bug that rejects empty password strings
     dbCredentials: {
         host: process.env.DB_HOST || "localhost",
         port: process.env.DB_PORT ? parseInt(process.env.DB_PORT) : 3306,
