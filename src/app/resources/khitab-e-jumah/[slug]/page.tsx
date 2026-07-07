@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation";
 import { db } from "@/db";
-import { sermons } from "@/db/schema";
+import { khitabAudios } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import { SermonDetail } from "@/components/resources/SermonDetail";
+import { AudioDetail } from "@/components/resources/AudioDetail"; // Assuming there is an AudioDetail or we can pass it to SermonDetail for now. Wait, I should check if AudioDetail exists.
 import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
@@ -13,16 +13,16 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const { slug } = await params;
-    const sermon = await db.query.sermons.findFirst({
-        where: eq(sermons.slug, slug),
+    const sermon = await db.query.khitabAudios.findFirst({
+        where: eq(khitabAudios.slug, slug),
     });
 
     if (!sermon || !sermon.isPublished) {
-        return { title: "Sermon Not Found | Tanzeem-e-Islami" };
+        return { title: "Audio Not Found | Tanzeem-e-Islami" };
     }
 
-    const title = sermon.metaTitle || sermon.title;
-    const description = sermon.metaDescription ?? undefined;
+    const title = sermon.title;
+    const description = sermon.description ?? undefined;
 
     return {
         title: `${title} | Tanzeem-e-Islami`,
@@ -37,8 +37,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function SermonDetailPage({ params }: Props) {
     const { slug } = await params;
-    const sermon = await db.query.sermons.findFirst({
-        where: eq(sermons.slug, slug),
+    const sermon = await db.query.khitabAudios.findFirst({
+        where: eq(khitabAudios.slug, slug),
     });
 
     if (!sermon || !sermon.isPublished) {
@@ -47,7 +47,8 @@ export default async function SermonDetailPage({ params }: Props) {
 
     return (
         <main className="min-h-screen bg-background">
-            <SermonDetail sermon={sermon} />
+            <h1 className="sr-only">{sermon.title}</h1>
+            <AudioDetail audio={sermon} backHref={`/resources/khitab-e-jumah/`} backLabel="Back to Categories" />
         </main>
     );
 }

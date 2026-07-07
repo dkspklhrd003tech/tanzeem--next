@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ArrowLeft, Clock, Headphones, Download, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ClientShareButton } from "@/components/shared/ClientShareButton";
 
 interface AudioDetailProps {
   audio: {
@@ -34,9 +35,9 @@ export function AudioDetail({ audio, backHref, backLabel }: AudioDetailProps) {
         <ArrowLeft className="h-4 w-4" /> {backLabel}
       </Link>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+      <div className="grid grid-cols-1 gap-6 max-w-7xl mx-auto">
         {/* Thumbnail */}
-        <div className="lg:col-span-1">
+        {/* <div className="lg:col-span-1">
           {audio.thumbnailUrl ? (
             <img
               src={audio.thumbnailUrl}
@@ -44,18 +45,24 @@ export function AudioDetail({ audio, backHref, backLabel }: AudioDetailProps) {
               className="w-full aspect-square rounded-xl object-cover shadow-lg"
             />
           ) : (
-            <div className="w-full aspect-square rounded-xl bg-primary/10 flex items-center justify-center shadow-lg">
-              <Headphones className="h-20 w-20 text-primary/40" />
+            <div className="w-15 h-15 rounded-xl bg-primary/10 flex items-center justify-center shadow-lg">
+              <Headphones className="h-8 w-8 text-primary/40" />
             </div>
           )}
-        </div>
+        </div> */}
 
         {/* Details */}
         <div className="lg:col-span-2 space-y-6">
           <div>
             {audio.speakerName && (
-              <p className="text-lg text-primary font-medium">{audio.speakerName}</p>
+              <p className="text-lg text-primary font-medium mb-2">{audio.speakerName}</p>
             )}
+            <div className="flex items-start justify-between gap-4">
+              <h1 className="text-xl md:text-2xl font-bold text-foreground leading-tight">
+                {audio.title}
+              </h1>
+              <ClientShareButton variant="icon" className="shrink-0 mt-1" />
+            </div>
           </div>
 
           <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
@@ -70,8 +77,8 @@ export function AudioDetail({ audio, backHref, backLabel }: AudioDetailProps) {
               </span>
             )}
             {audio.publishedAt && (
-              <span className="flex items-center gap-1">
-                <Calendar className="h-4 w-4" /> {new Date(audio.publishedAt).toLocaleDateString()}
+              <span className="flex items-center gap-1.5 border border-primary text-primary px-3 py-1 rounded-full text-xs font-semibold">
+                <Calendar className="h-3.5 w-3.5" /> {new Date(audio.publishedAt).toLocaleDateString()}
               </span>
             )}
           </div>
