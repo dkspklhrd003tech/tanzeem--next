@@ -168,10 +168,10 @@ export default function SpeakersPageEditor({ pageId, initialPageData, mediaConte
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // 40MB limit for files
-    const MAX_FILE_SIZE = 40 * 1024 * 1024;
+    // 100MB limit for files
+    const MAX_FILE_SIZE = 100 * 1024 * 1024;
     if (file.size > MAX_FILE_SIZE) {
-      toast({ variant: "destructive", title: "File too large", description: "Files must be under 40MB." });
+      toast({ variant: "destructive", title: "File too large", description: "Files must be under 100MB." });
       // Clear the input
       e.target.value = '';
       return;
@@ -463,7 +463,7 @@ export default function SpeakersPageEditor({ pageId, initialPageData, mediaConte
         )
       }
 
-      <ConfirmDialog open={!!deletingSpeaker} title="Delete Speaker" description="Are you sure you want to delete this speaker?" onConfirm={() => deletingSpeaker && handleSpeakerDelete(deletingSpeaker)} onOpenChange={(open) => !open && setDeletingSpeaker(null)} />
+      <ConfirmDialog open={!!deletingSpeaker} title="Delete Speaker" description="Are you sure you want to delete this speaker?" onConfirm={() => { if (deletingSpeaker) handleSpeakerDelete(deletingSpeaker); }} onOpenChange={(open) => !open && setDeletingSpeaker(null)} />
       <ConfirmDialog open={!!deletingAudio} title="Delete Audio" description="Are you sure you want to delete this audio?" onConfirm={async () => { if (deletingAudio) { await fetch(`/api/admin/audio/${deletingAudio.id}`, { method: 'DELETE' }); fetchData(); setDeletingAudio(null); } }} onOpenChange={(open) => !open && setDeletingAudio(null)} />
       <ConfirmDialog open={!!deletingVideo} title="Delete Video" description="Are you sure you want to delete this video?" onConfirm={async () => { if (deletingVideo) { await fetch(`/api/admin/videos/${deletingVideo.id}`, { method: 'DELETE' }); fetchData(); setDeletingVideo(null); } }} onOpenChange={(open) => !open && setDeletingVideo(null)} />
     </div >

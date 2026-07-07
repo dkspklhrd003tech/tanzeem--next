@@ -76,9 +76,9 @@ export default function AudioFormPage({ id, speakerIdParam = "", categoryIdParam
     const file = e.target.files?.[0];
     if (!file) return;
 
-    const MAX_AUDIO_SIZE = 40 * 1024 * 1024;
+    const MAX_AUDIO_SIZE = 100 * 1024 * 1024;
     if (file.size > MAX_AUDIO_SIZE) {
-      toast({ variant: "destructive", title: "File too large", description: "Audio files must be under 40MB." });
+      toast({ variant: "destructive", title: "File too large", description: "Audio files must be under 100MB." });
       e.target.value = '';
       return;
     }

@@ -970,10 +970,10 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                                 if (!e.target.files?.length) return;
                                 const file = e.target.files[0];
 
-                                // 40MB limit for files
-                                const MAX_FILE_SIZE = 40 * 1024 * 1024;
+                                // 100MB limit for files
+                                const MAX_FILE_SIZE = 100 * 1024 * 1024;
                                 if (file.size > MAX_FILE_SIZE) {
-                                  toast.error("File is too large. Please select a file under 40MB.");
+                                  toast.error("File is too large. Please select a file under 100MB.");
                                   e.target.value = '';
                                   return;
                                 }

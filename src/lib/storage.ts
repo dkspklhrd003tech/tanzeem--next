@@ -14,8 +14,9 @@ export interface StorageOptions {
 async function createFtpClient(): Promise<Client> {
     const client = new Client();
 
-    // Uncomment this line temporarily to see verbose FTP handshake logs:
-    // client.ftp.verbose = true;
+    // Verbose mode: logs every FTP command + server reply.
+    // IMPORTANT: Disable this (comment it out) once the FTP issue is diagnosed.
+    client.ftp.verbose = true;
 
     // Generous timeout for large audio files on shared hosting
     client.ftp.socket.setTimeout(60_000); // 60 seconds

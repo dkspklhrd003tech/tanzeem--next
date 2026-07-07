@@ -141,7 +141,7 @@ function SortableSermonCard({ id, item, onEdit, onDelete }: any) {
 
         <h3 className="font-bold text-base text-foreground leading-snug line-clamp-2 mb-1">{item.title}</h3>
         {item.titleUrdu && (
-            <h4 className="font-bold text-sm text-foreground leading-snug line-clamp-2 mb-2 font-amiri" dir="rtl">{item.titleUrdu}</h4>
+          <h4 className="font-bold text-sm text-foreground leading-snug line-clamp-2 mb-2 font-amiri" dir="rtl">{item.titleUrdu}</h4>
         )}
         <p className="text-xs text-muted-foreground font-mono truncate mb-4" title={item.slug}>
           /{item.slug}
@@ -301,16 +301,16 @@ export default function SermonsPageEditor({ pageId, initialPageData }: { pageId:
     try {
       const url = editingSermonId ? `/api/admin/sermons/${editingSermonId}` : "/api/admin/sermons";
       const method = editingSermonId ? "PUT" : "POST";
-      const payload: any = { 
-        ...sermonFormData, 
+      const payload: any = {
+        ...sermonFormData,
         categoryId: activeCategory?.id,
         publishedAt: sermonFormData.publishedAt ? new Date(sermonFormData.publishedAt).toISOString() : null,
       };
-      
+
       const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
       if (!res.ok) {
-         const errorData = await res.json().catch(() => ({}));
-         throw new Error(errorData.error || "Failed");
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || "Failed");
       }
       toast({ title: "Success", description: "Audio saved" });
       setIsSermonModalOpen(false);
@@ -358,6 +358,11 @@ export default function SermonsPageEditor({ pageId, initialPageData }: { pageId:
       toast({ variant: "destructive", title: "Invalid file type", description: "Please upload a valid audio file (MP3, OGG, WAV, etc.)." });
       return;
     }
+    const MAX_AUDIO_MB = 40;
+    if (file.size > MAX_AUDIO_MB * 1024 * 1024) {
+      toast({ variant: "destructive", title: "File too large", description: `Audio file must be under ${MAX_AUDIO_MB}MB. Current file: ${(file.size / 1024 / 1024).toFixed(1)}MB. Please compress the file first.` });
+      return;
+    }
     setIsUploading(true);
     try {
       const formDataObj = new FormData();
@@ -369,7 +374,8 @@ export default function SermonsPageEditor({ pageId, initialPageData }: { pageId:
       if (!contentType.includes("application/json")) {
         const text = await res.text();
         console.error("[SermonsPageEditor] Non-JSON upload response:", res.status, text.slice(0, 500));
-        throw new Error(`Upload failed (HTTP ${res.status}). Server returned non-JSON — check server logs.`);
+        const hint = res.status === 413 ? " File too large for server — compress audio below 100MB." : " Check server logs.";
+        throw new Error(`Upload failed (HTTP ${res.status}).${hint}`);
       }
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || `Upload failed (HTTP ${res.status})`);
@@ -404,6 +410,11 @@ export default function SermonsPageEditor({ pageId, initialPageData }: { pageId:
       toast({ variant: "destructive", title: "Invalid file type", description: "Please upload a valid audio file." });
       return;
     }
+    const MAX_AUDIO_MB = 40;
+    if (file.size > MAX_AUDIO_MB * 1024 * 1024) {
+      toast({ variant: "destructive", title: "File too large", description: `Audio must be under ${MAX_AUDIO_MB}MB. File is ${(file.size / 1024 / 1024).toFixed(1)}MB.` });
+      return;
+    }
     setIsUploading(true);
     try {
       const formDataObj = new FormData();
@@ -414,7 +425,8 @@ export default function SermonsPageEditor({ pageId, initialPageData }: { pageId:
       if (!contentType.includes("application/json")) {
         const text = await res.text();
         console.error("[SermonsPageEditor modal] Non-JSON upload response:", res.status, text.slice(0, 500));
-        throw new Error(`Upload failed (HTTP ${res.status}). Server returned non-JSON — check server logs.`);
+        const hint = res.status === 413 ? " File too large for server — compress audio below 100MB." : " Check server logs.";
+        throw new Error(`Upload failed (HTTP ${res.status}).${hint}`);
       }
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || `Upload failed (HTTP ${res.status})`);
@@ -534,19 +546,19 @@ export default function SermonsPageEditor({ pageId, initialPageData }: { pageId:
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {activeSermons.map(sermon => (
                   <SortableSermonCard key={sermon.id} id={sermon.id} item={sermon}
-                    onEdit={(item: any) => { 
-                      setEditingSermonId(item.id); 
-                      setSermonFormData({ 
-                        title: item.title, 
-                        titleUrdu: item.titleUrdu || "", 
-                        slug: item.slug, 
-                        excerpt: item.excerpt || "", 
-                        description: item.description || "", 
-                        videoUrl: item.videoUrl || "", 
+                    onEdit={(item: any) => {
+                      setEditingSermonId(item.id);
+                      setSermonFormData({
+                        title: item.title,
+                        titleUrdu: item.titleUrdu || "",
+                        slug: item.slug,
+                        excerpt: item.excerpt || "",
+                        description: item.description || "",
+                        videoUrl: item.videoUrl || "",
                         isPublished: item.isPublished,
                         publishedAt: item.publishedAt ? new Date(item.publishedAt).toISOString().split("T")[0] : "",
-                      }); 
-                      setIsSermonModalOpen(true); 
+                      });
+                      setIsSermonModalOpen(true);
                     }}
                     onDelete={(item: SermonItem) => setDeletingSermon(item)} />
                 ))}
