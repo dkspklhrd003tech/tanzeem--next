@@ -64,7 +64,7 @@ export function SpotlightCampaigns({ campaigns }: { campaigns: HomeCampaign[] })
                     </h2>
                 </div>
 
-                <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div ref={gridRef} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {campaigns.length > 0 ? campaigns.map((campaign, i) => {
                         const card = (
                             <div className="flex flex-col h-full bg-card/60 backdrop-blur-md rounded-[1.5rem] border border-border/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] group-hover:shadow-primary/10 group-hover:border-primary/40 group-hover:-translate-y-3 transition-all duration-700 overflow-hidden relative group/inner border border-primary-light">

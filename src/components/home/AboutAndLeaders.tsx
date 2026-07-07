@@ -98,7 +98,7 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
                     <div className="absolute inset-0 transition-opacity duration-1000 pointer-events-none" />
                     {/* Logo Panel */}
                     <motion.div
-                        className="w-32 h-32 md:w-48 md:h-48 bg-white rounded-2xl overflow-hidden flex items-center justify-center shadow-[0_0_40px_rgba(16,185,129,0.15)] relative z-10"
+                        className="w-32 h-32 md:w-48 md:h-48 p-4 bg-white rounded-2xl overflow-hidden flex items-center justify-center shadow-[0_0_40px_rgba(16,185,129,0.15)] relative z-10"
                     >
                         <img
                             src={aboutImage}
