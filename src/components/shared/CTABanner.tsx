@@ -23,7 +23,7 @@ export function CTABanner({
 }: CTABannerProps) {
   return (
     <section
-      className="py- bg-primary/95 relative overflow-hidden perspective-1000 shadow-[0_0_50px_rgba(16,185,129,0.3)] z-10"
+      className="py- bg-primary/95 relative overflow-hidden "
     >
       {backgroundImage && (
         <div
@@ -32,7 +32,7 @@ export function CTABanner({
         />
       )}
 
-      <div className="container px-4 py-6 mx-auto relative z-10">
+      <div className="container px-6 py-10 mx-auto relative z-10">
         <div className="max-w-4xl mx-auto text-center space-y-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -40,7 +40,7 @@ export function CTABanner({
             viewport={{ once: true }}
             className="space-y-4"
           >
-            <h2 className="text-3xl md:text-5xl font-black text-white leading-tight">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl text-white">
               {heading}
             </h2>
             {subheading && (
@@ -58,7 +58,7 @@ export function CTABanner({
           >
             <Link
               href={buttonUrl}
-              className="inline-flex items-center gap-3 px-8 py-4 bg-white text-primary font-bold rounded-full hover:bg-black hover:text-white transition-all duration-300 group shadow-xl"
+              className="inline-flex items-center gap-3 px-8 py-4 bg-white text-primary font-bold rounded-full transition-all duration-300 group shadow-xl"
             >
               {buttonLabel}
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />

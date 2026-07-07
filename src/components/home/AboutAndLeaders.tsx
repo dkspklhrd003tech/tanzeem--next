@@ -184,11 +184,11 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
                                         <p className="sub_title">
                                             {leader.designation || "Leader"}
                                         </p>
-                                        <h3 className="text-xl md:text-2xl font-bold text-[#222222] mb-3">
+                                        <h3 className="text-xl md:text-2xl font-bold  mb-3">
                                             {leader.name}
                                         </h3>
                                         {leader.bio && (
-                                            <p className="text-foreground-muted text-sm leading-relaxed line-clamp-4">
+                                            <p className=" text-sm leading-relaxed line-clamp-4">
                                                 {leader.bio}
                                             </p>
                                         )}

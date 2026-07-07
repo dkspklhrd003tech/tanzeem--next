@@ -162,7 +162,7 @@ export function ModernizedProsePage({
       </div>
 
       {/* ── Main Layout Body ── */}
-      <div className="container mx-auto p-6 md:my-8 md:my-12">
+      <div className="container mx-auto p-6 md:py-8 ">
         <div className="grid grid-cols-1 gap-6 md:gap-8 items-start">
 
           {/* Left / Main Column — Article Text */}
@@ -257,14 +257,14 @@ export function ModernizedProsePage({
       {/* ── Footer CTA Banner (Conditional) ── */}
       {
         ctaHeading && ctaButtonLabel && ctaButtonUrl && (
-          <div className="mt-16">
+          
             <CTABanner
               heading={ctaHeading}
               subheading={ctaSubheading || ""}
               buttonLabel={ctaButtonLabel}
               buttonUrl={ctaButtonUrl}
             />
-          </div>
+          
         )
       }
     </div>

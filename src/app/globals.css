@@ -287,6 +287,24 @@ h6 {
 @utility spotlight_heading {
   @apply text-2xl md:text-3xl md:text-4xl font-black text-foreground;
 }
+.about_page{
+  font-size: var(--text-small);
+  color: var(--foreground);
+}
+.about_top_content {
+   background-color: var(--primary-light);
+   padding: 1rem;
+   border-radius: var(--radius-lg);
+   margin-bottom: 1.5rem;
+   max-width: 800px;
+   margin:0 auto 1.5rem;
+}
+.about_page p{
+  margin-bottom:1.5rem
+}
+.about_top_content p{margin-bottom:0;}
+
+
 div[role="dialog"] button svg,
 header svg {
     width: 24px !important;
@@ -345,7 +363,7 @@ header svg {
 /* Set Helvetica font for span and p tags for english text by default and keep LTR direction */
 span,
 p {
-  font-family: Helvetica, Arial, sans-serif;
+  /* font-family: Helvetica, Arial, sans-serif; */
   direction: ltr;
   /* text-align: left; */
 }

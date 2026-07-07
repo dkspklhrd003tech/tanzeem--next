@@ -106,7 +106,7 @@ export function CTA({ platforms }: CTAProps) {
     <section
       ref={sectionRef}
       aria-labelledby="social-heading"
-      className="py-10 bg-primary/95 relative overflow-hidden perspective-1000 shadow-[0_0_50px_rgba(16,185,129,0.3)] z-10"
+      className="py-10 px-6 bg-primary"
     >
       {/* Subtle dot pattern and glow */}
       <div className="absolute inset-0 bg-[url('/noise.png')] opacity-30 mix-blend-overlay pointer-events-none" />
@@ -121,13 +121,13 @@ export function CTA({ platforms }: CTAProps) {
       />
 
       <div className="container mx-auto relative z-20">
-        <div ref={headerRef} className="text-center mb-16">
+        <div ref={headerRef} className="text-center mb-8">
           <p className="text-white/60 text-xs font-bold tracking-[0.3em] uppercase mb-4">
             Connect with Tanzeem
           </p>
           <h2
             id="social-heading"
-            className="text-3xl md:text-5xl font-black text-white drop-shadow-lg tracking-tight"
+            className="text-2xl sm:text-3xl md:text-4xl font-black text-white drop-shadow-lg tracking-tight"
           >
             Follow Us On Social Media
           </h2>
@@ -161,7 +161,7 @@ export function CTA({ platforms }: CTAProps) {
 
                 <div
                   className={cn(
-                    "relative w-20 h-20 md:w-24 md:h-24 rounded-[1.5rem] flex items-center justify-center",
+                    "relative w-15 h-15 md:w-20 md:h-20 rounded-[1.5rem] flex items-center justify-center",
                     "text-white shadow-[0_10px_30px_rgba(0,0,0,0.2)] transition-all duration-500",
                     "group-hover:-translate-y-3 group-hover:shadow-[0_20px_40px_rgba(0,0,0,0.3)] group-hover:rotate-6"
                   )}
@@ -171,7 +171,7 @@ export function CTA({ platforms }: CTAProps) {
                     <Icon />
                   </div>
                 </div>
-                <p className="text-white font-bold text-sm text-center tracking-wide group-hover:text-white/100 text-white/70 transition-colors duration-500">
+                <p className="text-white text-sm text-center tracking-wide group-hover:text-white/100 text-white/70 transition-colors duration-500">
                   {platform.name}
                 </p>
               </a>

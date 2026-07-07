@@ -82,10 +82,10 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
     return (
         <div className="bg-background px-6 overflow-hidden perspective-1000">
             {/* 1. Our Magazines Section */}
-            <section ref={section1Ref} aria-labelledby="magazines-heading" className="relative py-10 border-t border-border/20">
+            <section ref={section1Ref} aria-labelledby="magazines-heading" className="relative py-8 border-t border-border/20">
                 <div className="absolute inset-0 bg-gradient-to-b from-card/30 to-background pointer-events-none" />
                 <div className="container max-w-7xl mx-auto relative z-10">
-                    <div className="pub-header flex flex-col md:flex-row justify-between items-start md:items-center mb-16 gap-6">
+                    <div className="pub-header flex flex-col items-center md:items-start text-center md:text-left md:flex-row justify-between md:items-center mb-8 gap-6">
                         <div>
                             <p className="text-primary font-bold tracking-widest uppercase text-xs mb-3">Our Magazines</p>
                             <h2 id="magazines-heading" className="spotlight_heading max-w-3xl">
@@ -158,10 +158,10 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
             </section>
 
             {/* 2. Our Books Section */}
-            <section ref={section2Ref} aria-labelledby="books-heading" className="relative py-10 border-t border-border/20 bg-background">
+            <section ref={section2Ref} aria-labelledby="books-heading" className="relative py-8 border-t border-border/20 bg-background">
                 <div className="absolute inset-0 bg-gradient-to-t from-card/30 to-background pointer-events-none" />
                 <div className="container max-w-7xl mx-auto relative z-10">
-                    <div className="pub-header flex flex-col md:flex-row justify-between items-start md:items-center mb-16 gap-6">
+                    <div className="pub-header flex flex-col md:flex-row justify-between items-center md:items-start text-center md:text-left md:items-center mb-16 gap-6">
                         <div>
                             <p className="text-primary font-bold tracking-widest uppercase text-xs mb-3">Our Books</p>
                             <h2 id="books-heading" className="spotlight_heading max-w-3xl">

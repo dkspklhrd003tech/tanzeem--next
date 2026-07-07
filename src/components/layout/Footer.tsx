@@ -64,7 +64,7 @@ export function Footer() {
     <footer className="bg-background-dark text-white/70 px-6">
       {/* Main Footer */}
       <div className="container mx-auto py-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-8">
           {/* Dynamic link columns — each top-level footer menu item is a column. */}
           {isLoading || !mounted ? (
             // Skeleton columns while the footer menu loads.
