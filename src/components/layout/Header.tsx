@@ -510,7 +510,7 @@ function MobileNavigation({ navigation, onClose }: { navigation: MenuNode[], onC
     );
   }
   return (
-    <nav className="mt-6">
+    <nav className="">
       <div className="space-y-0.5">
         {navigation.map((item) => (
           <MobileNavItem key={item.id} item={item} onClose={onClose} />

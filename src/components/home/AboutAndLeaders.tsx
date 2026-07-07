@@ -113,7 +113,7 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
                     </motion.div>
 
                     {/* Text Content */}
-                    <div className="flex-1 flex flex-col justify-center relative z-10">
+                    <div className="flex-1 flex flex-col justify-center relative z-10 items-center md:items-start text-center md:text-left">
                         <p className="sub_title">About Us</p>
                         <h2
                             id="about-heading"
@@ -154,7 +154,7 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
                             <div
                                 key={leader.id}
                                 role="listitem"
-                                className="leader-card group bg-white border border-border/50 rounded-2xl p-6 shadow-lg transition-all duration-700 flex flex-row sm:flex-row md:flex-col lg:flex-row gap-6 relative overflow-hidden"
+                                className="leader-card group bg-white border border-border/50 rounded-2xl p-6 shadow-lg transition-all duration-700 flex flex-col sm:flex-row md:flex-col lg:flex-row gap-6 relative overflow-hidden text-center sm:text-left items-center sm:items-start"
                             >
                                 
                                 {/* Photo */}

@@ -241,10 +241,10 @@ export default async function SearchPage({ searchParams }: Props) {
   };
 
   return (
-    <main className="min-h-screen bg-background px-4 py-12 md:py-16">
+    <main className="min-h-screen bg-background px-4 pt-6 pb-8 md:py-16">
       <div className="container mx-auto max-w-4xl">
         {/* Search header */}
-        <div className="mb-12 text-center">
+        <div className="mb-6 text-center">
           <h1 className="text-2xl md:text-5xl font-bold text-primary mb-4">
             Tanzeem Search Portal
           </h1>
@@ -254,7 +254,7 @@ export default async function SearchPage({ searchParams }: Props) {
         </div>
 
         {/* Search input bar */}
-        <div className="mb-10">
+        <div className="mb-6">
           <form action="/search" method="GET" className="relative flex gap-2">
             <div className="relative flex-1">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-foreground-muted" />
