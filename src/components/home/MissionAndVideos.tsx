@@ -70,7 +70,7 @@ export function MissionAndVideos({ videos, settings }: MissionProps) {
                 <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-[100px]" aria-hidden="true" />
                 <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-black/20 rounded-full translate-y-1/2 -translate-x-1/2 blur-[80px]" aria-hidden="true" />
 
-                <div className="max-w-4xl mx-auto relative z-10 px-6 md:px-0 ">
+                <div className="max-w-3xl md:max-w-4xl mx-auto relative z-10 px-6 md:px-0 ">
                     <div className="space-y-6">
                         <h2 ref={textRef} className="text-2xl md:text-3xl lg:text-4xl font-black text-white leading-tight md:leading-snug drop-shadow-lg tracking-tight">
                             &ldquo;{missionText.replace(/<[^>]+>/g, '')}&rdquo;
@@ -91,7 +91,7 @@ export function MissionAndVideos({ videos, settings }: MissionProps) {
                         </h2>
                     </div>
 
-                    <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div ref={gridRef} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {videos.length > 0 ? videos.map((vid, i) => {
                             const card = (
                                 <div className="flex flex-col h-full bg-card/40 backdrop-blur-md rounded-[1.5rem] border border-border/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] group-hover:shadow-primary/30 group-hover:border-primary/30 group-hover:-translate-y-3 transition-all duration-700 overflow-hidden relative group/inner border border-primary-light hover:cursor-pointer">

@@ -107,7 +107,7 @@ export function BooksCategoryGrid({ categoryName, initialItems }: BooksCategoryG
           <h3 className="text-lg font-bold text-foreground">No Books Found</h3>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredItems.map((item, idx) => (
             <Link
               href={`/books/${item.slug}`}

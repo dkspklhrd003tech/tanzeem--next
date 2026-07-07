@@ -65,7 +65,7 @@ export function LatestPressReleases({ items }: Props) {
     <section ref={sectionRef} aria-labelledby="press-heading" className="py-10 px-6 bg-primary-light relative overflow-hidden perspective-1000 border-t border-border/20">
       <div className="absolute pointer-events-none" />
       <div className="container max-w-7xl mx-auto relative z-10">
-        <div ref={headerRef} className="flex flex-col md:flex-row items-start md:items-end justify-between mb-16 gap-6">
+        <div ref={headerRef} className="flex flex-col md:flex-row items-center md:items-end justify-between mb-16 gap-6 text-center md:text-left">
           <div>
             <p className="text-primary font-bold tracking-widest uppercase text-xs mb-3">News & Updates</p>
             <h2 id="press-heading" className="spotlight_heading">Latest Press Releases</h2>
@@ -82,7 +82,7 @@ export function LatestPressReleases({ items }: Props) {
             View all <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
           </Link>
         </div>
-        <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div ref={gridRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {items.length > 0 ? items.map((item, i) => (
             <Link
               key={item.id}
@@ -108,7 +108,7 @@ export function LatestPressReleases({ items }: Props) {
                     : "\u2014"}
                 </span>
               </div>
-              <h3 className="font-bold text-foreground text-xl leading-snug line-clamp-2 relative z-10 group-hover:text-primary transition-colors duration-500">{item.title}</h3>
+              <h3 className="font-bold text-foreground text-md leading-snug line-clamp-2 relative z-10 group-hover:text-primary transition-colors duration-500">{item.title}</h3>
               {item.excerpt && (
                 <p className="mt-4 text-sm text-foreground-muted line-clamp-3 leading-relaxed relative z-10">{item.excerpt}</p>
               )}
