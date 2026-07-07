@@ -2,15 +2,18 @@
 
 import { useState, useEffect, useRef } from "react";
 import {
-  Plus, Pencil, Trash2, GripVertical, FileText,
+  Plus, Pencil, Trash2, GripVertical, FileText, Settings2,
   UploadCloud, Loader2, ArrowLeft, Mic, Calendar
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
@@ -23,6 +26,8 @@ import {
   rectSortingStrategy, useSortable
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { PageRecord } from "@/components/sitemanager/PageForm";
+import { RichTextEditor } from "./RichTextEditor";
 
 function slugify(text: string) {
   return text.toLowerCase().trim()
@@ -52,7 +57,7 @@ interface SermonItem {
   slug: string;
   excerpt?: string;
   description?: string;
-  audioUrl?: string;
+  videoUrl?: string;
   isPublished: boolean;
   publishedAt?: string;
   order: number;
@@ -121,7 +126,7 @@ function SortableSermonCard({ id, item, onEdit, onDelete }: any) {
       <div className="p-5 flex-1 flex flex-col">
         <div className="flex items-center justify-between gap-2 mb-3">
           <Badge variant="outline" className="text-[10px] px-2.5 py-0.5 font-semibold uppercase tracking-wider rounded-md bg-emerald-500/10 text-emerald-600 border-emerald-500/20">
-            Audio
+            Video
           </Badge>
 
           <div className="flex items-center gap-1">
@@ -169,8 +174,10 @@ function SortableSermonCard({ id, item, onEdit, onDelete }: any) {
 // MAIN COMPONENT
 // ==========================================
 
-export function SermonsManager() {
+export default function SermonsPageEditor({ pageId, initialPageData }: { pageId: string, initialPageData: PageRecord }) {
   const { toast } = useToast();
+  const [pageForm, setPageForm] = useState<PageRecord>({ ...initialPageData });
+  const [isSavingPage, setIsSavingPage] = useState(false);
 
   const [categories, setCategories] = useState<CategoryItem[]>([]);
   const [sermons, setSermons] = useState<SermonItem[]>([]);
@@ -182,7 +189,7 @@ export function SermonsManager() {
   const [editingCatId, setEditingCatId] = useState<string | null>(null);
 
   const [isSermonModalOpen, setIsSermonModalOpen] = useState(false);
-  const [sermonFormData, setSermonFormData] = useState({ title: "", titleUrdu: "", slug: "", excerpt: "", description: "", audioUrl: "", isPublished: true, publishedAt: "" });
+  const [sermonFormData, setSermonFormData] = useState({ title: "", titleUrdu: "", slug: "", excerpt: "", description: "", videoUrl: "", isPublished: true, publishedAt: "" });
   const [editingSermonId, setEditingSermonId] = useState<string | null>(null);
 
   const [isUploading, setIsUploading] = useState(false);
@@ -225,6 +232,25 @@ export function SermonsManager() {
         setSermons((data.items || []));
       }
     } catch (e) { console.error(e); }
+  };
+
+  const handlePageSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSavingPage(true);
+    try {
+      const res = await fetch(`/api/pages/${pageId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: pageForm.title, slug: pageForm.slug, excerpt: pageForm.excerpt,
+          content: pageForm.content, isPublished: pageForm.isPublished,
+          metaTitle: pageForm.metaTitle, metaDescription: pageForm.metaDescription, metaKeywords: pageForm.metaKeywords,
+        }),
+      });
+      if (!res.ok) throw new Error("Failed to save settings.");
+      toast({ title: "Saved", description: "Page settings updated." });
+    } catch (error) { toast({ variant: "destructive", title: "Error", description: "Failed to save settings." }); }
+    finally { setIsSavingPage(false); }
   };
 
   // --- Category CRUD ---
@@ -316,19 +342,19 @@ export function SermonsManager() {
     e.stopPropagation();
     setDragActive(false);
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      await handleAudioUploadDirectly(e.dataTransfer.files[0]);
+      await handleVideoUploadDirectly(e.dataTransfer.files[0]);
     }
   };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      await handleAudioUploadDirectly(e.target.files[0]);
+      await handleVideoUploadDirectly(e.target.files[0]);
     }
   };
 
-  const handleAudioUploadDirectly = async (file: File) => {
-    if (!file.type.startsWith("audio/")) {
-      toast({ variant: "destructive", title: "Invalid file type", description: "Please upload a valid audio file." });
+  const handleVideoUploadDirectly = async (file: File) => {
+    if (!file.type.startsWith("video/")) {
+      toast({ variant: "destructive", title: "Invalid file type", description: "Please upload a valid video file." });
       return;
     }
     setIsUploading(true);
@@ -351,7 +377,7 @@ export function SermonsManager() {
         slug: slugify(cleanedTitle),
         excerpt: "",
         description: "",
-        audioUrl: data.url,
+        videoUrl: data.url,
         isPublished: true,
         publishedAt: new Date().toISOString().split("T")[0]
       });
@@ -364,21 +390,51 @@ export function SermonsManager() {
     }
   };
 
+  const handleVideoUploadInModal = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || !e.target.files[0]) return;
+    const file = e.target.files[0];
+    if (!file.type.startsWith("video/")) {
+      toast({ variant: "destructive", title: "Invalid file type", description: "Please upload a valid video file." });
+      return;
+    }
+    setIsUploading(true);
+    try {
+      const formDataObj = new FormData();
+      formDataObj.append("file", file);
+      formDataObj.append("type", "uploads");
+      const res = await fetch("/api/upload", { method: "POST", body: formDataObj });
+      if (!res.ok) throw new Error("Upload failed");
+      const data = await res.json();
+      setSermonFormData(prev => ({ ...prev, videoUrl: data.url }));
+      toast({ title: "Video Uploaded Successfully" });
+    } catch (err) {
+      toast({ variant: "destructive", title: "Upload Failed", description: "Failed to upload the file." });
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   const filteredCategories = categories.filter(c => c.name.toLowerCase().includes(searchQuery.toLowerCase()));
   const activeSermons = sermons.filter(s => s.categoryId === activeCategory?.id).filter(s => s.title.toLowerCase().includes(searchQuery.toLowerCase()));
 
   return (
     <div className="space-y-6 max-w-7xl">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <div className="flex items-center gap-3">
-            {activeCategory && (
+            {activeCategory ? (
               <Button variant="outline" size="icon" onClick={() => { setActiveCategory(null); setSearchQuery(""); }} className="h-8 w-8">
                 <ArrowLeft className="h-4 w-4" />
               </Button>
+            ) : (
+              <Button variant="outline" size="icon" asChild className="h-8 w-8">
+                <Link href="/sitemanager/pages">
+                  <ArrowLeft className="h-4 w-4" />
+                </Link>
+              </Button>
             )}
             <h1 className="text-3xl font-bold text-foreground tracking-tight">
-              {activeCategory ? `${activeCategory.name} Audios` : "Friday Sermons (Khitab-e-Jum'ah)"}
+              {activeCategory ? `${activeCategory.name} Audios` : pageForm.title}
             </h1>
           </div>
           <p className="text-muted-foreground mt-1">
@@ -391,14 +447,20 @@ export function SermonsManager() {
               <Plus className="w-4 h-4 mr-2" /> Add Category
             </Button>
           ) : (
-            <Button onClick={() => { setEditingSermonId(null); setSermonFormData({ title: "", titleUrdu: "", slug: "", excerpt: "", description: "", audioUrl: "", isPublished: true, publishedAt: new Date().toISOString().split("T")[0] }); setIsSermonModalOpen(true); }}>
-              <Plus className="w-4 h-4 mr-2" /> Add Audio
+            <Button onClick={() => { setEditingSermonId(null); setSermonFormData({ title: "", titleUrdu: "", slug: "", excerpt: "", description: "", videoUrl: "", isPublished: true, publishedAt: new Date().toISOString().split("T")[0] }); setIsSermonModalOpen(true); }}>
+              <Plus className="w-4 h-4 mr-2" /> Add Video
             </Button>
           )}
         </div>
       </div>
 
-      <div className="space-y-6">
+      <Tabs defaultValue="list" className="space-y-6">
+        <TabsList className="bg-muted p-1 rounded-lg">
+          <TabsTrigger value="list" className="px-4 py-2"><Mic className="w-4 h-4 mr-2" /> Video Library</TabsTrigger>
+          {!activeCategory && <TabsTrigger value="settings" className="px-4 py-2"><Settings2 className="w-4 h-4 mr-2" /> Page Setup</TabsTrigger>}
+        </TabsList>
+
+        <TabsContent value="list" className="space-y-6">
 
           {!activeCategory ? (
             // CATEGORIES GRID
@@ -436,11 +498,11 @@ export function SermonsManager() {
                   isUploading && "pointer-events-none opacity-60"
                 )}
               >
-                <input ref={fileInputRef} type="file" accept="audio/*" className="hidden" onChange={handleFileChange} />
+                <input ref={fileInputRef} type="file" accept="video/*" className="hidden" onChange={handleFileChange} />
                 {isUploading ? (
                   <div className="flex flex-col items-center gap-3">
                     <Loader2 className="h-10 w-10 text-primary animate-spin" />
-                    <p className="font-semibold text-foreground">Uploading Audio...</p>
+                    <p className="font-semibold text-foreground">Uploading Video...</p>
                     <p className="text-xs text-muted-foreground">This will only take a moment.</p>
                   </div>
                 ) : (
@@ -448,7 +510,7 @@ export function SermonsManager() {
                     <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-1">
                       <UploadCloud className="h-6 w-6" />
                     </div>
-                    <p className="font-bold text-foreground text-lg">Drag & Drop an Audio File here</p>
+                    <p className="font-bold text-foreground text-lg">Drag & Drop a Video File here</p>
                     <p className="text-sm text-muted-foreground max-w-sm">
                       Or click anywhere to choose a file from your computer. Titles will auto-generate.
                     </p>
@@ -467,7 +529,7 @@ export function SermonsManager() {
                         slug: item.slug, 
                         excerpt: item.excerpt || "", 
                         description: item.description || "", 
-                        audioUrl: item.audioUrl || "", 
+                        videoUrl: item.videoUrl || "", 
                         isPublished: item.isPublished,
                         publishedAt: item.publishedAt ? new Date(item.publishedAt).toISOString().split("T")[0] : "",
                       }); 
@@ -475,11 +537,27 @@ export function SermonsManager() {
                     }}
                     onDelete={(item: SermonItem) => setDeletingSermon(item)} />
                 ))}
-                {activeSermons.length === 0 && <div className="col-span-full py-10 text-center text-muted-foreground border border-dashed rounded-xl">No audios found in this category.</div>}
+                {activeSermons.length === 0 && <div className="col-span-full py-10 text-center text-muted-foreground border border-dashed rounded-xl">No videos found in this category.</div>}
               </div>
             </div>
           )}
-      </div>
+        </TabsContent>
+
+        <TabsContent value="settings">
+          <form onSubmit={handlePageSave} className="space-y-6 max-w-2xl">
+            <Card>
+              <CardHeader><CardTitle>Page SEO</CardTitle></CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2"><Label>Title</Label><Input value={pageForm.title} onChange={e => setPageForm({ ...pageForm, title: e.target.value })} /></div>
+                <div className="space-y-2"><Label>Slug</Label><Input value={pageForm.slug} onChange={e => setPageForm({ ...pageForm, slug: e.target.value })} /></div>
+                <div className="space-y-2"><Label>Meta Title</Label><Input value={pageForm.metaTitle || ""} onChange={e => setPageForm({ ...pageForm, metaTitle: e.target.value })} /></div>
+                <div className="space-y-2"><Label>Meta Description</Label><Textarea value={pageForm.metaDescription || ""} onChange={e => setPageForm({ ...pageForm, metaDescription: e.target.value })} /></div>
+                <Button type="submit" disabled={isSavingPage}>{isSavingPage ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : "Save Settings"}</Button>
+              </CardContent>
+            </Card>
+          </form>
+        </TabsContent>
+      </Tabs>
 
       {/* Category Modal */}
       {isCatModalOpen && (
@@ -521,7 +599,7 @@ export function SermonsManager() {
             <div className="p-6 border-b border-border flex justify-between items-center bg-muted/20">
               <h2 className="text-xl font-bold flex items-center gap-2">
                 <Mic className="h-5 w-5 text-primary" />
-                {editingSermonId ? "Edit Audio" : "Add Audio"}
+                {editingSermonId ? "Edit Video" : "Add Video"}
               </h2>
               <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsSermonModalOpen(false)}>×</Button>
             </div>
@@ -531,9 +609,21 @@ export function SermonsManager() {
                 <div className="space-y-2"><Label>Title (Urdu)</Label><Input value={sermonFormData.titleUrdu} onChange={e => setSermonFormData({ ...sermonFormData, titleUrdu: e.target.value })} dir="rtl" /></div>
               </div>
               <div className="space-y-2"><Label>Slug</Label><Input value={sermonFormData.slug} onChange={e => setSermonFormData({ ...sermonFormData, slug: e.target.value })} /></div>
-              <div className="space-y-2"><Label>Audio URL</Label><Input value={sermonFormData.audioUrl} onChange={e => setSermonFormData({ ...sermonFormData, audioUrl: e.target.value })} placeholder="Upload via drag/drop or enter URL" /></div>
+              <div className="space-y-2">
+                <Label>Video Upload / URL</Label>
+                <div className="flex gap-2 items-center">
+                  <Input value={sermonFormData.videoUrl} onChange={e => setSermonFormData({ ...sermonFormData, videoUrl: e.target.value })} placeholder="Upload file or enter URL manually" className="flex-1" />
+                  <Label className="cursor-pointer bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 px-4 py-2 rounded-xl text-sm font-semibold transition-colors flex items-center gap-2">
+                    {isUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <UploadCloud className="w-4 h-4" />}
+                    {isUploading ? "Uploading..." : "Upload File"}
+                    <input type="file" accept="video/*" className="hidden" onChange={handleVideoUploadInModal} disabled={isUploading} />
+                  </Label>
+                </div>
+              </div>
               <div className="space-y-2"><Label>Excerpt</Label><Textarea value={sermonFormData.excerpt} onChange={e => setSermonFormData({ ...sermonFormData, excerpt: e.target.value })} rows={2} /></div>
-              <div className="space-y-2"><Label>Description</Label><Textarea value={sermonFormData.description} onChange={e => setSermonFormData({ ...sermonFormData, description: e.target.value })} rows={4} /></div>
+              <div className="space-y-2"><Label>Description</Label>
+                <RichTextEditor content={sermonFormData.description || ""} onChange={val => setSermonFormData({ ...sermonFormData, description: val })} />
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2"><Label>Publish Date</Label><Input type="date" value={sermonFormData.publishedAt} onChange={e => setSermonFormData({ ...sermonFormData, publishedAt: e.target.value })} /></div>
               </div>
@@ -541,12 +631,12 @@ export function SermonsManager() {
             <div className="p-6 border-t border-border bg-muted/20 flex justify-end gap-3">
               <Button variant="outline" onClick={() => setIsSermonModalOpen(false)}>Cancel</Button>
               <ConfirmDialog
-                title={editingSermonId ? "Update Audio" : "Add Audio"}
-                description={`Are you sure you want to ${editingSermonId ? "update" : "add"} this audio?`}
+                title={editingSermonId ? "Update Video" : "Add Video"}
+                description={`Are you sure you want to ${editingSermonId ? "update" : "add"} this video?`}
                 onConfirm={handleSermonSave}
               >
                 <Button disabled={isUploading} className="bg-primary text-primary-foreground hover:bg-primary/95">
-                  {editingSermonId ? "Update Audio" : "Save Audio"}
+                  {editingSermonId ? "Update Video" : "Save Video"}
                 </Button>
               </ConfirmDialog>
             </div>

@@ -250,7 +250,7 @@ export default function PagesListPage() {
     const json = await res.json();
     if (res.ok) {
       toast({ title: "Page duplicated successfully." });
-      router.push(`/sitemanager/pages/${json.page.title}/edit`);
+      setTimeout(() => router.push(`/sitemanager/pages/${json.page.id}/edit`), 100);
     } else {
       toast({ variant: "destructive", title: json.error ?? "Duplicate failed." });
     }
@@ -527,7 +527,7 @@ export default function PagesListPage() {
 
                         <div className="flex-1 min-w-0">
                           <Link
-                            href={`/sitemanager/pages/${row.title}/edit`}
+                            href={`/sitemanager/pages/${row.id}/edit`}
                             className="text-sm font-bold text-foreground hover:text-primary transition-colors truncate block filter drop-shadow-sm"
                           >
                             {row.title}
@@ -620,7 +620,7 @@ export default function PagesListPage() {
                             className="h-8 w-8 text-muted-foreground hover:text-white hover:bg-primary rounded-lg transition-all duration-200"
                             title="Edit Page"
                           >
-                            <Link href={`/sitemanager/pages/${row.title}/edit`}>
+                            <Link href={`/sitemanager/pages/${row.id}/edit`}>
                               <Edit2 className="h-4 w-4" />
                             </Link>
                           </Button>
@@ -733,7 +733,7 @@ export default function PagesListPage() {
                         </div>
 
                         <div className="flex-1">
-                          <Link href={`/sitemanager/pages/${row.title}/edit`} className="font-bold text-foreground hover:text-primary transition-colors line-clamp-2 mb-1 filter drop-shadow-sm">
+                          <Link href={`/sitemanager/pages/${row.id}/edit`} className="font-bold text-foreground hover:text-primary transition-colors line-clamp-2 mb-1 filter drop-shadow-sm">
                             {row.title}
                           </Link>
                           <div className="flex items-center gap-1.5">
@@ -751,7 +751,7 @@ export default function PagesListPage() {
                           </div>
                           <div className="flex items-center gap-1">
                             <Button asChild variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-white hover:bg-primary rounded-lg transition-all" title="Edit Page">
-                              <Link href={`/sitemanager/pages/${row.title}/edit`}><Edit2 className="h-3.5 w-3.5" /></Link>
+                              <Link href={`/sitemanager/pages/${row.id}/edit`}><Edit2 className="h-3.5 w-3.5" /></Link>
                             </Button>
                             <Button variant="ghost" size="icon" onClick={() => window.open(`/${row.slug}`, '_blank', 'noopener,noreferrer')} className="h-7 w-7 text-muted-foreground hover:text-indigo-600 hover:bg-indigo-500/10 rounded-lg transition-all" title="View Live">
                               <Eye className="h-3.5 w-3.5" />

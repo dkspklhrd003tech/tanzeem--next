@@ -69,7 +69,7 @@ export async function GET(request: NextRequest, { params }: Ctx) {
     if (!page) return NextResponse.json({ error: "Page not found" }, { status: 404 });
     return NextResponse.json({ page });
   } catch (err) {
-    console.error("GET /api/sitemanager/pages/[title]:", err);
+    console.error("GET /api/sitemanager/pages/[id]:", err);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }
@@ -211,7 +211,7 @@ export async function DELETE(request: NextRequest, { params }: Ctx) {
 
     return NextResponse.json({ success: true });
   } catch (err) {
-    console.error("DELETE /api/sitemanager/pages/[title]:", err);
+    console.error("DELETE /api/sitemanager/pages/[id]:", err);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

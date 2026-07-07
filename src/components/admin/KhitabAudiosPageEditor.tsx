@@ -2,15 +2,18 @@
 
 import { useState, useEffect, useRef } from "react";
 import {
-  Plus, Pencil, Trash2, GripVertical, FileText,
+  Plus, Pencil, Trash2, GripVertical, FileText, Settings2,
   UploadCloud, Loader2, ArrowLeft, Mic, Calendar
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
@@ -23,6 +26,8 @@ import {
   rectSortingStrategy, useSortable
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { PageRecord } from "@/components/sitemanager/PageForm";
+import { RichTextEditor } from "./RichTextEditor";
 
 function slugify(text: string) {
   return text.toLowerCase().trim()
@@ -44,7 +49,7 @@ interface CategoryItem {
   order: number;
 }
 
-interface SermonItem {
+interface KhitabAudioItem {
   id: string;
   categoryId?: string;
   title: string;
@@ -62,7 +67,7 @@ interface SermonItem {
 // SORTABLE COMPONENTS
 // ==========================================
 
-function SortableCategoryCard({ id, item, onEdit, onDelete, onClick, sermonCount }: any) {
+function SortableCategoryCard({ id, item, onEdit, onDelete, onClick, khitabAudioCount }: any) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
   const style = { transform: CSS.Transform.toString(transform), transition, zIndex: isDragging ? 50 : undefined };
 
@@ -80,7 +85,7 @@ function SortableCategoryCard({ id, item, onEdit, onDelete, onClick, sermonCount
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
             <Badge variant="outline" className="text-[10px] uppercase">Category</Badge>
-            <Badge variant="secondary" className="text-[10px] uppercase">{sermonCount} Audios</Badge>
+            <Badge variant="secondary" className="text-[10px] uppercase">{khitabAudioCount} Audios</Badge>
           </div>
           <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
             <Button variant="ghost" size="icon" className="h-7 w-7 text-green-500 hover:text-green-600 hover:bg-green-500/10" onClick={() => onEdit(item)}>
@@ -104,7 +109,7 @@ function SortableCategoryCard({ id, item, onEdit, onDelete, onClick, sermonCount
   );
 }
 
-function SortableSermonCard({ id, item, onEdit, onDelete }: any) {
+function SortableKhitabAudioCard({ id, item, onEdit, onDelete }: any) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
   const style = { transform: CSS.Transform.toString(transform), transition, zIndex: isDragging ? 50 : undefined };
 
@@ -169,11 +174,13 @@ function SortableSermonCard({ id, item, onEdit, onDelete }: any) {
 // MAIN COMPONENT
 // ==========================================
 
-export function SermonsManager() {
+export default function KhitabAudiosPageEditor({ pageId, initialPageData }: { pageId: string, initialPageData: PageRecord }) {
   const { toast } = useToast();
+  const [pageForm, setPageForm] = useState<PageRecord>({ ...initialPageData });
+  const [isSavingPage, setIsSavingPage] = useState(false);
 
   const [categories, setCategories] = useState<CategoryItem[]>([]);
-  const [sermons, setSermons] = useState<SermonItem[]>([]);
+  const [khitabAudios, setKhitabAudios] = useState<KhitabAudioItem[]>([]);
   const [activeCategory, setActiveCategory] = useState<CategoryItem | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -181,9 +188,9 @@ export function SermonsManager() {
   const [catFormData, setCatFormData] = useState({ name: "", urduName: "", slug: "", description: "" });
   const [editingCatId, setEditingCatId] = useState<string | null>(null);
 
-  const [isSermonModalOpen, setIsSermonModalOpen] = useState(false);
-  const [sermonFormData, setSermonFormData] = useState({ title: "", titleUrdu: "", slug: "", excerpt: "", description: "", audioUrl: "", isPublished: true, publishedAt: "" });
-  const [editingSermonId, setEditingSermonId] = useState<string | null>(null);
+  const [isKhitabAudioModalOpen, setIsKhitabAudioModalOpen] = useState(false);
+  const [khitabAudioFormData, setKhitabAudioFormData] = useState({ title: "", titleUrdu: "", slug: "", excerpt: "", description: "", audioUrl: "", isPublished: true, publishedAt: "" });
+  const [editingKhitabAudioId, setEditingKhitabAudioId] = useState<string | null>(null);
 
   const [isUploading, setIsUploading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -193,7 +200,7 @@ export function SermonsManager() {
 
   // Confirmation dialogs
   const [deletingCat, setDeletingCat] = useState<CategoryItem | null>(null);
-  const [deletingSermon, setDeletingSermon] = useState<SermonItem | null>(null);
+  const [deletingKhitabAudio, setDeletingKhitabAudio] = useState<KhitabAudioItem | null>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
@@ -202,13 +209,13 @@ export function SermonsManager() {
 
   useEffect(() => {
     fetchCategories();
-    fetchSermons();
+    fetchKhitabAudios();
   }, []);
 
   const fetchCategories = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch("/api/admin/sermon-categories");
+      const res = await fetch("/api/admin/khitab-audio-categories");
       if (res.ok) {
         const data = await res.json();
         setCategories((data.items || []).sort((a: any, b: any) => (a.order || 0) - (b.order || 0)));
@@ -217,21 +224,40 @@ export function SermonsManager() {
     finally { setIsLoading(false); }
   };
 
-  const fetchSermons = async () => {
+  const fetchKhitabAudios = async () => {
     try {
-      const res = await fetch("/api/admin/sermons");
+      const res = await fetch("/api/admin/khitab-audios");
       if (res.ok) {
         const data = await res.json();
-        setSermons((data.items || []));
+        setKhitabAudios((data.items || []));
       }
     } catch (e) { console.error(e); }
+  };
+
+  const handlePageSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSavingPage(true);
+    try {
+      const res = await fetch(`/api/pages/${pageId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: pageForm.title, slug: pageForm.slug, excerpt: pageForm.excerpt,
+          content: pageForm.content, isPublished: pageForm.isPublished,
+          metaTitle: pageForm.metaTitle, metaDescription: pageForm.metaDescription, metaKeywords: pageForm.metaKeywords,
+        }),
+      });
+      if (!res.ok) throw new Error("Failed to save settings.");
+      toast({ title: "Saved", description: "Page settings updated." });
+    } catch (error) { toast({ variant: "destructive", title: "Error", description: "Failed to save settings." }); }
+    finally { setIsSavingPage(false); }
   };
 
   // --- Category CRUD ---
   const handleCatSave = async () => {
     if (!catFormData.name || !catFormData.slug) return;
     try {
-      const url = editingCatId ? `/api/admin/sermon-categories/${editingCatId}` : "/api/admin/sermon-categories";
+      const url = editingCatId ? `/api/admin/khitab-audio-categories/${editingCatId}` : "/api/admin/khitab-audio-categories";
       const method = editingCatId ? "PUT" : "POST";
       const payload: any = { ...catFormData };
       if (!editingCatId) payload.order = categories.length;
@@ -246,7 +272,7 @@ export function SermonsManager() {
 
   const handleCatDelete = async (item: CategoryItem) => {
     try {
-      await fetch(`/api/admin/sermon-categories/${item.id}`, { method: "DELETE" });
+      await fetch(`/api/admin/khitab-audio-categories/${item.id}`, { method: "DELETE" });
       fetchCategories();
       toast({ title: "Category deleted" });
     } catch (e) {
@@ -263,22 +289,22 @@ export function SermonsManager() {
     const newIndex = categories.findIndex(i => i.id === over.id);
     const reordered = arrayMove(categories, oldIndex, newIndex).map((item, idx) => ({ ...item, order: idx }));
     setCategories(reordered);
-    await fetch("/api/admin/sermon-categories", {
+    await fetch("/api/admin/khitab-audio-categories", {
       method: "PATCH", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ orders: reordered.map(i => ({ id: i.id, orderIndex: i.order })) }),
     });
   };
 
-  // --- Sermon CRUD ---
-  const handleSermonSave = async () => {
-    if (!sermonFormData.title || !sermonFormData.slug) return;
+  // --- KhitabAudio CRUD ---
+  const handleKhitabAudioSave = async () => {
+    if (!khitabAudioFormData.title || !khitabAudioFormData.slug) return;
     try {
-      const url = editingSermonId ? `/api/admin/sermons/${editingSermonId}` : "/api/admin/sermons";
-      const method = editingSermonId ? "PUT" : "POST";
+      const url = editingKhitabAudioId ? `/api/admin/khitab-audios/${editingKhitabAudioId}` : "/api/admin/khitab-audios";
+      const method = editingKhitabAudioId ? "PUT" : "POST";
       const payload: any = { 
-        ...sermonFormData, 
+        ...khitabAudioFormData, 
         categoryId: activeCategory?.id,
-        publishedAt: sermonFormData.publishedAt ? new Date(sermonFormData.publishedAt).toISOString() : null,
+        publishedAt: khitabAudioFormData.publishedAt ? new Date(khitabAudioFormData.publishedAt).toISOString() : null,
       };
       
       const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
@@ -287,20 +313,20 @@ export function SermonsManager() {
          throw new Error(errorData.error || "Failed");
       }
       toast({ title: "Success", description: "Audio saved" });
-      setIsSermonModalOpen(false);
-      fetchSermons();
+      setIsKhitabAudioModalOpen(false);
+      fetchKhitabAudios();
     } catch (e: any) { toast({ variant: "destructive", title: "Error", description: e.message || "Save failed." }); }
   };
 
-  const handleSermonDelete = async (item: SermonItem) => {
+  const handleKhitabAudioDelete = async (item: KhitabAudioItem) => {
     try {
-      await fetch(`/api/admin/sermons/${item.id}`, { method: "DELETE" });
-      fetchSermons();
+      await fetch(`/api/admin/khitab-audios/${item.id}`, { method: "DELETE" });
+      fetchKhitabAudios();
       toast({ title: "Audio deleted" });
     } catch (e) {
       toast({ variant: "destructive", title: "Failed to delete audio" });
     } finally {
-      setDeletingSermon(null);
+      setDeletingKhitabAudio(null);
     }
   };
 
@@ -344,8 +370,8 @@ export function SermonsManager() {
       const baseName = file.name.replace(/\.[^/.]+$/, "");
       const cleanedTitle = baseName.split(/[-_]+/).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
 
-      setEditingSermonId(null);
-      setSermonFormData({
+      setEditingKhitabAudioId(null);
+      setKhitabAudioFormData({
         title: cleanedTitle,
         titleUrdu: "",
         slug: slugify(cleanedTitle),
@@ -355,7 +381,7 @@ export function SermonsManager() {
         isPublished: true,
         publishedAt: new Date().toISOString().split("T")[0]
       });
-      setIsSermonModalOpen(true);
+      setIsKhitabAudioModalOpen(true);
       toast({ title: "Audio Uploaded Successfully", description: "Configure details to save this audio." });
     } catch (err) {
       toast({ variant: "destructive", title: "Upload Failed", description: "Failed to upload the file." });
@@ -364,21 +390,51 @@ export function SermonsManager() {
     }
   };
 
+  const handleAudioUploadInModal = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || !e.target.files[0]) return;
+    const file = e.target.files[0];
+    if (!file.type.startsWith("audio/")) {
+      toast({ variant: "destructive", title: "Invalid file type", description: "Please upload a valid audio file." });
+      return;
+    }
+    setIsUploading(true);
+    try {
+      const formDataObj = new FormData();
+      formDataObj.append("file", file);
+      formDataObj.append("type", "uploads");
+      const res = await fetch("/api/upload", { method: "POST", body: formDataObj });
+      if (!res.ok) throw new Error("Upload failed");
+      const data = await res.json();
+      setKhitabAudioFormData(prev => ({ ...prev, audioUrl: data.url }));
+      toast({ title: "Audio Uploaded Successfully" });
+    } catch (err) {
+      toast({ variant: "destructive", title: "Upload Failed", description: "Failed to upload the file." });
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   const filteredCategories = categories.filter(c => c.name.toLowerCase().includes(searchQuery.toLowerCase()));
-  const activeSermons = sermons.filter(s => s.categoryId === activeCategory?.id).filter(s => s.title.toLowerCase().includes(searchQuery.toLowerCase()));
+  const activeKhitabAudios = khitabAudios.filter(s => s.categoryId === activeCategory?.id).filter(s => s.title.toLowerCase().includes(searchQuery.toLowerCase()));
 
   return (
     <div className="space-y-6 max-w-7xl">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <div className="flex items-center gap-3">
-            {activeCategory && (
+            {activeCategory ? (
               <Button variant="outline" size="icon" onClick={() => { setActiveCategory(null); setSearchQuery(""); }} className="h-8 w-8">
                 <ArrowLeft className="h-4 w-4" />
               </Button>
+            ) : (
+              <Button variant="outline" size="icon" asChild className="h-8 w-8">
+                <Link href="/sitemanager/pages">
+                  <ArrowLeft className="h-4 w-4" />
+                </Link>
+              </Button>
             )}
             <h1 className="text-3xl font-bold text-foreground tracking-tight">
-              {activeCategory ? `${activeCategory.name} Audios` : "Friday Sermons (Khitab-e-Jum'ah)"}
+              {activeCategory ? `${activeCategory.name} Audios` : pageForm.title}
             </h1>
           </div>
           <p className="text-muted-foreground mt-1">
@@ -391,14 +447,20 @@ export function SermonsManager() {
               <Plus className="w-4 h-4 mr-2" /> Add Category
             </Button>
           ) : (
-            <Button onClick={() => { setEditingSermonId(null); setSermonFormData({ title: "", titleUrdu: "", slug: "", excerpt: "", description: "", audioUrl: "", isPublished: true, publishedAt: new Date().toISOString().split("T")[0] }); setIsSermonModalOpen(true); }}>
+            <Button onClick={() => { setEditingKhitabAudioId(null); setKhitabAudioFormData({ title: "", titleUrdu: "", slug: "", excerpt: "", description: "", audioUrl: "", isPublished: true, publishedAt: new Date().toISOString().split("T")[0] }); setIsKhitabAudioModalOpen(true); }}>
               <Plus className="w-4 h-4 mr-2" /> Add Audio
             </Button>
           )}
         </div>
       </div>
 
-      <div className="space-y-6">
+      <Tabs defaultValue="list" className="space-y-6">
+        <TabsList className="bg-muted p-1 rounded-lg">
+          <TabsTrigger value="list" className="px-4 py-2"><Mic className="w-4 h-4 mr-2" /> Audio Library</TabsTrigger>
+          {!activeCategory && <TabsTrigger value="settings" className="px-4 py-2"><Settings2 className="w-4 h-4 mr-2" /> Page Setup</TabsTrigger>}
+        </TabsList>
+
+        <TabsContent value="list" className="space-y-6">
 
           {!activeCategory ? (
             // CATEGORIES GRID
@@ -412,7 +474,7 @@ export function SermonsManager() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                     {filteredCategories.map(cat => (
                       <SortableCategoryCard key={cat.id} id={cat.id} item={cat} onClick={setActiveCategory}
-                        sermonCount={sermons.filter(s => s.categoryId === cat.id).length}
+                        khitabAudioCount={khitabAudios.filter(s => s.categoryId === cat.id).length}
                         onEdit={(item: any) => { setEditingCatId(item.id); setCatFormData({ name: item.name, urduName: item.urduName || "", slug: item.slug, description: item.description || "" }); setIsCatModalOpen(true); }}
                         onDelete={(item: CategoryItem) => setDeletingCat(item)} />
                     ))}
@@ -457,11 +519,11 @@ export function SermonsManager() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {activeSermons.map(sermon => (
-                  <SortableSermonCard key={sermon.id} id={sermon.id} item={sermon}
+                {activeKhitabAudios.map(khitabAudio => (
+                  <SortableKhitabAudioCard key={khitabAudio.id} id={khitabAudio.id} item={khitabAudio}
                     onEdit={(item: any) => { 
-                      setEditingSermonId(item.id); 
-                      setSermonFormData({ 
+                      setEditingKhitabAudioId(item.id); 
+                      setKhitabAudioFormData({ 
                         title: item.title, 
                         titleUrdu: item.titleUrdu || "", 
                         slug: item.slug, 
@@ -471,15 +533,31 @@ export function SermonsManager() {
                         isPublished: item.isPublished,
                         publishedAt: item.publishedAt ? new Date(item.publishedAt).toISOString().split("T")[0] : "",
                       }); 
-                      setIsSermonModalOpen(true); 
+                      setIsKhitabAudioModalOpen(true); 
                     }}
-                    onDelete={(item: SermonItem) => setDeletingSermon(item)} />
+                    onDelete={(item: KhitabAudioItem) => setDeletingKhitabAudio(item)} />
                 ))}
-                {activeSermons.length === 0 && <div className="col-span-full py-10 text-center text-muted-foreground border border-dashed rounded-xl">No audios found in this category.</div>}
+                {activeKhitabAudios.length === 0 && <div className="col-span-full py-10 text-center text-muted-foreground border border-dashed rounded-xl">No audios found in this category.</div>}
               </div>
             </div>
           )}
-      </div>
+        </TabsContent>
+
+        <TabsContent value="settings">
+          <form onSubmit={handlePageSave} className="space-y-6 max-w-2xl">
+            <Card>
+              <CardHeader><CardTitle>Page SEO</CardTitle></CardHeader>
+              <CardContent className="space-y-4">
+                <div className="space-y-2"><Label>Title</Label><Input value={pageForm.title} onChange={e => setPageForm({ ...pageForm, title: e.target.value })} /></div>
+                <div className="space-y-2"><Label>Slug</Label><Input value={pageForm.slug} onChange={e => setPageForm({ ...pageForm, slug: e.target.value })} /></div>
+                <div className="space-y-2"><Label>Meta Title</Label><Input value={pageForm.metaTitle || ""} onChange={e => setPageForm({ ...pageForm, metaTitle: e.target.value })} /></div>
+                <div className="space-y-2"><Label>Meta Description</Label><Textarea value={pageForm.metaDescription || ""} onChange={e => setPageForm({ ...pageForm, metaDescription: e.target.value })} /></div>
+                <Button type="submit" disabled={isSavingPage}>{isSavingPage ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : "Save Settings"}</Button>
+              </CardContent>
+            </Card>
+          </form>
+        </TabsContent>
+      </Tabs>
 
       {/* Category Modal */}
       {isCatModalOpen && (
@@ -514,39 +592,51 @@ export function SermonsManager() {
         </div>
       )}
 
-      {/* Sermon Modal */}
-      {isSermonModalOpen && (
+      {/* KhitabAudio Modal */}
+      {isKhitabAudioModalOpen && (
         <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
           <div className="bg-card w-full max-w-2xl border border-border rounded-2xl shadow-xl relative overflow-hidden flex flex-col max-h-[90vh]">
             <div className="p-6 border-b border-border flex justify-between items-center bg-muted/20">
               <h2 className="text-xl font-bold flex items-center gap-2">
                 <Mic className="h-5 w-5 text-primary" />
-                {editingSermonId ? "Edit Audio" : "Add Audio"}
+                {editingKhitabAudioId ? "Edit Audio" : "Add Audio"}
               </h2>
-              <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsSermonModalOpen(false)}>×</Button>
+              <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsKhitabAudioModalOpen(false)}>×</Button>
             </div>
             <div className="overflow-y-auto p-6 flex-1 space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2"><Label>Title (English)</Label><Input value={sermonFormData.title} onChange={e => setSermonFormData({ ...sermonFormData, title: e.target.value, slug: editingSermonId ? sermonFormData.slug : slugify(e.target.value) })} /></div>
-                <div className="space-y-2"><Label>Title (Urdu)</Label><Input value={sermonFormData.titleUrdu} onChange={e => setSermonFormData({ ...sermonFormData, titleUrdu: e.target.value })} dir="rtl" /></div>
+                <div className="space-y-2"><Label>Title (English)</Label><Input value={khitabAudioFormData.title} onChange={e => setKhitabAudioFormData({ ...khitabAudioFormData, title: e.target.value, slug: editingKhitabAudioId ? khitabAudioFormData.slug : slugify(e.target.value) })} /></div>
+                <div className="space-y-2"><Label>Title (Urdu)</Label><Input value={khitabAudioFormData.titleUrdu} onChange={e => setKhitabAudioFormData({ ...khitabAudioFormData, titleUrdu: e.target.value })} dir="rtl" /></div>
               </div>
-              <div className="space-y-2"><Label>Slug</Label><Input value={sermonFormData.slug} onChange={e => setSermonFormData({ ...sermonFormData, slug: e.target.value })} /></div>
-              <div className="space-y-2"><Label>Audio URL</Label><Input value={sermonFormData.audioUrl} onChange={e => setSermonFormData({ ...sermonFormData, audioUrl: e.target.value })} placeholder="Upload via drag/drop or enter URL" /></div>
-              <div className="space-y-2"><Label>Excerpt</Label><Textarea value={sermonFormData.excerpt} onChange={e => setSermonFormData({ ...sermonFormData, excerpt: e.target.value })} rows={2} /></div>
-              <div className="space-y-2"><Label>Description</Label><Textarea value={sermonFormData.description} onChange={e => setSermonFormData({ ...sermonFormData, description: e.target.value })} rows={4} /></div>
+              <div className="space-y-2"><Label>Slug</Label><Input value={khitabAudioFormData.slug} onChange={e => setKhitabAudioFormData({ ...khitabAudioFormData, slug: e.target.value })} /></div>
+              <div className="space-y-2">
+                <Label>Audio Upload / URL</Label>
+                <div className="flex gap-2 items-center">
+                  <Input value={khitabAudioFormData.audioUrl} onChange={e => setKhitabAudioFormData({ ...khitabAudioFormData, audioUrl: e.target.value })} placeholder="Upload file or enter URL manually" className="flex-1" />
+                  <Label className="cursor-pointer bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 px-4 py-2 rounded-xl text-sm font-semibold transition-colors flex items-center gap-2">
+                    {isUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <UploadCloud className="w-4 h-4" />}
+                    {isUploading ? "Uploading..." : "Upload File"}
+                    <input type="file" accept="audio/*" className="hidden" onChange={handleAudioUploadInModal} disabled={isUploading} />
+                  </Label>
+                </div>
+              </div>
+              <div className="space-y-2"><Label>Excerpt</Label><Textarea value={khitabAudioFormData.excerpt} onChange={e => setKhitabAudioFormData({ ...khitabAudioFormData, excerpt: e.target.value })} rows={2} /></div>
+              <div className="space-y-2"><Label>Description</Label>
+                <RichTextEditor content={khitabAudioFormData.description || ""} onChange={val => setKhitabAudioFormData({ ...khitabAudioFormData, description: val })} />
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2"><Label>Publish Date</Label><Input type="date" value={sermonFormData.publishedAt} onChange={e => setSermonFormData({ ...sermonFormData, publishedAt: e.target.value })} /></div>
+                <div className="space-y-2"><Label>Publish Date</Label><Input type="date" value={khitabAudioFormData.publishedAt} onChange={e => setKhitabAudioFormData({ ...khitabAudioFormData, publishedAt: e.target.value })} /></div>
               </div>
             </div>
             <div className="p-6 border-t border-border bg-muted/20 flex justify-end gap-3">
-              <Button variant="outline" onClick={() => setIsSermonModalOpen(false)}>Cancel</Button>
+              <Button variant="outline" onClick={() => setIsKhitabAudioModalOpen(false)}>Cancel</Button>
               <ConfirmDialog
-                title={editingSermonId ? "Update Audio" : "Add Audio"}
-                description={`Are you sure you want to ${editingSermonId ? "update" : "add"} this audio?`}
-                onConfirm={handleSermonSave}
+                title={editingKhitabAudioId ? "Update Audio" : "Add Audio"}
+                description={`Are you sure you want to ${editingKhitabAudioId ? "update" : "add"} this audio?`}
+                onConfirm={handleKhitabAudioSave}
               >
                 <Button disabled={isUploading} className="bg-primary text-primary-foreground hover:bg-primary/95">
-                  {editingSermonId ? "Update Audio" : "Save Audio"}
+                  {editingKhitabAudioId ? "Update Audio" : "Save Audio"}
                 </Button>
               </ConfirmDialog>
             </div>
@@ -563,13 +653,13 @@ export function SermonsManager() {
         onConfirm={() => { if (deletingCat) handleCatDelete(deletingCat); }}
       />
 
-      {/* Delete Sermon Confirmation */}
+      {/* Delete KhitabAudio Confirmation */}
       <ConfirmDialog
-        open={!!deletingSermon}
-        onOpenChange={(open) => !open && setDeletingSermon(null)}
+        open={!!deletingKhitabAudio}
+        onOpenChange={(open) => !open && setDeletingKhitabAudio(null)}
         title="Delete Audio"
-        description={`Are you sure you want to delete "${deletingSermon?.title}"?`}
-        onConfirm={() => { if (deletingSermon) handleSermonDelete(deletingSermon); }}
+        description={`Are you sure you want to delete "${deletingKhitabAudio?.title}"?`}
+        onConfirm={() => { if (deletingKhitabAudio) handleKhitabAudioDelete(deletingKhitabAudio); }}
       />
     </div>
   );

@@ -566,10 +566,27 @@ export const serviceCategoriesRelations = relations(serviceCategories, ({ many }
 // SERMONS
 // ============================================
 
+export const sermonCategories = mysqlTable("sermon_categories", {
+    id: varchar("id", { length: 191 }).primaryKey(),
+    name: varchar("name", { length: 191 }).notNull(),
+    urduName: varchar("urdu_name", { length: 191 }),
+    slug: varchar("slug", { length: 191 }).notNull().unique(),
+    description: text("description"),
+    order: int("order").default(0).notNull(),
+    ...timestamps,
+});
+
+export const sermonCategoriesRelations = relations(sermonCategories, ({ many }) => ({
+    sermons: many(sermons),
+}));
+
 export const sermons = mysqlTable("sermons", {
     id: varchar("id", { length: 191 }).primaryKey(),
+    categoryId: varchar("category_id", { length: 191 }),
     title: varchar("title", { length: 255 }).notNull(),
+    titleUrdu: varchar("title_urdu", { length: 255 }),
     slug: varchar("slug", { length: 191 }).notNull().unique(),
+    excerpt: text("excerpt"),
     description: text("description"),
     audioUrl: text("audio_url"),
     videoUrl: text("video_url"),
@@ -578,10 +595,53 @@ export const sermons = mysqlTable("sermons", {
     sermonDate: timestamp("sermon_date"),
     speakerName: varchar("speaker_name", { length: 191 }),
     isPublished: boolean("is_published").default(true).notNull(),
+    publishedAt: timestamp("published_at"),
     metaTitle: varchar("meta_title", { length: 255 }),
     metaDescription: text("meta_description"),
     ...timestamps,
 });
+
+export const sermonsRelations = relations(sermons, ({ one }) => ({
+    category: one(sermonCategories, { fields: [sermons.categoryId], references: [sermonCategories.id] }),
+}));
+
+// ============================================
+// KHITAB-E-JUMAH AUDIOS
+// ============================================
+
+export const khitabAudioCategories = mysqlTable("khitab_audio_categories", {
+    id: varchar("id", { length: 191 }).primaryKey(),
+    name: varchar("name", { length: 191 }).notNull(),
+    urduName: varchar("urdu_name", { length: 191 }),
+    slug: varchar("slug", { length: 191 }).notNull().unique(),
+    description: text("description"),
+    order: int("order").default(0).notNull(),
+    ...timestamps,
+});
+
+export const khitabAudioCategoriesRelations = relations(khitabAudioCategories, ({ many }) => ({
+    audios: many(khitabAudios),
+}));
+
+export const khitabAudios = mysqlTable("khitab_audios", {
+    id: varchar("id", { length: 191 }).primaryKey(),
+    categoryId: varchar("category_id", { length: 191 }),
+    title: varchar("title", { length: 255 }).notNull(),
+    titleUrdu: varchar("title_urdu", { length: 255 }),
+    slug: varchar("slug", { length: 191 }).notNull().unique(),
+    excerpt: text("excerpt"),
+    description: text("description"),
+    audioUrl: text("audio_url"),
+    isPublished: boolean("is_published").default(true).notNull(),
+    publishedAt: timestamp("published_at"),
+    metaTitle: varchar("meta_title", { length: 255 }),
+    metaDescription: text("meta_description"),
+    ...timestamps,
+});
+
+export const khitabAudiosRelations = relations(khitabAudios, ({ one }) => ({
+    category: one(khitabAudioCategories, { fields: [khitabAudios.categoryId], references: [khitabAudioCategories.id] }),
+}));
 
 // ============================================
 // PRESS RELEASES

@@ -22,6 +22,8 @@ import HistoryPageEditor from "@/components/admin/HistoryPageEditor";
 import CampaignsPageEditor from "@/components/admin/CampaignsPageEditor";
 import EventsPageEditor from "@/components/admin/EventsPageEditor";
 import ServicesPageEditor from "@/components/admin/ServicesPageEditor";
+import SermonsPageEditor from "@/components/admin/SermonsPageEditor";
+import KhitabAudiosPageEditor from "@/components/admin/KhitabAudiosPageEditor";
 
 export default function EditPagePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -124,6 +126,19 @@ export default function EditPagePage({ params }: { params: Promise<{ id: string 
 
   if (page.slug === "services") {
     return <ServicesPageEditor pageId={page.id} initialPageData={page} />;
+  }
+
+  if (
+    page.slug === "khitab-e-jumah" ||
+    page.slug === "khitab-e-jumah-audios" ||
+    page.slug === "khitab-e-jumah-audio" ||
+    page.slug.includes("khitab")
+  ) {
+    return <KhitabAudiosPageEditor pageId={page.id} initialPageData={page} />;
+  }
+
+  if (page.slug === "friday-sermons" || page.slug === "sermons") {
+    return <SermonsPageEditor pageId={page.id} initialPageData={page} />;
   }
 
   const magazineIds = [

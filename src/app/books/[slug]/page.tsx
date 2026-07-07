@@ -75,7 +75,7 @@ export default async function BookDetailPage({ params }: Props) {
           Back to Books Library
         </Link>
 
-        <div className="space-y-5">
+        <div className="space-y-4">
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
             <div className="space-y-3">
               {book.category && (
@@ -91,37 +91,13 @@ export default async function BookDetailPage({ params }: Props) {
               <a
                 href={book.fileUrl}
                 download
-                className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground rounded-full px-6 py-2.5 text-sm font-semibold hover:bg-primary-dark transition-colors shrink-0"
+                className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground rounded-full px-6 py-2.5 text-sm font-semibold transition-colors shrink-0"
               >
                 <Download className="h-4 w-4" />
                 Download PDF
               </a>
             )}
           </div>
-
-          {/* Meta grid */}
-          <dl className="grid grid-cols-2 gap-y-3 gap-x-6 text-sm border border-border rounded-xl p-5 bg-card">
-            {book.authorName && (
-              <>
-                <dt className="font-semibold text-foreground-muted">Author</dt>
-                <dd className="text-foreground">{book.authorName}</dd>
-              </>
-            )}
-            <dt className="font-semibold text-foreground-muted">Language</dt>
-            <dd className="text-foreground capitalize">{book.language}</dd>
-            {book.pages && (
-              <>
-                <dt className="font-semibold text-foreground-muted">Pages</dt>
-                <dd className="text-foreground">{book.pages}</dd>
-              </>
-            )}
-            {book.downloadCount > 0 && (
-              <>
-                <dt className="font-semibold text-foreground-muted">Downloads</dt>
-                <dd className="text-foreground">{book.downloadCount.toLocaleString()}</dd>
-              </>
-            )}
-          </dl>
 
           {book.description && (
             <div>

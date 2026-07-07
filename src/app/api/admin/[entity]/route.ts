@@ -26,6 +26,9 @@ import {
     speakers,
     campaigns,
     services,
+    sermonCategories,
+    khitabAudios,
+    khitabAudioCategories,
 } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { getCurrentUser } from "@/lib/auth";
@@ -42,8 +45,9 @@ function revalidateEntityPaths(entity: string) {
             revalidatePath("/audio-books");
         } else if (entity === "social-accounts" || entity === "social-platforms") {
             revalidatePath("/social-media");
-        } else if (entity === "sermons") {
-            revalidatePath("/sermons");
+        } else if (entity === "sermons" || entity === "sermon-categories") {
+            revalidatePath("/resources/khitab-e-jumah");
+            revalidatePath("/khitab-e-jumah");
         } else if (entity === "campaigns") {
             revalidatePath("/");
         } else if (entity === "book-categories" || entity === "books") {
@@ -75,6 +79,9 @@ const entityMap: Record<string, any> = {
     services: services,
     locations,
     sermons,
+    "sermon-categories": sermonCategories,
+    "khitab-audios": khitabAudios,
+    "khitab-audio-categories": khitabAudioCategories,
     // ── New entities (Phase 4) ───────────────────────────────────────────────
     faqs: faqItems,
     downloads,
@@ -86,6 +93,7 @@ const entityMap: Record<string, any> = {
     "book-categories": bookCategories,
     "video-categories": videoCategories,
     "audio-categories": audioCategories,
+    "sermon-categories": sermonCategories,
     speakers,
 };
 
@@ -112,6 +120,7 @@ const REQUIRED_FIELDS: Record<string, string[]> = {
     "book-categories": ["name", "slug"],
     "video-categories": ["name", "slug"],
     "audio-categories": ["name", "slug"],
+    "sermon-categories": ["name", "slug"],
     speakers: ["name", "slug"],
 };
 

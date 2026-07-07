@@ -65,7 +65,11 @@ export function LatestPressReleases({ items }: Props) {
     <section ref={sectionRef} aria-labelledby="press-heading" className="py-10 px-6 bg-primary-light relative overflow-hidden perspective-1000 border-t border-border/20">
       <div className="absolute pointer-events-none" />
       <div className="container max-w-7xl mx-auto relative z-10">
+<<<<<<< Updated upstream
         <div ref={headerRef} className="flex flex-col md:flex-row items-center md:items-end justify-between mb-16 gap-6 text-center md:text-left">
+=======
+        <div ref={headerRef} className="flex flex-col md:flex-row items-start md:items-end justify-between mb-8 gap-6">
+>>>>>>> Stashed changes
           <div>
             <p className="text-primary font-bold tracking-widest uppercase text-xs mb-3">News & Updates</p>
             <h2 id="press-heading" className="spotlight_heading">Latest Press Releases</h2>
@@ -82,8 +86,13 @@ export function LatestPressReleases({ items }: Props) {
             View all <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
           </Link>
         </div>
+<<<<<<< Updated upstream
         <div ref={gridRef} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {items.length > 0 ? items.map((item, i) => (
+=======
+        <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {items.length > 0 ? items.slice(0, 6).map((item, i) => (
+>>>>>>> Stashed changes
             <Link
               key={item.id}
               href={`/press-releases/${item.slug || item.id}`}

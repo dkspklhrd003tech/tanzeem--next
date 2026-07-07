@@ -25,6 +25,9 @@ import {
     speakers,
     campaigns,
     services,
+    sermonCategories,
+    khitabAudios,
+    khitabAudioCategories,
 } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { getCurrentUser } from "@/lib/auth";
@@ -78,6 +81,9 @@ const entityMap: Record<string, any> = {
     "social-accounts": socialAccounts,
     "book-categories": bookCategories,
     "audio-categories": audioCategories,
+    "sermon-categories": sermonCategories,
+    "khitab-audios": khitabAudios,
+    "khitab-audio-categories": khitabAudioCategories,
     speakers,
 };
 
