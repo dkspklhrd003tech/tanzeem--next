@@ -364,9 +364,15 @@ export default function KhitabAudiosPageEditor({ pageId, initialPageData }: { pa
       formDataObj.append("type", "uploads");
 
       const res = await fetch("/api/upload", { method: "POST", body: formDataObj });
-      if (!res.ok) throw new Error("Upload failed");
-
+      const contentType = res.headers.get("content-type") || "";
+      if (!contentType.includes("application/json")) {
+        const text = await res.text();
+        console.error("[KhitabAudiosPageEditor] Non-JSON upload response:", res.status, text.slice(0, 500));
+        throw new Error(`Upload failed (HTTP ${res.status}). Server returned non-JSON — check server logs.`);
+      }
       const data = await res.json();
+      if (!res.ok) throw new Error(data.error || `Upload failed (HTTP ${res.status})`);
+
       const baseName = file.name.replace(/\.[^/.]+$/, "");
       const cleanedTitle = baseName.split(/[-_]+/).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
 
@@ -383,8 +389,8 @@ export default function KhitabAudiosPageEditor({ pageId, initialPageData }: { pa
       });
       setIsKhitabAudioModalOpen(true);
       toast({ title: "Audio Uploaded Successfully", description: "Configure details to save this audio." });
-    } catch (err) {
-      toast({ variant: "destructive", title: "Upload Failed", description: "Failed to upload the file." });
+    } catch (err: any) {
+      toast({ variant: "destructive", title: "Upload Failed", description: err.message || "Failed to upload the file." });
     } finally {
       setIsUploading(false);
     }
@@ -403,12 +409,18 @@ export default function KhitabAudiosPageEditor({ pageId, initialPageData }: { pa
       formDataObj.append("file", file);
       formDataObj.append("type", "uploads");
       const res = await fetch("/api/upload", { method: "POST", body: formDataObj });
-      if (!res.ok) throw new Error("Upload failed");
+      const contentType = res.headers.get("content-type") || "";
+      if (!contentType.includes("application/json")) {
+        const text = await res.text();
+        console.error("[KhitabAudiosPageEditor modal] Non-JSON upload response:", res.status, text.slice(0, 500));
+        throw new Error(`Upload failed (HTTP ${res.status}). Server returned non-JSON — check server logs.`);
+      }
       const data = await res.json();
+      if (!res.ok) throw new Error(data.error || `Upload failed (HTTP ${res.status})`);
       setKhitabAudioFormData(prev => ({ ...prev, audioUrl: data.url }));
       toast({ title: "Audio Uploaded Successfully" });
-    } catch (err) {
-      toast({ variant: "destructive", title: "Upload Failed", description: "Failed to upload the file." });
+    } catch (err: any) {
+      toast({ variant: "destructive", title: "Upload Failed", description: err.message || "Failed to upload the file." });
     } finally {
       setIsUploading(false);
     }

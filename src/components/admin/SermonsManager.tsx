@@ -338,6 +338,12 @@ export function SermonsManager() {
       formDataObj.append("type", "uploads");
 
       const res = await fetch("/api/upload", { method: "POST", body: formDataObj });
+      const contentType = res.headers.get("content-type") || "";
+      if (!contentType.includes("application/json")) {
+        const text = await res.text();
+        console.error("[SermonsManager] Non-JSON upload response:", res.status, text.slice(0, 500));
+        throw new Error(`Upload failed (HTTP ${res.status}). Server returned non-JSON — check server logs.`);
+      }
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Upload failed");
       const baseName = file.name.replace(/\.[^/.]+$/, "");

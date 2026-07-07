@@ -353,8 +353,9 @@ export default function SermonsPageEditor({ pageId, initialPageData }: { pageId:
   };
 
   const handleVideoUploadDirectly = async (file: File) => {
-    if (!file.type.startsWith("video/")) {
-      toast({ variant: "destructive", title: "Invalid file type", description: "Please upload a valid video file." });
+    // This component uploads audio files for sermon categories
+    if (!file.type.startsWith("audio/")) {
+      toast({ variant: "destructive", title: "Invalid file type", description: "Please upload a valid audio file (MP3, OGG, WAV, etc.)." });
       return;
     }
     setIsUploading(true);
@@ -364,9 +365,15 @@ export default function SermonsPageEditor({ pageId, initialPageData }: { pageId:
       formDataObj.append("type", "uploads");
 
       const res = await fetch("/api/upload", { method: "POST", body: formDataObj });
-      if (!res.ok) throw new Error("Upload failed");
-
+      const contentType = res.headers.get("content-type") || "";
+      if (!contentType.includes("application/json")) {
+        const text = await res.text();
+        console.error("[SermonsPageEditor] Non-JSON upload response:", res.status, text.slice(0, 500));
+        throw new Error(`Upload failed (HTTP ${res.status}). Server returned non-JSON — check server logs.`);
+      }
       const data = await res.json();
+      if (!res.ok) throw new Error(data.error || `Upload failed (HTTP ${res.status})`);
+
       const baseName = file.name.replace(/\.[^/.]+$/, "");
       const cleanedTitle = baseName.split(/[-_]+/).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
 
@@ -383,8 +390,8 @@ export default function SermonsPageEditor({ pageId, initialPageData }: { pageId:
       });
       setIsSermonModalOpen(true);
       toast({ title: "Audio Uploaded Successfully", description: "Configure details to save this audio." });
-    } catch (err) {
-      toast({ variant: "destructive", title: "Upload Failed", description: "Failed to upload the file." });
+    } catch (err: any) {
+      toast({ variant: "destructive", title: "Upload Failed", description: err.message || "Failed to upload the file." });
     } finally {
       setIsUploading(false);
     }
@@ -393,8 +400,8 @@ export default function SermonsPageEditor({ pageId, initialPageData }: { pageId:
   const handleVideoUploadInModal = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || !e.target.files[0]) return;
     const file = e.target.files[0];
-    if (!file.type.startsWith("video/")) {
-      toast({ variant: "destructive", title: "Invalid file type", description: "Please upload a valid video file." });
+    if (!file.type.startsWith("audio/")) {
+      toast({ variant: "destructive", title: "Invalid file type", description: "Please upload a valid audio file." });
       return;
     }
     setIsUploading(true);
@@ -403,12 +410,18 @@ export default function SermonsPageEditor({ pageId, initialPageData }: { pageId:
       formDataObj.append("file", file);
       formDataObj.append("type", "uploads");
       const res = await fetch("/api/upload", { method: "POST", body: formDataObj });
-      if (!res.ok) throw new Error("Upload failed");
+      const contentType = res.headers.get("content-type") || "";
+      if (!contentType.includes("application/json")) {
+        const text = await res.text();
+        console.error("[SermonsPageEditor modal] Non-JSON upload response:", res.status, text.slice(0, 500));
+        throw new Error(`Upload failed (HTTP ${res.status}). Server returned non-JSON — check server logs.`);
+      }
       const data = await res.json();
+      if (!res.ok) throw new Error(data.error || `Upload failed (HTTP ${res.status})`);
       setSermonFormData(prev => ({ ...prev, videoUrl: data.url }));
-      toast({ title: "Video Uploaded Successfully" });
-    } catch (err) {
-      toast({ variant: "destructive", title: "Upload Failed", description: "Failed to upload the file." });
+      toast({ title: "Audio Uploaded Successfully" });
+    } catch (err: any) {
+      toast({ variant: "destructive", title: "Upload Failed", description: err.message || "Failed to upload the file." });
     } finally {
       setIsUploading(false);
     }

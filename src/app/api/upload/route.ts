@@ -110,6 +110,12 @@ const ALLOWED_TYPES: Record<string, string> = {
 
 const MAX_FILE_SIZE = 200 * 1024 * 1024; // 200 MB
 
+// ── Route segment config ──────────────────────────────────────────────────────
+// Disable Next.js body size limit so large audio/video files don't get truncated
+// (default is 4MB). The manual MAX_FILE_SIZE check below enforces our own limit.
+export const maxDuration = 300; // 5 minutes — needed for FTP transfer of large files
+export const dynamic = "force-dynamic";
+
 export async function POST(req: NextRequest) {
   try {
     let formData: FormData;
