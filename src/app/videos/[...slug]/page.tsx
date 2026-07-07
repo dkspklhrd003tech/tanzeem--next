@@ -31,11 +31,16 @@ export default async function VideoDetailRoute({ params }: Props) {
   const { slug: slugArray } = await params;
   const slug = slugArray.join("/");
 
-  const item = await db.query.videos.findFirst({
+  const rawItem = await db.query.videos.findFirst({
     where: and(eq(videos.slug, slug), eq(videos.isPublished, true)),
     with: { category: true, speaker: true },
   });
-  if (!item) notFound();
+  if (!rawItem) notFound();
+  
+  const item = {
+    ...rawItem,
+    customFields: typeof rawItem.customFields === "string" ? JSON.parse(rawItem.customFields) : rawItem.customFields
+  };
 
   const customFieldSchema = await db.select().from(customFieldDefinitions).where(eq(customFieldDefinitions.entityType, "video"));
 

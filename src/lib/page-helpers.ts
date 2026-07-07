@@ -82,7 +82,7 @@ export async function getCmsPage(slug: string): Promise<CmsPageResult> {
       pageId: s.pageId,
       type: s.type,
       order: s.order,
-      config: s.config as Record<string, unknown>,
+      config: (typeof s.config === "string" ? JSON.parse(s.config) : s.config) as Record<string, unknown>,
       isActive: s.isActive,
     })),
   };

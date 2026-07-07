@@ -47,6 +47,12 @@ export default async function ContactPage() {
     {}
   );
 
+  // Parse location details (MariaDB may return JSON as string)
+  const parsedLocations = locationRows.map((row) => ({
+    ...row,
+    details: typeof row.details === "string" ? JSON.parse(row.details) : row.details,
+  }));
+
   const breadcrumb = breadcrumbJsonLd([
     { name: "Home", path: "/" },
     { name: "Contact Us", path: "/contact" },
@@ -59,7 +65,7 @@ export default async function ContactPage() {
       <script id="jsonld-contact-webpage" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webpage) }} />
       <ContactSection
         contactSettings={contactSettings}
-        locationRows={locationRows as LocationRow[]}
+        locationRows={parsedLocations as LocationRow[]}
       />
     </main>
   );

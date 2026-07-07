@@ -31,12 +31,17 @@ export default async function AudioDetailPage({ params }: Props) {
   const { slug: slugArray } = await params;
   const slug = slugArray.join("/");
 
-  const item = await db.query.audio.findFirst({
+  const rawItem = await db.query.audio.findFirst({
     where: and(eq(audio.slug, slug), eq(audio.isPublished, true)),
     with: { category: true, speaker: true },
   });
 
-  if (!item) notFound();
+  if (!rawItem) notFound();
+  
+  const item = {
+    ...rawItem,
+    customFields: typeof rawItem.customFields === "string" ? JSON.parse(rawItem.customFields) : rawItem.customFields
+  };
 
   const customFieldSchema = await db.select().from(customFieldDefinitions).where(eq(customFieldDefinitions.entityType, "audio"));
 
