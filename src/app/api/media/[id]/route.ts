@@ -33,7 +33,7 @@ export async function GET(
       return NextResponse.redirect(redirectUrl, 301);
     }
 
-    return new NextResponse(item.fileData, {
+    return new NextResponse(Uint8Array.from(item.fileData), {
       status: 200,
       headers: {
         "Content-Type": item.mimeType || "application/octet-stream",
