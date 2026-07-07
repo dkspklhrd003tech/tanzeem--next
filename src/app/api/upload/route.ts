@@ -180,9 +180,10 @@ export async function POST(req: NextRequest) {
 
     const mediaId = uuidv4();
     const publicUrl = `/api/media/${mediaId}`;
+    let staticUrl = publicUrl;
     try {
         // Stream buffer to FTP or Local FS
-        const staticUrl = await uploadFile({
+        staticUrl = await uploadFile({
           fileName: uniqueFilename,
           folder,
           buffer,
@@ -202,9 +203,9 @@ export async function POST(req: NextRequest) {
           uploadedBy: uploadedBy ?? null,
         });
     } catch (dbError: any) {
-      console.error("[upload] DB insert failed:", dbError?.message ?? dbError);
+      console.error("[upload] Upload or DB insert failed:", dbError?.message ?? dbError);
       return NextResponse.json(
-        { success: false, error: "Failed to save file to database: " + (dbError?.message ?? "unknown error") },
+        { success: false, error: "Failed to save file: " + (dbError?.message ?? "unknown error") },
         { status: 500 }
       );
     }

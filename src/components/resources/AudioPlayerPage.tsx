@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
+import { WaveformPlayer } from "./WaveformPlayer";
 
 type AudioItem = {
   id: string;
@@ -58,57 +59,32 @@ export function AudioPlayerPage({ item, related, customFieldSchema = [] }: Audio
 
         {/* Player column */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Thumbnail */}
-          <motion.div
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="rounded-xl overflow-hidden bg-muted aspect-video relative"
-          >
-            {item.thumbnailUrl ? (
-              <img src={item.thumbnailUrl} alt={item.title} className="w-full h-full object-cover" />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center bg-primary/5">
-                <Headphones className="h-16 w-16 text-primary/30" />
-              </div>
-            )}
-          </motion.div>
-
-          {/* Native audio player */}
-          <div className="bg-card border border-border rounded-xl p-4">
-            <audio
-              controls
-              className="w-full"
-              src={item.audioUrl}
-              preload="metadata"
-            >
-              Your browser does not support the audio element.
-            </audio>
+          {/* Waveform Player */}
+          <div className="w-full">
+            <WaveformPlayer
+              audioUrl={item.audioUrl}
+              title={item.title}
+              speakerName={item.speaker?.name}
+              categoryName={item.category?.name}
+              publishedAt={item.customFields?.publishedAt || null}
+            />
           </div>
 
-          {/* Title + meta */}
-          <div>
-            {item.category && (
-              <Badge variant="outline" className="text-primary border-primary/30 mb-3">
-                {item.category.name}
-              </Badge>
-            )}
-            <h1 className="text-2xl md:text-3xl font-bold text-foreground leading-snug mb-3">
-              {item.title}
-            </h1>
-            <div className="flex flex-wrap items-center gap-4 text-sm text-foreground-muted mb-4">
+          {/* Meta & Actions */}
+          <div className="flex flex-wrap items-center justify-between gap-4 bg-card border border-border rounded-xl p-5">
+            <div className="flex flex-wrap items-center gap-4 text-sm text-foreground-muted">
               {item.duration && (
                 <span className="flex items-center gap-1">
-                  <Clock className="h-3.5 w-3.5" />
+                  <Clock className="h-4 w-4" />
                   {formatDuration(item.duration)}
                 </span>
               )}
               <span className="flex items-center gap-1">
-                <Play className="h-3.5 w-3.5" />
+                <Play className="h-4 w-4" />
                 {item.playCount.toLocaleString()} plays
               </span>
             </div>
 
-            {/* Actions */}
             <div className="flex flex-wrap gap-3">
               <a
                 href={item.audioUrl}

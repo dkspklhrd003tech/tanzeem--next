@@ -231,13 +231,6 @@ export function ModernizedProsePage({
                 No content available for this page yet. Edit this page in the Site Manager.
               </div>
             )}
-
-            {/* Accordion List Component */}
-            {accordionItems && accordionItems.length > 0 && (
-              <div className="bg-white  rounded-3xl border border-slate-200/80  p-6 md:p-8 shadow-sm">
-                <Accordion heading="Interactive In-Depth Explorer" items={accordionItems} />
-              </div>
-            )}
           </div>
         </div>
       </div>
