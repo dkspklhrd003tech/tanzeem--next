@@ -9,6 +9,10 @@ export interface StorageOptions {
     buffer: Buffer;
 }
 
+export interface ChunkStorageOptions extends StorageOptions {
+    chunkIndex: number;
+}
+
 // ── FTP connection helper ─────────────────────────────────────────────────────
 
 async function createFtpClient(): Promise<Client> {
@@ -116,6 +120,61 @@ export async function uploadFile({ fileName, folder, buffer }: StorageOptions): 
     await fs.mkdir(path.dirname(fullPath), { recursive: true });
     await fs.writeFile(fullPath, buffer);
     console.log(`[Storage] Saved locally: ${fullPath}`);
+
+    return relativePath;
+}
+
+/**
+ * Appends a chunk to a file on FTP or local filesystem.
+ * If chunkIndex === 0, the file is created/overwritten.
+ * Returns the publicly accessible URL/path.
+ */
+export async function appendFileChunk({ fileName, folder, buffer, chunkIndex }: ChunkStorageOptions): Promise<string> {
+    const useFtp = !!process.env.FTP_HOST;
+    const relativePath = `/uploads/${folder}/${fileName}`;
+
+    if (useFtp) {
+        const client = await createFtpClient();
+
+        try {
+            const remoteDir = `uploads/${folder}`;
+            await navigateToRemoteDir(client, remoteDir);
+
+            const stream = Readable.from(buffer);
+            if (chunkIndex === 0) {
+                console.log(`[FTP] Creating ${fileName} (Chunk 0, ${(buffer.length / 1024).toFixed(1)} KB)...`);
+                await client.uploadFrom(stream, fileName);
+            } else {
+                console.log(`[FTP] Appending to ${fileName} (Chunk ${chunkIndex}, ${(buffer.length / 1024).toFixed(1)} KB)...`);
+                await client.appendFrom(stream, fileName);
+            }
+            console.log(`[FTP] Chunk ${chunkIndex} complete for: ${fileName}`);
+        } catch (err: any) {
+            console.error("[FTP] Chunk append error:", {
+                message: err?.message,
+                code:    err?.code,
+                stack:   err?.stack?.slice(0, 600),
+            });
+            throw new Error(`FTP chunk append failed: ${err?.message ?? "unknown error"}`);
+        } finally {
+            client.close();
+        }
+
+        const mediaBase = (process.env.NEXT_PUBLIC_MEDIA_URL ?? "").replace(/\/$/, "");
+        return `${mediaBase}${relativePath}`;
+    }
+
+    // ── Local filesystem fallback ────────
+    console.log(`[Storage] Local chunk upload → ${relativePath} (Chunk ${chunkIndex})`);
+    const fullPath = path.join(process.cwd(), "public", "uploads", folder, fileName);
+    await fs.mkdir(path.dirname(fullPath), { recursive: true });
+    
+    if (chunkIndex === 0) {
+        await fs.writeFile(fullPath, buffer);
+    } else {
+        await fs.appendFile(fullPath, buffer);
+    }
+    console.log(`[Storage] Saved chunk locally: ${fullPath}`);
 
     return relativePath;
 }

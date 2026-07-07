@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { useChunkedUpload } from "@/hooks/useChunkedUpload";
 
 import {
   DndContext, closestCenter, KeyboardSensor, PointerSensor,
@@ -326,6 +327,8 @@ export function SermonsManager() {
     }
   };
 
+  const { uploadFile: chunkedUpload } = useChunkedUpload();
+
   const handleAudioUploadDirectly = async (file: File) => {
     if (!file.type.startsWith("audio/")) {
       toast({ variant: "destructive", title: "Invalid file type", description: "Please upload a valid audio file." });
@@ -333,19 +336,12 @@ export function SermonsManager() {
     }
     setIsUploading(true);
     try {
-      const formDataObj = new FormData();
-      formDataObj.append("file", file);
-      formDataObj.append("type", "uploads");
+      // Use chunked upload to bypass Vercel's 4.5MB serverless function limit.
+      // Files are split into 3MB chunks and assembled server-side before FTP transfer.
+      const data = await chunkedUpload(file, {
+        onProgress: (pct) => console.log(`[SermonsManager] Upload progress: ${pct}%`),
+      });
 
-      const res = await fetch("/api/upload", { method: "POST", body: formDataObj });
-      const contentType = res.headers.get("content-type") || "";
-      if (!contentType.includes("application/json")) {
-        const text = await res.text();
-        console.error("[SermonsManager] Non-JSON upload response:", res.status, text.slice(0, 500));
-        throw new Error(`Upload failed (HTTP ${res.status}). Server returned non-JSON — check server logs.`);
-      }
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || "Upload failed");
       const baseName = file.name.replace(/\.[^/.]+$/, "");
       const cleanedTitle = baseName.split(/[-_]+/).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
 
