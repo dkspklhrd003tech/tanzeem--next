@@ -36,6 +36,9 @@ export async function PUT(request: NextRequest, { params }: { params: Promise<{ 
     });
 
     const [updated] = await db.select().from(locations).where(eq(locations.id, id));
+    if (updated && typeof updated.details === "string") {
+      updated.details = JSON.parse(updated.details);
+    }
     return NextResponse.json(updated);
   } catch (error) {
     console.error("PUT location error:", error);

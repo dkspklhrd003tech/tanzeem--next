@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import { db } from "@/db";
 import { media } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth";
+import { uploadFile } from "@/lib/storage";
 
 // ── ffmpeg is loaded LAZILY so the route doesn't crash if binaries are missing
 // on the live server (cPanel, shared host, etc.)
@@ -179,21 +180,27 @@ export async function POST(req: NextRequest) {
 
     const mediaId = uuidv4();
     const publicUrl = `/api/media/${mediaId}`;
-
     try {
-      await db.insert(media).values({
-        id: mediaId,
-        filename: uniqueFilename,
-        originalName: file.name,
-        mimeType,
-        size: finalSize,
-        url: publicUrl,
-        thumbnailUrl: null,
-        altText: null,
-        caption: null,
-        fileData: buffer,
-        uploadedBy: uploadedBy ?? null,
-      });
+        // Stream buffer to FTP or Local FS
+        const staticUrl = await uploadFile({
+          fileName: uniqueFilename,
+          folder,
+          buffer,
+        });
+
+        await db.insert(media).values({
+          id: mediaId,
+          filename: uniqueFilename,
+          originalName: file.name,
+          mimeType,
+          size: finalSize,
+          url: staticUrl, // Static URL instead of API endpoint
+          thumbnailUrl: null,
+          altText: null,
+          caption: null,
+          fileData: null, // We no longer store binary data in the DB
+          uploadedBy: uploadedBy ?? null,
+        });
     } catch (dbError: any) {
       console.error("[upload] DB insert failed:", dbError?.message ?? dbError);
       return NextResponse.json(
@@ -204,7 +211,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       success: true,
-      url: publicUrl,
+      url: staticUrl,
       mediaId,
       filename: uniqueFilename,
       originalName: file.name,

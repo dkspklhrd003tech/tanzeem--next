@@ -17,11 +17,20 @@ export async function GET(
       id: media.id,
       fileData: media.fileData,
       mimeType: media.mimeType,
-      filename: media.filename
+      filename: media.filename,
+      url: media.url
     }).from(media).where(eq(media.id, id)).limit(1);
 
-    if (!item || !item.fileData) {
+    if (!item) {
       return new NextResponse("Not Found", { status: 404 });
+    }
+
+    if (!item.fileData) {
+      // item.url can be a full domain URL (FTP) or a relative path (local)
+      const redirectUrl = item.url.startsWith("http")
+        ? item.url
+        : new URL(item.url, request.url).toString();
+      return NextResponse.redirect(redirectUrl, 301);
     }
 
     return new NextResponse(item.fileData, {
@@ -59,9 +68,12 @@ export async function DELETE(
       return NextResponse.json({ error: "Media not found" }, { status: 404 });
     }
 
-    // Attempt to delete file from disk
+    // Attempt to delete file from disk or FTP
     try {
-      if (item.url.startsWith("/")) {
+      if (item.url.startsWith("/uploads/")) {
+        const { deleteFile } = await import("@/lib/storage");
+        await deleteFile(item.url);
+      } else if (item.url.startsWith("/")) {
         const filePath = join(process.cwd(), "public", item.url);
         await unlink(filePath).catch(() => console.warn(`Could not delete file at ${filePath}`));
       }

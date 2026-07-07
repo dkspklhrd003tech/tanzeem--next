@@ -717,7 +717,7 @@ export const media = mysqlTable("media", {
     thumbnailUrl: text("thumbnail_url"),
     altText: varchar("alt_text", { length: 255 }),
     caption: text("caption"),
-    fileData: longblob("file_data"),
+    fileData: longblob("file_data"), // DEPRECATED: Files are now stored on FTP/Local FS
     uploadedBy: varchar("uploaded_by", { length: 191 }),
     createdAt: timestamp("created_at").defaultNow().notNull(),
 });

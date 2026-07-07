@@ -7,7 +7,14 @@ import { eq, asc } from "drizzle-orm";
 export async function GET() {
   try {
     const rows = await db.select().from(locations).orderBy(asc(locations.name));
-    return NextResponse.json({ locations: rows });
+    
+    // MariaDB/older MySQL returns JSON as string for longtext aliases
+    const parsedRows = rows.map(row => ({
+      ...row,
+      details: typeof row.details === "string" ? JSON.parse(row.details) : row.details
+    }));
+
+    return NextResponse.json({ locations: parsedRows });
   } catch (error) {
     console.error("GET locations error:", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

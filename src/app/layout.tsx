@@ -15,7 +15,6 @@ const plusJakartaSans = Plus_Jakarta_Sans({
   display: "swap",
 });
 
-// ── Body font: Kumbh Sans (matched from tanzeem.org extraction) ─────────────
 const kumbhSans = Kumbh_Sans({
   variable: "--font-body",
   subsets: ["latin"],

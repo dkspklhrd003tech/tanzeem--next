@@ -208,7 +208,7 @@ export function SermonsManager() {
   const fetchCategories = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch("/api/admin/sermon-categories");
+      const res = await fetch("/api/admin/khitab-audio-categories");
       if (res.ok) {
         const data = await res.json();
         setCategories((data.items || []).sort((a: any, b: any) => (a.order || 0) - (b.order || 0)));
@@ -219,7 +219,7 @@ export function SermonsManager() {
 
   const fetchSermons = async () => {
     try {
-      const res = await fetch("/api/admin/sermons");
+      const res = await fetch("/api/admin/khitab-audios");
       if (res.ok) {
         const data = await res.json();
         setSermons((data.items || []));
@@ -231,7 +231,7 @@ export function SermonsManager() {
   const handleCatSave = async () => {
     if (!catFormData.name || !catFormData.slug) return;
     try {
-      const url = editingCatId ? `/api/admin/sermon-categories/${editingCatId}` : "/api/admin/sermon-categories";
+      const url = editingCatId ? `/api/admin/khitab-audio-categories/${editingCatId}` : "/api/admin/khitab-audio-categories";
       const method = editingCatId ? "PUT" : "POST";
       const payload: any = { ...catFormData };
       if (!editingCatId) payload.order = categories.length;
@@ -246,7 +246,7 @@ export function SermonsManager() {
 
   const handleCatDelete = async (item: CategoryItem) => {
     try {
-      await fetch(`/api/admin/sermon-categories/${item.id}`, { method: "DELETE" });
+      await fetch(`/api/admin/khitab-audio-categories/${item.id}`, { method: "DELETE" });
       fetchCategories();
       toast({ title: "Category deleted" });
     } catch (e) {
@@ -263,7 +263,7 @@ export function SermonsManager() {
     const newIndex = categories.findIndex(i => i.id === over.id);
     const reordered = arrayMove(categories, oldIndex, newIndex).map((item, idx) => ({ ...item, order: idx }));
     setCategories(reordered);
-    await fetch("/api/admin/sermon-categories", {
+    await fetch("/api/admin/khitab-audio-categories", {
       method: "PATCH", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ orders: reordered.map(i => ({ id: i.id, orderIndex: i.order })) }),
     });
@@ -294,7 +294,7 @@ export function SermonsManager() {
 
   const handleSermonDelete = async (item: SermonItem) => {
     try {
-      await fetch(`/api/admin/sermons/${item.id}`, { method: "DELETE" });
+      await fetch(`/api/admin/khitab-audios/${item.id}`, { method: "DELETE" });
       fetchSermons();
       toast({ title: "Audio deleted" });
     } catch (e) {
@@ -338,9 +338,8 @@ export function SermonsManager() {
       formDataObj.append("type", "uploads");
 
       const res = await fetch("/api/upload", { method: "POST", body: formDataObj });
-      if (!res.ok) throw new Error("Upload failed");
-
       const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Upload failed");
       const baseName = file.name.replace(/\.[^/.]+$/, "");
       const cleanedTitle = baseName.split(/[-_]+/).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
 
@@ -357,8 +356,8 @@ export function SermonsManager() {
       });
       setIsSermonModalOpen(true);
       toast({ title: "Audio Uploaded Successfully", description: "Configure details to save this audio." });
-    } catch (err) {
-      toast({ variant: "destructive", title: "Upload Failed", description: "Failed to upload the file." });
+    } catch (err: any) {
+      toast({ variant: "destructive", title: "Upload Failed", description: err.message || "Failed to upload the file." });
     } finally {
       setIsUploading(false);
     }
