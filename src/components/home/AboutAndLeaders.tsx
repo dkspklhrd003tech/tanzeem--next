@@ -85,14 +85,14 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
     }, []);
 
     return (
-        <section ref={sectionRef} aria-labelledby="about-heading" className="relative px-6 py-8 md:py-20 overflow-hidden perspective-1000 bg-primary-light">
+        <section ref={sectionRef} aria-labelledby="about-heading" className="relative px-6 py-8 md:py-10 overflow-hidden perspective-1000 bg-primary-light">
             {/* <CinematicBackground /> */}
             <div className="max-w-7xl mx-auto relative z-10">
 
                 {/* ── About Card ── */}
                 <div
                     ref={aboutRef}
-                    className="relative mb-10 md:mb-20 flex flex-col md:flex-row gap-8 md:gap-12 items-center md:items-start overflow-hidden"
+                    className="relative mb-10 flex flex-col md:flex-row gap-8 md:gap-12 items-center md:items-start overflow-hidden"
                 >
                     <div className="absolute inset-0 opacity-20 pointer-events-none" />
                     <div className="absolute inset-0 transition-opacity duration-1000 pointer-events-none" />
@@ -145,7 +145,7 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
                 {/* ── Leader Cards ── */}
                 <div
                     ref={leadersRef}
-                    className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-8"
+                    className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-8"
                     role="list"
                     aria-label="Leadership team"
                 >
@@ -154,11 +154,11 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
                             <div
                                 key={leader.id}
                                 role="listitem"
-                                className="leader-card group bg-white border border-border/50 rounded-2xl p-6 shadow-lg transition-all duration-700 flex flex-col md:flex-col lg:flex-row gap-6 relative overflow-hidden"
+                                className="leader-card group bg-white border border-border/50 rounded-2xl p-6 shadow-lg transition-all duration-700 flex flex-row sm:flex-row md:flex-col lg:flex-row gap-6 relative overflow-hidden"
                             >
                                 
                                 {/* Photo */}
-                                <div className="md:w-44 rounded-xl overflow-hidden shrink-0 border border-white/2 relative z-10">
+                                <div className="w-44 rounded-xl overflow-hidden shrink-0 border border-white/2 relative z-10">
                                     {leader.avatar ? (
                                         <img
                                             src={leader.avatar}

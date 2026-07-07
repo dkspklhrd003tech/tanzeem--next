@@ -101,7 +101,7 @@ export function ModernizedProsePage({
   return (
     <div className="min-h-screen bg-slate-50/50 ">
       {/* ── Gorgeous Hero Header ── */}
-      <div className="relative overflow-hidden bg-primary text-white pt-24 pb-20 md:pt-28 md:pb-28">
+      <div className="relative overflow-hidden bg-primary text-white py-15 md:py-28">
         {/* Global Banner Background Image */}
         {bgImage && (
           <>
@@ -162,7 +162,7 @@ export function ModernizedProsePage({
       </div>
 
       {/* ── Main Layout Body ── */}
-      <div className="container mx-auto my-8 md:my-12">
+      <div className="container mx-auto p-6 md:my-8 md:my-12">
         <div className="grid grid-cols-1 gap-6 md:gap-8 items-start">
 
           {/* Left / Main Column — Article Text */}

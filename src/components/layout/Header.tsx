@@ -184,7 +184,7 @@ export function Header() {
         animate={{ y: 0 }}
         transition={{ duration: 0.3 }}
       >
-        <div className="container mx-auto">
+        <div className="container mx-auto p-0">
           <div className="flex items-center justify-between h-16 md:h-20">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-3 shrink-0">
@@ -192,7 +192,7 @@ export function Header() {
                 <img
                   src={logoSrc}
                   alt="Tanzeem-e-Islami"
-                  className="h-10 md:h-14 w-auto object-contain transition-transform"
+                  className="h-10 md:h-14 w-[95px] md:w-auto object-contain transition-transform"
                 />
               ) : (
                 <>
@@ -308,7 +308,7 @@ export function Header() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-start justify-center pt-32 px-8"
+              className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-start justify-center pt-32 px-6"
               onClick={() => setIsSearchOpen(false)}
             >
               <motion.div

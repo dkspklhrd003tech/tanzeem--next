@@ -99,7 +99,7 @@ export function PageBanner({ settings }: PageBannerProps) {
 
   return (
     <section
-      className="relative overflow-hidden bg-primary text-white pt-24 pb-20 md:pt-28 md:pb-28 flex items-center justify-center text-center w-full"
+      className="relative overflow-hidden bg-primary text-white py-8 md:py-28 flex items-center justify-center text-center w-full"
     >
       {/* Background Image - global setting */}
       {bgImage && (
@@ -126,7 +126,7 @@ export function PageBanner({ settings }: PageBannerProps) {
       <div className="container relative z-20 px-4">
         <h1
           className={cn(
-            "text-4xl md:text-5xl lg:text-6xl font-bold pt-4 pb-4 drop-shadow-lg line-clamp-1",
+            "text-2xl md:text-5xl lg:text-6xl font-bold py-3 drop-shadow-lg line-clamp-1",
             titleLoading && "animate-pulse",
           )}
           style={{ color: textColor }}

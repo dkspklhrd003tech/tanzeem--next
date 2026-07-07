@@ -16,9 +16,8 @@ interface StatsGridProps {
 
 export function StatsGrid({ stats, backgroundColor = "#005031", textColor = "#ffffff" }: StatsGridProps) {
   return (
-    <section
-      className="py-20 relative overflow-hidden"
-      style={{ backgroundColor }}
+    <section 
+      className="py-20 relative overflow-hidden bg-primary-light"
     >
       {/* Decorative background element */}
       <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32 blur-3xl" />
@@ -37,13 +36,13 @@ export function StatsGrid({ stats, backgroundColor = "#005031", textColor = "#ff
             >
               <div
                 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight"
-                style={{ color: textColor }}
+                
               >
                 {stat.number}
               </div>
               <div
                 className="text-sm md:text-base font-medium uppercase tracking-widest opacity-80"
-                style={{ color: textColor }}
+                
               >
                 {stat.label}
               </div>
