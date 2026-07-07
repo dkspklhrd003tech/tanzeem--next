@@ -96,11 +96,6 @@ export function AudioPlayerPage({ item, related, customFieldSchema = [] }: Audio
               {item.title}
             </h1>
             <div className="flex flex-wrap items-center gap-4 text-sm text-foreground-muted mb-4">
-              {item.speaker && (
-                <Link href={`/speakers/${item.speaker.slug}`} className="hover:text-primary transition-colors font-medium">
-                  {item.speaker.name}
-                </Link>
-              )}
               {item.duration && (
                 <span className="flex items-center gap-1">
                   <Clock className="h-3.5 w-3.5" />
@@ -149,7 +144,7 @@ export function AudioPlayerPage({ item, related, customFieldSchema = [] }: Audio
                 {customFieldSchema.map((field) => {
                   const val = item.customFields?.[field.fieldKey];
                   if (val === undefined || val === null || val === "") return null;
-                  
+
                   return (
                     <div key={field.id} className="space-y-1">
                       <p className="text-xs text-foreground-muted uppercase tracking-wider">{field.label}</p>

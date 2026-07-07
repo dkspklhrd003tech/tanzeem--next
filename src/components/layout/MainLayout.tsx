@@ -8,7 +8,6 @@ import { PageBanner } from "./PageBanner";
 import { PersistentAudioPlayer } from "@/components/audio/PersistentAudioPlayer";
 import { ShareSidebar } from "@/components/shared/ShareSidebar";
 import { useSettings } from "@/hooks/use-settings";
-import { ScrollProgress } from "@/components/ui/scroll-progress";
 import { BackToTop } from "@/components/ui/back-to-top";
 
 interface MainLayoutProps {
@@ -54,8 +53,7 @@ export function MainLayout({ children }: MainLayoutProps) {
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* ScrollProgress and BackToTop are handled globally in MainLayout */}
-      {!isSiteManager && <ScrollProgress />}
+      {/* BackToTop is handled globally in MainLayout */}
       {!isSiteManager && <BackToTop />}
       {!isSiteManager && <Header />}
 
