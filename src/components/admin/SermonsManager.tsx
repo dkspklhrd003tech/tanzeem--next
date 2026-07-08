@@ -536,8 +536,9 @@ export function SermonsManager() {
                 <Label>Audio URL</Label>
                 <div className="flex gap-2">
                   <Input value={sermonFormData.audioUrl} onChange={e => setSermonFormData({ ...sermonFormData, audioUrl: e.target.value })} placeholder="Enter URL or upload file..." />
-                  <Button type="button" variant="secondary" onClick={() => fileInputRef.current?.click()}>
-                    <UploadCloud className="h-4 w-4 mr-2" /> Upload
+                  <Button type="button" variant="secondary" onClick={() => fileInputRef.current?.click()} disabled={isUploading}>
+                    {isUploading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <UploadCloud className="h-4 w-4 mr-2" />}
+                    {isUploading ? "Uploading..." : "Upload"}
                   </Button>
                 </div>
               </div>

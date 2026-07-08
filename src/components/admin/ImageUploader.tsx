@@ -246,8 +246,9 @@ export function ImageUploader({
           "hover:border-primary/50 cursor-pointer p-8 flex flex-col items-center justify-center",
           value &&
           "p-4 min-h-[150px] flex items-center justify-center bg-zinc-50/50",
+          isUploading && "pointer-events-none opacity-60"
         )}
-        onClick={() => !value && fileInputRef.current?.click()}
+        onClick={() => !value && !isUploading && fileInputRef.current?.click()}
       >
         {value ? (
           <>
@@ -278,6 +279,11 @@ export function ImageUploader({
                 Remove
               </Button>
             </div>
+          </>
+        ) : isUploading ? (
+          <>
+            <Loader2 className="h-7 w-7 text-primary animate-spin mb-2" />
+            <p className="text-xs font-medium">Uploading Image…</p>
           </>
         ) : (
           <>

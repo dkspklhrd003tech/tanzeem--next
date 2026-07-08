@@ -943,6 +943,10 @@ export default function AudioBooksPageEditor({ pageId, initialPageData }: AudioB
                       className="font-mono"
                       placeholder="https://your-server.com/uploads/..."
                     />
+                    <Button type="button" variant="secondary" onClick={() => fileInputRef.current?.click()} disabled={isUploading}>
+                      {isUploading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <UploadCloud className="h-4 w-4 mr-2" />}
+                      {isUploading ? "Uploading..." : "Upload"}
+                    </Button>
                     {formData.audioUrl && (
                       <Button variant="outline" size="icon" asChild>
                         <a href={formData.audioUrl} target="_blank" rel="noreferrer" title="Open File">
