@@ -4,13 +4,15 @@ import Link from "next/link";
 import { ArrowLeft, Clock, Headphones, Download, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ClientShareButton } from "@/components/shared/ClientShareButton";
+import { VideoEmbed } from "./VideoEmbed";
 
 interface AudioDetailProps {
   audio: {
     id: string;
     title: string;
     description?: string | null;
-    audioUrl: string;
+    audioUrl?: string | null;
+    videoUrl?: string | null;
     duration?: number | null;
     thumbnailUrl?: string | null;
     speakerName?: string | null;
@@ -87,21 +89,27 @@ export function AudioDetail({ audio, backHref, backLabel }: AudioDetailProps) {
             <p className="text-muted-foreground leading-relaxed">{audio.description}</p>
           )}
 
-          {/* Audio Player */}
-          <div className="bg-card border border-border rounded-xl p-4 shadow-sm">
-            <audio controls className="w-full" src={audio.audioUrl}>
-              Your browser does not support the audio element.
-            </audio>
-          </div>
+          {/* Media Player */}
+          {audio.videoUrl ? (
+            <VideoEmbed url={audio.videoUrl} />
+          ) : audio.audioUrl ? (
+            <div className="bg-card border border-border rounded-xl p-4 shadow-sm">
+              <audio controls className="w-full" src={audio.audioUrl}>
+                Your browser does not support the audio element.
+              </audio>
+            </div>
+          ) : null}
 
           {/* Download */}
-          <div className="flex gap-3">
-            <Button asChild variant="default" className="gap-2">
-              <a href={audio.audioUrl} download>
-                <Download className="h-4 w-4" /> Download
-              </a>
-            </Button>
-          </div>
+          {audio.audioUrl && (
+            <div className="flex gap-3">
+              <Button asChild variant="default" className="gap-2">
+                <a href={audio.audioUrl} download>
+                  <Download className="h-4 w-4" /> Download
+                </a>
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </div>

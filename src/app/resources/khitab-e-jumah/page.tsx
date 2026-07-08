@@ -4,7 +4,7 @@ import { eq, desc, and } from "drizzle-orm";
 import { CTABanner } from "@/components/shared/CTABanner";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
-import { Folder } from "lucide-react";
+import { Headset } from "lucide-react";
 import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
@@ -38,26 +38,27 @@ export default async function KhitabEJumahCategoriesPage() {
 
                     <div className={
                         `grid gap-6 ` +
-                        (categories.length === 1 ? "grid-cols-1 max-w-2xl mx-auto" :
-                            categories.length === 2 ? "grid-cols-1 md:grid-cols-2 max-w-4xl mx-auto" :
-                                "grid-cols-1 sm:grid-cols-2 md:grid-cols-3")
+                        (categories.length === 1 ? "grid gap-4 grid-cols-1 md:grid-cols-3 max-w-5xl"
+                            : "grid gap-4 grid-cols-1 md:grid-cols-3")
                     }>
                         {categories.map((cat: any) => {
                             const cleanSlug = cat.slug?.replace(/^\/+/, '') || '';
                             return (
-                            <Link href={`/resources/khitab-e-jumah/category/${cleanSlug}`} key={cat.id}>
-                                <Card className="overflow-hidden hover:shadow-lg transition-all h-full group border-border/50 hover:border-primary/50">
-                                    <CardContent className="p-2 flex flex-row items-center text-center">
-                                        <div className="w-10 h-10 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform">
-                                            <Folder className="w-6 h-6" />
-                                        </div>
-                                        <h3 className="font-bold text-xl mb-1 text-foreground">{cat.name}</h3>
-                                        {cat.urduName && (
-                                            <h4 className="font-bold text-lg text-foreground font-amiri mb-3" dir="rtl">{cat.urduName}</h4>
-                                        )}
-                                    </CardContent>
-                                </Card>
-                            </Link>
+                                <Link href={`/resources/khitab-e-jumah/category/${cleanSlug}`} key={cat.id}>
+                                    <Card className="cursor-pointer overflow-hidden hover:shadow-lg transition-all h-full group border-border/50 hover:border-primary/50">
+                                        <CardContent className="p-4 flex flex-row items-center gap-4 text-left">
+                                            <div className="w-12 h-12 shrink-0 rounded-2xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                                                <Headset className="w-6 h-6" />
+                                            </div>
+                                            <div className="flex flex-col flex-1">
+                                                <h3 className="font-bold text-lg md:text-xl text-foreground leading-tight mb-1">{cat.name}</h3>
+                                                {cat.urduName && (
+                                                    <h4 className="font-bold text-lg text-foreground font-amiri text-right" dir="rtl">{cat.urduName}</h4>
+                                                )}
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                </Link>
                             );
                         })}
 

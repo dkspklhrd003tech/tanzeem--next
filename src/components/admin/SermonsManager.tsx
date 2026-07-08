@@ -54,6 +54,7 @@ interface SermonItem {
   excerpt?: string;
   description?: string;
   audioUrl?: string;
+  videoUrl?: string;
   isPublished: boolean;
   publishedAt?: string;
   order: number;
@@ -184,9 +185,10 @@ export function SermonsManager() {
   const [catFormErrors, setCatFormErrors] = useState<Record<string, string>>({});
 
   const [isSermonModalOpen, setIsSermonModalOpen] = useState(false);
-  const [sermonFormData, setSermonFormData] = useState({ title: "", titleUrdu: "", slug: "", excerpt: "", description: "", audioUrl: "", isPublished: true, publishedAt: "" });
+  const [sermonFormData, setSermonFormData] = useState({ title: "", titleUrdu: "", slug: "", excerpt: "", description: "", audioUrl: "", videoUrl: "", isPublished: true, publishedAt: "" });
   const [editingSermonId, setEditingSermonId] = useState<string | null>(null);
   const [sermonFormErrors, setSermonFormErrors] = useState<Record<string, string>>({});
+  const [mediaType, setMediaType] = useState<"audio" | "video">("audio");
 
   const [isUploading, setIsUploading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -285,7 +287,9 @@ export function SermonsManager() {
     const errors: Record<string, string> = {};
     if (!sermonFormData.title.trim()) errors.title = "Title is required";
     if (!sermonFormData.slug.trim()) errors.slug = "Slug is required";
-    if (!sermonFormData.audioUrl.trim()) errors.audioUrl = "Audio URL is required";
+    
+    if (mediaType === "audio" && !sermonFormData.audioUrl.trim()) errors.audioUrl = "Audio URL is required";
+    if (mediaType === "video" && !sermonFormData.videoUrl.trim()) errors.videoUrl = "Video URL is required";
 
     if (Object.keys(errors).length > 0) {
       setSermonFormErrors(errors);
@@ -300,6 +304,9 @@ export function SermonsManager() {
         categoryId: activeCategory?.id,
         publishedAt: sermonFormData.publishedAt ? new Date(sermonFormData.publishedAt).toISOString() : null,
       };
+
+      if (mediaType === "audio") payload.videoUrl = "";
+      if (mediaType === "video") payload.audioUrl = "";
       
       const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
       if (!res.ok) {
@@ -348,15 +355,15 @@ export function SermonsManager() {
 
   const { uploadFile: chunkedUpload } = useChunkedUpload();
 
-  const handleAudioUploadDirectly = async (file: File) => {
-    if (!file.type.startsWith("audio/")) {
-      toast({ variant: "destructive", title: "Invalid file type", description: "Please upload a valid audio file." });
+  const handleMediaUploadDirectly = async (file: File) => {
+    const isAudio = file.type.startsWith("audio/");
+    const isVideo = file.type.startsWith("video/");
+    if (!isAudio && !isVideo) {
+      toast({ variant: "destructive", title: "Invalid file type", description: "Please upload a valid audio or video file." });
       return;
     }
     setIsUploading(true);
     try {
-      // Use chunked upload to bypass Vercel's 4.5MB serverless function limit.
-      // Files are split into 3MB chunks and assembled server-side before FTP transfer.
       const data = await chunkedUpload(file, {
         onProgress: (pct) => console.log(`[SermonsManager] Upload progress: ${pct}%`),
       });
@@ -371,12 +378,14 @@ export function SermonsManager() {
         slug: slugify(cleanedTitle),
         excerpt: "",
         description: "",
-        audioUrl: data.url,
+        audioUrl: isAudio ? data.url : "",
+        videoUrl: isVideo ? data.url : "",
         isPublished: true,
         publishedAt: new Date().toISOString().split("T")[0]
       });
+      setMediaType(isVideo ? "video" : "audio");
       setIsSermonModalOpen(true);
-      toast({ title: "Audio Uploaded Successfully", description: "Configure details to save this audio." });
+      toast({ title: "Media Uploaded Successfully", description: "Configure details to save this item." });
     } catch (err: any) {
       toast({ variant: "destructive", title: "Upload Failed", description: err.message || "Failed to upload the file." });
     } finally {
@@ -414,8 +423,8 @@ export function SermonsManager() {
               <Plus className="w-4 h-4 mr-2" /> Add Category
             </Button>
           ) : (
-            <Button onClick={() => { setEditingSermonId(null); setSermonFormData({ title: "", titleUrdu: "", slug: "", excerpt: "", description: "", audioUrl: "", isPublished: true, publishedAt: "" }); setSermonFormErrors({}); setIsSermonModalOpen(true); }}>
-              <Plus className="w-4 h-4 mr-2" /> Add Audio
+            <Button onClick={() => { setEditingSermonId(null); setSermonFormData({ title: "", titleUrdu: "", slug: "", excerpt: "", description: "", audioUrl: "", videoUrl: "", isPublished: true, publishedAt: "" }); setSermonFormErrors({}); setMediaType("audio"); setIsSermonModalOpen(true); }}>
+              <Plus className="w-4 h-4 mr-2" /> Add Media
             </Button>
           )}
         </div>
@@ -459,7 +468,7 @@ export function SermonsManager() {
                   isUploading && "pointer-events-none opacity-60"
                 )}
               >
-                <input ref={fileInputRef} type="file" accept="audio/*" className="hidden" onChange={handleFileChange} />
+                <input ref={fileInputRef} type="file" accept="audio/*,video/*" className="hidden" onChange={handleFileChange} />
                 {isUploading ? (
                   <div className="flex flex-col items-center gap-3">
                     <Loader2 className="h-10 w-10 text-primary animate-spin" />
@@ -491,9 +500,11 @@ export function SermonsManager() {
                         excerpt: item.excerpt || "", 
                         description: item.description || "", 
                         audioUrl: item.audioUrl || "", 
+                        videoUrl: item.videoUrl || "",
                         isPublished: item.isPublished,
                         publishedAt: item.publishedAt ? new Date(item.publishedAt).toISOString().split("T")[0] : "",
                       }); 
+                      setMediaType(item.videoUrl ? "video" : "audio");
                       setSermonFormErrors({});
                       setIsSermonModalOpen(true); 
                     }}
@@ -553,7 +564,7 @@ export function SermonsManager() {
             <div className="p-6 border-b border-border flex justify-between items-center bg-muted/20">
               <h2 className="text-xl font-bold flex items-center gap-2">
                 <Mic className="h-5 w-5 text-primary" />
-                {editingSermonId ? "Edit Audio" : "Add Audio"}
+                {editingSermonId ? "Edit Media" : "Add Media"}
               </h2>
               <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsSermonModalOpen(false)}>×</Button>
             </div>
@@ -573,16 +584,51 @@ export function SermonsManager() {
                 {sermonFormErrors.slug && <p className="text-xs text-destructive">{sermonFormErrors.slug}</p>}
               </div>
               
-              <div className="space-y-2">
-                <Label>Audio URL <span className="text-destructive">*</span></Label>
-                <div className="flex gap-2">
-                  <Input className={cn(sermonFormErrors.audioUrl && "border-destructive")} value={sermonFormData.audioUrl} onChange={e => setSermonFormData({ ...sermonFormData, audioUrl: e.target.value })} placeholder="Enter URL or upload file..." />
-                  <Button type="button" variant="secondary" onClick={() => fileInputRef.current?.click()} disabled={isUploading}>
-                    {isUploading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <UploadCloud className="h-4 w-4 mr-2" />}
-                    {isUploading ? "Uploading..." : "Upload"}
+              <div className="space-y-4 pt-2 border-t border-border mt-2">
+                <div className="flex gap-2 p-1 bg-muted rounded-full w-fit">
+                  <Button
+                    type="button"
+                    variant={mediaType === "audio" ? "default" : "ghost"}
+                    className="rounded-full px-6 h-8 text-xs font-semibold"
+                    onClick={() => setMediaType("audio")}
+                  >
+                    Audio
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={mediaType === "video" ? "default" : "ghost"}
+                    className="rounded-full px-6 h-8 text-xs font-semibold"
+                    onClick={() => setMediaType("video")}
+                  >
+                    Video
                   </Button>
                 </div>
-                {sermonFormErrors.audioUrl && <p className="text-xs text-destructive">{sermonFormErrors.audioUrl}</p>}
+
+                {mediaType === "audio" ? (
+                  <div className="space-y-2">
+                    <Label>Audio URL <span className="text-destructive">*</span></Label>
+                    <div className="flex gap-2">
+                      <Input className={cn(sermonFormErrors.audioUrl && "border-destructive")} value={sermonFormData.audioUrl} onChange={e => setSermonFormData({ ...sermonFormData, audioUrl: e.target.value })} placeholder="Enter URL or upload file..." />
+                      <Button type="button" variant="secondary" onClick={() => fileInputRef.current?.click()} disabled={isUploading}>
+                        {isUploading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <UploadCloud className="h-4 w-4 mr-2" />}
+                        {isUploading ? "Uploading..." : "Upload"}
+                      </Button>
+                    </div>
+                    {sermonFormErrors.audioUrl && <p className="text-xs text-destructive">{sermonFormErrors.audioUrl}</p>}
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <Label>Video URL or Iframe <span className="text-destructive">*</span></Label>
+                    <div className="flex gap-2">
+                      <Input className={cn(sermonFormErrors.videoUrl && "border-destructive")} value={sermonFormData.videoUrl} onChange={e => setSermonFormData({ ...sermonFormData, videoUrl: e.target.value })} placeholder="Enter URL, Iframe, or upload file..." />
+                      <Button type="button" variant="secondary" onClick={() => fileInputRef.current?.click()} disabled={isUploading}>
+                        {isUploading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <UploadCloud className="h-4 w-4 mr-2" />}
+                        {isUploading ? "Uploading..." : "Upload"}
+                      </Button>
+                    </div>
+                    {sermonFormErrors.videoUrl && <p className="text-xs text-destructive">{sermonFormErrors.videoUrl}</p>}
+                  </div>
+                )}
               </div>
               <div className="space-y-2"><Label>Excerpt</Label><Textarea value={sermonFormData.excerpt} onChange={e => setSermonFormData({ ...sermonFormData, excerpt: e.target.value })} rows={2} /></div>
               <div className="space-y-2"><Label>Description</Label><Textarea value={sermonFormData.description} onChange={e => setSermonFormData({ ...sermonFormData, description: e.target.value })} rows={4} /></div>
@@ -593,12 +639,12 @@ export function SermonsManager() {
             <div className="p-6 border-t border-border bg-muted/20 flex justify-end gap-3">
               <Button variant="outline" onClick={() => setIsSermonModalOpen(false)}>Cancel</Button>
               <ConfirmDialog
-                title={editingSermonId ? "Update Audio" : "Add Audio"}
-                description={`Are you sure you want to ${editingSermonId ? "update" : "add"} this audio?`}
+                title={editingSermonId ? "Update Media" : "Add Media"}
+                description={`Are you sure you want to ${editingSermonId ? "update" : "add"} this item?`}
                 onConfirm={handleSermonSave}
               >
                 <Button disabled={isUploading} className="bg-primary text-primary-foreground hover:bg-primary/95">
-                  {editingSermonId ? "Update Audio" : "Save Audio"}
+                  {editingSermonId ? "Update Media" : "Save Media"}
                 </Button>
               </ConfirmDialog>
             </div>

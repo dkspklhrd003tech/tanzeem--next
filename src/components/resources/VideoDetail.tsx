@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { ArrowLeft, Clock, User, Calendar } from "lucide-react";
+import { VideoEmbed } from "./VideoEmbed";
 
 interface VideoDetailProps {
   video: {
@@ -20,13 +21,8 @@ interface VideoDetailProps {
   backLabel: string;
 }
 
-function getYouTubeId(url: string): string | null {
-  const match = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]+)/);
-  return match ? match[1] : null;
-}
-
 export function VideoDetail({ video, backHref, backLabel }: VideoDetailProps) {
-  const youtubeId = video.embedUrl ? getYouTubeId(video.embedUrl) : getYouTubeId(video.videoUrl);
+  const finalUrl = video.embedUrl || video.videoUrl;
 
   return (
     <div className="container mx-auto py-6 md:py-8">
@@ -36,21 +32,11 @@ export function VideoDetail({ video, backHref, backLabel }: VideoDetailProps) {
 
       <div className="max-w-5xl mx-auto space-y-8">
         {/* Video Player */}
-        <div className="aspect-video rounded-xl overflow-hidden shadow-lg bg-black">
-          {youtubeId ? (
-            <iframe
-              src={`https://www.youtube.com/embed/${youtubeId}`}
-              title={video.title}
-              className="w-full h-full"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              allowFullScreen
-            />
-          ) : video.videoUrl ? (
-            <video controls className="w-full h-full" src={video.videoUrl}>
-              Your browser does not support the video element.
-            </video>
+        <div className="w-full">
+          {finalUrl ? (
+            <VideoEmbed url={finalUrl} />
           ) : (
-            <div className="w-full h-full flex items-center justify-center bg-muted">
+            <div className="aspect-video rounded-xl overflow-hidden shadow-lg bg-muted flex items-center justify-center">
               <p className="text-muted-foreground">Video not available</p>
             </div>
           )}
