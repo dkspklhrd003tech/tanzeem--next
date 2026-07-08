@@ -117,7 +117,10 @@ export function ImageUploader({
               body: formData,
             });
 
-            if (!res.ok) throw new Error("Upload failed");
+            if (!res.ok) {
+              const errData = await res.json().catch(() => ({}));
+              throw new Error(errData.error || `Upload failed with status ${res.status}`);
+            }
 
             const data = await res.json();
             onChange(data.url, isControlled ? (altValue ?? "") : localAltValue);
@@ -132,7 +135,7 @@ export function ImageUploader({
             toast({
               variant: "destructive",
               title: "Error",
-              description: "Failed to upload image. Please try again.",
+              description: error instanceof Error ? error.message : "Failed to upload image. Please try again.",
             });
           } finally {
             setIsUploading(false);
@@ -207,7 +210,10 @@ export function ImageUploader({
         body: formData,
       });
 
-      if (!res.ok) throw new Error("Upload failed");
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.error || `Upload failed with status ${res.status}`);
+      }
 
       const data = await res.json();
       onChange(data.url, isControlled ? (altValue ?? "") : localAltValue);
@@ -223,7 +229,7 @@ export function ImageUploader({
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Failed to upload image. Please try again.",
+        description: error instanceof Error ? error.message : "Failed to upload image. Please try again.",
       });
     } finally {
       setIsUploading(false);
@@ -253,7 +259,7 @@ export function ImageUploader({
         {value ? (
           <>
             <img
-              src={value}
+              src={value?.startsWith("http") ? value : `${process.env.NEXT_PUBLIC_MEDIA_URL || "https://tanzeemmedia.dks.com.pk"}${value}`}
               alt={isControlled ? (altValue ?? "") : localAltValue}
               className="w-auto h-auto max-h-[300px] object-contain rounded-lg"
             />

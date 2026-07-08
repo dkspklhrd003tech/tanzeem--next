@@ -343,7 +343,7 @@ export default function PagesListPage() {
               {bannerBgImage ? (
                 <div
                   className="absolute inset-0 z-0 bg-contain bg-center"
-                  style={{ backgroundImage: `url('${bannerBgImage}')` }}
+                  style={{ backgroundImage: `url('${bannerBgImage?.startsWith("http") ? bannerBgImage : `${process.env.NEXT_PUBLIC_MEDIA_URL || "https://tanzeemmedia.dks.com.pk"}${bannerBgImage}`}')` }}
                 />
               ) : null}
 

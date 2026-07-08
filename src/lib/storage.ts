@@ -29,7 +29,8 @@ async function createFtpClient(): Promise<Client> {
     const user = process.env.FTP_USER ?? "";
     const password = process.env.FTP_PASSWORD ?? "";
     const port = parseInt(process.env.FTP_PORT ?? "21", 10);
-    const initialSecure = process.env.FTP_SECURE !== "false";
+    // Default to false to prevent Hostinger data socket TLS session resumption drops (ECONNRESET)
+    const initialSecure = process.env.FTP_SECURE === "true";
 
     console.log(`[FTP] Connecting → host=${host} port=${port} secure=${initialSecure}`);
 

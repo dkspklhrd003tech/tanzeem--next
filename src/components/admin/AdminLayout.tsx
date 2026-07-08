@@ -69,11 +69,6 @@ const menuItems: any[] = [
     href: "/sitemanager/pages",
   },
   {
-    title: "Media Library",
-    icon: Folder,
-    href: "/sitemanager?section=media",
-  },
-  {
     title: "SEO / Meta",
     icon: Hash,
     href: "/sitemanager?section=seo",

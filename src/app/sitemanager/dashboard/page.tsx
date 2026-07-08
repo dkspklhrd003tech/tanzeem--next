@@ -115,7 +115,6 @@ const TOP_CARDS = [
   { key: "books" as keyof StatsData, label: "Books", icon: BookOpen, color: "bg-amber-500/10 text-amber-600", href: "/sitemanager/books" },
   { key: "magazines" as keyof StatsData, label: "Magazines", icon: BookMarked, color: "bg-orange-500/10 text-orange-600", href: "/sitemanager/magazines" },
   { key: "sermons" as keyof StatsData, label: "Sermons", icon: Mic2, color: "bg-teal-500/10 text-teal-600", href: "/sitemanager/sermons" },
-  { key: "media" as keyof StatsData, label: "Media Files", icon: Image, color: "bg-violet-500/10 text-violet-600", href: "/sitemanager/media" },
   { key: "unreadMessages" as keyof StatsData, label: "Unread Messages", icon: Mail, color: "bg-rose-500/10 text-rose-600", href: "/sitemanager/contact" },
 ];
 
@@ -287,7 +286,6 @@ export default function DashboardPage() {
         <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">Quick Actions</h2>
         <div className="flex flex-wrap gap-2">
           <Button asChild size="sm"><Link href="/sitemanager/pages"><Plus className="h-4 w-4" />Create New Page</Link></Button>
-          <Button asChild variant="outline" size="sm"><Link href="/sitemanager/media"><Upload className="h-4 w-4" />Upload Media</Link></Button>
           <Button asChild variant="outline" size="sm"><Link href="/sitemanager/header"><Menu className="h-4 w-4" />Manage Menu</Link></Button>
           <Button asChild variant="outline" size="sm"><Link href="/" target="_blank" rel="noopener noreferrer"><Globe className="h-4 w-4" />View Website</Link></Button>
         </div>
@@ -389,23 +387,6 @@ export default function DashboardPage() {
               rowKeys={[{ key: "count", label: "Items" }]}
             />
 
-            {/* Media Library */}
-            <KpiCard
-              title="Media Library"
-              icon={Image}
-              iconColor="text-violet-600"
-              metrics={[
-                { label: "Files", value: stats?.media ?? 0, icon: Layers },
-                { label: "—", value: "—", icon: Activity },
-                { label: "—", value: "—", icon: Activity },
-              ]}
-              rows={mediaByType}
-              rowLabel="types"
-              rowKeys={[
-                { key: "count", label: "Files", isBar: true, barColor: "bg-violet-500" },
-                { key: "totalSizeMB", label: "MB" },
-              ]}
-            />
 
           </div>
         )}

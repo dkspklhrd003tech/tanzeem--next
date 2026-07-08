@@ -22,6 +22,8 @@ const nextConfig: NextConfig = {
       // Tanzeem.org WordPress media (cover images, thumbnails)
       { protocol: "https", hostname: "www.tanzeem.org" },
       { protocol: "https", hostname: "tanzeem.org" },
+      // Tanzeem media FTP/CDN host (uploaded audio/video/image assets)
+      { protocol: "https", hostname: "tanzeemmedia.dks.com.pk" },
       // YouTube thumbnails
       { protocol: "https", hostname: "i.ytimg.com" },
       { protocol: "https", hostname: "img.youtube.com" },
@@ -81,13 +83,23 @@ const nextConfig: NextConfig = {
       { source: "/resources/books/:slug", destination: "/books/:slug", permanent: true },
       // Contact alias
       { source: "/contact-us", destination: "/contact", permanent: true },
-      { 
-        source: "/uploads/:path*", 
-        destination: `${process.env.NEXT_PUBLIC_MEDIA_URL || "https://tanzeemmedia.dks.com.pk"}/:path*`, 
-        permanent: false 
-      },
     ];
   },
+
+  // ── Rewrites — proxy external media transparently ─────────────────────────
+  async rewrites() {
+    return {
+      beforeFiles: [],
+      afterFiles: [
+        { 
+          source: "/uploads/:path*", 
+          destination: `${process.env.NEXT_PUBLIC_MEDIA_URL || "https://tanzeemmedia.dks.com.pk"}/uploads/:path*`, 
+        }
+      ],
+      fallback: []
+    };
+  },
 };
+
 
 export default nextConfig;
