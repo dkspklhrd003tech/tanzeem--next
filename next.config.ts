@@ -93,7 +93,7 @@ const nextConfig: NextConfig = {
       afterFiles: [
         { 
           source: "/uploads/:path*", 
-          destination: `${process.env.NEXT_PUBLIC_MEDIA_URL || "https://tanzeemmedia.dks.com.pk"}/uploads/:path*`, 
+          destination: `${process.env.NEXT_PUBLIC_MEDIA_URL || "https://tanzeemmedia.dks.com.pk"}/:path*`, 
         }
       ],
       fallback: []

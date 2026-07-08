@@ -90,7 +90,12 @@ export function ModernizedProsePage({
   };
 
   const { settings } = useSettings();
-  const bgImage = settings?.banner_bg_image;
+  const rawBgImage = settings?.banner_bg_image;
+  const bgImage = rawBgImage
+    ? rawBgImage.startsWith("http")
+      ? rawBgImage
+      : `${process.env.NEXT_PUBLIC_MEDIA_URL || "https://tanzeemmedia.dks.com.pk"}${rawBgImage}`
+    : null;
 
   const textColor = settings?.banner_text_color || "#ffffff";
   const separator = settings?.banner_breadcrumb_separator || "/";

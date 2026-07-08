@@ -45,6 +45,7 @@ export default function PagesListPage() {
   const { toast } = useToast();
 
   const [bannerBgImage, setBannerBgImage] = useState<string>("");
+  const [bannerPreviewUrl, setBannerPreviewUrl] = useState<string | null>(null);
   const [isUploadingBanner, setIsUploadingBanner] = useState(false);
   const [bannerError, setBannerError] = useState<string | null>(null);
   const bannerFileInputRef = useRef<HTMLInputElement>(null);
@@ -69,8 +70,10 @@ export default function PagesListPage() {
       }
       const reader = new FileReader();
       reader.onload = () => {
+        const dataUrl = reader.result as string;
+        setBannerPreviewUrl(dataUrl); // show local preview immediately
         const img = new Image();
-        img.src = reader.result as string;
+        img.src = dataUrl;
         img.onload = async () => {
           const width = img.width;
           const height = img.height;
@@ -149,6 +152,7 @@ export default function PagesListPage() {
       if (!settingsRes.ok) throw new Error("Failed to clear banner image setting");
 
       setBannerBgImage("");
+      setBannerPreviewUrl(null);
       toast({
         title: "Success",
         description: "Global Page Banner Background Image removed successfully.",
@@ -343,7 +347,7 @@ export default function PagesListPage() {
               {bannerBgImage ? (
                 <div
                   className="absolute inset-0 z-0 bg-contain bg-center"
-                  style={{ backgroundImage: `url('${bannerBgImage?.startsWith("http") ? bannerBgImage : `${process.env.NEXT_PUBLIC_MEDIA_URL || "https://tanzeemmedia.dks.com.pk"}${bannerBgImage}`}')` }}
+                  style={{ backgroundImage: bannerPreviewUrl ? `url('${bannerPreviewUrl}')` : bannerBgImage ? `url('${process.env.NEXT_PUBLIC_MEDIA_URL || "https://tanzeemmedia.dks.com.pk"}${bannerBgImage}')` : "none" }}
                 />
               ) : null}
 

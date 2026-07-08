@@ -95,7 +95,12 @@ export function PageBanner({ settings }: PageBannerProps) {
     breadcrumbs[breadcrumbs.length - 1]?.label ??
     "Page";
 
-  const bgImage = settings?.banner_bg_image;
+  const rawBgImage = settings?.banner_bg_image;
+  const bgImage = rawBgImage
+    ? rawBgImage.startsWith("http")
+      ? rawBgImage
+      : `${process.env.NEXT_PUBLIC_MEDIA_URL || "https://tanzeemmedia.dks.com.pk"}${rawBgImage}`
+    : null;
 
   return (
     <section

@@ -56,6 +56,8 @@ export function ImageUploader({
   const [isCropping, setIsCropping] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [detectedAspect, setDetectedAspect] = useState<number | null>(null);
+  // Holds the local blob/data URL for immediate preview — avoids fetching from Hostinger
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   // Use controlled altValue (via onAltChange) or local state
   const isControlled = typeof onAltChange === "function";
@@ -93,6 +95,7 @@ export function ImageUploader({
       reader.addEventListener("load", async () => {
         const result = reader.result as string;
         setImage(result);
+        setPreviewUrl(result); // show local preview immediately
 
         const img = new Image();
         img.onload = () => {
@@ -125,6 +128,7 @@ export function ImageUploader({
             const data = await res.json();
             onChange(data.url, isControlled ? (altValue ?? "") : localAltValue);
             setImage(null);
+            // previewUrl stays set — keeps showing the local preview
 
             toast({
               title: "Success",
@@ -219,6 +223,7 @@ export function ImageUploader({
       onChange(data.url, isControlled ? (altValue ?? "") : localAltValue);
       setIsCropping(false);
       setImage(null);
+      // previewUrl stays set — keeps showing the local preview
 
       toast({
         title: "Success",
@@ -259,7 +264,7 @@ export function ImageUploader({
         {value ? (
           <>
             <img
-              src={value?.startsWith("http") ? value : `${process.env.NEXT_PUBLIC_MEDIA_URL || "https://tanzeemmedia.dks.com.pk"}${value}`}
+              src={previewUrl ?? (value?.startsWith("http") ? value : `${process.env.NEXT_PUBLIC_MEDIA_URL || "https://tanzeemmedia.dks.com.pk"}${value}`)}
               alt={isControlled ? (altValue ?? "") : localAltValue}
               className="w-auto h-auto max-h-[300px] object-contain rounded-lg"
             />
