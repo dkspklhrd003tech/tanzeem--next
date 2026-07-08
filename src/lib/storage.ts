@@ -140,8 +140,8 @@ export async function uploadFile({ fileName, folder, buffer }: StorageOptions): 
         client.close();
     }
 
-    const mediaBase = (process.env.NEXT_PUBLIC_MEDIA_URL ?? "").replace(/\/$/, "");
-    return `${mediaBase}${relativePath}`;
+    // Return relative path to store in database
+    return relativePath;
 }
 
 /**
@@ -181,8 +181,8 @@ export async function appendFileChunk({ fileName, folder, buffer, chunkIndex }: 
         client.close();
     }
 
-    const mediaBase = (process.env.NEXT_PUBLIC_MEDIA_URL ?? "").replace(/\/$/, "");
-    return `${mediaBase}${relativePath}`;
+    // Return relative path to store in database
+    return relativePath;
 }
 
 /**

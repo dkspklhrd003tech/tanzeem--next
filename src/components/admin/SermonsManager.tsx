@@ -532,7 +532,15 @@ export function SermonsManager() {
                 <div className="space-y-2"><Label>Title (Urdu)</Label><Input value={sermonFormData.titleUrdu} onChange={e => setSermonFormData({ ...sermonFormData, titleUrdu: e.target.value })} dir="rtl" /></div>
               </div>
               <div className="space-y-2"><Label>Slug</Label><Input value={sermonFormData.slug} onChange={e => setSermonFormData({ ...sermonFormData, slug: e.target.value })} /></div>
-              <div className="space-y-2"><Label>Audio URL</Label><Input value={sermonFormData.audioUrl} onChange={e => setSermonFormData({ ...sermonFormData, audioUrl: e.target.value })} placeholder="Upload via drag/drop or enter URL" /></div>
+              <div className="space-y-2">
+                <Label>Audio URL</Label>
+                <div className="flex gap-2">
+                  <Input value={sermonFormData.audioUrl} onChange={e => setSermonFormData({ ...sermonFormData, audioUrl: e.target.value })} placeholder="Enter URL or upload file..." />
+                  <Button type="button" variant="secondary" onClick={() => fileInputRef.current?.click()}>
+                    <UploadCloud className="h-4 w-4 mr-2" /> Upload
+                  </Button>
+                </div>
+              </div>
               <div className="space-y-2"><Label>Excerpt</Label><Textarea value={sermonFormData.excerpt} onChange={e => setSermonFormData({ ...sermonFormData, excerpt: e.target.value })} rows={2} /></div>
               <div className="space-y-2"><Label>Description</Label><Textarea value={sermonFormData.description} onChange={e => setSermonFormData({ ...sermonFormData, description: e.target.value })} rows={4} /></div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
