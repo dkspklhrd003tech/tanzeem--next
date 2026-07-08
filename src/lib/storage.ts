@@ -134,7 +134,8 @@ export async function uploadFile({ fileName, folder, buffer }: StorageOptions): 
     if (!process.env.FTP_HOST) {
         throw new Error("FTP_HOST is not configured. Media uploads are strictly set to FTP only.");
     }
-    const relativePath = `/${folder}/${fileName}`;
+    const rootDir = resolveFtpRoot();
+    const relativePath = `${rootDir}/${folder}/${fileName}`.replace(/\/+/g, "/");
 
     const client = await createFtpClient();
 
@@ -171,7 +172,8 @@ export async function appendFileChunk({ fileName, folder, buffer, chunkIndex }: 
     if (!process.env.FTP_HOST) {
         throw new Error("FTP_HOST is not configured. Media uploads are strictly set to FTP only.");
     }
-    const relativePath = `/${folder}/${fileName}`;
+    const rootDir = resolveFtpRoot();
+    const relativePath = `${rootDir}/${folder}/${fileName}`.replace(/\/+/g, "/");
 
     const client = await createFtpClient();
 
