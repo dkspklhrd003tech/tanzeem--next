@@ -274,7 +274,7 @@ export function SermonsManager() {
   const handleSermonSave = async () => {
     if (!sermonFormData.title || !sermonFormData.slug) return;
     try {
-      const url = editingSermonId ? `/api/admin/sermons/${editingSermonId}` : "/api/admin/sermons";
+      const url = editingSermonId ? `/api/admin/khitab-audios/${editingSermonId}` : "/api/admin/khitab-audios";
       const method = editingSermonId ? "PUT" : "POST";
       const payload: any = { 
         ...sermonFormData, 
