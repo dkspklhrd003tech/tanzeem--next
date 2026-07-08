@@ -18,12 +18,12 @@ export function CTABanner({
   subheading,
   buttonLabel,
   buttonUrl,
-  backgroundColor = "#c8a84e",
+  backgroundColor = "bg-primary/95",
   backgroundImage,
 }: CTABannerProps) {
   return (
     <section
-      className="py- bg-primary/95 relative overflow-hidden "
+      className={backgroundColor + " relative overflow-hidden "}
     >
       {backgroundImage && (
         <div

@@ -6,7 +6,7 @@ import { MissionAndVideos } from "@/components/home/MissionAndVideos";
 import { PublicationsGrid } from "@/components/home/PublicationsGrid";
 import { CTA } from "@/components/home/CTA";
 import { db } from "@/db";
-import { homeSliders, books, magazines, teamMembers, homeCampaigns, videos, settings, pressReleases } from "@/db/schema";
+import { homeSliders, books, magazines, teamMembers, homeCampaigns, services, videos, settings, pressReleases } from "@/db/schema";
 import { LatestPressReleases } from "@/components/home/LatestPressReleases";
 import { eq, desc, asc } from "drizzle-orm";
 import { webPageJsonLd, buildMetadata } from "@/lib/seo";
@@ -64,7 +64,31 @@ async function HomeContent() {
       .from(homeCampaigns)
       .where(eq(homeCampaigns.isActive, true))
       .orderBy(desc(homeCampaigns.order), desc(homeCampaigns.createdAt));
-  } catch (error) { console.error("Failed to fetch campaigns:", error); }
+
+    const publishedServices = await db
+      .select()
+      .from(services)
+      .where(eq(services.isPublished, true))
+      .orderBy(desc(services.order), desc(services.createdAt));
+
+    const spotlightServices = publishedServices.filter(s => {
+      const fields = s.customFields as any;
+      return fields && fields.showInSpotlight === true;
+    }).map(s => ({
+      id: s.id,
+      title: s.title,
+      imageUrl: s.imageUrl || "",
+      linkUrl: `/services/${s.slug}`,
+      openInNewTab: (s.customFields as any)?.openInNewTab || false,
+      order: s.order,
+      createdAt: s.createdAt,
+    }));
+
+    activeCampaigns = [...activeCampaigns, ...spotlightServices].sort((a, b) => {
+      if (a.order !== b.order) return b.order - a.order;
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
+  } catch (error) { console.error("Failed to fetch campaigns or services:", error); }
 
   try {
     team = await db

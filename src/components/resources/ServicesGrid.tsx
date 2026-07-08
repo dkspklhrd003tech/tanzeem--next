@@ -126,15 +126,18 @@ export function ServicesGrid({ initialItems }: ServicesGridProps) {
                   transition={{ duration: 0.4, delay: idx * 0.05 }}
                   className="relative bg-card border bg-slate-100 rounded-2xl overflow-hidden cursor-pointer hover:-translate-y-1.5 transition-all duration-300 h-full flex flex-col"
                 >
-                  {/* Visual Top Bar */}
-                  <div
-                    className={cn(
-                      "h-2 w-full shrink-0",
-                      hasimage
-                        ? "bg-primary"
-                        : "bg-gradient-to-r from-secondary to-primary"
-                    )}
-                  />
+                  {/* Visual Top Bar or Thumbnail */}
+                  {hasimage ? (
+                    <div className="relative w-full overflow-hidden bg-muted/50 border-b border-border/50" style={{ aspectRatio: '16/9' }}>
+                       <img
+                           src={item.imageUrl as string}
+                           alt={item.title}
+                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]"
+                       />
+                    </div>
+                  ) : (
+                    <div className="h-2 w-full shrink-0 bg-gradient-to-r from-secondary to-primary" />
+                  )}
 
                   <div className="p-6 flex flex-col flex-1 justify-between">
                     <div>

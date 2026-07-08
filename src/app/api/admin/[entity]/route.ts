@@ -93,7 +93,6 @@ const entityMap: Record<string, any> = {
     "book-categories": bookCategories,
     "video-categories": videoCategories,
     "audio-categories": audioCategories,
-    "sermon-categories": sermonCategories,
     speakers,
 };
 
@@ -157,7 +156,7 @@ export async function GET(
         if (authError) return authError;
 
         const { entity } = await params;
-        const table = entityMap[entity];
+        const table = entityMap[entity.toLowerCase()];
 
         if (!table) {
             return NextResponse.json({ error: "Invalid entity type" }, { status: 400 });
@@ -191,7 +190,7 @@ export async function POST(
         const user = await getCurrentUser(request);
 
         const { entity } = await params;
-        const table = entityMap[entity];
+        const table = entityMap[entity.toLowerCase()];
 
         if (!table) {
             return NextResponse.json({ error: "Invalid entity type" }, { status: 400 });

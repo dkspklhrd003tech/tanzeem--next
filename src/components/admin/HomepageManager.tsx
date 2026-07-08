@@ -4,7 +4,6 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { HomeSlidersManagement } from "./HomeSlidersManagement";
 import { FeaturedBooks } from "./HomepageFeatures/FeaturedBooks";
 import { FeaturedMagazines } from "./HomepageFeatures/FeaturedMagazines";
-import { CampaignsManager } from "./HomepageFeatures/CampaignsManager";
 import { AboutMissionSettings } from "./HomepageFeatures/AboutMissionSettings";
 import { LeaderProfiles } from "./HomepageFeatures/LeaderProfiles";
 import { FeaturedVideos } from "./HomepageFeatures/FeaturedVideos";
@@ -35,10 +34,6 @@ export function HomepageManager() {
                     <TabsTrigger value="leaders" className="py-2.5 px-6 rounded-lg text-sm font-medium transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm whitespace-nowrap">
                         <Users className="w-4 h-4 mr-2" />
                         Leader Profiles
-                    </TabsTrigger>
-                    <TabsTrigger value="campaigns" className="py-2.5 px-6 rounded-lg text-sm font-medium transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm whitespace-nowrap">
-                        <Target className="w-4 h-4 mr-2" />
-                        Spotlight Campaigns
                     </TabsTrigger>
                     <TabsTrigger value="videos" className="py-2.5 px-6 rounded-lg text-sm font-medium transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm whitespace-nowrap">
                         <Video className="w-4 h-4 mr-2" />
@@ -74,12 +69,6 @@ export function HomepageManager() {
                     <TabsContent value="leaders" className="mt-0 outline-none">
                         <div className="max-w-7xl">
                             <LeaderProfiles />
-                        </div>
-                    </TabsContent>
-
-                    <TabsContent value="campaigns" className="mt-0 outline-none">
-                        <div className="max-w-7xl">
-                            <CampaignsManager />
                         </div>
                     </TabsContent>
 

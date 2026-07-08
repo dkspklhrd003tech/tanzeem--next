@@ -257,7 +257,7 @@ export default function CampaignsPageEditor({ pageId, initialPageData }: Campaig
   const fetchItems = async () => {
     setIsLoadingItems(true);
     try {
-      const res = await fetch("/api/admin/Campaigns");
+      const res = await fetch("/api/admin/campaigns");
       if (res.ok) {
         const data = await res.json();
         // The API now returns them ordered by orderIndex
@@ -489,7 +489,7 @@ export default function CampaignsPageEditor({ pageId, initialPageData }: Campaig
 
     try {
       const isNew = !editingItem;
-      const url = isNew ? "/api/admin/Campaigns" : `/api/admin/Campaigns/${editingItem.id}`;
+      const url = isNew ? "/api/admin/campaigns" : `/api/admin/campaigns/${editingItem.id}`;
       const method = isNew ? "POST" : "PUT";
 
       // If creating new, assign it to the top/bottom order index
@@ -540,7 +540,7 @@ export default function CampaignsPageEditor({ pageId, initialPageData }: Campaig
   const handleDeleteItem = async (id: string) => {
     setDeletingItem(null);
     try {
-      const res = await fetch(`/api/admin/Campaigns/${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/admin/campaigns/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Failed to delete item");
 
       toast({
@@ -580,7 +580,7 @@ export default function CampaignsPageEditor({ pageId, initialPageData }: Campaig
     setItems(updated);
 
     try {
-      const res = await fetch("/api/admin/Campaigns", {
+      const res = await fetch("/api/admin/campaigns", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

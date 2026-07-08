@@ -38,7 +38,25 @@ export default function EditPagePage({ params }: { params: Promise<{ id: string 
       fetch(`/api/sitemanager/pages/${id}`),
       fetch("/api/sitemanager/pages?limit=100&sort=az"),
     ]).then(async ([pageRes, listRes]) => {
-      if (!pageRes.ok) { setNotFound(true); return; }
+      if (!pageRes.ok) {
+        const hardcodedIds = ["services", "campaigns", "events", "sermons", "faqs", "contact", "history-of-tanzeem-e-islami"];
+        if (hardcodedIds.includes(id)) {
+          setPage({
+            id,
+            slug: id,
+            title: id.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+            content: "",
+            excerpt: "",
+            isPublished: true,
+            metaTitle: id.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+            metaDescription: "",
+            metaKeywords: "",
+          } as any);
+        } else {
+          setNotFound(true);
+        }
+        return;
+      }
       const { page } = await pageRes.json();
       setPage(page);
       if (listRes.ok) {

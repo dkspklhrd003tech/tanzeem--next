@@ -32,10 +32,10 @@ export default async function CampaignsPage() {
                 </div>
             </div>
             <CTABanner
-                heading="Support Our Campaigns"
-                subheading="Join hands with Tanzeem-e-Islami to support our ongoing campaigns."
-                buttonLabel="Get Involved"
-                buttonUrl="/contact"
+                heading="Support Our Services & Campaigns"
+                subheading="Join hands with Tanzeem-e-Islami to support our ongoing services & campaigns."
+                buttonLabel="Visit Services"
+                buttonUrl="/services"
             />
         </main>
     );

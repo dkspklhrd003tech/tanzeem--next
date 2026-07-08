@@ -16,6 +16,7 @@ type HomeCampaign = {
     title: string;
     imageUrl: string;
     linkUrl: string | null;
+    openInNewTab?: boolean;
 };
 
 export function SpotlightCampaigns({ campaigns }: { campaigns: HomeCampaign[] }) {
@@ -108,9 +109,9 @@ export function SpotlightCampaigns({ campaigns }: { campaigns: HomeCampaign[] })
                                 <a
                                     key={campaign.id}
                                     href={campaign.linkUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    aria-label={`${campaign.title} \u2014 opens in new tab`}
+                                    target={campaign.openInNewTab ? "_blank" : "_self"}
+                                    rel={campaign.openInNewTab ? "noopener noreferrer" : undefined}
+                                    aria-label={campaign.openInNewTab ? `${campaign.title} \u2014 opens in new tab` : campaign.title}
                                     className={cn(
                                         "campaign-card group relative flex flex-col",
                                         "focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"

@@ -21,6 +21,10 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { ImageUploader } from "@/components/admin/ImageUploader";
+import { PdfUploader } from "@/components/admin/PdfUploader";
+import { RichTextEditor } from "@/components/admin/RichTextEditor";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { v4 as uuidv4 } from "uuid";
 
 // DnD Kit imports
 import {
@@ -30,13 +34,14 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
-  DragEndService,
+  DragEndEvent,
 } from "@dnd-kit/core";
 import {
   arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
   rectSortingStrategy,
+  verticalListSortingStrategy,
   useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -68,6 +73,7 @@ interface ServiceItem {
   metaTitle?: string | null;
   metaDescription?: string | null;
   orderIndex: number;
+  customFields?: Record<string, any> | null;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -77,14 +83,25 @@ interface ServicesPageEditorProps {
   initialPageData: PageRecord;
 }
 
+export type BlockType = "image" | "pdf" | "text" | "thumbnails";
+
+export interface ServiceBlock {
+  id: string;
+  type: BlockType;
+  value: any;
+}
+
 const defaultFormData = {
   title: "",
   slug: "",
   imageUrl: "",
+  blocks: [] as ServiceBlock[],
   isPublished: true,
   startDate: "",
   metaTitle: "",
   metaDescription: "",
+  showInSpotlight: false,
+  openInNewTab: false,
 };
 
 function slugify(text: string) {
@@ -207,6 +224,145 @@ function SortableCard({ id, item, onEdit, onDelete }: SortableItemProps) {
   );
 }
 
+function ServiceBlockBuilder({ blocks, onChange }: { blocks: ServiceBlock[], onChange: (blocks: ServiceBlock[]) => void }) {
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      const oldIndex = blocks.findIndex((b) => b.id === active.id);
+      const newIndex = blocks.findIndex((b) => b.id === over.id);
+      onChange(arrayMove(blocks, oldIndex, newIndex));
+    }
+  };
+
+  const addBlock = (type: string) => {
+    const newBlock: ServiceBlock = {
+      id: uuidv4(),
+      type: type as BlockType,
+      value: type === "thumbnails" ? [] : "",
+    };
+    onChange([...blocks, newBlock]);
+  };
+
+  const updateBlock = (id: string, value: any) => {
+    onChange(blocks.map(b => b.id === id ? { ...b, value } : b));
+  };
+
+  const removeBlock = (id: string) => {
+    onChange(blocks.filter(b => b.id !== id));
+  };
+
+  return (
+    <div className="space-y-4 border-t border-border/50 pt-4">
+      <div className="flex items-center justify-between mb-2">
+        <Label>Dynamic Layout Fields</Label>
+        <Select onValueChange={addBlock} value="">
+          <SelectTrigger className="w-[180px]">
+            <Plus className="h-4 w-4 mr-2" />
+            <SelectValue placeholder="Add Field..." />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="image">Image Block</SelectItem>
+            <SelectItem value="pdf">PDF Document</SelectItem>
+            <SelectItem value="text">Rich Text</SelectItem>
+            <SelectItem value="thumbnails">Thumbnails / Links</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {blocks.length === 0 && (
+        <div className="text-center p-4 border border-dashed rounded-lg bg-muted/20">
+          <p className="text-xs text-muted-foreground">No layout fields added yet. Select a field above.</p>
+        </div>
+      )}
+
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <SortableContext items={blocks} strategy={verticalListSortingStrategy}>
+          <div className="space-y-3">
+            {blocks.map((block, index) => (
+              <SortableServiceBlock
+                key={block.id}
+                block={block}
+                index={index}
+                onUpdate={(val: any) => updateBlock(block.id, val)}
+                onRemove={() => removeBlock(block.id)}
+              />
+            ))}
+          </div>
+        </SortableContext>
+      </DndContext>
+    </div>
+  );
+}
+
+function SortableServiceBlock({ block, index, onUpdate, onRemove }: any) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: block.id });
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    zIndex: isDragging ? 50 : 1,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} className="relative bg-muted/10 border border-border/50 p-4 rounded-xl group">
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <div {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-primary">
+            <GripVertical className="h-4 w-4" />
+          </div>
+          <Badge variant="outline" className="uppercase text-[10px]">{block.type}</Badge>
+        </div>
+        <Button type="button" variant="ghost" size="icon" className="h-6 w-6 text-destructive" onClick={onRemove}>
+          <Trash2 className="h-4 w-4" />
+        </Button>
+      </div>
+
+      {block.type === "image" && (
+        <ImageUploader value={block.value} onChange={onUpdate} />
+      )}
+      {block.type === "pdf" && (
+        <PdfUploader value={block.value} onChange={onUpdate} />
+      )}
+      {block.type === "text" && (
+        <RichTextEditor content={block.value} onChange={onUpdate} />
+      )}
+      {block.type === "thumbnails" && (
+        <div className="space-y-3">
+          <Button type="button" variant="outline" size="sm" onClick={() => onUpdate([...(block.value || []), { image: "", url: "" }])}>
+            <Plus className="h-3 w-3 mr-1" /> Add Thumbnail Link
+          </Button>
+          <div className="grid grid-cols-2 gap-3">
+            {(block.value || []).map((thumb: any, i: number) => (
+              <div key={i} className="border border-border/40 p-2 rounded-lg bg-background relative space-y-2">
+                <Button type="button" variant="destructive" size="icon" className="absolute -top-2 -right-2 h-5 w-5 rounded-full z-10 shadow-sm hover:bg-destructive hover:text-white"
+                  onClick={() => onUpdate((block.value || []).filter((_: any, idx: number) => idx !== i))}
+                >
+                  <Trash2 className="h-3 w-3" />
+                </Button>
+                <ImageUploader value={thumb.image} onChange={(url) => {
+                  const newThumbs = [...block.value];
+                  newThumbs[i] = { ...newThumbs[i], image: url };
+                  onUpdate(newThumbs);
+                }} />
+                <Input placeholder="URL (e.g. /page or https://)" value={thumb.url || ""} onChange={(e) => {
+                  const newThumbs = [...block.value];
+                  newThumbs[i] = { ...newThumbs[i], url: e.target.value };
+                  onUpdate(newThumbs);
+                }} />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Main Component ──────────────────────────────────────────────────────────
 export default function ServicesPageEditor({ pageId, initialPageData }: ServicesPageEditorProps) {
   const router = useRouter();
@@ -257,12 +413,14 @@ export default function ServicesPageEditor({ pageId, initialPageData }: Services
   const fetchItems = async () => {
     setIsLoadingItems(true);
     try {
-      const res = await fetch("/api/admin/Services");
+      const res = await fetch("/api/admin/services");
       if (res.ok) {
         const data = await res.json();
         // The API now returns them ordered by orderIndex
         setItems(data.items || []);
       } else {
+        const errText = await res.text();
+        console.error("API Error Status:", res.status, errText);
         throw new Error("Failed to fetch Services");
       }
     } catch (error) {
@@ -289,8 +447,8 @@ export default function ServicesPageEditor({ pageId, initialPageData }: Services
   };
 
   // Page SEO / Settings Save
-  const handlePageSave = async (e: React.FormService) => {
-    e.prServiceDefault();
+  const handlePageSave = async (e: React.FormEvent) => {
+    e.preventDefault();
     const errors: Record<string, string> = {};
     if (!pageForm.title.trim()) errors.title = "Title is required";
     if (!pageForm.slug.trim()) errors.slug = "Slug is required";
@@ -357,8 +515,8 @@ export default function ServicesPageEditor({ pageId, initialPageData }: Services
   };
 
   // Drag over / Drag leave handlers
-  const handleDrag = (e: React.DragService) => {
-    e.prServiceDefault();
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     if (e.type === "dragenter" || e.type === "dragover") {
       setDragActive(true);
@@ -367,8 +525,8 @@ export default function ServicesPageEditor({ pageId, initialPageData }: Services
     }
   };
 
-  const handleDrop = async (e: React.DragService) => {
-    e.prServiceDefault();
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
 
@@ -377,7 +535,7 @@ export default function ServicesPageEditor({ pageId, initialPageData }: Services
     }
   };
 
-  const handleFileChange = async (e: React.ChangeService<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       await handleFileUpload(e.target.files[0]);
     }
@@ -421,10 +579,13 @@ export default function ServicesPageEditor({ pageId, initialPageData }: Services
         title: cleanedTitle,
         slug: slugify(cleanedTitle),
         imageUrl: data.url,
+        blocks: [],
         isPublished: true,
         startDate: new Date().toISOString().split("T")[0],
         metaTitle: cleanedTitle,
         metaDescription: `Service: ${cleanedTitle}`,
+        showInSpotlight: false,
+        openInNewTab: false,
       });
       setFormErrors({});
       setIsModalOpen(true);
@@ -452,10 +613,13 @@ export default function ServicesPageEditor({ pageId, initialPageData }: Services
       title: item.title,
       slug: item.slug,
       imageUrl: item.imageUrl || "",
+      blocks: item.customFields?.blocks || [],
       isPublished: item.isPublished,
       startDate: item.startDate ? new Date(item.startDate).toISOString().split("T")[0] : "",
       metaTitle: item.metaTitle || "",
       metaDescription: item.metaDescription || "",
+      showInSpotlight: item.customFields?.showInSpotlight || false,
+      openInNewTab: item.customFields?.openInNewTab || false,
     });
     setFormErrors({});
     setIsModalOpen(true);
@@ -473,8 +637,8 @@ export default function ServicesPageEditor({ pageId, initialPageData }: Services
   };
 
   // Submit Modal CRUD
-  const handleSubmit = async (e: React.FormService) => {
-    e.prServiceDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     const errors: Record<string, string> = {};
     if (!formData.title.trim()) errors.title = "Title is required";
     if (!formData.slug.trim()) errors.slug = "Slug is required";
@@ -489,7 +653,7 @@ export default function ServicesPageEditor({ pageId, initialPageData }: Services
 
     try {
       const isNew = !editingItem;
-      const url = isNew ? "/api/admin/Services" : `/api/admin/Services/${editingItem.id}`;
+      const url = isNew ? "/api/admin/services" : `/api/admin/services/${editingItem.id}`;
       const method = isNew ? "POST" : "PUT";
 
       // If creating new, assign it to the top/bottom order index
@@ -497,6 +661,11 @@ export default function ServicesPageEditor({ pageId, initialPageData }: Services
         title: formData.title,
         slug: formData.slug,
         imageUrl: formData.imageUrl || null,
+        customFields: { 
+          blocks: formData.blocks,
+          showInSpotlight: formData.showInSpotlight,
+          openInNewTab: formData.openInNewTab
+        },
         isPublished: formData.isPublished,
         startDate: formData.startDate ? new Date(formData.startDate).toISOString() : null,
         metaTitle: formData.metaTitle || null,
@@ -540,7 +709,7 @@ export default function ServicesPageEditor({ pageId, initialPageData }: Services
   const handleDeleteItem = async (id: string) => {
     setDeletingItem(null);
     try {
-      const res = await fetch(`/api/admin/Services/${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/admin/services/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Failed to delete item");
 
       toast({
@@ -560,8 +729,8 @@ export default function ServicesPageEditor({ pageId, initialPageData }: Services
   };
 
   // DnD Reorder handler
-  const handleDragEnd = async (Service: DragEndService) => {
-    const { active, over } = Service;
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
     if (!over || active.id === over.id) return;
 
     const oldIndex = items.findIndex(item => item.id === active.id);
@@ -580,7 +749,7 @@ export default function ServicesPageEditor({ pageId, initialPageData }: Services
     setItems(updated);
 
     try {
-      const res = await fetch("/api/admin/Services", {
+      const res = await fetch("/api/admin/services", {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -671,7 +840,7 @@ export default function ServicesPageEditor({ pageId, initialPageData }: Services
               dragActive
                 ? "border-primary bg-primary/5 scale-[1.005]"
                 : "border-border hover:border-muted-foreground/50 bg-card",
-              isUploading && "pointer-Services-none opacity-60"
+              isUploading && "pointer-events-none opacity-60"
             )}
           >
             <input
@@ -894,7 +1063,17 @@ export default function ServicesPageEditor({ pageId, initialPageData }: Services
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="slug">URL Slug <span className="text-destructive">*</span></Label>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="slug">URL Slug <span className="text-destructive">*</span></Label>
+                    <div className="flex items-center gap-2">
+                      <Label htmlFor="openInNewTab" className="text-xs font-normal">Open in New Tab</Label>
+                      <Switch
+                        id="openInNewTab"
+                        checked={formData.openInNewTab}
+                        onCheckedChange={(checked) => setFormData(prev => ({ ...prev, openInNewTab: checked }))}
+                      />
+                    </div>
+                  </div>
                   <div className="flex gap-2">
                     <Input
                       id="slug"
@@ -922,11 +1101,28 @@ export default function ServicesPageEditor({ pageId, initialPageData }: Services
                   {formErrors.slug && <p className="text-xs text-destructive">{formErrors.slug}</p>}
                 </div>
 
-                <div className="space-y-2">
-                  <Label>image Document <span className="text-destructive">*</span></Label>
-                  <ImageUploader
-                    value={formData.imageUrl}
-                    onChange={(url) => setFormData(prev => ({ ...prev, imageUrl: url }))}
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Label>Main Image <span className="text-destructive">*</span></Label>
+                      <div className="flex items-center gap-2">
+                        <Label htmlFor="showInSpotlight" className="text-xs font-normal text-muted-foreground">Show in Spotlight</Label>
+                        <Switch
+                          id="showInSpotlight"
+                          checked={formData.showInSpotlight}
+                          onCheckedChange={(checked) => setFormData(prev => ({ ...prev, showInSpotlight: checked }))}
+                        />
+                      </div>
+                    </div>
+                    <ImageUploader
+                      value={formData.imageUrl}
+                      onChange={(url) => setFormData(prev => ({ ...prev, imageUrl: url }))}
+                    />
+                  </div>
+
+                  <ServiceBlockBuilder 
+                    blocks={formData.blocks || []} 
+                    onChange={(blocks) => setFormData(prev => ({ ...prev, blocks }))} 
                   />
                 </div>
 
