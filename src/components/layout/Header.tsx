@@ -31,9 +31,13 @@ export function Header() {
   // Single shared source of truth for nav + settings (SWR-deduped across components).
   const { items: navigation, isLoading: navLoading } = useNavigation("main", true);
   const { settings } = useSettings();
-  const logoSrc = (settings.header_logo && settings.header_logo !== "null" && settings.header_logo !== "undefined" && settings.header_logo.trim() !== "")
+  const rawLogoSrc = (settings.header_logo && settings.header_logo !== "null" && settings.header_logo !== "undefined" && settings.header_logo.trim() !== "")
     ? settings.header_logo
     : "/tanzeem-logo.webp";
+  
+  const logoSrc = rawLogoSrc.startsWith("http") || rawLogoSrc.startsWith("/tanzeem-logo")
+    ? rawLogoSrc
+    : `${process.env.NEXT_PUBLIC_MEDIA_URL || "https://tanzeemmedia.dks.com.pk"}${rawLogoSrc}`;
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();

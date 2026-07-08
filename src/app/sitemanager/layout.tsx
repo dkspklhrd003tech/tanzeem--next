@@ -607,7 +607,9 @@ export default function SiteManagerLayout({
       .then(res => res.json())
       .then(data => {
         if (data.settings?.general?.site_logo) {
-          setSiteLogo(data.settings.general.site_logo);
+          const rawLogo = data.settings.general.site_logo;
+          const absoluteLogo = rawLogo.startsWith("http") ? rawLogo : `${process.env.NEXT_PUBLIC_MEDIA_URL || "https://tanzeemmedia.dks.com.pk"}${rawLogo}`;
+          setSiteLogo(absoluteLogo);
         }
       })
       .catch(err => console.error("Failed to load identity settings:", err));

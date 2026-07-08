@@ -38,7 +38,11 @@ export function MainLayout({ children }: MainLayoutProps) {
 
         <div className="max-w-md space-y-6 relative z-10 bg-card p-10 rounded-3xl shadow-xl border border-border">
           {settings.login_logo ? (
-            <img src={settings.login_logo} alt="Logo" className="w-24 h-24 mx-auto mb-6 object-contain" />
+            <img 
+              src={settings.login_logo.startsWith("http") ? settings.login_logo : `${process.env.NEXT_PUBLIC_MEDIA_URL || "https://tanzeemmedia.dks.com.pk"}${settings.login_logo}`} 
+              alt="Logo" 
+              className="w-24 h-24 mx-auto mb-6 object-contain" 
+            />
           ) : (
             <div className="w-24 h-24 mx-auto mb-6 bg-primary/10 rounded-2xl flex items-center justify-center">
               <span className="text-4xl text-primary font-bold">ت</span>

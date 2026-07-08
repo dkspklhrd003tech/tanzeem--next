@@ -39,8 +39,10 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
         settings["homepage_about_button_text"] || "Read More";
     const btnLink =
         settings["homepage_about_button_link"] || "/organization";
-    const aboutImage =
-        settings["homepage_about_image"] || "/media/logo-dark.png";
+    const rawAboutImage = settings["homepage_about_image"] || "/media/logo-dark.png";
+    const aboutImage = rawAboutImage.startsWith("http") || rawAboutImage.startsWith("/media/")
+        ? rawAboutImage
+        : `${process.env.NEXT_PUBLIC_MEDIA_URL || "https://tanzeemmedia.dks.com.pk"}${rawAboutImage}`;
 
     const sectionRef = useRef<HTMLElement>(null);
     const aboutRef = useRef<HTMLDivElement>(null);
