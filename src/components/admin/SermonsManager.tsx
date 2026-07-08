@@ -57,6 +57,7 @@ interface SermonItem {
   videoUrl?: string;
   isPublished: boolean;
   publishedAt?: string;
+  createdAt?: string;
   order: number;
 }
 
@@ -343,13 +344,13 @@ export function SermonsManager() {
     e.stopPropagation();
     setDragActive(false);
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      await handleAudioUploadDirectly(e.dataTransfer.files[0]);
+      await handleMediaUploadDirectly(e.dataTransfer.files[0]);
     }
   };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      await handleAudioUploadDirectly(e.target.files[0]);
+      await handleMediaUploadDirectly(e.target.files[0]);
     }
   };
 

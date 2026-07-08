@@ -61,6 +61,7 @@ interface KhitabAudioItem {
   audioUrl?: string;
   isPublished: boolean;
   publishedAt?: string;
+  createdAt?: string;
   order: number;
 }
 

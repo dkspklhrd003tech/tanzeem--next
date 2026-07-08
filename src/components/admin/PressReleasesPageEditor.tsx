@@ -45,6 +45,7 @@ interface PageRecord {
   id: string;
   title: string;
   slug: string;
+  content?: string;
   excerpt: string;
   isPublished: boolean;
   metaTitle: string;

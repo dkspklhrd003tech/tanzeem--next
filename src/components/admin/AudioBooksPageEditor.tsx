@@ -1048,7 +1048,9 @@ export default function AudioBooksPageEditor({ pageId, initialPageData }: AudioB
         onOpenChange={(open) => !open && setDeletingItem(null)}
         title="Delete audio book"
         description={`Are you sure you want to permanently delete "${deletingItem?.title}"? This action cannot be undone.`}
-        onConfirm={() => deletingItem && handleDeleteItem(deletingItem.id)}
+        onConfirm={() => {
+          if (deletingItem) return handleDeleteItem(deletingItem.id);
+        }}
       />
 
     </div>
