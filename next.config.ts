@@ -81,10 +81,9 @@ const nextConfig: NextConfig = {
       { source: "/resources/books/:slug", destination: "/books/:slug", permanent: true },
       // Contact alias
       { source: "/contact-us", destination: "/contact", permanent: true },
-      // Redirect relative media requests to the external FTP storage
       { 
         source: "/uploads/:path*", 
-        destination: `${process.env.NEXT_PUBLIC_MEDIA_URL || "https://tanzeemmedia.dks.com.pk"}/uploads/:path*`, 
+        destination: `${process.env.NEXT_PUBLIC_MEDIA_URL || "https://tanzeemmedia.dks.com.pk"}/:path*`, 
         permanent: false 
       },
     ];
