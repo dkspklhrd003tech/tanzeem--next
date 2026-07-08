@@ -49,10 +49,11 @@ async function createFtpClient(): Promise<Client> {
         // If secure failed, let's try insecure fallback. Often resolves Vercel/Hostinger TLS conflicts that disguise as 530 errors.
         if (initialSecure) {
             console.log("[FTP] Retrying connection with secure=false (Insecure Fallback)...");
+            let fallbackClient: Client | null = null;
             try {
                 // Must close and re-instantiate client after a failure
                 client.close();
-                const fallbackClient = new Client();
+                fallbackClient = new Client();
                 fallbackClient.ftp.verbose = true;
                 fallbackClient.ftp.socket.setTimeout(60_000);
                 
@@ -66,7 +67,7 @@ async function createFtpClient(): Promise<Client> {
                 console.log("[FTP] Connected successfully via INSECURE fallback.");
                 return fallbackClient;
             } catch (fallbackErr: any) {
-                fallbackClient.close();
+                if (fallbackClient) fallbackClient.close();
                 let hint = "";
                 if (fallbackErr?.code === 530) {
                     hint = " → HINT: Auth failed even on fallback. Verify FTP_USER/FTP_PASSWORD in Vercel env vars, OR Hostinger's firewall is aggressively blocking Vercel's IP addresses.";
