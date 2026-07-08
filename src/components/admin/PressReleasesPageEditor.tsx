@@ -45,7 +45,6 @@ interface PageRecord {
   id: string;
   title: string;
   slug: string;
-  content: string;
   excerpt: string;
   isPublished: boolean;
   metaTitle: string;
@@ -59,7 +58,6 @@ interface PressReleaseItem {
   id: string;
   title: string;
   slug: string;
-  content: string;
   excerpt?: string | null;
   featuredImage?: string | null;
   pdfUrl?: string | null;
@@ -481,6 +479,8 @@ export default function PressReleasesPageEditor({ pageId, initialPageData }: Pre
     if (!/^[a-z0-9-]+$/.test(formData.slug)) {
       errors.slug = "Slug must contain only lowercase letters, numbers, and hyphens";
     }
+    if (!formData.pdfUrl) errors.pdfUrl = "PDF Document is required";
+    if (!formData.publishedAt) errors.publishedAt = "Published Date is required";
 
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
@@ -608,11 +608,13 @@ export default function PressReleasesPageEditor({ pageId, initialPageData }: Pre
     }
   };
 
-  // Filter items based on search query
-  const filteredItems = items.filter(item =>
-    item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.slug.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Filter and sort items
+  const filteredItems = items
+    .filter(item =>
+      item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.slug.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    .sort((a, b) => new Date(b.publishedAt || b.createdAt || 0).getTime() - new Date(a.publishedAt || a.createdAt || 0).getTime());
 
   return (
     <div className="space-y-6 max-w-7xl">
@@ -924,10 +926,13 @@ export default function PressReleasesPageEditor({ pageId, initialPageData }: Pre
 
                 <div className="space-y-2">
                   <Label>PDF Document <span className="text-destructive">*</span></Label>
-                  <PdfUploader
-                    value={formData.pdfUrl}
-                    onChange={(url) => setFormData(prev => ({ ...prev, pdfUrl: url }))}
-                  />
+                  <div className={cn("rounded-xl transition-colors", formErrors.pdfUrl && "border border-destructive ring-1 ring-destructive")}>
+                    <PdfUploader
+                      value={formData.pdfUrl}
+                      onChange={(url) => setFormData(prev => ({ ...prev, pdfUrl: url }))}
+                    />
+                  </div>
+                  {formErrors.pdfUrl && <p className="text-xs text-destructive">{formErrors.pdfUrl}</p>}
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -939,7 +944,9 @@ export default function PressReleasesPageEditor({ pageId, initialPageData }: Pre
                       required
                       value={formData.publishedAt}
                       onChange={(e) => setFormData(prev => ({ ...prev, publishedAt: e.target.value }))}
+                      className={cn(formErrors.publishedAt && "border-destructive")}
                     />
+                    {formErrors.publishedAt && <p className="text-xs text-destructive">{formErrors.publishedAt}</p>}
                   </div>
 
                   <div className="flex items-center justify-between p-3 border border-border rounded-xl bg-muted/10 mt-6 h-[42px]">

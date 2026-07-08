@@ -84,7 +84,7 @@ export default async function KhitabEJumahCategoryPage({ params }: Props) {
 
                             return (
                                 <Link href={`/resources/khitab-e-jumah/${cleanSlug}`} key={item.id} className="block group">
-                                    <div className="relative bg-primary-light/20 border border-border rounded-2xl overflow-hidden cursor-pointer hover:-translate-y-1 hover:shadow-lg transition-all duration-300 h-full p-6 flex flex-col justify-center min-h-[160px]">
+                                    <div className="relative bg-primary-light/80 border border-border rounded-2xl overflow-hidden cursor-pointer hover:-translate-y-1 hover:shadow-lg transition-all duration-300 h-full p-6 flex flex-col justify-center min-h-[160px]">
                                         {/* Watermark Icon */}
                                         <div className="absolute -right-4 -bottom-4 text-[#0d5844]/5 pointer-events-none group-hover:scale-110 transition-transform duration-500">
                                             <FileText className="w-32 h-32" strokeWidth={1.5} />

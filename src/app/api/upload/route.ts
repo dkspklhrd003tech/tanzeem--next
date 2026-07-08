@@ -88,24 +88,24 @@ async function compressAudio(inputBuffer: Buffer): Promise<Buffer> {
 
 // ── Allowed MIME types ──────────────────────────────────────────────────────
 const ALLOWED_TYPES: Record<string, string> = {
-  "image/jpeg":      "images",
-  "image/jpg":       "images",
-  "image/png":       "images",
-  "image/webp":      "images",
-  "image/gif":       "images",
-  "image/svg+xml":   "images",
-  "application/pdf": "documents",
-  "audio/mpeg":      "audio",
-  "audio/mp3":       "audio",
-  "audio/ogg":       "audio",
-  "audio/wav":       "audio",
-  "audio/x-wav":     "audio",
-  "audio/aac":       "audio",
-  "video/mp4":       "videos",
-  "video/mpeg":      "videos",
-  "video/ogg":       "videos",
-  "video/webm":      "videos",
-  "video/quicktime": "videos",
+  "image/jpeg":      "Image",
+  "image/jpg":       "Image",
+  "image/png":       "Image",
+  "image/webp":      "Image",
+  "image/gif":       "Image",
+  "image/svg+xml":   "Image",
+  "application/pdf": "Document",
+  "audio/mpeg":      "Audio",
+  "audio/mp3":       "Audio",
+  "audio/ogg":       "Audio",
+  "audio/wav":       "Audio",
+  "audio/x-wav":     "Audio",
+  "audio/aac":       "Audio",
+  "video/mp4":       "Video",
+  "video/mpeg":      "Video",
+  "video/ogg":       "Video",
+  "video/webm":      "Video",
+  "video/quicktime": "Video",
 };
 
 const MAX_FILE_SIZE = 200 * 1024 * 1024; // 200 MB
@@ -147,7 +147,7 @@ export async function POST(req: NextRequest) {
 
     const mimeType = file.type || "application/octet-stream";
     const mimeFolder = ALLOWED_TYPES[mimeType];
-    const folder = mimeFolder ?? (typeHint === "slider" ? "sliders" : typeHint === "cover" ? "covers" : "uploads");
+    const folder = mimeFolder ?? (typeHint === "slider" ? "sliders" : typeHint === "cover" ? "covers" : "Media");
 
     const bytes = await file.arrayBuffer();
     let buffer: Buffer = Buffer.from(bytes);

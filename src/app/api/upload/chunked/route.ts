@@ -10,24 +10,24 @@ export const maxDuration = 300;
 export const dynamic = "force-dynamic";
 
 const ALLOWED_TYPES: Record<string, string> = {
-  "image/jpeg": "images",
-  "image/jpg": "images",
-  "image/png": "images",
-  "image/webp": "images",
-  "image/gif": "images",
-  "image/svg+xml": "images",
-  "application/pdf": "documents",
-  "audio/mpeg": "audio",
-  "audio/mp3": "audio",
-  "audio/ogg": "audio",
-  "audio/wav": "audio",
-  "audio/x-wav": "audio",
-  "audio/aac": "audio",
-  "video/mp4": "videos",
-  "video/mpeg": "videos",
-  "video/ogg": "videos",
-  "video/webm": "videos",
-  "video/quicktime": "videos",
+  "image/jpeg": "Image",
+  "image/jpg": "Image",
+  "image/png": "Image",
+  "image/webp": "Image",
+  "image/gif": "Image",
+  "image/svg+xml": "Image",
+  "application/pdf": "Document",
+  "audio/mpeg": "Audio",
+  "audio/mp3": "Audio",
+  "audio/ogg": "Audio",
+  "audio/wav": "Audio",
+  "audio/x-wav": "Audio",
+  "audio/aac": "Audio",
+  "video/mp4": "Video",
+  "video/mpeg": "Video",
+  "video/ogg": "Video",
+  "video/webm": "Video",
+  "video/quicktime": "Video",
 };
 
 export async function POST(req: NextRequest) {
@@ -51,13 +51,13 @@ export async function POST(req: NextRequest) {
     const safeName = fileName.replace(/[^a-zA-Z0-9.\-_]/g, "-").replace(/-{2,}/g, "-").toLowerCase();
     const uniqueFilename = `${uploadId}-${safeName}`;
 
-    let mimeFolder = "uploads";
+    let mimeFolder = "Media";
     const typeLower = mimeType.toLowerCase();
-    if (typeLower.startsWith("image/")) mimeFolder = "images";
-    else if (typeLower.startsWith("audio/")) mimeFolder = "audio";
-    else if (typeLower.startsWith("video/")) mimeFolder = "videos";
-    else if (typeLower === "application/pdf") mimeFolder = "documents";
-    else mimeFolder = ALLOWED_TYPES[mimeType] ?? "uploads";
+    if (typeLower.startsWith("image/")) mimeFolder = "Image";
+    else if (typeLower.startsWith("audio/")) mimeFolder = "Audio";
+    else if (typeLower.startsWith("video/")) mimeFolder = "Video";
+    else if (typeLower === "application/pdf") mimeFolder = "Document";
+    else mimeFolder = ALLOWED_TYPES[mimeType] ?? "Media";
     const bytes = await chunk.arrayBuffer();
     const buffer = Buffer.from(bytes);
 

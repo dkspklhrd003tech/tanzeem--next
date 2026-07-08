@@ -181,10 +181,12 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
   const [isCatModalOpen, setIsCatModalOpen] = useState(false);
   const [catFormData, setCatFormData] = useState({ name: "", urduName: "", slug: "", description: "", coverImage: "" });
   const [editingCatId, setEditingCatId] = useState<string | null>(null);
+  const [catFormErrors, setCatFormErrors] = useState<Record<string, string>>({});
 
   const [isBookModalOpen, setIsBookModalOpen] = useState(false);
   const [bookFormData, setBookFormData] = useState({ title: "", slug: "", description: "", coverImage: "", fileUrl: "", isPublished: true });
   const [editingBookId, setEditingBookId] = useState<string | null>(null);
+  const [bookFormErrors, setBookFormErrors] = useState<Record<string, string>>({});
 
   const [isUploading, setIsUploading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -249,7 +251,15 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
 
   // --- Category CRUD ---
   const handleCatSave = async () => {
-    if (!catFormData.name || !catFormData.slug) return;
+    const errors: Record<string, string> = {};
+    if (!catFormData.name.trim()) errors.name = "Name is required";
+    if (!catFormData.slug.trim()) errors.slug = "Slug is required";
+    
+    if (Object.keys(errors).length > 0) {
+      setCatFormErrors(errors);
+      return;
+    }
+
     try {
       const url = editingCatId ? `/api/admin/book-categories/${editingCatId}` : "/api/admin/book-categories";
       const method = editingCatId ? "PUT" : "POST";
@@ -291,7 +301,15 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
 
   // --- Book CRUD ---
   const handleBookSave = async () => {
-    if (!bookFormData.title || !bookFormData.slug) return;
+    const errors: Record<string, string> = {};
+    if (!bookFormData.title.trim()) errors.title = "Title is required";
+    if (!bookFormData.slug.trim()) errors.slug = "Slug is required";
+    
+    if (Object.keys(errors).length > 0) {
+      setBookFormErrors(errors);
+      return;
+    }
+
     try {
       const url = editingBookId ? `/api/admin/books/${editingBookId}` : "/api/admin/books";
       const method = editingBookId ? "PUT" : "POST";
@@ -417,7 +435,10 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
   };
 
   const filteredCategories = categories.filter(c => c.name.toLowerCase().includes(searchQuery.toLowerCase()));
-  const activeBooks = books.filter(b => b.categoryId === activeCategory?.id).filter(b => b.title.toLowerCase().includes(searchQuery.toLowerCase()));
+  const activeBooks = books
+    .filter(b => b.categoryId === activeCategory?.id)
+    .filter(b => b.title.toLowerCase().includes(searchQuery.toLowerCase()))
+    .sort((a, b) => new Date(b.publishedAt || b.createdAt || 0).getTime() - new Date(a.publishedAt || a.createdAt || 0).getTime());
 
   return (
     <div className="space-y-6 max-w-7xl">
@@ -445,11 +466,11 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
         </div>
         <div className="flex items-center gap-2">
           {!activeCategory ? (
-            <Button onClick={() => { setEditingCatId(null); setCatFormData({ name: "", urduName: "", slug: "", description: "", coverImage: "" }); setIsCatModalOpen(true); }}>
+            <Button onClick={() => { setEditingCatId(null); setCatFormData({ name: "", urduName: "", slug: "", description: "", coverImage: "" }); setCatFormErrors({}); setIsCatModalOpen(true); }}>
               <Plus className="w-4 h-4 mr-2" /> Add Category
             </Button>
           ) : (
-            <Button onClick={() => { setEditingBookId(null); setBookFormData({ title: "", slug: "", description: "", coverImage: "", fileUrl: "", isPublished: true }); setIsBookModalOpen(true); }}>
+            <Button onClick={() => { setEditingBookId(null); setBookFormData({ title: "", slug: "", description: "", coverImage: "", fileUrl: "", isPublished: true }); setBookFormErrors({}); setIsBookModalOpen(true); }}>
               <Plus className="w-4 h-4 mr-2" /> Add Book
             </Button>
           )}
@@ -477,7 +498,7 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
                     {filteredCategories.map(cat => (
                       <SortableCategoryCard key={cat.id} id={cat.id} item={cat} onClick={setActiveCategory}
                         bookCount={books.filter(b => b.categoryId === cat.id).length}
-                        onEdit={(item: any) => { setEditingCatId(item.id); setCatFormData({ name: item.name, urduName: item.urduName || "", slug: item.slug, description: item.description || "", coverImage: item.coverImage || "" }); setIsCatModalOpen(true); }}
+                        onEdit={(item: any) => { setEditingCatId(item.id); setCatFormData({ name: item.name, urduName: item.urduName || "", slug: item.slug, description: item.description || "", coverImage: item.coverImage || "" }); setCatFormErrors({}); setIsCatModalOpen(true); }}
                         onDelete={(item: CategoryItem) => setDeletingCat(item)} />
                     ))}
                   </div>
@@ -525,7 +546,7 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {activeBooks.map(book => (
                       <SortableBookCard key={book.id} id={book.id} item={book}
-                        onEdit={(item: any) => { setEditingBookId(item.id); setBookFormData({ title: item.title, slug: item.slug, description: item.description || "", coverImage: item.coverImage || "", fileUrl: item.fileUrl || "", isPublished: item.isPublished }); setIsBookModalOpen(true); }}
+                        onEdit={(item: any) => { setEditingBookId(item.id); setBookFormData({ title: item.title, slug: item.slug, description: item.description || "", coverImage: item.coverImage || "", fileUrl: item.fileUrl || "", isPublished: item.isPublished }); setBookFormErrors({}); setIsBookModalOpen(true); }}
                         onDelete={(item: BookItem) => setDeletingBook(item)} />
                     ))}
                     {activeBooks.length === 0 && <div className="col-span-full py-10 text-center text-muted-foreground border border-dashed rounded-xl">No books found in this category.</div>}
@@ -562,9 +583,17 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
               <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsCatModalOpen(false)}>×</Button>
             </div>
             <div className="overflow-y-auto p-6 flex-1 space-y-4">
-              <div className="space-y-2"><Label>Name</Label><Input value={catFormData.name} onChange={e => setCatFormData({ ...catFormData, name: e.target.value, slug: editingCatId ? catFormData.slug : slugify(e.target.value) })} /></div>
+              <div className="space-y-2">
+                <Label>Name <span className="text-destructive">*</span></Label>
+                <Input className={cn(catFormErrors.name && "border-destructive")} value={catFormData.name} onChange={e => setCatFormData({ ...catFormData, name: e.target.value, slug: editingCatId ? catFormData.slug : slugify(e.target.value) })} />
+                {catFormErrors.name && <p className="text-xs text-destructive">{catFormErrors.name}</p>}
+              </div>
               <div className="space-y-2"><Label>Urdu Name (Optional)</Label><Input value={catFormData.urduName} onChange={e => setCatFormData({ ...catFormData, urduName: e.target.value })} dir="rtl" /></div>
-              <div className="space-y-2"><Label>Slug</Label><Input value={catFormData.slug} onChange={e => setCatFormData({ ...catFormData, slug: e.target.value })} /></div>
+              <div className="space-y-2">
+                <Label>Slug <span className="text-destructive">*</span></Label>
+                <Input className={cn(catFormErrors.slug && "border-destructive")} value={catFormData.slug} onChange={e => setCatFormData({ ...catFormData, slug: e.target.value })} />
+                {catFormErrors.slug && <p className="text-xs text-destructive">{catFormErrors.slug}</p>}
+              </div>
               <div className="space-y-2"><Label>Description</Label><Textarea value={catFormData.description} onChange={e => setCatFormData({ ...catFormData, description: e.target.value })} /></div>
               <div className="space-y-2">
                 <Label>Cover Image</Label>
@@ -603,8 +632,16 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
               <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsBookModalOpen(false)}>×</Button>
             </div>
             <div className="overflow-y-auto p-6 flex-1 space-y-4">
-              <div className="space-y-2"><Label>Title</Label><Input value={bookFormData.title} onChange={e => setBookFormData({ ...bookFormData, title: e.target.value, slug: editingBookId ? bookFormData.slug : slugify(e.target.value) })} /></div>
-              <div className="space-y-2"><Label>Slug</Label><Input value={bookFormData.slug} onChange={e => setBookFormData({ ...bookFormData, slug: e.target.value })} /></div>
+              <div className="space-y-2">
+                <Label>Title <span className="text-destructive">*</span></Label>
+                <Input className={cn(bookFormErrors.title && "border-destructive")} value={bookFormData.title} onChange={e => setBookFormData({ ...bookFormData, title: e.target.value, slug: editingBookId ? bookFormData.slug : slugify(e.target.value) })} />
+                {bookFormErrors.title && <p className="text-xs text-destructive">{bookFormErrors.title}</p>}
+              </div>
+              <div className="space-y-2">
+                <Label>Slug <span className="text-destructive">*</span></Label>
+                <Input className={cn(bookFormErrors.slug && "border-destructive")} value={bookFormData.slug} onChange={e => setBookFormData({ ...bookFormData, slug: e.target.value })} />
+                {bookFormErrors.slug && <p className="text-xs text-destructive">{bookFormErrors.slug}</p>}
+              </div>
               <div className="space-y-2">
                 <Label>Cover Image</Label>
                 <ImageUploader

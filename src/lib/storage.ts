@@ -93,7 +93,10 @@ async function createFtpClient(): Promise<Client> {
  * AND changes into it, so subsequent calls are relative to the deepest folder.
  */
 async function navigateToRemoteDir(client: Client, remoteDir: string): Promise<void> {
-    const rootDir = (process.env.FTP_ROOT_DIR ?? "/public_html").replace(/\/$/, "");
+    let rootDir = (process.env.FTP_ROOT_DIR ?? "/public_html").replace(/\/$/, "");
+    if (!rootDir.endsWith("/uploads")) {
+        rootDir = `${rootDir}/uploads`;
+    }
 
     // Build the full absolute remote path
     const fullRemotePath = `${rootDir}/${remoteDir}`.replace(/\/+/g, "/");
@@ -121,7 +124,7 @@ export async function uploadFile({ fileName, folder, buffer }: StorageOptions): 
     const client = await createFtpClient();
 
     try {
-        const remoteDir = `uploads/${folder}`;
+        const remoteDir = folder;
         await navigateToRemoteDir(client, remoteDir);
 
         // Convert buffer to Readable stream for FTP upload
@@ -158,7 +161,7 @@ export async function appendFileChunk({ fileName, folder, buffer, chunkIndex }: 
     const client = await createFtpClient();
 
     try {
-        const remoteDir = `uploads/${folder}`;
+        const remoteDir = folder;
         await navigateToRemoteDir(client, remoteDir);
 
         const stream = Readable.from(buffer);

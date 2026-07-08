@@ -645,6 +645,8 @@ export default function ServicesPageEditor({ pageId, initialPageData }: Services
     if (!/^[a-z0-9-]+$/.test(formData.slug)) {
       errors.slug = "Slug must contain only lowercase letters, numbers, and hyphens";
     }
+    if (!formData.imageUrl) errors.imageUrl = "Main Image is required";
+    if (!formData.startDate) errors.startDate = "Published Date is required";
 
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
@@ -1114,10 +1116,13 @@ export default function ServicesPageEditor({ pageId, initialPageData }: Services
                         />
                       </div>
                     </div>
-                    <ImageUploader
-                      value={formData.imageUrl}
-                      onChange={(url) => setFormData(prev => ({ ...prev, imageUrl: url }))}
-                    />
+                    <div className={cn("rounded-xl transition-colors", formErrors.imageUrl && "border border-destructive ring-1 ring-destructive")}>
+                      <ImageUploader
+                        value={formData.imageUrl}
+                        onChange={(url) => setFormData(prev => ({ ...prev, imageUrl: url }))}
+                      />
+                    </div>
+                    {formErrors.imageUrl && <p className="text-xs text-destructive">{formErrors.imageUrl}</p>}
                   </div>
 
                   <ServiceBlockBuilder 
@@ -1135,7 +1140,9 @@ export default function ServicesPageEditor({ pageId, initialPageData }: Services
                       required
                       value={formData.startDate}
                       onChange={(e) => setFormData(prev => ({ ...prev, startDate: e.target.value }))}
+                      className={cn(formErrors.startDate && "border-destructive")}
                     />
+                    {formErrors.startDate && <p className="text-xs text-destructive">{formErrors.startDate}</p>}
                   </div>
 
                   <div className="flex items-center justify-between p-3 border border-border rounded-xl bg-muted/10 mt-6 h-[42px]">

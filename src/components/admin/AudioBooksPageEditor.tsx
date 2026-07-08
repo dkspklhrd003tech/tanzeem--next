@@ -488,6 +488,7 @@ export default function AudioBooksPageEditor({ pageId, initialPageData }: AudioB
     if (!/^[a-z0-9-]+$/.test(formData.slug)) {
       errors.slug = "Slug must contain only lowercase letters, numbers, and hyphens";
     }
+    if (!formData.audioUrl) errors.audioUrl = "MP3 URL Reference is required";
 
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
@@ -618,11 +619,13 @@ export default function AudioBooksPageEditor({ pageId, initialPageData }: AudioB
     }
   };
 
-  // Filter items based on search query
-  const filteredItems = items.filter(item =>
-    item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    item.slug.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Filter and sort items
+  const filteredItems = items
+    .filter(item =>
+      item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      item.slug.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    .sort((a, b) => new Date(b.publishedAt || b.createdAt || 0).getTime() - new Date(a.publishedAt || a.createdAt || 0).getTime());
 
   return (
     <div className="space-y-6 max-w-7xl">
@@ -940,7 +943,7 @@ export default function AudioBooksPageEditor({ pageId, initialPageData }: AudioB
                       required
                       value={formData.audioUrl}
                       onChange={(e) => setFormData(prev => ({ ...prev, audioUrl: e.target.value }))}
-                      className="font-mono"
+                      className={cn("font-mono", formErrors.audioUrl && "border-destructive")}
                       placeholder="https://your-server.com/uploads/..."
                     />
                     <Button type="button" variant="secondary" onClick={() => fileInputRef.current?.click()} disabled={isUploading}>
@@ -955,6 +958,7 @@ export default function AudioBooksPageEditor({ pageId, initialPageData }: AudioB
                       </Button>
                     )}
                   </div>
+                  {formErrors.audioUrl && <p className="text-xs text-destructive">{formErrors.audioUrl}</p>}
                 </div>
 
                 <div className="space-y-2">

@@ -101,7 +101,7 @@ const REQUIRED_FIELDS: Record<string, string[]> = {
     audio: ["title", "audioUrl", "slug"],
     videos: ["title", "slug"],
     books: ["title", "slug"],
-    "press-releases": ["title", "content", "slug"],
+    "press-releases": ["title", "slug"],
     "audio-books": ["title", "content", "slug"],
     magazines: ["title", "slug"],
     "home-campaigns": ["title", "slug"],

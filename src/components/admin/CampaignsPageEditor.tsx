@@ -481,6 +481,8 @@ export default function CampaignsPageEditor({ pageId, initialPageData }: Campaig
     if (!/^[a-z0-9-]+$/.test(formData.slug)) {
       errors.slug = "Slug must contain only lowercase letters, numbers, and hyphens";
     }
+    if (!formData.imageUrl) errors.imageUrl = "Image Document is required";
+    if (!formData.startDate) errors.startDate = "Published Date is required";
 
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
@@ -924,10 +926,13 @@ export default function CampaignsPageEditor({ pageId, initialPageData }: Campaig
 
                 <div className="space-y-2">
                   <Label>image Document <span className="text-destructive">*</span></Label>
-                  <ImageUploader
-                    value={formData.imageUrl}
-                    onChange={(url) => setFormData(prev => ({ ...prev, imageUrl: url }))}
-                  />
+                  <div className={cn("rounded-xl transition-colors", formErrors.imageUrl && "border border-destructive ring-1 ring-destructive")}>
+                    <ImageUploader
+                      value={formData.imageUrl}
+                      onChange={(url) => setFormData(prev => ({ ...prev, imageUrl: url }))}
+                    />
+                  </div>
+                  {formErrors.imageUrl && <p className="text-xs text-destructive">{formErrors.imageUrl}</p>}
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -939,7 +944,9 @@ export default function CampaignsPageEditor({ pageId, initialPageData }: Campaig
                       required
                       value={formData.startDate}
                       onChange={(e) => setFormData(prev => ({ ...prev, startDate: e.target.value }))}
+                      className={cn(formErrors.startDate && "border-destructive")}
                     />
+                    {formErrors.startDate && <p className="text-xs text-destructive">{formErrors.startDate}</p>}
                   </div>
 
                   <div className="flex items-center justify-between p-3 border border-border rounded-xl bg-muted/10 mt-6 h-[42px]">

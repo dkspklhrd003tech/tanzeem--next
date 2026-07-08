@@ -169,14 +169,17 @@ export default function VideosPageEditor({ pageId, initialPageData }: { pageId: 
   const [isCatModalOpen, setIsCatModalOpen] = useState(false);
   const [catFormData, setCatFormData] = useState({ name: "", slug: "", description: "" });
   const [editingCatId, setEditingCatId] = useState<string | null>(null);
+  const [catFormErrors, setCatFormErrors] = useState<Record<string, string>>({});
 
   const [isSpeakerModalOpen, setIsSpeakerModalOpen] = useState(false);
   const [speakerFormData, setSpeakerFormData] = useState({ name: "", slug: "", bio: "", avatar: "" });
   const [editingSpeakerId, setEditingSpeakerId] = useState<string | null>(null);
+  const [speakerFormErrors, setSpeakerFormErrors] = useState<Record<string, string>>({});
 
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [videoFormData, setVideoFormData] = useState({ title: "", slug: "", description: "", videoUrl: "", embedUrl: "", thumbnailUrl: "", speakerId: "", isPublished: true });
   const [editingVideoId, setEditingVideoId] = useState<string | null>(null);
+  const [videoFormErrors, setVideoFormErrors] = useState<Record<string, string>>({});
 
   const [isUploading, setIsUploading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -248,7 +251,15 @@ export default function VideosPageEditor({ pageId, initialPageData }: { pageId: 
 
   // --- Category CRUD ---
   const handleCatSave = async () => {
-    if (!catFormData.name || !catFormData.slug) return;
+    const errors: Record<string, string> = {};
+    if (!catFormData.name.trim()) errors.name = "Name is required";
+    if (!catFormData.slug.trim()) errors.slug = "Slug is required";
+
+    if (Object.keys(errors).length > 0) {
+      setCatFormErrors(errors);
+      return;
+    }
+
     try {
       const url = editingCatId ? `/api/admin/video-categories/${editingCatId}` : "/api/admin/video-categories";
       const method = editingCatId ? "PUT" : "POST";
@@ -273,7 +284,15 @@ export default function VideosPageEditor({ pageId, initialPageData }: { pageId: 
 
   // --- Speaker CRUD ---
   const handleSpeakerSave = async () => {
-    if (!speakerFormData.name || !speakerFormData.slug) return;
+    const errors: Record<string, string> = {};
+    if (!speakerFormData.name.trim()) errors.name = "Name is required";
+    if (!speakerFormData.slug.trim()) errors.slug = "Slug is required";
+
+    if (Object.keys(errors).length > 0) {
+      setSpeakerFormErrors(errors);
+      return;
+    }
+
     try {
       const url = editingSpeakerId ? `/api/admin/speakers/${editingSpeakerId}` : "/api/admin/speakers";
       const method = editingSpeakerId ? "PUT" : "POST";
@@ -298,7 +317,16 @@ export default function VideosPageEditor({ pageId, initialPageData }: { pageId: 
 
   // --- Video CRUD ---
   const handleVideoSave = async () => {
-    if (!videoFormData.title || !videoFormData.slug) return;
+    const errors: Record<string, string> = {};
+    if (!videoFormData.title.trim()) errors.title = "Title is required";
+    if (!videoFormData.slug.trim()) errors.slug = "Slug is required";
+    if (!videoFormData.videoUrl.trim()) errors.videoUrl = "Video URL is required";
+
+    if (Object.keys(errors).length > 0) {
+      setVideoFormErrors(errors);
+      return;
+    }
+
     try {
       const url = editingVideoId ? `/api/admin/videos/${editingVideoId}` : "/api/admin/videos";
       const method = editingVideoId ? "PUT" : "POST";
@@ -342,7 +370,10 @@ export default function VideosPageEditor({ pageId, initialPageData }: { pageId: 
   };
 
   const filteredCategories = categories.filter(c => c.name.toLowerCase().includes(searchQuery.toLowerCase()));
-  const activeVideos = videosList.filter(b => b.categoryId === activeCategory?.id).filter(b => b.title.toLowerCase().includes(searchQuery.toLowerCase())).sort((a, b) => a.order - b.order);
+  const activeVideos = videosList
+    .filter(b => b.categoryId === activeCategory?.id)
+    .filter(b => b.title.toLowerCase().includes(searchQuery.toLowerCase()))
+    .sort((a, b) => new Date(b.publishedAt || b.createdAt || 0).getTime() - new Date(a.publishedAt || a.createdAt || 0).getTime());
 
   return (
     <div className="space-y-6 max-w-7xl">
@@ -366,11 +397,11 @@ export default function VideosPageEditor({ pageId, initialPageData }: { pageId: 
         }}
       >
         {!activeCategory ? (
-          <Button onClick={() => { setEditingCatId(null); setCatFormData({ name: "", slug: "", description: "" }); setIsCatModalOpen(true); }} className="ml-2 bg-primary text-primary-foreground hover:bg-primary/95">
+          <Button onClick={() => { setEditingCatId(null); setCatFormData({ name: "", slug: "", description: "" }); setCatFormErrors({}); setIsCatModalOpen(true); }} className="ml-2 bg-primary text-primary-foreground hover:bg-primary/95">
             <Plus className="w-4 h-4 mr-2" /> Add Category
           </Button>
         ) : (
-          <Button onClick={() => { setEditingVideoId(null); setVideoFormData({ title: "", slug: "", description: "", videoUrl: "", embedUrl: "", thumbnailUrl: "", speakerId: "", isPublished: true }); setIsVideoModalOpen(true); }} className="ml-2 bg-primary text-primary-foreground hover:bg-primary/95">
+          <Button onClick={() => { setEditingVideoId(null); setVideoFormData({ title: "", slug: "", description: "", videoUrl: "", embedUrl: "", thumbnailUrl: "", speakerId: "", isPublished: true }); setVideoFormErrors({}); setIsVideoModalOpen(true); }} className="ml-2 bg-primary text-primary-foreground hover:bg-primary/95">
             <Plus className="w-4 h-4 mr-2" /> Add Video
           </Button>
         )}
@@ -406,7 +437,7 @@ export default function VideosPageEditor({ pageId, initialPageData }: { pageId: 
                 {filteredCategories.map(cat => (
                   <SortableCategoryCard key={cat.id} id={cat.id} item={cat} onClick={setActiveCategory}
                     videoCount={videosList.filter(b => b.categoryId === cat.id).length}
-                    onEdit={(item: any) => { setEditingCatId(item.id); setCatFormData({ name: item.name, slug: item.slug, description: item.description || "" }); setIsCatModalOpen(true); }}
+                    onEdit={(item: any) => { setEditingCatId(item.id); setCatFormData({ name: item.name, slug: item.slug, description: item.description || "" }); setCatFormErrors({}); setIsCatModalOpen(true); }}
                     onDelete={(item: CategoryItem) => setDeletingCat(item)} />
                 ))}
               </div>
@@ -419,7 +450,7 @@ export default function VideosPageEditor({ pageId, initialPageData }: { pageId: 
                     {activeVideos.map(vid => (
                       <SortableVideoCard key={vid.id} id={vid.id} item={vid}
                         speakerName={speakersList.find(s => s.id === vid.speakerId)?.name}
-                        onEdit={(item: any) => { setEditingVideoId(item.id); setVideoFormData({ title: item.title, slug: item.slug, description: item.description || "", videoUrl: item.videoUrl || "", embedUrl: item.embedUrl || "", thumbnailUrl: item.thumbnailUrl || "", speakerId: item.speakerId || "", isPublished: item.isPublished }); setIsVideoModalOpen(true); }}
+                        onEdit={(item: any) => { setEditingVideoId(item.id); setVideoFormData({ title: item.title, slug: item.slug, description: item.description || "", videoUrl: item.videoUrl || "", embedUrl: item.embedUrl || "", thumbnailUrl: item.thumbnailUrl || "", speakerId: item.speakerId || "", isPublished: item.isPublished }); setVideoFormErrors({}); setIsVideoModalOpen(true); }}
                         onDelete={(item: VideoItem) => setDeletingVideo(item)} />
                     ))}
                     {activeVideos.length === 0 && <div className="col-span-full py-10 text-center text-muted-foreground border border-dashed rounded-xl">No videos found in this category.</div>}
@@ -433,7 +464,7 @@ export default function VideosPageEditor({ pageId, initialPageData }: { pageId: 
         <TabsContent value="speakers" className="space-y-6">
           <div className="flex justify-between items-center">
             <h2 className="text-xl font-bold">Speakers Management</h2>
-            <Button size="sm" onClick={() => { setEditingSpeakerId(null); setSpeakerFormData({ name: "", slug: "", bio: "", avatar: "" }); setIsSpeakerModalOpen(true); }}>
+            <Button size="sm" onClick={() => { setEditingSpeakerId(null); setSpeakerFormData({ name: "", slug: "", bio: "", avatar: "" }); setSpeakerFormErrors({}); setIsSpeakerModalOpen(true); }}>
               <Plus className="w-4 h-4 mr-1" /> Add Speaker
             </Button>
           </div>
@@ -453,7 +484,7 @@ export default function VideosPageEditor({ pageId, initialPageData }: { pageId: 
                   <div className="flex justify-between items-start mb-2">
                     <h3 className="font-bold text-base line-clamp-1">{speaker.name}</h3>
                     <div className="flex gap-1">
-                      <Button variant="ghost" size="icon" className="h-6 w-6 text-green-500" onClick={() => { setEditingSpeakerId(speaker.id); setSpeakerFormData({ name: speaker.name, slug: speaker.slug, bio: speaker.bio || "", avatar: speaker.avatar || "" }); setIsSpeakerModalOpen(true); }}><Pencil className="w-3 h-3" /></Button>
+                      <Button variant="ghost" size="icon" className="h-6 w-6 text-green-500" onClick={() => { setEditingSpeakerId(speaker.id); setSpeakerFormData({ name: speaker.name, slug: speaker.slug, bio: speaker.bio || "", avatar: speaker.avatar || "" }); setSpeakerFormErrors({}); setIsSpeakerModalOpen(true); }}><Pencil className="w-3 h-3" /></Button>
                       <Button variant="ghost" size="icon" className="h-6 w-6 text-red-500" onClick={() => setDeletingSpeaker(speaker)}><Trash2 className="w-3 h-3" /></Button>
                     </div>
                   </div>
@@ -490,8 +521,16 @@ export default function VideosPageEditor({ pageId, initialPageData }: { pageId: 
               <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsCatModalOpen(false)}>×</Button>
             </div>
             <div className="p-6 flex-1 space-y-4">
-              <div className="space-y-2"><Label>Name</Label><Input value={catFormData.name} onChange={e => setCatFormData({ ...catFormData, name: e.target.value, slug: editingCatId ? catFormData.slug : slugify(e.target.value) })} /></div>
-              <div className="space-y-2"><Label>Slug</Label><Input value={catFormData.slug} onChange={e => setCatFormData({ ...catFormData, slug: e.target.value })} /></div>
+              <div className="space-y-2">
+                <Label>Name <span className="text-destructive">*</span></Label>
+                <Input className={cn(catFormErrors.name && "border-destructive")} value={catFormData.name} onChange={e => setCatFormData({ ...catFormData, name: e.target.value, slug: editingCatId ? catFormData.slug : slugify(e.target.value) })} />
+                {catFormErrors.name && <p className="text-xs text-destructive">{catFormErrors.name}</p>}
+              </div>
+              <div className="space-y-2">
+                <Label>Slug <span className="text-destructive">*</span></Label>
+                <Input className={cn(catFormErrors.slug && "border-destructive")} value={catFormData.slug} onChange={e => setCatFormData({ ...catFormData, slug: e.target.value })} />
+                {catFormErrors.slug && <p className="text-xs text-destructive">{catFormErrors.slug}</p>}
+              </div>
               <div className="space-y-2"><Label>Description</Label><Textarea value={catFormData.description} onChange={e => setCatFormData({ ...catFormData, description: e.target.value })} /></div>
             </div>
             <div className="p-6 border-t border-border bg-muted/20 flex justify-end gap-3">
@@ -516,8 +555,16 @@ export default function VideosPageEditor({ pageId, initialPageData }: { pageId: 
               <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsSpeakerModalOpen(false)}>×</Button>
             </div>
             <div className="overflow-y-auto p-6 flex-1 space-y-4">
-              <div className="space-y-2"><Label>Name</Label><Input value={speakerFormData.name} onChange={e => setSpeakerFormData({ ...speakerFormData, name: e.target.value, slug: editingSpeakerId ? speakerFormData.slug : slugify(e.target.value) })} /></div>
-              <div className="space-y-2"><Label>Slug</Label><Input value={speakerFormData.slug} onChange={e => setSpeakerFormData({ ...speakerFormData, slug: e.target.value })} /></div>
+              <div className="space-y-2">
+                <Label>Name <span className="text-destructive">*</span></Label>
+                <Input className={cn(speakerFormErrors.name && "border-destructive")} value={speakerFormData.name} onChange={e => setSpeakerFormData({ ...speakerFormData, name: e.target.value, slug: editingSpeakerId ? speakerFormData.slug : slugify(e.target.value) })} />
+                {speakerFormErrors.name && <p className="text-xs text-destructive">{speakerFormErrors.name}</p>}
+              </div>
+              <div className="space-y-2">
+                <Label>Slug <span className="text-destructive">*</span></Label>
+                <Input className={cn(speakerFormErrors.slug && "border-destructive")} value={speakerFormData.slug} onChange={e => setSpeakerFormData({ ...speakerFormData, slug: e.target.value })} />
+                {speakerFormErrors.slug && <p className="text-xs text-destructive">{speakerFormErrors.slug}</p>}
+              </div>
               <div className="space-y-2"><Label>Bio</Label><Textarea value={speakerFormData.bio} onChange={e => setSpeakerFormData({ ...speakerFormData, bio: e.target.value })} /></div>
               <div className="space-y-2">
                 <Label>Speaker Photo</Label>
@@ -551,10 +598,22 @@ export default function VideosPageEditor({ pageId, initialPageData }: { pageId: 
             </div>
             <div className="overflow-y-auto p-6 flex-1 space-y-4">
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2 col-span-2"><Label>Title</Label><Input value={videoFormData.title} onChange={e => setVideoFormData({ ...videoFormData, title: e.target.value, slug: editingVideoId ? videoFormData.slug : slugify(e.target.value) })} /></div>
-                <div className="space-y-2 col-span-2"><Label>Slug</Label><Input value={videoFormData.slug} onChange={e => setVideoFormData({ ...videoFormData, slug: e.target.value })} /></div>
+                <div className="space-y-2 col-span-2">
+                  <Label>Title <span className="text-destructive">*</span></Label>
+                  <Input className={cn(videoFormErrors.title && "border-destructive")} value={videoFormData.title} onChange={e => setVideoFormData({ ...videoFormData, title: e.target.value, slug: editingVideoId ? videoFormData.slug : slugify(e.target.value) })} />
+                  {videoFormErrors.title && <p className="text-xs text-destructive">{videoFormErrors.title}</p>}
+                </div>
+                <div className="space-y-2 col-span-2">
+                  <Label>Slug <span className="text-destructive">*</span></Label>
+                  <Input className={cn(videoFormErrors.slug && "border-destructive")} value={videoFormData.slug} onChange={e => setVideoFormData({ ...videoFormData, slug: e.target.value })} />
+                  {videoFormErrors.slug && <p className="text-xs text-destructive">{videoFormErrors.slug}</p>}
+                </div>
 
-                <div className="space-y-2 col-span-2"><Label>Video URL</Label><Input placeholder="https://youtube.com/..." value={videoFormData.videoUrl} onChange={e => setVideoFormData({ ...videoFormData, videoUrl: e.target.value })} /></div>
+                <div className="space-y-2 col-span-2">
+                  <Label>Video URL <span className="text-destructive">*</span></Label>
+                  <Input className={cn(videoFormErrors.videoUrl && "border-destructive")} placeholder="https://youtube.com/..." value={videoFormData.videoUrl} onChange={e => setVideoFormData({ ...videoFormData, videoUrl: e.target.value })} />
+                  {videoFormErrors.videoUrl && <p className="text-xs text-destructive">{videoFormErrors.videoUrl}</p>}
+                </div>
                 <div className="space-y-2 col-span-2"><Label>Embed URL (Optional)</Label><Input placeholder="https://www.youtube.com/embed/..." value={videoFormData.embedUrl} onChange={e => setVideoFormData({ ...videoFormData, embedUrl: e.target.value })} /></div>
 
                 <div className="space-y-2 col-span-2">

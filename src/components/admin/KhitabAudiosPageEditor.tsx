@@ -188,10 +188,12 @@ export default function KhitabAudiosPageEditor({ pageId, initialPageData }: { pa
   const [isCatModalOpen, setIsCatModalOpen] = useState(false);
   const [catFormData, setCatFormData] = useState({ name: "", urduName: "", slug: "", description: "" });
   const [editingCatId, setEditingCatId] = useState<string | null>(null);
+  const [catFormErrors, setCatFormErrors] = useState<Record<string, string>>({});
 
   const [isKhitabAudioModalOpen, setIsKhitabAudioModalOpen] = useState(false);
   const [khitabAudioFormData, setKhitabAudioFormData] = useState({ title: "", titleUrdu: "", slug: "", excerpt: "", description: "", audioUrl: "", isPublished: true, publishedAt: "" });
   const [editingKhitabAudioId, setEditingKhitabAudioId] = useState<string | null>(null);
+  const [khitabAudioFormErrors, setKhitabAudioFormErrors] = useState<Record<string, string>>({});
 
   const [isUploading, setIsUploading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -256,7 +258,15 @@ export default function KhitabAudiosPageEditor({ pageId, initialPageData }: { pa
 
   // --- Category CRUD ---
   const handleCatSave = async () => {
-    if (!catFormData.name || !catFormData.slug) return;
+    const errors: Record<string, string> = {};
+    if (!catFormData.name.trim()) errors.name = "Name is required";
+    if (!catFormData.slug.trim()) errors.slug = "Slug is required";
+    
+    if (Object.keys(errors).length > 0) {
+      setCatFormErrors(errors);
+      return;
+    }
+
     try {
       const url = editingCatId ? `/api/admin/khitab-audio-categories/${editingCatId}` : "/api/admin/khitab-audio-categories";
       const method = editingCatId ? "PUT" : "POST";
@@ -298,7 +308,16 @@ export default function KhitabAudiosPageEditor({ pageId, initialPageData }: { pa
 
   // --- KhitabAudio CRUD ---
   const handleKhitabAudioSave = async () => {
-    if (!khitabAudioFormData.title || !khitabAudioFormData.slug) return;
+    const errors: Record<string, string> = {};
+    if (!khitabAudioFormData.title.trim()) errors.title = "Title is required";
+    if (!khitabAudioFormData.slug.trim()) errors.slug = "Slug is required";
+    if (!khitabAudioFormData.audioUrl.trim()) errors.audioUrl = "Audio Upload / URL is required";
+
+    if (Object.keys(errors).length > 0) {
+      setKhitabAudioFormErrors(errors);
+      return;
+    }
+
     try {
       const url = editingKhitabAudioId ? `/api/admin/khitab-audios/${editingKhitabAudioId}` : "/api/admin/khitab-audios";
       const method = editingKhitabAudioId ? "PUT" : "POST";
@@ -421,7 +440,10 @@ export default function KhitabAudiosPageEditor({ pageId, initialPageData }: { pa
   };
 
   const filteredCategories = categories.filter(c => c.name.toLowerCase().includes(searchQuery.toLowerCase()));
-  const activeKhitabAudios = khitabAudios.filter(s => s.categoryId === activeCategory?.id).filter(s => s.title.toLowerCase().includes(searchQuery.toLowerCase()));
+  const activeKhitabAudios = khitabAudios
+    .filter(s => s.categoryId === activeCategory?.id)
+    .filter(s => s.title.toLowerCase().includes(searchQuery.toLowerCase()))
+    .sort((a, b) => new Date(b.publishedAt || b.createdAt || 0).getTime() - new Date(a.publishedAt || a.createdAt || 0).getTime());
 
   return (
     <div className="space-y-6 max-w-7xl">
@@ -449,11 +471,11 @@ export default function KhitabAudiosPageEditor({ pageId, initialPageData }: { pa
         </div>
         <div className="flex items-center gap-2">
           {!activeCategory ? (
-            <Button onClick={() => { setEditingCatId(null); setCatFormData({ name: "", urduName: "", slug: "", description: "" }); setIsCatModalOpen(true); }}>
+            <Button onClick={() => { setEditingCatId(null); setCatFormData({ name: "", urduName: "", slug: "", description: "" }); setCatFormErrors({}); setIsCatModalOpen(true); }}>
               <Plus className="w-4 h-4 mr-2" /> Add Category
             </Button>
           ) : (
-            <Button onClick={() => { setEditingKhitabAudioId(null); setKhitabAudioFormData({ title: "", titleUrdu: "", slug: "", excerpt: "", description: "", audioUrl: "", isPublished: true, publishedAt: new Date().toISOString().split("T")[0] }); setIsKhitabAudioModalOpen(true); }}>
+            <Button onClick={() => { setEditingKhitabAudioId(null); setKhitabAudioFormData({ title: "", titleUrdu: "", slug: "", excerpt: "", description: "", audioUrl: "", isPublished: true, publishedAt: new Date().toISOString().split("T")[0] }); setKhitabAudioFormErrors({}); setIsKhitabAudioModalOpen(true); }}>
               <Plus className="w-4 h-4 mr-2" /> Add Audio
             </Button>
           )}
@@ -481,7 +503,7 @@ export default function KhitabAudiosPageEditor({ pageId, initialPageData }: { pa
                     {filteredCategories.map(cat => (
                       <SortableCategoryCard key={cat.id} id={cat.id} item={cat} onClick={setActiveCategory}
                         khitabAudioCount={khitabAudios.filter(s => s.categoryId === cat.id).length}
-                        onEdit={(item: any) => { setEditingCatId(item.id); setCatFormData({ name: item.name, urduName: item.urduName || "", slug: item.slug, description: item.description || "" }); setIsCatModalOpen(true); }}
+                        onEdit={(item: any) => { setEditingCatId(item.id); setCatFormData({ name: item.name, urduName: item.urduName || "", slug: item.slug, description: item.description || "" }); setCatFormErrors({}); setIsCatModalOpen(true); }}
                         onDelete={(item: CategoryItem) => setDeletingCat(item)} />
                     ))}
                   </div>
@@ -539,6 +561,7 @@ export default function KhitabAudiosPageEditor({ pageId, initialPageData }: { pa
                         isPublished: item.isPublished,
                         publishedAt: item.publishedAt ? new Date(item.publishedAt).toISOString().split("T")[0] : "",
                       }); 
+                      setKhitabAudioFormErrors({});
                       setIsKhitabAudioModalOpen(true); 
                     }}
                     onDelete={(item: KhitabAudioItem) => setDeletingKhitabAudio(item)} />
@@ -577,9 +600,17 @@ export default function KhitabAudiosPageEditor({ pageId, initialPageData }: { pa
               <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsCatModalOpen(false)}>×</Button>
             </div>
             <div className="overflow-y-auto p-6 flex-1 space-y-4">
-              <div className="space-y-2"><Label>Name (e.g. Khitab-e-Jum'ah 2026)</Label><Input value={catFormData.name} onChange={e => setCatFormData({ ...catFormData, name: e.target.value, slug: editingCatId ? catFormData.slug : slugify(e.target.value) })} /></div>
+              <div className="space-y-2">
+                <Label>Name (e.g. Khitab-e-Jum'ah 2026) <span className="text-destructive">*</span></Label>
+                <Input className={cn(catFormErrors.name && "border-destructive")} value={catFormData.name} onChange={e => setCatFormData({ ...catFormData, name: e.target.value, slug: editingCatId ? catFormData.slug : slugify(e.target.value) })} />
+                {catFormErrors.name && <p className="text-xs text-destructive">{catFormErrors.name}</p>}
+              </div>
               <div className="space-y-2"><Label>Urdu Name (Optional)</Label><Input value={catFormData.urduName} onChange={e => setCatFormData({ ...catFormData, urduName: e.target.value })} dir="rtl" /></div>
-              <div className="space-y-2"><Label>Slug</Label><Input value={catFormData.slug} onChange={e => setCatFormData({ ...catFormData, slug: e.target.value })} /></div>
+              <div className="space-y-2">
+                <Label>Slug <span className="text-destructive">*</span></Label>
+                <Input className={cn(catFormErrors.slug && "border-destructive")} value={catFormData.slug} onChange={e => setCatFormData({ ...catFormData, slug: e.target.value })} />
+                {catFormErrors.slug && <p className="text-xs text-destructive">{catFormErrors.slug}</p>}
+              </div>
               <div className="space-y-2"><Label>Description</Label><Textarea value={catFormData.description} onChange={e => setCatFormData({ ...catFormData, description: e.target.value })} /></div>
             </div>
             <div className="p-6 border-t border-border bg-muted/20 flex justify-end gap-3">
@@ -611,20 +642,29 @@ export default function KhitabAudiosPageEditor({ pageId, initialPageData }: { pa
             </div>
             <div className="overflow-y-auto p-6 flex-1 space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2"><Label>Title (English)</Label><Input value={khitabAudioFormData.title} onChange={e => setKhitabAudioFormData({ ...khitabAudioFormData, title: e.target.value, slug: editingKhitabAudioId ? khitabAudioFormData.slug : slugify(e.target.value) })} /></div>
-                <div className="space-y-2"><Label>Title (Urdu)</Label><Input value={khitabAudioFormData.titleUrdu} onChange={e => setKhitabAudioFormData({ ...khitabAudioFormData, titleUrdu: e.target.value })} dir="rtl" /></div>
+                <div className="space-y-2">
+                  <Label>Title (English) <span className="text-destructive">*</span></Label>
+                  <Input className={cn(khitabAudioFormErrors.title && "border-destructive")} value={khitabAudioFormData.title} onChange={e => setKhitabAudioFormData({ ...khitabAudioFormData, title: e.target.value, slug: editingKhitabAudioId ? khitabAudioFormData.slug : slugify(e.target.value) })} />
+                  {khitabAudioFormErrors.title && <p className="text-xs text-destructive">{khitabAudioFormErrors.title}</p>}
+                </div>
+                <div className="space-y-2"><Label>Title (Urdu) - Optional</Label><Input value={khitabAudioFormData.titleUrdu} onChange={e => setKhitabAudioFormData({ ...khitabAudioFormData, titleUrdu: e.target.value })} dir="rtl" /></div>
               </div>
-              <div className="space-y-2"><Label>Slug</Label><Input value={khitabAudioFormData.slug} onChange={e => setKhitabAudioFormData({ ...khitabAudioFormData, slug: e.target.value })} /></div>
               <div className="space-y-2">
-                <Label>Audio Upload / URL</Label>
+                <Label>Slug <span className="text-destructive">*</span></Label>
+                <Input className={cn(khitabAudioFormErrors.slug && "border-destructive")} value={khitabAudioFormData.slug} onChange={e => setKhitabAudioFormData({ ...khitabAudioFormData, slug: e.target.value })} />
+                {khitabAudioFormErrors.slug && <p className="text-xs text-destructive">{khitabAudioFormErrors.slug}</p>}
+              </div>
+              <div className="space-y-2">
+                <Label>Audio Upload / URL <span className="text-destructive">*</span></Label>
                 <div className="flex gap-2 items-center">
-                  <Input value={khitabAudioFormData.audioUrl} onChange={e => setKhitabAudioFormData({ ...khitabAudioFormData, audioUrl: e.target.value })} placeholder="Upload file or enter URL manually" className="flex-1" />
+                  <Input className={cn("flex-1", khitabAudioFormErrors.audioUrl && "border-destructive")} value={khitabAudioFormData.audioUrl} onChange={e => setKhitabAudioFormData({ ...khitabAudioFormData, audioUrl: e.target.value })} placeholder="Upload file or enter URL manually" />
                   <Label className="cursor-pointer bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 px-4 py-2 rounded-xl text-sm font-semibold transition-colors flex items-center gap-2">
                     {isUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <UploadCloud className="w-4 h-4" />}
                     {isUploading ? "Uploading..." : "Upload File"}
                     <input type="file" accept="audio/*" className="hidden" onChange={handleAudioUploadInModal} disabled={isUploading} />
                   </Label>
                 </div>
+                {khitabAudioFormErrors.audioUrl && <p className="text-xs text-destructive">{khitabAudioFormErrors.audioUrl}</p>}
               </div>
               <div className="space-y-2"><Label>Excerpt</Label><Textarea value={khitabAudioFormData.excerpt} onChange={e => setKhitabAudioFormData({ ...khitabAudioFormData, excerpt: e.target.value })} rows={2} /></div>
               <div className="space-y-2"><Label>Description</Label>

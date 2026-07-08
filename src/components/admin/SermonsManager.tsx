@@ -181,10 +181,12 @@ export function SermonsManager() {
   const [isCatModalOpen, setIsCatModalOpen] = useState(false);
   const [catFormData, setCatFormData] = useState({ name: "", urduName: "", slug: "", description: "" });
   const [editingCatId, setEditingCatId] = useState<string | null>(null);
+  const [catFormErrors, setCatFormErrors] = useState<Record<string, string>>({});
 
   const [isSermonModalOpen, setIsSermonModalOpen] = useState(false);
   const [sermonFormData, setSermonFormData] = useState({ title: "", titleUrdu: "", slug: "", excerpt: "", description: "", audioUrl: "", isPublished: true, publishedAt: "" });
   const [editingSermonId, setEditingSermonId] = useState<string | null>(null);
+  const [sermonFormErrors, setSermonFormErrors] = useState<Record<string, string>>({});
 
   const [isUploading, setIsUploading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -230,7 +232,15 @@ export function SermonsManager() {
 
   // --- Category CRUD ---
   const handleCatSave = async () => {
-    if (!catFormData.name || !catFormData.slug) return;
+    const errors: Record<string, string> = {};
+    if (!catFormData.name.trim()) errors.name = "Name is required";
+    if (!catFormData.slug.trim()) errors.slug = "Slug is required";
+    
+    if (Object.keys(errors).length > 0) {
+      setCatFormErrors(errors);
+      return;
+    }
+
     try {
       const url = editingCatId ? `/api/admin/khitab-audio-categories/${editingCatId}` : "/api/admin/khitab-audio-categories";
       const method = editingCatId ? "PUT" : "POST";
@@ -272,7 +282,16 @@ export function SermonsManager() {
 
   // --- Sermon CRUD ---
   const handleSermonSave = async () => {
-    if (!sermonFormData.title || !sermonFormData.slug) return;
+    const errors: Record<string, string> = {};
+    if (!sermonFormData.title.trim()) errors.title = "Title is required";
+    if (!sermonFormData.slug.trim()) errors.slug = "Slug is required";
+    if (!sermonFormData.audioUrl.trim()) errors.audioUrl = "Audio URL is required";
+
+    if (Object.keys(errors).length > 0) {
+      setSermonFormErrors(errors);
+      return;
+    }
+
     try {
       const url = editingSermonId ? `/api/admin/khitab-audios/${editingSermonId}` : "/api/admin/khitab-audios";
       const method = editingSermonId ? "PUT" : "POST";
@@ -366,7 +385,10 @@ export function SermonsManager() {
   };
 
   const filteredCategories = categories.filter(c => c.name.toLowerCase().includes(searchQuery.toLowerCase()));
-  const activeSermons = sermons.filter(s => s.categoryId === activeCategory?.id).filter(s => s.title.toLowerCase().includes(searchQuery.toLowerCase()));
+  const activeSermons = sermons
+    .filter(s => s.categoryId === activeCategory?.id)
+    .filter(s => s.title.toLowerCase().includes(searchQuery.toLowerCase()))
+    .sort((a, b) => new Date(b.publishedAt || b.createdAt || 0).getTime() - new Date(a.publishedAt || a.createdAt || 0).getTime());
 
   return (
     <div className="space-y-6 max-w-7xl">
@@ -388,11 +410,11 @@ export function SermonsManager() {
         </div>
         <div className="flex items-center gap-2">
           {!activeCategory ? (
-            <Button onClick={() => { setEditingCatId(null); setCatFormData({ name: "", urduName: "", slug: "", description: "" }); setIsCatModalOpen(true); }}>
+            <Button onClick={() => { setEditingCatId(null); setCatFormData({ name: "", urduName: "", slug: "", description: "" }); setCatFormErrors({}); setIsCatModalOpen(true); }}>
               <Plus className="w-4 h-4 mr-2" /> Add Category
             </Button>
           ) : (
-            <Button onClick={() => { setEditingSermonId(null); setSermonFormData({ title: "", titleUrdu: "", slug: "", excerpt: "", description: "", audioUrl: "", isPublished: true, publishedAt: new Date().toISOString().split("T")[0] }); setIsSermonModalOpen(true); }}>
+            <Button onClick={() => { setEditingSermonId(null); setSermonFormData({ title: "", titleUrdu: "", slug: "", excerpt: "", description: "", audioUrl: "", isPublished: true, publishedAt: "" }); setSermonFormErrors({}); setIsSermonModalOpen(true); }}>
               <Plus className="w-4 h-4 mr-2" /> Add Audio
             </Button>
           )}
@@ -414,7 +436,7 @@ export function SermonsManager() {
                     {filteredCategories.map(cat => (
                       <SortableCategoryCard key={cat.id} id={cat.id} item={cat} onClick={setActiveCategory}
                         sermonCount={sermons.filter(s => s.categoryId === cat.id).length}
-                        onEdit={(item: any) => { setEditingCatId(item.id); setCatFormData({ name: item.name, urduName: item.urduName || "", slug: item.slug, description: item.description || "" }); setIsCatModalOpen(true); }}
+                        onEdit={(item: any) => { setEditingCatId(item.id); setCatFormData({ name: item.name, urduName: item.urduName || "", slug: item.slug, description: item.description || "" }); setCatFormErrors({}); setIsCatModalOpen(true); }}
                         onDelete={(item: CategoryItem) => setDeletingCat(item)} />
                     ))}
                   </div>
@@ -472,6 +494,7 @@ export function SermonsManager() {
                         isPublished: item.isPublished,
                         publishedAt: item.publishedAt ? new Date(item.publishedAt).toISOString().split("T")[0] : "",
                       }); 
+                      setSermonFormErrors({});
                       setIsSermonModalOpen(true); 
                     }}
                     onDelete={(item: SermonItem) => setDeletingSermon(item)} />
@@ -494,9 +517,17 @@ export function SermonsManager() {
               <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsCatModalOpen(false)}>×</Button>
             </div>
             <div className="overflow-y-auto p-6 flex-1 space-y-4">
-              <div className="space-y-2"><Label>Name (e.g. Khitab-e-Jum'ah 2026)</Label><Input value={catFormData.name} onChange={e => setCatFormData({ ...catFormData, name: e.target.value, slug: editingCatId ? catFormData.slug : slugify(e.target.value) })} /></div>
+              <div className="space-y-2">
+                <Label>Name <span className="text-destructive">*</span></Label>
+                <Input className={cn(catFormErrors.name && "border-destructive")} value={catFormData.name} onChange={e => setCatFormData({ ...catFormData, name: e.target.value, slug: editingCatId ? catFormData.slug : slugify(e.target.value) })} />
+                {catFormErrors.name && <p className="text-xs text-destructive">{catFormErrors.name}</p>}
+              </div>
               <div className="space-y-2"><Label>Urdu Name (Optional)</Label><Input value={catFormData.urduName} onChange={e => setCatFormData({ ...catFormData, urduName: e.target.value })} dir="rtl" /></div>
-              <div className="space-y-2"><Label>Slug</Label><Input value={catFormData.slug} onChange={e => setCatFormData({ ...catFormData, slug: e.target.value })} /></div>
+              <div className="space-y-2">
+                <Label>Slug <span className="text-destructive">*</span></Label>
+                <Input className={cn(catFormErrors.slug && "border-destructive")} value={catFormData.slug} onChange={e => setCatFormData({ ...catFormData, slug: e.target.value })} />
+                {catFormErrors.slug && <p className="text-xs text-destructive">{catFormErrors.slug}</p>}
+              </div>
               <div className="space-y-2"><Label>Description</Label><Textarea value={catFormData.description} onChange={e => setCatFormData({ ...catFormData, description: e.target.value })} /></div>
             </div>
             <div className="p-6 border-t border-border bg-muted/20 flex justify-end gap-3">
@@ -527,20 +558,31 @@ export function SermonsManager() {
               <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsSermonModalOpen(false)}>×</Button>
             </div>
             <div className="overflow-y-auto p-6 flex-1 space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2"><Label>Title (English)</Label><Input value={sermonFormData.title} onChange={e => setSermonFormData({ ...sermonFormData, title: e.target.value, slug: editingSermonId ? sermonFormData.slug : slugify(e.target.value) })} /></div>
-                <div className="space-y-2"><Label>Title (Urdu)</Label><Input value={sermonFormData.titleUrdu} onChange={e => setSermonFormData({ ...sermonFormData, titleUrdu: e.target.value })} dir="rtl" /></div>
-              </div>
-              <div className="space-y-2"><Label>Slug</Label><Input value={sermonFormData.slug} onChange={e => setSermonFormData({ ...sermonFormData, slug: e.target.value })} /></div>
               <div className="space-y-2">
-                <Label>Audio URL</Label>
+                <Label>Title <span className="text-destructive">*</span></Label>
+                <Input className={cn(sermonFormErrors.title && "border-destructive")} value={sermonFormData.title} onChange={e => setSermonFormData({ ...sermonFormData, title: e.target.value, slug: editingSermonId ? sermonFormData.slug : slugify(e.target.value) })} />
+                {sermonFormErrors.title && <p className="text-xs text-destructive">{sermonFormErrors.title}</p>}
+              </div>
+              <div className="space-y-2">
+                <Label>Title (Urdu) - Optional</Label>
+                <Input value={sermonFormData.titleUrdu} onChange={e => setSermonFormData({ ...sermonFormData, titleUrdu: e.target.value })} dir="rtl" />
+              </div>
+              <div className="space-y-2">
+                <Label>Slug <span className="text-destructive">*</span></Label>
+                <Input className={cn(sermonFormErrors.slug && "border-destructive")} value={sermonFormData.slug} onChange={e => setSermonFormData({ ...sermonFormData, slug: e.target.value })} />
+                {sermonFormErrors.slug && <p className="text-xs text-destructive">{sermonFormErrors.slug}</p>}
+              </div>
+              
+              <div className="space-y-2">
+                <Label>Audio URL <span className="text-destructive">*</span></Label>
                 <div className="flex gap-2">
-                  <Input value={sermonFormData.audioUrl} onChange={e => setSermonFormData({ ...sermonFormData, audioUrl: e.target.value })} placeholder="Enter URL or upload file..." />
+                  <Input className={cn(sermonFormErrors.audioUrl && "border-destructive")} value={sermonFormData.audioUrl} onChange={e => setSermonFormData({ ...sermonFormData, audioUrl: e.target.value })} placeholder="Enter URL or upload file..." />
                   <Button type="button" variant="secondary" onClick={() => fileInputRef.current?.click()} disabled={isUploading}>
                     {isUploading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <UploadCloud className="h-4 w-4 mr-2" />}
                     {isUploading ? "Uploading..." : "Upload"}
                   </Button>
                 </div>
+                {sermonFormErrors.audioUrl && <p className="text-xs text-destructive">{sermonFormErrors.audioUrl}</p>}
               </div>
               <div className="space-y-2"><Label>Excerpt</Label><Textarea value={sermonFormData.excerpt} onChange={e => setSermonFormData({ ...sermonFormData, excerpt: e.target.value })} rows={2} /></div>
               <div className="space-y-2"><Label>Description</Label><Textarea value={sermonFormData.description} onChange={e => setSermonFormData({ ...sermonFormData, description: e.target.value })} rows={4} /></div>
