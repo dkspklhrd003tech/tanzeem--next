@@ -25,11 +25,11 @@ async function createFtpClient(): Promise<Client> {
     // Generous timeout for large audio files on shared hosting
     client.ftp.socket.setTimeout(60_000); // 60 seconds
 
-    const host     = process.env.FTP_HOST     ?? "";
-    const user     = process.env.FTP_USER     ?? "";
+    const host = process.env.FTP_HOST ?? "";
+    const user = process.env.FTP_USER ?? "";
     const password = process.env.FTP_PASSWORD ?? "";
-    const port     = parseInt(process.env.FTP_PORT ?? "21", 10);
-    const initialSecure = process.env.FTP_SECURE !== "false"; 
+    const port = parseInt(process.env.FTP_PORT ?? "21", 10);
+    const initialSecure = process.env.FTP_SECURE !== "false";
 
     console.log(`[FTP] Connecting → host=${host} port=${port} secure=${initialSecure}`);
 
@@ -45,7 +45,7 @@ async function createFtpClient(): Promise<Client> {
         console.log("[FTP] Connected successfully (secure).");
     } catch (err: any) {
         console.error(`[FTP] Initial connection failed (secure=${initialSecure}):`, err?.message || err?.code);
-        
+
         // If secure failed, let's try insecure fallback. Often resolves Vercel/Hostinger TLS conflicts that disguise as 530 errors.
         if (initialSecure) {
             console.log("[FTP] Retrying connection with secure=false (Insecure Fallback)...");
@@ -56,7 +56,7 @@ async function createFtpClient(): Promise<Client> {
                 fallbackClient = new Client();
                 fallbackClient.ftp.verbose = true;
                 fallbackClient.ftp.socket.setTimeout(60_000);
-                
+
                 await fallbackClient.access({
                     host,
                     user,
@@ -87,16 +87,31 @@ async function createFtpClient(): Promise<Client> {
     return client;
 }
 
+// ── Path resolution helper ────────────────────────────────────────────────────
+
+/**
+ * Resolves the absolute FTP root directory for uploads, guaranteeing that
+ * "uploads" appears in the path exactly once — regardless of whether
+ * FTP_ROOT_DIR already includes it (e.g. "/uploads") or not (e.g. "/public_html").
+ *
+ * Used by BOTH navigateToRemoteDir (upload path) and deleteFile (delete path)
+ * so the two can never drift apart if FTP_ROOT_DIR changes in the future.
+ */
+function resolveFtpRoot(): string {
+    let rootDir = (process.env.FTP_ROOT_DIR ?? "/public_html").replace(/\/+$/, "");
+    if (!rootDir.endsWith("/uploads") && rootDir !== "/uploads") {
+        rootDir = `${rootDir}/uploads`;
+    }
+    return rootDir;
+}
+
 /**
  * Navigate into a remote directory, creating each segment if it doesn't exist.
  * Uses `ensureDir` which is the correct basic-ftp method — it creates the dir
  * AND changes into it, so subsequent calls are relative to the deepest folder.
  */
 async function navigateToRemoteDir(client: Client, remoteDir: string): Promise<void> {
-    let rootDir = (process.env.FTP_ROOT_DIR ?? "/public_html").replace(/\/$/, "");
-    if (!rootDir.endsWith("/uploads")) {
-        rootDir = `${rootDir}/uploads`;
-    }
+    const rootDir = resolveFtpRoot();
 
     // Build the full absolute remote path
     const fullRemotePath = `${rootDir}/${remoteDir}`.replace(/\/+/g, "/");
@@ -119,7 +134,7 @@ export async function uploadFile({ fileName, folder, buffer }: StorageOptions): 
     if (!process.env.FTP_HOST) {
         throw new Error("FTP_HOST is not configured. Media uploads are strictly set to FTP only.");
     }
-    const relativePath = `/uploads/${folder}/${fileName}`;
+    const relativePath = `/${folder}/${fileName}`;
 
     const client = await createFtpClient();
 
@@ -135,8 +150,8 @@ export async function uploadFile({ fileName, folder, buffer }: StorageOptions): 
     } catch (err: any) {
         console.error("[FTP] Upload error:", {
             message: err?.message,
-            code:    err?.code,
-            stack:   err?.stack?.slice(0, 600),
+            code: err?.code,
+            stack: err?.stack?.slice(0, 600),
         });
         throw new Error(`FTP upload failed: ${err?.message ?? "unknown error"}`);
     } finally {
@@ -156,7 +171,7 @@ export async function appendFileChunk({ fileName, folder, buffer, chunkIndex }: 
     if (!process.env.FTP_HOST) {
         throw new Error("FTP_HOST is not configured. Media uploads are strictly set to FTP only.");
     }
-    const relativePath = `/uploads/${folder}/${fileName}`;
+    const relativePath = `/${folder}/${fileName}`;
 
     const client = await createFtpClient();
 
@@ -176,8 +191,8 @@ export async function appendFileChunk({ fileName, folder, buffer, chunkIndex }: 
     } catch (err: any) {
         console.error("[FTP] Chunk append error:", {
             message: err?.message,
-            code:    err?.code,
-            stack:   err?.stack?.slice(0, 600),
+            code: err?.code,
+            stack: err?.stack?.slice(0, 600),
         });
         throw new Error(`FTP chunk append failed: ${err?.message ?? "unknown error"}`);
     } finally {
@@ -199,14 +214,14 @@ export async function deleteFile(relativePath: string): Promise<boolean> {
     let client: Client | null = null;
     try {
         client = await createFtpClient();
-        const rootDir = (process.env.FTP_ROOT_DIR ?? "/public_html").replace(/\/$/, "");
+        const rootDir = resolveFtpRoot();
         const remotePath = `${rootDir}${relativePath}`.replace(/\/+/g, "/");
         await client.remove(remotePath);
         return true;
     } catch (err: any) {
         console.error(`[FTP] Delete error for ${relativePath}:`, {
             message: err?.message,
-            code:    err?.code,
+            code: err?.code,
         });
         return false;
     } finally {
