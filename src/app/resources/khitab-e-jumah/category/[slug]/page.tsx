@@ -59,7 +59,7 @@ export default async function KhitabEJumahCategoryPage({ params }: Props) {
                         </Link>
                     </Button>
 
-                    <div className="mb-10 pb-8 border-b border-border/50">
+                    <div className="pb-2 border-b border-border/50">
                         <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">{category.name}</h1>
                         {category.urduName && (
                             <h2 className="text-2xl font-bold text-foreground font-amiri mb-4" dir="rtl">{category.urduName}</h2>
@@ -68,7 +68,7 @@ export default async function KhitabEJumahCategoryPage({ params }: Props) {
                             <p className="text-lg text-muted-foreground">{category.description}</p>
                         )}
                     </div>
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {publishedItems.map((item: any) => {
                             const dateStr = item.publishedAt || item.createdAt;
@@ -84,12 +84,12 @@ export default async function KhitabEJumahCategoryPage({ params }: Props) {
 
                             return (
                                 <Link href={`/resources/khitab-e-jumah/${cleanSlug}`} key={item.id} className="block group">
-                                    <div className="relative bg-white border border-border rounded-2xl overflow-hidden cursor-pointer hover:-translate-y-1 hover:shadow-lg transition-all duration-300 h-full p-6 flex flex-col justify-center min-h-[160px]">
+                                    <div className="relative bg-primary-light/20 border border-border rounded-2xl overflow-hidden cursor-pointer hover:-translate-y-1 hover:shadow-lg transition-all duration-300 h-full p-6 flex flex-col justify-center min-h-[160px]">
                                         {/* Watermark Icon */}
                                         <div className="absolute -right-4 -bottom-4 text-[#0d5844]/5 pointer-events-none group-hover:scale-110 transition-transform duration-500">
                                             <FileText className="w-32 h-32" strokeWidth={1.5} />
                                         </div>
-                                        
+
                                         {/* Date Pill */}
                                         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0d5844]/10 text-[#0d5844] text-[10px] sm:text-xs font-bold mb-4 w-fit">
                                             <Calendar className="w-3.5 h-3.5" />
@@ -100,7 +100,7 @@ export default async function KhitabEJumahCategoryPage({ params }: Props) {
                                         <h3 className="font-bold text-foreground text-lg sm:text-xl leading-snug group-hover:text-primary transition-colors duration-200 line-clamp-2 uppercase">
                                             {item.title}
                                         </h3>
-                                        
+
                                         {item.titleUrdu && (
                                             <h4 className="font-bold text-lg text-foreground font-amiri mt-2 line-clamp-1" dir="rtl">{item.titleUrdu}</h4>
                                         )}
@@ -108,7 +108,7 @@ export default async function KhitabEJumahCategoryPage({ params }: Props) {
                                 </Link>
                             );
                         })}
-                        
+
                         {publishedItems.length === 0 && (
                             <div className="col-span-full py-12 text-center text-muted-foreground bg-white rounded-2xl border border-dashed border-border">
                                 No audio sermons found in this category.
