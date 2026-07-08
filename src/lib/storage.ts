@@ -29,9 +29,9 @@ async function createFtpClient(): Promise<Client> {
     const user     = process.env.FTP_USER     ?? "";
     const password = process.env.FTP_PASSWORD ?? "";
     const port     = parseInt(process.env.FTP_PORT ?? "21", 10);
-    const secure   = process.env.FTP_SECURE !== "false"; // Default to true
+    const initialSecure = process.env.FTP_SECURE !== "false"; 
 
-    console.log(`[FTP] Connecting → host=${host} port=${port} secure=${secure}`);
+    console.log(`[FTP] Connecting → host=${host} port=${port} secure=${initialSecure}`);
 
     try {
         await client.access({
@@ -39,25 +39,47 @@ async function createFtpClient(): Promise<Client> {
             user,
             password,
             port,
-            secure,
-            // Shared-hosting certs are often self-signed — skip verification.
-            // This is acceptable for Hostinger shared hosting.
+            secure: initialSecure,
             secureOptions: { rejectUnauthorized: false },
         });
-        console.log("[FTP] Connected successfully.");
+        console.log("[FTP] Connected successfully (secure).");
     } catch (err: any) {
+        console.error(`[FTP] Initial connection failed (secure=${initialSecure}):`, err?.message || err?.code);
+        
+        // If secure failed, let's try insecure fallback. Often resolves Vercel/Hostinger TLS conflicts that disguise as 530 errors.
+        if (initialSecure) {
+            console.log("[FTP] Retrying connection with secure=false (Insecure Fallback)...");
+            try {
+                // Must close and re-instantiate client after a failure
+                client.close();
+                const fallbackClient = new Client();
+                fallbackClient.ftp.verbose = true;
+                fallbackClient.ftp.socket.setTimeout(60_000);
+                
+                await fallbackClient.access({
+                    host,
+                    user,
+                    password,
+                    port,
+                    secure: false,
+                });
+                console.log("[FTP] Connected successfully via INSECURE fallback.");
+                return fallbackClient;
+            } catch (fallbackErr: any) {
+                fallbackClient.close();
+                let hint = "";
+                if (fallbackErr?.code === 530) {
+                    hint = " → HINT: Auth failed even on fallback. Verify FTP_USER/FTP_PASSWORD in Vercel env vars, OR Hostinger's firewall is aggressively blocking Vercel's IP addresses.";
+                }
+                throw new Error(`FTP connection failed after fallback: ${fallbackErr?.message ?? "unknown"} (code: ${fallbackErr?.code ?? "?"})${hint}`);
+            }
+        }
+
         client.close();
         let hint = "";
         if (err?.code === 530) {
-            hint = " → HINT: Auth/TLS handshake failed. Verify FTP_USER/FTP_PASSWORD in Vercel env vars. Ensure the username format matches exactly what Hostinger expects.";
-        } else if (err?.code === 450) {
-            hint = " → HINT: Target directory missing/not writable, or disk quota exceeded on the server.";
+            hint = " → HINT: Auth failed. Verify FTP_USER/FTP_PASSWORD in Vercel env vars. Ensure the username format matches exactly what Hostinger expects.";
         }
-
-        console.error("[FTP] Connection failed:", {
-            message: err?.message,
-            code:    err?.code,
-        });
         throw new Error(`FTP connection failed: ${err?.message ?? "unknown error"} (code: ${err?.code ?? "?"})${hint}`);
     }
 
@@ -86,135 +108,104 @@ async function navigateToRemoteDir(client: Client, remoteDir: string): Promise<v
 // ── Public API ────────────────────────────────────────────────────────────────
 
 /**
- * Uploads a buffer to either FTP (production) or local filesystem (dev).
+ * Uploads a buffer to FTP.
  * Returns the publicly accessible URL/path.
  */
 export async function uploadFile({ fileName, folder, buffer }: StorageOptions): Promise<string> {
-    const useFtp = !!process.env.FTP_HOST;
+    if (!process.env.FTP_HOST) {
+        throw new Error("FTP_HOST is not configured. Media uploads are strictly set to FTP only.");
+    }
     const relativePath = `/uploads/${folder}/${fileName}`;
 
-    if (useFtp) {
-        const client = await createFtpClient(); // throws with real error if conn fails
+    const client = await createFtpClient();
 
-        try {
-            const remoteDir = `uploads/${folder}`;
-            await navigateToRemoteDir(client, remoteDir);
+    try {
+        const remoteDir = `uploads/${folder}`;
+        await navigateToRemoteDir(client, remoteDir);
 
-            // Convert buffer to Readable stream for FTP upload
-            const stream = Readable.from(buffer);
-            console.log(`[FTP] Uploading ${fileName} (${(buffer.length / 1024).toFixed(1)} KB)...`);
-            await client.uploadFrom(stream, fileName);
-            console.log(`[FTP] Upload complete: ${fileName}`);
-        } catch (err: any) {
-            console.error("[FTP] Upload error:", {
-                message: err?.message,
-                code:    err?.code,
-                stack:   err?.stack?.slice(0, 600),
-            });
-            throw new Error(`FTP upload failed: ${err?.message ?? "unknown error"}`);
-        } finally {
-            client.close();
-        }
-
-        const mediaBase = (process.env.NEXT_PUBLIC_MEDIA_URL ?? "").replace(/\/$/, "");
-        return `${mediaBase}${relativePath}`;
+        // Convert buffer to Readable stream for FTP upload
+        const stream = Readable.from(buffer);
+        console.log(`[FTP] Uploading ${fileName} (${(buffer.length / 1024).toFixed(1)} KB)...`);
+        await client.uploadFrom(stream, fileName);
+        console.log(`[FTP] Upload complete: ${fileName}`);
+    } catch (err: any) {
+        console.error("[FTP] Upload error:", {
+            message: err?.message,
+            code:    err?.code,
+            stack:   err?.stack?.slice(0, 600),
+        });
+        throw new Error(`FTP upload failed: ${err?.message ?? "unknown error"}`);
+    } finally {
+        client.close();
     }
 
-    // ── Local filesystem fallback (localhost dev with no FTP_HOST set) ────────
-    console.log(`[Storage] Local upload → ${relativePath}`);
-    const fullPath = path.join(process.cwd(), "public", "uploads", folder, fileName);
-    await fs.mkdir(path.dirname(fullPath), { recursive: true });
-    await fs.writeFile(fullPath, buffer);
-    console.log(`[Storage] Saved locally: ${fullPath}`);
-
-    return relativePath;
+    const mediaBase = (process.env.NEXT_PUBLIC_MEDIA_URL ?? "").replace(/\/$/, "");
+    return `${mediaBase}${relativePath}`;
 }
 
 /**
- * Appends a chunk to a file on FTP or local filesystem.
+ * Appends a chunk to a file on FTP.
  * If chunkIndex === 0, the file is created/overwritten.
  * Returns the publicly accessible URL/path.
  */
 export async function appendFileChunk({ fileName, folder, buffer, chunkIndex }: ChunkStorageOptions): Promise<string> {
-    const useFtp = !!process.env.FTP_HOST;
+    if (!process.env.FTP_HOST) {
+        throw new Error("FTP_HOST is not configured. Media uploads are strictly set to FTP only.");
+    }
     const relativePath = `/uploads/${folder}/${fileName}`;
 
-    if (useFtp) {
-        const client = await createFtpClient();
+    const client = await createFtpClient();
 
-        try {
-            const remoteDir = `uploads/${folder}`;
-            await navigateToRemoteDir(client, remoteDir);
+    try {
+        const remoteDir = `uploads/${folder}`;
+        await navigateToRemoteDir(client, remoteDir);
 
-            const stream = Readable.from(buffer);
-            if (chunkIndex === 0) {
-                console.log(`[FTP] Creating ${fileName} (Chunk 0, ${(buffer.length / 1024).toFixed(1)} KB)...`);
-                await client.uploadFrom(stream, fileName);
-            } else {
-                console.log(`[FTP] Appending to ${fileName} (Chunk ${chunkIndex}, ${(buffer.length / 1024).toFixed(1)} KB)...`);
-                await client.appendFrom(stream, fileName);
-            }
-            console.log(`[FTP] Chunk ${chunkIndex} complete for: ${fileName}`);
-        } catch (err: any) {
-            console.error("[FTP] Chunk append error:", {
-                message: err?.message,
-                code:    err?.code,
-                stack:   err?.stack?.slice(0, 600),
-            });
-            throw new Error(`FTP chunk append failed: ${err?.message ?? "unknown error"}`);
-        } finally {
-            client.close();
+        const stream = Readable.from(buffer);
+        if (chunkIndex === 0) {
+            console.log(`[FTP] Creating ${fileName} (Chunk 0, ${(buffer.length / 1024).toFixed(1)} KB)...`);
+            await client.uploadFrom(stream, fileName);
+        } else {
+            console.log(`[FTP] Appending to ${fileName} (Chunk ${chunkIndex}, ${(buffer.length / 1024).toFixed(1)} KB)...`);
+            await client.appendFrom(stream, fileName);
         }
-
-        const mediaBase = (process.env.NEXT_PUBLIC_MEDIA_URL ?? "").replace(/\/$/, "");
-        return `${mediaBase}${relativePath}`;
+        console.log(`[FTP] Chunk ${chunkIndex} complete for: ${fileName}`);
+    } catch (err: any) {
+        console.error("[FTP] Chunk append error:", {
+            message: err?.message,
+            code:    err?.code,
+            stack:   err?.stack?.slice(0, 600),
+        });
+        throw new Error(`FTP chunk append failed: ${err?.message ?? "unknown error"}`);
+    } finally {
+        client.close();
     }
 
-    // ── Local filesystem fallback ────────
-    console.log(`[Storage] Local chunk upload → ${relativePath} (Chunk ${chunkIndex})`);
-    const fullPath = path.join(process.cwd(), "public", "uploads", folder, fileName);
-    await fs.mkdir(path.dirname(fullPath), { recursive: true });
-    
-    if (chunkIndex === 0) {
-        await fs.writeFile(fullPath, buffer);
-    } else {
-        await fs.appendFile(fullPath, buffer);
-    }
-    console.log(`[Storage] Saved chunk locally: ${fullPath}`);
-
-    return relativePath;
+    const mediaBase = (process.env.NEXT_PUBLIC_MEDIA_URL ?? "").replace(/\/$/, "");
+    return `${mediaBase}${relativePath}`;
 }
 
 /**
- * Removes a file from FTP or local filesystem.
+ * Removes a file from FTP.
  */
 export async function deleteFile(relativePath: string): Promise<boolean> {
-    const useFtp = !!process.env.FTP_HOST;
-
-    if (useFtp) {
-        let client: Client | null = null;
-        try {
-            client = await createFtpClient();
-            const rootDir = (process.env.FTP_ROOT_DIR ?? "/public_html").replace(/\/$/, "");
-            const remotePath = `${rootDir}${relativePath}`.replace(/\/+/g, "/");
-            await client.remove(remotePath);
-            return true;
-        } catch (err: any) {
-            console.error(`[FTP] Delete error for ${relativePath}:`, {
-                message: err?.message,
-                code:    err?.code,
-            });
-            return false;
-        } finally {
-            client?.close();
-        }
+    if (!process.env.FTP_HOST) {
+        throw new Error("FTP_HOST is not configured. Media operations are strictly set to FTP only.");
     }
 
+    let client: Client | null = null;
     try {
-        await fs.unlink(path.join(process.cwd(), "public", relativePath));
+        client = await createFtpClient();
+        const rootDir = (process.env.FTP_ROOT_DIR ?? "/public_html").replace(/\/$/, "");
+        const remotePath = `${rootDir}${relativePath}`.replace(/\/+/g, "/");
+        await client.remove(remotePath);
         return true;
     } catch (err: any) {
-        console.warn(`[Storage] Local delete error for ${relativePath}:`, err?.message);
+        console.error(`[FTP] Delete error for ${relativePath}:`, {
+            message: err?.message,
+            code:    err?.code,
+        });
         return false;
+    } finally {
+        if (client) client.close();
     }
 }

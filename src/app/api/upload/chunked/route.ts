@@ -10,36 +10,36 @@ export const maxDuration = 300;
 export const dynamic = "force-dynamic";
 
 const ALLOWED_TYPES: Record<string, string> = {
-  "image/jpeg":      "images",
-  "image/jpg":       "images",
-  "image/png":       "images",
-  "image/webp":      "images",
-  "image/gif":       "images",
-  "image/svg+xml":   "images",
+  "image/jpeg": "images",
+  "image/jpg": "images",
+  "image/png": "images",
+  "image/webp": "images",
+  "image/gif": "images",
+  "image/svg+xml": "images",
   "application/pdf": "documents",
-  "audio/mpeg":      "audio",
-  "audio/mp3":       "audio",
-  "audio/ogg":       "audio",
-  "audio/wav":       "audio",
-  "audio/x-wav":     "audio",
-  "audio/aac":       "audio",
-  "video/mp4":       "videos",
-  "video/mpeg":      "videos",
-  "video/ogg":       "videos",
-  "video/webm":      "videos",
+  "audio/mpeg": "audio",
+  "audio/mp3": "audio",
+  "audio/ogg": "audio",
+  "audio/wav": "audio",
+  "audio/x-wav": "audio",
+  "audio/aac": "audio",
+  "video/mp4": "videos",
+  "video/mpeg": "videos",
+  "video/ogg": "videos",
+  "video/webm": "videos",
   "video/quicktime": "videos",
 };
 
 export async function POST(req: NextRequest) {
   try {
     const formData = await req.formData();
-    const chunk       = formData.get("chunk") as File | null;
-    const uploadId    = formData.get("uploadId") as string | null;
-    const chunkIndex  = parseInt((formData.get("chunkIndex") as string) ?? "0", 10);
+    const chunk = formData.get("chunk") as File | null;
+    const uploadId = formData.get("uploadId") as string | null;
+    const chunkIndex = parseInt((formData.get("chunkIndex") as string) ?? "0", 10);
     const totalChunks = parseInt((formData.get("totalChunks") as string) ?? "1", 10);
-    const fileName    = (formData.get("fileName") as string | null) ?? "upload";
-    const mimeType    = (formData.get("mimeType") as string | null) ?? "application/octet-stream";
-    const totalSize   = parseInt((formData.get("totalSize") as string) ?? "0", 10); // Added for final size
+    const fileName = (formData.get("fileName") as string | null) ?? "upload";
+    const mimeType = (formData.get("mimeType") as string | null) ?? "application/octet-stream";
+    const totalSize = parseInt((formData.get("totalSize") as string) ?? "0", 10); // Added for final size
 
     if (!chunk || !uploadId) {
       return NextResponse.json({ success: false, error: "Missing chunk or uploadId" }, { status: 400 });
@@ -51,7 +51,13 @@ export async function POST(req: NextRequest) {
     const safeName = fileName.replace(/[^a-zA-Z0-9.\-_]/g, "-").replace(/-{2,}/g, "-").toLowerCase();
     const uniqueFilename = `${uploadId}-${safeName}`;
 
-    const mimeFolder = ALLOWED_TYPES[mimeType] ?? "uploads";
+    let mimeFolder = "uploads";
+    const typeLower = mimeType.toLowerCase();
+    if (typeLower.startsWith("image/")) mimeFolder = "images";
+    else if (typeLower.startsWith("audio/")) mimeFolder = "audio";
+    else if (typeLower.startsWith("video/")) mimeFolder = "videos";
+    else if (typeLower === "application/pdf") mimeFolder = "documents";
+    else mimeFolder = ALLOWED_TYPES[mimeType] ?? "uploads";
     const bytes = await chunk.arrayBuffer();
     const buffer = Buffer.from(bytes);
 
@@ -80,19 +86,19 @@ export async function POST(req: NextRequest) {
     const mediaId = uploadId; // Use the same UUID for media ID
 
     try {
-        await db.insert(media).values({
-          id: mediaId,
-          filename: uniqueFilename,
-          originalName: fileName,
-          mimeType,
-          size: totalSize || buffer.length, // Fallback if totalSize not provided
-          url: relativeOrPublicUrl,
-          thumbnailUrl: null,
-          altText: null,
-          caption: null,
-          fileData: null,
-          uploadedBy: uploadedBy ?? null,
-        });
+      await db.insert(media).values({
+        id: mediaId,
+        filename: uniqueFilename,
+        originalName: fileName,
+        mimeType,
+        size: totalSize || buffer.length, // Fallback if totalSize not provided
+        url: relativeOrPublicUrl,
+        thumbnailUrl: null,
+        altText: null,
+        caption: null,
+        fileData: null,
+        uploadedBy: uploadedBy ?? null,
+      });
     } catch (dbError: any) {
       console.error("[chunked-upload] DB insert failed:", dbError?.message ?? dbError);
       return NextResponse.json(

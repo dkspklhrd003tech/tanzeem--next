@@ -26,6 +26,7 @@ import {
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { useChunkedUpload } from "@/hooks/useChunkedUpload";
 
 type MediaItem = {
   id: string;
@@ -69,6 +70,8 @@ export function MediaLibrary() {
     }
   };
 
+  const { uploadFile: chunkedUpload } = useChunkedUpload();
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
     const files = Array.from(e.target.files);
@@ -78,33 +81,15 @@ export function MediaLibrary() {
     let failCount = 0;
 
     for (const file of files) {
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("type", "media");
-
       try {
-        // 1. Upload file to storage
-        const uploadRes = await fetch("/api/upload", {
-          method: "POST",
-          body: formData,
-        });
-        const uploadData = await uploadRes.json();
-        if (!uploadRes.ok || !uploadData.success) throw new Error(uploadData.error || "Upload failed");
-
-        // 2. Create database record
-        const mediaRes = await fetch("/api/media", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            filename: uploadData.url.split("/").pop(),
-            originalName: file.name,
-            mimeType: file.type || "application/octet-stream",
-            size: file.size,
-            url: uploadData.url,
-          }),
+        // 1. Stream file directly to FTP using chunked uploader
+        const uploadData = await chunkedUpload(file, {
+          onProgress: (pct) => console.log(`[MediaLibrary] Uploading ${file.name}: ${pct}%`),
         });
 
-        if (!mediaRes.ok) throw new Error("Failed to register media in database");
+        // 2. Create database record (already handled inside chunked route, but let's confirm the media ID)
+        // Wait, the chunked route ALREADY inserts the media record into the database!
+        // We just need to refresh the list.
         successCount++;
       } catch (err: any) {
         console.error(`Upload failed for ${file.name}:`, err);
@@ -458,7 +443,11 @@ export function MediaLibrary() {
         onOpenChange={(open) => !open && setDeletingMediaId(null)}
         title="Delete Media File"
         description={`Are you sure you want to permanently delete "${deletingMediaId?.name}"? This action cannot be undone.`}
-        onConfirm={() => deletingMediaId && handleDelete(deletingMediaId.id, deletingMediaId.name)}
+        onConfirm={() => {
+          if (deletingMediaId) {
+            return handleDelete(deletingMediaId.id, deletingMediaId.name);
+          }
+        }}
       />
 
       <ConfirmDialog
