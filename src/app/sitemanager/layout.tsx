@@ -113,6 +113,7 @@ const NAV_ITEMS: NavItem[] = [
   },
   { title: "Press Releases", href: "/sitemanager/pages/press-releases/edit", icon: FileText },
   { title: "Khitab-e-Jum'ah (Audio)", href: "/sitemanager/pages/khitab-e-jumah-audio/edit", icon: Headphones },
+  { title: "Pages", href: "/sitemanager/pages", icon: Home },
   // ── Content ──────────────────────────────────────────────────────────────
   { title: "Events", href: "/sitemanager/pages/events/edit", icon: Calendar },
   { title: "Services & Campaigns", href: "/sitemanager/pages/services/edit", icon: Sparkles },
@@ -148,12 +149,12 @@ function SidebarNavItem({
 
   // Find all possible hrefs to check for more specific matches
   const allHrefs = NAV_ITEMS.flatMap(i => [i.href, ...(i.subItems?.map(s => s.href) || [])]).filter(Boolean) as string[];
-  
+
   const isExactMatch = item.href ? pathname === item.href : false;
   const isPrefixMatch = item.href ? pathname.startsWith(item.href + "/") : false;
-  
+
   // If there's another matching href that is longer, it's a more specific match
-  const hasMoreSpecificMatch = item.href ? allHrefs.some(href => 
+  const hasMoreSpecificMatch = item.href ? allHrefs.some(href =>
     href !== item.href && pathname.startsWith(href) && href.length > item.href!.length
   ) : false;
 
