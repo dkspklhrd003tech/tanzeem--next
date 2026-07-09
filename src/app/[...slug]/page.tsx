@@ -595,7 +595,17 @@ export default async function DynamicPage({ params }: PageProps) {
 
       {/* Section-builder content (all 15 section types supported) */}
       {sections.length > 0 && page.template !== "leader" ? (
-        <DynamicPageContent sections={sections as any} />
+        <ModernizedProsePage
+          title={page.title}
+          excerpt={page.excerpt}
+          content={page.content}
+          slug={slug}
+          breadcrumbs={crumbs}
+          featuredImage={page.featuredImage}
+          template={page.template || undefined}
+        >
+          <DynamicPageContent sections={sections as any} />
+        </ModernizedProsePage>
       ) : (page.slug === 'audios-by-category' || page.slug === 'videos-by-category') ? (
         <div className="py-6">
           <NestedCategoryGrid

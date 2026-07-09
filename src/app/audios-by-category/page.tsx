@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Headphones } from "lucide-react";
 import { db } from "@/lib/db";
 import { audioCategories, audio } from "@/db/schema";
 import { count, eq, asc, desc, isNull } from "drizzle-orm";
@@ -68,8 +69,8 @@ export default async function AudiosByCategoryPage() {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                     />
                   ) : (
-                    <div className="w-full h-full flex flex-col items-center justify-center bg-muted/30">
-                      <span className="text-muted-foreground/50 text-sm font-medium">No Thumbnail</span>
+                    <div className="w-full h-full flex items-center justify-center bg-primary/5">
+                      <Headphones className="w-12 h-12 text-primary/30" />
                     </div>
                   )}
                   {/* Hover Overlay */}

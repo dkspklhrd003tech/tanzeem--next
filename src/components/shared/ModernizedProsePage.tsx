@@ -14,6 +14,7 @@ import { StatsGrid } from "@/components/shared/StatsGrid";
 import { Accordion } from "@/components/shared/Accordion";
 import { CTABanner } from "@/components/shared/CTABanner";
 import { useSettings } from "@/hooks/use-settings";
+import { PageBanner } from "@/components/layout/PageBanner";
 
 interface BreadcrumbItem {
   name: string;
@@ -99,68 +100,24 @@ export function ModernizedProsePage({
   const titleLoading = false;
   const displayTitle = title;
 
+  const isOrgOrIdeology =
+    (pathname?.startsWith("/organization/") && pathname !== "/organization") ||
+    pathname === "/the-founder" ||
+    pathname === "/the-ameer" ||
+    pathname === "/background" ||
+    pathname === "/mission-statement" ||
+    pathname === "/our-ideology";
+
   return (
     <div className="min-h-screen bg-slate-50/50 ">
-      {/* ── Gorgeous Hero Header ── */}
-      <div className="relative overflow-hidden bg-primary text-white py-15 md:py-28">
-        {/* Global Banner Background Image */}
-        {bgImage && (
-          <>
-            <div
-              className="absolute inset-0 z-0 bg-contain bg-center transition-transform"
-              style={{ backgroundImage: `url('${bgImage}')` }}
-            />
-          </>
-        )}
-
-        {/* Ambient Overlay Patterns */}
-        <div className="absolute inset-0 opacity-15 mix-blend-overlay pointer-events-none bg-primary" />
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#c8a84e]/10 rounded-full blur-[100px] -mr-64 -mt-64" />
-        <div className="absolute -bottom-24 left-1/4 w-[400px] h-[400px] bg-primary rounded-full blur-[80px]" />
-
-        {/* Arabesque geometric watermark */}
-        <div
-          className="absolute inset-0 opacity-[0.03]  pointer-events-none bg-repeat bg-center"
-          style={{ backgroundImage: `url('/images/pattern-arabesque.png')`, backgroundSize: '180px' }}
+      {/* ── Gorgeous Hero Header (Unified via PageBanner) ── */}
+      {isOrgOrIdeology && (
+        <PageBanner
+          titleOverride={displayTitle}
+          breadcrumbsOverride={breadcrumbs.map(c => ({ label: c.name, href: c.path }))}
+          settings={settings}
         />
-        <div className="container relative z-20 px-4 text-center">
-          <h1
-            className={cn(
-              "text-4xl md:text-5xl lg:text-6xl font-bold pb-6 drop-shadow-lg line-clamp-1",
-              titleLoading && "animate-pulse",
-            )}
-            style={{ color: textColor }}
-          >
-            {displayTitle}
-          </h1>
-
-          {showBreadcrumbs && breadcrumbs.length > 0 && (
-            <nav className="flex items-center justify-center gap-2 text-sm md:text-base font-medium drop-shadow-md flex-wrap">
-              {breadcrumbs.map((crumb, index) => (
-                <div key={crumb.path} className="flex items-center gap-2">
-                  {index > 0 && <span style={{ color: textColor }}>{separator}</span>}
-                  {index === breadcrumbs.length - 1 ? (
-                    <span
-                      className="opacity-80"
-                      style={{ color: textColor }}
-                    >
-                      {crumb.name}
-                    </span>
-                  ) : (
-                    <Link
-                      href={crumb.path}
-                      className="hover:text-emerald-200 transition-colors"
-                      style={{ color: textColor }}
-                    >
-                      {crumb.name}
-                    </Link>
-                  )}
-                </div>
-              ))}
-            </nav>
-          )}
-        </div>
-      </div>
+      )}
 
       {/* ── Main Layout Body ── */}
       <div className="container mx-auto p-6 md:py-8 ">
@@ -227,11 +184,11 @@ export function ModernizedProsePage({
                 )}
                 <div dangerouslySetInnerHTML={{ __html: cleanContent }} />
               </article>
-            ) : (
+            ) : !children ? (
               <div className="text-center py-12 text-muted-foreground italic">
                 No content available for this page yet. Edit this page in the Site Manager.
               </div>
-            )}
+            ) : null}
           </div>
         </div>
       </div>

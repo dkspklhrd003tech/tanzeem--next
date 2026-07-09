@@ -151,8 +151,8 @@ export default async function CategoryAudiosPage({ params }: { params: Promise<{
                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                           />
                         ) : (
-                          <div className="w-full h-full flex flex-col items-center justify-center bg-muted/30">
-                            <span className="text-muted-foreground/50 text-sm font-medium">No Thumbnail</span>
+                          <div className="w-full h-full flex items-center justify-center bg-primary/5">
+                            <Headphones className="w-12 h-12 text-primary/30" />
                           </div>
                         )}
                         <div className="absolute inset-0 bg-black/10 transition-opacity duration-300 opacity-0 group-hover:opacity-100" />
