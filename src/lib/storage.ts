@@ -136,7 +136,8 @@ export async function uploadFile({ fileName, folder, buffer }: StorageOptions): 
         throw new Error("FTP_HOST is not configured. Media uploads are strictly set to FTP only.");
     }
     const rootDir = resolveFtpRoot();
-    const relativePath = `${rootDir}/${folder}/${fileName}`.replace(/\/+/g, "/");
+    // Return a standardized public path for the database so URLs don't contain internal server directories like /public_html
+    const relativePath = `/uploads/${folder}/${fileName}`.replace(/\/+/g, "/");
 
     const client = await createFtpClient();
 
@@ -174,7 +175,8 @@ export async function appendFileChunk({ fileName, folder, buffer, chunkIndex }: 
         throw new Error("FTP_HOST is not configured. Media uploads are strictly set to FTP only.");
     }
     const rootDir = resolveFtpRoot();
-    const relativePath = `${rootDir}/${folder}/${fileName}`.replace(/\/+/g, "/");
+    // Return a standardized public path for the database so URLs don't contain internal server directories like /public_html
+    const relativePath = `/uploads/${folder}/${fileName}`.replace(/\/+/g, "/");
 
     const client = await createFtpClient();
 
@@ -218,7 +220,17 @@ export async function deleteFile(relativePath: string): Promise<boolean> {
     try {
         client = await createFtpClient();
         const rootDir = resolveFtpRoot();
-        const remotePath = `${rootDir}/${relativePath}`.replace(/\/+/g, "/");
+        
+        // Extract the actual path after '/uploads/' to prevent duplicating the root directory
+        let safeRelativePath = relativePath;
+        const uploadsIndex = safeRelativePath.indexOf('/uploads/');
+        if (uploadsIndex !== -1) {
+            safeRelativePath = safeRelativePath.substring(uploadsIndex + '/uploads/'.length);
+        } else if (safeRelativePath.startsWith('uploads/')) {
+            safeRelativePath = safeRelativePath.substring('uploads/'.length);
+        }
+
+        const remotePath = `${rootDir}/${safeRelativePath}`.replace(/\/+/g, "/");
         await client.remove(remotePath);
         return true;
     } catch (err: any) {
