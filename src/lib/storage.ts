@@ -136,8 +136,7 @@ export async function uploadFile({ fileName, folder, buffer }: StorageOptions): 
         throw new Error("FTP_HOST is not configured. Media uploads are strictly set to FTP only.");
     }
     const rootDir = resolveFtpRoot();
-    // Return a standardized public path for the database so URLs don't contain internal server directories like /public_html
-    const relativePath = `/uploads/${folder}/${fileName}`.replace(/\/+/g, "/");
+    const relativePath = `${rootDir}/${folder}/${fileName}`.replace(/\/+/g, "/");
 
     const client = await createFtpClient();
 
@@ -175,8 +174,7 @@ export async function appendFileChunk({ fileName, folder, buffer, chunkIndex }: 
         throw new Error("FTP_HOST is not configured. Media uploads are strictly set to FTP only.");
     }
     const rootDir = resolveFtpRoot();
-    // Return a standardized public path for the database so URLs don't contain internal server directories like /public_html
-    const relativePath = `/uploads/${folder}/${fileName}`.replace(/\/+/g, "/");
+    const relativePath = `${rootDir}/${folder}/${fileName}`.replace(/\/+/g, "/");
 
     const client = await createFtpClient();
 

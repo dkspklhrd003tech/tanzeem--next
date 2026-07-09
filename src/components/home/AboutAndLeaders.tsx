@@ -156,7 +156,7 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
                                 role="listitem"
                                 className="leader-card group bg-white border border-border/50 rounded-2xl p-6 shadow-lg transition-all duration-700 flex flex-col sm:flex-row md:flex-col lg:flex-row gap-6 relative overflow-hidden text-center sm:text-left items-center sm:items-start"
                             >
-                                
+
                                 {/* Photo */}
                                 <div className="w-44 rounded-xl overflow-hidden shrink-0 border border-white/2 relative z-10">
                                     {leader.avatar ? (
