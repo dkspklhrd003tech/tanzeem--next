@@ -99,25 +99,42 @@ export function PageBanner({ settings }: PageBannerProps) {
   const bgImage = rawBgImage
     ? rawBgImage.startsWith("http")
       ? rawBgImage
-      : `${process.env.NEXT_PUBLIC_MEDIA_URL || "https://tanzeemmedia.dks.com.pk"}${rawBgImage}`
+      : `${(process.env.NEXT_PUBLIC_MEDIA_URL || "https://tanzeemmedia.dks.com.pk").replace(/\/$/, "")}/${rawBgImage.replace(/^\//, "")}`
     : null;
+
+  // Additional settings from GlobalBannerManager
+  const overlayColor = settings?.banner_overlay_color || "#005031"; // Fallback to primary if missing
+  const overlayOpacity = settings?.banner_overlay_opacity ? parseFloat(settings.banner_overlay_opacity) : 0.85;
+  const bannerHeight = settings?.banner_height || "auto";
 
   return (
     <section
-      className="relative overflow-hidden bg-primary text-white py-8 md:py-28 flex items-center justify-center text-center w-full"
+      className="relative overflow-hidden flex items-center justify-center text-center w-full"
+      style={{ 
+        minHeight: bannerHeight,
+        backgroundColor: overlayColor, // Base background color fallback
+        padding: bannerHeight === "auto" ? "4rem 0" : "0" // Add some padding if no height specified
+      }}
     >
       {/* Background Image - global setting */}
       {bgImage && (
         <>
           <div
-            className="absolute inset-0 z-0 bg-contain bg-center transition-transform"
+            className="absolute inset-0 z-0 bg-cover bg-center transition-transform"
             style={{ backgroundImage: `url('${bgImage}')` }}
           />
         </>
       )}
 
       {/* Ambient Overlay Patterns */}
-      <div className="absolute inset-0 opacity-15 mix-blend-overlay pointer-events-none bg-primary" />
+      <div 
+        className="absolute inset-0 pointer-events-none" 
+        style={{ 
+          backgroundColor: overlayColor, 
+          opacity: overlayOpacity 
+        }} 
+      />
+      <div className="absolute inset-0 opacity-15 mix-blend-overlay pointer-events-none" style={{ backgroundColor: overlayColor }} />
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#c8a84e]/10 rounded-full blur-[100px] -mr-64 -mt-64" />
       <div className="absolute -bottom-24 left-1/4 w-[400px] h-[400px] bg-primary rounded-full blur-[80px]" />
 

@@ -15,7 +15,7 @@ import {
   Headphones,
 } from "lucide-react";
 import { useAudioStore } from "@/store/audioStore";
-import { cn } from "@/lib/utils";
+import { cn, resolveMediaUrl } from "@/lib/utils";
 
 // Format seconds → MM:SS
 function formatTime(s: number): string {
@@ -95,7 +95,7 @@ export function PersistentAudioPlayer() {
   useEffect(() => {
     const el = audioRef.current;
     if (!el || !current) return;
-    el.src = current.audioUrl;
+    el.src = resolveMediaUrl(current.audioUrl);
     el.volume = volume;
     el.play().catch(() => pause());
   }, [current?.id]); // eslint-disable-line
@@ -212,7 +212,7 @@ export function PersistentAudioPlayer() {
                   <div className="relative shrink-0 h-12 w-12 hidden sm:flex items-center justify-center">
                     {current.thumbnail ? (
                       <img
-                        src={current.thumbnail}
+                        src={resolveMediaUrl(current.thumbnail)}
                         alt=""
                         className="h-12 w-12 rounded-lg object-cover border border-white/10"
                       />
