@@ -52,6 +52,7 @@ export async function POST(request: NextRequest) {
         config: s.config || {},
         isActive: s.isActive !== false,
       });
+    }
     // Revalidate the cache for this page so changes show up immediately
     try {
       const [page] = await db.select({ slug: pages.slug }).from(pages).where(eq(pages.id, pageId)).limit(1);
