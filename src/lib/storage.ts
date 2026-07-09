@@ -100,8 +100,8 @@ async function createFtpClient(): Promise<Client> {
  */
 function resolveFtpRoot(): string {
     let rootDir = (process.env.FTP_ROOT_DIR ?? "/uploads").replace(/\/+$/, "");
-    if (!rootDir.endsWith("/uploads/") && rootDir !== "/uploads/") {
-        rootDir = `${rootDir}/uploads/`;
+    if (!rootDir.endsWith("/uploads") && rootDir !== "/uploads") {
+        rootDir = `${rootDir}/uploads`;
     }
     return rootDir;
 }
