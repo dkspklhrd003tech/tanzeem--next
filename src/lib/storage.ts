@@ -99,9 +99,9 @@ async function createFtpClient(): Promise<Client> {
  * so the two can never drift apart if FTP_ROOT_DIR changes in the future.
  */
 function resolveFtpRoot(): string {
-    let rootDir = (process.env.FTP_ROOT_DIR ?? "/public_html").replace(/\/+$/, "");
-    if (!rootDir.endsWith("/uploads") && rootDir !== "/uploads") {
-        rootDir = `${rootDir}/uploads`;
+    let rootDir = (process.env.FTP_ROOT_DIR ?? "/uploads").replace(/\/+$/, "");
+    if (!rootDir.endsWith("/uploads/") && rootDir !== "/uploads/") {
+        rootDir = `${rootDir}/uploads/`;
     }
     return rootDir;
 }

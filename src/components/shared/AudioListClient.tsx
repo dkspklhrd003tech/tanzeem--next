@@ -19,7 +19,7 @@ export function AudioListClient({ audios }: { audios: any[] }) {
         {audios.map((a: any) => (
           <Link key={a.id}
             href={`/audio/${a.slug}`}
-            className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-xl border border-border/50 hover:border-primary/50 bg-card hover:bg-muted/50 transition-colors cursor-pointer group shadow-sm hover:shadow-md">
+            className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-xl border border-border/50 hover:border-primary/50 bg-primary-light/80 hover:bg-muted/50 transition-colors cursor-pointer group shadow-sm hover:shadow-md">
             <div>
               <div className="flex items-center gap-2 mb-1">
                 {a.code && <span className="text-xs font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded">{a.code}</span>}

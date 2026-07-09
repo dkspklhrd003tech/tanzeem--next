@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight, User } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, resolveMediaUrl } from "@/lib/utils";
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -40,9 +40,7 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
     const btnLink =
         settings["homepage_about_button_link"] || "/organization";
     const rawAboutImage = settings["homepage_about_image"] || "/media/logo-dark.png";
-    const aboutImage = rawAboutImage.startsWith("http") || rawAboutImage.startsWith("/media/")
-        ? rawAboutImage
-        : `${process.env.NEXT_PUBLIC_MEDIA_URL || "https://tanzeemmedia.dks.com.pk"}${rawAboutImage}`;
+    const aboutImage = resolveMediaUrl(rawAboutImage);
 
     const sectionRef = useRef<HTMLElement>(null);
     const aboutRef = useRef<HTMLDivElement>(null);

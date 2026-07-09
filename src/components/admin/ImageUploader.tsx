@@ -24,6 +24,8 @@ import {
 import { Slider } from "@/components/ui/slider";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import { useChunkedUpload } from "@/hooks/useChunkedUpload";
+import { resolveMediaUrl } from "@/lib/utils";
 
 interface ImageUploaderProps {
   value?: string;
@@ -66,6 +68,7 @@ export function ImageUploader({
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+  const { uploadFile } = useChunkedUpload();
 
   const onCropComplete = useCallback(
     (_croppedArea: any, croppedAreaPixels: any) => {
@@ -111,22 +114,9 @@ export function ImageUploader({
           // Direct upload without cropping
           setIsUploading(true);
           try {
-            const formData = new FormData();
-            formData.append("file", file);
-            formData.append("type", "uploads");
+            const result = await uploadFile(file);
 
-            const res = await fetch("/api/upload", {
-              method: "POST",
-              body: formData,
-            });
-
-            if (!res.ok) {
-              const errData = await res.json().catch(() => ({}));
-              throw new Error(errData.error || `Upload failed with status ${res.status}`);
-            }
-
-            const data = await res.json();
-            onChange(data.url, isControlled ? (altValue ?? "") : localAltValue);
+            onChange(result.url, isControlled ? (altValue ?? "") : localAltValue);
             setImage(null);
             // previewUrl stays set — keeps showing the local preview
 
@@ -205,22 +195,10 @@ export function ImageUploader({
       const croppedBlob = await getCroppedImg(image, croppedAreaPixels);
       if (!croppedBlob) throw new Error("Failed to crop image");
 
-      const formData = new FormData();
-      formData.append("file", croppedBlob, "upload.webp");
-      formData.append("type", "uploads");
+      const croppedFile = new File([croppedBlob], "upload.webp", { type: "image/webp" });
+      const result = await uploadFile(croppedFile);
 
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-      });
-
-      if (!res.ok) {
-        const errData = await res.json().catch(() => ({}));
-        throw new Error(errData.error || `Upload failed with status ${res.status}`);
-      }
-
-      const data = await res.json();
-      onChange(data.url, isControlled ? (altValue ?? "") : localAltValue);
+      onChange(result.url, isControlled ? (altValue ?? "") : localAltValue);
       setIsCropping(false);
       setImage(null);
       // previewUrl stays set — keeps showing the local preview
@@ -264,7 +242,7 @@ export function ImageUploader({
         {value ? (
           <>
             <img
-              src={previewUrl ?? (value?.startsWith("http") ? value : `${process.env.NEXT_PUBLIC_MEDIA_URL || "https://tanzeemmedia.dks.com.pk"}${value}`)}
+              src={previewUrl ?? resolveMediaUrl(value)}
               alt={isControlled ? (altValue ?? "") : localAltValue}
               className="w-auto h-auto max-h-[300px] object-contain rounded-lg"
             />

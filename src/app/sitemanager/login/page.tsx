@@ -4,7 +4,7 @@ import { useState, useEffect, Suspense, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Eye, EyeOff, Lock, Mail, AlertCircle, Loader2, ArrowLeft, KeyRound, CheckCircle2 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, resolveMediaUrl } from "@/lib/utils";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Stars, Float } from "@react-three/drei";
 import * as THREE from "three";
@@ -244,7 +244,7 @@ function LoginForm() {
       {settings.login_bg_image && (
         <div
           className="absolute inset-0 z-0 bg-cover bg-center opacity-40 mix-blend-overlay transition-opacity duration-1000"
-          style={{ backgroundImage: `url('${settings.login_bg_image}')` }}
+          style={{ backgroundImage: `url('${resolveMediaUrl(settings.login_bg_image)}')` }}
         />
       )}
 
@@ -263,7 +263,7 @@ function LoginForm() {
             {/* Logo area */}
             <div className="flex flex-col items-center mb-8">
               {settings.site_logo && settings.site_logo !== "null" && settings.site_logo !== "undefined" && settings.site_logo.trim() !== "" ? (
-                <img src={settings.site_logo?.startsWith("http") ? settings.site_logo : `${process.env.NEXT_PUBLIC_MEDIA_URL || "https://tanzeemmedia.dks.com.pk"}${settings.site_logo}`} alt="Site Logo" className="max-w-[120px] h-auto mb-5 object-contain" />
+                <img src={resolveMediaUrl(settings.site_logo)} alt="Site Logo" className="max-w-[120px] h-auto mb-5 object-contain" />
               ) : (
                 <div className="w-16 h-16 bg-primary rounded-xl flex items-center justify-center shadow-lg mb-5">
                   <span className="text-white font-bold text-3xl leading-none">ت</span>

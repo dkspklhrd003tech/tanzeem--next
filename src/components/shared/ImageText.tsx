@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, resolveMediaUrl } from "@/lib/utils";
 
 interface ImageTextProps {
   heading?: string;
@@ -49,7 +49,7 @@ export function ImageText({
             >
               <div className="relative rounded-xl overflow-hidden border-2 border-primary/20 shadow-deep">
                 <img
-                  src={image}
+                  src={resolveMediaUrl(image)}
                   alt={imageAlt}
                   className="w-full h-auto object-cover"
                 />

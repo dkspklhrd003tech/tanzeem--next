@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useNavigation } from "@/hooks/use-navigation";
-import { cn } from "@/lib/utils";
+import { cn, resolveMediaUrl } from "@/lib/utils";
 
 interface PageBannerProps {
   /** All flattened site settings (from useSettings). */
@@ -96,11 +96,7 @@ export function PageBanner({ settings }: PageBannerProps) {
     "Page";
 
   const rawBgImage = settings?.banner_bg_image;
-  const bgImage = rawBgImage
-    ? rawBgImage.startsWith("http")
-      ? rawBgImage
-      : `${(process.env.NEXT_PUBLIC_MEDIA_URL || "https://tanzeemmedia.dks.com.pk").replace(/\/$/, "")}/${rawBgImage.replace(/^\//, "")}`
-    : null;
+  const bgImage = rawBgImage ? resolveMediaUrl(rawBgImage) : null;
 
   // Additional settings from GlobalBannerManager
   const overlayColor = settings?.banner_overlay_color || "#005031"; // Fallback to primary if missing

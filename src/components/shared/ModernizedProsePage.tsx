@@ -8,7 +8,7 @@ import {
   ArrowRight, Share2, Printer, Bookmark, Calendar, User,
   ChevronRight, Compass, Shield, BookOpen, Anchor, MapPin
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, resolveMediaUrl } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { StatsGrid } from "@/components/shared/StatsGrid";
 import { Accordion } from "@/components/shared/Accordion";
@@ -91,11 +91,7 @@ export function ModernizedProsePage({
 
   const { settings } = useSettings();
   const rawBgImage = settings?.banner_bg_image;
-  const bgImage = rawBgImage
-    ? rawBgImage.startsWith("http")
-      ? rawBgImage
-      : `${process.env.NEXT_PUBLIC_MEDIA_URL || "https://tanzeemmedia.dks.com.pk"}${rawBgImage}`
-    : null;
+  const bgImage = rawBgImage ? resolveMediaUrl(rawBgImage) : null;
 
   const textColor = settings?.banner_text_color || "#ffffff";
   const separator = settings?.banner_breadcrumb_separator || "/";

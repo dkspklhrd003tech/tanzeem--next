@@ -66,7 +66,18 @@ const menuItems: any[] = [
   {
     title: "Pages",
     icon: FileText,
-    href: "/sitemanager/pages",
+    items: [
+      {
+        title: "All Pages",
+        icon: FileText,
+        href: "/sitemanager/pages",
+      },
+      {
+        title: "Policy",
+        icon: FileText,
+        href: "/sitemanager/pages/policy",
+      }
+    ]
   },
   {
     title: "SEO / Meta",

@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import { cn, resolveMediaUrl } from "@/lib/utils";
 
 interface IntroSectionProps {
   heading: string;
@@ -27,32 +27,25 @@ export function IntroSection({
       style={{ backgroundColor }}
     >
       <div className="container px-4 mx-auto">
-        <div className={cn(
-          "flex flex-col gap-12 items-center",
-          alignment === "right" ? "md:flex-row-reverse" : "md:flex-row"
-        )}>
-          {/* Text Content */}
-          <div className="flex-1 space-y-6">
+        <div className="flex flex-col gap-8 max-w-5xl mx-auto">
+          {/* Header Content */}
+          <div className="space-y-4 text-center">
             {subheading && (
-              <span className="text-primary font-bold uppercase tracking-wider text-sm">
+              <span className="text-primary font-bold uppercase tracking-wider text-sm block">
                 {subheading}
               </span>
             )}
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-tight">
               {heading}
             </h2>
-            <div
-              className="prose prose-lg text-foreground-muted max-w-none"
-              dangerouslySetInnerHTML={{ __html: body }}
-            />
           </div>
 
-          {/* Image */}
+          {/* Centered Image Just Below Heading */}
           {image && (
-            <div className="flex-1 w-full max-w-2xl">
+            <div className="w-full max-w-3xl mx-auto">
               <div className="relative rounded-2xl overflow-hidden shadow-2xl transition-transform duration-500 hover:scale-[1.02]">
                 <img
-                  src={image}
+                  src={resolveMediaUrl(image)}
                   alt={imageAlt || heading}
                   className="w-full h-auto object-cover"
                 />
@@ -60,6 +53,14 @@ export function IntroSection({
               </div>
             </div>
           )}
+
+          {/* Body Content */}
+          <div className="w-full mt-4">
+            <div
+              className="prose prose-lg text-foreground-muted max-w-none [&>*]:[unicode-bidi:plaintext] [&>*]:text-start"
+              dangerouslySetInnerHTML={{ __html: body }}
+            />
+          </div>
         </div>
       </div>
     </section>

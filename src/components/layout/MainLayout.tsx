@@ -9,6 +9,7 @@ import { PersistentAudioPlayer } from "@/components/audio/PersistentAudioPlayer"
 import { ShareSidebar } from "@/components/shared/ShareSidebar";
 import { useSettings } from "@/hooks/use-settings";
 import { BackToTop } from "@/components/ui/back-to-top";
+import { resolveMediaUrl } from "@/lib/utils";
 
 interface MainLayoutProps {
   children: ReactNode;
@@ -39,7 +40,7 @@ export function MainLayout({ children }: MainLayoutProps) {
         <div className="max-w-md space-y-6 relative z-10 bg-card p-10 rounded-3xl shadow-xl border border-border">
           {settings.login_logo ? (
             <img 
-              src={settings.login_logo.startsWith("http") ? settings.login_logo : `${process.env.NEXT_PUBLIC_MEDIA_URL || "https://tanzeemmedia.dks.com.pk"}${settings.login_logo}`} 
+              src={resolveMediaUrl(settings.login_logo)} 
               alt="Logo" 
               className="w-24 h-24 mx-auto mb-6 object-contain" 
             />

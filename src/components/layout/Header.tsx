@@ -14,7 +14,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { cn } from "@/lib/utils";
+import { cn, resolveMediaUrl } from "@/lib/utils";
 import { resolveMenuLink, EXTERNAL_LINK_REL } from "@/lib/security";
 import { useSettings } from "@/hooks/use-settings";
 import { useNavigation, type MenuNode } from "@/hooks/use-navigation";
@@ -35,9 +35,7 @@ export function Header() {
     ? settings.header_logo
     : "/tanzeem-logo.webp";
   
-  const logoSrc = rawLogoSrc.startsWith("http") || rawLogoSrc.startsWith("/tanzeem-logo")
-    ? rawLogoSrc
-    : `${process.env.NEXT_PUBLIC_MEDIA_URL || "https://tanzeemmedia.dks.com.pk"}${rawLogoSrc}`;
+  const logoSrc = resolveMediaUrl(rawLogoSrc);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();

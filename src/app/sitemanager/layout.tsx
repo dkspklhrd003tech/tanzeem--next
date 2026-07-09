@@ -41,7 +41,7 @@ import {
   Sun,
   Moon,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, resolveMediaUrl } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -608,8 +608,7 @@ export default function SiteManagerLayout({
       .then(data => {
         if (data.settings?.general?.site_logo) {
           const rawLogo = data.settings.general.site_logo;
-          const absoluteLogo = rawLogo.startsWith("http") ? rawLogo : `${process.env.NEXT_PUBLIC_MEDIA_URL || "https://tanzeemmedia.dks.com.pk"}${rawLogo}`;
-          setSiteLogo(absoluteLogo);
+          setSiteLogo(resolveMediaUrl(rawLogo));
         }
       })
       .catch(err => console.error("Failed to load identity settings:", err));

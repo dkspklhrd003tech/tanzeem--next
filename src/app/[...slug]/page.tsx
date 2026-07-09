@@ -15,15 +15,23 @@ import { PublicationGrid } from "@/components/shared/PublicationGrid";
 // ── Slug resolver — handles prefix mismatches (e.g. DB has "our-ideology"
 //    but route provides "organization/our-ideology") ────────────────────────────
 async function findPageBySlug(slug: string) {
-  const candidates = [slug];
+  const candidates = [
+    slug,
+    `/${slug}`,
+    slug.replace(/^\//, "")
+  ];
   if (slug.includes("/")) {
     candidates.push(slug.replace(/^[^/]+\//, ""));
   }
   if (!slug.startsWith("organization/")) {
     candidates.push(`organization/${slug}`);
+    candidates.push(`/organization/${slug}`);
   }
+  
+  const uniqueCandidates = Array.from(new Set(candidates));
+
   try {
-    for (const candidate of candidates) {
+    for (const candidate of uniqueCandidates) {
       const page = await db.query.pages.findFirst({
         where: eq(pages.slug, candidate),
       });

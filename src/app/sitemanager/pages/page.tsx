@@ -20,7 +20,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useToast } from "@/hooks/use-toast";
-import { cn } from "@/lib/utils";
+import { cn, resolveMediaUrl } from "@/lib/utils";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 
 const fetcher = (url: string) => fetch(url).then(r => r.json());
@@ -347,7 +347,7 @@ export default function PagesListPage() {
               {bannerBgImage ? (
                 <div
                   className="absolute inset-0 z-0 bg-contain bg-center"
-                  style={{ backgroundImage: bannerPreviewUrl ? `url('${bannerPreviewUrl}')` : bannerBgImage ? `url('${process.env.NEXT_PUBLIC_MEDIA_URL || "https://tanzeemmedia.dks.com.pk"}${bannerBgImage}')` : "none" }}
+                  style={{ backgroundImage: bannerPreviewUrl ? `url('${bannerPreviewUrl}')` : bannerBgImage ? `url('${resolveMediaUrl(bannerBgImage)}')` : "none" }}
                 />
               ) : null}
 
