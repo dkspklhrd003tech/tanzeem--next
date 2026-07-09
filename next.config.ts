@@ -19,9 +19,6 @@ const nextConfig: NextConfig = {
     imageSizes: [16, 32, 64, 96, 128, 256, 384],
     minimumCacheTTL: 60 * 60 * 24 * 7, // 7 days
     remotePatterns: [
-      // Tanzeem.org WordPress media (cover images, thumbnails)
-      { protocol: "https", hostname: "www.tanzeem.org" },
-      { protocol: "https", hostname: "tanzeem.org" },
       // Tanzeem media FTP/CDN host (uploaded audio/video/image assets)
       { protocol: "https", hostname: "tanzeemmedia.dks.com.pk" },
       // YouTube thumbnails

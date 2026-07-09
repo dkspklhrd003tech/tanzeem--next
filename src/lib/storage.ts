@@ -218,7 +218,7 @@ export async function deleteFile(relativePath: string): Promise<boolean> {
     try {
         client = await createFtpClient();
         const rootDir = resolveFtpRoot();
-        const remotePath = `${rootDir}${relativePath}`.replace(/\/+/g, "/");
+        const remotePath = `${rootDir}/${relativePath}`.replace(/\/+/g, "/");
         await client.remove(remotePath);
         return true;
     } catch (err: any) {
