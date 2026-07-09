@@ -3,6 +3,8 @@ import { db } from "@/db";
 import { pageSections } from "@/db/schema";
 import { eq, asc } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
+import { revalidatePath } from "next/cache";
+import { pages } from "@/db/schema";
 
 // GET - List sections for a specific page
 export async function GET(request: NextRequest) {
@@ -50,6 +52,20 @@ export async function POST(request: NextRequest) {
         config: s.config || {},
         isActive: s.isActive !== false,
       });
+    // Revalidate the cache for this page so changes show up immediately
+    try {
+      const [page] = await db.select({ slug: pages.slug }).from(pages).where(eq(pages.id, pageId)).limit(1);
+      if (page && page.slug) {
+        revalidatePath(`/${page.slug}`);
+        if (!page.slug.startsWith("organization/")) {
+          revalidatePath(`/organization/${page.slug}`);
+        } else {
+          revalidatePath(`/organization/${page.slug.replace(/^[^/]+\//, "")}`);
+        }
+        revalidatePath("/[...slug]", "page");
+      }
+    } catch (revalErr) {
+      console.error("Cache revalidation failed in page_sections:", revalErr);
     }
 
     return NextResponse.json({ success: true });

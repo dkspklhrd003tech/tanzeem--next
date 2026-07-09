@@ -61,7 +61,8 @@ export function ModernizedProsePage({
   const pathname = usePathname() || "";
 
   // Clean up content: replace empty paragraphs or extra line breaks
-  const cleanContent = content ? content.trim().replace(/<p><\/p>/g, "") : "";
+  // Handle <p><br></p>, <p>&nbsp;</p>, or just whitespace.
+  const cleanContent = content ? content.replace(/<p>(\s|&nbsp;|<br\s*\/?>)*<\/p>/gi, "").trim() : "";
 
   // Helper to generate dynamic sidebar navigation items
   const sidebarLinks = [
