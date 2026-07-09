@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { ImageUploader } from "./ImageUploader";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn, resolveMediaUrl } from "@/lib/utils";
 import {
     DndContext,
     closestCenter,
@@ -82,7 +82,7 @@ function SortableSliderRow({
             <td className="px-6 py-4 w-48">
                 <div className="w-40 h-16 rounded-md overflow-hidden bg-muted border border-border relative">
                     {slider.imageUrl ? (
-                        <img src={slider.imageUrl} alt={slider.title} className="w-full h-full object-contain" />
+                        <img src={resolveMediaUrl(slider.imageUrl)} alt={slider.title} className="w-full h-full object-contain" />
                     ) : (
                         <div className="w-full h-full flex items-center justify-center text-muted-foreground">
                             <ImageIcon className="w-6 h-6" />

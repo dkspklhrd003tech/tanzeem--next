@@ -13,7 +13,7 @@ import { ImageUploader } from "./ImageUploader";
 import { toast } from "sonner";
 import { CustomFieldRenderer } from "./CustomFieldRenderer";
 import { CustomFieldBuilder } from "./CustomFieldBuilder";
-import { cn } from "@/lib/utils";
+import { cn, resolveMediaUrl } from "@/lib/utils";
 import {
   DndContext,
   closestCenter,
@@ -87,7 +87,7 @@ function SortableCategoryCard({ cat, onClick, onEdit, onDelete }: { cat: MainCat
       </div>
       <div className="aspect-video bg-muted relative overflow-hidden">
         {cat.image ? (
-          <img src={cat.image} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt={cat.title} />
+          <img src={resolveMediaUrl(cat.image)} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt={cat.title} />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-muted-foreground"><ImageIcon className="w-10 h-10 opacity-20" /></div>
         )}
@@ -600,7 +600,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                     {mediaType === "video" && (
                       <div className="aspect-video bg-muted relative overflow-hidden">
                         {sub.image ? (
-                          <img src={sub.image} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt={sub.title} />
+                          <img src={resolveMediaUrl(sub.image)} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt={sub.title} />
                         ) : (
                           <div className="w-full h-full flex items-center justify-center text-muted-foreground"><ImageIcon className="w-8 h-8 opacity-20" /></div>
                         )}

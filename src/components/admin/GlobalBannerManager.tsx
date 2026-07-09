@@ -10,6 +10,7 @@ import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
 import { ImageUploader } from "./ImageUploader";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { resolveMediaUrl } from "@/lib/utils";
 
 export function GlobalBannerManager() {
   const [settings, setSettings] = useState<Record<string, any>>({
@@ -221,7 +222,7 @@ export function GlobalBannerManager() {
             style={{ 
               height: settings.banner_height, 
               backgroundColor: settings.banner_overlay_color,
-              backgroundImage: settings.banner_bg_image ? `url(${settings.banner_bg_image})` : 'none',
+              backgroundImage: settings.banner_bg_image ? `url(${resolveMediaUrl(settings.banner_bg_image)})` : 'none',
               backgroundSize: 'cover',
               backgroundPosition: 'center'
             }}

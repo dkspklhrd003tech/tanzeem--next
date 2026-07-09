@@ -27,6 +27,7 @@ import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useChunkedUpload } from "@/hooks/useChunkedUpload";
+import { resolveMediaUrl } from "@/lib/utils";
 
 type MediaItem = {
   id: string;
@@ -293,7 +294,7 @@ export function MediaLibrary() {
               {/* Thumbnail */}
               <div className="aspect-square bg-muted flex items-center justify-center relative">
                 {item.mimeType.startsWith("image/") ? (
-                  <img src={item.url} alt={item.originalName} className="w-full h-full object-cover" />
+                  <img src={resolveMediaUrl(item.url)} alt={item.originalName} className="w-full h-full object-cover" />
                 ) : item.mimeType === "application/pdf" ? (
                   <span className="text-4xl">📄</span>
                 ) : (
@@ -334,18 +335,18 @@ export function MediaLibrary() {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => copyToClipboard(item.url)}>
+                    <DropdownMenuItem onClick={() => copyToClipboard(resolveMediaUrl(item.url))}>
                       <Copy className="h-4 w-4 mr-2" />
                       Copy URL
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <a href={item.url} target="_blank" rel="noopener noreferrer">
+                      <a href={resolveMediaUrl(item.url)} target="_blank" rel="noopener noreferrer">
                         <ExternalLink className="h-4 w-4 mr-2" />
                         Open Original
                       </a>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
-                      <a href={item.url} download={item.originalName}>
+                      <a href={resolveMediaUrl(item.url)} download={item.originalName}>
                         <Download className="h-4 w-4 mr-2" />
                         Download
                       </a>
@@ -388,7 +389,7 @@ export function MediaLibrary() {
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-muted rounded-lg flex items-center justify-center overflow-hidden flex-shrink-0">
                           {item.mimeType.startsWith("image/") ? (
-                            <img src={item.url} className="w-full h-full object-cover" />
+                            <img src={resolveMediaUrl(item.url)} className="w-full h-full object-cover" />
                           ) : (
                             <span className="text-xl">📄</span>
                           )}
@@ -420,7 +421,7 @@ export function MediaLibrary() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => copyToClipboard(item.url)}>
+                          <DropdownMenuItem onClick={() => copyToClipboard(resolveMediaUrl(item.url))}>
                             <Copy className="h-4 w-4 mr-2" />
                             Copy URL
                           </DropdownMenuItem>
