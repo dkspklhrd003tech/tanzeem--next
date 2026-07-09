@@ -55,31 +55,24 @@ function getPasswordStrength(password: string) {
 
 function PasswordStrengthBar({ password }: { password: string }) {
   const score = getPasswordStrength(password);
+  const percent = (score / 5) * 100;
 
-  const colors = [
-    "bg-gray-200", // 0
-    "bg-red-500", // 1
-    "bg-orange-500", // 2
-    "bg-yellow-500", // 3
-    "bg-lime-500", // 4
-    "bg-green-500", // 5
-  ];
-
-  const color = score === 0 ? colors[0] : colors[score];
+  const label = score === 0 ? "" : score < 3 ? "Weak" : score < 5 ? "Average" : "Strong";
 
   return (
     <div className="mt-2">
-      <div className="flex gap-1 h-1">
-        {[1, 2, 3, 4, 5].map((level) => (
-          <div
-            key={level}
-            className={cn("flex-1 rounded-full transition-all duration-300", level <= score ? color : "bg-gray-200")}
-          />
-        ))}
+      <div className="h-1.5 w-full rounded-full bg-gray-300 overflow-hidden">
+        <div
+          className="h-full rounded-full transition-all duration-500 ease-out"
+          style={{
+            width: `${percent}%`,
+            background: "linear-gradient(to right, #dc2626, #f97316, #eab308, #84cc16, #22c55e)",
+            backgroundSize: "500% 100%",
+            backgroundPosition: `${100 - percent}% 0`,
+          }}
+        />
       </div>
-      <p className="text-[10px] text-gray-500 mt-1 text-right">
-        {score === 0 ? "" : score < 3 ? "Weak" : score < 5 ? "Good" : "Strong"}
-      </p>
+      <p className="text-[12px] text-primary mt-1 text-right">{label}</p>
     </div>
   );
 }
@@ -257,11 +250,11 @@ function LoginForm() {
         transition={{ duration: 0.6, ease: "easeOut" }}
         className="relative z-10 w-full max-w-md"
       >
-        <div className="bg-white/95 backdrop-blur-xl rounded-3xl shadow-[0_0_50px_rgba(13,88,68,0.3)] overflow-hidden border border-white/20">
+        <div className="bg-white/90 backdrop-blur-xl rounded-3xl shadow-[0_0_50px_rgba(13,88,68,0.3)] overflow-hidden border border-white/20">
 
           <div className="p-6">
             {/* Logo area */}
-            <div className="flex flex-col items-center mb-8">
+            <div className="flex flex-col items-center mb-4">
               {settings.site_logo && settings.site_logo !== "null" && settings.site_logo !== "undefined" && settings.site_logo.trim() !== "" ? (
                 <img src={resolveMediaUrl(settings.site_logo)} alt="Site Logo" className="max-w-[120px] h-auto mb-5 object-contain" />
               ) : (
@@ -292,14 +285,14 @@ function LoginForm() {
                   onSubmit={handleLoginSubmit} className="space-y-5" noValidate
                 >
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1.5">Email address</label>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1.5">Email Address</label>
                     <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                       <input
                         type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
                         placeholder="admin@tanzeem.org"
                         className={cn(
-                          "w-full h-11 pl-10 pr-4 rounded-xl border text-sm transition-all",
+                          "w-full h-11 pl-8 pr-2 rounded-xl border text-sm transition-all",
                           "bg-gray-50 text-gray-900 placeholder:text-gray-400",
                           error && "border-red-400 focus:border-red-400 focus:ring-red-200"
                         )}
@@ -308,19 +301,19 @@ function LoginForm() {
                   </div>
 
                   <div>
-                    <div className="flex items-center justify-between mb-1.5">
+                    <div className="flex items-center justify-between py-2">
                       <label className="block text-sm font-semibold text-gray-700">Password</label>
                       <button type="button" onClick={() => { setMode("forgot"); setError(null); setSuccess(null); }} className="cursor-pointer text-xs text-primary hover:text-primary/80 font-bold transition-colors">
                         Forgot password?
                       </button>
                     </div>
                     <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                       <input
                         type={showPassword ? "text" : "password"} required value={password} onChange={(e) => setPassword(e.target.value)}
                         placeholder="••••••••"
                         className={cn(
-                          "w-full h-11 pl-10 pr-10 rounded-xl border text-sm transition-all",
+                          "w-full h-11 pl-8 pr-2 rounded-xl border text-sm transition-all",
                           "bg-gray-50 text-gray-900 placeholder:text-gray-400",
                           error && "border-red-400 focus:border-red-400 focus:ring-red-200"
                         )}

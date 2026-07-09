@@ -223,7 +223,11 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
         </div>
       </div>
 
-      <Tabs defaultValue={activeSpeaker ? "audios" : "speakers"} className="space-y-6">
+      <Tabs
+        key={activeSpeaker ? `speaker-${activeSpeaker.id}` : "speakers-list"}
+        defaultValue={activeSpeaker ? "audios" : "speakers"}
+        className="space-y-6"
+      >
         <TabsList className="bg-transparent border border-border/50 p-1 rounded-full h-auto w-full max-w-3xl flex items-center justify-between mb-8 overflow-x-auto">
           {!activeSpeaker ? (
             <>
@@ -334,8 +338,6 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
           </>
         )}
       </Tabs>
-
-
 
       <ConfirmDialog open={!!deletingSpeaker} title="Delete Speaker" description="Are you sure you want to delete this speaker?" onConfirm={async () => { if (deletingSpeaker) await handleSpeakerDelete(deletingSpeaker) }} onOpenChange={(open) => !open && setDeletingSpeaker(null)} />
       <ConfirmDialog open={!!deletingAudio} title="Delete Audio" description="Are you sure you want to delete this audio?" onConfirm={async () => { if (deletingAudio) { await fetch(`/api/admin/audio/${deletingAudio.id}`, { method: 'DELETE' }); fetchData(); setDeletingAudio(null); } }} onOpenChange={(open) => !open && setDeletingAudio(null)} />
