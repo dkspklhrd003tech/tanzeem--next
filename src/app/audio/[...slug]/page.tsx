@@ -38,9 +38,19 @@ export default async function AudioDetailPage({ params }: Props) {
 
   if (!rawItem) notFound();
   
+  let parsedCustomFields = rawItem.customFields;
+  if (typeof rawItem.customFields === "string") {
+    try {
+      parsedCustomFields = rawItem.customFields ? JSON.parse(rawItem.customFields) : {};
+    } catch (e) {
+      console.warn("Failed to parse customFields for audio:", slug);
+      parsedCustomFields = {};
+    }
+  }
+
   const item = {
     ...rawItem,
-    customFields: typeof rawItem.customFields === "string" ? JSON.parse(rawItem.customFields) : rawItem.customFields
+    customFields: parsedCustomFields
   };
 
   const customFieldSchema = await db.select().from(customFieldDefinitions).where(eq(customFieldDefinitions.entityType, "audio"));
