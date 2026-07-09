@@ -12,6 +12,15 @@ export function resolveMediaUrl(url: string | null | undefined): string {
   
   // Safely join base URL and path to avoid double slashes or missing slashes
   const baseUrl = (process.env.NEXT_PUBLIC_MEDIA_URL || "https://tanzeemmedia.dks.com.pk").replace(/\/$/, "");
-  const path = url.startsWith("/") ? url : `/${url}`;
+  let path = url.startsWith("/") ? url : `/${url}`;
+  
+  // Auto-fix legacy database entries: If the stored URL is just "/uploads/..." 
+  // but FTP_ROOT_DIR includes a prefix like "/public_html", dynamically add it.
+  const rootDir = (process.env.FTP_ROOT_DIR || "/public_html/uploads").replace(/\/$/, "");
+  if (path.startsWith("/uploads") && rootDir.endsWith("/uploads") && rootDir !== "/uploads") {
+    const prefix = rootDir.slice(0, rootDir.lastIndexOf("/uploads")); // e.g., "/public_html"
+    path = `${prefix}${path}`;
+  }
+
   return `${baseUrl}${path}`;
 }

@@ -136,7 +136,7 @@ export async function uploadFile({ fileName, folder, buffer }: StorageOptions): 
         throw new Error("FTP_HOST is not configured. Media uploads are strictly set to FTP only.");
     }
     const rootDir = resolveFtpRoot();
-    const relativePath = `${rootDir}/${folder}/${fileName}`.replace(/\/+/g, "/");
+    const ftpPath = `${rootDir}/${folder}/${fileName}`.replace(/\/+/g, "/");
 
     const client = await createFtpClient();
 
@@ -160,8 +160,8 @@ export async function uploadFile({ fileName, folder, buffer }: StorageOptions): 
         client.close();
     }
 
-    // Return relative path to store in database
-    return relativePath;
+    // Return consistent path to store in database (abstracted away from FTP root)
+    return `/uploads/${folder}/${fileName}`.replace(/\/+/g, "/");
 }
 
 /**
@@ -174,7 +174,7 @@ export async function appendFileChunk({ fileName, folder, buffer, chunkIndex }: 
         throw new Error("FTP_HOST is not configured. Media uploads are strictly set to FTP only.");
     }
     const rootDir = resolveFtpRoot();
-    const relativePath = `${rootDir}/${folder}/${fileName}`.replace(/\/+/g, "/");
+    const ftpPath = `${rootDir}/${folder}/${fileName}`.replace(/\/+/g, "/");
 
     const client = await createFtpClient();
 
@@ -202,8 +202,8 @@ export async function appendFileChunk({ fileName, folder, buffer, chunkIndex }: 
         client.close();
     }
 
-    // Return relative path to store in database
-    return relativePath;
+    // Return consistent path to store in database (abstracted away from FTP root)
+    return `/uploads/${folder}/${fileName}`.replace(/\/+/g, "/");
 }
 
 /**
