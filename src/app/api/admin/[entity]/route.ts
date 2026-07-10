@@ -166,7 +166,12 @@ export async function GET(
         if (entity === "press-releases") {
             results = await db.select().from(table).orderBy((table as any).orderIndex || (table as any).order || (table as any).id, desc(table.publishedAt)).limit(100);
         } else if (entity === "speakers") {
-            results = await db.select().from(table).orderBy((table as any).order || (table as any).id, desc((table as any).name || (table as any).id)).limit(100);
+            const type = request.nextUrl.searchParams.get("type");
+            let query = db.select().from(table);
+            if (type) {
+                query = query.where(eq((table as any).speakerType, type)) as any;
+            }
+            results = await query.orderBy((table as any).order || (table as any).id, desc((table as any).name || (table as any).id)).limit(100);
         } else {
             results = await db.select().from(table).orderBy(desc((table as any).updatedAt || (table as any).createdAt || (table as any).id)).limit(100);
         }

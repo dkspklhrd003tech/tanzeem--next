@@ -106,7 +106,7 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
   const { toast } = useToast();
   const [pageForm, setPageForm] = useState<PageRecord>({ ...initialPageData });
   const [isSavingPage, setIsSavingPage] = useState(false);
-  
+
   const [speakersList, setSpeakersList] = useState<SpeakerItem[]>([]);
   const [videosList, setVideosList] = useState<VideoItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -169,7 +169,7 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
       const method = editingSpeakerId ? "PUT" : "POST";
       const payload = { ...speakerFormData, type: "video" };
       const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-      if (!res.ok) throw new Error((await res.json().catch(()=>({}))).error || "Failed");
+      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || "Failed");
       toast({ title: "Success", description: "Speaker saved" });
       setIsSpeakerModalOpen(false);
       fetchData();
@@ -193,7 +193,7 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
       const method = editingVideoId ? "PUT" : "POST";
       const payload = { ...videoFormData, speakerId: activeSpeaker?.id };
       const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-      if (!res.ok) throw new Error((await res.json().catch(()=>({}))).error || "Failed");
+      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || "Failed");
       toast({ title: "Success", description: "Video saved" });
       setIsVideoModalOpen(false);
       fetchData();
@@ -460,7 +460,7 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
       )}
 
       <ConfirmDialog open={!!deletingSpeaker} title="Delete Speaker" description="Are you sure you want to delete this speaker?" onConfirm={() => deletingSpeaker && handleSpeakerDelete(deletingSpeaker)} onOpenChange={(open) => !open && setDeletingSpeaker(null)} />
-      <ConfirmDialog open={!!deletingVideo} title="Delete Video" description="Are you sure you want to delete this video?" onConfirm={async () => { if(deletingVideo){ await fetch(`/api/admin/videos/${deletingVideo.id}`, {method:'DELETE'}); fetchData(); setDeletingVideo(null); } }} onOpenChange={(open) => !open && setDeletingVideo(null)} />
+      <ConfirmDialog open={!!deletingVideo} title="Delete Video" description="Are you sure you want to delete this video?" onConfirm={async () => { if (deletingVideo) { await fetch(`/api/admin/videos/${deletingVideo.id}`, { method: 'DELETE' }); fetchData(); setDeletingVideo(null); } }} onOpenChange={(open) => !open && setDeletingVideo(null)} />
     </div>
   );
 }

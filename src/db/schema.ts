@@ -333,6 +333,7 @@ export const speakers = mysqlTable("speakers", {
     id: varchar("id", { length: 191 }).primaryKey(),
     name: varchar("name", { length: 191 }).notNull(),
     slug: varchar("slug", { length: 191 }).notNull().unique(),
+    speakerType: varchar("speaker_type", { length: 50 }).default("audio").notNull(),
     bio: text("bio"),
     avatar: text("avatar"),
     metaTitle: varchar("meta_title", { length: 255 }),
