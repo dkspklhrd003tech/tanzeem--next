@@ -373,19 +373,19 @@ function SortableServiceBlock({ block, index, onUpdate, onRemove }: any) {
                 >
                   <Trash2 className="h-3 w-3" />
                 </Button>
-                <ImageUploader 
-                  value={slide.image} 
-                  altValue={slide.alt || ""} 
+                <ImageUploader
+                  value={slide.image}
+                  altValue={slide.alt || ""}
                   onAltChange={(alt) => {
                     const newSlides = [...block.value];
                     newSlides[i] = { ...newSlides[i], alt };
                     onUpdate(newSlides);
-                  }} 
+                  }}
                   onChange={(url, alt) => {
                     const newSlides = [...block.value];
                     newSlides[i] = { ...newSlides[i], image: url, alt: alt || newSlides[i].alt };
                     onUpdate(newSlides);
-                  }} 
+                  }}
                 />
               </div>
             ))}
@@ -696,7 +696,7 @@ export default function ServicesPageEditor({ pageId, initialPageData }: Services
         title: formData.title,
         slug: formData.slug,
         imageUrl: formData.imageUrl || null,
-        customFields: { 
+        customFields: {
           blocks: formData.blocks,
           showInSpotlight: formData.showInSpotlight,
           openInNewTab: formData.openInNewTab
@@ -1141,7 +1141,7 @@ export default function ServicesPageEditor({ pageId, initialPageData }: Services
                     <div className="flex items-center justify-between">
                       <Label>Main Image <span className="text-destructive">*</span></Label>
                       <div className="flex items-center gap-2">
-                        <Label htmlFor="showInSpotlight" className="text-xs font-normal text-muted-foreground">Show in Spotlight</Label>
+                        <Label htmlFor="showInSpotlight" className="text-xs font-normal text-foreground">Show in Spotlight</Label>
                         <Switch
                           id="showInSpotlight"
                           checked={formData.showInSpotlight}
@@ -1158,9 +1158,9 @@ export default function ServicesPageEditor({ pageId, initialPageData }: Services
                     {formErrors.imageUrl && <p className="text-xs text-destructive">{formErrors.imageUrl}</p>}
                   </div>
 
-                  <ServiceBlockBuilder 
-                    blocks={formData.blocks || []} 
-                    onChange={(blocks) => setFormData(prev => ({ ...prev, blocks }))} 
+                  <ServiceBlockBuilder
+                    blocks={formData.blocks || []}
+                    onChange={(blocks) => setFormData(prev => ({ ...prev, blocks }))}
                   />
                 </div>
 
