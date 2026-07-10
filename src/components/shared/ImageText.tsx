@@ -86,7 +86,7 @@ export function ImageText({
                   className={cn(
                     "inline-flex items-center gap-2 bg-primary text-primary-foreground",
                     "px-6 py-2.5 rounded-full text-sm font-semibold",
-                    "hover:bg-primary-dark transition-colors",
+                    "transition-colors",
                     "focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
                   )}
                 >

@@ -116,7 +116,7 @@ export function MediaLibrary() {
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
-  const [deletingMediaId, setDeletingMediaId] = useState<{id: string, name: string} | null>(null);
+  const [deletingMediaId, setDeletingMediaId] = useState<{ id: string, name: string } | null>(null);
   const [isBulkDeleting, setIsBulkDeleting] = useState(false);
 
   const handleDelete = async (id: string, name: string) => {
@@ -215,7 +215,7 @@ export function MediaLibrary() {
           <Button
             disabled={isUploading}
             onClick={() => fileInputRef.current?.click()}
-            className="bg-primary hover:bg-primary-dark text-primary-foreground"
+            className="bg-primary text-primary-foreground"
           >
             {isUploading ? (
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -352,10 +352,10 @@ export function MediaLibrary() {
                       </a>
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                     <DropdownMenuItem className="text-red-500" onClick={() => setDeletingMediaId({id: item.id, name: item.originalName})}>
-                       <Trash2 className="h-4 w-4 mr-2" />
-                       Delete
-                     </DropdownMenuItem>
+                    <DropdownMenuItem className="text-red-500" onClick={() => setDeletingMediaId({ id: item.id, name: item.originalName })}>
+                      <Trash2 className="h-4 w-4 mr-2" />
+                      Delete
+                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
@@ -425,10 +425,10 @@ export function MediaLibrary() {
                             <Copy className="h-4 w-4 mr-2" />
                             Copy URL
                           </DropdownMenuItem>
-                           <DropdownMenuItem className="text-red-500" onClick={() => setDeletingMediaId({id: item.id, name: item.originalName})}>
-                             <Trash2 className="h-4 w-4 mr-2" />
-                             Delete
-                           </DropdownMenuItem>
+                          <DropdownMenuItem className="text-red-500" onClick={() => setDeletingMediaId({ id: item.id, name: item.originalName })}>
+                            <Trash2 className="h-4 w-4 mr-2" />
+                            Delete
+                          </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </td>

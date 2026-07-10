@@ -26,7 +26,7 @@ export function WaveformPlayer({
 }: WaveformPlayerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const wavesurferRef = useRef<WaveSurfer | null>(null);
-  
+
   const [isPlaying, setIsPlaying] = useState(false);
   const [isReady, setIsReady] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -35,25 +35,34 @@ export function WaveformPlayer({
   useEffect(() => {
     if (!containerRef.current) return;
 
-    // Initialize WaveSurfer
+    // Native audio element allows instant streaming instead of waiting for full download
+    const audio = new Audio();
+    audio.src = audioUrl;
+    audio.crossOrigin = "anonymous";
+    audio.preload = "metadata";
+
+    // Initialize WaveSurfer with native media element
     const ws = WaveSurfer.create({
       container: containerRef.current,
-      waveColor: "#4b5563", // Tailwind gray-600
-      progressColor: "#10b981", // Tailwind emerald-500 (primary)
+      waveColor: "#5b6470ff",
+      progressColor: "#0d5844",
       cursorColor: "transparent",
       barWidth: 2,
       barGap: 2,
       barRadius: 2,
       height: 80,
       normalize: true,
-      url: audioUrl,
+      media: audio,
     });
 
     wavesurferRef.current = ws;
 
-    ws.on("ready", () => {
+    // Ready as soon as audio can play, instead of waiting for full decode
+    audio.addEventListener("canplay", () => {
       setIsReady(true);
-      setDuration(ws.getDuration());
+      if (!isNaN(audio.duration)) {
+        setDuration(audio.duration);
+      }
     });
 
     ws.on("play", () => setIsPlaying(true));
@@ -88,7 +97,7 @@ export function WaveformPlayer({
   }
 
   return (
-    <div className="bg-[#181818] rounded-xl overflow-hidden shadow-lg p-6 flex flex-col gap-6 text-white w-full">
+    <div className="bg-foreground rounded-xl overflow-hidden shadow-lg p-6 flex flex-col gap-6 text-white w-full">
       {/* Header Section */}
       <div className="flex justify-between items-start">
         <div className="flex gap-4 items-center">
@@ -108,7 +117,7 @@ export function WaveformPlayer({
 
           {/* Title and Speaker */}
           <div className="flex flex-col">
-            <span className="text-gray-400 text-sm font-medium">
+            <span className="text-gray-200 text-sm font-medium">
               {speakerName || "Unknown Speaker"}
             </span>
             <h2 className="text-2xl font-bold line-clamp-1">{title}</h2>
@@ -131,15 +140,17 @@ export function WaveformPlayer({
       {/* Waveform Section */}
       <div className="relative w-full">
         {!isReady && (
-          <div className="absolute inset-0 flex items-center justify-center bg-[#181818] z-10">
-            <span className="text-sm text-gray-400 animate-pulse">Loading audio...</span>
+          <div className="absolute inset-0 flex items-center justify-center bg-foreground z-10">
+            <span className="text-sm font-medium animate-pulse text-primary">
+              Loading...
+            </span>
           </div>
         )}
         <div ref={containerRef} className="w-full relative cursor-pointer" />
-        
+
         {/* Time bubble (like Soundcloud) */}
         {isReady && (
-          <div className="absolute right-0 bottom-2 bg-black/80 px-2 py-0.5 rounded text-[10px] font-mono text-gray-300 z-10 pointer-events-none shadow-sm">
+          <div className="absolute right-0 bottom-2 bg-black/80 px-2 py-0.5 rounded text-[10px] font-mono text-primary-light z-10 pointer-events-none shadow-sm">
             {formatTime(currentTime)} / {formatTime(duration)}
           </div>
         )}

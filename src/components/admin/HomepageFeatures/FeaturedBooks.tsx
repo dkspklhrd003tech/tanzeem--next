@@ -218,7 +218,7 @@ export function FeaturedBooks() {
         }
     };
 
-    const [deletingBook, setDeletingBook] = useState<{id: string, title: string} | null>(null);
+    const [deletingBook, setDeletingBook] = useState<{ id: string, title: string } | null>(null);
 
     const handleDelete = async (id: string, title: string) => {
         setDeletingBook(null);
@@ -244,7 +244,7 @@ export function FeaturedBooks() {
                     <h2 className="text-2xl font-bold text-foreground tracking-tight">Featured Books</h2>
                     <p className="text-sm text-foreground-muted mt-1">Manage Books Displayed in the Homepage Featured Section</p>
                 </div>
-                <button onClick={() => handleOpenModal()} className="flex items-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 rounded-xl text-sm font-semibold transition-all hover:bg-primary-dark shadow-sm hover:shadow-md active:scale-95">
+                <button onClick={() => handleOpenModal()} className="flex items-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 rounded-xl text-sm font-semibold transition-all shadow-sm hover:shadow-md active:scale-95">
                     <Plus className="w-4 h-4" /> Add New Book
                 </button>
             </div>
@@ -325,7 +325,7 @@ export function FeaturedBooks() {
                                     </select>
                                 </div>
                             </div>
-                            
+
                             <div className="flex gap-4">
                                 <div className="flex-1 space-y-2">
                                     <label className="text-sm font-semibold text-foreground">Button Text (Optional)</label>
@@ -337,7 +337,7 @@ export function FeaturedBooks() {
                                 </div>
                             </div>
 
-                             <div className="flex justify-end gap-3 pt-6 border-t border-border mt-4">
+                            <div className="flex justify-end gap-3 pt-6 border-t border-border mt-4">
                                 <button type="button" onClick={closeModal} className="px-6 py-2.5 bg-muted text-foreground rounded-xl font-medium hover:bg-muted/80 transition-all active:scale-95">Cancel</button>
                                 <ConfirmDialog
                                     title={editingItem ? "Update Book" : "Create Book"}

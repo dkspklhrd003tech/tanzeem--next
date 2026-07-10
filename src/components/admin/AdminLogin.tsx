@@ -133,7 +133,7 @@ export function AdminLogin() {
 
             <Button
               type="submit"
-              className="w-full bg-primary hover:bg-primary-dark text-primary-foreground"
+              className="w-full bg-primary text-primary-foreground"
               disabled={isLoading}
             >
               {isLoading ? "Signing in..." : "Sign In"}

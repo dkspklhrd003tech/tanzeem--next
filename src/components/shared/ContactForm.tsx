@@ -19,7 +19,7 @@ export function ContactForm() {
     setIsSubmitting(true);
 
     const formData = new FormData(e.currentTarget);
-    
+
     try {
       const response = await fetch("/api/contact", {
         method: "POST",
@@ -151,7 +151,7 @@ export function ContactForm() {
       <Button
         type="submit"
         size="lg"
-        className="w-full md:w-auto bg-primary hover:bg-primary-dark text-primary-foreground"
+        className="w-full md:w-auto bg-primary text-primary-foreground"
         disabled={isSubmitting}
       >
         {isSubmitting ? (

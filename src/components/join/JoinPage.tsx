@@ -231,7 +231,7 @@ export function JoinPage() {
           <Button
             type="submit"
             disabled={submitting || !form.tier}
-            className="w-full md:w-auto bg-primary hover:bg-primary-dark text-primary-foreground rounded-full px-10 py-3 font-semibold"
+            className="w-full md:w-auto bg-primary text-primary-foreground rounded-full px-10 py-3 font-semibold"
           >
             {submitting ? <><Loader2 className="h-4 w-4 animate-spin mr-2" />Submitting…</> : <><Send className="h-4 w-4 mr-2" />Submit Application</>}
           </Button>

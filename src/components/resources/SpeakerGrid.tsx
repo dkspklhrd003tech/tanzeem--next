@@ -16,7 +16,7 @@ export function SpeakerGrid({ speakers }: { speakers: SpeakerItem[] }) {
       {speakers.map((speaker) => (
         <Link
           key={speaker.id}
-          href={`/audio/speaker/${speaker.id}`}
+          href={`/audios-by-speaker/${speaker.slug}`}
           className="group border border-border rounded-md p-4 bg-card hover:border-primary/40 text-center transition-colors"
         >
           <div className="w-20 h-20 mx-auto rounded-full overflow-hidden bg-primary/10 mb-3">

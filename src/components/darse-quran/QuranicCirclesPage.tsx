@@ -236,7 +236,7 @@ export function QuranicCirclesPage({
               className="bg-card rounded-xl shadow-sm border border-border overflow-hidden hover:shadow-mid transition-shadow flex flex-col group"
             >
               {/* Card header */}
-              <div className="bg-primary px-5 py-4 flex justify-between items-center gap-4 group-hover:bg-primary-dark transition-colors">
+              <div className="bg-primary px-5 py-4 flex justify-between items-center gap-4 group-transition-colors">
                 <h3 className="text-primary-foreground font-bold text-lg truncate">
                   {event.city}
                 </h3>

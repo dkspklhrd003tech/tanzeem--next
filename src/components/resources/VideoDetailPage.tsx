@@ -85,7 +85,7 @@ export function VideoDetailPage({ item, related, customFieldSchema = [] }: { ite
               {item.viewCount > 0 && <span className="flex items-center gap-1"><Eye className="h-3.5 w-3.5" />{item.viewCount.toLocaleString()} views</span>}
             </div>
             <div className="flex gap-3">
-              <a href={item.videoUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold bg-primary text-primary-foreground hover:bg-primary-dark transition-colors">
+              <a href={item.videoUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold bg-primary text-primary-foreground transition-colors">
                 <ExternalLink className="h-4 w-4" /> Watch on YouTube
               </a>
               <Button variant="outline" size="sm" className="rounded-full" onClick={handleShare}>
@@ -109,7 +109,7 @@ export function VideoDetailPage({ item, related, customFieldSchema = [] }: { ite
                 {customFieldSchema.map((field) => {
                   const val = item.customFields?.[field.fieldKey];
                   if (val === undefined || val === null || val === "") return null;
-                  
+
                   return (
                     <div key={field.id} className="space-y-1">
                       <p className="text-xs text-foreground-muted uppercase tracking-wider">{field.label}</p>

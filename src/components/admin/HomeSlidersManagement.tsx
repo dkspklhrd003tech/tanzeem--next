@@ -424,7 +424,7 @@ export function HomeSlidersManagement() {
                             </button>
                             <button
                                 onClick={() => handleOpenModal()}
-                                className="flex items-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 rounded-xl font-semibold shadow-sm hover:shadow-md transition-all hover:bg-primary-dark active:scale-95"
+                                className="flex items-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 rounded-xl font-semibold shadow-sm hover:shadow-md transition-all active:scale-95"
                             >
                                 <Plus className="w-4 h-4" />
                                 Add New Banner

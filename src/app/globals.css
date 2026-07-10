@@ -9,14 +9,13 @@
 :root {
   /* ── Brand Greens (primary identity — kept from project) ── */
   --primary: #0d5844;
-  /* --primary: red; */
   --primary-light: color-mix(in srgb, var(--primary) 10%, white);
   --primary-foreground: #fefefc;
-  --primary-dark: #007db3;
+  /* --primary-dark: #007db3; */
 
   /* ── Accent Blue (CTA / interactive — from tanzeem.org extraction) ── */
-  --accent-blue: #008ECA;
-  --accent-blue-hover: #007db3;
+  /* --accent-blue: #008ECA; */
+  /* --accent-blue-hover: #007db3; */
   --accent-blue-light: #e6f3ff;
 
   /* ── Accent Gold ── */
@@ -64,7 +63,7 @@
   --secondary-foreground: #222222;
 
   /* ── Destructive ── */
-  --destructive: #ff0008;
+  --destructive: #ff0000;
   --destructive-foreground: #fefefc;
 
   /* ── Muted ── */

@@ -267,7 +267,7 @@ export function AdminPages({ section }: AdminPagesProps) {
           </div>
           <Button
             onClick={() => setEditingId("new")}
-            className="bg-primary hover:bg-primary-dark text-primary-foreground px-6 py-2.5 rounded-xl font-semibold shadow-sm hover:shadow-md transition-all active:scale-95"
+            className="bg-primary text-primary-foreground px-6 py-2.5 rounded-xl font-semibold shadow-sm hover:shadow-md transition-all active:scale-95"
           >
             <Plus className="h-4 w-4 mr-2" />
             Add New

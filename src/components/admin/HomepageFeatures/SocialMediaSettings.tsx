@@ -31,7 +31,7 @@ export function SocialMediaSettings() {
             if (res.ok) {
                 const data = await res.json();
                 const socialSettings = data.raw.find((s: any) => s.key === "homepage_social_links");
-                
+
                 if (socialSettings && socialSettings.value) {
                     try {
                         setLinks(JSON.parse(socialSettings.value));
@@ -92,12 +92,12 @@ export function SocialMediaSettings() {
     };
 
     const addLink = () => {
-        setLinks([...links, { 
-            id: crypto.randomUUID(), 
-            name: "", 
-            icon: "globe", 
-            url: "", 
-            color: "#0d5844" 
+        setLinks([...links, {
+            id: crypto.randomUUID(),
+            name: "",
+            icon: "globe",
+            url: "",
+            color: "#0d5844"
         }]);
     };
 
@@ -135,7 +135,7 @@ export function SocialMediaSettings() {
                     <button
                         type="button"
                         disabled={isSaving}
-                        className="flex items-center gap-2 bg-primary text-primary-foreground px-6 py-2.5 rounded-xl font-semibold shadow-sm hover:shadow-md transition-all hover:bg-primary-dark active:scale-95 disabled:opacity-50"
+                        className="flex items-center gap-2 bg-primary text-primary-foreground px-6 py-2.5 rounded-xl font-semibold shadow-sm hover:shadow-md transition-all active:scale-95 disabled:opacity-50"
                     >
                         {isSaving ? (
                             <div className="w-4 h-4 border-2 border-white/30 border-t-[#fefefc] rounded-full animate-spin"></div>
@@ -166,48 +166,48 @@ export function SocialMediaSettings() {
                                 <div className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
                                     <div className="space-y-1.5">
                                         <label className="text-xs font-semibold text-muted-foreground">Platform Name</label>
-                                        <Input 
-                                            placeholder="e.g. YouTube" 
-                                            value={link.name} 
-                                            onChange={(e) => updateLink(link.id, "name", e.target.value)} 
+                                        <Input
+                                            placeholder="e.g. YouTube"
+                                            value={link.name}
+                                            onChange={(e) => updateLink(link.id, "name", e.target.value)}
                                         />
                                     </div>
                                     <div className="space-y-1.5">
                                         <label className="text-xs font-semibold text-muted-foreground">Icon SVG (Slug)</label>
-                                        <Input 
-                                            placeholder="e.g. youtube, facebook, instagram" 
-                                            value={link.icon} 
-                                            onChange={(e) => updateLink(link.id, "icon", e.target.value.toLowerCase())} 
+                                        <Input
+                                            placeholder="e.g. youtube, facebook, instagram"
+                                            value={link.icon}
+                                            onChange={(e) => updateLink(link.id, "icon", e.target.value.toLowerCase())}
                                         />
                                     </div>
                                     <div className="space-y-1.5">
                                         <label className="text-xs font-semibold text-muted-foreground">URL Target</label>
-                                        <Input 
-                                            placeholder="e.g. /social-media#youtube" 
-                                            value={link.url} 
-                                            onChange={(e) => updateLink(link.id, "url", e.target.value)} 
+                                        <Input
+                                            placeholder="e.g. /social-media#youtube"
+                                            value={link.url}
+                                            onChange={(e) => updateLink(link.id, "url", e.target.value)}
                                         />
                                     </div>
                                     <div className="space-y-1.5">
                                         <label className="text-xs font-semibold text-muted-foreground">Theme Color</label>
                                         <div className="flex gap-2">
-                                            <Input 
-                                                type="color" 
-                                                className="w-12 p-1 h-9 cursor-pointer" 
-                                                value={link.color} 
-                                                onChange={(e) => updateLink(link.id, "color", e.target.value)} 
+                                            <Input
+                                                type="color"
+                                                className="w-12 p-1 h-9 cursor-pointer"
+                                                value={link.color}
+                                                onChange={(e) => updateLink(link.id, "color", e.target.value)}
                                             />
-                                            <Input 
-                                                className="flex-1" 
-                                                value={link.color} 
-                                                onChange={(e) => updateLink(link.id, "color", e.target.value)} 
+                                            <Input
+                                                className="flex-1"
+                                                value={link.color}
+                                                onChange={(e) => updateLink(link.id, "color", e.target.value)}
                                             />
                                         </div>
                                     </div>
                                 </div>
-                                <Button 
-                                    variant="ghost" 
-                                    size="icon" 
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
                                     className="text-destructive hover:bg-destructive/10 hover:text-destructive shrink-0 mt-6 md:mt-0"
                                     onClick={() => removeLink(link.id)}
                                 >

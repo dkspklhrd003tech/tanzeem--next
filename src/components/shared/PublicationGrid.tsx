@@ -47,7 +47,7 @@ export function PublicationGrid({ heading, publications }: PublicationGridProps)
                   <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center gap-4 p-4 text-center">
                     <Link
                       href={pub.link}
-                      className="w-full py-2 bg-primary text-white font-bold rounded hover:bg-primary-dark transition-colors flex items-center justify-center gap-2 text-sm"
+                      className="w-full py-2 bg-primary text-white font-bold rounded transition-colors flex items-center justify-center gap-2 text-sm"
                     >
                       <BookOpen className="w-4 h-4" /> Read Online
                     </Link>

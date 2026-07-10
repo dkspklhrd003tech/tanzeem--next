@@ -91,7 +91,7 @@ export function AudioPlayerPage({ item, related, customFieldSchema = [] }: Audio
                 download
                 className={cn(
                   "inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold",
-                  "bg-primary text-primary-foreground hover:bg-primary-dark transition-colors"
+                  "bg-primary text-primary-foreground transition-colors"
                 )}
               >
                 <Download className="h-4 w-4" />

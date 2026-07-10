@@ -329,7 +329,7 @@ export function CampaignsManager() {
                 </div>
                 <button
                     onClick={() => handleOpenModal()}
-                    className="flex items-center gap-2 bg-primary text-primary-foreground px-6 py-2.5 rounded-xl font-semibold shadow-sm hover:shadow-md transition-all hover:bg-primary-dark active:scale-95"
+                    className="flex items-center gap-2 bg-primary text-primary-foreground px-6 py-2.5 rounded-xl font-semibold shadow-sm hover:shadow-md transition-all active:scale-95"
                 >
                     <Plus className="w-4 h-4" />
                     Launch Campaign
@@ -512,7 +512,7 @@ export function CampaignsManager() {
                                     <button
                                         type="button"
                                         disabled={isLoading || isUploading}
-                                        className="px-8 py-2.5 text-sm font-bold text-primary-foreground bg-primary rounded-xl hover:bg-primary-dark transition-all active:scale-95 shadow-sm hover:shadow-md min-w-[140px]"
+                                        className="px-8 py-2.5 text-sm font-bold text-primary-foreground bg-primary rounded-xl transition-all active:scale-95 shadow-sm hover:shadow-md min-w-[140px]"
                                     >
                                         {isLoading ? (
                                             <div className="w-5 h-5 border-2 border-white/30 border-t-[#fefefc] rounded-full animate-spin"></div>
