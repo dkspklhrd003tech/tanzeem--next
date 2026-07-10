@@ -1,5 +1,6 @@
 "use client";
 
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Video, Share2, Clock, Eye, ExternalLink, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -39,6 +40,46 @@ function toEmbedSrc(videoUrl: string, embedUrl: string | null): string | null {
 
 export function VideoDetailPage({ item, related, customFieldSchema = [] }: { item: VideoItem; related: VideoItem[]; customFieldSchema?: any[] }) {
   const embedSrc = toEmbedSrc(item.videoUrl, item.embedUrl);
+  
+  const [viewCount, setViewCount] = useState(item.viewCount);
+  const trackedRef = useRef(false);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
+  const trackView = async () => {
+    if (trackedRef.current) return;
+    trackedRef.current = true;
+    try {
+      setViewCount(prev => prev + 1);
+      await fetch(`/api/videos/${item.slug}/track`, { method: "POST" });
+    } catch (e) {
+      console.error("Failed to track video view:", e);
+    }
+  };
+
+  // Cross-origin iframe tracking (Rumble, YT, Dailymotion, etc)
+  useEffect(() => {
+    if (!embedSrc) return;
+    
+    let timer: NodeJS.Timeout;
+    
+    const handleBlur = () => {
+      // If the active element is our iframe, it means the user clicked inside it (likely Play)
+      if (document.activeElement === iframeRef.current) {
+        if (!trackedRef.current) {
+          // Start 10-second timer to count as a view
+          timer = setTimeout(() => {
+            trackView();
+          }, 10000);
+        }
+      }
+    };
+
+    window.addEventListener("blur", handleBlur);
+    return () => {
+      window.removeEventListener("blur", handleBlur);
+      clearTimeout(timer);
+    };
+  }, [embedSrc, item.slug]);
 
   const handleShare = () => {
     if (navigator.share) navigator.share({ title: item.title, url: window.location.href });
@@ -58,6 +99,7 @@ export function VideoDetailPage({ item, related, customFieldSchema = [] }: { ite
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="rounded-xl overflow-hidden bg-black aspect-video">
             {embedSrc ? (
               <iframe
+                ref={iframeRef}
                 src={embedSrc}
                 title={item.title}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -65,7 +107,17 @@ export function VideoDetailPage({ item, related, customFieldSchema = [] }: { ite
                 className="w-full h-full"
               />
             ) : (
-              <video controls src={item.videoUrl} className="w-full h-full" poster={item.thumbnailUrl ?? undefined}>
+              <video 
+                controls 
+                src={item.videoUrl} 
+                className="w-full h-full" 
+                poster={item.thumbnailUrl ?? undefined}
+                onTimeUpdate={(e) => {
+                  if (e.currentTarget.currentTime > 10) {
+                    trackView();
+                  }
+                }}
+              >
                 Your browser does not support the video element.
               </video>
             )}
@@ -82,7 +134,7 @@ export function VideoDetailPage({ item, related, customFieldSchema = [] }: { ite
                 </Link>
               )}
               {item.duration && <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" />{formatDuration(item.duration)}</span>}
-              {item.viewCount > 0 && <span className="flex items-center gap-1 text-primary"><Eye className="h-3.5 w-3.5" />{item.viewCount.toLocaleString()} Views</span>}
+              {viewCount > 0 && <span className="flex items-center gap-1 text-primary"><Eye className="h-3.5 w-3.5" />{viewCount.toLocaleString()} Views</span>}
             </div>
             <div className="flex gap-3">
               <a href={item.videoUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold bg-primary text-primary-foreground transition-colors">

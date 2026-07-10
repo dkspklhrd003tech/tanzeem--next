@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import Link from "next/link";
 import { Headphones, Download, Share2, Clock, Play, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -38,6 +39,17 @@ function formatDuration(seconds: number | null) {
 }
 
 export function AudioPlayerPage({ item, related, customFieldSchema = [] }: AudioPlayerPageProps) {
+  const [playCount, setPlayCount] = React.useState(item.playCount);
+
+  const handleTracked = async () => {
+    try {
+      setPlayCount((prev) => prev + 1);
+      await fetch(`/api/audio/${item.slug}/track`, { method: "POST" });
+    } catch (e) {
+      console.error("Failed to track play:", e);
+    }
+  };
+
   const handleShare = () => {
     if (navigator.share) {
       navigator.share({ title: item.title, url: window.location.href });
@@ -67,6 +79,7 @@ export function AudioPlayerPage({ item, related, customFieldSchema = [] }: Audio
               speakerName={item.speaker?.name}
               categoryName={item.category?.name}
               publishedAt={item.customFields?.publishedAt || null}
+              onTracked={handleTracked}
             />
           </div>
 
@@ -81,7 +94,7 @@ export function AudioPlayerPage({ item, related, customFieldSchema = [] }: Audio
               )}
               <span className="flex items-center gap-1">
                 <Play className="h-4 w-4 text-primary" />
-                {item.playCount.toLocaleString()} Plays
+                {playCount.toLocaleString()} Plays
               </span>
             </div>
 

@@ -9,6 +9,7 @@ interface WaveformPlayerProps {
   speakerName?: string;
   categoryName?: string;
   publishedAt?: Date | string | null;
+  onTracked?: () => void;
 }
 
 function formatTime(seconds: number) {
@@ -23,9 +24,11 @@ export function WaveformPlayer({
   speakerName,
   categoryName,
   publishedAt,
+  onTracked,
 }: WaveformPlayerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const wavesurferRef = useRef<WaveSurfer | null>(null);
+  const trackedRef = useRef(false);
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [isReady, setIsReady] = useState(false);
@@ -69,9 +72,18 @@ export function WaveformPlayer({
     ws.on("pause", () => setIsPlaying(false));
     ws.on("finish", () => setIsPlaying(false));
 
-    ws.on("audioprocess", () => {
-      setCurrentTime(ws.getCurrentTime());
-    });
+    const handleAudioProcess = () => {
+      const current = ws.getCurrentTime();
+      setCurrentTime(current);
+
+      // Trigger tracking exactly once when passing 10 seconds
+      if (current >= 10 && !trackedRef.current) {
+        trackedRef.current = true;
+        if (onTracked) onTracked();
+      }
+    };
+
+    ws.on("audioprocess", handleAudioProcess);
 
     ws.on("seeking", () => {
       setCurrentTime(ws.getCurrentTime());
