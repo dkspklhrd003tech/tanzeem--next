@@ -79,7 +79,7 @@ export default async function AudioDetailPage({ params }: Props) {
   });
   const bc = breadcrumbJsonLd([
     { name: "Home", path: "/" },
-    { name: "Audio", path: "/audio" },
+    { name: "Audios", path: "/audios" },
     { name: item.title, path: `/audios/${item.slug}` },
   ]);
 

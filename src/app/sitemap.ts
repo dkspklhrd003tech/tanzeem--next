@@ -17,7 +17,7 @@ const STATIC_ROUTES: { url: string; priority?: number; changeFrequency?: "daily"
   { url: "/our-ideology/our-obligations", priority: 0.6, changeFrequency: "yearly" },
   { url: "/the-founder", priority: 0.7, changeFrequency: "monthly" },
   { url: "/the-ameer", priority: 0.7, changeFrequency: "monthly" },
-  { url: "/audio", priority: 0.9, changeFrequency: "daily" },
+  { url: "/audios", priority: 0.9, changeFrequency: "daily" },
   { url: "/videos", priority: 0.9, changeFrequency: "daily" },
   { url: "/books", priority: 0.8, changeFrequency: "weekly" },
   { url: "/magazines", priority: 0.8, changeFrequency: "monthly" },
@@ -93,7 +93,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     dynamicEntries = [
       ...publishedPages.map((p) => ({ url: `${BASE_URL}/${p.slug}`, lastModified: p.updatedAt, changeFrequency: "monthly" as const, priority: 0.6 })),
-      ...publishedAudios.map((a) => ({ url: `${BASE_URL}/audio/${a.slug}`, lastModified: a.updatedAt, changeFrequency: "monthly" as const, priority: 0.6 })),
+      ...publishedAudios.map((a) => ({ url: `${BASE_URL}/audios/${a.slug}`, lastModified: a.updatedAt, changeFrequency: "monthly" as const, priority: 0.6 })),
       ...publishedVideos.map((v) => ({ url: `${BASE_URL}/videos/${v.slug}`, lastModified: v.updatedAt, changeFrequency: "monthly" as const, priority: 0.6 })),
       ...publishedBooks.map((b) => ({ url: `${BASE_URL}/books/${b.slug}`, lastModified: b.updatedAt, changeFrequency: "monthly" as const, priority: 0.6 })),
       ...publishedMagazines.map((m) => ({ url: `${BASE_URL}/magazines`, lastModified: m.updatedAt, changeFrequency: "monthly" as const, priority: 0.5 })),

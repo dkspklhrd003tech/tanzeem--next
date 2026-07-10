@@ -50,9 +50,9 @@ export function AudioPlayerPage({ item, related, customFieldSchema = [] }: Audio
     <div className="container max-w-7xl mx-auto py-10">
 
       {/* Back */}
-      <Link href="/audio" className="inline-flex items-center gap-2 text-sm text-foreground-muted hover:text-primary mb-6 transition-colors">
+      <Link href="/audios" className="inline-flex items-center gap-2 text-sm text-foreground-muted hover:text-primary mb-6 transition-colors">
         <ArrowLeft className="h-4 w-4" />
-        Back to Audio Library
+        Back to Audios
       </Link>
 
       <div className="grid lg:grid-cols-3 gap-8">
