@@ -145,7 +145,7 @@ export default async function SearchPage({ searchParams }: Props) {
         title: a.title,
         description: stripHtml(a.description || ""),
         type: "audio" as const,
-        link: `/resources/audios/${a.slug}`,
+        link: `/audio/${a.slug}`,
         date: a.publishedAt || a.createdAt,
       }));
 

@@ -637,7 +637,7 @@ export default async function DynamicPage({ params }: PageProps) {
                     title: a.title,
                     image: a.thumbnailUrl || '/images/default-audio.jpg',
                     type: 'audio',
-                    link: `/audios/${a.slug}`
+                    link: `/audio/${a.slug}`
                   }))}
                   columns={4}
                 />
