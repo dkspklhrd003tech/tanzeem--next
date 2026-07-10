@@ -54,7 +54,7 @@ export function PageBanner({ settings, titleOverride, breadcrumbsOverride, bgIma
           setPageImage(image);
         }
       })
-      .catch(() => {})
+      .catch(() => { })
       .finally(() => {
         if (!cancelled) setTitleLoading(false);
       });
