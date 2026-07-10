@@ -92,7 +92,7 @@ export function Hero({ slidesData = [] }: { slidesData?: any[] }) {
                 <img
                   src={displaySlides[current].imageUrl}
                   alt={displaySlides[current].title || ""}
-                  className="w-full h-full object-contain cursor-pointer"
+                  className="w-full h-full object-cover cursor-pointer"
                   onError={(e) => {
                     const target = e.currentTarget;
                     target.style.display = "none";
@@ -111,7 +111,7 @@ export function Hero({ slidesData = [] }: { slidesData?: any[] }) {
                 <img
                   src={displaySlides[current].imageUrl}
                   alt={displaySlides[current].title || ""}
-                  className="w-full h-full object-cover md:object-contain"
+                  className="w-full h-full object-cover"
                   onError={(e) => {
                     const target = e.currentTarget;
                     target.style.display = "none";

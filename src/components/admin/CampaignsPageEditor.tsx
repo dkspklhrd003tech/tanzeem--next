@@ -30,7 +30,7 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
-  DragEndCampaign,
+  DragEndEvent,
 } from "@dnd-kit/core";
 import {
   arrayMove,
@@ -289,8 +289,8 @@ export default function CampaignsPageEditor({ pageId, initialPageData }: Campaig
   };
 
   // Page SEO / Settings Save
-  const handlePageSave = async (e: React.FormCampaign) => {
-    e.prCampaignDefault();
+  const handlePageSave = async (e: React.FormEvent) => {
+    e.preventDefault();
     const errors: Record<string, string> = {};
     if (!pageForm.title.trim()) errors.title = "Title is required";
     if (!pageForm.slug.trim()) errors.slug = "Slug is required";
@@ -357,8 +357,8 @@ export default function CampaignsPageEditor({ pageId, initialPageData }: Campaig
   };
 
   // Drag over / Drag leave handlers
-  const handleDrag = (e: React.DragCampaign) => {
-    e.prCampaignDefault();
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     if (e.type === "dragenter" || e.type === "dragover") {
       setDragActive(true);
@@ -367,8 +367,8 @@ export default function CampaignsPageEditor({ pageId, initialPageData }: Campaig
     }
   };
 
-  const handleDrop = async (e: React.DragCampaign) => {
-    e.prCampaignDefault();
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
 
@@ -377,7 +377,7 @@ export default function CampaignsPageEditor({ pageId, initialPageData }: Campaig
     }
   };
 
-  const handleFileChange = async (e: React.ChangeCampaign<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       await handleFileUpload(e.target.files[0]);
     }
@@ -473,8 +473,8 @@ export default function CampaignsPageEditor({ pageId, initialPageData }: Campaig
   };
 
   // Submit Modal CRUD
-  const handleSubmit = async (e: React.FormCampaign) => {
-    e.prCampaignDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     const errors: Record<string, string> = {};
     if (!formData.title.trim()) errors.title = "Title is required";
     if (!formData.slug.trim()) errors.slug = "Slug is required";
@@ -562,8 +562,8 @@ export default function CampaignsPageEditor({ pageId, initialPageData }: Campaig
   };
 
   // DnD Reorder handler
-  const handleDragEnd = async (Campaign: DragEndCampaign) => {
-    const { active, over } = Campaign;
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
     if (!over || active.id === over.id) return;
 
     const oldIndex = items.findIndex(item => item.id === active.id);

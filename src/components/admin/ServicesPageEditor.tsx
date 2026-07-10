@@ -83,7 +83,7 @@ interface ServicesPageEditorProps {
   initialPageData: PageRecord;
 }
 
-export type BlockType = "image" | "pdf" | "text" | "thumbnails";
+export type BlockType = "image" | "pdf" | "text" | "thumbnails" | "slider";
 
 export interface ServiceBlock {
   id: string;
@@ -243,7 +243,7 @@ function ServiceBlockBuilder({ blocks, onChange }: { blocks: ServiceBlock[], onC
     const newBlock: ServiceBlock = {
       id: uuidv4(),
       type: type as BlockType,
-      value: type === "thumbnails" ? [] : "",
+      value: (type === "thumbnails" || type === "slider") ? [] : "",
     };
     onChange([...blocks, newBlock]);
   };
@@ -270,6 +270,7 @@ function ServiceBlockBuilder({ blocks, onChange }: { blocks: ServiceBlock[], onC
             <SelectItem value="pdf">PDF Document</SelectItem>
             <SelectItem value="text">Rich Text</SelectItem>
             <SelectItem value="thumbnails">Thumbnails / Links</SelectItem>
+            <SelectItem value="slider">Image Slider</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -354,6 +355,38 @@ function SortableServiceBlock({ block, index, onUpdate, onRemove }: any) {
                   newThumbs[i] = { ...newThumbs[i], url: e.target.value };
                   onUpdate(newThumbs);
                 }} />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      {block.type === "slider" && (
+        <div className="space-y-3">
+          <Button type="button" variant="outline" size="sm" onClick={() => onUpdate([...(block.value || []), { image: "", alt: "" }])}>
+            <Plus className="h-3 w-3 mr-1" /> Add Slider Image
+          </Button>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            {(block.value || []).map((slide: any, i: number) => (
+              <div key={i} className="border border-border/40 p-2 rounded-lg bg-background relative space-y-2">
+                <Button type="button" variant="destructive" size="icon" className="absolute -top-2 -right-2 h-5 w-5 rounded-full z-10 shadow-sm hover:bg-destructive hover:text-white"
+                  onClick={() => onUpdate((block.value || []).filter((_: any, idx: number) => idx !== i))}
+                >
+                  <Trash2 className="h-3 w-3" />
+                </Button>
+                <ImageUploader 
+                  value={slide.image} 
+                  altValue={slide.alt || ""} 
+                  onAltChange={(alt) => {
+                    const newSlides = [...block.value];
+                    newSlides[i] = { ...newSlides[i], alt };
+                    onUpdate(newSlides);
+                  }} 
+                  onChange={(url, alt) => {
+                    const newSlides = [...block.value];
+                    newSlides[i] = { ...newSlides[i], image: url, alt: alt || newSlides[i].alt };
+                    onUpdate(newSlides);
+                  }} 
+                />
               </div>
             ))}
           </div>

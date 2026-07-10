@@ -66,11 +66,11 @@ export function ModernizedProsePage({
 
   // Helper to generate dynamic sidebar navigation items
   const sidebarLinks = [
-    { name: "Background", path: "/organization/background" },
-    { name: "Mission Statement", path: "/organization/mission-statement" },
-    { name: "Our Ideology", path: "/organization/our-ideology" },
-    { name: "The Founder", path: "/organization/the-founder" },
-    { name: "The Ameer", path: "/organization/the-ameer" }
+    { name: "Background", path: "/background" },
+    { name: "Mission Statement", path: "/mission-statement" },
+    { name: "Our Ideology", path: "/our-ideology" },
+    { name: "The Founder", path: "/the-founder" },
+    { name: "The Ameer", path: "/the-ameer" }
   ];
 
   const handlePrint = () => {

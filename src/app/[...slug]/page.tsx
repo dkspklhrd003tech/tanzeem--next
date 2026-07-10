@@ -329,15 +329,12 @@ export default async function DynamicPage({ params }: PageProps) {
     dateModified: page.updatedAt,
   });
 
-  const crumbs = [
-    { name: "Home", path: "/" },
-    ...slugArray.map((seg, i) => ({
-      name: seg
-        .replace(/-/g, " ")
-        .replace(/\b\w/g, (l) => l.toUpperCase()),
-      path: "/" + slugArray.slice(0, i + 1).join("/"),
-    })),
-  ];
+  const crumbs = slugArray.map((seg, i) => ({
+    name: seg
+      .replace(/-/g, " ")
+      .replace(/\b\w/g, (l) => l.toUpperCase()),
+    path: "/" + slugArray.slice(0, i + 1).join("/"),
+  }));
   const bc = breadcrumbJsonLd(crumbs);
 
   const ldId = slug.replace(/\//g, "-");
@@ -505,7 +502,7 @@ export default async function DynamicPage({ params }: PageProps) {
     ctaHeading = "Learn About Our Mission";
     ctaSubheading = "Discover how Tanzeem-e-Islami works toward the revival of Islam.";
     ctaButtonLabel = "Mission Statement";
-    ctaButtonUrl = "/organization/mission-statement";
+    ctaButtonUrl = "/mission-statement";
   } else if (normalizedSlug === "mission-statement") {
     stats = [
       { number: "1975", label: "Founded" },
@@ -516,13 +513,13 @@ export default async function DynamicPage({ params }: PageProps) {
     ctaHeading = "Explore Our Ideology";
     ctaSubheading = "Learn about the beliefs and principles that guide our work.";
     ctaButtonLabel = "Our Ideology";
-    ctaButtonUrl = "/organization/our-ideology";
+    ctaButtonUrl = "/our-ideology";
   } else if (normalizedSlug === "our-ideology") {
     ideologyCards = [
-      { title: "Basic Belief", href: "/organization/our-ideology/basic-belief", description: "Fundamental Islamic beliefs and principles" },
-      { title: "Our Obligations", href: "/organization/our-ideology/our-obligations", description: "Our duties and responsibilities as Muslims" },
-      { title: "Methodology", href: "/organization/our-ideology/methodology", description: "Our approach and method of work" },
-      { title: "Foundation", href: "/organization/our-ideology/foundation", description: "The foundational principles of our movement" },
+      { title: "Basic Belief", href: "/our-ideology/basic-belief", description: "Fundamental Islamic beliefs and principles" },
+      { title: "Our Obligations", href: "/our-ideology/our-obligations", description: "Our duties and responsibilities as Muslims" },
+      { title: "Methodology", href: "/our-ideology/methodology", description: "Our approach and method of work" },
+      { title: "Foundation", href: "/our-ideology/foundation", description: "The foundational principles of our movement" },
     ];
   } else if (normalizedSlug === "our-ideology/basic-belief") {
     accordionItems = [
@@ -562,17 +559,17 @@ export default async function DynamicPage({ params }: PageProps) {
     ctaHeading = "Meet Our Founder";
     ctaSubheading = "Learn about Dr. Israr Ahmed, the visionary founder of Tanzeem-e-Islami.";
     ctaButtonLabel = "The Founder";
-    ctaButtonUrl = "/organization/the-founder";
+    ctaButtonUrl = "/the-founder";
   } else if (normalizedSlug === "the-founder") {
     ctaHeading = "Meet Our Ameer";
     ctaSubheading = "Discover the current Ameer of Tanzeem-e-Islami and read his profile.";
     ctaButtonLabel = "The Ameer";
-    ctaButtonUrl = "/organization/the-ameer";
+    ctaButtonUrl = "/the-ameer";
   } else if (normalizedSlug === "the-ameer") {
     ctaHeading = "Explore Our Ideology";
     ctaSubheading = "Learn about the beliefs and principles that guide our work.";
     ctaButtonLabel = "Our Ideology";
-    ctaButtonUrl = "/organization/our-ideology";
+    ctaButtonUrl = "/our-ideology";
   }
 
   if (page.template === "redirect") {

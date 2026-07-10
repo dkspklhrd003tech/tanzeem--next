@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { CTABanner } from "@/components/shared/CTABanner";
+import { ImageSlider } from "@/components/shared/ImageSlider";
 import { Button } from "@/components/ui/button";
 import { FileText, PlayCircle } from "lucide-react";
 
@@ -129,6 +130,14 @@ export default async function ServiceDetailsPage({ params }: { params: Promise<{
                                                     </Link>
                                                 );
                                             })}
+                                        </div>
+                                    );
+
+                                case "slider":
+                                    if (!Array.isArray(block.value) || block.value.length === 0) return null;
+                                    return (
+                                        <div key={idx} className="w-full">
+                                            <ImageSlider slides={block.value} />
                                         </div>
                                     );
 

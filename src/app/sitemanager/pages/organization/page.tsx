@@ -37,7 +37,7 @@ const INITIAL_DEMO_DATA: OrganizationPageState = {
     heading: "Our History",
     body: "The essence of what we call the \"Islamic revolutionary thought\" consists of the idea that it is not enough to perform rites in one's individual life, but the supremacy of the Quran and those of the sunnah of Prophet Muhammad (SAW) must also be implemented in their totality in the social, cultural, political, and economic spheres of life...",
     buttonLabel: "Read Full History",
-    buttonUrl: "/organization/background",
+    buttonUrl: "/background",
     sideImage: ""
   },
   missionStatement: {
@@ -51,7 +51,7 @@ const INITIAL_DEMO_DATA: OrganizationPageState = {
     bio: "Dr. Israr Ahmed, the second son of a government servant, was born on April 26, 1932...",
     avatar: "",
     readMoreLabel: "More Details",
-    readMoreUrl: "/organization/the-founder"
+    readMoreUrl: "/the-founder"
   },
   ameer: {
     name: "Shujah Uddin Sheikh",
@@ -59,15 +59,15 @@ const INITIAL_DEMO_DATA: OrganizationPageState = {
     bio: "Mohammad Shujah Uddin Sheikh is the current Ameer of Tanzeem-e-Islami...",
     avatar: "",
     readMoreLabel: "About Ameer",
-    readMoreUrl: "/organization/the-ameer"
+    readMoreUrl: "/the-ameer"
   },
   ideology: {
     heading: "Our Ideology",
     cards: [
-      { icon: "book", title: "Our Foundation", urduTitle: "قرآن الکریم", description: "The Quran is the final and complete word of Allah...", linkLabel: "Our Belief", linkUrl: "/organization/our-ideology" },
-      { icon: "star", title: "Methodology", urduTitle: "نبوت", description: "Belief in the Prophethood of Muhammad (SAWS) as the final messenger...", linkLabel: "Prophethood", linkUrl: "/organization/our-ideology" },
-      { icon: "compass", title: "Our Obligations", urduTitle: "دینِ قیّم", description: "Islam is a complete and comprehensive way of life...", linkLabel: "Obligations", linkUrl: "/organization/our-ideology" },
-      { icon: "heart", title: "Our Belief", urduTitle: "ہمارا عقیدہ", description: "Tanzeem-e-Islami works to re-establish the Khilafah...", linkLabel: "Foundation", linkUrl: "/organization/our-ideology" }
+      { icon: "book", title: "Our Foundation", urduTitle: "قرآن الکریم", description: "The Quran is the final and complete word of Allah...", linkLabel: "Our Belief", linkUrl: "/our-ideology" },
+      { icon: "star", title: "Methodology", urduTitle: "نبوت", description: "Belief in the Prophethood of Muhammad (SAWS) as the final messenger...", linkLabel: "Prophethood", linkUrl: "/our-ideology" },
+      { icon: "compass", title: "Our Obligations", urduTitle: "دینِ قیّم", description: "Islam is a complete and comprehensive way of life...", linkLabel: "Obligations", linkUrl: "/our-ideology" },
+      { icon: "heart", title: "Our Belief", urduTitle: "ہمارا عقیدہ", description: "Tanzeem-e-Islami works to re-establish the Khilafah...", linkLabel: "Foundation", linkUrl: "/our-ideology" }
     ]
   },
   join: {

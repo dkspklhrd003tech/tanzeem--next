@@ -66,7 +66,7 @@ export function PageBanner({ settings, titleOverride, breadcrumbsOverride, bgIma
 
   // Banner settings come from the DB
   const textColor = settings?.banner_text_color || "#ffffff";
-  const separator = settings?.banner_breadcrumb_separator || "/";
+  const separator = settings?.banner_breadcrumb_separator || ">";
   const showBreadcrumbs = settings?.banner_show_breadcrumbs !== "false";
 
   // Build breadcrumb segments from the pathname if no override provided.
