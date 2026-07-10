@@ -25,6 +25,7 @@ import { PdfUploader } from "@/components/admin/PdfUploader";
 import { RichTextEditor } from "@/components/admin/RichTextEditor";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { v4 as uuidv4 } from "uuid";
+import { useChunkedUpload } from "@/hooks/useChunkedUpload";
 
 // DnD Kit imports
 import {
@@ -301,6 +302,10 @@ function ServiceBlockBuilder({ blocks, onChange }: { blocks: ServiceBlock[], onC
 }
 
 function SortableServiceBlock({ block, index, onUpdate, onRemove }: any) {
+  const { toast } = useToast();
+  const { uploadFile } = useChunkedUpload();
+  const bulkUploadRef = useRef<HTMLInputElement>(null);
+  const [isBulkUploading, setIsBulkUploading] = useState(false);
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: block.id });
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -334,27 +339,63 @@ function SortableServiceBlock({ block, index, onUpdate, onRemove }: any) {
       )}
       {block.type === "thumbnails" && (
         <div className="space-y-3">
-          <Button type="button" variant="outline" size="sm" onClick={() => onUpdate([...(block.value || []), { image: "", url: "" }])}>
+          <Button type="button" variant="outline" size="sm" onClick={() => onUpdate([...(block.value || []), { image: "", url: "", newTab: true }])}>
             <Plus className="h-3 w-3 mr-1" /> Add Thumbnail Link
           </Button>
           <div className="grid grid-cols-2 gap-3">
             {(block.value || []).map((thumb: any, i: number) => (
-              <div key={i} className="border border-border/40 p-2 rounded-lg bg-background relative space-y-2">
+              <div key={i} className="border border-border/40 p-2 rounded-lg bg-background relative space-y-2 flex flex-col">
                 <Button type="button" variant="destructive" size="icon" className="absolute -top-2 -right-2 h-5 w-5 rounded-full z-10 shadow-sm hover:bg-destructive hover:text-white"
                   onClick={() => onUpdate((block.value || []).filter((_: any, idx: number) => idx !== i))}
                 >
                   <Trash2 className="h-3 w-3" />
                 </Button>
-                <ImageUploader value={thumb.image} onChange={(url) => {
-                  const newThumbs = [...block.value];
-                  newThumbs[i] = { ...newThumbs[i], image: url };
-                  onUpdate(newThumbs);
-                }} />
-                <Input placeholder="URL (e.g. /page or https://)" value={thumb.url || ""} onChange={(e) => {
-                  const newThumbs = [...block.value];
-                  newThumbs[i] = { ...newThumbs[i], url: e.target.value };
-                  onUpdate(newThumbs);
-                }} />
+                <div className="flex-1">
+                  <ImageUploader value={thumb.image} onChange={(url) => {
+                    const newThumbs = [...block.value];
+                    newThumbs[i] = { ...newThumbs[i], image: url };
+                    onUpdate(newThumbs);
+                  }} />
+                </div>
+                <div className="space-y-2 mt-2">
+                  <Input placeholder="URL (e.g. /page or https://)" value={thumb.url || ""} onChange={(e) => {
+                    const newThumbs = [...block.value];
+                    newThumbs[i] = { ...newThumbs[i], url: e.target.value };
+                    onUpdate(newThumbs);
+                  }} />
+                  <div className="flex items-center justify-between mt-2">
+                    <div className="flex items-center gap-2">
+                      <Switch 
+                        checked={thumb.newTab !== false} 
+                        onCheckedChange={(checked) => {
+                          const newThumbs = [...block.value];
+                          newThumbs[i] = { ...newThumbs[i], newTab: checked };
+                          onUpdate(newThumbs);
+                        }} 
+                      />
+                      <span className="text-xs text-muted-foreground">Open in New Tab</span>
+                    </div>
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      size="sm" 
+                      className="text-[10px] h-6 px-2 bg-primary/5 hover:bg-primary/10 text-primary border-primary/20"
+                      onClick={() => {
+                        const match = thumb.url?.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&?]+)/);
+                        if (match) {
+                           const newThumbs = [...block.value];
+                           newThumbs[i] = { ...newThumbs[i], image: `https://img.youtube.com/vi/${match[1]}/maxresdefault.jpg` };
+                           onUpdate(newThumbs);
+                           toast({ title: "Success", description: "Thumbnail fetched from YouTube." });
+                        } else {
+                           toast({ title: "Invalid URL", description: "Please enter a valid YouTube URL to fetch its thumbnail.", variant: "destructive" });
+                        }
+                      }}
+                    >
+                      Fetch YT Thumb
+                    </Button>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
@@ -362,9 +403,49 @@ function SortableServiceBlock({ block, index, onUpdate, onRemove }: any) {
       )}
       {block.type === "slider" && (
         <div className="space-y-3">
-          <Button type="button" variant="outline" size="sm" onClick={() => onUpdate([...(block.value || []), { image: "", alt: "" }])}>
-            <Plus className="h-3 w-3 mr-1" /> Add Slider Image
-          </Button>
+          <div className="flex gap-2">
+            <Button type="button" variant="outline" size="sm" onClick={() => onUpdate([...(block.value || []), { image: "", alt: "" }])}>
+              <Plus className="h-3 w-3 mr-1" /> Add Slider Image
+            </Button>
+            <input 
+              type="file" 
+              multiple 
+              accept="image/*" 
+              className="hidden" 
+              ref={bulkUploadRef} 
+              onChange={async (e) => {
+                if (!e.target.files || e.target.files.length === 0) return;
+                setIsBulkUploading(true);
+                try {
+                  const newSlides: { image: string; alt: string }[] = [];
+                  for (let i = 0; i < e.target.files.length; i++) {
+                    const file = e.target.files[i];
+                    const baseName = file.name.replace(/\.[^/.]+$/, "");
+                    const cleanedName = baseName.split(/[-_]+/).map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+                    const { url } = await uploadFile(file);
+                    newSlides.push({ image: url, alt: cleanedName });
+                  }
+                  onUpdate([...(block.value || []), ...newSlides]);
+                  toast({ title: "Success", description: `Uploaded ${e.target.files.length} images to slider.` });
+                } catch (error) {
+                  toast({ title: "Upload failed", description: "Failed to bulk upload images.", variant: "destructive" });
+                } finally {
+                  setIsBulkUploading(false);
+                  if (bulkUploadRef.current) bulkUploadRef.current.value = "";
+                }
+              }} 
+            />
+            <Button 
+              type="button" 
+              variant="default" 
+              size="sm" 
+              disabled={isBulkUploading}
+              onClick={() => bulkUploadRef.current?.click()}
+            >
+              {isBulkUploading ? <Loader2 className="h-3 w-3 mr-1 animate-spin" /> : <UploadCloud className="h-3 w-3 mr-1" />}
+              Bulk Upload
+            </Button>
+          </div>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             {(block.value || []).map((slide: any, i: number) => (
               <div key={i} className="border border-border/40 p-2 rounded-lg bg-background relative space-y-2">
