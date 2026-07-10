@@ -47,7 +47,7 @@ export function VideoDetailPage({ item, related, customFieldSchema = [] }: { ite
 
   return (
     <div className="container max-w-7xl mx-auto py-10">
-      <Link href="/videos" className="inline-flex items-center gap-2 text-sm text-foreground-muted hover:text-primary mb-6 transition-colors">
+      <Link href="/videos-by-speakers" className="inline-flex items-center gap-2 text-sm text-foreground-muted hover:text-primary mb-6 transition-colors">
         <ArrowLeft className="h-4 w-4" />
         Back to Video Library
       </Link>
@@ -82,7 +82,7 @@ export function VideoDetailPage({ item, related, customFieldSchema = [] }: { ite
                 </Link>
               )}
               {item.duration && <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" />{formatDuration(item.duration)}</span>}
-              {item.viewCount > 0 && <span className="flex items-center gap-1"><Eye className="h-3.5 w-3.5" />{item.viewCount.toLocaleString()} views</span>}
+              {item.viewCount > 0 && <span className="flex items-center gap-1 text-primary"><Eye className="h-3.5 w-3.5" />{item.viewCount.toLocaleString()} Views</span>}
             </div>
             <div className="flex gap-3">
               <a href={item.videoUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold bg-primary text-primary-foreground transition-colors">
@@ -148,7 +148,7 @@ export function VideoDetailPage({ item, related, customFieldSchema = [] }: { ite
                   {item.speaker.bio && <p className="text-xs text-foreground-muted mt-0.5 line-clamp-2">{item.speaker.bio}</p>}
                 </div>
               </div>
-              <Link href={`/videos?speaker=${item.speaker.slug}`} className="mt-3 block text-xs text-primary hover:underline">More by {item.speaker.name} →</Link>
+              <Link href={`/videos-by-speakers/${item.speaker.slug}`} className="mt-3 block text-xs text-primary hover:underline">More by {item.speaker.name} →</Link>
             </div>
           )}
 

@@ -50,9 +50,9 @@ export function AudioPlayerPage({ item, related, customFieldSchema = [] }: Audio
     <div className="container max-w-7xl mx-auto py-10">
 
       {/* Back */}
-      <Link href="/audio" className="inline-flex items-center gap-2 text-sm text-foreground-muted hover:text-primary mb-6 transition-colors">
+      <Link href="/audios-by-speakers" className="inline-flex items-center gap-2 text-sm text-foreground-muted hover:text-primary mb-6 transition-colors">
         <ArrowLeft className="h-4 w-4" />
-        Back to Audio Library
+        Back to Audio Speakers
       </Link>
 
       <div className="grid lg:grid-cols-3 gap-8">
@@ -80,8 +80,8 @@ export function AudioPlayerPage({ item, related, customFieldSchema = [] }: Audio
                 </span>
               )}
               <span className="flex items-center gap-1">
-                <Play className="h-4 w-4" />
-                {item.playCount.toLocaleString()} plays
+                <Play className="h-4 w-4 text-primary" />
+                {item.playCount.toLocaleString()} Plays
               </span>
             </div>
 
@@ -165,7 +165,7 @@ export function AudioPlayerPage({ item, related, customFieldSchema = [] }: Audio
                 </div>
               </div>
               <Link
-                href={`/audio?speaker=${item.speaker.slug}`}
+                href={`/audios-by-speaker/${item.speaker.slug}`}
                 className="mt-3 block text-xs text-primary hover:underline"
               >
                 More by {item.speaker.name} →
