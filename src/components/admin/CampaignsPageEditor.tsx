@@ -142,7 +142,7 @@ function SortableCard({ id, item, onEdit, onDelete }: SortableItemProps) {
                 : "bg-emerald-500/10 text-emerald-600  border-emerald-500/20"
             )}
           >
-            {isimage ? "image Document" : "Written Statement"}
+            {isimage ? "SpotLight Campaigns" : "Campaigns"}
           </Badge>
 
           <div className="flex items-center gap-1">
