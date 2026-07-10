@@ -82,7 +82,7 @@ export default async function SpeakerAudiosPage({ params }: { params: Promise<{ 
           <div className="max-w-7xl mx-auto">
             <h2 className="text-2xl font-bold mb-8 flex justify-center items-center gap-2 text-center">
               Audios by {speaker.name}
-              <span className="text-sm font-normal text-primary bg-muted px-3 py-1 rounded-full">
+              <span className="text-sm font-normal !text-primary bg-muted px-3 py-1 rounded-full">
                 {audios.length} Audios
               </span>
             </h2>

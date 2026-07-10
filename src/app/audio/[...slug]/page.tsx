@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return buildMetadata({
     title: item.metaTitle ?? item.title,
     description: item.metaDescription ?? item.description ?? undefined,
-    path: `/audios/${slug}`,
+    path: `/audio/${slug}`,
     ogImage: item.thumbnailUrl,
     keywords: ["Islamic audio", "lecture", item.speaker?.name ?? "", item.category?.name ?? ""].filter(Boolean),
   });
@@ -79,8 +79,8 @@ export default async function AudioDetailPage({ params }: Props) {
   });
   const bc = breadcrumbJsonLd([
     { name: "Home", path: "/" },
-    { name: "Audios", path: "/audios" },
-    { name: item.title, path: `/audios/${item.slug}` },
+    { name: "Audio", path: "/audio" },
+    { name: item.title, path: `/audio/${item.slug}` },
   ]);
 
   return (
