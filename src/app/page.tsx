@@ -6,7 +6,7 @@ import { MissionAndVideos } from "@/components/home/MissionAndVideos";
 import { PublicationsGrid } from "@/components/home/PublicationsGrid";
 import { CTA } from "@/components/home/CTA";
 import { db } from "@/db";
-import { homeSliders, books, magazines, teamMembers, homeCampaigns, services, videos, settings, pressReleases } from "@/db/schema";
+import { homeSliders, books, magazines, teamMembers, homeCampaigns, services, videos, settings, pressReleases, campaigns } from "@/db/schema";
 import { LatestPressReleases } from "@/components/home/LatestPressReleases";
 import { eq, desc, asc } from "drizzle-orm";
 import { webPageJsonLd, buildMetadata } from "@/lib/seo";
@@ -59,17 +59,19 @@ async function HomeContent() {
   } catch (error) { console.error("Failed to fetch magazines:", error); }
 
   try {
-    activeCampaigns = await db
-      .select()
-      .from(homeCampaigns)
-      .where(eq(homeCampaigns.isActive, true))
-      .orderBy(desc(homeCampaigns.order), desc(homeCampaigns.createdAt));
+    activeCampaigns = [];
 
     const publishedServices = await db
       .select()
       .from(services)
       .where(eq(services.isPublished, true))
       .orderBy(desc(services.order), desc(services.createdAt));
+
+    const publishedCampaigns = await db
+      .select()
+      .from(campaigns)
+      .where(eq(campaigns.isPublished, true))
+      .orderBy(desc(campaigns.createdAt));
 
     const spotlightServices = publishedServices.filter(s => {
       const fields = s.customFields as any;
@@ -84,7 +86,19 @@ async function HomeContent() {
       createdAt: s.createdAt,
     }));
 
-    activeCampaigns = [...activeCampaigns, ...spotlightServices].sort((a, b) => {
+    const spotlightCampaigns = publishedCampaigns.filter(c => {
+      return c.categoryId === "SpotLight Campaigns";
+    }).map(c => ({
+      id: c.id,
+      title: c.title,
+      imageUrl: c.thumbnailUrl || "",
+      linkUrl: `/campaigns/${c.slug}`,
+      openInNewTab: false,
+      order: 0,
+      createdAt: c.createdAt,
+    }));
+
+    activeCampaigns = [...activeCampaigns, ...spotlightServices, ...spotlightCampaigns].sort((a, b) => {
       if (a.order !== b.order) return b.order - a.order;
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     });

@@ -21,6 +21,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { ImageUploader } from "@/components/admin/ImageUploader";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 // DnD Kit imports
 import {
@@ -61,10 +62,10 @@ interface CampaignItem {
   slug: string;
   content: string;
   excerpt?: string | null;
-  featuredImage?: string | null;
-  imageUrl?: string | null;
+  thumbnailUrl?: string | null;
+  categoryId?: string | null;
   isPublished: boolean;
-  startDate?: string | null;
+  startsAt?: string | null;
   metaTitle?: string | null;
   metaDescription?: string | null;
   orderIndex: number;
@@ -80,9 +81,10 @@ interface CampaignsPageEditorProps {
 const defaultFormData = {
   title: "",
   slug: "",
-  imageUrl: "",
+  thumbnailUrl: "",
+  categoryId: "Campaigns",
   isPublished: true,
-  startDate: "",
+  startsAt: "",
   metaTitle: "",
   metaDescription: "",
 };
@@ -118,7 +120,7 @@ function SortableCard({ id, item, onEdit, onDelete }: SortableItemProps) {
     zIndex: isDragging ? 50 : undefined,
   };
 
-  const isimage = !!item.imageUrl;
+  const isSpotlight = item.categoryId === "SpotLight Campaigns";
 
   return (
     <div
@@ -129,7 +131,7 @@ function SortableCard({ id, item, onEdit, onDelete }: SortableItemProps) {
         isDragging ? "shadow-2xl border-primary scale-[1.02]" : "hover:shadow-md hover:border-border/80"
       )}
     >
-      <div className={cn("h-1.5 w-full", isimage ? "bg-green-500" : "bg-emerald-500")} />
+      <div className={cn("h-1.5 w-full", isSpotlight ? "bg-green-500" : "bg-emerald-500")} />
 
       <div className="p-5 flex-1 flex flex-col">
         <div className="flex items-center justify-between gap-2 mb-3">
@@ -137,12 +139,12 @@ function SortableCard({ id, item, onEdit, onDelete }: SortableItemProps) {
             variant="outline"
             className={cn(
               "text-[10px] px-2.5 py-0.5 font-semibold uppercase tracking-wider rounded-md",
-              isimage
+              isSpotlight
                 ? "bg-green-500/10 text-green-600  border-green-500/20"
                 : "bg-emerald-500/10 text-emerald-600  border-emerald-500/20"
             )}
           >
-            {isimage ? "SpotLight Campaigns" : "Campaigns"}
+            {isSpotlight ? "SpotLight Campaigns" : "Campaigns"}
           </Badge>
 
           <div className="flex items-center gap-1">
@@ -188,8 +190,8 @@ function SortableCard({ id, item, onEdit, onDelete }: SortableItemProps) {
           <div className="flex items-center gap-1.5">
             <Calendar className="h-3.5 w-3.5 text-muted-foreground/75" />
             <span>
-              {item.startDate
-                ? new Date(item.startDate).toLocaleDateString(undefined, {
+              {item.startsAt
+                ? new Date(item.startsAt).toLocaleDateString(undefined, {
                   month: "short",
                   day: "numeric",
                   year: "numeric",
@@ -420,9 +422,10 @@ export default function CampaignsPageEditor({ pageId, initialPageData }: Campaig
       setFormData({
         title: cleanedTitle,
         slug: slugify(cleanedTitle),
-        imageUrl: data.url,
+        thumbnailUrl: data.url,
+        categoryId: "Campaigns",
         isPublished: true,
-        startDate: new Date().toISOString().split("T")[0],
+        startsAt: new Date().toISOString().split("T")[0],
         metaTitle: cleanedTitle,
         metaDescription: `Campaign: ${cleanedTitle}`,
       });
@@ -451,9 +454,10 @@ export default function CampaignsPageEditor({ pageId, initialPageData }: Campaig
     setFormData({
       title: item.title,
       slug: item.slug,
-      imageUrl: item.imageUrl || "",
+      thumbnailUrl: item.thumbnailUrl || "",
+      categoryId: item.categoryId || "Campaigns",
       isPublished: item.isPublished,
-      startDate: item.startDate ? new Date(item.startDate).toISOString().split("T")[0] : "",
+      startsAt: item.startsAt ? new Date(item.startsAt).toISOString().split("T")[0] : "",
       metaTitle: item.metaTitle || "",
       metaDescription: item.metaDescription || "",
     });
@@ -466,7 +470,7 @@ export default function CampaignsPageEditor({ pageId, initialPageData }: Campaig
     setSlugManual(false);
     setFormData({
       ...defaultFormData,
-      startDate: new Date().toISOString().split("T")[0],
+      startsAt: new Date().toISOString().split("T")[0],
     });
     setFormErrors({});
     setIsModalOpen(true);
@@ -481,8 +485,7 @@ export default function CampaignsPageEditor({ pageId, initialPageData }: Campaig
     if (!/^[a-z0-9-]+$/.test(formData.slug)) {
       errors.slug = "Slug must contain only lowercase letters, numbers, and hyphens";
     }
-    if (!formData.imageUrl) errors.imageUrl = "Image Document is required";
-    if (!formData.startDate) errors.startDate = "Published Date is required";
+    if (!formData.thumbnailUrl) errors.thumbnailUrl = "Image Document is required";
 
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
@@ -494,13 +497,13 @@ export default function CampaignsPageEditor({ pageId, initialPageData }: Campaig
       const url = isNew ? "/api/admin/campaigns" : `/api/admin/campaigns/${editingItem.id}`;
       const method = isNew ? "POST" : "PUT";
 
-      // If creating new, assign it to the top/bottom order index
       const payload: Record<string, any> = {
         title: formData.title,
         slug: formData.slug,
-        imageUrl: formData.imageUrl || null,
+        thumbnailUrl: formData.thumbnailUrl || null,
+        categoryId: formData.categoryId || "Campaigns",
         isPublished: formData.isPublished,
-        startDate: formData.startDate ? new Date(formData.startDate).toISOString() : null,
+        startsAt: formData.startsAt ? new Date(formData.startsAt).toISOString() : null,
         metaTitle: formData.metaTitle || null,
         metaDescription: formData.metaDescription || null,
       };
@@ -924,29 +927,41 @@ export default function CampaignsPageEditor({ pageId, initialPageData }: Campaig
                   {formErrors.slug && <p className="text-xs text-destructive">{formErrors.slug}</p>}
                 </div>
 
-                <div className="space-y-2">
-                  <Label>image Document <span className="text-destructive">*</span></Label>
-                  <div className={cn("rounded-xl transition-colors", formErrors.imageUrl && "border border-destructive ring-1 ring-destructive")}>
-                    <ImageUploader
-                      value={formData.imageUrl}
-                      onChange={(url) => setFormData(prev => ({ ...prev, imageUrl: url }))}
-                    />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Category <span className="text-destructive">*</span></Label>
+                    <Select value={formData.categoryId} onValueChange={(val) => setFormData(prev => ({ ...prev, categoryId: val }))}>
+                      <SelectTrigger className={cn(formErrors.categoryId && "border-destructive")}>
+                        <SelectValue placeholder="Select Category" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Campaigns">Campaigns</SelectItem>
+                        <SelectItem value="SpotLight Campaigns">SpotLight Campaigns</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
-                  {formErrors.imageUrl && <p className="text-xs text-destructive">{formErrors.imageUrl}</p>}
+
+                  <div className="space-y-2">
+                    <Label>Image Document <span className="text-destructive">*</span></Label>
+                    <div className={cn("rounded-xl transition-colors", formErrors.thumbnailUrl && "border border-destructive ring-1 ring-destructive")}>
+                      <ImageUploader
+                        value={formData.thumbnailUrl}
+                        onChange={(url) => setFormData(prev => ({ ...prev, thumbnailUrl: url }))}
+                      />
+                    </div>
+                    {formErrors.thumbnailUrl && <p className="text-xs text-destructive">{formErrors.thumbnailUrl}</p>}
+                  </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="startDate">Published Date <span className="text-destructive">*</span></Label>
+                    <Label htmlFor="startsAt">Published Date</Label>
                     <Input
-                      id="startDate"
+                      id="startsAt"
                       type="date"
-                      required
-                      value={formData.startDate}
-                      onChange={(e) => setFormData(prev => ({ ...prev, startDate: e.target.value }))}
-                      className={cn(formErrors.startDate && "border-destructive")}
+                      value={formData.startsAt}
+                      onChange={(e) => setFormData(prev => ({ ...prev, startsAt: e.target.value }))}
                     />
-                    {formErrors.startDate && <p className="text-xs text-destructive">{formErrors.startDate}</p>}
                   </div>
 
                   <div className="flex items-center justify-between p-3 border border-border rounded-xl bg-muted/10 mt-6 h-[42px]">
