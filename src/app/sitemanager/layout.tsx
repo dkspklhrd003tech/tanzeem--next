@@ -617,6 +617,9 @@ export default function SiteManagerLayout({
 
   // Load current user — redirect to login if not authenticated
   useEffect(() => {
+    // Only fetch once when the layout mounts
+    if (user && !isUserLoading) return;
+
     fetch("/api/auth/me")
       .then((r) => {
         if (!r.ok) {
@@ -633,7 +636,7 @@ export default function SiteManagerLayout({
         setUser(null);
       })
       .finally(() => setIsUserLoading(false));
-  }, [pathname]);
+  }, []);
 
   // Close mobile sidebar on route change
   useEffect(() => {

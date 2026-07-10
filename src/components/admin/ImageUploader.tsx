@@ -5,7 +5,7 @@ import Cropper from "react-easy-crop";
 import {
   Upload,
   X,
-  Check,
+  Save,
   Image as ImageIcon,
   Loader2,
   Crop as CropIcon,
@@ -348,7 +348,8 @@ export function ImageUploader({
           </div>
 
           <div className="p-6 space-y-6">
-            <div className="space-y-3">
+            {/* Zoom Level Slider */}
+            {/* <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <Label className="text-xs font-medium text-foreground-muted uppercase tracking-wider">
                   Zoom Level
@@ -364,21 +365,21 @@ export function ImageUploader({
                 step={0.1}
                 onValueChange={([val]) => setZoom(val)}
               />
-            </div>
+            </div> */}
 
-            <DialogFooter className="gap-2 sm:gap-0">
+            <DialogFooter className="gap-4 sm:gap-2">
               <Button
                 variant="ghost"
                 onClick={() => setIsCropping(false)}
                 disabled={isUploading}
-                className="rounded-xl"
+                className="border border-red-500 text-red-500 hover:text-white hover:bg-red-500 rounded-xl"
               >
                 Cancel
               </Button>
               <Button
                 onClick={handleUpload}
                 disabled={isUploading}
-                className="bg-[#0d5844] hover:bg-[#0a4636] text-white rounded-xl px-8"
+                className="bg-white border border-primary text-primary hover:text-white hover:bg-primary rounded-xl px-8"
               >
                 {isUploading ? (
                   <>
@@ -387,7 +388,7 @@ export function ImageUploader({
                   </>
                 ) : (
                   <>
-                    <Check className="mr-2 h-4 w-4" />
+                    <Save className="mr-2 h-4 w-4" />
                     Save & Upload
                   </>
                 )}
