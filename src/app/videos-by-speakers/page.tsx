@@ -27,6 +27,7 @@ export default async function VideosBySpeakersPage() {
         imageUrl: speakers.avatar,
       })
       .from(speakers)
+      .where(eq(speakers.type, "video"))
       .orderBy(asc(speakers.order), asc(speakers.name));
 
     const countRows = await db

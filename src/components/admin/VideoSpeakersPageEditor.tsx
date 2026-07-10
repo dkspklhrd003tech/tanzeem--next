@@ -135,13 +135,12 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
     setIsLoading(true);
     try {
       const [spRes, viRes] = await Promise.all([
-        fetch("/api/admin/speakers"),
+        fetch("/api/admin/speakers?type=video"),
         fetch("/api/admin/videos")
       ]);
       if (spRes.ok) {
         const items = (await spRes.json()).items || [];
-        // Only show video speakers, sorted by order
-        setSpeakersList(items.filter((s: any) => s.type !== "audio").sort((a: any, b: any) => (a.order || 0) - (b.order || 0)));
+        setSpeakersList(items.sort((a: any, b: any) => (a.order || 0) - (b.order || 0)));
       }
       if (viRes.ok) setVideosList((await viRes.json()).items || []);
     } catch (e) { console.error(e); }
@@ -299,7 +298,7 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
           <TabsContent value="speakers" className="space-y-6">
             <div className="flex justify-between items-center">
               <h2 className="text-xl font-bold">Video Speakers</h2>
-              <Button size="sm" onClick={() => { setEditingSpeakerId(null); setSpeakerFormData({ name: "", slug: "", bio: "", avatar: "", type: "video", order: 0 }); setIsSpeakerModalOpen(true); }}>
+              <Button size="sm" onClick={() => { setEditingSpeakerId(null); setSpeakerFormData({ name: "", slug: "", bio: "", avatar: "", type: "video", order: 0, customFields: {} }); setIsSpeakerModalOpen(true); }}>
                 <Plus className="w-4 h-4 mr-1" /> Add Speaker
               </Button>
             </div>
@@ -349,7 +348,7 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
             <TabsContent value="videos" className="space-y-6">
               <div className="flex justify-between items-center">
                 <h2 className="text-xl font-bold">Speaker Videos</h2>
-                <Button size="sm" onClick={() => { setEditingVideoId(null); setVideoFormData({ title: "", slug: "", videoUrl: "", embedUrl: "", isPublished: true, isNew: false }); setIsVideoModalOpen(true); }}>
+                <Button size="sm" onClick={() => { setEditingVideoId(null); setVideoFormData({ title: "", slug: "", videoUrl: "", embedUrl: "", isPublished: true, isNew: false, customFields: {} }); setIsVideoModalOpen(true); }}>
                   <Plus className="w-4 h-4 mr-1" /> Add Video
                 </Button>
               </div>
@@ -437,7 +436,7 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
                 </div>
               </div>
               <div className="space-y-2">
-                <Label>Or Embed URL (YouTube/Vimeo)</Label>
+                <Label>Or Embed URL (YouTube/Vimeo etc.)</Label>
                 <Input value={videoFormData.embedUrl} onChange={e => setVideoFormData({ ...videoFormData, embedUrl: e.target.value })} placeholder="https://youtube.com/embed/..." />
               </div>
               <div className="flex items-center space-x-2 pt-2">
@@ -458,8 +457,7 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
           </div>
         </div>
       )}
-
-      <ConfirmDialog open={!!deletingSpeaker} title="Delete Speaker" description="Are you sure you want to delete this speaker?" onConfirm={() => deletingSpeaker && handleSpeakerDelete(deletingSpeaker)} onOpenChange={(open) => !open && setDeletingSpeaker(null)} />
+      <ConfirmDialog open={!!deletingSpeaker} title="Delete Speaker" description="Are you sure you want to delete this speaker?" onConfirm={async () => { if (deletingSpeaker) await handleSpeakerDelete(deletingSpeaker) }} onOpenChange={(open) => !open && setDeletingSpeaker(null)} />
       <ConfirmDialog open={!!deletingVideo} title="Delete Video" description="Are you sure you want to delete this video?" onConfirm={async () => { if (deletingVideo) { await fetch(`/api/admin/videos/${deletingVideo.id}`, { method: 'DELETE' }); fetchData(); setDeletingVideo(null); } }} onOpenChange={(open) => !open && setDeletingVideo(null)} />
     </div>
   );

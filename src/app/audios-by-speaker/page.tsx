@@ -27,6 +27,7 @@ export default async function AudiosBySpeakersPage() {
         imageUrl: speakers.avatar,
       })
       .from(speakers)
+      .where(eq(speakers.type, "audio"))
       .orderBy(asc(speakers.order), asc(speakers.name));
 
     const countRows = await db

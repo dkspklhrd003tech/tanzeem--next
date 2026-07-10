@@ -169,7 +169,7 @@ export async function GET(
             const type = request.nextUrl.searchParams.get("type");
             let query = db.select().from(table);
             if (type) {
-                query = query.where(eq((table as any).speakerType, type)) as any;
+                query = query.where(eq((table as any).type, type)) as any;
             }
             results = await query.orderBy((table as any).order || (table as any).id, desc((table as any).name || (table as any).id)).limit(100);
         } else {

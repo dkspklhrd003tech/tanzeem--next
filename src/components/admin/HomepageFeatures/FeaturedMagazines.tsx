@@ -205,7 +205,7 @@ export function FeaturedMagazines() {
                 const errData = await res.json().catch(() => null);
                 throw new Error(errData?.error || "API Route Blocked");
             }
-            toast({ title: "Success!", description: "Featured magazine saved." });
+            toast({ title: "Success!", description: "Featured Magazine Saved." });
             closeModal();
             fetchMagazines();
         } catch (err: any) {
@@ -351,7 +351,7 @@ export function FeaturedMagazines() {
                                 <ConfirmDialog
                                     title={editingItem ? "Update Magazine" : "Create Magazine"}
                                     description={`Are you sure you want to ${editingItem ? "update" : "create"} this featured magazine?`}
-                                    onConfirm={() => document.getElementById("magazine-form")?.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }))}
+                                    onConfirm={() => { document.getElementById("magazine-form")?.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true })); }}
                                 >
                                     <button type="button" disabled={isLoading || isUploading} className="px-8 py-2.5 bg-[#0d5844] text-[#fefefc] rounded-xl font-semibold hover:bg-[#0a4636] transition-all shadow-md active:scale-95 disabled:opacity-50">Save Changes</button>
                                 </ConfirmDialog>
@@ -365,7 +365,7 @@ export function FeaturedMagazines() {
                 onOpenChange={(open) => !open && setDeletingMagazine(null)}
                 title="Delete Magazine"
                 description={`Are you sure you want to permanently delete the magazine "${deletingMagazine?.title}"?`}
-                onConfirm={() => deletingMagazine && handleDelete(deletingMagazine.id, deletingMagazine.title)}
+                onConfirm={async () => { if (deletingMagazine) await handleDelete(deletingMagazine.id, deletingMagazine.title); }}
             />
         </div>
     );
