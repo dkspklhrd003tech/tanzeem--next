@@ -5,10 +5,22 @@ import { eq, asc } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
 import { revalidatePath } from "next/cache";
 import { pages } from "@/db/schema";
+import { getCurrentUser } from "@/lib/auth";
+
+async function requireAuth(request: NextRequest): Promise<NextResponse | null> {
+    const user = await getCurrentUser(request);
+    if (!user) {
+        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    return null;
+}
 
 // GET - List sections for a specific page
 export async function GET(request: NextRequest) {
   try {
+    const authError = await requireAuth(request);
+    if (authError) return authError;
+
     const { searchParams } = new URL(request.url);
     const pageId = searchParams.get("pageId");
 
@@ -31,6 +43,9 @@ export async function GET(request: NextRequest) {
 // POST - Save/upsert all sections for a page (batch replace)
 export async function POST(request: NextRequest) {
   try {
+    const authError = await requireAuth(request);
+    if (authError) return authError;
+
     const body = await request.json();
     const { pageId, sections } = body;
 
