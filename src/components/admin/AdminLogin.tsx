@@ -144,7 +144,7 @@ export function AdminLogin() {
           <div className="mt-6 text-center">
             <a
               href="/"
-              className="text-sm text-primary hover:text-primary-dark transition-colors"
+              className="text-sm text-primary transition-colors"
             >
               ← Back to Website
             </a>
