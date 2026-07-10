@@ -374,7 +374,7 @@ p,
 li {
   /* font-family: Helvetica, Arial, sans-serif; */
   direction: ltr;
-  color: var(--color-foreground);
+  /* color: var(--color-foreground); */
   /* text-align: left; */
 }
 

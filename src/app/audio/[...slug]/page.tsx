@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { db } from "@/lib/db";
-import { audio, customFieldDefinitions } from "@/db/schema";
+import { audio, customFieldDefinitions, audioCategories, speakers } from "@/db/schema";
 import { eq, and, ne, desc } from "drizzle-orm";
 import { AudioPlayerPage } from "@/components/resources/AudioPlayerPage";
 import { buildMetadata, audioJsonLd, breadcrumbJsonLd } from "@/lib/seo";
@@ -13,11 +13,20 @@ type Props = { params: Promise<{ slug: string[] }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug: slugArray } = await params;
   const slug = slugArray.join("/");
-  const item = await db.query.audio.findFirst({
-    where: and(eq(audio.slug, slug), eq(audio.isPublished, true)),
-    with: { speaker: true, category: true },
-  });
-  if (!item) return { title: "Audio Not Found" };
+  const [result] = await db
+    .select({
+      audio: audio,
+      category: audioCategories,
+      speaker: speakers,
+    })
+    .from(audio)
+    .leftJoin(audioCategories, eq(audio.categoryId, audioCategories.id))
+    .leftJoin(speakers, eq(audio.speakerId, speakers.id))
+    .where(and(eq(audio.slug, slug), eq(audio.isPublished, true)))
+    .limit(1);
+
+  if (!result) return { title: "Audio Not Found" };
+  const item = { ...result.audio, category: result.category, speaker: result.speaker };
   return buildMetadata({
     title: item.metaTitle ?? item.title,
     description: item.metaDescription ?? item.description ?? undefined,
@@ -31,12 +40,20 @@ export default async function AudioDetailPage({ params }: Props) {
   const { slug: slugArray } = await params;
   const slug = slugArray.join("/");
 
-  const rawItem = await db.query.audio.findFirst({
-    where: and(eq(audio.slug, slug), eq(audio.isPublished, true)),
-    with: { category: true, speaker: true },
-  });
+  const [result] = await db
+    .select({
+      audio: audio,
+      category: audioCategories,
+      speaker: speakers,
+    })
+    .from(audio)
+    .leftJoin(audioCategories, eq(audio.categoryId, audioCategories.id))
+    .leftJoin(speakers, eq(audio.speakerId, speakers.id))
+    .where(and(eq(audio.slug, slug), eq(audio.isPublished, true)))
+    .limit(1);
 
-  if (!rawItem) notFound();
+  if (!result) notFound();
+  const rawItem = { ...result.audio, category: result.category, speaker: result.speaker };
 
   let parsedCustomFields = rawItem.customFields;
   if (typeof rawItem.customFields === "string") {
@@ -56,16 +73,30 @@ export default async function AudioDetailPage({ params }: Props) {
   const customFieldSchema = await db.select().from(customFieldDefinitions).where(eq(customFieldDefinitions.entityType, "audio"));
 
   // Related lectures — same category or speaker, exclude current
-  const related = await db.query.audio.findMany({
-    where: and(
-      eq(audio.isPublished, true),
-      ne(audio.id, item.id),
-      item.categoryId ? eq(audio.categoryId, item.categoryId) : undefined
-    ),
-    with: { category: true, speaker: true },
-    orderBy: [desc(audio.createdAt)],
-    limit: 6,
-  });
+  const relatedQuery = await db
+    .select({
+      audio: audio,
+      category: audioCategories,
+      speaker: speakers,
+    })
+    .from(audio)
+    .leftJoin(audioCategories, eq(audio.categoryId, audioCategories.id))
+    .leftJoin(speakers, eq(audio.speakerId, speakers.id))
+    .where(
+      and(
+        eq(audio.isPublished, true),
+        ne(audio.id, item.id),
+        item.categoryId ? eq(audio.categoryId, item.categoryId) : undefined
+      )
+    )
+    .orderBy(desc(audio.createdAt))
+    .limit(6);
+
+  const related = relatedQuery.map((row) => ({
+    ...row.audio,
+    category: row.category,
+    speaker: row.speaker,
+  }));
 
   const ld = audioJsonLd({
     title: item.title,

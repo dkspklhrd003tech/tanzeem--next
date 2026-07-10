@@ -34,7 +34,7 @@ export function Header() {
   const rawLogoSrc = (settings.header_logo && settings.header_logo !== "null" && settings.header_logo !== "undefined" && settings.header_logo.trim() !== "")
     ? settings.header_logo
     : "/tanzeem-logo.webp";
-  
+
   const logoSrc = resolveMediaUrl(rawLogoSrc);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
@@ -159,7 +159,7 @@ export function Header() {
               )}
             </div>
             {settings.header_show_date !== "false" && displayDate && (
-              <div className="flex items-center gap-1.5 text-xs font-semibold text-secondary border border-primary/20 px-3 py-1 rounded-full shadow-sm">
+              <div className="flex items-center gap-1.5 text-xs font-semibold text-white border border-primary/20 px-3 py-1 rounded-full shadow-sm">
                 <span className="ltr">{displayDate.greg}</span>
                 <span className="text-secondary mx-0.5">&amp;</span>
                 <span

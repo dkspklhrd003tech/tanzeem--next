@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { db } from "@/lib/db";
-import { videos, customFieldDefinitions } from "@/db/schema";
+import { videos, customFieldDefinitions, videoCategories, speakers } from "@/db/schema";
 import { eq, and, ne, desc } from "drizzle-orm";
 import { VideoDetailPage } from "@/components/resources/VideoDetailPage";
 import { buildMetadata, videoJsonLd, breadcrumbJsonLd } from "@/lib/seo";
@@ -13,11 +13,20 @@ type Props = { params: Promise<{ slug: string[] }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug: slugArray } = await params;
   const slug = slugArray.join("/");
-  const item = await db.query.videos.findFirst({
-    where: and(eq(videos.slug, slug), eq(videos.isPublished, true)),
-    with: { speaker: true, category: true },
-  });
-  if (!item) return { title: "Video Not Found" };
+  const [result] = await db
+    .select({
+      videos: videos,
+      category: videoCategories,
+      speaker: speakers,
+    })
+    .from(videos)
+    .leftJoin(videoCategories, eq(videos.categoryId, videoCategories.id))
+    .leftJoin(speakers, eq(videos.speakerId, speakers.id))
+    .where(and(eq(videos.slug, slug), eq(videos.isPublished, true)))
+    .limit(1);
+
+  if (!result) return { title: "Video Not Found" };
+  const item = { ...result.videos, category: result.category, speaker: result.speaker };
   return buildMetadata({
     title: item.metaTitle ?? item.title,
     description: item.metaDescription ?? item.description ?? undefined,
@@ -31,11 +40,20 @@ export default async function VideoDetailRoute({ params }: Props) {
   const { slug: slugArray } = await params;
   const slug = slugArray.join("/");
 
-  const rawItem = await db.query.videos.findFirst({
-    where: and(eq(videos.slug, slug), eq(videos.isPublished, true)),
-    with: { category: true, speaker: true },
-  });
-  if (!rawItem) notFound();
+  const [result] = await db
+    .select({
+      videos: videos,
+      category: videoCategories,
+      speaker: speakers,
+    })
+    .from(videos)
+    .leftJoin(videoCategories, eq(videos.categoryId, videoCategories.id))
+    .leftJoin(speakers, eq(videos.speakerId, speakers.id))
+    .where(and(eq(videos.slug, slug), eq(videos.isPublished, true)))
+    .limit(1);
+
+  if (!result) notFound();
+  const rawItem = { ...result.videos, category: result.category, speaker: result.speaker };
   
   let parsedCustomFields = rawItem.customFields;
   if (typeof rawItem.customFields === "string") {
@@ -54,16 +72,30 @@ export default async function VideoDetailRoute({ params }: Props) {
 
   const customFieldSchema = await db.select().from(customFieldDefinitions).where(eq(customFieldDefinitions.entityType, "video"));
 
-  const related = await db.query.videos.findMany({
-    where: and(
-      eq(videos.isPublished, true),
-      ne(videos.id, item.id),
-      item.categoryId ? eq(videos.categoryId, item.categoryId) : undefined
-    ),
-    with: { category: true, speaker: true },
-    orderBy: [desc(videos.createdAt)],
-    limit: 6,
-  });
+  const relatedQuery = await db
+    .select({
+      videos: videos,
+      category: videoCategories,
+      speaker: speakers,
+    })
+    .from(videos)
+    .leftJoin(videoCategories, eq(videos.categoryId, videoCategories.id))
+    .leftJoin(speakers, eq(videos.speakerId, speakers.id))
+    .where(
+      and(
+        eq(videos.isPublished, true),
+        ne(videos.id, item.id),
+        item.categoryId ? eq(videos.categoryId, item.categoryId) : undefined
+      )
+    )
+    .orderBy(desc(videos.createdAt))
+    .limit(6);
+
+  const related = relatedQuery.map((row) => ({
+    ...row.videos,
+    category: row.category,
+    speaker: row.speaker,
+  }));
 
   const ld = videoJsonLd({
     title: item.title,

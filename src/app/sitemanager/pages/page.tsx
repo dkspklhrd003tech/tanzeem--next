@@ -367,7 +367,7 @@ export default function PagesListPage() {
                 <h1 className="text-lg md:text-xl font-bold mb-1.5 text-white">
                   Frequently Asked Questions
                 </h1>
-                <div className="flex items-center justify-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-white">
+                <div className="flex items-center justify-center gap-1.5 text-[10px] font-bold uppercase tracking-wider !text-white">
                   <span>Home</span>
                   <span>/</span>
                   <span>FAQs</span>
