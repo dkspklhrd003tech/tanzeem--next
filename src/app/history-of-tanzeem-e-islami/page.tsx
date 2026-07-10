@@ -79,7 +79,7 @@ export default async function HistoryOfTanzeemPage() {
           </div>
         </div>
 
-        <div className="prose prose-lg  max-w-none text-muted-foreground space-y-6">
+        <div className="prose prose-lg  max-w-none text-foreground space-y-6">
           {content.hero.content.split('\n').map((para, i) => {
             if (!para.trim()) return null;
             return <p key={i} dangerouslySetInnerHTML={{ __html: para }} />;

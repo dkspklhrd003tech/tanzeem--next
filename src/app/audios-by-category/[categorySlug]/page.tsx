@@ -99,7 +99,7 @@ export default async function CategoryAudiosPage({ params }: { params: Promise<{
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {directAudios.map((item) => (
                   <Link
-                    href={`/audio/${item.id}`}
+                    href={`/audios/${item.id}`}
                     key={item.id}
                     className="group text-left bg-card border border-border hover:border-primary/50 hover:shadow-md transition-all duration-300 rounded-xl overflow-hidden flex flex-col block w-full"
                   >

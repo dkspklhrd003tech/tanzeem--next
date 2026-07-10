@@ -27,7 +27,7 @@ async function findPageBySlug(slug: string) {
     candidates.push(`organization/${slug}`);
     candidates.push(`/organization/${slug}`);
   }
-  
+
   const uniqueCandidates = Array.from(new Set(candidates));
 
   try {
@@ -293,7 +293,7 @@ export default async function DynamicPage({ params }: PageProps) {
 
     // Check Audio Categories
     const audioCatMatch = await db.query.audioCategories.findFirst({ where: eq(audioCategories.slug, slug) });
-    if (audioCatMatch) permanentRedirect(`/audio/${audioCatMatch.slug}`);
+    if (audioCatMatch) permanentRedirect(`/audios-by-category/${audioCatMatch.slug}`);
 
     // Check Video Categories
     const videoCatMatch = await db.query.videoCategories.findFirst({ where: eq(videoCategories.slug, slug) });
@@ -366,7 +366,7 @@ export default async function DynamicPage({ params }: PageProps) {
           orderBy: [desc(audio.createdAt)],
           limit: 4
         });
-        
+
         const latestVideos = await db.query.videos.findMany({
           where: eq(videos.speakerId, speaker.id),
           orderBy: [desc(videos.createdAt)],
@@ -634,8 +634,8 @@ export default async function DynamicPage({ params }: PageProps) {
           {founderMedia && (
             <div className="space-y-4">
               {founderMedia.audios.length > 0 && (
-                <MediaCardGrid 
-                  heading="Latest Audios" 
+                <MediaCardGrid
+                  heading="Latest Audios"
                   items={founderMedia.audios.map((a: any) => ({
                     title: a.title,
                     image: a.thumbnailUrl || '/images/default-audio.jpg',
@@ -646,8 +646,8 @@ export default async function DynamicPage({ params }: PageProps) {
                 />
               )}
               {founderMedia.videos.length > 0 && (
-                <MediaCardGrid 
-                  heading="Latest Videos" 
+                <MediaCardGrid
+                  heading="Latest Videos"
                   items={founderMedia.videos.map((v: any) => ({
                     title: v.title,
                     image: v.thumbnailUrl || '/images/default-video.jpg',
@@ -658,8 +658,8 @@ export default async function DynamicPage({ params }: PageProps) {
                 />
               )}
               {founderMedia.books.length > 0 && (
-                <PublicationGrid 
-                  heading="Latest Books" 
+                <PublicationGrid
+                  heading="Latest Books"
                   publications={founderMedia.books.map((b: any) => ({
                     title: b.title,
                     cover: b.coverImage || '/images/default-book.jpg',
