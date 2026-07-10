@@ -127,13 +127,12 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
     setIsLoading(true);
     try {
       const [spRes, auRes] = await Promise.all([
-        fetch("/api/admin/speakers"),
+        fetch("/api/admin/speakers?type=audio"),
         fetch("/api/admin/audio")
       ]);
       if (spRes.ok) {
         const items = (await spRes.json()).items || [];
-        // Only show audio speakers, sorted by order
-        setSpeakersList(items.filter((s: any) => s.type !== "video").sort((a: any, b: any) => (a.order || 0) - (b.order || 0)));
+        setSpeakersList(items.sort((a: any, b: any) => (a.order || 0) - (b.order || 0)));
       }
       if (auRes.ok) setAudiosList((await auRes.json()).items || []);
     } catch (e) { console.error(e); }
