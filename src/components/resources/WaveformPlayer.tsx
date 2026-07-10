@@ -79,9 +79,13 @@ export function WaveformPlayer({
     }
   };
 
-  const formattedDate = publishedAt
-    ? formatDistanceToNow(new Date(publishedAt), { addSuffix: true })
-    : "";
+  let formattedDate = "";
+  if (publishedAt) {
+    const d = new Date(publishedAt);
+    if (!isNaN(d.getTime())) {
+      formattedDate = formatDistanceToNow(d, { addSuffix: true });
+    }
+  }
 
   return (
     <div className="bg-[#181818] rounded-xl overflow-hidden shadow-lg p-6 flex flex-col gap-6 text-white w-full">

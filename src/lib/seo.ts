@@ -17,6 +17,13 @@ export const SITE_NAME = "Tanzeem-e-Islami";
 export const SITE_LOGO = SITE_URL ? `${SITE_URL}/tanzeem-logo.webp` : "";
 export const DEFAULT_OG_IMAGE = SITE_URL ? `${SITE_URL}/og-default.jpg` : "";
 
+// ─── safeIsoDate ─────────────────────────────────────────────────────────────
+function safeIsoDate(dateVal?: Date | string | null): string | undefined {
+  if (!dateVal) return undefined;
+  const d = new Date(dateVal);
+  return isNaN(d.getTime()) ? undefined : d.toISOString();
+}
+
 // ─── buildMetadata ────────────────────────────────────────────────────────────
 
 interface MetadataInput {
@@ -128,8 +135,8 @@ export function webPageJsonLd({
     inLanguage: "ur",
     isPartOf: { "@id": SITE_URL },
     publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
-    datePublished: datePublished ? new Date(datePublished).toISOString() : undefined,
-    dateModified: dateModified ? new Date(dateModified).toISOString() : undefined,
+    datePublished: safeIsoDate(datePublished),
+    dateModified: safeIsoDate(dateModified),
   };
 }
 
@@ -167,7 +174,7 @@ export function audioJsonLd({
       ? { "@type": "Person", name: speakerName }
       : { "@type": "Organization", name: SITE_NAME },
     publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
-    uploadDate: datePublished ? new Date(datePublished).toISOString() : undefined,
+    uploadDate: safeIsoDate(datePublished),
   };
 }
 
@@ -205,7 +212,7 @@ export function videoJsonLd({
       ? { "@type": "Person", name: speakerName }
       : { "@type": "Organization", name: SITE_NAME },
     publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL, logo: { "@type": "ImageObject", url: SITE_LOGO } },
-    uploadDate: datePublished ? new Date(datePublished).toISOString() : undefined,
+    uploadDate: safeIsoDate(datePublished),
   };
 }
 
@@ -239,7 +246,7 @@ export function bookJsonLd({
       ? { "@type": "Person", name: authorName }
       : { "@type": "Organization", name: SITE_NAME },
     publisher: { "@type": "Organization", name: SITE_NAME, url: SITE_URL },
-    datePublished: datePublished ? new Date(datePublished).toISOString() : undefined,
+    datePublished: safeIsoDate(datePublished),
   };
 }
 
