@@ -19,6 +19,7 @@ type AddressDetail = {
   titleValue?: string;
   titleValueUrl?: string;
   titleValueUrlNewTab?: boolean;
+  leaderTitle?: 'Ameer' | 'Naib Ameer';
   naibAmeer?: string;
   address: string;
   addressUrl?: string;
@@ -410,7 +411,8 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
                       mobileUrl: "",
                       email: "",
                       emailUrl: "",
-                      mapUrl: ""
+                      mapUrl: "",
+                      leaderTitle: "Ameer"
                     }];
                     setEditingLocation({ ...editingLocation, details: newDetails });
                   }}
@@ -480,12 +482,39 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
 
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <Label className="text-xs">Naib Ameer</Label>
+                        <div className="flex items-center gap-2 mb-2">
+                           <Button 
+                             type="button" 
+                             variant={(!detail.leaderTitle || detail.leaderTitle === 'Ameer') ? 'default' : 'outline'} 
+                             size="sm" 
+                             className="h-6 text-[10px] px-2 rounded-full"
+                             onClick={() => {
+                               const newDetails = [...editingLocation.details!];
+                               newDetails[index].leaderTitle = 'Ameer';
+                               setEditingLocation({ ...editingLocation, details: newDetails });
+                             }}
+                           >
+                             Ameer
+                           </Button>
+                           <Button 
+                             type="button" 
+                             variant={detail.leaderTitle === 'Naib Ameer' ? 'default' : 'outline'} 
+                             size="sm" 
+                             className="h-6 text-[10px] px-2 rounded-full"
+                             onClick={() => {
+                               const newDetails = [...editingLocation.details!];
+                               newDetails[index].leaderTitle = 'Naib Ameer';
+                               setEditingLocation({ ...editingLocation, details: newDetails });
+                             }}
+                           >
+                             Naib Ameer
+                           </Button>
+                        </div>
                         <Input className="h-8" value={detail.naibAmeer || ""} onChange={(e) => {
                           const newDetails = [...editingLocation.details!];
                           newDetails[index].naibAmeer = e.target.value;
                           setEditingLocation({ ...editingLocation, details: newDetails });
-                        }} />
+                        }} placeholder="Enter name..." />
                       </div>
 
                       <div className="space-y-2">
