@@ -93,21 +93,38 @@ export function Footer() {
             <h3 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Contact Us</h3>
             <div className="space-y-3">
               {settings.footer_address && (
-                <div className="flex items-start gap-2.5 text-white text-sm">
-                  <MapPin className="h-4 w-4 text-white mt-0.5 shrink-0" />
-                  <span className="text-white">{settings.footer_address}</span>
-                </div>
+                settings.footer_address_url ? (
+                  <a
+                    href={settings.footer_address_url}
+                    target={settings.footer_address_new_tab !== 'false' ? "_blank" : undefined}
+                    rel={EXTERNAL_LINK_REL}
+                    className="flex items-start gap-2.5 text-white hover:text-primary-foreground transition-colors text-sm focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2 rounded-sm"
+                  >
+                    <MapPin className="h-4 w-4 text-white mt-0.5 shrink-0" />
+                    <span>{settings.footer_address}</span>
+                  </a>
+                ) : (
+                  <div className="flex items-start gap-2.5 text-white text-sm">
+                    <MapPin className="h-4 w-4 text-white mt-0.5 shrink-0" />
+                    <span className="text-white">{settings.footer_address}</span>
+                  </div>
+                )
               )}
               {settings.footer_landline && (
-                <a href={`tel:${settings.footer_landline}`} className="flex items-center gap-2.5 text-white hover:text-primary-foreground transition-colors text-sm focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2 rounded-sm">
+                <a 
+                  href={settings.footer_landline_url ? `tel:${settings.footer_landline_url}` : `tel:${settings.footer_landline}`} 
+                  target={settings.footer_landline_new_tab !== 'false' ? "_blank" : undefined}
+                  rel={EXTERNAL_LINK_REL}
+                  className="flex items-center gap-2.5 text-white hover:text-primary-foreground transition-colors text-sm focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2 rounded-sm"
+                >
                   <Phone className="h-4 w-4 text-white shrink-0" aria-hidden="true" />
                   <span>{settings.footer_landline}</span>
                 </a>
               )}
               {settings.whatsapp_number && (
                 <a
-                  href={`https://wa.me/${settings.whatsapp_number.replace(/\D/g, "")}`}
-                  target="_blank"
+                  href={settings.whatsapp_number_url ? `https://wa.me/${settings.whatsapp_number_url}` : `https://wa.me/${settings.whatsapp_number.replace(/\D/g, "")}`}
+                  target={settings.whatsapp_number_new_tab !== 'false' ? "_blank" : undefined}
                   rel={EXTERNAL_LINK_REL}
                   className="flex items-center gap-2.5 text-white hover:text-primary-foreground transition-colors text-sm focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2 rounded-sm"
                 >
@@ -116,7 +133,12 @@ export function Footer() {
                 </a>
               )}
               {settings.contact_email && (
-                <a href={`mailto:${settings.contact_email}`} className="flex items-center gap-2.5 text-white hover:text-primary-foreground transition-colors text-sm break-all focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2 rounded-sm">
+                <a 
+                  href={settings.contact_email_url ? `mailto:${settings.contact_email_url}` : `mailto:${settings.contact_email}`} 
+                  target={settings.contact_email_new_tab !== 'false' ? "_blank" : undefined}
+                  rel={EXTERNAL_LINK_REL}
+                  className="flex items-center gap-2.5 text-white hover:text-primary-foreground transition-colors text-sm break-all focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2 rounded-sm"
+                >
                   <Mail className="h-4 w-4 text-white shrink-0" aria-hidden="true" />
                   <span>{settings.contact_email}</span>
                 </a>

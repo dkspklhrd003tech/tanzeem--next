@@ -141,7 +141,7 @@ function SortableCard({ id, item, onEdit, onDelete }: SortableItemProps) {
                 : "bg-emerald-500/10 text-emerald-600  border-emerald-500/20"
             )}
           >
-            {isPdf ? "PDF Document" : "Written Statement"}
+            {isPdf ? "Press Release (PDF)" : "Press Release"}
           </Badge>
 
           <div className="flex items-center gap-1">
@@ -726,7 +726,7 @@ export default function PressReleasesPageEditor({ pageId, initialPageData }: Pre
                 items={filteredItems.map(item => item.id)}
                 strategy={rectSortingStrategy}
               >
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                   {filteredItems.map((item) => (
                     <SortableCard
                       key={item.id}

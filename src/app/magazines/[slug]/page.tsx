@@ -6,6 +6,7 @@ import { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft, Download, AlertCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ClientShareButton } from "@/components/shared/ClientShareButton";
 
 interface PageProps {
     params: Promise<{ slug: string }>;
@@ -80,12 +81,15 @@ export default async function MagazineDetailsPage({ params }: PageProps) {
 
     return (
         <main className="min-h-screen bg-zinc-50/50">
-            {/* Header / Actions Bar */}
-            <div className="border-b bg-background sticky top-[72px] z-40 shadow-sm">
-                <div className="max-w-5xl mx-auto py-4 flex flex-wrap items-center justify-between gap-4">
+            <div className="container mx-auto py-10 px-4 flex flex-col items-center mt-4">
+                <div className="w-full max-w-5xl mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <h1 className="text-2xl md:text-3xl font-bold text-foreground">
+                        {targetLink.title}
+                    </h1>
                     <div className="flex items-center gap-2">
+                        <ClientShareButton variant="icon" />
                         {targetLink.url.endsWith(".pdf") && (
-                            <Button asChild variant="outline" size="sm" className="h-8">
+                            <Button asChild variant="outline" size="sm" className="bg-primary text-white hover:bg-primary/80 border-primary border h-8 font-medium shadow-sm">
                                 <a href={targetLink.url} download={`${targetLink.title.replace(/[^a-zA-Z0-9]/g, "-")}.pdf`}>
                                     <Download className="w-4 h-4 mr-2" />
                                     Download PDF
@@ -93,14 +97,6 @@ export default async function MagazineDetailsPage({ params }: PageProps) {
                             </Button>
                         )}
                     </div>
-                </div>
-            </div>
-
-            <div className="container mx-auto py-10 px-4 flex flex-col items-center">
-                <div className="w-full max-w-5xl mb-6">
-                    <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
-                        {targetLink.title}
-                    </h1>
                 </div>
 
                 {targetLink.url ? (

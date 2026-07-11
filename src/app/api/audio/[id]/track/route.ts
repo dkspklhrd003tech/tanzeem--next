@@ -3,9 +3,9 @@ import { db } from "@/lib/db";
 import { audio } from "@/db/schema";
 import { eq, sql } from "drizzle-orm";
 
-export async function POST(req: Request, { params }: { params: Promise<{ slug: string }> }) {
+export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const { slug } = await params;
+    const { id: slug } = await params;
     if (!slug) return NextResponse.json({ error: "No slug provided" }, { status: 400 });
 
     // Ensure the audio exists first
@@ -18,7 +18,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ slug: s
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
-    // Atomically increment the play count
+    // Automatically increment the play count
     await db
       .update(audio)
       .set({ playCount: sql`play_count + 1` })

@@ -106,7 +106,7 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
                         </Link>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                         {magazinesData.length > 0 ? magazinesData.map((mag, i) => (
                             <div
                                 key={mag.id}

@@ -70,7 +70,7 @@ export default async function BookDetailPage({ params }: Props) {
       <div className="container max-w-5xl mx-auto py-10">
 
         {/* Back */}
-        <Link href="/books" className="inline-flex items-center gap-2 text-sm text-foreground-muted hover:text-primary mb-8 transition-colors">
+        <Link href="/books" className="inline-flex items-center gap-2 text-sm text-foreground-muted hover:text-primary mb-6 transition-colors">
           <ArrowLeft className="h-4 w-4" />
           Back to Books Library
         </Link>
@@ -79,7 +79,7 @@ export default async function BookDetailPage({ params }: Props) {
           <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
             <div className="space-y-3">
               {book.category && (
-                <Badge variant="outline" className="text-primary border-primary/30">{book.category.name}</Badge>
+                <Badge variant="outline" className="bg-primary-light text-primary border-primary/30">{book.category.name}</Badge>
               )}
               <div className="flex flex-wrap items-center gap-3">
                 <h1 className="text-2xl md:text-3xl font-bold text-foreground leading-snug">{book.title}</h1>
@@ -91,7 +91,7 @@ export default async function BookDetailPage({ params }: Props) {
               <a
                 href={book.fileUrl}
                 download
-                className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground rounded-full px-6 py-2.5 text-sm font-semibold transition-colors shrink-0"
+                className="inline-flex items-center justify-center gap-2 bg-primary text-white hover:bg-primary/80 border-primary border h-12 font-medium shadow-sm rounded-md px-6 py-2 text-sm font-semibold transition-colors shrink-0"
               >
                 <Download className="h-4 w-4" />
                 Download PDF
@@ -107,7 +107,7 @@ export default async function BookDetailPage({ params }: Props) {
           )}
 
           {book.fileUrl && (
-            <div className="mt-8">
+            <div className="mt-4">
               <div className="w-full h-[85vh] rounded-2xl overflow-hidden border border-border shadow-xl bg-white relative">
                 <iframe
                   src={`${book.fileUrl}#toolbar=1`}
