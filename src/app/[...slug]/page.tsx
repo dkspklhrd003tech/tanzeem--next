@@ -1,6 +1,6 @@
 import { notFound, redirect, permanentRedirect } from "next/navigation";
 import { db } from "@/db";
-import { pages, pageSections, audioCategories, videoCategories, audio, videos, speakers, bookCategories, books } from "@/db/schema";
+import { pages, pageSections, audioCategories, videoCategories, audio, videos, speakers, bookCategories, books, settings } from "@/db/schema";
 import { eq, and, desc } from "drizzle-orm";
 import { Metadata } from "next";
 import crypto from "crypto";
@@ -11,6 +11,7 @@ import { RedirectPage } from "@/components/shared/RedirectPage";
 import { NestedCategoryGrid } from "@/components/shared/NestedCategoryGrid";
 import { MediaCardGrid } from "@/components/shared/MediaCardGrid";
 import { PublicationGrid } from "@/components/shared/PublicationGrid";
+import { resolveMediaUrl } from "@/lib/utils";
 
 // ── Slug resolver — handles prefix mismatches (e.g. DB has "our-ideology"
 //    but route provides "organization/our-ideology") ────────────────────────────
