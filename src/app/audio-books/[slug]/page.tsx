@@ -8,6 +8,7 @@ import Link from "next/link";
 import { ArrowLeft, PlayCircle, AlertCircle, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { WaveformPlayer } from "@/components/resources/WaveformPlayer";
 
 interface PageProps {
     params: Promise<{ slug: string }>;
@@ -117,14 +118,11 @@ export default async function AudioBookDetailsPage({ params }: PageProps) {
                                     <h3 className="font-semibold text-lg mb-4 text-emerald-800">
                                         Now Playing
                                     </h3>
-                                    <audio
-                                        controls
-                                        controlsList="nodownload"
-                                        className="w-full h-12"
-                                        src={selectedItem.audioUrl}
-                                    >
-                                        Your browser does not support the audio element.
-                                    </audio>
+                                    <WaveformPlayer
+                                        audioUrl={selectedItem.audioUrl}
+                                        title={selectedItem.title}
+                                        publishedAt={selectedItem.publishedAt}
+                                    />
                                     <div className="mt-4 flex justify-end">
                                         <Button asChild variant="outline" size="sm" className="text-xs">
                                             <a href={selectedItem.audioUrl} download={`${selectedItem.slug || "audio-book"}.mp3`}>

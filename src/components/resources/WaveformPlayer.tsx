@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useRef, useState } from "react";
 import WaveSurfer from "wavesurfer.js";
 import { Play, Pause } from "lucide-react";
@@ -32,10 +34,12 @@ export function WaveformPlayer({
 
   const [isPlaying, setIsPlaying] = useState(false);
   const [isReady, setIsReady] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
 
   useEffect(() => {
+    setIsMounted(true);
     if (!containerRef.current) return;
 
     // Native audio element allows instant streaming instead of waiting for full download
@@ -108,8 +112,12 @@ export function WaveformPlayer({
     }
   }
 
+  if (!isMounted) {
+    return <div className="bg-slate-900 rounded-xl overflow-hidden shadow-lg p-6 flex flex-col gap-6 w-full animate-pulse h-40"></div>;
+  }
+
   return (
-    <div className="bg-foreground rounded-xl overflow-hidden shadow-lg p-6 flex flex-col gap-6 text-white w-full">
+    <div className="bg-slate-900 rounded-xl overflow-hidden shadow-lg p-6 flex flex-col gap-6 text-white w-full">
       {/* Header Section */}
       <div className="flex justify-between items-start">
         <div className="flex gap-4 items-center">

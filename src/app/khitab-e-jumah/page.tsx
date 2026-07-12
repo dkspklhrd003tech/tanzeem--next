@@ -4,6 +4,7 @@ import { eq, desc } from "drizzle-orm";
 import { CTABanner } from "@/components/shared/CTABanner";
 import { Card, CardContent } from "@/components/ui/card";
 import { Mic } from "lucide-react";
+import { WaveformPlayer } from "@/components/resources/WaveformPlayer";
 import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
@@ -48,10 +49,13 @@ export default async function KhitabEJumahPage() {
                                                 {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : ""}
                                             </p>
                                             {item.audioUrl && (
-                                                <audio controls className="w-full h-10">
-                                                    <source src={item.audioUrl} type="audio/mpeg" />
-                                                    Your browser does not support the audio element.
-                                                </audio>
+                                                <div className="mt-3">
+                                                    <WaveformPlayer 
+                                                        audioUrl={item.audioUrl} 
+                                                        title={item.title} 
+                                                        publishedAt={item.createdAt}
+                                                    />
+                                                </div>
                                             )}
                                         </div>
                                     </div>

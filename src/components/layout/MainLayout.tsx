@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { PageBanner } from "./PageBanner";
-import { PersistentAudioPlayer } from "@/components/audio/PersistentAudioPlayer";
 import { ShareSidebar } from "@/components/shared/ShareSidebar";
 import { useSettings } from "@/hooks/use-settings";
 import { BackToTop } from "@/components/ui/back-to-top";
@@ -72,7 +71,6 @@ export function MainLayout({ children }: MainLayoutProps) {
 
       {!isSiteManager && <Footer />}
       {!isSiteManager && <ShareSidebar />}
-      {!isSiteManager && <PersistentAudioPlayer />}
     </div>
   );
 }

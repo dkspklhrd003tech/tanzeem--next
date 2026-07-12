@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { WaveformPlayer } from "./WaveformPlayer";
 
 type SermonRecord = {
     id: string;
@@ -74,12 +75,11 @@ export function SermonDetail({ sermon }: SermonDetailProps) {
             {audioUrl && (
                 <div className="mt-8">
                     <h2 className="text-lg font-semibold text-foreground mb-3">Audio</h2>
-                    {/* eslint-disable-next-line jsx-a11y/media-has-caption */}
-                    <audio
-                        controls
-                        src={audioUrl}
-                        className="w-full"
-                        aria-label={`Audio: ${title}`}
+                    <WaveformPlayer 
+                        audioUrl={audioUrl} 
+                        title={title} 
+                        speakerName={speakerName || undefined}
+                        publishedAt={sermonDate}
                     />
                 </div>
             )}

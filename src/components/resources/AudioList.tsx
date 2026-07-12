@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { AudioPlayButton } from "@/components/shared/AudioPlayButton";
+import { WaveformPlayer } from "@/components/resources/WaveformPlayer";
 import { cn } from "@/lib/utils";
 
 export type AudioListItem = {
@@ -127,16 +127,17 @@ export function AudioList({ items, showFilters = true, categories = [], speakers
                     {item.description.replace(/<[^>]+>/g, "")}
                   </p>
                 )}
+                
+                <div className="mt-4 w-full">
+                  <WaveformPlayer 
+                    audioUrl={item.audioUrl} 
+                    title={item.title} 
+                    speakerName={item.speakerName || undefined}
+                    categoryName={item.categoryName || undefined}
+                    publishedAt={item.publishedAt}
+                  />
+                </div>
               </div>
-              <AudioPlayButton
-                track={{
-                  id: item.id,
-                  title: item.title,
-                  audioUrl: item.audioUrl,
-                  speaker: item.speakerName || undefined,
-                  thumbnail: item.thumbnailUrl || undefined,
-                }}
-              />
             </li>
           ))}
         </ul>

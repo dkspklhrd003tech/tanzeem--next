@@ -5,6 +5,7 @@ import { ArrowLeft, Clock, Headphones, Download, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ClientShareButton } from "@/components/shared/ClientShareButton";
 import { VideoEmbed } from "./VideoEmbed";
+import { WaveformPlayer } from "./WaveformPlayer";
 
 interface AudioDetailProps {
   audio: {
@@ -93,11 +94,13 @@ export function AudioDetail({ audio, backHref, backLabel }: AudioDetailProps) {
           {audio.videoUrl ? (
             <VideoEmbed url={audio.videoUrl} />
           ) : audio.audioUrl ? (
-            <div className="bg-card border border-border rounded-xl p-4 shadow-sm">
-              <audio controls className="w-full" src={audio.audioUrl}>
-                Your browser does not support the audio element.
-              </audio>
-            </div>
+            <WaveformPlayer 
+              audioUrl={audio.audioUrl} 
+              title={audio.title} 
+              speakerName={audio.speakerName || undefined}
+              categoryName={audio.categoryName || undefined}
+              publishedAt={audio.publishedAt}
+            />
           ) : null}
 
           {/* Download */}
