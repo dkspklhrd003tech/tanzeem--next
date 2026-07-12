@@ -62,7 +62,22 @@ export function ContactSection({
   locationRows = [],
 }: ContactSectionProps) {
   const s = { ...DEFAULT_SETTINGS, ...contactSettings };
-  const branches: LocationRow[] = locationRows;
+  
+  let orderedBranches = [...locationRows];
+  if (s.locations_order) {
+    try {
+      const order = JSON.parse(s.locations_order);
+      orderedBranches.sort((a, b) => {
+        const indexA = order.indexOf(a.id);
+        const indexB = order.indexOf(b.id);
+        if (indexA === -1 && indexB === -1) return 0;
+        if (indexA === -1) return 1;
+        if (indexB === -1) return -1;
+        return indexA - indexB;
+      });
+    } catch (e) {}
+  }
+  const branches = orderedBranches;
 
   // For the vertical accordion in the right panel
   const [openBranchSlug, setOpenBranchSlug] = useState<string | null>(

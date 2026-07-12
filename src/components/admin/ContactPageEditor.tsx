@@ -12,6 +12,25 @@ import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  rectSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { GripVertical } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 type AddressDetail = {
   id: string;
@@ -50,6 +69,63 @@ type LocationRow = {
   isActive: boolean;
 };
 
+function SortableLocationCard({ loc, onEdit, onDelete }: { loc: LocationRow, onEdit: () => void, onDelete: () => void }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: loc.id });
+  const style = { transform: CSS.Transform.toString(transform), transition };
+  
+  return (
+    <div 
+      ref={setNodeRef} 
+      style={style} 
+      className={cn(
+        "flex flex-col p-4 border border-border rounded-xl bg-card hover:border-primary/30 transition-all",
+        isDragging && "z-50 shadow-2xl scale-[1.02] border-primary ring-2 ring-primary/20 opacity-90"
+      )}
+    >
+      <div className="flex items-start justify-between w-full">
+        <div className="flex-1">
+          <div className="flex items-center gap-2 mb-2">
+            <button {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing hover:bg-muted p-1 rounded -ml-2 text-muted-foreground hover:text-foreground">
+              <GripVertical className="h-4 w-4" />
+            </button>
+            <h4 className="font-bold text-foreground text-lg leading-none">{loc.name}</h4>
+            {!loc.isActive && <span className="bg-destructive/10 text-destructive text-[10px] px-2 py-0.5 rounded-full font-bold">Hidden</span>}
+          </div>
+          <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground mt-1">
+            {loc.city && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" /> {loc.city}</span>}
+            {(!loc.details || loc.details.length === 0) && loc.phone && <span className="flex items-center gap-1"><Phone className="h-3 w-3" /> {loc.phone}</span>}
+            {(!loc.details || loc.details.length === 0) && loc.email && <span className="flex items-center gap-1"><Mail className="h-3 w-3" /> {loc.email}</span>}
+          </div>
+          {(!loc.details || loc.details.length === 0) && loc.address && <p className="text-xs text-muted-foreground mt-2">{loc.address}</p>}
+
+          {loc.details && loc.details.length > 0 && (
+            <div className="mt-4 space-y-2">
+              {loc.details.map((detail) => (
+                <div key={detail.id} className="bg-secondary/30 p-2 rounded text-xs border border-border/50">
+                  <div className="font-semibold mb-1">{detail.title || "Office"}</div>
+                  {detail.address && <div className="text-muted-foreground flex items-start gap-1"><MapPin className="h-3 w-3 mt-0.5 shrink-0" /> {detail.address}</div>}
+                  <div className="flex flex-wrap gap-2 mt-1">
+                    {detail.phone && <span className="text-muted-foreground flex items-center gap-1"><Phone className="h-3 w-3" /> {detail.phone}</span>}
+                    {detail.email && <span className="text-muted-foreground flex items-center gap-1"><Mail className="h-3 w-3" /> {detail.email}</span>}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+        <div className="flex flex-col gap-2 shrink-0 ml-4 items-center">
+          <Button variant="ghost" size="icon" onClick={onEdit} className="h-8 w-8 hover:bg-primary/10 hover:text-primary">
+            <Edit2 className="h-4 w-4" />
+          </Button>
+          <Button variant="ghost" size="icon" onClick={onDelete} className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10">
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function ContactPageEditor({ pageId, title }: { pageId: string; title: string }) {
   const { toast } = useToast();
 
@@ -69,14 +145,33 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
   // Confirmation state
   const [deletingLocationId, setDeletingLocationId] = useState<string | null>(null);
 
+  // DnD Sensors config
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
   useEffect(() => {
     Promise.all([
       fetch("/api/settings").then((res) => res.json()),
       fetch("/api/sitemanager/locations").then((res) => res.json()),
     ])
       .then(([settingsData, locationsData]) => {
+        let orderMap: Record<string, number> = {};
         if (settingsData?.settings?.contact) {
           setSettings(settingsData.settings.contact);
+          try {
+            const orderArr = JSON.parse(settingsData.settings.contact.locations_order || "[]");
+            orderArr.forEach((id: string, idx: number) => {
+              orderMap[id] = idx;
+            });
+          } catch(e) {}
         } else {
           // Fallbacks from ContactSection.tsx if not set
           setSettings({
@@ -92,7 +187,13 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
           });
         }
         if (locationsData?.locations) {
-          setLocations(locationsData.locations);
+          const locs = locationsData.locations;
+          locs.sort((a: any, b: any) => {
+            const indexA = orderMap[a.id] !== undefined ? orderMap[a.id] : 9999;
+            const indexB = orderMap[b.id] !== undefined ? orderMap[b.id] : 9999;
+            return indexA - indexB;
+          });
+          setLocations(locs);
         }
       })
       .finally(() => setIsLoading(false));
@@ -119,6 +220,31 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
       toast({ variant: "destructive", title: "Network error" });
     }
     setIsSavingSettings(false);
+  };
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (active.id !== over?.id) {
+      setLocations((items) => {
+        const oldIndex = items.findIndex((i) => i.id === active.id);
+        const newIndex = items.findIndex((i) => i.id === over?.id);
+        const newArray = arrayMove(items, oldIndex, newIndex);
+        
+        // Save the new order to settings
+        const newOrder = newArray.map(loc => loc.id);
+        const orderStr = JSON.stringify(newOrder);
+        setSettings(prev => ({ ...prev, locations_order: orderStr }));
+        
+        // Background save
+        fetch("/api/settings", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ settings: { ...settings, locations_order: orderStr }, group: "contact" }),
+        }).catch(e => console.error("Failed to auto-save location order"));
+        
+        return newArray;
+      });
+    }
   };
 
   const openLocationDialog = (loc?: LocationRow) => {
@@ -323,47 +449,20 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
                   <p className="text-sm text-muted-foreground">No branches found. Add one to get started.</p>
                 </div>
               ) : (
-                <div className="space-y-3">
-                  {locations.map((loc) => (
-                    <div key={loc.id} className="flex items-start justify-between p-4 border border-border rounded-xl bg-card hover:border-primary/30 transition-colors">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-1">
-                          <h4 className="font-bold text-foreground">{loc.name}</h4>
-                          {!loc.isActive && <span className="bg-destructive/10 text-destructive text-[10px] px-2 py-0.5 rounded-full font-bold">Hidden</span>}
-                        </div>
-                        <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
-                          {loc.city && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" /> {loc.city}</span>}
-                          {(!loc.details || loc.details.length === 0) && loc.phone && <span className="flex items-center gap-1"><Phone className="h-3 w-3" /> {loc.phone}</span>}
-                          {(!loc.details || loc.details.length === 0) && loc.email && <span className="flex items-center gap-1"><Mail className="h-3 w-3" /> {loc.email}</span>}
-                        </div>
-                        {(!loc.details || loc.details.length === 0) && loc.address && <p className="text-xs text-muted-foreground mt-2">{loc.address}</p>}
-
-                        {loc.details && loc.details.length > 0 && (
-                          <div className="mt-3 space-y-2">
-                            {loc.details.map((detail) => (
-                              <div key={detail.id} className="bg-secondary/30 p-2 rounded text-xs border border-border/50">
-                                <div className="font-semibold mb-1">{detail.title || "Office"}</div>
-                                {detail.address && <div className="text-muted-foreground flex items-start gap-1"><MapPin className="h-3 w-3 mt-0.5 shrink-0" /> {detail.address}</div>}
-                                <div className="flex flex-wrap gap-2 mt-1">
-                                  {detail.phone && <span className="text-muted-foreground flex items-center gap-1"><Phone className="h-3 w-3" /> {detail.phone}</span>}
-                                  {detail.email && <span className="text-muted-foreground flex items-center gap-1"><Mail className="h-3 w-3" /> {detail.email}</span>}
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-1 shrink-0 ml-4">
-                        <Button variant="ghost" size="icon" onClick={() => openLocationDialog(loc)}>
-                          <Edit2 className="h-4 w-4" />
-                        </Button>
-                        <Button variant="ghost" size="icon" onClick={() => setDeletingLocationId(loc.id)} className="text-destructive hover:text-destructive hover:bg-destructive/10">
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
+                <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                  <SortableContext items={locations.map(l => l.id)} strategy={rectSortingStrategy}>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {locations.map((loc) => (
+                        <SortableLocationCard 
+                          key={loc.id} 
+                          loc={loc} 
+                          onEdit={() => openLocationDialog(loc)} 
+                          onDelete={() => setDeletingLocationId(loc.id)} 
+                        />
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  </SortableContext>
+                </DndContext>
               )}
             </CardContent>
           </Card>
