@@ -74,17 +74,26 @@ async function HomeContent() {
       .orderBy(desc(campaigns.createdAt));
 
     const spotlightServices = publishedServices.filter(s => {
-      const fields = s.customFields as any;
+      let fields = s.customFields as any;
+      if (typeof fields === 'string') {
+        try { fields = JSON.parse(fields); } catch (e) { fields = {}; }
+      }
       return fields && fields.showInSpotlight === true;
-    }).map(s => ({
-      id: s.id,
-      title: s.title,
-      imageUrl: s.imageUrl || "",
-      linkUrl: `/services/${s.slug}`,
-      openInNewTab: (s.customFields as any)?.openInNewTab || false,
-      order: s.order,
-      createdAt: s.createdAt,
-    }));
+    }).map(s => {
+      let fields = s.customFields as any;
+      if (typeof fields === 'string') {
+        try { fields = JSON.parse(fields); } catch (e) { fields = {}; }
+      }
+      return {
+        id: s.id,
+        title: s.title,
+        imageUrl: s.imageUrl || "",
+        linkUrl: `/services/${s.slug}`,
+        openInNewTab: fields?.openInNewTab || false,
+        order: s.order,
+        createdAt: s.createdAt,
+      };
+    });
 
     const spotlightCampaigns = publishedCampaigns.filter(c => {
       return c.categoryId === "SpotLight Campaigns";

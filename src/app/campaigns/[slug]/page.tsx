@@ -31,7 +31,10 @@ export default async function CampaignDetailsPage({ params }: { params: Promise<
         notFound();
     }
 
-    const customFields = campaign.customFields as any;
+    let customFields = campaign.customFields as any;
+    if (typeof customFields === 'string') {
+        try { customFields = JSON.parse(customFields); } catch (e) { customFields = {}; }
+    }
     const blocks = customFields?.blocks || [];
 
     return (
