@@ -81,8 +81,8 @@ export function SpotlightCampaigns({ campaigns }: { campaigns: HomeCampaign[] })
                                             onError={(e) => { e.currentTarget.style.display = "none"; }}
                                         />
                                     ) : (
-                                        <div className="w-full h-full flex flex-col items-center justify-center p-8 text-center bg-gradient-to-br from-muted to-muted/30" aria-hidden="true">
-                                            <Target className="w-12 h-12 text-primary/20 mb-4" />
+                                        <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center bg-primary-light" aria-hidden="true">
+                                            <Target className="w-12 h-12 text-foreground hover:text-primary mb-4" />
                                             <span className="text-foreground/40 text-xs font-bold uppercase tracking-widest leading-tight border-l-2 border-primary/20">
                                                 Preview Pending
                                             </span>
