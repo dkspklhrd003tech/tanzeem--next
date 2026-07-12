@@ -68,8 +68,7 @@ export function SpotlightCampaigns({ campaigns }: { campaigns: HomeCampaign[] })
                 <div ref={gridRef} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {campaigns.length > 0 ? campaigns.map((campaign, i) => {
                         const card = (
-                            <div className="flex flex-col h-full bg-card/60 backdrop-blur-md rounded-[1.5rem] border border-border/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] group-hover:shadow-primary/10 group-hover:border-primary/40 group-hover:-translate-y-3 transition-all duration-700 overflow-hidden relative group/inner border border-primary-light">
-                                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/80 opacity-0 group-hover/inner:opacity-100 transition-opacity duration-700 pointer-events-none z-10" />
+                            <div className="flex flex-col h-full bg-card/60 backdrop-blur-md rounded-[1.5rem] border border-border/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] group-hover:shadow-primary/10 group-hover:border-primary/40 group-hover:bg-primary-light group-hover:-translate-y-3 transition-all duration-700 overflow-hidden relative group/inner">
 
                                 {/* Image Container */}
                                 <div className="relative w-full overflow-hidden bg-muted/50" style={{ aspectRatio: '348 / 195' }}>
@@ -97,7 +96,7 @@ export function SpotlightCampaigns({ campaigns }: { campaigns: HomeCampaign[] })
 
                                 {/* Content */}
                                 <div className="p-6 flex-1 flex flex-col justify-center items-center text-center transition-colors duration-500 relative z-20">
-                                    <h3 className="font-bold text-foreground text-md md:text-lg line-clamp-2 leading-tight group-hover/inner:text-white transition-colors duration-500">
+                                    <h3 className="font-bold text-foreground text-md md:text-lg line-clamp-2 leading-tight group-hover/inner:text-primary transition-colors duration-500">
                                         {campaign.title}
                                     </h3>
                                 </div>

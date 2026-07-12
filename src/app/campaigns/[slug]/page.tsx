@@ -37,24 +37,6 @@ export default async function CampaignDetailsPage({ params }: { params: Promise<
         <main className="min-h-screen bg-background">
             <div className="container mx-auto py-8 md:py-16 max-w-4xl px-4">
                 <div className="space-y-12">
-                    {/* Header */}
-                    <div className="text-center space-y-4">
-                        <h1 className="text-4xl md:text-5xl font-bold text-primary">{campaign.title}</h1>
-                    </div>
-
-                    {/* Main Image */}
-                    {campaign.thumbnailUrl && (
-                        <div className="w-full relative aspect-[16/9] rounded-2xl overflow-hidden shadow-xl border border-border">
-                            <Image
-                                src={campaign.thumbnailUrl}
-                                alt={campaign.title}
-                                fill
-                                className="object-cover"
-                                priority
-                            />
-                        </div>
-                    )}
-
                     {/* Dynamic Blocks */}
                     <div className="space-y-12 pt-6">
                         {blocks.map((block: any, idx: number) => {
