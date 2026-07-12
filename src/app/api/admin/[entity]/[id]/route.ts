@@ -174,14 +174,24 @@ export async function PUT(
                 }, { status: 400 });
             }
 
-            const dup = await db.select({ id: (table as any).id })
-                .from(table)
-                .where(eq((table as any).slug, data.slug))
-                .limit(1);
-            if (dup.length > 0 && dup[0].id !== id) {
-                return NextResponse.json({
-                    error: "An item with this slug already exists"
-                }, { status: 409 });
+            let baseSlug = data.slug;
+            let currentSlug = baseSlug;
+            let counter = 1;
+            
+            while (true) {
+                const dup = await db.select({ id: (table as any).id })
+                    .from(table)
+                    .where(eq((table as any).slug, currentSlug))
+                    .limit(1);
+                
+                // If no duplicate found, or the duplicate is the item being edited itself
+                if (dup.length === 0 || dup[0].id === id) {
+                    data.slug = currentSlug;
+                    break;
+                }
+                
+                currentSlug = `${baseSlug}-${counter}`;
+                counter++;
             }
         }
 

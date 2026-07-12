@@ -64,9 +64,10 @@ export function WaveformPlayer({
 
     wavesurferRef.current = ws;
 
-    // Ready as soon as audio can play, instead of waiting for full decode
-    audio.addEventListener("canplay", () => {
-      setIsReady(true);
+    // Ready immediately to allow instant streaming playback
+    setIsReady(true);
+    
+    audio.addEventListener("loadedmetadata", () => {
       if (!isNaN(audio.duration)) {
         setDuration(audio.duration);
       }

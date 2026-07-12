@@ -225,16 +225,24 @@ export async function POST(
             }, { status: 400 });
         }
 
-        // Check for duplicate slug
+        // Ensure unique slug
         if (data.slug) {
-            const existing = await db.select({ id: (table as any).id })
-                .from(table)
-                .where(eq((table as any).slug, data.slug))
-                .limit(1);
-            if (existing.length > 0) {
-                return NextResponse.json({
-                    error: "An item with this slug already exists"
-                }, { status: 409 });
+            let baseSlug = data.slug;
+            let currentSlug = baseSlug;
+            let counter = 1;
+            
+            while (true) {
+                const existing = await db.select({ id: (table as any).id })
+                    .from(table)
+                    .where(eq((table as any).slug, currentSlug))
+                    .limit(1);
+                
+                if (existing.length === 0) {
+                    data.slug = currentSlug;
+                    break;
+                }
+                currentSlug = `${baseSlug}-${counter}`;
+                counter++;
             }
         }
 
