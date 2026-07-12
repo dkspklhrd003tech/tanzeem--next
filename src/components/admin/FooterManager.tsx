@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import {
-  Save, Loader2, Plus, Trash2, ArrowLeft, ArrowRight,
+  Save, Loader2, Plus, XCircle, ArrowLeft, ArrowRight,
   ArrowUp, ArrowDown, Edit, LayoutTemplate, ExternalLink,
   Info, Globe, Mail, Phone, MapPin, RefreshCw, Check
 } from "lucide-react";
@@ -649,7 +649,7 @@ export function FooterManager() {
                                   onClick={() => setEditingColumnId(null)}
                                   className="h-8 w-8 text-muted-foreground hover:bg-destructive/10 shrink-0"
                                 >
-                                  <Trash2 className="h-4 w-4" />
+                                  <XCircle className="h-4 w-4" />
                                 </Button>
                               </div>
                             ) : (
@@ -699,10 +699,10 @@ export function FooterManager() {
                                 onConfirm={() => handleDeleteColumn(column)}
                               >
                                 <button
-                                  className="p-1 rounded text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+                                  className="p-1 rounded text-muted-foreground hover:text-destructive hover:bg-destructive/80 transition-colors"
                                   title="Delete column"
                                 >
-                                  <Trash2 className="h-3.5 w-3.5" />
+                                  <XCircle className="h-3.5 w-3.5" />
                                 </button>
                               </ConfirmDialog>
                             </div>
@@ -765,8 +765,8 @@ export function FooterManager() {
                                         description={`Are you sure you want to remove the link "${link.label}"?`}
                                         onConfirm={() => handleDeleteLink(link.id)}
                                       >
-                                        <button className="p-1 rounded text-muted-foreground hover:text-destructive hover:bg-destructive/10">
-                                          <Trash2 className="h-3 w-3" />
+                                        <button className="p-1 rounded text-muted-foreground hover:text-destructive hover:bg-destructive/80">
+                                          <XCircle className="h-3 w-3" />
                                         </button>
                                       </ConfirmDialog>
                                     </div>

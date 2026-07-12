@@ -9,7 +9,7 @@ import {
   List,
   MoreHorizontal,
   Download,
-  Trash2,
+  XCircle,
   Copy,
   ExternalLink,
   Loader2,
@@ -353,7 +353,7 @@ export function MediaLibrary() {
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem className="text-red-500" onClick={() => setDeletingMediaId({ id: item.id, name: item.originalName })}>
-                      <Trash2 className="h-4 w-4 mr-2" />
+                      <XCircle className="h-4 w-4 mr-2" />
                       Delete
                     </DropdownMenuItem>
                   </DropdownMenuContent>
@@ -426,7 +426,7 @@ export function MediaLibrary() {
                             Copy URL
                           </DropdownMenuItem>
                           <DropdownMenuItem className="text-red-500" onClick={() => setDeletingMediaId({ id: item.id, name: item.originalName })}>
-                            <Trash2 className="h-4 w-4 mr-2" />
+                            <XCircle className="h-4 w-4 mr-2" />
                             Delete
                           </DropdownMenuItem>
                         </DropdownMenuContent>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Pencil, Trash2, Settings2, Loader2, User, ArrowLeft, Video, UploadCloud, Bot } from "lucide-react";
+import { Plus, Pencil, XCircle, Settings2, Loader2, User, ArrowLeft, Video, UploadCloud, Bot } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -93,7 +93,7 @@ function SortableSpeakerCard({ speaker, onClick, onEdit, onDelete }: { speaker: 
           <h3 className="font-bold text-base line-clamp-1 group-hover:text-primary pl-1">{speaker.name}</h3>
           <div className="flex gap-1" onClick={e => e.stopPropagation()}>
             <Button variant="ghost" size="icon" className="h-6 w-6 text-green-500" onClick={() => onEdit(speaker)}><Pencil className="w-3 h-3" /></Button>
-            <Button variant="ghost" size="icon" className="h-6 w-6 text-red-500" onClick={() => onDelete(speaker)}><Trash2 className="w-3 h-3" /></Button>
+            <Button variant="ghost" size="icon" className="h-6 w-6 text-red-500" onClick={() => onDelete(speaker)}><XCircle className="w-3 h-3" /></Button>
           </div>
         </div>
         <p className="text-xs font-nastaleeq text-muted-foreground line-clamp-2" dir="rtl">{speaker.bio}</p>
@@ -271,7 +271,11 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
         </div>
       </div>
 
-      <Tabs defaultValue={activeSpeaker ? "videos" : "speakers"} className="space-y-6">
+      <Tabs 
+        key={activeSpeaker ? `speaker-${activeSpeaker.id}` : "speakers-list"}
+        defaultValue={activeSpeaker ? "videos" : "speakers"} 
+        className="space-y-6"
+      >
         <TabsList className="bg-transparent border border-border/50 p-1 rounded-full h-auto w-full max-w-3xl flex items-center justify-between mb-8 overflow-x-auto">
           {!activeSpeaker ? (
             <>
@@ -364,7 +368,7 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
                     </div>
                     <div className="flex gap-2 justify-end mt-4">
                       <Button variant="ghost" size="sm" onClick={() => { setEditingVideoId(video.id); setVideoFormData({ title: video.title, slug: video.slug, videoUrl: video.videoUrl || "", embedUrl: video.embedUrl || "", isPublished: video.isPublished, isNew: video.isNew || false, customFields: video.customFields || {} }); setIsVideoModalOpen(true); }}><Pencil className="w-4 h-4" /></Button>
-                      <Button variant="ghost" size="sm" onClick={() => { setDeletingVideo(video); }} className="text-red-500"><Trash2 className="w-4 h-4" /></Button>
+                      <Button variant="ghost" size="sm" onClick={() => { setDeletingVideo(video); }} className="text-red-500"><XCircle className="w-4 h-4" /></Button>
                     </div>
                   </div>
                 ))}

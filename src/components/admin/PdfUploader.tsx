@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { FileText, Upload, Trash2, Loader2 } from "lucide-react";
+import { FileText, Upload, XCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
@@ -91,10 +91,10 @@ export function PdfUploader({ value = "", onChange, className }: PdfUploaderProp
                             size="icon"
                             onClick={() => onChange("")}
                             disabled={isUploading}
-                            className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg h-7 w-7"
+                            className="text-muted-foreground hover:text-destructive hover:bg-destructive/80 rounded-lg h-7 w-7"
                             aria-label="Remove PDF"
                         >
-                            <Trash2 className="h-3.5 w-3.5" />
+                            <XCircle className="h-3.5 w-3.5" />
                         </Button>
                     </div>
 

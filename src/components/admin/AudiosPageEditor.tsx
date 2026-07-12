@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import {
-  Plus, Pencil, Trash2, Search, GripVertical, FileText,
+  Plus, Pencil, XCircle, Search, GripVertical, FileText,
   Settings2, UploadCloud, Loader2, ArrowLeft, Image as ImageIcon,
   Video, User, PlayCircle, Eye, Check
 } from "lucide-react";
@@ -95,7 +95,7 @@ function SortableCategoryCard({ id, item, onEdit, onDelete, onClick, videoCount 
               <Pencil className="h-3.5 w-3.5" />
             </Button>
             <Button variant="ghost" size="icon" className="h-7 w-7 text-red-500 hover:text-red-600 hover:bg-red-500/10" onClick={() => onDelete(item)}>
-              <Trash2 className="h-3.5 w-3.5" />
+              <XCircle className="h-3.5 w-3.5" />
             </Button>
           </div>
         </div>
@@ -139,7 +139,7 @@ function SortableAudioCard({ id, item, speakerName, onEdit, onDelete }: any) {
               <Pencil className="h-3.5 w-3.5" />
             </Button>
             <Button variant="ghost" size="icon" className="h-7 w-7 text-red-500 hover:bg-red-500/10" onClick={() => onDelete(item)}>
-              <Trash2 className="h-3.5 w-3.5" />
+              <XCircle className="h-3.5 w-3.5" />
             </Button>
             <div {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing p-1.5 hover:bg-muted rounded text-muted-foreground">
               <GripVertical className="h-4 w-4" />

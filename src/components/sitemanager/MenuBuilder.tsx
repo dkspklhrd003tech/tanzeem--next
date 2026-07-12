@@ -11,7 +11,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import {
-  GripVertical, Plus, Pencil, Trash2, ChevronDown, ChevronRight,
+  GripVertical, Plus, Pencil, XCircle, ChevronDown, ChevronRight,
   ExternalLink, EyeOff, Globe2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -113,7 +113,7 @@ function SortableItem({
           </button>
           <button onClick={() => setConfirmDelete(true)} title="Delete"
             className="h-7 w-7 rounded flex items-center justify-center hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors">
-            <Trash2 className="h-3.5 w-3.5" />
+            <XCircle className="h-3.5 w-3.5" />
           </button>
         </div>
       </div>

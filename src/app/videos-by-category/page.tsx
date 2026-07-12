@@ -18,6 +18,7 @@ export default async function VideosByCategoryPage() {
         slug: videoCategories.slug,
         description: videoCategories.description,
         imageUrl: videoCategories.imageUrl,
+        customFields: videoCategories.customFields,
       })
       .from(videoCategories)
       .where(isNull(videoCategories.parentId))
@@ -73,6 +74,11 @@ export default async function VideosByCategoryPage() {
                   <h3 className="text-lg md:text-xl font-semibold text-foreground group-hover:text-primary transition-colors duration-300">
                     {cat.name}
                   </h3>
+                  {cat.customFields?.urduName && (
+                    <p className="text-sm text-muted-foreground text-center line-clamp-1 mt-1" dir="rtl">
+                      {cat.customFields.urduName}
+                    </p>
+                  )}
                   <span className="text-xs font-normal text-primary bg-primary/10 px-3 py-1 rounded-full mt-2 inline-block">
                     {cat.count} Videos
                   </span>

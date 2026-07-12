@@ -10,7 +10,7 @@ import {
   ChevronUp,
   FileText,
   Upload,
-  Trash2,
+  XCircle,
   Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -470,9 +470,9 @@ function AudioUploader({ value = "", onChange }: AudioUploaderProps) {
             variant="ghost"
             size="icon"
             onClick={() => onChange("")}
-            className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 rounded-lg h-7 w-7 shrink-0"
+            className="text-muted-foreground hover:text-destructive hover:bg-destructive/80 rounded-lg h-7 w-7 shrink-0"
           >
-            <Trash2 className="h-3.5 w-3.5" />
+            <XCircle className="h-3.5 w-3.5" />
           </Button>
         </div>
       ) : (

@@ -8,7 +8,7 @@ import {
   Filter,
   MoreHorizontal,
   Edit,
-  Trash2,
+  XCircle,
   Eye,
   ChevronLeft,
   ChevronRight,
@@ -203,7 +203,7 @@ export function ContentList<T extends { id: string | number }>({
                               onClick={() => setDeletingItem(item)}
                               className="text-red-500 focus:text-red-500 cursor-pointer"
                             >
-                              <Trash2 className="h-4 w-4 mr-2" />
+                              <XCircle className="h-4 w-4 mr-2" />
                               Delete
                             </DropdownMenuItem>
                           )}

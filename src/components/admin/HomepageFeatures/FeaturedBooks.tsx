@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Plus, Edit2, Trash2, X, Image as ImageIcon, GripVertical } from "lucide-react";
+import { Plus, Edit2, XCircle, X, Image as ImageIcon, GripVertical } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { ImageUploader } from "../ImageUploader";
@@ -61,7 +61,7 @@ function SortableBookRow({ book, onEdit, onDelete }: { book: any; onEdit: (b: an
             </td>
             <td className="py-3 text-right">
                 <button onClick={() => onEdit(book)} className="p-2 text-foreground-light hover:text-primary"><Edit2 className="w-4 h-4" /></button>
-                <button onClick={() => onDelete(book.id, book.title)} className="p-2 text-foreground-light hover:text-destructive"><Trash2 className="w-4 h-4" /></button>
+                <button onClick={() => onDelete(book.id, book.title)} className="p-2 text-foreground-light hover:text-destructive"><XCircle className="w-4 h-4" /></button>
             </td>
         </tr>
     );

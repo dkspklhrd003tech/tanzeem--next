@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Pencil, Trash2, MapPin, Search } from "lucide-react";
+import { Plus, Pencil, XCircle, MapPin, Search } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -232,7 +232,7 @@ export function DarseQuranManager() {
                                                     <Pencil className="w-4 h-4 text-blue-500" />
                                                 </Button>
                                                 <Button variant="ghost" size="icon" onClick={() => setDeletingEventId({id: event.id, city: event.city})}>
-                                                    <Trash2 className="w-4 h-4 text-red-500" />
+                                                    <XCircle className="w-4 h-4 text-red-500" />
                                                 </Button>
                                             </div>
                                         </td>

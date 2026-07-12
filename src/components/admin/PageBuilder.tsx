@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Plus, GripVertical, Trash2, Save } from 'lucide-react';
+import { Plus, GripVertical, XCircle, Save } from 'lucide-react';
 
 interface Section {
   id: string;
@@ -61,7 +61,7 @@ export function PageBuilder({ pageId }: { pageId: string }) {
               <div className="flex justify-between">
                 <span className="font-semibold uppercase text-sm text-primary">{section.type}</span>
                 <Button variant="ghost" size="sm" onClick={() => removeSection(section.id)} className="text-red-500 hover:text-red-700">
-                  <Trash2 className="h-4 w-4" />
+                  <XCircle className="h-4 w-4" />
                 </Button>
               </div>
               <div className="text-sm text-gray-500">

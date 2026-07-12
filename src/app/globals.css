@@ -7,6 +7,9 @@
    Their CSS variables (--font-heading, --font-body) are injected on <body>. */
 
 :root {
+  /* ── Urdu Font Fallback (Jameel Noori) with Unicode Range ── */
+  --font-urdu-fallback: 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', serif;
+
   /* ── Brand Greens (primary identity — kept from project) ── */
   --primary: #0d5844;
   --primary-light: color-mix(in srgb, var(--primary) 10%, white);
@@ -256,13 +259,26 @@
   --font-family-nastaleeq: var(--font-nastaleeq);
 }
 
-/* ─── Base Styles ─────────────────────────────────────────────────────────── */
+/* ── Custom Urdu Font with Unicode Range ── */
+@font-face {
+  font-family: 'UrduAutoFallback';
+  src: local('Jameel Noori Nastaleeq'), local('Noto Nastaliq Urdu');
+  /* Covers Arabic/Urdu character ranges */
+  unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF;
+}
 
-body {
-  background-color: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-body);
-  overflow-x: hidden;
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-body), 'UrduAutoFallback', sans-serif;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading), 'UrduAutoFallback', sans-serif;
+  }
 }
 
 /* Heading font applied globally to all heading elements */

@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { mutate } from "swr";
 import {
-  LayoutTemplate, Plus, Trash2, GripVertical,
+  LayoutTemplate, Plus, XCircle, GripVertical,
   ChevronDown, ChevronRight, Check, ExternalLink,
   Save, RotateCcw, Eye,
 } from "lucide-react";
@@ -184,7 +184,7 @@ function SortableMenuRow({
               className="p-1 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
               title="Delete"
             >
-              <Trash2 className="h-3.5 w-3.5" />
+              <XCircle className="h-3.5 w-3.5" />
             </button>
           </ConfirmDialog>
         </div>

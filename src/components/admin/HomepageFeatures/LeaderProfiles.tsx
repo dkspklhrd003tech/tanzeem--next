@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Edit2, Trash2, X, Image as ImageIcon } from "lucide-react";
+import { Plus, Edit2, XCircle, X, Image as ImageIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { ImageUploader } from "../ImageUploader";
@@ -214,7 +214,7 @@ export function LeaderProfiles() {
                                                     <Edit2 className="w-4 h-4" />
                                                 </button>
                                                 <button onClick={() => handleDelete(member.id, member.name)} className="p-2 text-foreground-muted hover:text-red-500 transition-colors rounded-full hover:bg-red-50" title="Delete">
-                                                    <Trash2 className="w-4 h-4" />
+                                                    <XCircle className="w-4 h-4" />
                                                 </button>
                                             </div>
                                         </td>

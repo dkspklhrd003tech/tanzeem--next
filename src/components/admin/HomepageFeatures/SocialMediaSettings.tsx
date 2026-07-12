@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { Save, Plus, Trash2, GripVertical } from "lucide-react";
+import { Save, Plus, XCircle, GripVertical } from "lucide-react";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -43,7 +43,7 @@ export function SocialMediaSettings() {
                     // Fallback to legacy settings if JSON doesn't exist
                     const legacyUrls: any = {};
                     data.raw.forEach((s: any) => { legacyUrls[s.key] = s.value; });
-                    const defaultLinks = [];
+                    const defaultLinks: SocialLink[] = [];
                     if (legacyUrls.youtube_url) defaultLinks.push({ id: "youtube", name: "YouTube", icon: "youtube", url: legacyUrls.youtube_url, color: "#dc2626" });
                     if (legacyUrls.facebook_url) defaultLinks.push({ id: "facebook", name: "Facebook", icon: "facebook", url: legacyUrls.facebook_url, color: "#2563eb" });
                     if (legacyUrls.twitter_url) defaultLinks.push({ id: "twitter", name: "X (Twitter)", icon: "twitter", url: legacyUrls.twitter_url, color: "#000000" });
@@ -208,10 +208,10 @@ export function SocialMediaSettings() {
                                 <Button
                                     variant="ghost"
                                     size="icon"
-                                    className="text-destructive hover:bg-destructive/10 hover:text-destructive shrink-0 mt-6 md:mt-0"
+                                    className="text-destructive hover:bg-destructive/80 hover:text-destructive shrink-0 mt-6 md:mt-0"
                                     onClick={() => removeLink(link.id)}
                                 >
-                                    <Trash2 className="w-4 h-4" />
+                                    <XCircle className="w-4 h-4" />
                                 </Button>
                             </div>
                         ))}

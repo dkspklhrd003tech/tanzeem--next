@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import {
-  Plus, Pencil, Trash2, Search, FileText, Sparkles,
+  Plus, Pencil, XCircle, Search, FileText, Sparkles,
   Settings2, Check, AlertCircle, UploadCloud, Loader2, ArrowLeft,
   GripVertical, Calendar, ExternalLink
 } from "lucide-react";
@@ -188,7 +188,7 @@ function SortableCard({ id, item, onEdit, onDelete }: SortableItemProps) {
               onClick={() => onDelete(item)}
               title="Delete Campaign"
             >
-              <Trash2 className="h-3.5 w-3.5" />
+              <XCircle className="h-3.5 w-3.5" />
             </Button>
             {/* Drag Handle */}
             <div
@@ -328,7 +328,7 @@ function SortableCampaignBlock({ block, index, onUpdate, onUpdateTitle, onRemove
           <Badge variant="outline" className="bg-primary border border-primary uppercase text-[12px] text-white">{block.type}</Badge>
         </div>
         <Button type="button" variant="ghost" size="icon" className="h-6 w-6 text-destructive" onClick={onRemove}>
-          <Trash2 className="h-4 w-4" />
+          <XCircle className="h-4 w-4" />
         </Button>
       </div>
 
@@ -376,7 +376,7 @@ function SortableCampaignBlock({ block, index, onUpdate, onUpdateTitle, onRemove
                 <Button type="button" variant="destructive" size="icon" className="absolute -top-2 -right-2 h-5 w-5 rounded-full z-10 shadow-sm hover:bg-destructive hover:text-white"
                   onClick={() => onUpdate((block.value || []).filter((_: any, idx: number) => idx !== i))}
                 >
-                  <Trash2 className="h-3 w-3" />
+                  <XCircle className="h-3 w-3" />
                 </Button>
                 <div className="flex-1">
                   <ImageUploader value={thumb.image} onChange={(url) => {
@@ -485,7 +485,7 @@ function SortableCampaignBlock({ block, index, onUpdate, onUpdateTitle, onRemove
                 <Button type="button" variant="destructive" size="icon" className="absolute -top-2 -right-2 h-5 w-5 rounded-full z-10 shadow-sm hover:bg-destructive hover:text-white"
                   onClick={() => onUpdate((block.value || []).filter((_: any, idx: number) => idx !== i))}
                 >
-                  <Trash2 className="h-3 w-3" />
+                  <XCircle className="h-3 w-3" />
                 </Button>
                 <ImageUploader
                   value={slide.image}

@@ -20,7 +20,7 @@ import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import {
   Save, Eye, EyeOff, LayoutGrid, FileText, Settings, HelpCircle,
-  Plus, Trash2, ArrowUp, ArrowDown, Upload, Link2, Sparkles,
+  Plus, XCircle, ArrowUp, ArrowDown, Upload, Link2, Sparkles,
   Globe2, Compass, Heart, Share2, Search, MapPin, Code, ChevronRight, User
 } from "lucide-react";
 
@@ -752,9 +752,9 @@ export default function OrganizationPageEditor() {
                       <div key={i} className="border border-border p-4 rounded-xl bg-card space-y-4 relative shadow-sm">
                         <button
                           onClick={() => removeIdeologyCard(i)}
-                          className="absolute top-4 right-4 text-destructive hover:bg-destructive/10 p-1.5 rounded-lg transition-colors"
+                          className="absolute top-4 right-4 text-destructive hover:bg-destructive/80 p-1.5 rounded-lg transition-colors"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <XCircle className="w-4 h-4" />
                         </button>
                         <h4 className="text-xs font-bold text-primary uppercase">Pillar Card #{i + 1}</h4>
 
@@ -852,9 +852,9 @@ export default function OrganizationPageEditor() {
                       <div key={i} className="border border-border p-4 rounded-xl bg-card space-y-4 relative shadow-sm">
                         <button
                           onClick={() => removeJoinCard(i)}
-                          className="absolute top-4 right-4 text-destructive hover:bg-destructive/10 p-1.5 rounded-lg transition-colors"
+                          className="absolute top-4 right-4 text-destructive hover:bg-destructive/80 p-1.5 rounded-lg transition-colors"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <XCircle className="w-4 h-4" />
                         </button>
 
                         <div className="grid grid-cols-3 gap-4">
@@ -1236,7 +1236,7 @@ export default function OrganizationPageEditor() {
                     {seoState.faqs.map((faq, i) => (
                       <div key={i} className="border border-border p-3 rounded-lg bg-card space-y-3 relative">
                         <button onClick={() => removeFaq(i)} className="absolute top-2 right-2 text-destructive p-1">
-                          <Trash2 className="w-3.5 h-3.5" />
+                          <XCircle className="w-3.5 h-3.5" />
                         </button>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pr-6">
                           <div>
@@ -1279,7 +1279,7 @@ export default function OrganizationPageEditor() {
                           className="h-8 text-xs flex-1"
                         />
                         <button onClick={() => removeHowToStep(i)} className="text-destructive p-1">
-                          <Trash2 className="w-3.5 h-3.5" />
+                          <XCircle className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     ))}

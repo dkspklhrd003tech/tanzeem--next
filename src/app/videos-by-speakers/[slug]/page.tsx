@@ -82,8 +82,13 @@ export default async function SpeakerVideosPage({ params }: { params: Promise<{ 
         {/* Content Section */}
         <div className="container mx-auto">
           <div className="max-w-7xl mx-auto">
-            <h2 className="text-2xl font-bold mb-8 flex justify-center items-center gap-2 text-center">
+            <h2 className="text-2xl font-bold mb-8 flex justify-center items-center gap-2 text-center flex-wrap">
               Videos by {speaker.name}
+              {speaker.bio && (
+                <span className="text-foreground font-nastaleeq text-2xl mx-1" dir="rtl">
+                  ({speaker.bio})
+                </span>
+              )}
               <span className="text-sm font-normal text-primary bg-muted px-3 py-1 rounded-full">
                 {vids.length} Videos
               </span>

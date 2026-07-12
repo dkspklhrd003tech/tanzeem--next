@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import {
   Plus,
   Pencil,
-  Trash2,
+  XCircle,
   Search,
   Settings2,
   FileText,
@@ -185,11 +185,11 @@ function SortableAccountCard({ id, account, platformName, onEdit, onDelete }: So
             <Button
               variant="ghost"
               size="icon"
-              className="h-7 w-7 text-destructive hover:text-destructive hover:bg-destructive/10"
+              className="h-7 w-7 text-destructive hover:text-destructive hover:bg-destructive/80"
               onClick={() => onDelete(account)}
               title="Delete card"
             >
-              <Trash2 className="h-3.5 w-3.5" />
+              <XCircle className="h-3.5 w-3.5" />
             </Button>
           </div>
         </div>
@@ -299,11 +299,11 @@ function SortablePlatformRow({ id, platform, onEdit, onDelete }: SortablePlatfor
           <Button
             variant="ghost"
             size="icon"
-            className="h-8 w-8 text-destructive hover:bg-destructive/10"
+            className="h-8 w-8 text-destructive hover:bg-destructive/80"
             onClick={() => onDelete(platform)}
             title="Delete"
           >
-            <Trash2 className="h-4 w-4" />
+            <XCircle className="h-4 w-4" />
           </Button>
         </div>
       </div>

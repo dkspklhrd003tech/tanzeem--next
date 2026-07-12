@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import {
-  ArrowLeft, Save, Send, Eye, Trash2, Copy,
+  ArrowLeft, Save, Send, Eye, XCircle, Copy,
   ChevronDown, ChevronUp, Clock, AlertCircle, Check,
   LayoutTemplate, FileText, SlidersHorizontal, Search
 } from "lucide-react";

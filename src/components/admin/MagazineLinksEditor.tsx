@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Plus, Trash2, Edit2, GripVertical, Save, ArrowLeft, ExternalLink, RefreshCw } from "lucide-react";
+import { Plus, XCircle, Edit2, GripVertical, Save, ArrowLeft, ExternalLink, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -80,7 +80,7 @@ function SortableLinkItem({ link, onEdit, onDelete, onToggleActive, onToggleNew 
             <Edit2 className="h-4 w-4" />
           </Button>
           <Button variant="ghost" size="icon" className="h-8 w-8 text-white bg-destructive hover:bg-destructive" onClick={() => onDelete(link.id)}>
-            <Trash2 className="h-4 w-4" />
+            <XCircle className="h-4 w-4" />
           </Button>
         </div>
       </div>

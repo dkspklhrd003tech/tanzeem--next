@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import { Plus, Trash2, Edit, Video, Headphones, Image as ImageIcon, X, UploadCloud, Loader2 } from "lucide-react";
+import { Plus, XCircle, Edit, Video, Headphones, Image as ImageIcon, X, UploadCloud, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -62,6 +62,7 @@ interface MainCategory {
   code?: string;
   image?: string;
   order?: number;
+  customFields?: any;
   subCategories: SubCategory[];
 }
 
@@ -105,7 +106,7 @@ function SortableCategoryCard({ cat, onClick, onEdit, onDelete }: { cat: MainCat
             <Edit className="w-4 h-4" />
           </Button>
           <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive z-10" onClick={(e) => { e.stopPropagation(); onDelete(cat); }}>
-            <Trash2 className="w-4 h-4" />
+            <XCircle className="w-4 h-4" />
           </Button>
         </div>
       </div>
@@ -168,6 +169,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
         code: mainCat.code || "",
         image: mainCat.imageUrl || "",
         order: mainCat.order || 0,
+        customFields: mainCat.customFields || {},
         subCategories: (mainCat.subCategories?.map((subCat: any) => ({
           id: subCat.id,
           title: subCat.name,
@@ -224,6 +226,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
         code,
         image: imageUrl,
         order: 0,
+        customFields: {},
         subCategories: [],
       };
       setCategories([...categories, newCat]);
@@ -256,7 +259,8 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
           name: updatedCat.title,
           code: updatedCat.code,
           imageUrl: updatedCat.image,
-          order: updatedCat.order || 0
+          order: updatedCat.order || 0,
+          customFields: updatedCat.customFields || {}
         })
       });
       setCategories(categories.map(c => c.id === updatedCat.id ? updatedCat : c).sort((a, b) => (a.order || 0) - (b.order || 0)));
@@ -644,7 +648,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                             });
                           }}
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <XCircle className="w-4 h-4" />
                         </Button>
                       </div>
                     </div>
@@ -715,7 +719,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                               });
                             }}
                           >
-                            <Trash2 className="w-4 h-4" />
+                            <XCircle className="w-4 h-4" />
                           </Button>
                         </div>
                       </div>
@@ -789,6 +793,14 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                 />
               </div>
               <div className="space-y-2">
+                <Label>Urdu Name</Label>
+                <Input
+                  value={editingMainCat.customFields?.urduName || ""}
+                  onChange={(e) => setEditingMainCat({ ...editingMainCat, customFields: { ...editingMainCat.customFields, urduName: e.target.value } })}
+                  dir="rtl"
+                />
+              </div>
+              <div className="space-y-2">
                 <Label>Featured Image (16:9 Ratio)</Label>
                 <ImageUploader
                   value={editingMainCat.image || ""}
@@ -854,6 +866,15 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
 
               {!editingSubCat.cat.id.endsWith("_direct") && (
                 <>
+                  <div className="space-y-2">
+                    <Label>Urdu Name</Label>
+                    <Input
+                      value={editingSubCat.cat.customFields?.urduName || ""}
+                      onChange={(e) => setEditingSubCat({ ...editingSubCat, cat: { ...editingSubCat.cat, customFields: { ...(editingSubCat.cat.customFields || {}), urduName: e.target.value } } })}
+                      onBlur={() => saveSubCategory(editingSubCat.mainId, editingSubCat.cat)}
+                      dir="rtl"
+                    />
+                  </div>
                   <CustomFieldRenderer
                     entityType={`${mediaType}_category`}
                     values={editingSubCat.cat.customFields || {}}
@@ -898,7 +919,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                             action: async () => await removeMediaItem(editingSubCat.cat.id, item.id)
                           });
                         }}>
-                          <Trash2 className="w-4 h-4" />
+                          <XCircle className="w-4 h-4" />
                         </Button>
                       </div>
                     ))}

@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import {
   Plus,
-  Trash2,
+  XCircle,
   Settings2,
   ExternalLink,
   Layout,
@@ -332,7 +332,7 @@ export function SocialMediaManager() {
                           setDeletingPlatformId(p.id);
                         }}
                       >
-                        <Trash2 className="w-3 h-3" />
+                        <XCircle className="w-3 h-3" />
                       </Button>
                     </div>
                   </button>
@@ -480,7 +480,7 @@ export function SocialMediaManager() {
                             className="flex-1 rounded-lg"
                             onClick={() => setDeletingAccountId(account.id)}
                           >
-                            <Trash2 className="w-3.5 h-3.5 mr-2" /> Delete
+                            <XCircle className="w-3.5 h-3.5 mr-2" /> Delete
                           </Button>
                         </div>
                       </div>

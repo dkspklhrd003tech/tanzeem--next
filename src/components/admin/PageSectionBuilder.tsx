@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { v4 as uuidv4 } from "uuid";
 import {
   Plus,
-  Trash2,
+  XCircle,
   GripVertical,
   Settings2,
   Eye,
@@ -382,8 +382,8 @@ function SortableItem({ section, isExpanded, onToggleExpand, onRemove, onUpdate 
             <Button variant="ghost" size="icon" onClick={onToggleExpand}>
               {isExpanded ? <ChevronUp className="w-4 h-4" /> : <Settings2 className="w-4 h-4" />}
             </Button>
-            <Button variant="ghost" size="icon" onClick={() => onRemove(section.id)} className="text-destructive hover:bg-destructive/10">
-              <Trash2 className="w-4 h-4" />
+            <Button variant="ghost" size="icon" onClick={() => onRemove(section.id)} className="text-destructive hover:bg-destructive/80">
+              <XCircle className="w-4 h-4" />
             </Button>
           </div>
         </div>
@@ -530,7 +530,7 @@ function SectionConfigForm({ type, config: rawConfig, onUpdate }: { type: string
                   const newStats = config.stats.filter((_: any, idx: number) => idx !== i);
                   handleChange("stats", newStats);
                 }}>
-                  <Trash2 className="w-4 h-4" />
+                  <XCircle className="w-4 h-4" />
                 </Button>
               </div>
             ))}
@@ -559,7 +559,7 @@ function SectionConfigForm({ type, config: rawConfig, onUpdate }: { type: string
                     const newItems = config.items.filter((_: any, idx: number) => idx !== i);
                     handleChange("items", newItems);
                   }}>
-                    <Trash2 className="w-3 h-3" />
+                    <XCircle className="w-3 h-3" />
                   </Button>
                 </div>
                 <div className="space-y-2">
@@ -605,7 +605,7 @@ function SectionConfigForm({ type, config: rawConfig, onUpdate }: { type: string
                     const newMembers = config.members.filter((_: any, idx: number) => idx !== i);
                     handleChange("members", newMembers);
                   }}>
-                    <Trash2 className="w-3 h-3" />
+                    <XCircle className="w-3 h-3" />
                   </Button>
                 </div>
                 <div className="space-y-3">
@@ -677,7 +677,7 @@ function SectionConfigForm({ type, config: rawConfig, onUpdate }: { type: string
                     const newItems = config.items.filter((_: any, idx: number) => idx !== i);
                     handleChange("items", newItems);
                   }}>
-                    <Trash2 className="w-3 h-3" />
+                    <XCircle className="w-3 h-3" />
                   </Button>
                 </div>
                 <div className="space-y-3">
@@ -737,7 +737,7 @@ function SectionConfigForm({ type, config: rawConfig, onUpdate }: { type: string
                     const newPubs = config.publications.filter((_: any, idx: number) => idx !== i);
                     handleChange("publications", newPubs);
                   }}>
-                    <Trash2 className="w-3 h-3" />
+                    <XCircle className="w-3 h-3" />
                   </Button>
                 </div>
                 <div className="space-y-3">
@@ -948,7 +948,7 @@ function SectionConfigForm({ type, config: rawConfig, onUpdate }: { type: string
                   <Label className="text-xs font-bold text-primary">Card #{i + 1}</Label>
                   <Button variant="ghost" size="icon" className="h-6 w-6 text-destructive" onClick={() => {
                     handleChange("cards", (config.cards ?? []).filter((_: any, idx: number) => idx !== i));
-                  }}><Trash2 className="w-3 h-3" /></Button>
+                  }}><XCircle className="w-3 h-3" /></Button>
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <div className="space-y-1">
@@ -1038,11 +1038,11 @@ function SectionConfigForm({ type, config: rawConfig, onUpdate }: { type: string
               <div key={cat.id || cIdx} className="space-y-4 bg-background p-4 rounded-xl border border-border/80 shadow-sm">
                 <div className="flex items-center justify-between mb-2">
                   <Label className="text-sm font-bold text-primary">Category: {cat.title || `Item #${cIdx + 1}`}</Label>
-                  <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:bg-destructive/10" onClick={() => {
+                  <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:bg-destructive/80" onClick={() => {
                     const newCats = config.categories.filter((_: any, idx: number) => idx !== cIdx);
                     handleChange("categories", newCats);
                   }}>
-                    <Trash2 className="w-4 h-4" />
+                    <XCircle className="w-4 h-4" />
                   </Button>
                 </div>
 
@@ -1107,12 +1107,12 @@ function SectionConfigForm({ type, config: rawConfig, onUpdate }: { type: string
                           }} placeholder="Short description..." />
                         </div>
                         <div className="sm:col-span-1 text-right">
-                          <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:bg-destructive/10" onClick={() => {
+                          <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:bg-destructive/80" onClick={() => {
                             const newCats = [...config.categories];
                             newCats[cIdx].subcategories = newCats[cIdx].subcategories.filter((_: any, idx: number) => idx !== sIdx);
                             handleChange("categories", newCats);
                           }}>
-                            <Trash2 className="w-3.5 h-3.5" />
+                            <XCircle className="w-3.5 h-3.5" />
                           </Button>
                         </div>
                       </div>

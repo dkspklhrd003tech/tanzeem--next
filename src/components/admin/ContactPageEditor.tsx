@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Trash2, Edit2, Save, ArrowLeft, RefreshCw, MapPin, Phone, Mail, Building2 } from "lucide-react";
+import { Plus, XCircle, Edit2, Save, ArrowLeft, RefreshCw, MapPin, Phone, Mail, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -72,11 +72,11 @@ type LocationRow = {
 function SortableLocationCard({ loc, onEdit, onDelete }: { loc: LocationRow, onEdit: () => void, onDelete: () => void }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: loc.id });
   const style = { transform: CSS.Transform.toString(transform), transition };
-  
+
   return (
-    <div 
-      ref={setNodeRef} 
-      style={style} 
+    <div
+      ref={setNodeRef}
+      style={style}
       className={cn(
         "flex flex-col p-4 border border-border rounded-xl bg-card hover:border-primary/30 transition-all",
         isDragging && "z-50 shadow-2xl scale-[1.02] border-primary ring-2 ring-primary/20 opacity-90"
@@ -117,8 +117,8 @@ function SortableLocationCard({ loc, onEdit, onDelete }: { loc: LocationRow, onE
           <Button variant="ghost" size="icon" onClick={onEdit} className="h-8 w-8 hover:bg-primary/10 hover:text-primary">
             <Edit2 className="h-4 w-4" />
           </Button>
-          <Button variant="ghost" size="icon" onClick={onDelete} className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10">
-            <Trash2 className="h-4 w-4" />
+          <Button variant="ghost" size="icon" onClick={onDelete} className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/80">
+            <XCircle className="h-4 w-4" />
           </Button>
         </div>
       </div>
@@ -171,7 +171,7 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
             orderArr.forEach((id: string, idx: number) => {
               orderMap[id] = idx;
             });
-          } catch(e) {}
+          } catch (e) { }
         } else {
           // Fallbacks from ContactSection.tsx if not set
           setSettings({
@@ -229,19 +229,19 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
         const oldIndex = items.findIndex((i) => i.id === active.id);
         const newIndex = items.findIndex((i) => i.id === over?.id);
         const newArray = arrayMove(items, oldIndex, newIndex);
-        
+
         // Save the new order to settings
         const newOrder = newArray.map(loc => loc.id);
         const orderStr = JSON.stringify(newOrder);
         setSettings(prev => ({ ...prev, locations_order: orderStr }));
-        
+
         // Background save
         fetch("/api/settings", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ settings: { ...settings, locations_order: orderStr }, group: "contact" }),
         }).catch(e => console.error("Failed to auto-save location order"));
-        
+
         return newArray;
       });
     }
@@ -453,11 +453,11 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
                   <SortableContext items={locations.map(l => l.id)} strategy={rectSortingStrategy}>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {locations.map((loc) => (
-                        <SortableLocationCard 
-                          key={loc.id} 
-                          loc={loc} 
-                          onEdit={() => openLocationDialog(loc)} 
-                          onDelete={() => setDeletingLocationId(loc.id)} 
+                        <SortableLocationCard
+                          key={loc.id}
+                          loc={loc}
+                          onEdit={() => openLocationDialog(loc)}
+                          onDelete={() => setDeletingLocationId(loc.id)}
                         />
                       ))}
                     </div>
@@ -511,7 +511,7 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
                       email: "",
                       emailUrl: "",
                       mapUrl: "",
-                      leaderTitle: "Ameer"
+                      leaderTitle: "Ameer" as "Ameer" | "Naib Ameer"
                     }];
                     setEditingLocation({ ...editingLocation, details: newDetails });
                   }}
@@ -529,13 +529,13 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
                     <Button
                       variant="ghost"
                       size="icon"
-                      className="absolute right-2 top-2 h-6 w-6 text-destructive hover:bg-destructive/10"
+                      className="absolute right-2 top-2 h-6 w-6 text-destructive hover:bg-destructive/80"
                       onClick={() => {
                         const newDetails = editingLocation.details!.filter(d => d.id !== detail.id);
                         setEditingLocation({ ...editingLocation, details: newDetails });
                       }}
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <XCircle className="h-4 w-4" />
                     </Button>
 
                     <div className="grid grid-cols-2 gap-3">
@@ -564,9 +564,9 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
                             setEditingLocation({ ...editingLocation, details: newDetails });
                           }} />
                           <div className="flex items-center gap-1.5 mt-2">
-                            <Checkbox 
-                              id={`titleValueUrlNewTab-${detail.id}`} 
-                              checked={detail.titleValueUrlNewTab !== false} 
+                            <Checkbox
+                              id={`titleValueUrlNewTab-${detail.id}`}
+                              checked={detail.titleValueUrlNewTab !== false}
                               onCheckedChange={(checked) => {
                                 const newDetails = [...editingLocation.details!];
                                 newDetails[index].titleValueUrlNewTab = checked === true;
@@ -582,32 +582,32 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
                     <div className="grid grid-cols-2 gap-3">
                       <div>
                         <div className="flex items-center gap-2 mb-2">
-                           <Button 
-                             type="button" 
-                             variant={(!detail.leaderTitle || detail.leaderTitle === 'Ameer') ? 'default' : 'outline'} 
-                             size="sm" 
-                             className="h-6 text-[10px] px-2 rounded-full"
-                             onClick={() => {
-                               const newDetails = [...editingLocation.details!];
-                               newDetails[index].leaderTitle = 'Ameer';
-                               setEditingLocation({ ...editingLocation, details: newDetails });
-                             }}
-                           >
-                             Ameer
-                           </Button>
-                           <Button 
-                             type="button" 
-                             variant={detail.leaderTitle === 'Naib Ameer' ? 'default' : 'outline'} 
-                             size="sm" 
-                             className="h-6 text-[10px] px-2 rounded-full"
-                             onClick={() => {
-                               const newDetails = [...editingLocation.details!];
-                               newDetails[index].leaderTitle = 'Naib Ameer';
-                               setEditingLocation({ ...editingLocation, details: newDetails });
-                             }}
-                           >
-                             Naib Ameer
-                           </Button>
+                          <Button
+                            type="button"
+                            variant={(!detail.leaderTitle || detail.leaderTitle === 'Ameer') ? 'default' : 'outline'}
+                            size="sm"
+                            className="h-6 text-[10px] px-2 rounded-full"
+                            onClick={() => {
+                              const newDetails = [...editingLocation.details!];
+                              newDetails[index].leaderTitle = 'Ameer';
+                              setEditingLocation({ ...editingLocation, details: newDetails });
+                            }}
+                          >
+                            Ameer
+                          </Button>
+                          <Button
+                            type="button"
+                            variant={detail.leaderTitle === 'Naib Ameer' ? 'default' : 'outline'}
+                            size="sm"
+                            className="h-6 text-[10px] px-2 rounded-full"
+                            onClick={() => {
+                              const newDetails = [...editingLocation.details!];
+                              newDetails[index].leaderTitle = 'Naib Ameer';
+                              setEditingLocation({ ...editingLocation, details: newDetails });
+                            }}
+                          >
+                            Naib Ameer
+                          </Button>
                         </div>
                         <Input className="h-8" value={detail.naibAmeer || ""} onChange={(e) => {
                           const newDetails = [...editingLocation.details!];
@@ -633,9 +633,9 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
                             setEditingLocation({ ...editingLocation, details: newDetails });
                           }} />
                           <div className="flex items-center gap-1.5 mt-2">
-                            <Checkbox 
-                              id={`addressUrlNewTab-${detail.id}`} 
-                              checked={detail.addressUrlNewTab !== false} 
+                            <Checkbox
+                              id={`addressUrlNewTab-${detail.id}`}
+                              checked={detail.addressUrlNewTab !== false}
                               onCheckedChange={(checked) => {
                                 const newDetails = [...editingLocation.details!];
                                 newDetails[index].addressUrlNewTab = checked === true;
@@ -666,9 +666,9 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
                             setEditingLocation({ ...editingLocation, details: newDetails });
                           }} />
                           <div className="flex items-center gap-1.5 mt-2">
-                            <Checkbox 
-                              id={`phoneUrlNewTab-${detail.id}`} 
-                              checked={detail.phoneUrlNewTab !== false} 
+                            <Checkbox
+                              id={`phoneUrlNewTab-${detail.id}`}
+                              checked={detail.phoneUrlNewTab !== false}
                               onCheckedChange={(checked) => {
                                 const newDetails = [...editingLocation.details!];
                                 newDetails[index].phoneUrlNewTab = checked === true;
@@ -696,9 +696,9 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
                             setEditingLocation({ ...editingLocation, details: newDetails });
                           }} />
                           <div className="flex items-center gap-1.5 mt-2">
-                            <Checkbox 
-                              id={`mobileUrlNewTab-${detail.id}`} 
-                              checked={detail.mobileUrlNewTab !== false} 
+                            <Checkbox
+                              id={`mobileUrlNewTab-${detail.id}`}
+                              checked={detail.mobileUrlNewTab !== false}
                               onCheckedChange={(checked) => {
                                 const newDetails = [...editingLocation.details!];
                                 newDetails[index].mobileUrlNewTab = checked === true;
@@ -729,9 +729,9 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
                             setEditingLocation({ ...editingLocation, details: newDetails });
                           }} />
                           <div className="flex items-center gap-1.5 mt-2">
-                            <Checkbox 
-                              id={`emailUrlNewTab-${detail.id}`} 
-                              checked={detail.emailUrlNewTab !== false} 
+                            <Checkbox
+                              id={`emailUrlNewTab-${detail.id}`}
+                              checked={detail.emailUrlNewTab !== false}
                               onCheckedChange={(checked) => {
                                 const newDetails = [...editingLocation.details!];
                                 newDetails[index].emailUrlNewTab = checked === true;
@@ -750,9 +750,9 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
                           setEditingLocation({ ...editingLocation, details: newDetails });
                         }} />
                         <div className="flex items-center gap-1.5 mt-2">
-                          <Checkbox 
-                            id={`mapUrlNewTab-${detail.id}`} 
-                            checked={detail.mapUrlNewTab !== false} 
+                          <Checkbox
+                            id={`mapUrlNewTab-${detail.id}`}
+                            checked={detail.mapUrlNewTab !== false}
                             onCheckedChange={(checked) => {
                               const newDetails = [...editingLocation.details!];
                               newDetails[index].mapUrlNewTab = checked === true;

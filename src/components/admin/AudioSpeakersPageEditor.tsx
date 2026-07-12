@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Pencil, Trash2, Settings2, Loader2, User, ArrowLeft, Music, UploadCloud, Bot } from "lucide-react";
+import { Plus, Pencil, XCircle, Settings2, Loader2, User, ArrowLeft, Music, UploadCloud, Bot } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -93,7 +93,7 @@ function SortableSpeakerCard({ speaker, onClick, onEdit, onDelete }: { speaker: 
           <h3 className="font-bold text-base line-clamp-1 group-hover:text-primary pl-1">{speaker.name}</h3>
           <div className="flex gap-1" onClick={e => e.stopPropagation()}>
             <Button variant="ghost" size="icon" className="h-6 w-6 text-green-500" onClick={() => onEdit(speaker)}><Pencil className="w-3 h-3" /></Button>
-            <Button variant="ghost" size="icon" className="h-6 w-6 text-red-500" onClick={() => onDelete(speaker)}><Trash2 className="w-3 h-3" /></Button>
+            <Button variant="ghost" size="icon" className="h-6 w-6 text-red-500" onClick={() => onDelete(speaker)}><XCircle className="w-3 h-3" /></Button>
           </div>
         </div>
         <p className="text-xs font-nastaleeq text-muted-foreground line-clamp-2" dir="rtl">{speaker.bio}</p>
@@ -323,7 +323,7 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
                     </div>
                     <div className="flex gap-2 justify-end mt-4">
                       <Button variant="ghost" size="sm" onClick={() => router.push(`/sitemanager/media/audio/${audio.id}`)}><Pencil className="w-4 h-4" /></Button>
-                      <Button variant="ghost" size="sm" onClick={() => { setDeletingAudio(audio); }} className="text-red-500"><Trash2 className="w-4 h-4" /></Button>
+                      <Button variant="ghost" size="sm" onClick={() => { setDeletingAudio(audio); }} className="text-red-500"><XCircle className="w-4 h-4" /></Button>
                     </div>
                   </div>
                 ))}

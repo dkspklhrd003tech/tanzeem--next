@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Pencil, Trash2, Settings2, Loader2, User, ArrowLeft, Video, Music, UploadCloud, Bot } from "lucide-react";
+import { Plus, Pencil, XCircle, Settings2, Loader2, User, ArrowLeft, Video, Music, UploadCloud, Bot } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -275,7 +275,7 @@ export default function SpeakersPageEditor({ pageId, initialPageData, mediaConte
                         <h3 className="font-bold text-base line-clamp-1 group-hover:text-primary">{speaker.name}</h3>
                         <div className="flex gap-1" onClick={e => e.stopPropagation()}>
                           <Button variant="ghost" size="icon" className="h-6 w-6 text-green-500" onClick={() => { setEditingSpeakerId(speaker.id); setSpeakerFormData({ name: speaker.name, slug: speaker.slug, bio: speaker.bio || "", avatar: speaker.avatar || "" }); setIsSpeakerModalOpen(true); }}><Pencil className="w-3 h-3" /></Button>
-                          <Button variant="ghost" size="icon" className="h-6 w-6 text-red-500" onClick={() => setDeletingSpeaker(speaker)}><Trash2 className="w-3 h-3" /></Button>
+                          <Button variant="ghost" size="icon" className="h-6 w-6 text-red-500" onClick={() => setDeletingSpeaker(speaker)}><XCircle className="w-3 h-3" /></Button>
                         </div>
                       </div>
                       <p className="text-xs text-muted-foreground line-clamp-2">{speaker.bio}</p>
@@ -321,7 +321,7 @@ export default function SpeakersPageEditor({ pageId, initialPageData, mediaConte
                       </div>
                       <div className="flex gap-2 justify-end mt-4">
                         <Button variant="ghost" size="sm" onClick={() => { setEditingAudioId(audio.id); setAudioFormData({ title: audio.title, slug: audio.slug, audioUrl: audio.audioUrl || "", isPublished: audio.isPublished }); setIsAudioModalOpen(true); }}><Pencil className="w-4 h-4" /></Button>
-                        <Button variant="ghost" size="sm" onClick={() => { setDeletingAudio(audio); }} className="text-red-500"><Trash2 className="w-4 h-4" /></Button>
+                        <Button variant="ghost" size="sm" onClick={() => { setDeletingAudio(audio); }} className="text-red-500"><XCircle className="w-4 h-4" /></Button>
                       </div>
                     </div>
                   ))}
@@ -347,7 +347,7 @@ export default function SpeakersPageEditor({ pageId, initialPageData, mediaConte
                       </div>
                       <div className="flex gap-2 justify-end mt-4">
                         <Button variant="ghost" size="sm" onClick={() => { setEditingVideoId(video.id); setVideoFormData({ title: video.title, slug: video.slug, videoUrl: video.videoUrl || "", embedUrl: video.embedUrl || "", isPublished: video.isPublished }); setIsVideoModalOpen(true); }}><Pencil className="w-4 h-4" /></Button>
-                        <Button variant="ghost" size="sm" onClick={() => { setDeletingVideo(video); }} className="text-red-500"><Trash2 className="w-4 h-4" /></Button>
+                        <Button variant="ghost" size="sm" onClick={() => { setDeletingVideo(video); }} className="text-red-500"><XCircle className="w-4 h-4" /></Button>
                       </div>
                     </div>
                   ))}

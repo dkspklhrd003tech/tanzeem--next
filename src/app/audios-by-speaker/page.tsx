@@ -83,6 +83,11 @@ export default async function AudiosBySpeakersPage() {
                   <h2 className="text-[17px] font-medium text-foreground text-center line-clamp-1 mb-2">
                     {sp.name}
                   </h2>
+                  {sp.bio && (
+                    <p className="text-xl text-foreground text-center line-clamp-1 mb-2 font-nastaleeq" dir="rtl">
+                      {sp.bio}
+                    </p>
+                  )}
                   <span className="text-sm font-normal text-primary bg-primary/10 px-3 py-1 rounded-full">
                     {sp.count} Audios
                   </span>

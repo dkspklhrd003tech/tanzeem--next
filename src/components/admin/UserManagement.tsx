@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Edit2, Trash2, Shield, User as UserIcon, X, Eye, EyeOff, KeyRound } from "lucide-react";
+import { Plus, Edit2, XCircle, Shield, User as UserIcon, X, Eye, EyeOff, KeyRound } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -242,7 +242,7 @@ export function UserManagement() {
                                                     className="p-2 text-foreground-light hover:text-destructive transition-colors hover:bg-destructive/10 rounded-md"
                                                     title="Delete User"
                                                 >
-                                                    <Trash2 className="w-4 h-4" />
+                                                    <XCircle className="w-4 h-4" />
                                                 </button>
                                             </div>
                                         </td>

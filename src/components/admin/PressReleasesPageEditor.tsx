@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import {
-  Plus, Pencil, Trash2, Search, FileText, Sparkles,
+  Plus, Pencil, XCircle, Search, FileText, Sparkles,
   Settings2, Check, AlertCircle, UploadCloud, Loader2, ArrowLeft,
   GripVertical, Calendar
 } from "lucide-react";
@@ -161,7 +161,7 @@ function SortableCard({ id, item, onEdit, onDelete }: SortableItemProps) {
               onClick={() => onDelete(item)}
               title="Delete Press Release"
             >
-              <Trash2 className="h-3.5 w-3.5" />
+              <XCircle className="h-3.5 w-3.5" />
             </Button>
             {/* Drag Handle */}
             <div

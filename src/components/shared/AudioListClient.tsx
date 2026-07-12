@@ -31,11 +31,11 @@ export function AudioListClient({ audios }: { audios: any[] }) {
               {a.description && <p className="text-sm text-muted-foreground line-clamp-2">{a.description}</p>}
             </div>
 
-            <div className="shrink-0 flex items-center">
-              <span className="text-xs text-muted-foreground font-medium mr-4 opacity-0 group-hover:opacity-100 transition-opacity">Listen Now</span>
+            <div className="shrink-0 flex flex-col items-center justify-center gap-1">
               <button className="h-10 w-10 flex items-center justify-center rounded-full bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-all scale-95 group-hover:scale-100 shadow-sm">
-                <Play className="w-5 h-5 ml-0.5" />
+                <Play className="w-6 h-6" />
               </button>
+              <span className="text-[11px] text-foreground font-medium transition-opacity">Listen Now</span>
             </div>
           </Link>
         ))}

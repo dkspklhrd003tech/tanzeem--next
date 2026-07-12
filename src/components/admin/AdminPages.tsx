@@ -24,7 +24,7 @@ import {
   Plus,
   Search,
   Edit,
-  Trash2,
+  XCircle,
   FileText,
   Globe,
   Calendar,
@@ -334,7 +334,7 @@ export function AdminPages({ section }: AdminPagesProps) {
                         className="w-8 h-8 rounded-full bg-red-500 hover:bg-red-600 flex items-center justify-center transition-colors"
                         title="Delete"
                       >
-                        <Trash2 className="h-3.5 w-3.5 text-white" />
+                        <XCircle className="h-3.5 w-3.5 text-white" />
                       </button>
                     </div>
                   </div>
@@ -484,7 +484,7 @@ export function AdminPages({ section }: AdminPagesProps) {
                             className="w-8 h-8 rounded-full bg-red-500 hover:bg-red-600 flex items-center justify-center transition-colors"
                             title="Delete"
                           >
-                            <Trash2 className="h-3.5 w-3.5 text-white" />
+                            <XCircle className="h-3.5 w-3.5 text-white" />
                           </button>
                         </div>
                       </div>

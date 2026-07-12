@@ -71,11 +71,11 @@ export function SermonsList({ sermons }: SermonsListProps) {
                                             )}
                                         </div>
                                     </div>
-                                    <div className="shrink-0 flex items-center mt-2 md:mt-0">
-                                        <span className="text-xs text-muted-foreground font-medium mr-4 opacity-0 group-hover:opacity-100 transition-opacity hidden md:block">Listen Now</span>
+                                    <div className="shrink-0 flex flex-col items-center justify-center gap-1 mt-2 md:mt-0">
                                         <button className="h-10 w-10 flex items-center justify-center rounded-full bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-all scale-95 group-hover:scale-100 shadow-sm shrink-0">
-                                            <Play className="w-5 h-5 ml-0.5" />
+                                            <Play className="w-6 h-6" />
                                         </button>
+                                        <span className="text-[11px] text-foreground font-medium transition-opacity hidden md:block">Listen Now</span>
                                     </div>
                                 </Link>
                             );

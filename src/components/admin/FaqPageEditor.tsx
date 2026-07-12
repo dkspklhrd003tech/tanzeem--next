@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import {
   HelpCircle, Settings2, Plus, ArrowUp, ArrowDown,
-  Trash2, GripVertical, Check, ArrowLeft, Search, Eye, Pencil
+  XCircle, GripVertical, Check, ArrowLeft, Search, Eye, Pencil
 } from "lucide-react";
 import { PageActionBar } from "@/components/admin/PageActionBar";
 import { Badge } from "@/components/ui/badge";
@@ -512,7 +512,7 @@ export default function FaqPageEditor({ pageId, initialPageData }: FaqPageEditor
                               onClick={() => setDeletingFaqItem(faq)}
                               aria-label="Delete FAQ"
                             >
-                              <Trash2 className="w-4 h-4 text-red-500" />
+                              <XCircle className="w-4 h-4 text-red-500" />
                             </Button>
                           </div>
                         </td>

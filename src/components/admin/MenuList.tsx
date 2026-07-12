@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Plus, Edit, Trash2, ArrowLeft, Save, ChevronDown, ChevronRight } from "lucide-react";
+import { Plus, Edit, XCircle, ArrowLeft, Save, ChevronDown, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -243,7 +243,7 @@ export function MenuList() {
                                     <Edit className="h-4 w-4" />
                                 </Button>
                                 <Button variant="ghost" size="icon" onClick={() => setDeletingMenuId(item.id)} className="text-red-500">
-                                    <Trash2 className="h-4 w-4" />
+                                    <XCircle className="h-4 w-4" />
                                 </Button>
                             </div>
                         </TableCell>

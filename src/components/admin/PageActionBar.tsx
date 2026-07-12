@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import {
-  ArrowLeft, Save, Send, Eye, Trash2, Copy,
+  ArrowLeft, Save, Send, Eye, XCircle, Copy,
   Check, SlidersHorizontal,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -101,8 +101,8 @@ export function PageActionBar({
         )}
         {mode === "edit" && onDelete && (
           <ConfirmDialog title="Delete page?" description={`"${title}" will be permanently deleted.`} onConfirm={onDelete} open={showDelete} onOpenChange={setShowDelete}>
-            <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive hover:bg-destructive/10" onClick={() => setShowDelete(true)}>
-              <Trash2 className="h-3.5 w-3.5" />
+            <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive hover:bg-destructive/80" onClick={() => setShowDelete(true)}>
+              <XCircle className="h-3.5 w-3.5" />
             </Button>
           </ConfirmDialog>
         )}

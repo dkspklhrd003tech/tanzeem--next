@@ -5,7 +5,7 @@ import useSWR from "swr";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
-  Plus, Search, Filter, Trash2, Globe2, EyeOff, Edit2,
+  Plus, Search, Filter, XCircle, Globe2, EyeOff, Edit2,
   Eye, Copy, MoreHorizontal, CheckSquare, Square,
   RefreshCw, X, Bell, LayoutGrid, Upload, Image as ImageIcon, AlertCircle, LayoutList
 } from "lucide-react";
@@ -307,7 +307,7 @@ export default function PagesListPage() {
               onClick={handleRemoveBanner}
               disabled={isUploadingBanner}
             >
-              <Trash2 className="h-3.5 w-3.5 mr-1.5" /> Remove Image
+              <XCircle className="h-3.5 w-3.5 mr-1.5" /> Remove Image
             </Button>
           )}
         </CardHeader>
@@ -451,7 +451,7 @@ export default function PagesListPage() {
             </ConfirmDialog>
             <ConfirmDialog title="Delete selected pages permanently?" description={`${selected.size} page(s) will be deleted permanently. This cannot be undone.`} onConfirm={() => doBulk("delete")} open={bulkOp === "delete"} onOpenChange={o => setBulkOp(o ? "delete" : null)}>
               <Button variant="destructive" size="sm" onClick={() => setBulkOp("delete")} className="bg-red-500/10 hover:bg-red-500/25 border-red-500/30 text-red-600 hover:text-red-100 text-xs font-bold rounded-lg px-3 py-1.5 h-8">
-                <Trash2 className="h-3.5 w-3.5 mr-1.5 text-red-600" />Delete Selected
+                <XCircle className="h-3.5 w-3.5 mr-1.5 text-red-600" />Delete Selected
               </Button>
             </ConfirmDialog>
             <Button variant="ghost" size="sm" onClick={() => setSelected(new Set())} className="text-muted-foreground hover:text-foreground p-1 rounded-lg hover:bg-accent ml-2">
@@ -659,7 +659,7 @@ export default function PagesListPage() {
                             className="h-8 w-8 text-muted-foreground hover:text-red-600 hover:bg-red-500/10 rounded-lg transition-all duration-200"
                             title="Delete Page"
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <XCircle className="h-4 w-4" />
                           </Button>
                         </div>
                       </div>
@@ -764,7 +764,7 @@ export default function PagesListPage() {
                               <Copy className="h-3 w-3" />
                             </Button>
                             <Button variant="ghost" size="icon" onClick={() => setDeleting(row.id)} className="h-7 w-7 text-muted-foreground hover:text-red-600 hover:bg-red-500/10 rounded-lg transition-all" title="Delete Page">
-                              <Trash2 className="h-3.5 w-3.5" />
+                              <XCircle className="h-3.5 w-3.5" />
                             </Button>
                           </div>
                         </div>

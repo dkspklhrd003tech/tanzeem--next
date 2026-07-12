@@ -94,7 +94,7 @@ export function ContactSection({
     <section className="flex flex-col lg:flex-row min-h-[calc(100vh-80px)] w-full bg-slate-50">
 
       {/* ── LEFT PANEL: Sticky & Immersive (Dark Emerald) ── */}
-      <div className="relative lg:w-5/12 xl:w-1/3 bg-[#0d5844] text-white flex flex-col p-4 md:p-6 lg:-10 overflow-hidden">
+      <div className="relative lg:w-5/12 xl:w-1/3 bg-primary text-white flex flex-col p-4 md:p-6 lg:-10 overflow-hidden">
 
         {/* Cinematic Background Elements */}
         <div className="absolute inset-0 top-0 h-full w-full bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-[size:48px_48px] pointer-events-none" />
@@ -117,11 +117,11 @@ export function ContactSection({
               <div className="space-y-6">
                 <div className="flex gap-4">
                   <div className="mt-1 w-10 h-10 rounded-full bg-white/10 flex items-center justify-center shrink-0 border border-white/10">
-                    <MapPin className="w-4 h-4 text-emerald-300" />
+                    <MapPin className="w-7 h-7 text-primary-light" />
                   </div>
                   <div>
                     <h3 className="text-white font-semibold mb-1">Address</h3>
-                    <a href={`https://maps.google.com/?q=${encodeURIComponent(s.footer_address)}`} target="_blank" rel="noopener noreferrer" className="text-emerald-100/70 hover:text-white transition-colors leading-relaxed block text-[15px]">
+                    <a href={`https://maps.google.com/?q=${encodeURIComponent(s.footer_address)}`} target="_blank" rel="noopener noreferrer" className="text-emerald-100/80 hover:text-white transition-colors leading-relaxed block text-[15px]">
                       {s.footer_address}
                     </a>
                   </div>
@@ -129,17 +129,17 @@ export function ContactSection({
 
                 <div className="flex gap-4">
                   <div className="mt-1 w-10 h-10 rounded-full bg-white/10 flex items-center justify-center shrink-0 border border-white/10">
-                    <Phone className="w-4 h-4 text-emerald-300" />
+                    <Phone className="w-7 h-7 text-primary-light" />
                   </div>
                   <div>
                     <h3 className="text-white font-semibold mb-1">Call Us</h3>
                     {s.contact_phone && (
-                      <a href={`tel:${getCleanNumber(s.contact_phone)}`} className="text-emerald-100/70 hover:text-white transition-colors block text-[15px] mb-1">
+                      <a href={`tel:${getCleanNumber(s.contact_phone)}`} className="text-emerald-100/80 hover:text-white transition-colors block text-[15px] mb-1">
                         Landline: {s.contact_phone}
                       </a>
                     )}
                     {s.whatsapp_number && (
-                      <a href={`tel:${getCleanNumber(s.whatsapp_number)}`} className="text-emerald-100/70 hover:text-white transition-colors block text-[15px]">
+                      <a href={`tel:${getCleanNumber(s.whatsapp_number)}`} className="text-emerald-100/80 hover:text-white transition-colors block text-[15px]">
                         WhatsApp: {s.whatsapp_number}
                       </a>
                     )}
@@ -148,7 +148,7 @@ export function ContactSection({
 
                 <div className="flex gap-4">
                   <div className="mt-1 w-10 h-10 rounded-full bg-white/10 flex items-center justify-center shrink-0 border border-white/10">
-                    <Mail className="w-4 h-4 text-emerald-300" />
+                    <Mail className="w-7 h-7 text-primary-light" />
                   </div>
                   <div>
                     <h3 className="text-white font-semibold mb-1">Email Us</h3>
@@ -173,7 +173,7 @@ export function ContactSection({
 
       {/* ── RIGHT PANEL: Scrollable (Light Gray) ── */}
       <div className="lg:w-7/12 xl:w-2/3 flex flex-col">
-        <div className="max-w-4xl mx-auto w-full p-8 md:p-12 lg:p-16 lg:py-24 space-y-24">
+        <div className="max-w-4xl mx-auto w-full p-4 md:p-6 lg:p-8 lg:py-10 space-y-12">
 
           {/* Section 1: Send a Message Form */}
           <motion.div
