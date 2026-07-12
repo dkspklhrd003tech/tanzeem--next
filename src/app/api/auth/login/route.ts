@@ -3,27 +3,32 @@ import { db } from "@/lib/db";
 import { users, activityLogs } from "@/db/schema";
 import { verifyPassword, createSession, setSessionCookie } from "@/lib/auth";
 import { eq } from "drizzle-orm";
+import { checkRateLimit } from "@/lib/rate-limit";
+import { loginSchema } from "@/lib/validations/api";
+import { ApiError, ApiSuccess } from "@/lib/api-response";
 
 export async function POST(request: NextRequest) {
   try {
-    const { email, password } = await request.json();
-
-    if (!email || !password) {
-      return NextResponse.json(
-        { error: "Email and password are required" },
-        { status: 400 }
-      );
+    const rateLimit = await checkRateLimit(request, "STRICT", "login");
+    if (!rateLimit.success) {
+      return ApiError("Too many login attempts. Please try again later.", 429);
     }
+
+    const body = await request.json();
+    const validationResult = loginSchema.safeParse(body);
+
+    if (!validationResult.success) {
+      return ApiError("Invalid email or password format", 400);
+    }
+
+    const { email, password } = validationResult.data;
 
     // Find user
     const [user] = await db.select().from(users).where(eq(users.email, email)).limit(1);
     console.log("DEBUG LOGIN: Searching for email:", email, "Found user:", user ? "YES" : "NO");
 
     if (!user) {
-      return NextResponse.json(
-        { error: "Invalid credentials" },
-        { status: 401 }
-      );
+      return ApiError("Invalid credentials", 401);
     }
 
     // Verify password
@@ -31,18 +36,12 @@ export async function POST(request: NextRequest) {
     console.log("DEBUG LOGIN: Password valid:", isValid);
 
     if (!isValid) {
-      return NextResponse.json(
-        { error: "Invalid credentials" },
-        { status: 401 }
-      );
+      return ApiError("Invalid credentials", 401);
     }
 
     // Check if user is active
     if (!user.isActive) {
-      return NextResponse.json(
-        { error: "Account is deactivated" },
-        { status: 403 }
-      );
+      return ApiError("Account is deactivated", 403);
     }
 
     // Create session
@@ -61,8 +60,7 @@ export async function POST(request: NextRequest) {
     });
 
     // Create response with session cookie
-    const response = NextResponse.json({
-      success: true,
+    const response = ApiSuccess({
       user: {
         id: user.id,
         email: user.email,
@@ -75,10 +73,6 @@ export async function POST(request: NextRequest) {
 
     return response;
   } catch (error) {
-    console.error("Login error:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+    return ApiError("Internal server error", 500, error);
   }
 }

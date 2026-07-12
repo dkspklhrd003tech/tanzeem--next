@@ -5,6 +5,8 @@ import { db } from "@/db";
 import { media } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth";
 import { uploadFile } from "@/lib/storage";
+import { checkRateLimit } from "@/lib/rate-limit";
+import { ApiError, ApiSuccess } from "@/lib/api-response";
 
 // ── ffmpeg is loaded LAZILY so the route doesn't crash if binaries are missing
 // on the live server (cPanel, shared host, etc.)
@@ -108,6 +110,36 @@ const ALLOWED_TYPES: Record<string, string> = {
   "video/quicktime": "Video",
 };
 
+// ── Basic Magic Number (File Signature) Validation ─────────────────────────
+function checkMagicNumber(buffer: Buffer, mimeType: string): boolean {
+  if (buffer.length < 4) return false;
+  
+  // PDF: %PDF-
+  if (mimeType === "application/pdf") {
+    return buffer[0] === 0x25 && buffer[1] === 0x50 && buffer[2] === 0x44 && buffer[3] === 0x46;
+  }
+  // JPEG: FF D8 FF
+  if (mimeType === "image/jpeg" || mimeType === "image/jpg") {
+    return buffer[0] === 0xFF && buffer[1] === 0xD8 && buffer[2] === 0xFF;
+  }
+  // PNG: 89 50 4E 47
+  if (mimeType === "image/png") {
+    return buffer[0] === 0x89 && buffer[1] === 0x50 && buffer[2] === 0x4E && buffer[3] === 0x47;
+  }
+  // GIF: GIF8
+  if (mimeType === "image/gif") {
+    return buffer[0] === 0x47 && buffer[1] === 0x49 && buffer[2] === 0x46 && buffer[3] === 0x38;
+  }
+  // MP4: ftyp at bytes 4-7
+  if (mimeType === "video/mp4") {
+    return buffer.length >= 8 && buffer[4] === 0x66 && buffer[5] === 0x74 && buffer[6] === 0x79 && buffer[7] === 0x70;
+  }
+  
+  // For other types like audio where signatures are variable (e.g. MP3 ID3 or ADTS), 
+  // or webp, we fall back to trusting the extension/mime, but this catches the most common vectors.
+  return true;
+}
+
 const MAX_FILE_SIZE = 200 * 1024 * 1024; // 200 MB
 
 // ── Route segment config ──────────────────────────────────────────────────────
@@ -118,40 +150,44 @@ export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   try {
+    const rateLimit = await checkRateLimit(req, "MODERATE", "upload");
+    if (!rateLimit.success) {
+      return ApiError("Too many upload requests. Please try again later.", 429);
+    }
+
     let formData: FormData;
     try {
       formData = await req.formData();
     } catch {
-      return NextResponse.json(
-        { success: false, error: "Could not parse form data — ensure Content-Type is multipart/form-data" },
-        { status: 400 }
-      );
+      return ApiError("Could not parse form data — ensure Content-Type is multipart/form-data", 400);
     }
 
     const file = formData.get("file") as File | null;
     const typeHint = (formData.get("type") as string) || "general";
 
     if (!file) {
-      return NextResponse.json(
-        { success: false, error: "No file provided" },
-        { status: 400 }
-      );
+      return ApiError("No file provided", 400);
     }
 
     if (file.size > MAX_FILE_SIZE) {
-      return NextResponse.json(
-        { success: false, error: "File exceeds 200 MB limit" },
-        { status: 413 }
-      );
+      return ApiError("File exceeds 200 MB limit", 413);
     }
 
     const mimeType = file.type || "application/octet-stream";
+    if (!ALLOWED_TYPES[mimeType]) {
+      return ApiError("File type not allowed", 415);
+    }
+
     const mimeFolder = ALLOWED_TYPES[mimeType];
     const folder = mimeFolder ?? (typeHint === "slider" ? "sliders" : typeHint === "cover" ? "covers" : "Media");
 
     const bytes = await file.arrayBuffer();
     let buffer: Buffer = Buffer.from(bytes);
     let finalSize = file.size;
+
+    if (!checkMagicNumber(buffer, mimeType)) {
+      return ApiError("File content does not match its extension", 400);
+    }
 
     // ── Audio compression (best-effort, skipped if ffmpeg unavailable) ───────
     const isAudio = mimeType === "audio/mpeg" || mimeType === "audio/mp3";
@@ -209,15 +245,10 @@ export async function POST(req: NextRequest) {
           uploadedBy: uploadedBy ?? null,
         });
     } catch (dbError: any) {
-      console.error("[upload] Upload or DB insert failed:", dbError?.message ?? dbError);
-      return NextResponse.json(
-        { success: false, error: "Failed to save file: " + (dbError?.message ?? "unknown error") },
-        { status: 500 }
-      );
+      return ApiError("Failed to save file", 500, dbError);
     }
 
-    return NextResponse.json({
-      success: true,
+    return ApiSuccess({
       url: staticUrl,
       mediaId,
       filename: uniqueFilename,
@@ -226,10 +257,6 @@ export async function POST(req: NextRequest) {
       size: finalSize,
     });
   } catch (error: any) {
-    console.error("[upload] Unhandled error:", error);
-    return NextResponse.json(
-      { success: false, error: error?.message ?? "Failed to upload file" },
-      { status: 500 }
-    );
+    return ApiError("Failed to upload file", 500, error);
   }
 }

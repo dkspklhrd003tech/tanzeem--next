@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { formSubmissions } from "@/db/schema";
 import { desc, eq, and, count } from "drizzle-orm";
+import { checkRateLimit } from "@/lib/rate-limit";
+import { contactFormSchema } from "@/lib/validations/api";
+import { ApiError, ApiSuccess } from "@/lib/api-response";
 
 // GET - List form submissions (admin only)
 export async function GET(request: NextRequest) {
@@ -30,25 +33,28 @@ export async function GET(request: NextRequest) {
       db.select({ count: count() }).from(formSubmissions).where(whereClause),
     ]);
 
-    return NextResponse.json({ submissions, total: totalResult[0].count });
+    return ApiSuccess({ submissions, total: totalResult[0].count });
   } catch (error) {
-    console.error("Get submissions error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return ApiError("Internal server error", 500, error);
   }
 }
 
 // POST - Submit a form (public)
 export async function POST(request: NextRequest) {
   try {
-    const data = await request.json();
-
-    if (!data.formType) {
-      return NextResponse.json(
-        { error: "Form type is required" },
-        { status: 400 }
-      );
+    const rateLimit = await checkRateLimit(request, "MODERATE", "contact");
+    if (!rateLimit.success) {
+      return ApiError("Too many form submissions. Please try again later.", 429);
     }
 
+    const body = await request.json();
+    const validationResult = contactFormSchema.safeParse(body);
+
+    if (!validationResult.success) {
+      return ApiError("Invalid form data provided", 400);
+    }
+
+    const data = validationResult.data;
     const submissionId = crypto.randomUUID();
 
     await db.insert(formSubmissions).values({
@@ -56,17 +62,13 @@ export async function POST(request: NextRequest) {
       formType: data.formType,
       name: data.name,
       email: data.email,
-      phone: data.phone,
+      phone: data.phone || null,
       subject: data.subject,
       message: data.message,
     });
 
-    return NextResponse.json(
-      { success: true, id: submissionId },
-      { status: 201 }
-    );
+    return ApiSuccess({ id: submissionId }, 201);
   } catch (error) {
-    console.error("Submit form error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return ApiError("Internal server error", 500, error);
   }
 }
