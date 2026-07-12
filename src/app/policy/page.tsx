@@ -20,12 +20,11 @@ export default async function PolicyPage() {
   }
 
   const settingsMap = Object.fromEntries(settingsRows.map((r) => [r.key, r.value]));
-  const policySettings = settingsMap["policy_page"] || {};
 
-  const title = policySettings.policy_title || "Policy";
-  const content = policySettings.policy_content || "";
-  const featuredImage = policySettings.policy_featured_image
-    ? resolveMediaUrl(policySettings.policy_featured_image)
+  const title = settingsMap["policy_title"] || "Policy";
+  const content = settingsMap["policy_content"] || "";
+  const featuredImage = settingsMap["policy_featured_image"]
+    ? resolveMediaUrl(settingsMap["policy_featured_image"])
     : null;
 
   return (
