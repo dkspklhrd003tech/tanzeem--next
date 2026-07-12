@@ -99,10 +99,9 @@ const defaultFormData = {
   imageUrl: "",
   blocks: [] as ServiceBlock[],
   isPublished: true,
-  startDate: "",
   metaTitle: "",
   metaDescription: "",
-  showInSpotlight: false,
+  showInSpotlight: true,
   openInNewTab: false,
 };
 
@@ -730,10 +729,9 @@ export default function ServicesPageEditor({ pageId, initialPageData }: Services
         imageUrl: data.url,
         blocks: [],
         isPublished: true,
-        startDate: new Date().toISOString().split("T")[0],
         metaTitle: cleanedTitle,
         metaDescription: `Service: ${cleanedTitle}`,
-        showInSpotlight: false,
+        showInSpotlight: true,
         openInNewTab: false,
       });
       setFormErrors({});
@@ -760,7 +758,7 @@ export default function ServicesPageEditor({ pageId, initialPageData }: Services
     setSlugManual(true);
     let cFields = item.customFields as any;
     if (typeof cFields === 'string') {
-        try { cFields = JSON.parse(cFields); } catch (e) { cFields = {}; }
+      try { cFields = JSON.parse(cFields); } catch (e) { cFields = {}; }
     }
     setFormData({
       title: item.title,
@@ -768,10 +766,9 @@ export default function ServicesPageEditor({ pageId, initialPageData }: Services
       imageUrl: item.imageUrl || "",
       blocks: cFields?.blocks || [],
       isPublished: item.isPublished,
-      startDate: item.startDate ? new Date(item.startDate).toISOString().split("T")[0] : "",
       metaTitle: item.metaTitle || "",
       metaDescription: item.metaDescription || "",
-      showInSpotlight: cFields?.showInSpotlight || false,
+      showInSpotlight: cFields?.showInSpotlight ?? true,
       openInNewTab: cFields?.openInNewTab || false,
     });
     setFormErrors({});
@@ -783,7 +780,6 @@ export default function ServicesPageEditor({ pageId, initialPageData }: Services
     setSlugManual(false);
     setFormData({
       ...defaultFormData,
-      startDate: new Date().toISOString().split("T")[0],
     });
     setFormErrors({});
     setIsModalOpen(true);
@@ -799,7 +795,6 @@ export default function ServicesPageEditor({ pageId, initialPageData }: Services
       errors.slug = "Slug must contain only lowercase letters, numbers, and hyphens";
     }
     if (!formData.imageUrl) errors.imageUrl = "Main Image is required";
-    if (!formData.startDate) errors.startDate = "Published Date is required";
 
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
@@ -822,7 +817,6 @@ export default function ServicesPageEditor({ pageId, initialPageData }: Services
           openInNewTab: formData.openInNewTab
         },
         isPublished: formData.isPublished,
-        startDate: formData.startDate ? new Date(formData.startDate).toISOString() : null,
         metaTitle: formData.metaTitle || null,
         metaDescription: formData.metaDescription || null,
       };
@@ -983,49 +977,6 @@ export default function ServicesPageEditor({ pageId, initialPageData }: Services
         {/* Tab 1: List, Uploader & Drag Grid */}
         <TabsContent value="list" className="space-y-6 outline-none">
 
-          {/* File Drag-and-Drop Area */}
-          <div
-            onDragEnter={handleDrag}
-            onDragOver={handleDrag}
-            onDragLeave={handleDrag}
-            onDrop={handleDrop}
-            onClick={() => fileInputRef.current?.click()}
-            className={cn(
-              "relative cursor-pointer py-10 px-6 border-2 border-dashed rounded-3xl transition-all duration-300 flex flex-col items-center justify-center text-center",
-              dragActive
-                ? "border-primary bg-primary/5 scale-[1.005]"
-                : "border-border hover:border-muted-foreground/50 bg-card",
-              isUploading && "pointer-events-none opacity-60"
-            )}
-          >
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".image"
-              className="hidden"
-              onChange={handleFileChange}
-            />
-
-            {isUploading ? (
-              <div className="flex flex-col items-center gap-3">
-                <Loader2 className="h-10 w-10 text-primary animate-spin" />
-                <p className="font-semibold text-foreground">Uploading image document...</p>
-                <p className="text-xs text-muted-foreground">This will only take a moment.</p>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-1">
-                  <UploadCloud className="h-6 w-6" />
-                </div>
-                <p className="font-bold text-foreground text-lg">
-                  Drag & Drop a Service image here
-                </p>
-                <p className="text-sm text-muted-foreground max-w-sm">
-                  Or click anywhere to choose a file from your computer. Titles and metadata will auto-generate.
-                </p>
-              </div>
-            )}
-          </div>
 
           {/* Sortable grid container */}
           {isLoadingItems ? (
@@ -1284,27 +1235,12 @@ export default function ServicesPageEditor({ pageId, initialPageData }: Services
                   />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="startDate">Published Date <span className="text-destructive">*</span></Label>
-                    <Input
-                      id="startDate"
-                      type="date"
-                      required
-                      value={formData.startDate}
-                      onChange={(e) => setFormData(prev => ({ ...prev, startDate: e.target.value }))}
-                      className={cn(formErrors.startDate && "border-destructive")}
-                    />
-                    {formErrors.startDate && <p className="text-xs text-destructive">{formErrors.startDate}</p>}
-                  </div>
-
-                  <div className="flex items-center justify-between p-3 border border-border rounded-xl bg-muted/10 mt-6 h-[42px]">
-                    <span className="text-sm font-medium">Published Visibility</span>
-                    <Switch
-                      checked={formData.isPublished}
-                      onCheckedChange={(checked) => setFormData(prev => ({ ...prev, isPublished: checked }))}
-                    />
-                  </div>
+                <div className="flex items-center justify-between p-3 border border-border rounded-xl bg-muted/10 mt-6 h-[42px]">
+                  <span className="text-sm font-medium">Published Visibility</span>
+                  <Switch
+                    checked={formData.isPublished}
+                    onCheckedChange={(checked) => setFormData(prev => ({ ...prev, isPublished: checked }))}
+                  />
                 </div>
 
                 <div className="border border-border/80 rounded-xl p-4 bg-muted/10 space-y-3">

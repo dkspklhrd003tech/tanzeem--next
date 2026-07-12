@@ -757,7 +757,7 @@ export default function CampaignsPageEditor({ pageId, initialPageData }: Campaig
     setSlugManual(true);
     let cFields = item.customFields as any;
     if (typeof cFields === 'string') {
-        try { cFields = JSON.parse(cFields); } catch (e) { cFields = {}; }
+      try { cFields = JSON.parse(cFields); } catch (e) { cFields = {}; }
     }
     setFormData({
       title: item.title,
@@ -973,50 +973,6 @@ export default function CampaignsPageEditor({ pageId, initialPageData }: Campaig
 
         {/* Tab 1: List, Uploader & Drag Grid */}
         <TabsContent value="list" className="space-y-6 outline-none">
-
-          {/* File Drag-and-Drop Area */}
-          <div
-            onDragEnter={handleDrag}
-            onDragOver={handleDrag}
-            onDragLeave={handleDrag}
-            onDrop={handleDrop}
-            onClick={() => fileInputRef.current?.click()}
-            className={cn(
-              "relative cursor-pointer py-10 px-6 border-2 border-dashed rounded-3xl transition-all duration-300 flex flex-col items-center justify-center text-center",
-              dragActive
-                ? "border-primary bg-primary/5 scale-[1.005]"
-                : "border-border hover:border-muted-foreground/50 bg-card",
-              isUploading && "pointer-Campaigns-none opacity-60"
-            )}
-          >
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept=".image"
-              className="hidden"
-              onChange={handleFileChange}
-            />
-
-            {isUploading ? (
-              <div className="flex flex-col items-center gap-3">
-                <Loader2 className="h-10 w-10 text-primary animate-spin" />
-                <p className="font-semibold text-foreground">Uploading image document...</p>
-                <p className="text-xs text-muted-foreground">This will only take a moment.</p>
-              </div>
-            ) : (
-              <div className="flex flex-col items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-1">
-                  <UploadCloud className="h-6 w-6" />
-                </div>
-                <p className="font-bold text-foreground text-lg">
-                  Drag & Drop a Campaign image here
-                </p>
-                <p className="text-sm text-muted-foreground max-w-sm">
-                  Or click anywhere to choose a file from your computer. Titles and metadata will auto-generate.
-                </p>
-              </div>
-            )}
-          </div>
 
           {/* Sortable grid container */}
           {isLoadingItems ? (
