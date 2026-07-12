@@ -1,5 +1,5 @@
 import { db } from "@/db";
-import { services } from "@/db/schema";
+import { campaigns } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import Image from "next/image";
@@ -13,25 +13,25 @@ export const dynamic = "force-dynamic";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
-    const [service] = await db.select().from(services).where(eq(services.slug, slug)).limit(1);
+    const [campaign] = await db.select().from(campaigns).where(eq(campaigns.slug, slug)).limit(1);
 
-    if (!service || !service.isPublished) return { title: "Not Found" };
+    if (!campaign || !campaign.isPublished) return { title: "Not Found" };
 
     return {
-        title: service.metaTitle || service.title,
-        description: service.metaDescription || service.description || "Service details.",
+        title: campaign.metaTitle || campaign.title,
+        description: campaign.metaDescription || "Campaign details.",
     };
 }
 
-export default async function ServiceDetailsPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function CampaignDetailsPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
-    const [service] = await db.select().from(services).where(eq(services.slug, slug)).limit(1);
+    const [campaign] = await db.select().from(campaigns).where(eq(campaigns.slug, slug)).limit(1);
 
-    if (!service || !service.isPublished) {
+    if (!campaign || !campaign.isPublished) {
         notFound();
     }
 
-    const blocks = service.customFields?.blocks || [];
+    const blocks = campaign.customFields?.blocks || [];
 
     return (
         <main className="min-h-screen bg-background">
@@ -39,15 +39,15 @@ export default async function ServiceDetailsPage({ params }: { params: Promise<{
                 <div className="space-y-12">
                     {/* Header */}
                     <div className="text-center space-y-4">
-                        <h1 className="text-4xl md:text-5xl font-bold text-primary">{service.title}</h1>
+                        <h1 className="text-4xl md:text-5xl font-bold text-primary">{campaign.title}</h1>
                     </div>
 
                     {/* Main Image */}
-                    {service.imageUrl && (
+                    {campaign.thumbnailUrl && (
                         <div className="w-full relative aspect-[16/9] rounded-2xl overflow-hidden shadow-xl border border-border">
                             <Image
-                                src={service.imageUrl}
-                                alt={service.title}
+                                src={campaign.thumbnailUrl}
+                                alt={campaign.title}
                                 fill
                                 className="object-cover"
                                 priority
@@ -76,7 +76,7 @@ export default async function ServiceDetailsPage({ params }: { params: Promise<{
                                             {/* eslint-disable-next-line @next/next/no-img-element */}
                                             <img
                                                 src={block.value}
-                                                alt={`Service Block ${idx}`}
+                                                alt={`Campaign Block ${idx}`}
                                                 className="w-full h-auto object-cover"
                                             />
                                         </div>
@@ -155,7 +155,7 @@ export default async function ServiceDetailsPage({ params }: { params: Promise<{
 
             <CTABanner
                 heading="Support Our Mission"
-                subheading="Help Tanzeem-e-Islami expand these services and reach more people across the globe."
+                subheading="Help Tanzeem-e-Islami expand these campaigns and reach more people across the globe."
                 buttonLabel="Get Involved"
                 buttonUrl="/contact"
             />

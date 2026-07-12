@@ -21,7 +21,11 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { ImageUploader } from "@/components/admin/ImageUploader";
+import { PdfUploader } from "@/components/admin/PdfUploader";
+import { RichTextEditor } from "@/components/admin/RichTextEditor";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { v4 as uuidv4 } from "uuid";
+import { useChunkedUpload } from "@/hooks/useChunkedUpload";
 
 // DnD Kit imports
 import {
@@ -38,6 +42,7 @@ import {
   SortableContext,
   sortableKeyboardCoordinates,
   rectSortingStrategy,
+  verticalListSortingStrategy,
   useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
@@ -56,6 +61,13 @@ interface PageRecord {
   updatedAt?: string;
 }
 
+type BlockType = "image" | "pdf" | "text" | "thumbnails" | "slider";
+interface CampaignBlock {
+  id: string;
+  type: BlockType;
+  value: any;
+}
+
 interface CampaignItem {
   id: string;
   title: string;
@@ -64,6 +76,7 @@ interface CampaignItem {
   excerpt?: string | null;
   thumbnailUrl?: string | null;
   categoryId?: string | null;
+  customFields?: { blocks?: CampaignBlock[] } | null;
   isPublished: boolean;
   startsAt?: string | null;
   metaTitle?: string | null;
@@ -83,6 +96,7 @@ const defaultFormData = {
   slug: "",
   thumbnailUrl: "",
   categoryId: "Campaigns",
+  customFields: { blocks: [] as CampaignBlock[] },
   isPublished: true,
   startsAt: "",
   metaTitle: "",
@@ -205,6 +219,276 @@ function SortableCard({ id, item, onEdit, onDelete }: SortableItemProps) {
           </Badge>
         </div>
       </div>
+    </div>
+  );
+}
+
+// ─── Block Builder ───────────────────────────────────────────────────────────
+
+function CampaignBlockBuilder({ blocks, onChange }: { blocks: CampaignBlock[], onChange: (blocks: CampaignBlock[]) => void }) {
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      const oldIndex = blocks.findIndex((b) => b.id === active.id);
+      const newIndex = blocks.findIndex((b) => b.id === over.id);
+      onChange(arrayMove(blocks, oldIndex, newIndex));
+    }
+  };
+
+  const addBlock = (type: string) => {
+    const newBlock: CampaignBlock = {
+      id: uuidv4(),
+      type: type as BlockType,
+      value: (type === "thumbnails" || type === "slider") ? [] : "",
+    };
+    onChange([...blocks, newBlock]);
+  };
+
+  const updateBlock = (id: string, value: any) => {
+    onChange(blocks.map(b => b.id === id ? { ...b, value } : b));
+  };
+
+  const removeBlock = (id: string) => {
+    onChange(blocks.filter(b => b.id !== id));
+  };
+
+  return (
+    <div className="space-y-4 border-t border-border/50 pt-4">
+      <div className="flex items-center justify-between mb-2">
+        <Label>Dynamic Layout Fields</Label>
+        <Select onValueChange={addBlock} value="">
+          <SelectTrigger className="w-[180px]">
+            <Plus className="h-4 w-4 mr-2" />
+            <SelectValue placeholder="Add Field..." />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="image">Image Block</SelectItem>
+            <SelectItem value="pdf">PDF Document</SelectItem>
+            <SelectItem value="text">Rich Text</SelectItem>
+            <SelectItem value="thumbnails">Thumbnails / Links</SelectItem>
+            <SelectItem value="slider">Image Slider</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {blocks.length === 0 && (
+        <div className="text-center p-4 border border-dashed rounded-lg bg-muted/20">
+          <p className="text-xs text-muted-foreground">No layout fields added yet. Select a field above.</p>
+        </div>
+      )}
+
+      <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+        <SortableContext items={blocks} strategy={verticalListSortingStrategy}>
+          <div className="space-y-3">
+            {blocks.map((block, index) => (
+              <SortableCampaignBlock
+                key={block.id}
+                block={block}
+                index={index}
+                onUpdate={(val: any) => updateBlock(block.id, val)}
+                onRemove={() => removeBlock(block.id)}
+              />
+            ))}
+          </div>
+        </SortableContext>
+      </DndContext>
+    </div>
+  );
+}
+
+function SortableCampaignBlock({ block, index, onUpdate, onRemove }: any) {
+  const { toast } = useToast();
+  const { uploadFile } = useChunkedUpload();
+  const bulkUploadRef = useRef<HTMLInputElement>(null);
+  const [isBulkUploading, setIsBulkUploading] = useState(false);
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: block.id });
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    zIndex: isDragging ? 50 : 1,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} className="relative bg-muted/10 border border-border/50 p-4 rounded-xl group">
+      <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center gap-2">
+          <div {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-primary">
+            <GripVertical className="h-4 w-4" />
+          </div>
+          <Badge variant="outline" className="uppercase text-[10px]">{block.type}</Badge>
+        </div>
+        <Button type="button" variant="ghost" size="icon" className="h-6 w-6 text-destructive" onClick={onRemove}>
+          <Trash2 className="h-4 w-4" />
+        </Button>
+      </div>
+
+      {block.type === "image" && (
+        <ImageUploader value={block.value} onChange={onUpdate} />
+      )}
+      {block.type === "pdf" && (
+        <div className="space-y-3 p-3 border border-border rounded-lg bg-background">
+          <PdfUploader 
+            value={typeof block.value === 'string' ? block.value : block.value?.url || ""} 
+            onChange={(url) => {
+              const currentTitle = typeof block.value === 'string' ? "" : block.value?.title || "";
+              onUpdate({ url, title: currentTitle });
+            }} 
+          />
+          <Input 
+            placeholder="Title (Optional) - e.g. 'Read the full report'" 
+            value={typeof block.value === 'string' ? "" : block.value?.title || ""}
+            onChange={(e) => {
+              const currentUrl = typeof block.value === 'string' ? block.value : block.value?.url || "";
+              onUpdate({ url: currentUrl, title: e.target.value });
+            }}
+          />
+        </div>
+      )}
+      {block.type === "text" && (
+        <RichTextEditor content={block.value} onChange={onUpdate} />
+      )}
+      {block.type === "thumbnails" && (
+        <div className="space-y-3">
+          <Button type="button" variant="outline" size="sm" onClick={() => onUpdate([...(block.value || []), { image: "", url: "", newTab: true }])}>
+            <Plus className="h-3 w-3 mr-1" /> Add Thumbnail Link
+          </Button>
+          <div className="grid grid-cols-2 gap-3">
+            {(block.value || []).map((thumb: any, i: number) => (
+              <div key={i} className="border border-border/40 p-2 rounded-lg bg-background relative space-y-2 flex flex-col">
+                <Button type="button" variant="destructive" size="icon" className="absolute -top-2 -right-2 h-5 w-5 rounded-full z-10 shadow-sm hover:bg-destructive hover:text-white"
+                  onClick={() => onUpdate((block.value || []).filter((_: any, idx: number) => idx !== i))}
+                >
+                  <Trash2 className="h-3 w-3" />
+                </Button>
+                <div className="flex-1">
+                  <ImageUploader value={thumb.image} onChange={(url) => {
+                    const newThumbs = [...block.value];
+                    newThumbs[i] = { ...newThumbs[i], image: url };
+                    onUpdate(newThumbs);
+                  }} />
+                </div>
+                <div className="space-y-2 mt-2">
+                  <Input placeholder="URL (e.g. /page or https://)" value={thumb.url || ""} onChange={(e) => {
+                    const newThumbs = [...block.value];
+                    newThumbs[i] = { ...newThumbs[i], url: e.target.value };
+                    onUpdate(newThumbs);
+                  }} />
+                  <div className="flex items-center justify-between mt-2">
+                    <div className="flex items-center gap-2">
+                      <Switch 
+                        checked={thumb.newTab !== false} 
+                        onCheckedChange={(checked) => {
+                          const newThumbs = [...block.value];
+                          newThumbs[i] = { ...newThumbs[i], newTab: checked };
+                          onUpdate(newThumbs);
+                        }} 
+                      />
+                      <span className="text-xs text-muted-foreground">Open in New Tab</span>
+                    </div>
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      size="sm" 
+                      className="text-[10px] h-6 px-2 bg-primary/5 hover:bg-primary/10 text-primary border-primary/20"
+                      onClick={() => {
+                        const match = thumb.url?.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&?]+)/);
+                        if (match) {
+                           const newThumbs = [...block.value];
+                           newThumbs[i] = { ...newThumbs[i], image: `https://img.youtube.com/vi/${match[1]}/maxresdefault.jpg` };
+                           onUpdate(newThumbs);
+                           toast({ title: "Success", description: "Thumbnail fetched from YouTube." });
+                        } else {
+                           toast({ title: "Invalid URL", description: "Please enter a valid YouTube URL to fetch its thumbnail.", variant: "destructive" });
+                        }
+                      }}
+                    >
+                      Fetch YT Thumb
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+      {block.type === "slider" && (
+        <div className="space-y-3">
+          <div className="flex gap-2">
+            <Button type="button" variant="outline" size="sm" onClick={() => onUpdate([...(block.value || []), { image: "", alt: "" }])}>
+              <Plus className="h-3 w-3 mr-1" /> Add Slider Image
+            </Button>
+            <input 
+              type="file" 
+              multiple 
+              accept="image/*" 
+              className="hidden" 
+              ref={bulkUploadRef} 
+              onChange={async (e) => {
+                if (!e.target.files || e.target.files.length === 0) return;
+                setIsBulkUploading(true);
+                try {
+                  const newSlides: { image: string; alt: string }[] = [];
+                  for (let i = 0; i < e.target.files.length; i++) {
+                    const file = e.target.files[i];
+                    const baseName = file.name.replace(/\.[^/.]+$/, "");
+                    const cleanedName = baseName.split(/[-_]+/).map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+                    const { url } = await uploadFile(file);
+                    newSlides.push({ image: url, alt: cleanedName });
+                  }
+                  onUpdate([...(block.value || []), ...newSlides]);
+                  toast({ title: "Success", description: `Uploaded ${e.target.files.length} images to slider.` });
+                } catch (error) {
+                  toast({ title: "Upload failed", description: "Failed to bulk upload images.", variant: "destructive" });
+                } finally {
+                  setIsBulkUploading(false);
+                  if (bulkUploadRef.current) bulkUploadRef.current.value = "";
+                }
+              }} 
+            />
+            <Button 
+              type="button" 
+              variant="default" 
+              size="sm" 
+              disabled={isBulkUploading}
+              onClick={() => bulkUploadRef.current?.click()}
+            >
+              {isBulkUploading ? <Loader2 className="h-3 w-3 mr-1 animate-spin" /> : <UploadCloud className="h-3 w-3 mr-1" />}
+              Bulk Upload
+            </Button>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+            {(block.value || []).map((slide: any, i: number) => (
+              <div key={i} className="border border-border/40 p-2 rounded-lg bg-background relative space-y-2">
+                <Button type="button" variant="destructive" size="icon" className="absolute -top-2 -right-2 h-5 w-5 rounded-full z-10 shadow-sm hover:bg-destructive hover:text-white"
+                  onClick={() => onUpdate((block.value || []).filter((_: any, idx: number) => idx !== i))}
+                >
+                  <Trash2 className="h-3 w-3" />
+                </Button>
+                <ImageUploader
+                  value={slide.image}
+                  altValue={slide.alt || ""}
+                  onAltChange={(alt) => {
+                    const newSlides = [...block.value];
+                    newSlides[i] = { ...newSlides[i], alt };
+                    onUpdate(newSlides);
+                  }}
+                  onChange={(url, alt) => {
+                    const newSlides = [...block.value];
+                    newSlides[i] = { ...newSlides[i], image: url, alt: alt || newSlides[i].alt };
+                    onUpdate(newSlides);
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -424,6 +708,7 @@ export default function CampaignsPageEditor({ pageId, initialPageData }: Campaig
         slug: slugify(cleanedTitle),
         thumbnailUrl: data.url,
         categoryId: "Campaigns",
+        customFields: { blocks: [] },
         isPublished: true,
         startsAt: new Date().toISOString().split("T")[0],
         metaTitle: cleanedTitle,
@@ -456,6 +741,7 @@ export default function CampaignsPageEditor({ pageId, initialPageData }: Campaig
       slug: item.slug,
       thumbnailUrl: item.thumbnailUrl || "",
       categoryId: item.categoryId || "Campaigns",
+      customFields: item.customFields ? { blocks: item.customFields.blocks || [] } : { blocks: [] },
       isPublished: item.isPublished,
       startsAt: item.startsAt ? new Date(item.startsAt).toISOString().split("T")[0] : "",
       metaTitle: item.metaTitle || "",
@@ -502,6 +788,7 @@ export default function CampaignsPageEditor({ pageId, initialPageData }: Campaig
         slug: formData.slug,
         thumbnailUrl: formData.thumbnailUrl || null,
         categoryId: formData.categoryId || "Campaigns",
+        customFields: { blocks: formData.customFields?.blocks || [] },
         isPublished: formData.isPublished,
         startsAt: formData.startsAt ? new Date(formData.startsAt).toISOString() : null,
         metaTitle: formData.metaTitle || null,
@@ -997,6 +1284,11 @@ export default function CampaignsPageEditor({ pageId, initialPageData }: Campaig
                     />
                   </div>
                 </div>
+
+                <CampaignBlockBuilder
+                  blocks={formData.customFields.blocks}
+                  onChange={(blocks) => setFormData(prev => ({ ...prev, customFields: { blocks } }))}
+                />
 
               </form>
             </div>

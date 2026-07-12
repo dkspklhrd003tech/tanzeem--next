@@ -332,7 +332,23 @@ function SortableServiceBlock({ block, index, onUpdate, onRemove }: any) {
         <ImageUploader value={block.value} onChange={onUpdate} />
       )}
       {block.type === "pdf" && (
-        <PdfUploader value={block.value} onChange={onUpdate} />
+        <div className="space-y-3 p-3 border border-border rounded-lg bg-background">
+          <PdfUploader 
+            value={typeof block.value === 'string' ? block.value : block.value?.url || ""} 
+            onChange={(url) => {
+              const currentTitle = typeof block.value === 'string' ? "" : block.value?.title || "";
+              onUpdate({ url, title: currentTitle });
+            }} 
+          />
+          <Input 
+            placeholder="Title (Optional) - e.g. 'Read the full report'" 
+            value={typeof block.value === 'string' ? "" : block.value?.title || ""}
+            onChange={(e) => {
+              const currentUrl = typeof block.value === 'string' ? block.value : block.value?.url || "";
+              onUpdate({ url: currentUrl, title: e.target.value });
+            }}
+          />
+        </div>
       )}
       {block.type === "text" && (
         <RichTextEditor content={block.value} onChange={onUpdate} />
