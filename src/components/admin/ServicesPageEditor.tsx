@@ -90,6 +90,7 @@ export interface ServiceBlock {
   id: string;
   type: BlockType;
   value: any;
+  title?: string;
 }
 
 const defaultFormData = {
@@ -253,6 +254,10 @@ function ServiceBlockBuilder({ blocks, onChange }: { blocks: ServiceBlock[], onC
     onChange(blocks.map(b => b.id === id ? { ...b, value } : b));
   };
 
+  const updateBlockField = (id: string, field: string, val: any) => {
+    onChange(blocks.map(b => b.id === id ? { ...b, [field]: val } : b));
+  };
+
   const removeBlock = (id: string) => {
     onChange(blocks.filter(b => b.id !== id));
   };
@@ -291,6 +296,7 @@ function ServiceBlockBuilder({ blocks, onChange }: { blocks: ServiceBlock[], onC
                 block={block}
                 index={index}
                 onUpdate={(val: any) => updateBlock(block.id, val)}
+                onUpdateTitle={(val: string) => updateBlockField(block.id, "title", val)}
                 onRemove={() => removeBlock(block.id)}
               />
             ))}
@@ -301,7 +307,7 @@ function ServiceBlockBuilder({ blocks, onChange }: { blocks: ServiceBlock[], onC
   );
 }
 
-function SortableServiceBlock({ block, index, onUpdate, onRemove }: any) {
+function SortableServiceBlock({ block, index, onUpdate, onUpdateTitle, onRemove }: any) {
   const { toast } = useToast();
   const { uploadFile } = useChunkedUpload();
   const bulkUploadRef = useRef<HTMLInputElement>(null);
@@ -326,6 +332,14 @@ function SortableServiceBlock({ block, index, onUpdate, onRemove }: any) {
         <Button type="button" variant="ghost" size="icon" className="h-6 w-6 text-destructive" onClick={onRemove}>
           <Trash2 className="h-4 w-4" />
         </Button>
+      </div>
+
+      <div className="mb-4">
+         <Input 
+             placeholder="Optional Section Title" 
+             value={block.title || ""} 
+             onChange={(e) => onUpdateTitle(e.target.value)} 
+         />
       </div>
 
       {block.type === "image" && (

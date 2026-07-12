@@ -491,7 +491,7 @@ function MobileNavItem({ item, onClose, depth = 0 }: { item: MenuNode, onClose: 
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="overflow-hidden pl-4 border-l border-border/50 ml-4 mb-2"
+            className="overflow-hidden border-l border-border/50 ml-4 mb-2"
           >
             {item.children.map((child) => (
               <MobileNavItem key={child.id} item={child} onClose={onClose} depth={depth + 1} />

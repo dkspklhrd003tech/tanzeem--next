@@ -66,6 +66,7 @@ interface CampaignBlock {
   id: string;
   type: BlockType;
   value: any;
+  title?: string;
 }
 
 interface CampaignItem {
@@ -253,6 +254,10 @@ function CampaignBlockBuilder({ blocks, onChange }: { blocks: CampaignBlock[], o
     onChange(blocks.map(b => b.id === id ? { ...b, value } : b));
   };
 
+  const updateBlockField = (id: string, field: string, val: any) => {
+    onChange(blocks.map(b => b.id === id ? { ...b, [field]: val } : b));
+  };
+
   const removeBlock = (id: string) => {
     onChange(blocks.filter(b => b.id !== id));
   };
@@ -291,6 +296,7 @@ function CampaignBlockBuilder({ blocks, onChange }: { blocks: CampaignBlock[], o
                 block={block}
                 index={index}
                 onUpdate={(val: any) => updateBlock(block.id, val)}
+                onUpdateTitle={(val: string) => updateBlockField(block.id, "title", val)}
                 onRemove={() => removeBlock(block.id)}
               />
             ))}
@@ -301,7 +307,7 @@ function CampaignBlockBuilder({ blocks, onChange }: { blocks: CampaignBlock[], o
   );
 }
 
-function SortableCampaignBlock({ block, index, onUpdate, onRemove }: any) {
+function SortableCampaignBlock({ block, index, onUpdate, onUpdateTitle, onRemove }: any) {
   const { toast } = useToast();
   const { uploadFile } = useChunkedUpload();
   const bulkUploadRef = useRef<HTMLInputElement>(null);
@@ -328,20 +334,28 @@ function SortableCampaignBlock({ block, index, onUpdate, onRemove }: any) {
         </Button>
       </div>
 
+      <div className="mb-4">
+        <Input
+          placeholder="Optional Section Title"
+          value={block.title || ""}
+          onChange={(e) => onUpdateTitle(e.target.value)}
+        />
+      </div>
+
       {block.type === "image" && (
         <ImageUploader value={block.value} onChange={onUpdate} />
       )}
       {block.type === "pdf" && (
         <div className="space-y-3 p-3 border border-border rounded-lg bg-background">
-          <PdfUploader 
-            value={typeof block.value === 'string' ? block.value : block.value?.url || ""} 
+          <PdfUploader
+            value={typeof block.value === 'string' ? block.value : block.value?.url || ""}
             onChange={(url) => {
               const currentTitle = typeof block.value === 'string' ? "" : block.value?.title || "";
               onUpdate({ url, title: currentTitle });
-            }} 
+            }}
           />
-          <Input 
-            placeholder="Title (Optional) - e.g. 'Read the full report'" 
+          <Input
+            placeholder="Title (Optional) - e.g. 'Read the full report'"
             value={typeof block.value === 'string' ? "" : block.value?.title || ""}
             onChange={(e) => {
               const currentUrl = typeof block.value === 'string' ? block.value : block.value?.url || "";
@@ -381,30 +395,30 @@ function SortableCampaignBlock({ block, index, onUpdate, onRemove }: any) {
                   }} />
                   <div className="flex items-center justify-between mt-2">
                     <div className="flex items-center gap-2">
-                      <Switch 
-                        checked={thumb.newTab !== false} 
+                      <Switch
+                        checked={thumb.newTab !== false}
                         onCheckedChange={(checked) => {
                           const newThumbs = [...block.value];
                           newThumbs[i] = { ...newThumbs[i], newTab: checked };
                           onUpdate(newThumbs);
-                        }} 
+                        }}
                       />
                       <span className="text-xs text-muted-foreground">Open in New Tab</span>
                     </div>
-                    <Button 
-                      type="button" 
-                      variant="outline" 
-                      size="sm" 
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
                       className="text-[10px] h-6 px-2 bg-primary/5 hover:bg-primary/10 text-primary border-primary/20"
                       onClick={() => {
                         const match = thumb.url?.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&?]+)/);
                         if (match) {
-                           const newThumbs = [...block.value];
-                           newThumbs[i] = { ...newThumbs[i], image: `https://img.youtube.com/vi/${match[1]}/maxresdefault.jpg` };
-                           onUpdate(newThumbs);
-                           toast({ title: "Success", description: "Thumbnail fetched from YouTube." });
+                          const newThumbs = [...block.value];
+                          newThumbs[i] = { ...newThumbs[i], image: `https://img.youtube.com/vi/${match[1]}/maxresdefault.jpg` };
+                          onUpdate(newThumbs);
+                          toast({ title: "Success", description: "Thumbnail fetched from YouTube." });
                         } else {
-                           toast({ title: "Invalid URL", description: "Please enter a valid YouTube URL to fetch its thumbnail.", variant: "destructive" });
+                          toast({ title: "Invalid URL", description: "Please enter a valid YouTube URL to fetch its thumbnail.", variant: "destructive" });
                         }
                       }}
                     >
@@ -423,12 +437,12 @@ function SortableCampaignBlock({ block, index, onUpdate, onRemove }: any) {
             <Button type="button" variant="outline" size="sm" onClick={() => onUpdate([...(block.value || []), { image: "", alt: "" }])}>
               <Plus className="h-3 w-3 mr-1" /> Add Slider Image
             </Button>
-            <input 
-              type="file" 
-              multiple 
-              accept="image/*" 
-              className="hidden" 
-              ref={bulkUploadRef} 
+            <input
+              type="file"
+              multiple
+              accept="image/*"
+              className="hidden"
+              ref={bulkUploadRef}
               onChange={async (e) => {
                 if (!e.target.files || e.target.files.length === 0) return;
                 setIsBulkUploading(true);
@@ -449,12 +463,12 @@ function SortableCampaignBlock({ block, index, onUpdate, onRemove }: any) {
                   setIsBulkUploading(false);
                   if (bulkUploadRef.current) bulkUploadRef.current.value = "";
                 }
-              }} 
+              }}
             />
-            <Button 
-              type="button" 
-              variant="default" 
-              size="sm" 
+            <Button
+              type="button"
+              variant="default"
+              size="sm"
               disabled={isBulkUploading}
               onClick={() => bulkUploadRef.current?.click()}
             >
@@ -928,7 +942,7 @@ export default function CampaignsPageEditor({ pageId, initialPageData }: Campaig
           document.getElementById("hidden-submit-page-btn")?.click();
         }}
       >
-        <Button onClick={handleOpenAddModal} className="ml-2 bg-primary text-primary-foreground hover:bg-primary/95">
+        <Button onClick={handleOpenAddModal} className="bg-primary text-primary-foreground hover:bg-primary/95">
           <Plus className="w-4 h-4 mr-2" /> Add Release
         </Button>
       </PageActionBar>
