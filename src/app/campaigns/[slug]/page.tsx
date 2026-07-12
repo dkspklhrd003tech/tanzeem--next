@@ -139,6 +139,30 @@ export default async function CampaignDetailsPage({ params }: { params: Promise<
                                         </div>
                                     );
 
+                                case "video":
+                                    if (!block.value) return null;
+                                    let embedUrl = block.value;
+                                    if (embedUrl.includes("youtube.com/watch?v=")) {
+                                        embedUrl = embedUrl.replace("watch?v=", "embed/").split("&")[0];
+                                    } else if (embedUrl.includes("youtu.be/")) {
+                                        embedUrl = embedUrl.replace("youtu.be/", "youtube.com/embed/").split("?")[0];
+                                    } else if (embedUrl.includes("ok.ru/video/")) {
+                                        embedUrl = embedUrl.replace("ok.ru/video/", "ok.ru/videoembed/");
+                                    }
+                                    return (
+                                        <div key={idx} className="space-y-4">
+                                            {block.title && <h2 className="text-3xl text-center mx-auto font-bold text-foreground">{block.title}</h2>}
+                                            <div className="aspect-video w-full rounded-2xl overflow-hidden bg-black shadow-lg">
+                                                <iframe 
+                                                    src={embedUrl} 
+                                                    className="w-full h-full border-0" 
+                                                    allowFullScreen 
+                                                    allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+                                                ></iframe>
+                                            </div>
+                                        </div>
+                                    );
+
                                 case "slider":
                                     if (!Array.isArray(block.value) || block.value.length === 0) return null;
                                     return (

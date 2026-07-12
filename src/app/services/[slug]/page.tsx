@@ -50,7 +50,7 @@ export default async function ServiceDetailsPage({ params }: { params: Promise<{
                                 case "text":
                                     return (
                                         <div key={idx} className="space-y-4">
-                                            {block.title && <h2 className="text-2xl font-bold text-foreground">{block.title}</h2>}
+                                            {block.title && <h2 className="text-3xl text-center mx-auto font-bold text-foreground">{block.title}</h2>}
                                             <div
                                                 className="prose prose-lg dark:prose-invert max-w-none prose-p:text-muted-foreground prose-a:text-primary"
                                                 dangerouslySetInnerHTML={{ __html: block.value }}
@@ -61,7 +61,7 @@ export default async function ServiceDetailsPage({ params }: { params: Promise<{
                                 case "image":
                                     return (
                                         <div key={idx} className="space-y-4">
-                                            {block.title && <h2 className="text-2xl font-bold text-foreground">{block.title}</h2>}
+                                            {block.title && <h2 className="text-3xl text-center mx-auto font-bold text-foreground">{block.title}</h2>}
                                             <div className="w-full relative aspect-auto rounded-xl overflow-hidden shadow-lg border border-border">
                                                 {/* eslint-disable-next-line @next/next/no-img-element */}
                                                 <img
@@ -80,7 +80,7 @@ export default async function ServiceDetailsPage({ params }: { params: Promise<{
 
                                     return (
                                         <div key={idx} className="space-y-4">
-                                            {block.title && <h2 className="text-2xl font-bold text-foreground">{block.title}</h2>}
+                                            {block.title && <h2 className="text-3xl text-center mx-auto font-bold text-foreground">{block.title}</h2>}
                                             <div className="bg-muted/30 border border-border p-6 rounded-2xl flex items-center justify-between gap-4">
                                                 <div className="flex items-center gap-4">
                                                     <div className="h-12 w-12 rounded-full bg-red-100 flex items-center justify-center text-red-600 flex-shrink-0">
@@ -104,7 +104,7 @@ export default async function ServiceDetailsPage({ params }: { params: Promise<{
                                     if (!Array.isArray(block.value) || block.value.length === 0) return null;
                                     return (
                                         <div key={idx} className="space-y-4">
-                                            {block.title && <h2 className="text-2xl font-bold text-foreground">{block.title}</h2>}
+                                            {block.title && <h2 className="text-3xl text-center mx-auto font-bold text-foreground">{block.title}</h2>}
                                             <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
                                                 {block.value.map((thumb: any, tIdx: number) => {
                                                     const isVideo = thumb.url && (thumb.url.includes("youtube.com") || thumb.url.includes("youtu.be") || thumb.url.includes("vimeo") || thumb.url.includes("ok.ru"));
@@ -139,11 +139,35 @@ export default async function ServiceDetailsPage({ params }: { params: Promise<{
                                         </div>
                                     );
 
+                                case "video":
+                                    if (!block.value) return null;
+                                    let embedUrl = block.value;
+                                    if (embedUrl.includes("youtube.com/watch?v=")) {
+                                        embedUrl = embedUrl.replace("watch?v=", "embed/").split("&")[0];
+                                    } else if (embedUrl.includes("youtu.be/")) {
+                                        embedUrl = embedUrl.replace("youtu.be/", "youtube.com/embed/").split("?")[0];
+                                    } else if (embedUrl.includes("ok.ru/video/")) {
+                                        embedUrl = embedUrl.replace("ok.ru/video/", "ok.ru/videoembed/");
+                                    }
+                                    return (
+                                        <div key={idx} className="space-y-4">
+                                            {block.title && <h2 className="text-3xl text-center mx-auto font-bold text-foreground">{block.title}</h2>}
+                                            <div className="aspect-video w-full rounded-2xl overflow-hidden bg-black shadow-lg">
+                                                <iframe
+                                                    src={embedUrl}
+                                                    className="w-full h-full border-0"
+                                                    allowFullScreen
+                                                    allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+                                                ></iframe>
+                                            </div>
+                                        </div>
+                                    );
+
                                 case "slider":
                                     if (!Array.isArray(block.value) || block.value.length === 0) return null;
                                     return (
                                         <div key={idx} className="w-full space-y-4">
-                                            {block.title && <h2 className="text-2xl font-bold text-foreground">{block.title}</h2>}
+                                            {block.title && <h2 className="text-3xl text-center mx-auto font-bold text-foreground">{block.title}</h2>}
                                             <ImageSlider slides={block.value} />
                                         </div>
                                     );

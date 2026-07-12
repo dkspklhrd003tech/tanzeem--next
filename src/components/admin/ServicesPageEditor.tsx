@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import {
   Plus, Pencil, Trash2, Search, FileText, Sparkles,
   Settings2, Check, AlertCircle, UploadCloud, Loader2, ArrowLeft,
-  GripVertical, Calendar
+  GripVertical, Calendar, ExternalLink
 } from "lucide-react";
 import { PageActionBar } from "@/components/admin/PageActionBar";
 import { Badge } from "@/components/ui/badge";
@@ -84,7 +84,7 @@ interface ServicesPageEditorProps {
   initialPageData: PageRecord;
 }
 
-export type BlockType = "image" | "pdf" | "text" | "thumbnails" | "slider";
+export type BlockType = "image" | "pdf" | "text" | "thumbnails" | "slider" | "video";
 
 export interface ServiceBlock {
   id: string;
@@ -167,6 +167,15 @@ function SortableCard({ id, item, onEdit, onDelete }: SortableItemProps) {
             <Button
               variant="ghost"
               size="icon"
+              className="h-7 w-7 text-blue-500 hover:text-blue-600 hover:bg-blue-500/10"
+              onClick={() => window.open(`/services/${item.slug}`, '_blank')}
+              title="View on Frontend"
+            >
+              <ExternalLink className="h-3.5 w-3.5" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
               className="h-7 w-7 text-green-500 hover:text-green-600 hover:bg-green-500/10"
               onClick={() => onEdit(item)}
               title="Edit Details"
@@ -203,18 +212,6 @@ function SortableCard({ id, item, onEdit, onDelete }: SortableItemProps) {
 
         {/* Bottom meta information */}
         <div className="mt-auto pt-4 border-t border-border/60 flex items-center justify-between text-xs text-muted-foreground">
-          <div className="flex items-center gap-1.5">
-            <Calendar className="h-3.5 w-3.5 text-muted-foreground/75" />
-            <span>
-              {item.startDate
-                ? new Date(item.startDate).toLocaleDateString(undefined, {
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
-                })
-                : "No Date"}
-            </span>
-          </div>
 
           <Badge variant={item.isPublished ? "default" : "secondary"} className="text-[10px] px-2 py-0">
             {item.isPublished ? "Published" : "Draft"}
@@ -273,6 +270,7 @@ function ServiceBlockBuilder({ blocks, onChange }: { blocks: ServiceBlock[], onC
           <SelectContent>
             <SelectItem value="image">Image Block</SelectItem>
             <SelectItem value="pdf">PDF Document</SelectItem>
+            <SelectItem value="video">Video Player</SelectItem>
             <SelectItem value="text">Rich Text</SelectItem>
             <SelectItem value="thumbnails">Thumbnails / Links</SelectItem>
             <SelectItem value="slider">Image Slider</SelectItem>
@@ -507,6 +505,29 @@ function SortableServiceBlock({ block, index, onUpdate, onUpdateTitle, onRemove 
           </div>
         </div>
       )}
+      {block.type === "video" && (
+        <div className="space-y-3">
+          <Input
+            placeholder="Paste Video Link or <iframe> code here (YouTube, Vimeo, Ok.ru)"
+            value={block.value || ""}
+            onChange={(e) => {
+              let val = e.target.value;
+              // Extract src if it's an iframe to bypass WAF XSS blocks
+              const iframeMatch = val.match(/<iframe.*?src=["'](.*?)["']/i);
+              if (iframeMatch && iframeMatch[1]) {
+                val = iframeMatch[1];
+                toast({ title: "Iframe Parsed", description: "Successfully extracted URL from iframe." });
+              }
+              onUpdate(val);
+            }}
+          />
+          {block.value && (
+            <p className="text-xs text-muted-foreground break-all mt-1">
+              Clean URL saved: {block.value}
+            </p>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -567,6 +588,10 @@ export default function ServicesPageEditor({ pageId, initialPageData }: Services
         // The API now returns them ordered by orderIndex
         setItems(data.items || []);
       } else {
+        if (res.status === 401) {
+          window.location.href = "/sitemanager/login?expired=true";
+          return;
+        }
         const errText = await res.text();
         console.error("API Error Status:", res.status, errText);
         throw new Error("Failed to fetch Services");
@@ -940,7 +965,7 @@ export default function ServicesPageEditor({ pageId, initialPageData }: Services
         authorName={initialPageData.authorName}
         updatedAt={initialPageData.updatedAt}
         lastSaved={lastSavedPage}
-        previewUrl="/Services"
+        previewUrl="/services"
         seoUrl={`/sitemanager/pages/${pageId}/edit/seo`}
         isPublished={pageForm.isPublished}
         saving={isSavingPage}

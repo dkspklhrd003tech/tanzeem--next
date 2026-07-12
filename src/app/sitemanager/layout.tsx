@@ -116,7 +116,8 @@ const NAV_ITEMS: NavItem[] = [
   { title: "Pages", href: "/sitemanager/pages", icon: Home },
   // ── Content ──────────────────────────────────────────────────────────────
   { title: "Events", href: "/sitemanager/pages/events/edit", icon: Calendar },
-  { title: "Services & Campaigns", href: "/sitemanager/pages/services/edit", icon: Sparkles },
+  { title: "Services", href: "/sitemanager/pages/services/edit", icon: Sparkles },
+  { title: "Campaigns", href: "/sitemanager/pages/campaigns/edit", icon: Sparkles },
   { title: "Jummah Venues", href: "/sitemanager/khitabat-addresses", icon: MapPin },
   { title: "Sermons", href: "/sitemanager/sermons", icon: Mic },
   // ── System ───────────────────────────────────────────────────────────────
