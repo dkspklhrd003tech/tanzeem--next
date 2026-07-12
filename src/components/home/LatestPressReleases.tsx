@@ -45,16 +45,18 @@ export function LatestPressReleases({ items }: Props) {
       );
 
       const cards = gsap.utils.toArray(".press-card");
-      gsap.fromTo(cards,
-        { opacity: 0, y: 80, scale: 0.95, rotateX: 10 },
-        {
-          opacity: 1, y: 0, scale: 1, rotateX: 0,
-          duration: 1.2,
-          stagger: 0.15,
-          ease: "back.out(1.2)",
-          scrollTrigger: { trigger: gridRef.current, start: "top 75%" }
-        }
-      );
+      if (cards.length > 0) {
+        gsap.fromTo(cards,
+          { opacity: 0, y: 80, scale: 0.95, rotateX: 10 },
+          {
+            opacity: 1, y: 0, scale: 1, rotateX: 0,
+            duration: 1.2,
+            stagger: 0.15,
+            ease: "back.out(1.2)",
+            scrollTrigger: { trigger: gridRef.current, start: "top 75%" }
+          }
+        );
+      }
     }, sectionRef);
 
     return () => ctx.revert();

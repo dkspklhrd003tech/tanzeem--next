@@ -127,7 +127,7 @@ async function HomeContent() {
       .from(pressReleases)
       .where(eq(pressReleases.isPublished, true))
       .orderBy(desc(pressReleases.publishedAt), desc(pressReleases.createdAt))
-      .limit(3);
+      .limit(6);
   } catch (error) { console.error("Failed to fetch press releases:", error); }
 
   try {

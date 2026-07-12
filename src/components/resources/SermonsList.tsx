@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { PlayCircle, MessageSquare } from "lucide-react";
+import { Play, Calendar, MessageSquare } from "lucide-react";
 
 type SermonRecord = {
     id: string;
@@ -11,6 +11,7 @@ type SermonRecord = {
     audioUrl: string | null;
     videoUrl: string | null;
     isPublished: boolean;
+    titleUrdu?: string | null;
 };
 
 interface SermonsListProps {
@@ -38,70 +39,47 @@ export function SermonsList({ sermons }: SermonsListProps) {
                             <p>No sermons available yet. Please check back soon.</p>
                         </div>
                     ) : (
-                        sermons.map((sermon) => (
-                            <article
-                                key={sermon.id}
-                                className="bg-card border border-border rounded-lg overflow-hidden hover:shadow-md hover:-translate-y-1 transition-all duration-300"
-                            >
-                                {/* Thumbnail */}
-                                {sermon.thumbnailUrl ? (
-                                    <img
-                                        src={sermon.thumbnailUrl}
-                                        alt={sermon.title}
-                                        className="aspect-video object-cover w-full"
-                                    />
-                                ) : (
-                                    <div className="aspect-video bg-muted flex items-center justify-center">
-                                        <MessageSquare
-                                            className="h-10 w-10 text-foreground-muted opacity-40"
-                                            aria-hidden="true"
-                                        />
+                        sermons.map((sermon) => {
+                            const formattedDate = sermon.sermonDate
+                                ? sermon.sermonDate.toLocaleDateString("en-PK", {
+                                    year: "numeric",
+                                    month: "long",
+                                    day: "numeric",
+                                }).toUpperCase()
+                                : "RECENT";
+
+                            return (
+                                <Link key={sermon.id}
+                                    href={`/resources/khitab-e-jumah/${sermon.slug}`}
+                                    className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-xl border border-border/50 hover:border-primary/50 bg-primary-light/80 hover:bg-muted/50 transition-colors cursor-pointer group shadow-sm hover:shadow-md h-full"
+                                >
+                                    <div className="flex-1">
+                                        <div className="flex flex-col items-start gap-1 mb-1">
+                                            {/* Date Pill */}
+                                            <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-[#0d5844]/10 text-[#0d5844] text-[10px] sm:text-xs font-bold mb-1 w-fit">
+                                                <Calendar className="w-3.5 h-3.5" />
+                                                <span>{formattedDate}</span>
+                                            </div>
+                                            <h3 className="font-bold text-lg flex items-center gap-2 group-hover:text-primary transition-colors uppercase leading-snug line-clamp-2">
+                                                {sermon.title}
+                                            </h3>
+                                            {sermon.titleUrdu && (
+                                                <h4 className="font-bold text-lg text-foreground font-amiri mt-1 line-clamp-1" dir="rtl">{sermon.titleUrdu}</h4>
+                                            )}
+                                            {sermon.speakerName && (
+                                                <p className="text-sm text-foreground-muted mt-2">{sermon.speakerName}</p>
+                                            )}
+                                        </div>
                                     </div>
-                                )}
-
-                                {/* Card body */}
-                                <div className="p-5">
-                                    {/* Date */}
-                                    <p className="text-xs text-foreground-muted">
-                                        {sermon.sermonDate
-                                            ? sermon.sermonDate.toLocaleDateString("en-PK", {
-                                                year: "numeric",
-                                                month: "long",
-                                                day: "numeric",
-                                            })
-                                            : "—"}
-                                    </p>
-
-                                    {/* Title */}
-                                    <h2 className="text-lg font-bold text-foreground mt-1 line-clamp-2">
-                                        {sermon.title}
-                                    </h2>
-
-                                    {/* Speaker */}
-                                    <p className="text-sm text-foreground-muted mt-1">
-                                        {sermon.speakerName || "Tanzeem-e-Islami"}
-                                    </p>
-
-                                    {/* Link / play button */}
-                                    {sermon.audioUrl ? (
-                                        <Link
-                                            href={`/resources/khitab-e-jumah/${sermon.slug}`}
-                                            aria-label={`Play: ${sermon.title}`}
-                                            className="mt-3 inline-block"
-                                        >
-                                            <PlayCircle className="h-8 w-8 text-primary" />
-                                        </Link>
-                                    ) : sermon.videoUrl ? (
-                                        <Link
-                                            href={`/resources/khitab-e-jumah/${sermon.slug}`}
-                                            className="text-sm text-primary hover:underline mt-2 inline-block"
-                                        >
-                                            Listen / Watch
-                                        </Link>
-                                    ) : null}
-                                </div>
-                            </article>
-                        ))
+                                    <div className="shrink-0 flex items-center mt-2 md:mt-0">
+                                        <span className="text-xs text-muted-foreground font-medium mr-4 opacity-0 group-hover:opacity-100 transition-opacity hidden md:block">Listen Now</span>
+                                        <button className="h-10 w-10 flex items-center justify-center rounded-full bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-all scale-95 group-hover:scale-100 shadow-sm shrink-0">
+                                            <Play className="w-5 h-5 ml-0.5" />
+                                        </button>
+                                    </div>
+                                </Link>
+                            );
+                        })
                     )}
                 </div>
             </div>

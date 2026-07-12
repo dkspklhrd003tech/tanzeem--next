@@ -3,7 +3,7 @@ import { db } from "@/db";
 import { audioCategories, audio } from "@/db/schema";
 import { eq, asc, and, inArray, desc } from "drizzle-orm";
 import Link from "next/link";
-import { Headphones, PlayCircle } from "lucide-react";
+import { Headphones, PlayCircle, Play, Calendar } from "lucide-react";
 
 export default async function CategoryAudiosPage({ params }: { params: Promise<{ categorySlug: string }> }) {
   const { categorySlug } = await params;
@@ -69,6 +69,7 @@ export default async function CategoryAudiosPage({ params }: { params: Promise<{
       audioUrl: audio.audioUrl,
       thumbnailUrl: audio.thumbnailUrl,
       duration: audio.duration,
+      createdAt: audio.createdAt,
     })
     .from(audio)
     .where(and(eq(audio.categoryId, mainCat.id), eq(audio.isPublished, true)))
@@ -96,38 +97,46 @@ export default async function CategoryAudiosPage({ params }: { params: Promise<{
           <div className="space-y-12">
             {/* Direct Audios */}
             {directAudios.length > 0 && (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                {directAudios.map((item) => (
-                  <Link
-                    href={`/audio/${item.id}`}
-                    key={item.id}
-                    className="group text-left bg-card border border-border hover:border-primary/50 hover:shadow-md transition-all duration-300 rounded-xl overflow-hidden flex flex-col block w-full"
-                  >
-                    <div className="w-full aspect-square bg-muted relative overflow-hidden">
-                      {item.thumbnailUrl ? (
-                        <img src={item.thumbnailUrl} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-primary/5">
-                          <Headphones className="w-12 h-12 text-primary/30" />
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {directAudios.map((item) => {
+                  const formattedDate = item.createdAt
+                    ? new Date(item.createdAt).toLocaleDateString("en-PK", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      }).toUpperCase()
+                    : "RECENT";
+                  
+                  return (
+                    <Link
+                      href={`/audio/${item.id}`}
+                      key={item.id}
+                      className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-xl border border-border/50 hover:border-primary/50 bg-primary-light/80 hover:bg-muted/50 transition-colors cursor-pointer group shadow-sm hover:shadow-md h-full"
+                    >
+                      <div className="flex-1">
+                        <div className="flex flex-col items-start gap-1 mb-1">
+                          {/* Date Pill */}
+                          <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-primary/10 text-primary text-[10px] sm:text-xs font-bold mb-1 w-fit">
+                            <Calendar className="w-3.5 h-3.5" />
+                            <span>{formattedDate}</span>
+                          </div>
+                          <h3 className="font-bold text-lg flex items-center gap-2 group-hover:text-primary transition-colors uppercase leading-snug line-clamp-2">
+                            {item.title}
+                          </h3>
                         </div>
-                      )}
-                      <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <PlayCircle className="w-16 h-16 text-white drop-shadow-lg" />
+                        {item.description && (
+                          <p className="text-xs text-foreground-muted mt-2 line-clamp-2">{item.description}</p>
+                        )}
                       </div>
-                      {item.duration && (
-                        <span className="absolute bottom-2 right-2 bg-black/70 text-white text-[10px] px-1.5 py-0.5 rounded font-mono">
-                          {formatDuration(item.duration)}
-                        </span>
-                      )}
-                    </div>
-                    <div className="p-4 flex-1 flex flex-col">
-                      <h4 className="font-semibold text-foreground text-sm line-clamp-2 leading-snug group-hover:text-primary transition-colors">{item.title}</h4>
-                      {item.description && (
-                        <p className="text-xs text-foreground-muted mt-2 line-clamp-2">{item.description}</p>
-                      )}
-                    </div>
-                  </Link>
-                ))}
+                      <div className="shrink-0 flex items-center mt-2 md:mt-0">
+                        <span className="text-xs text-muted-foreground font-medium mr-4 opacity-0 group-hover:opacity-100 transition-opacity hidden md:block">Listen Now</span>
+                        <button className="h-10 w-10 flex items-center justify-center rounded-full bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-all scale-95 group-hover:scale-100 shadow-sm shrink-0">
+                          <Play className="w-5 h-5 ml-0.5" />
+                        </button>
+                      </div>
+                    </Link>
+                  );
+                })}
               </div>
             )}
 

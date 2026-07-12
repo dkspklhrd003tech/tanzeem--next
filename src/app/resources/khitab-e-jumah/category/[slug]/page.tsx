@@ -3,7 +3,7 @@ import { db } from "@/db";
 import { khitabAudioCategories, khitabAudios } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 import Link from "next/link";
-import { Mic, ArrowLeft, Calendar, FileText } from "lucide-react";
+import { Mic, ArrowLeft, Calendar, FileText, Play } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CTABanner } from "@/components/shared/CTABanner";
@@ -83,27 +83,29 @@ export default async function KhitabEJumahCategoryPage({ params }: Props) {
                             const cleanSlug = item.slug?.replace(/^\/+/, '') || '';
 
                             return (
-                                <Link href={`/resources/khitab-e-jumah/${cleanSlug}`} key={item.id} className="block group">
-                                    <div className="relative bg-primary-light/80 border border-border rounded-2xl overflow-hidden cursor-pointer hover:-translate-y-1 hover:shadow-lg transition-all duration-300 h-full p-6 flex flex-col justify-center min-h-[160px]">
-                                        {/* Watermark Icon */}
-                                        <div className="absolute -right-4 -bottom-4 text-[#0d5844]/5 pointer-events-none group-hover:scale-110 transition-transform duration-500">
-                                            <FileText className="w-32 h-32" strokeWidth={1.5} />
+                                <Link key={item.id}
+                                    href={`/resources/khitab-e-jumah/${cleanSlug}`}
+                                    className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-xl border border-border/50 hover:border-primary/50 bg-primary-light/80 hover:bg-muted/50 transition-colors cursor-pointer group shadow-sm hover:shadow-md h-full">
+                                    <div className="flex-1">
+                                        <div className="flex flex-col items-start gap-1 mb-1">
+                                            {/* Date Pill */}
+                                            <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-[#0d5844]/10 text-[#0d5844] text-[10px] sm:text-xs font-bold mb-1 w-fit">
+                                                <Calendar className="w-3.5 h-3.5" />
+                                                <span>{formattedDate}</span>
+                                            </div>
+                                            <h3 className="font-bold text-lg flex items-center gap-2 group-hover:text-primary transition-colors uppercase leading-snug line-clamp-2">
+                                                {item.title}
+                                            </h3>
+                                            {item.titleUrdu && (
+                                                <h4 className="font-bold text-lg text-foreground font-amiri mt-1 line-clamp-1" dir="rtl">{item.titleUrdu}</h4>
+                                            )}
                                         </div>
-
-                                        {/* Date Pill */}
-                                        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#0d5844]/10 text-[#0d5844] text-[10px] sm:text-xs font-bold mb-4 w-fit">
-                                            <Calendar className="w-3.5 h-3.5" />
-                                            <span>{formattedDate}</span>
-                                        </div>
-
-                                        {/* Title */}
-                                        <h3 className="font-bold text-foreground text-lg sm:text-xl leading-snug group-hover:text-primary transition-colors duration-200 line-clamp-2 uppercase">
-                                            {item.title}
-                                        </h3>
-
-                                        {item.titleUrdu && (
-                                            <h4 className="font-bold text-lg text-foreground font-amiri mt-2 line-clamp-1" dir="rtl">{item.titleUrdu}</h4>
-                                        )}
+                                    </div>
+                                    <div className="shrink-0 flex items-center mt-2 md:mt-0">
+                                        <span className="text-xs text-muted-foreground font-medium mr-4 opacity-0 group-hover:opacity-100 transition-opacity hidden md:block">Listen Now</span>
+                                        <button className="h-10 w-10 flex items-center justify-center rounded-full bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-all scale-95 group-hover:scale-100 shadow-sm shrink-0">
+                                            <Play className="w-5 h-5 ml-0.5" />
+                                        </button>
                                     </div>
                                 </Link>
                             );
