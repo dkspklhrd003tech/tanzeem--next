@@ -78,6 +78,9 @@ export async function POST(request: NextRequest) {
         } else {
           revalidatePath(`/organization/${page.slug.replace(/^[^/]+\//, "")}`);
         }
+        if (page.slug === "policy") {
+          revalidatePath("/policy", "page");
+        }
         revalidatePath("/[...slug]", "page");
       }
     } catch (revalErr) {

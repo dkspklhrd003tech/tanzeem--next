@@ -144,6 +144,10 @@ export async function PUT(request: NextRequest, { params }: Ctx) {
       } else {
         revalidatePath(`/organization/${existing.slug.replace(/^[^/]+\//, "")}`);
       }
+      // Bust the dedicated /policy page route if this is the policy page
+      if (updatedSlug === "policy" || existing.slug === "policy") {
+        revalidatePath("/policy", "page");
+      }
       revalidatePath("/[...slug]", "page");
       revalidatePath("/");
     } catch (revalErr) {
