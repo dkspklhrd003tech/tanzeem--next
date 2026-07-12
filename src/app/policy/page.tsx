@@ -1,39 +1,72 @@
-import { db } from "@/lib/db";
-import { settings } from "@/db/schema";
+import { db } from "@/db";
+import { pages } from "@/db/schema";
 import { eq } from "drizzle-orm";
+import { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { ModernizedProsePage } from "@/components/shared/ModernizedProsePage";
+import { buildMetadata } from "@/lib/seo";
 import { resolveMediaUrl } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
-export const metadata = { title: "Policy" };
+const PAGE_SLUG = "policy";
+
+export async function generateMetadata(): Promise<Metadata> {
+  try {
+    const [page] = await db
+      .select()
+      .from(pages)
+      .where(eq(pages.slug, PAGE_SLUG))
+      .limit(1);
+
+    if (!page || !page.isPublished) {
+      return { title: "Policy | Tanzeem-e-Islami" };
+    }
+
+    return buildMetadata({
+      title: page.metaTitle ?? page.title ?? "Policy",
+      description: page.metaDescription ?? page.excerpt ?? undefined,
+      path: `/${PAGE_SLUG}`,
+      ogImage: page.ogImage ?? page.featuredImage ?? null,
+      noIndex: page.noIndex ?? false,
+    });
+  } catch {
+    return { title: "Policy | Tanzeem-e-Islami" };
+  }
+}
 
 export default async function PolicyPage() {
-  let settingsRows: any[] = [];
+  let page: typeof pages.$inferSelect | null = null;
+
   try {
-    settingsRows = await db
+    const [result] = await db
       .select()
-      .from(settings)
-      .where(eq(settings.group, "policy_page"));
+      .from(pages)
+      .where(eq(pages.slug, PAGE_SLUG))
+      .limit(1);
+    page = result ?? null;
   } catch (err) {
-    console.error("Failed to fetch policy page settings:", err);
+    console.error("Failed to fetch policy page:", err);
   }
 
-  const settingsMap = Object.fromEntries(settingsRows.map((r) => [r.key, r.value]));
+  if (!page || !page.isPublished) {
+    notFound();
+  }
 
-  const title = settingsMap["policy_title"] || "Policy";
-  const content = settingsMap["policy_content"] || "";
-  const featuredImage = settingsMap["policy_featured_image"]
-    ? resolveMediaUrl(settingsMap["policy_featured_image"])
+  const featuredImage = page.featuredImage
+    ? resolveMediaUrl(page.featuredImage)
     : null;
 
   return (
     <ModernizedProsePage
-      title={title}
-      content={content}
-      slug="policy"
-      breadcrumbs={[{ name: title, path: "/policy" }]}
+      title={page.title}
+      excerpt={page.excerpt ?? undefined}
+      content={page.content}
+      slug={PAGE_SLUG}
+      breadcrumbs={[{ name: page.title, path: `/${PAGE_SLUG}` }]}
       featuredImage={featuredImage}
+      template={page.template ?? undefined}
     />
   );
 }
+
