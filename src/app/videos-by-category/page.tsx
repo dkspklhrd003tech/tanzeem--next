@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { db } from "@/lib/db";
+import { db } from "@/db";
 import { videoCategories, videos } from "@/db/schema";
 import { count, eq, asc, desc, isNull } from "drizzle-orm";
 

@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import Link from "next/link";
-import { db } from "@/lib/db";
+import { db } from "@/db";
 import { magazines } from "@/db/schema";
 import { eq, desc, asc } from "drizzle-orm";
 import { Newspaper, Download, BookOpen } from "lucide-react";

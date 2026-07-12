@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { Metadata } from "next";
-import { db } from "@/lib/db";
+import { db } from "@/db";
 import { books, bookCategories } from "@/db/schema";
 import { eq, desc, asc, and, like, or, count } from "drizzle-orm";
 import { BooksListing } from "@/components/resources/BooksListing";

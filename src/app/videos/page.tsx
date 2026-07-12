@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { Metadata } from "next";
-import { db } from "@/lib/db";
+import { db } from "@/db";
 import { videos, videoCategories, speakers } from "@/db/schema";
 import { eq, desc, asc, and, like, or, count } from "drizzle-orm";
 import { VideoListing } from "@/components/resources/VideoListing";

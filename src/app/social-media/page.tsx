@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { SocialHub } from "@/components/social/SocialHub";
-import { db } from "@/lib/db";
+import { db } from "@/db";
 import { socialPlatforms, socialAccounts, pages } from "@/db/schema";
 import { asc, eq } from "drizzle-orm";
 

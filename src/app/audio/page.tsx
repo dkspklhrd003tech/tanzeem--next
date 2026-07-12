@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { Metadata } from "next";
-import { db } from "@/lib/db";
+import { db } from "@/db";
 import { audio, audioCategories, speakers } from "@/db/schema";
 import { eq, desc, asc } from "drizzle-orm";
 import { AudioListing } from "@/components/resources/AudioListing";

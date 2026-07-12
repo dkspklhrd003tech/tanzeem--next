@@ -3,7 +3,7 @@ import { DynamicPageContent, generatePageMetadata } from "@/components/shared/Dy
 import OrganizationPageClient from "@/components/organization/OrganizationPage";
 import { IdeologySection } from "@/components/organization/IdeologySection";
 import { HubLanding } from "@/components/shared/HubLanding";
-import { db } from "@/lib/db";
+import { db } from "@/db";
 import { pageSections, pages } from "@/db/schema";
 import { eq, and, asc } from "drizzle-orm";
 import { webPageJsonLd, breadcrumbJsonLd, buildMetadata } from "@/lib/seo";

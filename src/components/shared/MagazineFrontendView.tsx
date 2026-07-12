@@ -1,4 +1,4 @@
-import { db } from "@/lib/db";
+import { db } from "@/db";
 import { pages, settings } from "@/db/schema";
 import { eq, or } from "drizzle-orm";
 import { notFound } from "next/navigation";

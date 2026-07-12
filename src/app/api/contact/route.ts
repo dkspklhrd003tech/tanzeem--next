@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { db } from "@/db";
 import { formSubmissions } from "@/db/schema";
 import { desc, eq, and, count } from "drizzle-orm";
 import { checkRateLimit } from "@/lib/rate-limit";

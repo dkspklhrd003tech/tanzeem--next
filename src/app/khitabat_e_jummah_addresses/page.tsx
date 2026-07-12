@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { db } from "@/lib/db";
+import { db } from "@/db";
 import { khitabatJummahAddresses } from "@/db/schema";
 import { eq, asc } from "drizzle-orm";
 import { KhitabatJummahPage } from "@/components/khitabat/KhitabatJummahPage";

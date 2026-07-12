@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
-import { db } from "@/lib/db";
+import { db } from "@/db";
 import { pages, activityLogs, users, pageSections } from "@/db/schema";
 import { eq, or, like, desc, asc, and, not, sql } from "drizzle-orm";
 import { revalidatePath } from "next/cache";

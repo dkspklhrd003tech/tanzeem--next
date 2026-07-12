@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Headphones } from "lucide-react";
-import { db } from "@/lib/db";
+import { db } from "@/db";
 import { audioCategories, audio } from "@/db/schema";
 import { count, eq, asc, desc, isNull } from "drizzle-orm";
 import { buildMetadata } from "@/lib/seo";

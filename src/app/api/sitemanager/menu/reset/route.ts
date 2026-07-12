@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
-import { db } from "@/lib/db";
+import { db } from "@/db";
 import { menuItems, activityLogs } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { DEFAULT_MENU_HEADER } from "@/lib/menu-defaults";

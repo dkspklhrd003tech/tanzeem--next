@@ -1,5 +1,5 @@
 import { Metadata } from "next";
-import { db } from "@/lib/db";
+import { db } from "@/db";
 import { darseQuranEvents } from "@/db/schema";
 import { eq, asc } from "drizzle-orm";
 import { QuranicCirclesPage } from "@/components/darse-quran/QuranicCirclesPage";

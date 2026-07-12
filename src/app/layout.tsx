@@ -30,7 +30,7 @@ const amiri = Amiri({
   display: "swap",
 });
 
-import { db } from "@/lib/db";
+import { db } from "@/db";
 import { settings } from "@/db/schema";
 import { inArray } from "drizzle-orm";
 

@@ -388,6 +388,11 @@ function SortableCampaignBlock({ block, index, onUpdate, onUpdateTitle, onRemove
                   }} />
                 </div>
                 <div className="space-y-2 mt-2">
+                  <Input placeholder="Thumbnail Title (Optional)" value={thumb.title || ""} onChange={(e) => {
+                    const newThumbs = [...block.value];
+                    newThumbs[i] = { ...newThumbs[i], title: e.target.value };
+                    onUpdate(newThumbs);
+                  }} />
                   <Input placeholder="URL (e.g. /page or https://)" value={thumb.url || ""} onChange={(e) => {
                     const newThumbs = [...block.value];
                     newThumbs[i] = { ...newThumbs[i], url: e.target.value };
@@ -411,10 +416,10 @@ function SortableCampaignBlock({ block, index, onUpdate, onUpdateTitle, onRemove
                       size="sm"
                       className="text-[10px] h-6 px-2 bg-primary/5 hover:bg-primary/10 text-primary border-primary/20"
                       onClick={() => {
-                        const match = thumb.url?.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&?]+)/);
-                        if (match) {
+                        const matchYt = thumb.url?.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&?]+)/);
+                        if (matchYt) {
                           const newThumbs = [...block.value];
-                          newThumbs[i] = { ...newThumbs[i], image: `https://img.youtube.com/vi/${match[1]}/maxresdefault.jpg` };
+                          newThumbs[i] = { ...newThumbs[i], image: `https://img.youtube.com/vi/${matchYt[1]}/maxresdefault.jpg` };
                           onUpdate(newThumbs);
                           toast({ title: "Success", description: "Thumbnail fetched from YouTube." });
                         } else {

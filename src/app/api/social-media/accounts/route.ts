@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { db } from "@/db";
 import { socialAccounts, activityLogs } from "@/db/schema";
 import { asc, eq } from "drizzle-orm";
 import { getCurrentUser } from "@/lib/auth";

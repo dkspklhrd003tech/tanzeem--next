@@ -1,7 +1,7 @@
 import { getCmsPage, getCleanContent } from "@/lib/page-helpers";
 import { DynamicPageContent, generatePageMetadata } from "@/components/shared/DynamicPageContent";
 import { ContactSection, type LocationRow } from "@/components/shared/ContactSection";
-import { db } from "@/lib/db";
+import { db } from "@/db";
 import { settings, locations } from "@/db/schema";
 import { eq, asc } from "drizzle-orm";
 import { webPageJsonLd, breadcrumbJsonLd, buildMetadata } from "@/lib/seo";

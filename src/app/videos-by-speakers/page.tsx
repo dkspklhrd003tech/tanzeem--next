@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { db } from "@/lib/db";
+import { db } from "@/db";
 import { speakers, videos } from "@/db/schema";
 import { eq, asc, count } from "drizzle-orm";
 import { buildMetadata } from "@/lib/seo";

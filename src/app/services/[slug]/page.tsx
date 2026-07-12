@@ -104,7 +104,7 @@ export default async function ServiceDetailsPage({ params }: { params: Promise<{
                                             {block.title && <h2 className="text-2xl font-bold text-foreground">{block.title}</h2>}
                                             <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
                                                 {block.value.map((thumb: any, tIdx: number) => {
-                                                    const isVideo = thumb.url && (thumb.url.includes("youtube.com") || thumb.url.includes("youtu.be") || thumb.url.includes("vimeo"));
+                                                    const isVideo = thumb.url && (thumb.url.includes("youtube.com") || thumb.url.includes("youtu.be") || thumb.url.includes("vimeo") || thumb.url.includes("ok.ru"));
                                                     return (
                                                         <Link
                                                             key={tIdx}
@@ -122,6 +122,11 @@ export default async function ServiceDetailsPage({ params }: { params: Promise<{
                                                             {isVideo && (
                                                                 <div className="absolute inset-0 flex items-center justify-center">
                                                                     <PlayCircle className="h-12 w-12 text-white/90 drop-shadow-lg group-hover:scale-110 transition-transform" />
+                                                                </div>
+                                                            )}
+                                                            {thumb.title && (
+                                                                <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/80 to-transparent">
+                                                                    <h3 className="text-white font-medium text-sm line-clamp-2">{thumb.title}</h3>
                                                                 </div>
                                                             )}
                                                         </Link>
