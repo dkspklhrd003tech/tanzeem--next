@@ -193,173 +193,167 @@ export function ContactSection({
                 <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">Regional Branches</h2>
               </div>
 
-              <div className="space-y-4">
+              <div className="flex flex-wrap gap-3 mb-8">
                 {branches.map((branch) => {
-                  const isOpen = openBranchSlug === branch.slug;
+                  const isActive = openBranchSlug === branch.slug;
                   return (
-                    <div 
-                      key={branch.slug} 
+                    <button
+                      key={branch.slug}
+                      onClick={() => setOpenBranchSlug(branch.slug)}
                       className={cn(
-                        "bg-white rounded-[1.5rem] border transition-all duration-300 overflow-hidden",
-                        isOpen ? "border-[#0d5844]/20 shadow-[0_8px_30px_rgb(13,88,68,0.06)]" : "border-slate-200 shadow-sm hover:border-[#0d5844]/30"
+                        "px-6 py-3 rounded-full text-[15px] font-bold transition-all duration-300 border",
+                        isActive 
+                          ? "bg-[#0d5844] text-white border-[#0d5844] shadow-md shadow-emerald-900/10"
+                          : "bg-white text-slate-600 border-slate-200 hover:border-[#0d5844]/30 hover:text-[#0d5844]"
                       )}
                     >
-                      {/* Accordion Header */}
-                      <button
-                        onClick={() => toggleBranch(branch.slug)}
-                        className="w-full text-left px-6 py-6 md:px-8 flex items-center justify-between bg-white hover:bg-slate-50/50 transition-colors"
-                      >
-                        <span className="text-lg font-bold text-slate-900">{branch.name}</span>
-                        <ChevronDown className={cn("w-5 h-5 text-slate-400 transition-transform duration-300", isOpen && "rotate-180 text-[#0d5844]")} />
-                      </button>
-
-                      {/* Accordion Body */}
-                      <AnimatePresence initial={false}>
-                        {isOpen && (
-                          <motion.div
-                            initial={{ height: 0, opacity: 0 }}
-                            animate={{ height: "auto", opacity: 1 }}
-                            exit={{ height: 0, opacity: 0 }}
-                            transition={{ duration: 0.3, ease: "easeInOut" }}
-                          >
-                            <div className="px-6 pb-8 md:px-8 pt-2 border-t border-slate-100">
-                              
-                              {/* Legacy simple fields */}
-                              {(!branch.details || branch.details.length === 0) && (
-                                <dl className="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-8 text-[15px]">
-                                  {branch.city && (
-                                    <div className="space-y-1">
-                                      <dt className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5"><Building2 className="w-3.5 h-3.5" /> City</dt>
-                                      <dd className="font-semibold text-slate-900">{branch.city}</dd>
-                                    </div>
-                                  )}
-                                  {branch.address && (
-                                    <div className="space-y-1 md:col-span-2">
-                                      <dt className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5"><MapPinned className="w-3.5 h-3.5" /> Address</dt>
-                                      <dd className="font-medium text-slate-700 leading-relaxed max-w-xl">
-                                        <a href={`https://maps.google.com/?q=${encodeURIComponent(branch.address)}`} target="_blank" rel="noopener noreferrer" className="hover:text-[#0d5844] transition-colors hover:underline decoration-slate-300 underline-offset-4">
-                                          {branch.address}
-                                        </a>
-                                      </dd>
-                                    </div>
-                                  )}
-                                  {branch.phone && (
-                                    <div className="space-y-1">
-                                      <dt className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5"><Phone className="w-3.5 h-3.5" /> Phone</dt>
-                                      <dd>
-                                        <a href={`tel:${getCleanNumber(branch.phone)}`} target="_blank" rel="noopener noreferrer" className="font-semibold text-slate-900 hover:text-[#0d5844] transition-colors">
-                                          {branch.phone}
-                                        </a>
-                                      </dd>
-                                    </div>
-                                  )}
-                                  {branch.email && (
-                                    <div className="space-y-1">
-                                      <dt className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5"><Mail className="w-3.5 h-3.5" /> Email</dt>
-                                      <dd>
-                                        <a href={`mailto:${branch.email}`} target="_blank" rel="noopener noreferrer" className="font-semibold text-slate-900 hover:text-[#0d5844] transition-colors">
-                                          {branch.email}
-                                        </a>
-                                      </dd>
-                                    </div>
-                                  )}
-                                </dl>
-                              )}
-
-                              {/* Complex Detailed Addresses Array */}
-                              {branch.details && branch.details.length > 0 && (
-                                <div className="space-y-6">
-                                  {branch.details.map((detail, idx) => (
-                                    <div key={detail.id || idx} className="bg-slate-50/50 rounded-2xl p-6 border border-slate-100">
-                                      {detail.title && (
-                                        <div className="mb-6 pb-4 border-b border-slate-200/60 flex items-center gap-3">
-                                          <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center shrink-0 border border-emerald-100/50">
-                                            <MapPin className="w-4 h-4 text-[#0d5844]" />
-                                          </div>
-                                          <div>
-                                            <h4 className="font-bold text-lg text-slate-900">{detail.title}</h4>
-                                            {detail.titleValue && (
-                                              <span className="text-sm text-slate-500 font-medium">{detail.titleValue}</span>
-                                            )}
-                                          </div>
-                                        </div>
-                                      )}
-                                      
-                                      <div className="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-8 text-[15px]">
-                                        {detail.naibAmeer && (
-                                          <div className="space-y-1">
-                                            <span className="block text-xs font-bold text-slate-400 uppercase tracking-wider">{detail.leaderTitle || 'Ameer'}</span>
-                                            <span className="block font-semibold text-slate-800">{detail.naibAmeer}</span>
-                                          </div>
-                                        )}
-                                        {detail.address && (
-                                          <div className="space-y-1 md:col-span-2">
-                                            <span className="block text-xs font-bold text-slate-400 uppercase tracking-wider">Postal Address</span>
-                                            <span className="block font-medium text-slate-600 leading-relaxed">
-                                              {detail.addressUrl ? (
-                                                <a href={detail.addressUrl} target={detail.addressUrlNewTab !== false ? "_blank" : "_self"} className="hover:text-[#0d5844] transition-colors hover:underline decoration-slate-300 underline-offset-4">
-                                                  {detail.address}
-                                                </a>
-                                              ) : (
-                                                detail.address
-                                              )}
-                                            </span>
-                                          </div>
-                                        )}
-                                        {detail.phone && (
-                                          <div className="space-y-1">
-                                            <span className="block text-xs font-bold text-slate-400 uppercase tracking-wider">Phone</span>
-                                            <span className="block font-semibold text-slate-800">
-                                              {detail.phoneUrl ? (
-                                                <a href={detail.phoneUrl} target={detail.phoneUrlNewTab !== false ? "_blank" : "_self"} className="hover:text-[#0d5844] transition-colors">{detail.phone}</a>
-                                              ) : (
-                                                detail.phone
-                                              )}
-                                            </span>
-                                          </div>
-                                        )}
-                                        {detail.mobile && (
-                                          <div className="space-y-1">
-                                            <span className="block text-xs font-bold text-slate-400 uppercase tracking-wider">Mobile</span>
-                                            <span className="block font-semibold text-slate-800">
-                                              {detail.mobileUrl ? (
-                                                <a href={detail.mobileUrl} target={detail.mobileUrlNewTab !== false ? "_blank" : "_self"} className="hover:text-[#0d5844] transition-colors">{detail.mobile}</a>
-                                              ) : (
-                                                detail.mobile
-                                              )}
-                                            </span>
-                                          </div>
-                                        )}
-                                        {detail.email && (
-                                          <div className="space-y-1">
-                                            <span className="block text-xs font-bold text-slate-400 uppercase tracking-wider">Email</span>
-                                            <span className="block font-semibold text-slate-800">
-                                              <a href={detail.emailUrl || `mailto:${detail.email}`} target={detail.emailUrlNewTab !== false ? "_blank" : "_self"} className="hover:text-[#0d5844] transition-colors">{detail.email}</a>
-                                            </span>
-                                          </div>
-                                        )}
-                                      </div>
-                                    </div>
-                                  ))}
-                                </div>
-                              )}
-
-                              {!branch.phone && !branch.city && (!branch.details || branch.details.length === 0) && (
-                                <div className="flex flex-col items-center justify-center py-10 px-6 text-center">
-                                  <Building2 className="w-10 h-10 text-slate-200 mb-3" />
-                                  <p className="text-[14px] text-slate-500 max-w-sm">
-                                    Contact details will be available soon. Please email <a href="mailto:markaz@tanzeem.org" className="text-[#0d5844] font-bold hover:underline">markaz@tanzeem.org</a> for assistance.
-                                  </p>
-                                </div>
-                              )}
-                            </div>
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </div>
+                      {branch.name}
+                    </button>
                   );
                 })}
               </div>
+
+              <AnimatePresence mode="wait">
+                {branches.filter(b => b.slug === openBranchSlug).map((branch) => (
+                  <motion.div
+                    key={branch.slug}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.3 }}
+                    className="bg-white rounded-[2rem] p-8 md:p-10 shadow-[0_8px_40px_rgb(0,0,0,0.04)] border border-slate-100"
+                  >
+                    {/* Legacy simple fields */}
+                    {(!branch.details || branch.details.length === 0) && (
+                      <dl className="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-8 text-[15px]">
+                        {branch.city && (
+                          <div className="space-y-1">
+                            <dt className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5"><Building2 className="w-3.5 h-3.5" /> City</dt>
+                            <dd className="font-semibold text-slate-900">{branch.city}</dd>
+                          </div>
+                        )}
+                        {branch.address && (
+                          <div className="space-y-1 md:col-span-2">
+                            <dt className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5"><MapPinned className="w-3.5 h-3.5" /> Address</dt>
+                            <dd className="font-medium text-slate-700 leading-relaxed max-w-xl">
+                              <a href={`https://maps.google.com/?q=${encodeURIComponent(branch.address)}`} target="_blank" rel="noopener noreferrer" className="hover:text-[#0d5844] transition-colors hover:underline decoration-slate-300 underline-offset-4">
+                                {branch.address}
+                              </a>
+                            </dd>
+                          </div>
+                        )}
+                        {branch.phone && (
+                          <div className="space-y-1">
+                            <dt className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5"><Phone className="w-3.5 h-3.5" /> Phone</dt>
+                            <dd>
+                              <a href={`tel:${getCleanNumber(branch.phone)}`} target="_blank" rel="noopener noreferrer" className="font-semibold text-slate-900 hover:text-[#0d5844] transition-colors">
+                                {branch.phone}
+                              </a>
+                            </dd>
+                          </div>
+                        )}
+                        {branch.email && (
+                          <div className="space-y-1">
+                            <dt className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5"><Mail className="w-3.5 h-3.5" /> Email</dt>
+                            <dd>
+                              <a href={`mailto:${branch.email}`} target="_blank" rel="noopener noreferrer" className="font-semibold text-slate-900 hover:text-[#0d5844] transition-colors">
+                                {branch.email}
+                              </a>
+                            </dd>
+                          </div>
+                        )}
+                      </dl>
+                    )}
+
+                    {/* Complex Detailed Addresses Array */}
+                    {branch.details && branch.details.length > 0 && (
+                      <div className="space-y-6">
+                        {branch.details.map((detail, idx) => (
+                          <div key={detail.id || idx} className="bg-slate-50/50 rounded-2xl p-6 border border-slate-100">
+                            {detail.title && (
+                              <div className="mb-6 pb-4 border-b border-slate-200/60 flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center shrink-0 border border-emerald-100/50">
+                                  <MapPin className="w-4 h-4 text-[#0d5844]" />
+                                </div>
+                                <div>
+                                  <h4 className="font-bold text-lg text-slate-900">{detail.title}</h4>
+                                  {detail.titleValue && (
+                                    <span className="text-sm text-slate-500 font-medium">{detail.titleValue}</span>
+                                  )}
+                                </div>
+                              </div>
+                            )}
+                            
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-8 text-[15px]">
+                              {detail.naibAmeer && (
+                                <div className="space-y-1">
+                                  <span className="block text-xs font-bold text-slate-400 uppercase tracking-wider">{detail.leaderTitle || 'Ameer'}</span>
+                                  <span className="block font-semibold text-slate-800">{detail.naibAmeer}</span>
+                                </div>
+                              )}
+                              {detail.address && (
+                                <div className="space-y-1 md:col-span-2">
+                                  <span className="block text-xs font-bold text-slate-400 uppercase tracking-wider">Postal Address</span>
+                                  <span className="block font-medium text-slate-600 leading-relaxed">
+                                    {detail.addressUrl ? (
+                                      <a href={detail.addressUrl} target={detail.addressUrlNewTab !== false ? "_blank" : "_self"} className="hover:text-[#0d5844] transition-colors hover:underline decoration-slate-300 underline-offset-4">
+                                        {detail.address}
+                                      </a>
+                                    ) : (
+                                      detail.address
+                                    )}
+                                  </span>
+                                </div>
+                              )}
+                              {detail.phone && (
+                                <div className="space-y-1">
+                                  <span className="block text-xs font-bold text-slate-400 uppercase tracking-wider">Phone</span>
+                                  <span className="block font-semibold text-slate-800">
+                                    {detail.phoneUrl ? (
+                                      <a href={detail.phoneUrl} target={detail.phoneUrlNewTab !== false ? "_blank" : "_self"} className="hover:text-[#0d5844] transition-colors">{detail.phone}</a>
+                                    ) : (
+                                      detail.phone
+                                    )}
+                                  </span>
+                                </div>
+                              )}
+                              {detail.mobile && (
+                                <div className="space-y-1">
+                                  <span className="block text-xs font-bold text-slate-400 uppercase tracking-wider">Mobile</span>
+                                  <span className="block font-semibold text-slate-800">
+                                    {detail.mobileUrl ? (
+                                      <a href={detail.mobileUrl} target={detail.mobileUrlNewTab !== false ? "_blank" : "_self"} className="hover:text-[#0d5844] transition-colors">{detail.mobile}</a>
+                                    ) : (
+                                      detail.mobile
+                                    )}
+                                  </span>
+                                </div>
+                              )}
+                              {detail.email && (
+                                <div className="space-y-1">
+                                  <span className="block text-xs font-bold text-slate-400 uppercase tracking-wider">Email</span>
+                                  <span className="block font-semibold text-slate-800">
+                                    <a href={detail.emailUrl || `mailto:${detail.email}`} target={detail.emailUrlNewTab !== false ? "_blank" : "_self"} className="hover:text-[#0d5844] transition-colors">{detail.email}</a>
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {!branch.phone && !branch.city && (!branch.details || branch.details.length === 0) && (
+                      <div className="flex flex-col items-center justify-center py-10 px-6 text-center">
+                        <Building2 className="w-10 h-10 text-slate-200 mb-3" />
+                        <p className="text-[14px] text-slate-500 max-w-sm">
+                          Contact details will be available soon. Please email <a href="mailto:markaz@tanzeem.org" className="text-[#0d5844] font-bold hover:underline">markaz@tanzeem.org</a> for assistance.
+                        </p>
+                      </div>
+                    )}
+                  </motion.div>
+                ))}
+              </AnimatePresence>
             </motion.div>
           )}
 
