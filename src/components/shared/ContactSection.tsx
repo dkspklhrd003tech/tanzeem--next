@@ -62,7 +62,7 @@ export function ContactSection({
   locationRows = [],
 }: ContactSectionProps) {
   const s = { ...DEFAULT_SETTINGS, ...contactSettings };
-  
+
   let orderedBranches = [...locationRows];
   if (s.locations_order) {
     try {
@@ -75,7 +75,7 @@ export function ContactSection({
         if (indexB === -1) return -1;
         return indexA - indexB;
       });
-    } catch (e) {}
+    } catch (e) { }
   }
   const branches = orderedBranches;
 
@@ -92,28 +92,28 @@ export function ContactSection({
 
   return (
     <section className="flex flex-col lg:flex-row min-h-[calc(100vh-80px)] w-full bg-slate-50">
-      
+
       {/* ── LEFT PANEL: Sticky & Immersive (Dark Emerald) ── */}
-      <div className="relative lg:w-5/12 xl:w-1/3 bg-[#0d5844] text-white flex flex-col p-8 md:p-12 lg:p-16 overflow-hidden">
-        
+      <div className="relative lg:w-5/12 xl:w-1/3 bg-[#0d5844] text-white flex flex-col p-4 md:p-6 lg:-10 overflow-hidden">
+
         {/* Cinematic Background Elements */}
         <div className="absolute inset-0 top-0 h-full w-full bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-[size:48px_48px] pointer-events-none" />
         <div className="absolute top-0 right-0 w-[400px] h-[400px] rounded-full bg-[#137a5f] blur-[120px] -z-0 opacity-40 pointer-events-none" />
         <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-repeat bg-center" style={{ backgroundImage: `url('/images/pattern-arabesque.png')`, backgroundSize: '400px' }} />
 
         {/* Content Wrapper */}
-        <div className="relative z-10 flex flex-col h-full pt-4">
-          
+        <div className="relative z-10 flex flex-col h-full">
+
           {/* Headquarters Info */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             className="space-y-10"
           >
             <div>
-              <h2 className="text-sm font-bold text-emerald-400 uppercase tracking-widest mb-8">Headquarters</h2>
-              
+              <h2 className="text-sm font-bold text-emerald-400 uppercase tracking-widest mb-6">Headquarters</h2>
+
               <div className="space-y-6">
                 <div className="flex gap-4">
                   <div className="mt-1 w-10 h-10 rounded-full bg-white/10 flex items-center justify-center shrink-0 border border-white/10">
@@ -174,22 +174,22 @@ export function ContactSection({
       {/* ── RIGHT PANEL: Scrollable (Light Gray) ── */}
       <div className="lg:w-7/12 xl:w-2/3 flex flex-col">
         <div className="max-w-4xl mx-auto w-full p-8 md:p-12 lg:p-16 lg:py-24 space-y-24">
-          
+
           {/* Section 1: Send a Message Form */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
           >
-            <div className="flex items-center gap-3 mb-8">
+            <div className="flex items-center gap-3 mb-6">
               <div className="w-12 h-12 rounded-2xl bg-white shadow-sm border border-slate-200 flex items-center justify-center">
                 <Send className="w-5 h-5 text-[#0d5844]" />
               </div>
               <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">Send a Message</h2>
             </div>
-            
+
             {/* The form container is intentionally clean and borderless to blend with the premium layout */}
-            <div className="bg-white rounded-[2rem] p-8 md:p-10 shadow-[0_8px_40px_rgb(0,0,0,0.04)] border border-slate-100">
+            <div className="bg-primary-light rounded-[1rem] p-4 md:p-6 shadow-[0_8px_40px_rgb(0,0,0,0.04)] border border-slate-100">
               <ContactForm />
             </div>
           </motion.div>
@@ -201,14 +201,14 @@ export function ContactSection({
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.4 }}
             >
-              <div className="flex items-center gap-3 mb-8">
+              <div className="flex items-center gap-3 mb-6">
                 <div className="w-12 h-12 rounded-2xl bg-white shadow-sm border border-slate-200 flex items-center justify-center">
                   <Globe className="w-5 h-5 text-[#0d5844]" />
                 </div>
                 <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">Regional Branches</h2>
               </div>
 
-              <div className="flex flex-wrap gap-3 mb-8">
+              <div className="flex flex-wrap gap-3 mb-4">
                 {branches.map((branch) => {
                   const isActive = openBranchSlug === branch.slug;
                   return (
@@ -217,7 +217,7 @@ export function ContactSection({
                       onClick={() => setOpenBranchSlug(branch.slug)}
                       className={cn(
                         "px-6 py-3 rounded-full text-[15px] font-bold transition-all duration-300 border",
-                        isActive 
+                        isActive
                           ? "bg-[#0d5844] text-white border-[#0d5844] shadow-md shadow-emerald-900/10"
                           : "bg-white text-slate-600 border-slate-200 hover:border-[#0d5844]/30 hover:text-[#0d5844]"
                       )}
@@ -236,11 +236,11 @@ export function ContactSection({
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.3 }}
-                    className="bg-white rounded-[2rem] p-8 md:p-10 shadow-[0_8px_40px_rgb(0,0,0,0.04)] border border-slate-100"
+                    className="bg-white rounded-[1rem] p-4 md:p-6 shadow-[0_8px_40px_rgb(0,0,0,0.04)] border border-slate-100"
                   >
                     {/* Legacy simple fields */}
                     {(!branch.details || branch.details.length === 0) && (
-                      <dl className="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-8 text-[15px]">
+                      <dl className="grid grid-cols-1 md:grid-cols-2 gap-y-6 text-[16px]">
                         {branch.city && (
                           <div className="space-y-1">
                             <dt className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5"><Building2 className="w-3.5 h-3.5" /> City</dt>
@@ -284,7 +284,7 @@ export function ContactSection({
                     {branch.details && branch.details.length > 0 && (
                       <div className="space-y-6">
                         {branch.details.map((detail, idx) => (
-                          <div key={detail.id || idx} className="bg-slate-50/50 rounded-2xl p-6 border border-slate-100">
+                          <div key={detail.id || idx} className="bg-primary-light rounded-xl p-6 border border-primary/40">
                             {detail.title && (
                               <div className="mb-6 pb-4 border-b border-slate-200/60 flex items-center gap-3">
                                 <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center shrink-0 border border-emerald-100/50">
@@ -298,18 +298,18 @@ export function ContactSection({
                                 </div>
                               </div>
                             )}
-                            
+
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-8 text-[15px]">
                               {detail.naibAmeer && (
                                 <div className="space-y-1">
-                                  <span className="block text-xs font-bold text-slate-400 uppercase tracking-wider">{detail.leaderTitle || 'Ameer'}</span>
+                                  <span className="block text-sm font-bold text-primary/90 uppercase tracking-wider">{detail.leaderTitle || 'Ameer'}</span>
                                   <span className="block font-semibold text-slate-800">{detail.naibAmeer}</span>
                                 </div>
                               )}
                               {detail.address && (
                                 <div className="space-y-1 md:col-span-2">
-                                  <span className="block text-xs font-bold text-slate-400 uppercase tracking-wider">Postal Address</span>
-                                  <span className="block font-medium text-slate-600 leading-relaxed">
+                                  <span className="block text-sm font-bold text-primary/90 uppercase tracking-wider">Postal Address</span>
+                                  <span className="block font-medium text-slate-800 leading-relaxed">
                                     {detail.addressUrl ? (
                                       <a href={detail.addressUrl} target={detail.addressUrlNewTab !== false ? "_blank" : "_self"} className="hover:text-[#0d5844] transition-colors hover:underline decoration-slate-300 underline-offset-4">
                                         {detail.address}
@@ -322,7 +322,7 @@ export function ContactSection({
                               )}
                               {detail.phone && (
                                 <div className="space-y-1">
-                                  <span className="block text-xs font-bold text-slate-400 uppercase tracking-wider">Phone</span>
+                                  <span className="block text-sm font-bold text-primary/90 uppercase tracking-wider">Phone</span>
                                   <span className="block font-semibold text-slate-800">
                                     {detail.phoneUrl ? (
                                       <a href={detail.phoneUrl} target={detail.phoneUrlNewTab !== false ? "_blank" : "_self"} className="hover:text-[#0d5844] transition-colors">{detail.phone}</a>
@@ -334,7 +334,7 @@ export function ContactSection({
                               )}
                               {detail.mobile && (
                                 <div className="space-y-1">
-                                  <span className="block text-xs font-bold text-slate-400 uppercase tracking-wider">Mobile</span>
+                                  <span className="block text-sm font-bold text-primary/90 uppercase tracking-wider">Mobile</span>
                                   <span className="block font-semibold text-slate-800">
                                     {detail.mobileUrl ? (
                                       <a href={detail.mobileUrl} target={detail.mobileUrlNewTab !== false ? "_blank" : "_self"} className="hover:text-[#0d5844] transition-colors">{detail.mobile}</a>
@@ -346,7 +346,7 @@ export function ContactSection({
                               )}
                               {detail.email && (
                                 <div className="space-y-1">
-                                  <span className="block text-xs font-bold text-slate-400 uppercase tracking-wider">Email</span>
+                                  <span className="block text-sm font-bold text-primary/90 uppercase tracking-wider">Email</span>
                                   <span className="block font-semibold text-slate-800">
                                     <a href={detail.emailUrl || `mailto:${detail.email}`} target={detail.emailUrlNewTab !== false ? "_blank" : "_self"} className="hover:text-[#0d5844] transition-colors">{detail.email}</a>
                                   </span>
