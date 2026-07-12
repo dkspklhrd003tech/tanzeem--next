@@ -327,7 +327,7 @@ function SortableServiceBlock({ block, index, onUpdate, onUpdateTitle, onRemove 
           <div {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-primary">
             <GripVertical className="h-4 w-4" />
           </div>
-          <Badge variant="outline" className="uppercase text-[10px]">{block.type}</Badge>
+          <Badge variant="outline" className="bg-primary border border-primary uppercase text-[12px] text-white">{block.type}</Badge>
         </div>
         <Button type="button" variant="ghost" size="icon" className="h-6 w-6 text-destructive" onClick={onRemove}>
           <Trash2 className="h-4 w-4" />
@@ -335,11 +335,11 @@ function SortableServiceBlock({ block, index, onUpdate, onUpdateTitle, onRemove 
       </div>
 
       <div className="mb-4">
-         <Input 
-             placeholder="Optional Section Title" 
-             value={block.title || ""} 
-             onChange={(e) => onUpdateTitle(e.target.value)} 
-         />
+        <Input
+          placeholder="Optional Section Title"
+          value={block.title || ""}
+          onChange={(e) => onUpdateTitle(e.target.value)}
+        />
       </div>
 
       {block.type === "image" && (
@@ -347,15 +347,15 @@ function SortableServiceBlock({ block, index, onUpdate, onUpdateTitle, onRemove 
       )}
       {block.type === "pdf" && (
         <div className="space-y-3 p-3 border border-border rounded-lg bg-background">
-          <PdfUploader 
-            value={typeof block.value === 'string' ? block.value : block.value?.url || ""} 
+          <PdfUploader
+            value={typeof block.value === 'string' ? block.value : block.value?.url || ""}
             onChange={(url) => {
               const currentTitle = typeof block.value === 'string' ? "" : block.value?.title || "";
               onUpdate({ url, title: currentTitle });
-            }} 
+            }}
           />
-          <Input 
-            placeholder="Title (Optional) - e.g. 'Read the full report'" 
+          <Input
+            placeholder="Title (Optional) - e.g. 'Read the full report'"
             value={typeof block.value === 'string' ? "" : block.value?.title || ""}
             onChange={(e) => {
               const currentUrl = typeof block.value === 'string' ? block.value : block.value?.url || "";
@@ -400,30 +400,30 @@ function SortableServiceBlock({ block, index, onUpdate, onUpdateTitle, onRemove 
                   }} />
                   <div className="flex items-center justify-between mt-2">
                     <div className="flex items-center gap-2">
-                      <Switch 
-                        checked={thumb.newTab !== false} 
+                      <Switch
+                        checked={thumb.newTab !== false}
                         onCheckedChange={(checked) => {
                           const newThumbs = [...block.value];
                           newThumbs[i] = { ...newThumbs[i], newTab: checked };
                           onUpdate(newThumbs);
-                        }} 
+                        }}
                       />
                       <span className="text-xs text-muted-foreground">Open in New Tab</span>
                     </div>
-                    <Button 
-                      type="button" 
-                      variant="outline" 
-                      size="sm" 
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
                       className="text-[10px] h-6 px-2 bg-primary/5 hover:bg-primary/10 text-primary border-primary/20"
                       onClick={() => {
                         const matchYt = thumb.url?.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&?]+)/);
                         if (matchYt) {
-                           const newThumbs = [...block.value];
-                           newThumbs[i] = { ...newThumbs[i], image: `https://img.youtube.com/vi/${matchYt[1]}/maxresdefault.jpg` };
-                           onUpdate(newThumbs);
-                           toast({ title: "Success", description: "Thumbnail fetched from YouTube." });
+                          const newThumbs = [...block.value];
+                          newThumbs[i] = { ...newThumbs[i], image: `https://img.youtube.com/vi/${matchYt[1]}/maxresdefault.jpg` };
+                          onUpdate(newThumbs);
+                          toast({ title: "Success", description: "Thumbnail fetched from YouTube." });
                         } else {
-                           toast({ title: "Invalid URL", description: "Please enter a valid YouTube URL to fetch its thumbnail.", variant: "destructive" });
+                          toast({ title: "Invalid URL", description: "Please enter a valid YouTube URL to fetch its thumbnail.", variant: "destructive" });
                         }
                       }}
                     >
@@ -442,12 +442,12 @@ function SortableServiceBlock({ block, index, onUpdate, onUpdateTitle, onRemove 
             <Button type="button" variant="outline" size="sm" onClick={() => onUpdate([...(block.value || []), { image: "", alt: "" }])}>
               <Plus className="h-3 w-3 mr-1" /> Add Slider Image
             </Button>
-            <input 
-              type="file" 
-              multiple 
-              accept="image/*" 
-              className="hidden" 
-              ref={bulkUploadRef} 
+            <input
+              type="file"
+              multiple
+              accept="image/*"
+              className="hidden"
+              ref={bulkUploadRef}
               onChange={async (e) => {
                 if (!e.target.files || e.target.files.length === 0) return;
                 setIsBulkUploading(true);
@@ -468,12 +468,12 @@ function SortableServiceBlock({ block, index, onUpdate, onUpdateTitle, onRemove 
                   setIsBulkUploading(false);
                   if (bulkUploadRef.current) bulkUploadRef.current.value = "";
                 }
-              }} 
+              }}
             />
-            <Button 
-              type="button" 
-              variant="default" 
-              size="sm" 
+            <Button
+              type="button"
+              variant="default"
+              size="sm"
               disabled={isBulkUploading}
               onClick={() => bulkUploadRef.current?.click()}
             >
@@ -758,17 +758,21 @@ export default function ServicesPageEditor({ pageId, initialPageData }: Services
   const handleOpenEditModal = (item: ServiceItem) => {
     setEditingItem(item);
     setSlugManual(true);
+    let cFields = item.customFields as any;
+    if (typeof cFields === 'string') {
+        try { cFields = JSON.parse(cFields); } catch (e) { cFields = {}; }
+    }
     setFormData({
       title: item.title,
       slug: item.slug,
       imageUrl: item.imageUrl || "",
-      blocks: item.customFields?.blocks || [],
+      blocks: cFields?.blocks || [],
       isPublished: item.isPublished,
       startDate: item.startDate ? new Date(item.startDate).toISOString().split("T")[0] : "",
       metaTitle: item.metaTitle || "",
       metaDescription: item.metaDescription || "",
-      showInSpotlight: item.customFields?.showInSpotlight || false,
-      openInNewTab: item.customFields?.openInNewTab || false,
+      showInSpotlight: cFields?.showInSpotlight || false,
+      openInNewTab: cFields?.openInNewTab || false,
     });
     setFormErrors({});
     setIsModalOpen(true);

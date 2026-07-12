@@ -327,7 +327,7 @@ function SortableCampaignBlock({ block, index, onUpdate, onUpdateTitle, onRemove
           <div {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-primary">
             <GripVertical className="h-4 w-4" />
           </div>
-          <Badge variant="outline" className="uppercase text-[10px]">{block.type}</Badge>
+          <Badge variant="outline" className="bg-primary border border-primary uppercase text-[12px] text-white">{block.type}</Badge>
         </div>
         <Button type="button" variant="ghost" size="icon" className="h-6 w-6 text-destructive" onClick={onRemove}>
           <Trash2 className="h-4 w-4" />
@@ -755,12 +755,16 @@ export default function CampaignsPageEditor({ pageId, initialPageData }: Campaig
   const handleOpenEditModal = (item: CampaignItem) => {
     setEditingItem(item);
     setSlugManual(true);
+    let cFields = item.customFields as any;
+    if (typeof cFields === 'string') {
+        try { cFields = JSON.parse(cFields); } catch (e) { cFields = {}; }
+    }
     setFormData({
       title: item.title,
       slug: item.slug,
       thumbnailUrl: item.thumbnailUrl || "",
       categoryId: item.categoryId || "Campaigns",
-      customFields: item.customFields ? { blocks: item.customFields.blocks || [] } : { blocks: [] },
+      customFields: cFields ? { blocks: cFields.blocks || [] } : { blocks: [] },
       isPublished: item.isPublished,
       startsAt: item.startsAt ? new Date(item.startsAt).toISOString().split("T")[0] : "",
       metaTitle: item.metaTitle || "",
