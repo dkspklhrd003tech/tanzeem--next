@@ -67,7 +67,7 @@ function SortableItem({
 
         {/* Collapse toggle */}
         {hasChildren ? (
-          <button onClick={() => setCollapsed(v => !v)} className="text-muted-foreground hover:text-foreground">
+          <button onClick={() => setCollapsed(v => !v)} className="text-muted-foreground">
             {collapsed ? <ChevronRight className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
           </button>
         ) : (
@@ -108,7 +108,7 @@ function SortableItem({
             </button>
           )}
           <button onClick={() => onEdit(item)} title="Edit"
-            className="h-7 w-7 rounded flex items-center justify-center hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
+            className="h-7 w-7 rounded flex items-center justify-center hover:bg-muted text-muted-foreground transition-colors">
             <Pencil className="h-3.5 w-3.5" />
           </button>
           <button onClick={() => setConfirmDelete(true)} title="Delete"
@@ -198,9 +198,9 @@ export function MenuBuilder({ items, onChange, onEditItem }: Props) {
   const handleDragEnd = useCallback(({ active, over }: DragEndEvent) => {
     if (!over || active.id === over.id) return;
 
-    const topIds  = topLevel.map(i => i.id);
+    const topIds = topLevel.map(i => i.id);
     const fromIdx = topIds.indexOf(active.id as string);
-    const toIdx   = topIds.indexOf(over.id as string);
+    const toIdx = topIds.indexOf(over.id as string);
 
     if (fromIdx === -1 || toIdx === -1) return;
 

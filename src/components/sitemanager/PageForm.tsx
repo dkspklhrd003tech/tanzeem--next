@@ -447,7 +447,7 @@ export function PageForm({ mode, initialData, parentPages = [] }: PageFormProps)
                     "flex items-center gap-2 px-5 py-3 text-sm font-medium border-b-2 transition-colors",
                     activeTab === "content"
                       ? "border-primary text-primary"
-                      : "border-transparent text-muted-foreground hover:text-foreground"
+                      : "border-transparent text-muted-foreground"
                   )}
                 >
                   <FileText className="h-4 w-4" />
@@ -460,7 +460,7 @@ export function PageForm({ mode, initialData, parentPages = [] }: PageFormProps)
                     "flex items-center gap-2 px-5 py-3 text-sm font-medium border-b-2 transition-colors",
                     activeTab === "sections"
                       ? "border-primary text-primary"
-                      : "border-transparent text-muted-foreground hover:text-foreground"
+                      : "border-transparent text-muted-foreground"
                   )}
                 >
                   <LayoutTemplate className="h-4 w-4" />
@@ -476,7 +476,7 @@ export function PageForm({ mode, initialData, parentPages = [] }: PageFormProps)
                     "flex items-center gap-2 px-5 py-3 text-sm font-medium border-b-2 transition-colors",
                     activeTab === "seo"
                       ? "border-primary text-primary"
-                      : "border-transparent text-muted-foreground hover:text-foreground"
+                      : "border-transparent text-muted-foreground"
                   )}
                 >
                   <Search className="h-4 w-4" />

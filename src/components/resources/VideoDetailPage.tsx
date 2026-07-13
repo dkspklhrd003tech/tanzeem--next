@@ -81,9 +81,22 @@ export function VideoDetailPage({ item, related, customFieldSchema = [] }: { ite
     };
   }, [embedSrc, item.slug]);
 
-  const handleShare = () => {
-    if (navigator.share) navigator.share({ title: item.title, url: window.location.href });
-    else navigator.clipboard.writeText(window.location.href);
+  const handleShare = async () => {
+    if (typeof window === "undefined" || typeof navigator === "undefined") return;
+    try {
+      if (navigator.clipboard) await navigator.clipboard.writeText(window.location.href);
+    } catch (e) {
+      console.error("Failed to copy:", e);
+    }
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: item.title, url: window.location.href });
+      } catch (err: any) {
+        if (err.name !== "AbortError") console.error("Error sharing:", err);
+      }
+    } else {
+      alert("Link copied to clipboard!");
+    }
   };
 
   return (

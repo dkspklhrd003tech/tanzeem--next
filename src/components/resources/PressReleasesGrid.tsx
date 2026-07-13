@@ -140,7 +140,7 @@ export function PressReleasesGrid({ initialItems }: PressReleasesGridProps) {
                     <div>
                       {/* Meta Section */}
                       <div className="flex items-center justify-between gap-2 mb-3">
-                        <div className="flex bg-primary-light rounded-full shadow-sm border-border border items-center gap-1.5 px-2 py-1 text-xs text-muted-foreground">
+                        <div className="flex bg-primary-light rounded-full shadow-sm border-primary border items-center gap-1.5 px-2 py-1 text-xs font-semibold text-primary">
                           <Calendar className="h-3.5 w-3.5" />
                           <span>{formattedDate}</span>
                         </div>

@@ -77,7 +77,7 @@ function SortableSpeakerCard({ speaker, onClick, onEdit, onDelete }: { speaker: 
 
   return (
     <div ref={setNodeRef} style={style} className="relative cursor-pointer group flex flex-col bg-card rounded-2xl border border-border overflow-hidden hover:border-primary/50 transition-colors shadow-sm" onClick={onClick}>
-      <div {...attributes} {...listeners} className="absolute top-2 left-2 z-20 p-1.5 bg-background/80 backdrop-blur rounded-md border shadow-sm cursor-grab active:cursor-grabbing hover:bg-background transition-colors text-muted-foreground hover:text-foreground">
+      <div {...attributes} {...listeners} className="absolute top-2 left-2 z-20 p-1.5 bg-background/80 backdrop-blur rounded-md border shadow-sm cursor-grab active:cursor-grabbing hover:bg-background transition-colors text-muted-foreground">
         <GripVertical className="w-4 h-4" />
       </div>
       <div className="aspect-square bg-muted relative border-b border-border">
@@ -114,7 +114,7 @@ function SortableVideoCard({ video, onEdit, onDelete }: { video: VideoItem, onEd
 
   return (
     <div ref={setNodeRef} style={style} className="relative bg-card rounded-xl border p-4 flex flex-col justify-between group hover:border-primary/50 transition-colors shadow-sm">
-      <div {...attributes} {...listeners} className="absolute top-2 right-2 z-20 p-1.5 bg-background/80 backdrop-blur rounded-md border shadow-sm cursor-grab active:cursor-grabbing hover:bg-background transition-colors text-muted-foreground hover:text-foreground">
+      <div {...attributes} {...listeners} className="absolute top-2 right-2 z-20 p-1.5 bg-background/80 backdrop-blur rounded-md border shadow-sm cursor-grab active:cursor-grabbing hover:bg-background transition-colors text-muted-foreground">
         <GripVertical className="w-4 h-4" />
       </div>
       <div className="pr-8">
@@ -221,7 +221,7 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
       const url = editingVideoId ? `/api/admin/videos/${editingVideoId}` : "/api/admin/videos";
       const method = editingVideoId ? "PUT" : "POST";
       const payload: any = { ...videoFormData, speakerId: activeSpeaker?.id };
-      
+
       if (!editingVideoId) {
         const currentSpeakerVideos = videosList.filter(v => v.speakerId === activeSpeaker?.id);
         const maxOrder = currentSpeakerVideos.length > 0 ? Math.max(...currentSpeakerVideos.map(v => v.order || 0)) : -1;
@@ -275,7 +275,7 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
       const newIndex = speakerVids.findIndex(v => v.id === over.id);
 
       const reorderedSpeakerVids = arrayMove(speakerVids, oldIndex, newIndex).map((v, idx) => ({ ...v, order: idx }));
-      
+
       const newArray = items.map(v => {
         if (v.speakerId !== activeSpeaker.id) return v;
         const matched = reorderedSpeakerVids.find(sv => sv.id === v.id);
@@ -338,9 +338,9 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
         </div>
       </div>
 
-      <Tabs 
+      <Tabs
         key={activeSpeaker ? `speaker-${activeSpeaker.id}` : "speakers-list"}
-        defaultValue={activeSpeaker ? "videos" : "speakers"} 
+        defaultValue={activeSpeaker ? "videos" : "speakers"}
         className="space-y-6"
       >
         <TabsList className="bg-transparent border border-border/50 p-1 rounded-full h-auto w-full max-w-3xl flex items-center justify-between mb-8 overflow-x-auto">
@@ -495,10 +495,10 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
                 <Label>Slug</Label>
                 <Input value={videoFormData.slug} onChange={e => setVideoFormData({ ...videoFormData, slug: e.target.value })} />
                 <div className="flex items-center space-x-2 pt-1">
-                  <Switch 
-                    id="openInNewTab" 
-                    checked={videoFormData.customFields?.openInNewTab || false} 
-                    onCheckedChange={(checked) => setVideoFormData({ ...videoFormData, customFields: { ...videoFormData.customFields, openInNewTab: checked } })} 
+                  <Switch
+                    id="openInNewTab"
+                    checked={videoFormData.customFields?.openInNewTab || false}
+                    onCheckedChange={(checked) => setVideoFormData({ ...videoFormData, customFields: { ...videoFormData.customFields, openInNewTab: checked } })}
                   />
                   <Label htmlFor="openInNewTab" className="cursor-pointer text-sm font-normal text-muted-foreground">Open in New Tab</Label>
                 </div>

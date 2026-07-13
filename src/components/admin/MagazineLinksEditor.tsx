@@ -45,7 +45,7 @@ function SortableLinkItem({ link, onEdit, onDelete, onToggleActive, onToggleNew 
 
   return (
     <div ref={setNodeRef} style={style} className="flex items-center gap-4 bg-card border border-border p-4 rounded-xl shadow-sm mb-3">
-      <div {...attributes} {...listeners} className="cursor-grab hover:bg-muted p-2 rounded text-muted-foreground hover:text-foreground transition-colors touch-none">
+      <div {...attributes} {...listeners} className="cursor-grab hover:bg-muted p-2 rounded text-muted-foreground transition-colors touch-none">
         <GripVertical className="h-5 w-5" />
       </div>
       <div className="flex-1 min-w-0">

@@ -125,7 +125,7 @@ function SortableMenuRow({
         <button
           {...attributes}
           {...listeners}
-          className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-foreground touch-none shrink-0"
+          className="cursor-grab active:cursor-grabbing text-muted-foreground touch-none shrink-0"
           aria-label="Drag to reorder"
         >
           <GripVertical className="h-4 w-4" />
@@ -189,10 +189,10 @@ function SortableMenuRow({
           </ConfirmDialog>
         </div>
       </div>
-      
+
       {/* Inline Editor */}
       {editingItem && editingItem.id === item.id && (
-        <div 
+        <div
           className="mt-2 mb-4 animate-in fade-in slide-in-from-top-2"
           style={{ marginLeft: depth > 0 ? `${depth * 1.5}rem` : undefined }}
         >
@@ -488,7 +488,7 @@ export function HeaderManager() {
       const flat = flattenTree(prev);
       const oi = flat.findIndex((x) => x.id === active.id);
       if (oi === -1) return prev;
-      
+
       const ni = over ? flat.findIndex((x) => x.id === over.id) : oi;
       let reordered = arrayMove(flat, oi, ni);
       const item = reordered[ni];
@@ -499,7 +499,7 @@ export function HeaderManager() {
         newParentId = null; // Forced to root if at the very top
       } else {
         const prevItem = reordered[ni - 1];
-        
+
         if (delta.x > 30) {
           // Indent: become child of the item directly above
           if (prevItem.id !== item.id) {
@@ -552,7 +552,7 @@ export function HeaderManager() {
           body: JSON.stringify(payload),
         });
       });
-      
+
       return buildTree(reordered);
     });
   }
@@ -594,7 +594,7 @@ export function HeaderManager() {
     }
     return result;
   };
-  
+
   const parentOptions = generateParentOptions(menuTree);
 
   return (

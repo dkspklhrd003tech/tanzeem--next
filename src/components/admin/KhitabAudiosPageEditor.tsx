@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import {
   Plus, Pencil, XCircle, GripVertical, FileText, Settings2,
-  UploadCloud, Loader2, ArrowLeft, Mic, Calendar
+  Loader2, ArrowLeft, Mic, Calendar, Upload
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -17,6 +17,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useChunkedUpload } from "@/hooks/useChunkedUpload";
+import { AudioUploader } from "@/components/admin/AudioUploader";
 
 import {
   DndContext, closestCenter, KeyboardSensor, PointerSensor,
@@ -198,6 +199,7 @@ export default function KhitabAudiosPageEditor({ pageId, initialPageData }: { pa
 
   const [isUploading, setIsUploading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+
 
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -414,31 +416,7 @@ export default function KhitabAudiosPageEditor({ pageId, initialPageData }: { pa
     }
   };
 
-  const handleAudioUploadInModal = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || !e.target.files[0]) return;
-    const file = e.target.files[0];
-    if (!file.type.startsWith("audio/")) {
-      toast({ variant: "destructive", title: "Invalid file type", description: "Please upload a valid audio file." });
-      return;
-    }
-    const MAX_AUDIO_MB = 100;
-    if (file.size > MAX_AUDIO_MB * 1024 * 1024) {
-      toast({ variant: "destructive", title: "File too large", description: `Audio must be under ${MAX_AUDIO_MB}MB. File is ${(file.size / 1024 / 1024).toFixed(1)}MB.` });
-      return;
-    }
-    setIsUploading(true);
-    try {
-      const data = await chunkedUpload(file, {
-        onProgress: (pct) => console.log(`[KhitabAudiosPageEditor modal] Upload progress: ${pct}%`),
-      });
-      setKhitabAudioFormData(prev => ({ ...prev, audioUrl: data.url }));
-      toast({ title: "Audio Uploaded Successfully" });
-    } catch (err: any) {
-      toast({ variant: "destructive", title: "Upload Failed", description: err.message || "Failed to upload the file." });
-    } finally {
-      setIsUploading(false);
-    }
-  };
+
 
   const filteredCategories = categories.filter(c => c.name.toLowerCase().includes(searchQuery.toLowerCase()));
   const activeKhitabAudios = khitabAudios
@@ -537,7 +515,7 @@ export default function KhitabAudiosPageEditor({ pageId, initialPageData }: { pa
                 ) : (
                   <div className="flex flex-col items-center gap-3">
                     <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-1">
-                      <UploadCloud className="h-6 w-6" />
+                      <Upload className="h-6 w-6" />
                     </div>
                     <p className="font-bold text-foreground text-lg">Drag & Drop an Audio File here</p>
                     <p className="text-sm text-muted-foreground max-w-sm">
@@ -656,15 +634,11 @@ export default function KhitabAudiosPageEditor({ pageId, initialPageData }: { pa
                 {khitabAudioFormErrors.slug && <p className="text-xs text-destructive">{khitabAudioFormErrors.slug}</p>}
               </div>
               <div className="space-y-2">
-                <Label>Audio Upload / URL <span className="text-destructive">*</span></Label>
-                <div className="flex gap-2 items-center">
-                  <Input className={cn("flex-1", khitabAudioFormErrors.audioUrl && "border-destructive")} value={khitabAudioFormData.audioUrl} onChange={e => setKhitabAudioFormData({ ...khitabAudioFormData, audioUrl: e.target.value })} placeholder="Upload file or enter URL manually" />
-                  <Label className="cursor-pointer bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 px-4 py-2 rounded-xl text-sm font-semibold transition-colors flex items-center gap-2">
-                    {isUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <UploadCloud className="w-4 h-4" />}
-                    {isUploading ? "Uploading..." : "Upload File"}
-                    <input type="file" accept="audio/*" className="hidden" onChange={handleAudioUploadInModal} disabled={isUploading} />
-                  </Label>
-                </div>
+                <Label>Audio File (MP3) <span className="text-destructive">*</span></Label>
+                <AudioUploader
+                  value={khitabAudioFormData.audioUrl}
+                  onChange={(url) => setKhitabAudioFormData(prev => ({ ...prev, audioUrl: url }))}
+                />
                 {khitabAudioFormErrors.audioUrl && <p className="text-xs text-destructive">{khitabAudioFormErrors.audioUrl}</p>}
               </div>
               <div className="space-y-2"><Label>Excerpt</Label><Textarea value={khitabAudioFormData.excerpt} onChange={e => setKhitabAudioFormData({ ...khitabAudioFormData, excerpt: e.target.value })} rows={2} /></div>

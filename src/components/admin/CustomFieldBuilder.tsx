@@ -49,61 +49,61 @@ export const FIELD_TYPE_GROUPS: { label: string; types: { value: string; label: 
   {
     label: "Text & Content",
     types: [
-      { value: "text",      label: "Text (Short)" },
-      { value: "textarea",  label: "Textarea (Long)" },
-      { value: "richtext",  label: "Rich Text (HTML)" },
-      { value: "markdown",  label: "Markdown" },
-      { value: "code",      label: "Code Snippet" },
+      { value: "text", label: "Text (Short)" },
+      { value: "textarea", label: "Textarea (Long)" },
+      { value: "richtext", label: "Rich Text (HTML)" },
+      { value: "markdown", label: "Markdown" },
+      { value: "code", label: "Code Snippet" },
     ],
   },
   {
     label: "Numbers & Ranges",
     types: [
-      { value: "number",    label: "Number" },
-      { value: "slider",    label: "Slider (Range)" },
-      { value: "rating",    label: "Star Rating (1–5)" },
-      { value: "currency",  label: "Currency / Price" },
+      { value: "number", label: "Number" },
+      { value: "slider", label: "Slider (Range)" },
+      { value: "rating", label: "Star Rating (1–5)" },
+      { value: "currency", label: "Currency / Price" },
     ],
   },
   {
     label: "Date & Time",
     types: [
-      { value: "date",      label: "Date" },
-      { value: "datetime",  label: "Date & Time" },
-      { value: "time",      label: "Time" },
+      { value: "date", label: "Date" },
+      { value: "datetime", label: "Date & Time" },
+      { value: "time", label: "Time" },
     ],
   },
   {
     label: "Links & Media",
     types: [
-      { value: "url",       label: "URL / Link" },
-      { value: "email",     label: "Email Address" },
-      { value: "phone",     label: "Phone Number" },
-      { value: "file",      label: "File / Image Upload" },
-      { value: "color",     label: "Color Picker" },
+      { value: "url", label: "URL / Link" },
+      { value: "email", label: "Email Address" },
+      { value: "phone", label: "Phone Number" },
+      { value: "file", label: "File / Image Upload" },
+      { value: "color", label: "Color Picker" },
     ],
   },
   {
     label: "Choice & Selection",
     types: [
-      { value: "toggle",         label: "Toggle (Yes / No)" },
-      { value: "select",         label: "Dropdown Select" },
-      { value: "radio",          label: "Radio Buttons" },
+      { value: "toggle", label: "Toggle (Yes / No)" },
+      { value: "select", label: "Dropdown Select" },
+      { value: "radio", label: "Radio Buttons" },
       { value: "checkbox-group", label: "Checkbox Group (Multi)" },
-      { value: "tags",           label: "Tags (Multi-value)" },
+      { value: "tags", label: "Tags (Multi-value)" },
     ],
   },
   {
     label: "Location & Social",
     types: [
-      { value: "location",  label: "Location / Address" },
-      { value: "json",      label: "JSON / Key-Value Map" },
+      { value: "location", label: "Location / Address" },
+      { value: "json", label: "JSON / Key-Value Map" },
     ],
   },
 ];
 
 const OPTION_FIELD_TYPES = new Set(["select", "radio", "checkbox-group", "tags"]);
-const MIN_MAX_TYPES      = new Set(["number", "slider", "rating"]);
+const MIN_MAX_TYPES = new Set(["number", "slider", "rating"]);
 
 // ── SortableFieldRow ──────────────────────────────────────────────────────────
 interface SortableFieldRowProps {
@@ -138,16 +138,15 @@ function SortableFieldRow({ field, onUpdate, onRemove }: SortableFieldRowProps) 
     <div
       ref={setNodeRef}
       style={style}
-      className={`relative flex flex-col gap-0 mb-3 border rounded-xl bg-card overflow-hidden transition-shadow ${
-        isDragging ? "shadow-xl border-primary/60 opacity-95" : "shadow-sm border-border"
-      }`}
+      className={`relative flex flex-col gap-0 mb-3 border rounded-xl bg-card overflow-hidden transition-shadow ${isDragging ? "shadow-xl border-primary/60 opacity-95" : "shadow-sm border-border"
+        }`}
     >
       {/* ── Top row ─────────────────────────────────────────────────────── */}
       <div className="flex items-center gap-3 p-4">
         <div
           {...attributes}
           {...listeners}
-          className="cursor-grab hover:bg-muted p-1.5 rounded text-muted-foreground hover:text-foreground shrink-0"
+          className="cursor-grab hover:bg-muted p-1.5 rounded text-muted-foreground shrink-0"
         >
           <GripVertical className="w-5 h-5" />
         </div>
@@ -208,7 +207,7 @@ function SortableFieldRow({ field, onUpdate, onRemove }: SortableFieldRowProps) 
             type="button"
             variant="ghost"
             size="icon"
-            className="text-muted-foreground hover:text-foreground"
+            className="text-muted-foreground"
             onClick={() => setExpanded(v => !v)}
             title="Advanced options"
           >
@@ -455,7 +454,7 @@ export function CustomFieldBuilder({ entityType }: CustomFieldBuilderProps) {
       <Button
         type="button"
         variant="outline"
-        className="w-full border-dashed border-2 py-8 text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors"
+        className="w-full border-dashed border-2 py-8 text-muted-foreground hover:border-primary/40 transition-colors"
         onClick={addField}
       >
         <Plus className="w-5 h-5 mr-2" /> Add New Field

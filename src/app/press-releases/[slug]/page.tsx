@@ -87,7 +87,7 @@ export default async function PressReleaseDetailsPage({ params }: PageProps) {
                         </div>
                         <div className="flex items-center gap-2">
                             {selectedItem.pdfUrl && (
-                                <Button asChild variant="outline" size="sm" className="h-8">
+                                <Button asChild size="sm" className="h-8 bg-primary text-white">
                                     <a href={selectedItem.pdfUrl} download={`${selectedItem.slug || 'press-release'}.pdf`}>
                                         <Download className="w-4 h-4 mr-2" />
                                         Download Press Release

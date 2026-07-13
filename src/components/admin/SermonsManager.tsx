@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import {
   Plus, Pencil, XCircle, GripVertical, FileText,
-  UploadCloud, Loader2, ArrowLeft, Mic, Calendar
+  Loader2, ArrowLeft, Mic, Calendar, Upload
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -14,6 +14,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useChunkedUpload } from "@/hooks/useChunkedUpload";
+import { AudioUploader } from "@/components/admin/AudioUploader";
 
 import {
   DndContext, closestCenter, KeyboardSensor, PointerSensor,
@@ -389,8 +390,6 @@ export function SermonsManager() {
       toast({ title: "Media Uploaded Successfully", description: "Configure details to save this item." });
     } catch (err: any) {
       toast({ variant: "destructive", title: "Upload Failed", description: err.message || "Failed to upload the file." });
-    } finally {
-      setIsUploading(false);
     }
   };
 
@@ -479,7 +478,7 @@ export function SermonsManager() {
                 ) : (
                   <div className="flex flex-col items-center gap-3">
                     <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-1">
-                      <UploadCloud className="h-6 w-6" />
+                      <Upload className="h-6 w-6" />
                     </div>
                     <p className="font-bold text-foreground text-lg">Drag & Drop an Audio File here</p>
                     <p className="text-sm text-muted-foreground max-w-sm">
@@ -607,26 +606,17 @@ export function SermonsManager() {
 
                 {mediaType === "audio" ? (
                   <div className="space-y-2">
-                    <Label>Audio URL <span className="text-destructive">*</span></Label>
-                    <div className="flex gap-2">
-                      <Input className={cn(sermonFormErrors.audioUrl && "border-destructive")} value={sermonFormData.audioUrl} onChange={e => setSermonFormData({ ...sermonFormData, audioUrl: e.target.value })} placeholder="Enter URL or upload file..." />
-                      <Button type="button" variant="secondary" onClick={() => fileInputRef.current?.click()} disabled={isUploading}>
-                        {isUploading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <UploadCloud className="h-4 w-4 mr-2" />}
-                        {isUploading ? "Uploading..." : "Upload"}
-                      </Button>
-                    </div>
+                    <Label>Audio File (MP3) <span className="text-destructive">*</span></Label>
+                    <AudioUploader
+                      value={sermonFormData.audioUrl}
+                      onChange={(url) => setSermonFormData(prev => ({ ...prev, audioUrl: url }))}
+                    />
                     {sermonFormErrors.audioUrl && <p className="text-xs text-destructive">{sermonFormErrors.audioUrl}</p>}
                   </div>
                 ) : (
                   <div className="space-y-2">
-                    <Label>Video URL or Iframe <span className="text-destructive">*</span></Label>
-                    <div className="flex gap-2">
-                      <Input className={cn(sermonFormErrors.videoUrl && "border-destructive")} value={sermonFormData.videoUrl} onChange={e => setSermonFormData({ ...sermonFormData, videoUrl: e.target.value })} placeholder="Enter URL, Iframe, or upload file..." />
-                      <Button type="button" variant="secondary" onClick={() => fileInputRef.current?.click()} disabled={isUploading}>
-                        {isUploading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <UploadCloud className="h-4 w-4 mr-2" />}
-                        {isUploading ? "Uploading..." : "Upload"}
-                      </Button>
-                    </div>
+                    <Label>Video URL or Embed <span className="text-destructive">*</span></Label>
+                    <Input className={cn(sermonFormErrors.videoUrl && "border-destructive")} value={sermonFormData.videoUrl} onChange={e => setSermonFormData({ ...sermonFormData, videoUrl: e.target.value })} placeholder="Enter YouTube/Vimeo embed URL or direct video URL..." />
                     {sermonFormErrors.videoUrl && <p className="text-xs text-destructive">{sermonFormErrors.videoUrl}</p>}
                   </div>
                 )}
@@ -644,7 +634,7 @@ export function SermonsManager() {
                 description={`Are you sure you want to ${editingSermonId ? "update" : "add"} this item?`}
                 onConfirm={handleSermonSave}
               >
-                <Button disabled={isUploading} className="bg-primary text-primary-foreground hover:bg-primary/95">
+                <Button className="bg-primary text-primary-foreground hover:bg-primary/95">
                   {editingSermonId ? "Update Media" : "Save Media"}
                 </Button>
               </ConfirmDialog>

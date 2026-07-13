@@ -53,7 +53,7 @@ export default async function KhitabEJumahCategoryPage({ params }: Props) {
         <main className="min-h-screen bg-slate-50">
             <div className="container mx-auto py-6 md:py-12">
                 <div className="max-w-7xl mx-auto">
-                    <Button variant="ghost" asChild className="mb-6 -ml-4 text-muted-foreground hover:text-foreground">
+                    <Button variant="ghost" asChild className="mb-6 -ml-4 text-muted-foreground">
                         <Link href="/resources/khitab-e-jumah">
                             <ArrowLeft className="w-4 h-4 mr-2" /> Back to Categories
                         </Link>

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Loader2, Save, UploadCloud } from "lucide-react";
+import { ArrowLeft, Loader2, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useChunkedUpload } from "@/hooks/useChunkedUpload";
 import { CustomFieldBuilder } from "@/components/admin/CustomFieldBuilder";
 import { CustomFieldRenderer } from "@/components/admin/CustomFieldRenderer";
+import { AudioUploader } from "@/components/admin/AudioUploader";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 function slugify(text: string) {
@@ -25,7 +26,6 @@ export default function AudioFormPage({ id, speakerIdParam = "", categoryIdParam
   const isNew = id === "new";
   const [isLoading, setIsLoading] = useState(!isNew);
   const [isSaving, setIsSaving] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
 
   const [speakers, setSpeakers] = useState<any[]>([]);
 
@@ -74,32 +74,6 @@ export default function AudioFormPage({ id, speakerIdParam = "", categoryIdParam
   }, [id, isNew, speakerIdParam, categoryIdParam]);
 
   const { uploadFile: chunkedUpload } = useChunkedUpload();
-
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    const MAX_AUDIO_SIZE = 100 * 1024 * 1024;
-    if (file.size > MAX_AUDIO_SIZE) {
-      toast({ variant: "destructive", title: "File too large", description: "Audio files must be under 100MB." });
-      e.target.value = '';
-      return;
-    }
-
-    setIsUploading(true);
-    try {
-      const data = await chunkedUpload(file, {
-        onProgress: (pct) => console.log(`[AudioFormPage] Upload progress: ${pct}%`),
-      });
-      setFormData(prev => ({ ...prev, audioUrl: data.url }));
-      toast({ title: "Uploaded", description: "Audio file uploaded." });
-    } catch (err: any) {
-      console.error("[AudioFormPage] Chunked upload threw:", err);
-      toast({ variant: "destructive", title: "Upload error", description: err.message });
-    } finally {
-      setIsUploading(false);
-    }
-  };
 
   const handleSave = async () => {
     if (!formData.title || !formData.slug) {
@@ -184,27 +158,11 @@ export default function AudioFormPage({ id, speakerIdParam = "", categoryIdParam
         </div>
 
         <div className="space-y-2">
-          <Label>Audio File or URL (MP3)</Label>
-          <div className="flex gap-2">
-            <Input
-              value={formData.audioUrl}
-              onChange={e => setFormData({ ...formData, audioUrl: e.target.value })}
-              placeholder="https://... or upload"
-            />
-            <div className="relative">
-              <Button type="button" variant="secondary" className="whitespace-nowrap" disabled={isUploading}>
-                {isUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <UploadCloud className="w-4 h-4 mr-2" />}
-                Upload MP3
-              </Button>
-              <input
-                type="file"
-                accept="audio/mp3,audio/mpeg"
-                className="absolute inset-0 opacity-0 cursor-pointer"
-                onChange={handleFileUpload}
-                disabled={isUploading}
-              />
-            </div>
-          </div>
+          <Label>Audio File (MP3) <span className="text-destructive">*</span></Label>
+          <AudioUploader
+            value={formData.audioUrl}
+            onChange={(url) => setFormData(prev => ({ ...prev, audioUrl: url }))}
+          />
         </div>
 
         <div className="flex items-center space-x-6 pt-2">

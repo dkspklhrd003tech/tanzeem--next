@@ -35,7 +35,7 @@ function SortablePlatformItem({ platform, isActive, togglePlatform }: any) {
 
   return (
     <div ref={setNodeRef} style={style} className={`flex items-center gap-3 p-3 border rounded-lg transition-colors ${isActive ? "bg-primary/5 border-primary" : "bg-card hover:bg-muted/50"}`}>
-      <div {...attributes} {...listeners} className="cursor-grab p-1 text-muted-foreground hover:text-foreground">
+      <div {...attributes} {...listeners} className="cursor-grab p-1 text-muted-foreground">
         <GripVertical className="w-4 h-4" />
       </div>
       <Checkbox checked={isActive} onCheckedChange={() => togglePlatform(platform.id)} />
@@ -82,7 +82,7 @@ export function ShareToolsManager() {
       if (res.ok) {
         const data = await res.json();
         const st = data.settings.share_tools || {};
-        
+
         let savedPlatforms = st.share_platforms ? JSON.parse(st.share_platforms) : ["facebook", "whatsapp", "twitter", "email", "linkedin"];
         // Ensure all platforms exist in the order list, putting selected ones first
         const unselected = ALL_PLATFORMS.map(p => p.id).filter(id => !savedPlatforms.includes(id));
@@ -235,7 +235,7 @@ export function ShareToolsManager() {
                 <div className="flex items-center space-x-2"><RadioGroupItem value="monochrome" id="c-mo" /><Label htmlFor="c-mo">Monochrome</Label></div>
                 <div className="flex items-center space-x-2"><RadioGroupItem value="custom" id="c-cu" /><Label htmlFor="c-cu">Custom</Label></div>
               </RadioGroup>
-              
+
               {settings.color_scheme === "custom" && (
                 <div className="flex gap-4 mt-3 p-4 border rounded-lg bg-muted/10">
                   <div className="space-y-1.5"><Label>Background Color</Label><Input type="color" value={settings.custom_bg_color} onChange={(e) => updateSetting("custom_bg_color", e.target.value)} className="h-10 w-24 p-1" /></div>
@@ -280,7 +280,7 @@ export function ShareToolsManager() {
               <div><Label className="text-base">Show Labels</Label><p className="text-sm text-muted-foreground">Display platform name text.</p></div>
               <Switch checked={settings.show_labels} onCheckedChange={(c) => updateSetting("show_labels", c)} />
             </div>
-            
+
             <div className="flex items-center justify-between">
               <div><Label className="text-base">Hide on Scroll Down</Label><p className="text-sm text-muted-foreground">Auto-hide when scrolling down.</p></div>
               <Switch checked={settings.hide_on_scroll} onCheckedChange={(c) => updateSetting("hide_on_scroll", c)} />
@@ -305,10 +305,10 @@ export function ShareToolsManager() {
 
             <div className="space-y-3">
               <Label>Exclude Pages</Label>
-              <Textarea 
-                placeholder="/cart, /checkout, /private" 
-                value={settings.exclude_pages} 
-                onChange={(e) => updateSetting("exclude_pages", e.target.value)} 
+              <Textarea
+                placeholder="/cart, /checkout, /private"
+                value={settings.exclude_pages}
+                onChange={(e) => updateSetting("exclude_pages", e.target.value)}
                 className="resize-none"
               />
               <p className="text-xs text-muted-foreground">Enter paths separated by commas where the sidebar should not appear.</p>
@@ -334,7 +334,7 @@ export function ShareToolsManager() {
                 <div><Label className="text-base">UTM Parameters</Label><p className="text-sm text-muted-foreground">Append UTM tags to shared links.</p></div>
                 <Switch checked={settings.utm_enabled} onCheckedChange={(c) => updateSetting("utm_enabled", c)} />
               </div>
-              
+
               {settings.utm_enabled && (
                 <div className="grid grid-cols-3 gap-4 p-4 border rounded-lg bg-muted/10">
                   <div className="space-y-1.5"><Label>utm_source</Label><Input placeholder="e.g. website" value={settings.utm_source} onChange={(e) => updateSetting("utm_source", e.target.value)} /></div>
@@ -370,11 +370,11 @@ export function ShareToolsManager() {
                   const p = ALL_PLATFORMS.find(x => x.id === id);
                   if (!p) return null;
                   return (
-                    <SortablePlatformItem 
-                      key={id} 
-                      platform={p} 
-                      isActive={settings.share_platforms.includes(id)} 
-                      togglePlatform={togglePlatform} 
+                    <SortablePlatformItem
+                      key={id}
+                      platform={p}
+                      isActive={settings.share_platforms.includes(id)}
+                      togglePlatform={togglePlatform}
                     />
                   );
                 })}
@@ -396,7 +396,7 @@ export function ShareToolsManager() {
             </div>
             <CardContent className="p-0 h-[600px] relative">
               <div className="absolute inset-0 opacity-20 pointer-events-none" style={{ backgroundImage: "linear-gradient(#333 1px, transparent 1px), linear-gradient(90deg, #333 1px, transparent 1px)", backgroundSize: "20px 20px" }}></div>
-              
+
               {/* Fake Content */}
               <div className="p-8 space-y-4">
                 <div className="h-8 w-3/4 bg-muted/20 rounded"></div>
@@ -408,7 +408,7 @@ export function ShareToolsManager() {
 
               {/* Sidebar Preview */}
               {settings.share_enabled === "true" && (
-                <div 
+                <div
                   className="absolute flex flex-col items-center shadow-2xl transition-all"
                   style={{
                     [settings.share_position]: `${settings.sidebar_gap}px`,
@@ -417,7 +417,7 @@ export function ShareToolsManager() {
                     transform: settings.sidebar_vertical === "center" ? "translateY(-50%)" : "none",
                   }}
                 >
-                  <div 
+                  <div
                     className="bg-primary text-primary-foreground flex items-center justify-center p-2 cursor-pointer shadow-md w-full"
                     style={{
                       borderRadius: settings.icon_style === "circle" ? "20px 20px 0 0" : (settings.share_position === "left" ? "8px 8px 0 0" : "8px 8px 0 0"),
@@ -430,7 +430,7 @@ export function ShareToolsManager() {
                       const platform = ALL_PLATFORMS.find(p => p.id === id);
                       if (!platform) return null;
                       const Icon = platform.icon;
-                      
+
                       let bg = platform.color;
                       let fill = "#ffffff";
 
@@ -448,7 +448,7 @@ export function ShareToolsManager() {
                       }
 
                       return (
-                        <div 
+                        <div
                           key={id}
                           className="flex items-center justify-center relative border-b border-white/10 last:border-0"
                           style={{
@@ -461,7 +461,7 @@ export function ShareToolsManager() {
                         >
                           <Icon style={{ width: settings.icon_size * 0.5, height: settings.icon_size * 0.5 }} />
                           {settings.show_labels && (
-                            <span 
+                            <span
                               className="absolute bg-black/80 text-white text-[10px] py-1 px-2 rounded whitespace-nowrap"
                               style={{ [settings.share_position === "left" ? "left" : "right"]: "100%", margin: "0 8px" }}
                             >

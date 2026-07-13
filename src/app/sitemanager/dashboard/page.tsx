@@ -256,7 +256,7 @@ export default function DashboardPage() {
             </h1>
             <p className="text-sm text-[#108ece] mt-0.5">{today}</p>
           </div>
-          <Button variant="ghost" size="sm" onClick={() => refreshStats()} className="self-start sm:self-auto text-muted-foreground hover:text-foreground">
+          <Button variant="ghost" size="sm" onClick={() => refreshStats()} className="self-start sm:self-auto text-muted-foreground">
             <RefreshCw className="h-3.5 w-3.5 mr-1.5" />Refresh
           </Button>
         </div>

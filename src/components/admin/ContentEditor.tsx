@@ -208,7 +208,7 @@ export function ContentEditor({
                           "px-4 py-2 text-xs font-semibold rounded-lg transition-all",
                           pressReleaseTab === "pdf"
                             ? "bg-background text-foreground shadow-sm"
-                            : "text-muted-foreground hover:text-foreground"
+                            : "text-muted-foreground"
                         )}
                       >
                         PDF Document Upload
@@ -220,7 +220,7 @@ export function ContentEditor({
                           "px-4 py-2 text-xs font-semibold rounded-lg transition-all",
                           pressReleaseTab === "text"
                             ? "bg-background text-foreground shadow-sm"
-                            : "text-muted-foreground hover:text-foreground"
+                            : "text-muted-foreground"
                         )}
                       >
                         Written Statement

@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
-import WaveSurfer from "wavesurfer.js";
-import { Play, Pause } from "lucide-react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
+import { Play, Pause, Volume2, VolumeX } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
+import { resolveMediaUrl } from "@/lib/utils";
 
 interface WaveformPlayerProps {
   audioUrl: string;
@@ -15,6 +15,7 @@ interface WaveformPlayerProps {
 }
 
 function formatTime(seconds: number) {
+  if (!isFinite(seconds) || isNaN(seconds)) return "0:00";
   const m = Math.floor(seconds / 60);
   const s = Math.floor(seconds % 60);
   return `${m}:${s < 10 ? "0" : ""}${s}`;
@@ -28,113 +29,142 @@ export function WaveformPlayer({
   publishedAt,
   onTracked,
 }: WaveformPlayerProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const wavesurferRef = useRef<WaveSurfer | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const progressBarRef = useRef<HTMLDivElement | null>(null);
   const trackedRef = useRef(false);
+  const animFrameRef = useRef<number | null>(null);
 
   const [isPlaying, setIsPlaying] = useState(false);
-  const [isReady, setIsReady] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [isMuted, setIsMuted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  // Tick current time via rAF while playing (smooth scrubber)
+  const tick = useCallback(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    setCurrentTime(audio.currentTime);
+
+    // Trigger tracking once at 10 seconds
+    if (audio.currentTime >= 10 && !trackedRef.current) {
+      trackedRef.current = true;
+      onTracked?.();
+    }
+
+    if (!audio.paused) {
+      animFrameRef.current = requestAnimationFrame(tick);
+    }
+  }, [onTracked]);
 
   useEffect(() => {
     setIsMounted(true);
-    if (!containerRef.current) return;
 
-    // Native audio element allows instant streaming instead of waiting for full download
+    const resolvedUrl = resolveMediaUrl(audioUrl);
+    if (!resolvedUrl) return;
+
     const audio = new Audio();
-    audio.src = audioUrl;
     audio.preload = "metadata";
+    // No crossOrigin — FTP server has no CORS headers; opaque requests play fine
+    audio.src = resolvedUrl;
     audioRef.current = audio;
 
-    // Initialize WaveSurfer with native media element
-    let ws: any;
-    try {
-      ws = WaveSurfer.create({
-        container: containerRef.current,
-        waveColor: "#5b6470ff",
-        progressColor: "#0d5844",
-        cursorColor: "transparent",
-        barWidth: 2,
-        barGap: 2,
-        barRadius: 2,
-        height: 80,
-        normalize: true,
-        media: audio,
-      });
-      wavesurferRef.current = ws;
-    } catch (e) {
-      console.warn("WaveSurfer initialization failed, likely due to CORS/ORB. Audio will play natively.", e);
-    }
+    const onLoadedMetadata = () => {
+      if (isFinite(audio.duration)) setDuration(audio.duration);
+    };
+    const onPlay = () => {
+      setIsPlaying(true);
+      setIsLoading(false);
+      animFrameRef.current = requestAnimationFrame(tick);
+    };
+    const onPause = () => {
+      setIsPlaying(false);
+      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+      setCurrentTime(audio.currentTime);
+    };
+    const onEnded = () => {
+      setIsPlaying(false);
+      setCurrentTime(0);
+      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
+    };
+    const onWaiting = () => setIsLoading(true);
+    const onCanPlay = () => setIsLoading(false);
+    const onDurationChange = () => {
+      if (isFinite(audio.duration)) setDuration(audio.duration);
+    };
+    const onError = () => {
+      const code = audio.error?.code;
+      const msg =
+        code === 4
+          ? "Audio format not supported or file unavailable."
+          : code === 3
+          ? "Audio file is corrupted or encoding error."
+          : "Could not load audio. Check the file URL.";
+      setError(msg);
+      setIsLoading(false);
+    };
 
-    // Ready immediately to allow instant streaming playback
-    setIsReady(true);
-    
-    audio.addEventListener("loadedmetadata", () => {
-      if (!isNaN(audio.duration)) {
-        setDuration(audio.duration);
-      }
-    });
-    
-    // Add fallback events if ws didn't load
-    audio.addEventListener("play", () => setIsPlaying(true));
-    audio.addEventListener("pause", () => setIsPlaying(false));
-    audio.addEventListener("ended", () => setIsPlaying(false));
-
-    if (ws) {
-      ws.on("play", () => setIsPlaying(true));
-      ws.on("pause", () => setIsPlaying(false));
-      ws.on("finish", () => setIsPlaying(false));
-
-      const handleAudioProcess = () => {
-        const current = ws.getCurrentTime();
-        setCurrentTime(current);
-
-        // Trigger tracking exactly once when passing 10 seconds
-        if (current >= 10 && !trackedRef.current) {
-          trackedRef.current = true;
-          if (onTracked) onTracked();
-        }
-      };
-
-      ws.on("audioprocess", handleAudioProcess);
-
-      ws.on("seeking", () => {
-        setCurrentTime(ws.getCurrentTime());
-      });
-    } else {
-      // Fallback timeupdate
-      audio.addEventListener("timeupdate", () => {
-        setCurrentTime(audio.currentTime);
-        if (audio.currentTime >= 10 && !trackedRef.current) {
-          trackedRef.current = true;
-          if (onTracked) onTracked();
-        }
-      });
-    }
+    audio.addEventListener("loadedmetadata", onLoadedMetadata);
+    audio.addEventListener("durationchange", onDurationChange);
+    audio.addEventListener("play", onPlay);
+    audio.addEventListener("pause", onPause);
+    audio.addEventListener("ended", onEnded);
+    audio.addEventListener("waiting", onWaiting);
+    audio.addEventListener("canplay", onCanPlay);
+    audio.addEventListener("error", onError);
 
     return () => {
-      ws?.destroy();
+      if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
       audio.pause();
-      audio.removeAttribute('src');
-      audio.load();
+      audio.removeEventListener("loadedmetadata", onLoadedMetadata);
+      audio.removeEventListener("durationchange", onDurationChange);
+      audio.removeEventListener("play", onPlay);
+      audio.removeEventListener("pause", onPause);
+      audio.removeEventListener("ended", onEnded);
+      audio.removeEventListener("waiting", onWaiting);
+      audio.removeEventListener("canplay", onCanPlay);
+      audio.removeEventListener("error", onError);
+      audio.src = "";
     };
-  }, [audioUrl]);
+  }, [audioUrl, tick]);
 
-  const togglePlay = () => {
-    if (wavesurferRef.current) {
-      wavesurferRef.current.playPause();
-    } else if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause();
-      } else {
-        audioRef.current.play().catch(e => console.error("Native play failed", e));
+  const togglePlay = async () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (isPlaying) {
+      audio.pause();
+    } else {
+      setIsLoading(true);
+      try {
+        await audio.play();
+      } catch (e) {
+        console.error("[WaveformPlayer] play() failed:", e);
+        setIsLoading(false);
+        setError("Playback was blocked. Tap again to try.");
       }
     }
   };
+
+  const toggleMute = () => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.muted = !audio.muted;
+    setIsMuted(audio.muted);
+  };
+
+  // Click on progress bar → seek
+  const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    const audio = audioRef.current;
+    if (!audio || !duration) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const ratio = (e.clientX - rect.left) / rect.width;
+    audio.currentTime = ratio * duration;
+    setCurrentTime(audio.currentTime);
+  };
+
+  const progress = duration > 0 ? (currentTime / duration) * 100 : 0;
 
   let formattedDate = "";
   if (publishedAt) {
@@ -145,40 +175,44 @@ export function WaveformPlayer({
   }
 
   if (!isMounted) {
-    return <div className="bg-slate-900 rounded-xl overflow-hidden shadow-lg p-6 flex flex-col gap-6 w-full animate-pulse h-40"></div>;
+    return <div className="bg-slate-900 rounded-xl overflow-hidden shadow-lg p-6 flex flex-col gap-6 w-full animate-pulse h-40" />;
   }
 
   return (
-    <div className="bg-slate-900 rounded-xl overflow-hidden shadow-lg p-6 flex flex-col gap-6 text-white w-full">
-      {/* Header Section */}
-      <div className="flex justify-between items-start">
-        <div className="flex gap-4 items-center">
-          {/* Play/Pause Button */}
+    <div className="bg-slate-900 rounded-xl overflow-hidden shadow-lg p-6 flex flex-col gap-5 text-white w-full">
+
+      {/* ── Header Row ── */}
+      <div className="flex justify-between items-start gap-4">
+        <div className="flex gap-4 items-center flex-1 min-w-0">
+          {/* Play / Pause */}
           <button
             onClick={togglePlay}
-            className="w-16 h-16 rounded-full bg-primary flex items-center justify-center hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
+            disabled={!!error}
+            className="w-16 h-16 rounded-full bg-primary flex items-center justify-center hover:scale-105 transition-transform shrink-0 disabled:opacity-40 disabled:cursor-not-allowed"
             aria-label={isPlaying ? "Pause" : "Play"}
           >
-            {isPlaying ? (
-              <Pause className="w-8 h-8 text-primary-foreground fill-current" />
+            {isLoading ? (
+              <span className="w-6 h-6 border-2 border-white/40 border-t-white rounded-full animate-spin" />
+            ) : isPlaying ? (
+              <Pause className="w-7 h-7 text-white fill-white" />
             ) : (
-              <Play className="w-8 h-8 text-primary-foreground fill-current ml-1" />
+              <Play className="w-7 h-7 text-white fill-white ml-1" />
             )}
           </button>
 
-          {/* Title and Speaker */}
-          <div className="flex flex-col">
-            <span className="text-gray-200 text-sm font-medium">
+          {/* Title + speaker */}
+          <div className="flex flex-col min-w-0">
+            <span className="text-gray-400 text-xs font-medium truncate">
               {speakerName || "Unknown Speaker"}
             </span>
-            <h2 className="text-2xl font-bold line-clamp-1">{title}</h2>
+            <h2 className="text-xl font-bold line-clamp-2 leading-tight">{title}</h2>
           </div>
         </div>
 
-        {/* Meta Section */}
+        {/* Meta */}
         <div className="flex flex-col items-end gap-2 shrink-0">
           {formattedDate && (
-            <span className="text-gray-400 text-xs font-medium">{formattedDate}</span>
+            <span className="text-gray-400 text-xs">{formattedDate}</span>
           )}
           {categoryName && (
             <span className="px-3 py-1 bg-[#282828] text-gray-300 text-xs font-semibold rounded-full border border-gray-700">
@@ -188,17 +222,70 @@ export function WaveformPlayer({
         </div>
       </div>
 
-      {/* Waveform Section */}
-      <div className="relative w-full">
-        <div ref={containerRef} className="w-full relative cursor-pointer" />
+      {/* ── Error Banner ── */}
+      {error && (
+        <div className="bg-red-900/60 border border-red-600/50 rounded-lg px-4 py-2 text-xs text-red-200">
+          ⚠ {error}
+        </div>
+      )}
 
-        {/* Time bubble (like Soundcloud) */}
-        {isReady && (
-          <div className="absolute right-0 bottom-2 bg-black/80 px-2 py-0.5 rounded text-[10px] font-mono text-primary-light z-10 pointer-events-none shadow-sm">
-            {formatTime(currentTime)} / {formatTime(duration)}
+      {/* ── Progress / Scrubber ── */}
+      {!error && (
+        <div className="space-y-2">
+          {/* Fake waveform bars as background decoration */}
+          <div
+            ref={progressBarRef}
+            className="relative h-16 cursor-pointer group"
+            onClick={handleProgressClick}
+            role="slider"
+            aria-label="Audio progress"
+            aria-valuenow={Math.round(progress)}
+            aria-valuemin={0}
+            aria-valuemax={100}
+          >
+            {/* Decorative bars (static — looks like a waveform) */}
+            <div className="absolute inset-0 flex items-center gap-[2px]">
+              {Array.from({ length: 60 }).map((_, i) => {
+                // Sinusoidal height pattern simulating a waveform
+                const h = 20 + 40 * Math.abs(Math.sin(i * 0.45 + 1)) * Math.abs(Math.sin(i * 0.12));
+                const filled = (i / 60) * 100 <= progress;
+                return (
+                  <div
+                    key={i}
+                    className="flex-1 rounded-full transition-colors duration-100"
+                    style={{
+                      height: `${h}%`,
+                      backgroundColor: filled ? "#0d5844" : "#3f4958",
+                    }}
+                  />
+                );
+              })}
+            </div>
+
+            {/* Invisible wide click target overlay */}
+            <div className="absolute inset-0" />
           </div>
-        )}
-      </div>
+
+          {/* Time + mute row */}
+          <div className="flex items-center justify-between text-xs text-gray-400 font-mono">
+            <span>{formatTime(currentTime)}</span>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={toggleMute}
+                className="hover:text-white transition-colors"
+                aria-label={isMuted ? "Unmute" : "Mute"}
+              >
+                {isMuted ? (
+                  <VolumeX className="w-4 h-4" />
+                ) : (
+                  <Volume2 className="w-4 h-4" />
+                )}
+              </button>
+              <span>{formatTime(duration)}</span>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

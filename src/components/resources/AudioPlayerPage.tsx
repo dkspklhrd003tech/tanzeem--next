@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Headphones, Download, Share2, Clock, Play, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
+import { cn, resolveMediaUrl } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { WaveformPlayer } from "./WaveformPlayer";
 
@@ -50,11 +50,21 @@ export function AudioPlayerPage({ item, related, customFieldSchema = [] }: Audio
     }
   };
 
-  const handleShare = () => {
+  const handleShare = async () => {
+    if (typeof window === "undefined" || typeof navigator === "undefined") return;
+    try {
+      if (navigator.clipboard) await navigator.clipboard.writeText(window.location.href);
+    } catch (e) {
+      console.error("Failed to copy:", e);
+    }
     if (navigator.share) {
-      navigator.share({ title: item.title, url: window.location.href });
+      try {
+        await navigator.share({ title: item.title, url: window.location.href });
+      } catch (err: any) {
+        if (err.name !== "AbortError") console.error("Error sharing:", err);
+      }
     } else {
-      navigator.clipboard.writeText(window.location.href);
+      alert("Link copied to clipboard!");
     }
   };
 
@@ -100,7 +110,7 @@ export function AudioPlayerPage({ item, related, customFieldSchema = [] }: Audio
 
             <div className="flex flex-wrap gap-3">
               <a
-                href={item.audioUrl}
+                href={resolveMediaUrl(item.audioUrl)}
                 download
                 className={cn(
                   "inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold",

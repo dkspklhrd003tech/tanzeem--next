@@ -145,37 +145,29 @@ export default async function CategoryAudiosPage({ params }: { params: Promise<{
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                 {subCategoriesWithAudios.map((sub) => {
                   return (
-                    <div
+                    <Link
                       key={sub.id}
-                      className="group flex flex-col items-center bg-transparent transition-all duration-300 text-left outline-none opacity-100"
+                      href={`/audios-by-category/${sub.slug}`}
+                      className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-xl border border-border/50 hover:border-primary/50 bg-primary-light/80 hover:bg-muted/50 transition-colors cursor-pointer group shadow-sm hover:shadow-md h-full"
                     >
-                      <Link
-                        href={`/audios-by-category/${sub.slug}`}
-                        className="w-full aspect-square rounded-xl overflow-hidden bg-card border shadow-md group-hover:shadow-xl border-border group-hover:border-primary/40 transition-all duration-500 relative mb-4 block"
-                      >
-                        {sub.imageUrl ? (
-                          <img
-                            src={sub.imageUrl}
-                            alt={sub.name}
-                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center bg-primary/5">
-                            <Headphones className="w-12 h-12 text-primary/30" />
-                          </div>
-                        )}
-                        <div className="absolute inset-0 bg-black/10 transition-opacity duration-300 opacity-0 group-hover:opacity-100" />
-                      </Link>
-
-                      <Link href={`/audios-by-category/${sub.slug}`} className="text-center w-full px-2 hover:opacity-80 transition-opacity">
-                        <h3 className="text-lg md:text-xl font-semibold transition-colors duration-300 text-foreground group-hover:text-primary">
+                      <div className="flex-1">
+                        <h3 className="font-bold text-lg flex items-center gap-2 group-hover:text-primary transition-colors leading-snug line-clamp-2 text-left">
                           {sub.name}
                         </h3>
                         {sub.description && (
-                          <p className="text-sm text-foreground-muted mt-2 line-clamp-2 max-w-xs mx-auto">{sub.description}</p>
+                          <p className="text-xs text-foreground-muted mt-2 line-clamp-2 text-left">{sub.description}</p>
                         )}
-                      </Link>
-                    </div>
+                      </div>
+
+                      <div className="shrink-0 flex flex-col items-center justify-center gap-1 mt-2 md:mt-0">
+                        <button className="h-10 w-10 flex items-center justify-center rounded-full bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-all scale-95 group-hover:scale-100 shadow-sm shrink-0">
+                          <AudioLines className="w-7 h-7" />
+                        </button>
+                        <span className="text-[11px] text-foreground font-medium transition-opacity hidden md:block">
+                          {sub.audios.length} Audios
+                        </span>
+                      </div>
+                    </Link>
                   );
                 })}
               </div>

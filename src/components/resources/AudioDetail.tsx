@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ClientShareButton } from "@/components/shared/ClientShareButton";
 import { VideoEmbed } from "./VideoEmbed";
 import { WaveformPlayer } from "./WaveformPlayer";
+import { resolveMediaUrl } from "@/lib/utils";
 
 interface AudioDetailProps {
   audio: {
@@ -107,7 +108,7 @@ export function AudioDetail({ audio, backHref, backLabel }: AudioDetailProps) {
           {audio.audioUrl && (
             <div className="flex gap-3">
               <Button asChild variant="default" className="gap-2">
-                <a href={audio.audioUrl} download>
+                <a href={resolveMediaUrl(audio.audioUrl)} download>
                   <Download className="h-4 w-4" /> Download
                 </a>
               </Button>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Pencil, XCircle, Settings2, Loader2, User, ArrowLeft, Video, Music, UploadCloud, Bot } from "lucide-react";
+import { Plus, Pencil, XCircle, Settings2, Loader2, User, ArrowLeft, Video, Music, Bot, UploadCloud } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,7 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PageRecord } from "@/components/sitemanager/PageForm";
 import { ImageUploader } from "@/components/admin/ImageUploader";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
-import { useChunkedUpload } from "@/hooks/useChunkedUpload";
+import { AudioUploader } from "@/components/admin/AudioUploader";
 import PageSeoManager from "./PageSeoManager";
 
 function slugify(text: string) {
@@ -79,7 +79,7 @@ export default function SpeakersPageEditor({ pageId, initialPageData, mediaConte
   const [editingVideoId, setEditingVideoId] = useState<string | null>(null);
   const [deletingVideo, setDeletingVideo] = useState<VideoItem | null>(null);
 
-  const [isUploading, setIsUploading] = useState(false);
+
 
   useEffect(() => {
     fetchData();
@@ -165,30 +165,7 @@ export default function SpeakersPageEditor({ pageId, initialPageData, mediaConte
     } catch (e: any) { toast({ variant: "destructive", title: "Error", description: e.message }); }
   };
 
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, setter: (url: string) => void) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
 
-    // 100MB limit for files
-    const MAX_FILE_SIZE = 100 * 1024 * 1024;
-    if (file.size > MAX_FILE_SIZE) {
-      toast({ variant: "destructive", title: "File too large", description: "Files must be under 100MB." });
-      // Clear the input
-      e.target.value = '';
-      return;
-    }
-
-    setIsUploading(true);
-    const formData = new FormData();
-    formData.append("file", file);
-    try {
-      const res = await fetch("/api/upload", { method: "POST", body: formData });
-      const data = await res.json();
-      if (data.url) setter(data.url);
-      else throw new Error("Upload failed");
-    } catch (err) { toast({ variant: "destructive", title: "Upload Error" }); }
-    finally { setIsUploading(false); }
-  };
 
   const activeAudios = audiosList.filter(a => a.speakerId === activeSpeaker?.id);
   const activeVideos = videosList.filter(v => v.speakerId === activeSpeaker?.id);
@@ -396,24 +373,18 @@ export default function SpeakersPageEditor({ pageId, initialPageData, mediaConte
           <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
             <div className="bg-card w-full max-w-md border border-border rounded-2xl shadow-xl relative overflow-hidden flex flex-col max-h-[90vh]">
               <div className="p-6 border-b border-border flex justify-between items-center bg-muted/20">
-                <h2 className="text-xl font-bold">{editingAudioId ? "Edit Audio" : "Add Audio"}</h2>
+                <h2 className="text-xl font-bold">{editingAudioId ? "Edit Audio Speakers" : "Add Audio"}</h2>
                 <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsAudioModalOpen(false)}>×</Button>
               </div>
               <div className="overflow-y-auto p-6 flex-1 space-y-4">
                 <div className="space-y-2"><Label>Title</Label><Input value={audioFormData.title} onChange={e => setAudioFormData({ ...audioFormData, title: e.target.value, slug: editingAudioId ? audioFormData.slug : slugify(e.target.value) })} /></div>
                 <div className="space-y-2"><Label>Slug</Label><Input value={audioFormData.slug} onChange={e => setAudioFormData({ ...audioFormData, slug: e.target.value })} /></div>
                 <div className="space-y-2">
-                  <Label>Audio File or URL (MP3)</Label>
-                  <div className="flex gap-2">
-                    <Input value={audioFormData.audioUrl} onChange={e => setAudioFormData({ ...audioFormData, audioUrl: e.target.value })} placeholder="https://... or upload" />
-                    <div className="relative">
-                      <Button type="button" variant="secondary" className="whitespace-nowrap" disabled={isUploading}>
-                        {isUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <UploadCloud className="w-4 h-4 mr-2" />}
-                        Upload MP3
-                      </Button>
-                      <input type="file" accept="audio/mp3,audio/mpeg" className="absolute inset-0 opacity-0 cursor-pointer" onChange={e => handleFileUpload(e, (url) => setAudioFormData(prev => ({ ...prev, audioUrl: url })))} disabled={isUploading} />
-                    </div>
-                  </div>
+                  <Label>Audio File (MP3)</Label>
+                  <AudioUploader
+                    value={audioFormData.audioUrl}
+                    onChange={(url) => setAudioFormData(prev => ({ ...prev, audioUrl: url }))}
+                  />
                 </div>
               </div>
               <div className="p-6 border-t border-border bg-muted/20 flex justify-end gap-3">
@@ -438,17 +409,8 @@ export default function SpeakersPageEditor({ pageId, initialPageData, mediaConte
                 <div className="space-y-2"><Label>Title</Label><Input value={videoFormData.title} onChange={e => setVideoFormData({ ...videoFormData, title: e.target.value, slug: editingVideoId ? videoFormData.slug : slugify(e.target.value) })} /></div>
                 <div className="space-y-2"><Label>Slug</Label><Input value={videoFormData.slug} onChange={e => setVideoFormData({ ...videoFormData, slug: e.target.value })} /></div>
                 <div className="space-y-2">
-                  <Label>Video File (MP4/WebM)</Label>
-                  <div className="flex gap-2">
-                    <Input value={videoFormData.videoUrl} onChange={e => setVideoFormData({ ...videoFormData, videoUrl: e.target.value })} placeholder="https://... or upload" />
-                    <div className="relative">
-                      <Button type="button" variant="secondary" className="whitespace-nowrap" disabled={isUploading}>
-                        {isUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <UploadCloud className="w-4 h-4 mr-2" />}
-                        Upload Video
-                      </Button>
-                      <input type="file" accept="video/mp4,video/webm" className="absolute inset-0 opacity-0 cursor-pointer" onChange={e => handleFileUpload(e, (url) => setVideoFormData(prev => ({ ...prev, videoUrl: url })))} disabled={isUploading} />
-                    </div>
-                  </div>
+                  <Label>Video File URL or Embed (MP4/YouTube)</Label>
+                  <Input value={videoFormData.videoUrl} onChange={e => setVideoFormData({ ...videoFormData, videoUrl: e.target.value })} placeholder="https://youtube.com/embed/... or direct video URL" />
                 </div>
                 <div className="space-y-2">
                   <Label>Or Embed URL (YouTube/Vimeo)</Label>

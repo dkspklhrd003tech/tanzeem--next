@@ -66,6 +66,11 @@ export function FAQPageClient({ initialItems, pageTitle, pageExcerpt }: FAQPageC
     setExpandedId(expandedId === id ? null : id);
   };
 
+  const getCategoryCount = (cat: string) => {
+    if (cat === "all") return initialItems.length;
+    return initialItems.filter((item) => getCategory(item.category).toLowerCase() === cat.toLowerCase()).length;
+  };
+
   return (
     <div className="bg-background min-h-screen pb-20">
       <FaqStyles />
@@ -88,20 +93,23 @@ export function FAQPageClient({ initialItems, pageTitle, pageExcerpt }: FAQPageC
 
           {/* Category Tabs */}
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1.5 scrollbar-thin">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={cn(
-                  "text-xs md:text-sm px-4 py-2 rounded-full border font-medium transition-all whitespace-nowrap capitalize",
-                  selectedCategory === cat
-                    ? "bg-primary text-primary-foreground border-primary shadow-sm"
-                    : "bg-muted/50 text-primary border-primary/50 hover:bg-primary/70 hover:text-white"
-                )}
-              >
-                {cat === "all" ? "All" : cat}
-              </button>
-            ))}
+            {categories.map((cat) => {
+              const count = getCategoryCount(cat);
+              return (
+                <button
+                  key={cat}
+                  onClick={() => setSelectedCategory(cat)}
+                  className={cn(
+                    "text-xs md:text-sm px-4 py-2 rounded-full border font-medium transition-all whitespace-nowrap capitalize",
+                    selectedCategory === cat
+                      ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                      : "bg-muted/50 text-primary border-primary/50 hover:bg-primary/70 hover:text-white"
+                  )}
+                >
+                  {cat === "all" ? "All" : cat} ({count})
+                </button>
+              );
+            })}
           </div>
         </div>
 

@@ -83,7 +83,7 @@ function SortableCategoryCard({ cat, onClick, onEdit, onDelete }: { cat: MainCat
 
   return (
     <div ref={setNodeRef} style={style} className="group relative flex flex-col bg-card border border-border rounded-xl overflow-hidden hover:border-primary/50 transition-all cursor-pointer shadow-sm hover:shadow-md" onClick={onClick}>
-      <div {...attributes} {...listeners} className="absolute top-2 left-2 z-20 p-1.5 bg-background/80 backdrop-blur rounded-md border shadow-sm cursor-grab active:cursor-grabbing hover:bg-background transition-colors text-muted-foreground hover:text-foreground">
+      <div {...attributes} {...listeners} className="absolute top-2 left-2 z-20 p-1.5 bg-background/80 backdrop-blur rounded-md border shadow-sm cursor-grab active:cursor-grabbing hover:bg-background transition-colors text-muted-foreground">
         <GripVertical className="w-4 h-4" />
       </div>
       <div className="aspect-video bg-muted relative overflow-hidden">

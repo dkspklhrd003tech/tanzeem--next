@@ -153,7 +153,7 @@ export function AudioBooksGrid({ initialItems }: AudioBooksGridProps) {
                     <div>
                       {/* Meta Section */}
                       <div className="flex items-center justify-between gap-2 mb-3">
-                        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                        <div className="flex bg-primary-light rounded-full shadow-sm border-primary border items-center gap-1.5 px-2 py-1 text-xs font-semibold text-primary">
                           <Calendar className="h-3.5 w-3.5" />
                           <span>{formattedDate}</span>
                         </div>
@@ -170,14 +170,6 @@ export function AudioBooksGrid({ initialItems }: AudioBooksGridProps) {
                           {item.excerpt}
                         </p>
                       )}
-                    </div>
-
-                    {/* Card Action Footer */}
-                    <div className="flex items-center justify-between pt-4 mt-5 border-t border-border/50">
-                      <span className="text-xs font-semibold text-primary flex items-center gap-1 group-hover:gap-2 transition-all duration-200">
-                        {hasAudio ? "Listen" : "View"}
-                        <ChevronRight className="h-4 w-4" />
-                      </span>
                     </div>
                   </div>
                 </motion.div>

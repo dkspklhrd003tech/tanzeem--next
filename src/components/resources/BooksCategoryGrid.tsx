@@ -52,12 +52,28 @@ export function BooksCategoryGrid({ categoryName, initialItems }: BooksCategoryG
     return result;
   }, [items, searchQuery]);
 
-  const handleShare = (item: Book) => {
+  const handleShare = async (item: Book) => {
+    if (typeof window === "undefined" || typeof navigator === "undefined") return;
     const shareUrl = `${window.location.href}?book=${item.id}`;
-    navigator.clipboard.writeText(shareUrl);
-    setIsCopied(true);
-    toast({ title: "Link copied!", description: "Book link copied to clipboard." });
-    setTimeout(() => setIsCopied(false), 2000);
+    
+    try {
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(shareUrl);
+        setIsCopied(true);
+        toast({ title: "Link copied!", description: "Book link copied to clipboard." });
+        setTimeout(() => setIsCopied(false), 2000);
+      }
+    } catch (e) {
+      console.error("Failed to copy:", e);
+    }
+
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: item.title, url: shareUrl });
+      } catch (err: any) {
+        if (err.name !== "AbortError") console.error("Error sharing:", err);
+      }
+    }
   };
 
   const handleDownload = (item: Book) => {

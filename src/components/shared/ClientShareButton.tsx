@@ -9,12 +9,26 @@ export function ClientShareButton({ className, variant = "default" }: { classNam
   const [copied, setCopied] = useState(false);
   const { toast } = useToast();
 
-  const handleShare = () => {
-    if (typeof navigator !== "undefined" && navigator.clipboard) {
-      navigator.clipboard.writeText(window.location.href);
-      setCopied(true);
-      toast({ title: "Link copied!", description: "URL copied to clipboard." });
-      setTimeout(() => setCopied(false), 2000);
+  const handleShare = async () => {
+    if (typeof window === "undefined" || typeof navigator === "undefined") return;
+
+    try {
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(window.location.href);
+        setCopied(true);
+        toast({ title: "Link copied!", description: "URL copied to clipboard." });
+        setTimeout(() => setCopied(false), 2000);
+      }
+    } catch (err) {
+      console.error("Failed to copy:", err);
+    }
+
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: document.title, url: window.location.href });
+      } catch (err: any) {
+        if (err.name !== "AbortError") console.error("Error sharing:", err);
+      }
     }
   };
 

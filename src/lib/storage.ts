@@ -20,7 +20,7 @@ async function createFtpClient(): Promise<Client> {
 
     // Verbose mode: logs every FTP command + server reply.
     // IMPORTANT: Disable this (comment it out) once the FTP issue is diagnosed.
-    client.ftp.verbose = true;
+    // client.ftp.verbose = true;
 
     // Generous timeout for large audio files on shared hosting
     client.ftp.socket.setTimeout(60_000); // 60 seconds
@@ -55,7 +55,7 @@ async function createFtpClient(): Promise<Client> {
                 // Must close and re-instantiate client after a failure
                 client.close();
                 fallbackClient = new Client();
-                fallbackClient.ftp.verbose = true;
+                // fallbackClient.ftp.verbose = true;
                 fallbackClient.ftp.socket.setTimeout(60_000);
 
                 await fallbackClient.access({
@@ -180,7 +180,13 @@ export async function appendFileChunk({ fileName, folder, buffer, chunkIndex }: 
 
     try {
         const remoteDir = folder;
-        await navigateToRemoteDir(client, remoteDir);
+        if (chunkIndex === 0) {
+            await navigateToRemoteDir(client, remoteDir);
+        } else {
+            const rootDir = resolveFtpRoot();
+            const fullRemotePath = `${rootDir}/${remoteDir}`.replace(/\/+/g, "/");
+            await client.cd(fullRemotePath);
+        }
 
         const stream = Readable.from(buffer);
         if (chunkIndex === 0) {

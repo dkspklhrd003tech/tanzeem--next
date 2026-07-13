@@ -85,7 +85,7 @@ function SortableLocationCard({ loc, onEdit, onDelete }: { loc: LocationRow, onE
       <div className="flex items-start justify-between w-full">
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-2">
-            <button {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing hover:bg-muted p-1 rounded -ml-2 text-muted-foreground hover:text-foreground">
+            <button {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing hover:bg-muted p-1 rounded -ml-2 text-muted-foreground">
               <GripVertical className="h-4 w-4" />
             </button>
             <h4 className="font-bold text-foreground text-lg leading-none">{loc.name}</h4>

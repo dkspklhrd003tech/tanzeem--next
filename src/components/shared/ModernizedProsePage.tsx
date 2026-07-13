@@ -79,14 +79,25 @@ export function ModernizedProsePage({
     }
   };
 
-  const handleShare = () => {
-    if (typeof window !== "undefined" && navigator.share) {
-      navigator.share({
-        title: `${title} | Tanzeem-e-Islami`,
-        url: window.location.href
-      }).catch(() => { });
-    } else if (typeof window !== "undefined") {
-      navigator.clipboard.writeText(window.location.href);
+  const handleShare = async () => {
+    if (typeof window === "undefined" || typeof navigator === "undefined") return;
+    try {
+      if (navigator.clipboard) {
+        await navigator.clipboard.writeText(window.location.href);
+      }
+    } catch (e) {
+      console.error("Failed to copy:", e);
+    }
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `${title} | Tanzeem-e-Islami`,
+          url: window.location.href
+        });
+      } catch (err: any) {
+        if (err.name !== "AbortError") console.error("Error sharing:", err);
+      }
+    } else {
       alert("Link copied to clipboard!");
     }
   };

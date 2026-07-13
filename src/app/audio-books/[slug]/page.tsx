@@ -7,7 +7,7 @@ import { CTABanner } from "@/components/shared/CTABanner";
 import Link from "next/link";
 import { ArrowLeft, PlayCircle, AlertCircle, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { cn, resolveMediaUrl } from "@/lib/utils";
 import { WaveformPlayer } from "@/components/resources/WaveformPlayer";
 
 interface PageProps {
@@ -83,7 +83,7 @@ export default async function AudioBookDetailsPage({ params }: PageProps) {
             </div>
 
             <div className="container mx-auto py-10 px-4">
-                <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-xl border border-border overflow-hidden flex flex-col md:flex-row">
+                <div className="max-w-7xl mx-auto bg-white rounded-2xl shadow-xl border border-border overflow-hidden flex flex-col md:flex-row">
 
                     {/* Left: Image */}
                     <div className="w-full md:w-1/3 bg-muted relative aspect-[3/4] md:aspect-auto">
@@ -101,9 +101,9 @@ export default async function AudioBookDetailsPage({ params }: PageProps) {
                     </div>
 
                     {/* Right: Content & Player */}
-                    <div className="w-full md:w-2/3 p-8 md:p-10 flex flex-col">
-                        <div className="flex items-center gap-2 mb-4 text-sm text-muted-foreground">
-                            <Calendar className="h-4 w-4" />
+                    <div className="w-full md:w-2/3 p-6 md:p-8 flex flex-col bg-primary-light">
+                        <div className="flex items-center gap-2 mb-4 text-sm text-primary">
+                            <Calendar className="h-4 w-4 text-medium" />
                             <span>{formattedDate}</span>
                         </div>
 
@@ -112,20 +112,17 @@ export default async function AudioBookDetailsPage({ params }: PageProps) {
                         </h1>
 
                         {/* Audio Player */}
-                        <div className="mt-6 mb-8 w-full bg-zinc-50 rounded-xl p-6 border border-border">
+                        <div className="py-6 w-full">
                             {selectedItem.audioUrl ? (
                                 <div>
-                                    <h3 className="font-semibold text-lg mb-4 text-emerald-800">
-                                        Now Playing
-                                    </h3>
                                     <WaveformPlayer
                                         audioUrl={selectedItem.audioUrl}
                                         title={selectedItem.title}
                                         publishedAt={selectedItem.publishedAt}
                                     />
                                     <div className="mt-4 flex justify-end">
-                                        <Button asChild variant="outline" size="sm" className="text-xs">
-                                            <a href={selectedItem.audioUrl} download={`${selectedItem.slug || "audio-book"}.mp3`}>
+                                        <Button asChild variant="outline" size="sm" className="bg-primary text-xs text-white">
+                                            <a href={resolveMediaUrl(selectedItem.audioUrl)} download={`${selectedItem.slug || "audio-book"}.mp3`}>
                                                 Download MP3
                                             </a>
                                         </Button>

@@ -168,7 +168,7 @@ function SortableCard({ id, item, onEdit, onDelete }: SortableItemProps) {
             <div
               {...attributes}
               {...listeners}
-              className="cursor-grab active:cursor-grabbing p-1.5 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+              className="cursor-grab active:cursor-grabbing p-1.5 rounded hover:bg-muted text-muted-foreground transition-colors"
               title="Drag to reorder"
             >
               <GripVertical className="h-4 w-4" />

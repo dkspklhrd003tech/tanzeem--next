@@ -506,7 +506,7 @@ function TopHeader({
               ) : (
                 <Link
                   href={crumb.href}
-                  className="text-muted-foreground hover:text-foreground transition-colors"
+                  className="text-muted-foreground transition-colors"
                 >
                   {crumb.label}
                 </Link>

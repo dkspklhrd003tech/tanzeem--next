@@ -11,7 +11,7 @@
  *   console.log(result.url); // public URL of uploaded file
  */
 
-const CHUNK_SIZE = 3 * 1024 * 1024; // 3 MB — safely under Vercel's 4.5MB limit
+const CHUNK_SIZE = 4 * 1024 * 1024; // 4 MB — safely under Vercel's 4.5MB limit
 
 export interface ChunkedUploadOptions {
   /** Called with percentage (0–100) as each chunk completes. */

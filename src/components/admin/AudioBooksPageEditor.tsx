@@ -2,9 +2,8 @@
 
 import { useState, useEffect, useRef } from "react";
 import {
-  Plus, Pencil, XCircle, Search, Calendar, GripVertical, FileText,
-  Settings2, Check, AlertCircle, UploadCloud, Loader2, ArrowLeft,
-  ExternalLink, Sparkles
+  Plus, Pencil, XCircle, Calendar, GripVertical, FileText,
+  Settings2, Loader2, UploadCloud, Sparkles
 } from "lucide-react";
 import { PageActionBar } from "@/components/admin/PageActionBar";
 import { Badge } from "@/components/ui/badge";
@@ -21,6 +20,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { ImageUploader } from "@/components/admin/ImageUploader";
+import { AudioUploader } from "@/components/admin/AudioUploader";
+import { useChunkedUpload } from "@/hooks/useChunkedUpload";
 
 // DnD Kit imports
 import {
@@ -169,7 +170,7 @@ function SortableCard({ id, item, onEdit, onDelete }: SortableItemProps) {
             <div
               {...attributes}
               {...listeners}
-              className="cursor-grab active:cursor-grabbing p-1.5 rounded hover:bg-muted text-muted-foreground hover:text-foreground transition-colors"
+              className="cursor-grab active:cursor-grabbing p-1.5 rounded hover:bg-muted text-muted-foreground transition-colors"
               title="Drag to reorder"
             >
               <GripVertical className="h-4 w-4" />
@@ -238,6 +239,8 @@ export default function AudioBooksPageEditor({ pageId, initialPageData }: AudioB
   const [dragActive, setDragActive] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const { uploadFile: chunkedUpload } = useChunkedUpload();
 
   // DnD Sensors config
   const sensors = useSensors(
@@ -396,18 +399,9 @@ export default function AudioBooksPageEditor({ pageId, initialPageData }: AudioB
 
     setIsUploading(true);
     try {
-      const formDataObj = new FormData();
-      formDataObj.append("file", file);
-      formDataObj.append("type", "uploads");
-
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        body: formDataObj,
+      const data = await chunkedUpload(file, {
+        onProgress: (pct) => console.log(`[AudioBooks] Upload progress: ${pct}%`),
       });
-
-      if (!res.ok) throw new Error("Upload failed");
-
-      const data = await res.json();
 
       // Parse clean default title from the file name
       const baseName = file.name.replace(/\.[^/.]+$/, "");
@@ -936,28 +930,11 @@ export default function AudioBooksPageEditor({ pageId, initialPageData }: AudioB
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="audioUrl">MP3 URL Reference <span className="text-destructive">*</span></Label>
-                  <div className="flex gap-2">
-                    <Input
-                      id="audioUrl"
-                      required
-                      value={formData.audioUrl}
-                      onChange={(e) => setFormData(prev => ({ ...prev, audioUrl: e.target.value }))}
-                      className={cn("font-mono", formErrors.audioUrl && "border-destructive")}
-                      placeholder="/uploads/..."
-                    />
-                    <Button type="button" variant="secondary" onClick={() => fileInputRef.current?.click()} disabled={isUploading}>
-                      {isUploading ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <UploadCloud className="h-4 w-4 mr-2" />}
-                      {isUploading ? "Uploading..." : "Upload"}
-                    </Button>
-                    {formData.audioUrl && (
-                      <Button variant="outline" size="icon" asChild>
-                        <a href={formData.audioUrl} target="_blank" rel="noreferrer" title="Open File">
-                          <ExternalLink className="h-4 w-4" />
-                        </a>
-                      </Button>
-                    )}
-                  </div>
+                  <Label>MP3 URL Reference <span className="text-destructive">*</span></Label>
+                  <AudioUploader
+                    value={formData.audioUrl}
+                    onChange={(url) => setFormData(prev => ({ ...prev, audioUrl: url }))}
+                  />
                   {formErrors.audioUrl && <p className="text-xs text-destructive">{formErrors.audioUrl}</p>}
                 </div>
 

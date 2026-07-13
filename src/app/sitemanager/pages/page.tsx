@@ -389,7 +389,7 @@ export default function PagesListPage() {
             className="pl-10 pr-9 bg-background border-input text-foreground placeholder:text-muted-foreground rounded-xl focus:border-emerald-500/40 focus:ring-emerald-500/10 transition-all duration-300 shadow-[inset_0_1px_2px_rgba(0,0,0,0.5)]"
           />
           {search && (
-            <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
+            <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
               <X className="h-4 w-4" />
             </button>
           )}
@@ -419,10 +419,10 @@ export default function PagesListPage() {
           </SelectContent>
         </Select>
         <div className="flex bg-background border border-input rounded-xl p-1">
-          <Button variant="ghost" size="icon" onClick={() => setViewMode("list")} className={cn("h-8 w-8 rounded-lg transition-all", viewMode === "list" ? "bg-accent text-primary" : "text-muted-foreground hover:text-foreground")}>
+          <Button variant="ghost" size="icon" onClick={() => setViewMode("list")} className={cn("h-8 w-8 rounded-lg transition-all", viewMode === "list" ? "bg-accent text-primary" : "text-muted-foreground")}>
             <LayoutList className="h-4 w-4" />
           </Button>
-          <Button variant="ghost" size="icon" onClick={() => setViewMode("grid")} className={cn("h-8 w-8 rounded-lg transition-all", viewMode === "grid" ? "bg-accent text-primary" : "text-muted-foreground hover:text-foreground")}>
+          <Button variant="ghost" size="icon" onClick={() => setViewMode("grid")} className={cn("h-8 w-8 rounded-lg transition-all", viewMode === "grid" ? "bg-accent text-primary" : "text-muted-foreground")}>
             <LayoutGrid className="h-4 w-4" />
           </Button>
         </div>
@@ -454,7 +454,7 @@ export default function PagesListPage() {
                 <XCircle className="h-3.5 w-3.5 mr-1.5 text-red-600" />Delete Selected
               </Button>
             </ConfirmDialog>
-            <Button variant="ghost" size="sm" onClick={() => setSelected(new Set())} className="text-muted-foreground hover:text-foreground p-1 rounded-lg hover:bg-accent ml-2">
+            <Button variant="ghost" size="sm" onClick={() => setSelected(new Set())} className="text-muted-foreground p-1 rounded-lg hover:bg-accent ml-2">
               <X className="h-4 w-4" />
             </Button>
           </div>
@@ -491,7 +491,7 @@ export default function PagesListPage() {
             <div className="overflow-x-auto">
               {/* Headings */}
               <div className="flex items-center gap-4 px-6 py-3.5 bg-muted border-b border-border text-[10px] font-black text-muted-foreground uppercase tracking-widest min-w-[700px]">
-                <button onClick={toggleAll} className="text-muted-foreground hover:text-foreground transition-colors">
+                <button onClick={toggleAll} className="text-muted-foreground transition-colors">
                   {allSelected ? (
                     <CheckSquare className="h-4.5 w-4.5 text-primary filter drop-shadow-[0_0_4px_rgba(52,211,153,0.3)]" />
                   ) : (
@@ -545,7 +545,7 @@ export default function PagesListPage() {
                           <span className="text-xs text-muted-foreground font-mono truncate select-all">/{row.slug}</span>
                           <button
                             onClick={() => copySlug(row.slug, toast)}
-                            className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-foreground p-0.5 hover:bg-accent rounded"
+                            className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground p-0.5 hover:bg-accent rounded"
                             title="Copy Slug"
                           >
                             <Copy className="h-3 w-3" />
@@ -742,7 +742,7 @@ export default function PagesListPage() {
                           </Link>
                           <div className="flex items-center gap-1.5">
                             <span className="text-[11px] text-muted-foreground font-mono truncate bg-background px-1.5 py-0.5 rounded">/{row.slug}</span>
-                            <button onClick={() => copySlug(row.slug, toast)} className="text-muted-foreground hover:text-foreground p-0.5 hover:bg-accent rounded transition-colors" title="Copy Slug">
+                            <button onClick={() => copySlug(row.slug, toast)} className="text-muted-foreground p-0.5 hover:bg-accent rounded transition-colors" title="Copy Slug">
                               <Copy className="h-3 w-3" />
                             </button>
                           </div>
