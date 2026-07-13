@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { db } from "@/db";
 import { speakers, videos } from "@/db/schema";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, asc } from "drizzle-orm";
 import { buildMetadata, breadcrumbJsonLd } from "@/lib/seo";
 import { VideoListClient } from "@/components/shared/VideoListClient";
 
@@ -44,7 +44,7 @@ export default async function SpeakerVideosPage({ params }: { params: Promise<{ 
         .select()
         .from(videos)
         .where(eq(videos.speakerId, speaker.id))
-        .orderBy(desc(videos.createdAt));
+        .orderBy(asc(videos.order), desc(videos.createdAt));
     }
   } catch (error) {
     console.warn("DB error in SpeakerVideosPage:", error);

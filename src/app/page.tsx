@@ -8,7 +8,8 @@ import { CTA } from "@/components/home/CTA";
 import { db } from "@/db";
 import { homeSliders, books, magazines, teamMembers, homeCampaigns, services, videos, settings, pressReleases, campaigns } from "@/db/schema";
 import { LatestPressReleases } from "@/components/home/LatestPressReleases";
-import { eq, desc, asc } from "drizzle-orm";
+import { DisclaimerPopup } from "@/components/home/DisclaimerPopup";
+import { eq, desc, asc, inArray, or } from "drizzle-orm";
 import { webPageJsonLd, buildMetadata } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
@@ -143,7 +144,12 @@ async function HomeContent() {
     siteSettings = await db
       .select()
       .from(settings)
-      .where(eq(settings.group, "homepage"));
+      .where(
+        or(
+          eq(settings.group, "homepage"),
+          inArray(settings.key, ["disclaimer_enabled", "disclaimer_image"])
+        )
+      );
   } catch (error) { console.error("Failed to fetch settings:", error); }
 
   // Map settings array to an object map for easy prop passing
@@ -182,6 +188,12 @@ async function HomeContent() {
 
   return (
     <>
+      {/* 0. Disclaimer Popup */}
+      <DisclaimerPopup
+        enabled={settingsMap.disclaimer_enabled === "true"}
+        imageUrl={settingsMap.disclaimer_image || ""}
+      />
+
       {/* 1. Hero Slider (Pass Dynamic payload) */}
       <Hero slidesData={finalSliders} />
 

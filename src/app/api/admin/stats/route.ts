@@ -14,6 +14,7 @@ import {
   homeCampaigns,
   locations,
   magazines,
+  settings,
 } from "@/db/schema";
 import { sql, desc, eq } from "drizzle-orm";
 
@@ -39,6 +40,7 @@ export async function GET(request: NextRequest) {
             magazinesCount,
             audioBooksCount,
             monthlyViews,
+            disclaimerViewsResult,
         ] = await Promise.all([
             db.select({ count: sql<number>`count(*)` }).from(pages),
             db.select({ count: sql<number>`count(*)` }).from(audio),
@@ -51,6 +53,7 @@ export async function GET(request: NextRequest) {
             db.select({ count: sql<number>`count(*)` }).from(magazines),
             db.select({ count: sql<number>`count(*)` }).from(audioBooks),
             db.select({ count: sql<number>`coalesce(sum(view_count), 0)` }).from(videos),
+            db.select().from(settings).where(eq(settings.key, "disclaimer_views")).limit(1),
         ]);
 
         // Get recent activity
@@ -99,6 +102,7 @@ export async function GET(request: NextRequest) {
                 locations: locationsCount[0].count,
                 magazines: magazinesCount[0].count,
                 views: `${Math.round(Number(monthlyViews[0].count) / 1000)}K`,
+                disclaimerViews: disclaimerViewsResult[0]?.value ? parseInt(disclaimerViewsResult[0].value, 10) : 0,
             },
             recentActivity
         });

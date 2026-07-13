@@ -17,6 +17,7 @@ import {
   locations,
   media,
   formSubmissions,
+  settings,
 } from "@/db/schema";
 import { sql, desc, eq, and, isNotNull } from "drizzle-orm";
 
@@ -179,6 +180,9 @@ export async function GET(request: NextRequest) {
       .orderBy(desc(pages.updatedAt))
       .limit(5);
 
+    const disclaimerViewsSetting = await db.select().from(settings).where(eq(settings.key, "disclaimer_views")).limit(1);
+    const disclaimerViews = Number(disclaimerViewsSetting[0]?.value || 0);
+
     const totalResources =
       Number(audioCount[0]?.count ?? 0) +
       Number(videosCount[0]?.count ?? 0) +
@@ -208,6 +212,7 @@ export async function GET(request: NextRequest) {
         videoViews: Number(videoViewTotal[0]?.total ?? 0),
         bookDownloads: Number(bookDownloadTotal[0]?.total ?? 0),
         magazineDownloads: Number(magazineDownloadTotal[0]?.total ?? 0),
+        disclaimerViews,
       },
       // sub-category breakdowns
       audioByCategory,

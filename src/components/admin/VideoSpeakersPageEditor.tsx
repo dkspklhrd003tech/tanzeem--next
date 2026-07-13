@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Switch } from "@/components/ui/switch";
 import Link from "next/link";
 import { PageRecord } from "@/components/sitemanager/PageForm";
 import { ImageUploader } from "@/components/admin/ImageUploader";
@@ -102,6 +103,35 @@ function SortableSpeakerCard({ speaker, onClick, onEdit, onDelete }: { speaker: 
   );
 }
 
+function SortableVideoCard({ video, onEdit, onDelete }: { video: VideoItem, onEdit: (v: VideoItem) => void, onDelete: (v: VideoItem) => void }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: video.id });
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    zIndex: isDragging ? 10 : 1,
+    opacity: isDragging ? 0.8 : 1,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} className="relative bg-card rounded-xl border p-4 flex flex-col justify-between group hover:border-primary/50 transition-colors shadow-sm">
+      <div {...attributes} {...listeners} className="absolute top-2 right-2 z-20 p-1.5 bg-background/80 backdrop-blur rounded-md border shadow-sm cursor-grab active:cursor-grabbing hover:bg-background transition-colors text-muted-foreground hover:text-foreground">
+        <GripVertical className="w-4 h-4" />
+      </div>
+      <div className="pr-8">
+        <div className="flex items-center gap-2 mb-1">
+          <h3 className="font-bold line-clamp-2 group-hover:text-primary transition-colors">{video.title}</h3>
+          {video.isNew && <span className="text-[10px] uppercase font-bold tracking-wider bg-green-500 text-white px-2 py-0.5 rounded-full shrink-0">New</span>}
+        </div>
+        <p className="text-xs text-muted-foreground break-all line-clamp-1">{video.videoUrl || video.embedUrl || "No URL"}</p>
+      </div>
+      <div className="flex gap-2 justify-end mt-4 relative z-30" onPointerDown={e => e.stopPropagation()}>
+        <Button variant="ghost" size="sm" onClick={() => onEdit(video)}><Pencil className="w-4 h-4" /></Button>
+        <Button variant="ghost" size="sm" onClick={() => onDelete(video)} className="text-red-500"><XCircle className="w-4 h-4" /></Button>
+      </div>
+    </div>
+  );
+}
+
 export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { pageId: string, initialPageData: PageRecord }) {
   const { toast } = useToast();
   const [pageForm, setPageForm] = useState<PageRecord>({ ...initialPageData });
@@ -190,7 +220,14 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
     try {
       const url = editingVideoId ? `/api/admin/videos/${editingVideoId}` : "/api/admin/videos";
       const method = editingVideoId ? "PUT" : "POST";
-      const payload = { ...videoFormData, speakerId: activeSpeaker?.id };
+      const payload: any = { ...videoFormData, speakerId: activeSpeaker?.id };
+      
+      if (!editingVideoId) {
+        const currentSpeakerVideos = videosList.filter(v => v.speakerId === activeSpeaker?.id);
+        const maxOrder = currentSpeakerVideos.length > 0 ? Math.max(...currentSpeakerVideos.map(v => v.order || 0)) : -1;
+        payload.order = maxOrder + 1;
+      }
+
       const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
       if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || "Failed");
       toast({ title: "Success", description: "Video saved" });
@@ -228,6 +265,36 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
     toast({ title: "Order saved", description: "The new sorting order has been saved automatically." });
   };
 
+  const handleVideoDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id || !activeSpeaker) return;
+
+    setVideosList((items) => {
+      const speakerVids = items.filter(v => v.speakerId === activeSpeaker.id).sort((a, b) => (a.order || 0) - (b.order || 0));
+      const oldIndex = speakerVids.findIndex(v => v.id === active.id);
+      const newIndex = speakerVids.findIndex(v => v.id === over.id);
+
+      const reorderedSpeakerVids = arrayMove(speakerVids, oldIndex, newIndex).map((v, idx) => ({ ...v, order: idx }));
+      
+      const newArray = items.map(v => {
+        if (v.speakerId !== activeSpeaker.id) return v;
+        const matched = reorderedSpeakerVids.find(sv => sv.id === v.id);
+        return matched || v;
+      });
+
+      fetch("/api/admin/videos", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          orders: reorderedSpeakerVids.map(i => ({ id: i.id, orderIndex: i.order }))
+        }),
+      }).catch(console.error);
+
+      return newArray;
+    });
+    toast({ title: "Video Order saved", description: "The new video sorting order has been saved." });
+  };
+
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, setter: (url: string) => void) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -243,7 +310,7 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
     finally { setIsUploading(false); }
   };
 
-  const activeVideos = videosList.filter(v => v.speakerId === activeSpeaker?.id);
+  const activeVideos = videosList.filter(v => v.speakerId === activeSpeaker?.id).sort((a, b) => (a.order || 0) - (b.order || 0));
 
   return (
     <div className="space-y-6 max-w-7xl">
@@ -350,30 +417,29 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
         {activeSpeaker && (
           <>
             <TabsContent value="videos" className="space-y-6">
-              <div className="flex justify-between items-center">
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <h2 className="text-xl font-bold">Speaker Videos</h2>
-                <Button size="sm" onClick={() => { setEditingVideoId(null); setVideoFormData({ title: "", slug: "", videoUrl: "", embedUrl: "", isPublished: true, isNew: false, customFields: {} }); setIsVideoModalOpen(true); }}>
-                  <Plus className="w-4 h-4 mr-1" /> Add Video
-                </Button>
+                <div className="flex flex-wrap gap-2">
+                  <Button size="sm" onClick={() => { setEditingVideoId(null); setVideoFormData({ title: "", slug: "", videoUrl: "", embedUrl: "", isPublished: true, isNew: false, customFields: {} }); setIsVideoModalOpen(true); }}>
+                    <Plus className="w-4 h-4 mr-1" /> Add Video
+                  </Button>
+                </div>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                {activeVideos.map(video => (
-                  <div key={video.id} className="bg-card rounded-xl border p-4 flex flex-col justify-between">
-                    <div>
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-bold">{video.title}</h3>
-                        {video.isNew && <span className="text-[10px] uppercase font-bold tracking-wider bg-green-500 text-white px-2 py-0.5 rounded-full">New</span>}
-                      </div>
-                      <p className="text-xs text-muted-foreground break-all">{video.videoUrl || video.embedUrl || "No URL"}</p>
-                    </div>
-                    <div className="flex gap-2 justify-end mt-4">
-                      <Button variant="ghost" size="sm" onClick={() => { setEditingVideoId(video.id); setVideoFormData({ title: video.title, slug: video.slug, videoUrl: video.videoUrl || "", embedUrl: video.embedUrl || "", isPublished: video.isPublished, isNew: video.isNew || false, customFields: video.customFields || {} }); setIsVideoModalOpen(true); }}><Pencil className="w-4 h-4" /></Button>
-                      <Button variant="ghost" size="sm" onClick={() => { setDeletingVideo(video); }} className="text-red-500"><XCircle className="w-4 h-4" /></Button>
-                    </div>
+              <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleVideoDragEnd}>
+                <SortableContext items={activeVideos.map(v => v.id)} strategy={rectSortingStrategy}>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    {activeVideos.map(video => (
+                      <SortableVideoCard
+                        key={video.id}
+                        video={video}
+                        onEdit={(v) => { setEditingVideoId(v.id); setVideoFormData({ title: v.title, slug: v.slug, videoUrl: v.videoUrl || "", embedUrl: v.embedUrl || "", isPublished: v.isPublished, isNew: v.isNew || false, customFields: v.customFields || {} }); setIsVideoModalOpen(true); }}
+                        onDelete={(v) => { setDeletingVideo(v); }}
+                      />
+                    ))}
+                    {activeVideos.length === 0 && <p className="text-muted-foreground col-span-full">No videos found for this speaker.</p>}
                   </div>
-                ))}
-                {activeVideos.length === 0 && <p className="text-muted-foreground col-span-full">No videos found for this speaker.</p>}
-              </div>
+                </SortableContext>
+              </DndContext>
             </TabsContent>
 
             <TabsContent value="seo" className="space-y-6">
@@ -425,7 +491,18 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
             </div>
             <div className="overflow-y-auto p-6 flex-1 space-y-4">
               <div className="space-y-2"><Label>Title</Label><Input value={videoFormData.title} onChange={e => setVideoFormData({ ...videoFormData, title: e.target.value, slug: editingVideoId ? videoFormData.slug : slugify(e.target.value) })} /></div>
-              <div className="space-y-2"><Label>Slug</Label><Input value={videoFormData.slug} onChange={e => setVideoFormData({ ...videoFormData, slug: e.target.value })} /></div>
+              <div className="space-y-2">
+                <Label>Slug</Label>
+                <Input value={videoFormData.slug} onChange={e => setVideoFormData({ ...videoFormData, slug: e.target.value })} />
+                <div className="flex items-center space-x-2 pt-1">
+                  <Switch 
+                    id="openInNewTab" 
+                    checked={videoFormData.customFields?.openInNewTab || false} 
+                    onCheckedChange={(checked) => setVideoFormData({ ...videoFormData, customFields: { ...videoFormData.customFields, openInNewTab: checked } })} 
+                  />
+                  <Label htmlFor="openInNewTab" className="cursor-pointer text-sm font-normal text-muted-foreground">Open in New Tab</Label>
+                </div>
+              </div>
               <div className="space-y-2">
                 <Label>Video File (MP4/WebM)</Label>
                 <div className="flex gap-2">

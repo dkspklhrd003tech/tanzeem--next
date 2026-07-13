@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Play, Calendar, MessageSquare } from "lucide-react";
+import { AudioLines, Calendar, MessageSquare } from "lucide-react";
 
 type SermonRecord = {
     id: string;
@@ -73,7 +73,7 @@ export function SermonsList({ sermons }: SermonsListProps) {
                                     </div>
                                     <div className="shrink-0 flex flex-col items-center justify-center gap-1 mt-2 md:mt-0">
                                         <button className="h-10 w-10 flex items-center justify-center rounded-full bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-all scale-95 group-hover:scale-100 shadow-sm shrink-0">
-                                            <Play className="w-6 h-6" />
+                                            <AudioLines className="w-7 h-7" />
                                         </button>
                                         <span className="text-[11px] text-foreground font-medium transition-opacity hidden md:block">Listen Now</span>
                                     </div>

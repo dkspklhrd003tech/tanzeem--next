@@ -1,7 +1,7 @@
 import { notFound, redirect, permanentRedirect } from "next/navigation";
 import { db } from "@/db";
 import { pages, pageSections, audioCategories, videoCategories, audio, videos, speakers, bookCategories, books, settings } from "@/db/schema";
-import { eq, and, desc } from "drizzle-orm";
+import { eq, and, desc, sql } from "drizzle-orm";
 import { Metadata } from "next";
 import crypto from "crypto";
 import { DynamicPageContent } from "@/components/shared/DynamicPageContent";
@@ -11,6 +11,10 @@ import { RedirectPage } from "@/components/shared/RedirectPage";
 import { NestedCategoryGrid } from "@/components/shared/NestedCategoryGrid";
 import { MediaCardGrid } from "@/components/shared/MediaCardGrid";
 import { PublicationGrid } from "@/components/shared/PublicationGrid";
+import { AudioListClient } from "@/components/shared/AudioListClient";
+import { VideoListClient } from "@/components/shared/VideoListClient";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { resolveMediaUrl } from "@/lib/utils";
 
 // ── Slug resolver — handles prefix mismatches (e.g. DB has "our-ideology"
@@ -351,29 +355,34 @@ export default async function DynamicPage({ params }: PageProps) {
   let ctaButtonLabel: string | undefined = undefined;
   let ctaButtonUrl: string | undefined = undefined;
   let founderMedia: any = null;
+  let speakerSlugLinks = { audios: "", videos: "" };
 
-  if (normalizedSlug === "the-founder") {
+  if (normalizedSlug === "the-founder" || normalizedSlug === "the-ameer") {
     try {
+      const dbSpeakerSlug = normalizedSlug === "the-founder" ? "dr-israr-ahmad" : "shujauddin-sheikh";
+      speakerSlugLinks.audios = normalizedSlug === "the-founder" ? "/audios-by-speaker/dr-israr-ahmad" : "/audios-by-speaker/shujauddin-sheikh";
+      speakerSlugLinks.videos = normalizedSlug === "the-founder" ? "/videos-by-speakers/dr-israr-ahmad-videos" : "/videos-by-speakers/shujauddin-sheikh";
+
       const speaker = await db.query.speakers.findFirst({
-        where: eq(speakers.slug, "dr-israr-ahmad")
+        where: eq(speakers.slug, dbSpeakerSlug)
       });
 
       if (speaker) {
         const latestAudios = await db.query.audio.findMany({
           where: eq(audio.speakerId, speaker.id),
-          orderBy: [desc(audio.createdAt)],
+          orderBy: [sql`RAND()`],
           limit: 4
         });
 
         const latestVideos = await db.query.videos.findMany({
           where: eq(videos.speakerId, speaker.id),
-          orderBy: [desc(videos.createdAt)],
+          orderBy: [sql`RAND()`],
           limit: 4
         });
 
-        const latestBooks = await db.query.books.findMany({
+        const latestBooks = normalizedSlug === "the-ameer" ? [] : await db.query.books.findMany({
           where: eq(books.isPublished, true),
-          orderBy: [desc(books.createdAt)],
+          orderBy: [sql`RAND()`],
           limit: 4
         });
 
@@ -632,32 +641,31 @@ export default async function DynamicPage({ params }: PageProps) {
           {founderMedia && (
             <div className="space-y-4">
               {founderMedia.audios.length > 0 && (
-                <MediaCardGrid
-                  heading="Latest Audios"
-                  items={founderMedia.audios.map((a: any) => ({
-                    title: a.title,
-                    image: a.thumbnailUrl || '/images/default-audio.jpg',
-                    type: 'audio',
-                    link: `/audio/${a.slug}`
-                  }))}
-                  columns={4}
-                />
+                <div className="py-2 container mx-auto">
+                  <div className="flex flex-col md:flex-row items-end justify-between gap-6 mb-8">
+                    <h2 className="text-3xl md:text-4xl font-bold text-foreground">Latest Audios</h2>
+                    <Link href={speakerSlugLinks.audios} className="text-primary font-bold inline-flex items-center gap-2 hover:underline">
+                      View All Resources <ArrowRight className="w-4 h-4" />
+                    </Link>
+                  </div>
+                  <AudioListClient audios={founderMedia.audios} />
+                </div>
               )}
               {founderMedia.videos.length > 0 && (
-                <MediaCardGrid
-                  heading="Latest Videos"
-                  items={founderMedia.videos.map((v: any) => ({
-                    title: v.title,
-                    image: v.thumbnailUrl || '/images/default-video.jpg',
-                    type: 'video',
-                    link: `/videos/${v.slug}`
-                  }))}
-                  columns={4}
-                />
+                <div className="py-10 container mx-auto px-4">
+                  <div className="flex flex-col md:flex-row items-end justify-between gap-6 mb-8">
+                    <h2 className="text-3xl md:text-4xl font-bold text-foreground">Latest Videos</h2>
+                    <Link href={speakerSlugLinks.videos} className="text-primary font-bold inline-flex items-center gap-2 hover:underline">
+                      View All Resources <ArrowRight className="w-4 h-4" />
+                    </Link>
+                  </div>
+                  <VideoListClient vids={founderMedia.videos} />
+                </div>
               )}
               {founderMedia.books.length > 0 && (
                 <PublicationGrid
                   heading="Latest Books"
+                  viewAllUrl="/books-by-category"
                   publications={founderMedia.books.map((b: any) => ({
                     title: b.title,
                     cover: b.coverImage || '/images/default-book.jpg',

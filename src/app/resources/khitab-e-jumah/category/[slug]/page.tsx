@@ -3,7 +3,7 @@ import { db } from "@/db";
 import { khitabAudioCategories, khitabAudios } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 import Link from "next/link";
-import { Mic, ArrowLeft, Calendar, FileText, Play } from "lucide-react";
+import { Mic, ArrowLeft, Calendar, FileText, AudioLines } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CTABanner } from "@/components/shared/CTABanner";
@@ -103,7 +103,7 @@ export default async function KhitabEJumahCategoryPage({ params }: Props) {
                                     </div>
                                     <div className="shrink-0 flex flex-col items-center justify-center gap-1 mt-2 md:mt-0">
                                         <button className="h-10 w-10 flex items-center justify-center rounded-full bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-all scale-95 group-hover:scale-100 shadow-sm shrink-0">
-                                            <Play className="w-6 h-6" />
+                                            <AudioLines className="w-7 h-7" />
                                         </button>
                                         <span className="text-[11px] text-foreground font-medium transition-opacity hidden md:block">Listen Now</span>
                                     </div>

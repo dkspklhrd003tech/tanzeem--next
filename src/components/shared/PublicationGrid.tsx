@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { BookOpen, Download } from "lucide-react";
+import { BookOpen, Download, ArrowRight } from "lucide-react";
 
 interface Publication {
   title: string;
@@ -14,16 +14,24 @@ interface Publication {
 interface PublicationGridProps {
   heading?: string;
   publications: Publication[];
+  viewAllUrl?: string;
 }
 
-export function PublicationGrid({ heading, publications }: PublicationGridProps) {
+export function PublicationGrid({ heading, publications, viewAllUrl }: PublicationGridProps) {
   return (
     <section className="py-16 md:py-10 bg-card/30">
       <div className="container px-4 mx-auto">
         {heading && (
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-16 text-foreground">
-            {heading}
-          </h2>
+          <div className="flex flex-col md:flex-row items-end justify-between gap-6 mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground">
+              {heading}
+            </h2>
+            {viewAllUrl && (
+              <Link href={viewAllUrl} className="text-primary font-bold inline-flex items-center gap-2 hover:underline">
+                View All Publications <ArrowRight className="w-4 h-4" />
+              </Link>
+            )}
+          </div>
         )}
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 md:gap-10">

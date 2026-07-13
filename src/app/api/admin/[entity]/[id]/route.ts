@@ -168,9 +168,9 @@ export async function PUT(
 
         // Check for duplicate slug if slug is being changed
         if (data.slug) {
-            if (!/^[a-z0-9-/]+$/.test(data.slug)) {
+            if (!/^[a-zA-Z0-9-/_.:?=&]+$/.test(data.slug)) {
                 return NextResponse.json({
-                    error: "Slug must contain only lowercase letters, numbers, hyphens, and forward slashes"
+                    error: "Slug contains invalid characters. Only letters, numbers, hyphens, slashes, and basic URL characters are allowed."
                 }, { status: 400 });
             }
 

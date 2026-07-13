@@ -235,6 +235,13 @@ export function SettingsManager() {
                     </TabsTrigger>
 
                     <TabsTrigger
+                        value="disclaimer"
+                        className="rounded-none px-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground hover:bg-muted px-4 py-2"
+                    >
+                        <MessageSquare className="w-4 h-4" /> Disclaimer Popup
+                    </TabsTrigger>
+
+                    <TabsTrigger
                         value="css"
                         className="rounded-none px-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground hover:bg-muted px-4 py-2"
                     >
@@ -788,6 +795,80 @@ export function SettingsManager() {
                             >
                                 <Button disabled={isSaving} className="bg-[#0d5844] hover:bg-[#0a4636] text-[#fefefc] rounded-xl px-10 font-bold shadow-md transition-all active:scale-95">
                                     {isSaving ? "Saving..." : "Save CSS Overrides"}
+                                </Button>
+                            </ConfirmDialog>
+                        </div>
+                    </div>
+                </TabsContent>
+
+                {/* DISCLAIMER POPUP TAB */}
+                <TabsContent value="disclaimer" className="animate-in fade-in-50 duration-500">
+                    <div className="bg-card border border-border rounded-xl p-6 shadow-sm space-y-8">
+                        <div>
+                            <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+                                <MessageSquare className="w-5 h-5 text-primary" />
+                                Disclaimer Popup Settings
+                            </h2>
+                            <p className="text-xs text-muted-foreground">
+                                Configure the disclaimer image that appears on the homepage when a user visits the site.
+                            </p>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <div className={`space-y-4 transition-opacity duration-300 ${settings.disclaimer_enabled === "true" ? "opacity-100" : "opacity-50 pointer-events-none"}`}>
+                                <div>
+                                    <label className="text-sm font-medium block mb-2">Disclaimer Image</label>
+                                    <ImageUploader
+                                        value={settings.disclaimer_image || ""}
+                                        onChange={(url) => handleSettingChange('disclaimer_image', url)}
+                                        disableCrop={true}
+                                    />
+                                    <p className="text-xs text-muted-foreground mt-2">Upload the image to be shown in the popup.</p>
+                                </div>
+                            </div>
+                            
+                            <div className="space-y-6">
+                                <div className={`border rounded-xl p-6 transition-colors duration-300 ${settings.disclaimer_enabled === "true" ? "bg-amber-500/10 border-amber-500/20" : "bg-card border-border"}`}>
+                                    <div className="flex items-center justify-between">
+                                        <div>
+                                            <h4 className="font-semibold text-foreground">Enable Disclaimer Popup</h4>
+                                            <p className="text-sm text-muted-foreground mt-1">Toggle whether the disclaimer popup is active on the homepage.</p>
+                                        </div>
+                                        <label className="relative inline-flex items-center cursor-pointer">
+                                            <input
+                                                type="checkbox"
+                                                className="sr-only peer"
+                                                checked={settings.disclaimer_enabled === "true"}
+                                                onChange={(e) => handleSettingChange("disclaimer_enabled", e.target.checked ? "true" : "false")}
+                                            />
+                                            <div className="w-11 h-6 bg-muted peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div className={`bg-card border border-border rounded-xl p-6 transition-opacity duration-300 ${settings.disclaimer_enabled === "true" ? "opacity-100" : "opacity-50 pointer-events-none"}`}>
+                                    <h4 className="font-semibold text-foreground">Live Disclaimer Views</h4>
+                                    <p className="text-3xl font-bold text-primary mt-2">{settings.disclaimer_views || 0}</p>
+                                    <p className="text-sm text-muted-foreground mt-1">Total times the disclaimer has been displayed to visitors.</p>
+                                    <Button 
+                                        variant="outline" 
+                                        size="sm" 
+                                        className="mt-4"
+                                        onClick={() => handleSettingChange("disclaimer_views", "0")}
+                                    >
+                                        Reset Counter
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="mt-8 flex justify-end">
+                            <ConfirmDialog
+                                title="Save Disclaimer Settings"
+                                description="Are you sure you want to update the disclaimer configuration?"
+                                onConfirm={() => saveSettings()}
+                            >
+                                <Button disabled={isSaving} className="bg-[#0d5844] hover:bg-[#0a4636] text-[#fefefc] rounded-xl px-10 font-bold shadow-md transition-all active:scale-95">
+                                    {isSaving ? "Saving..." : "Save Disclaimer Settings"}
                                 </Button>
                             </ConfirmDialog>
                         </div>

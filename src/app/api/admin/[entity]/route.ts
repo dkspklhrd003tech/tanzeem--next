@@ -219,9 +219,9 @@ export async function POST(
         }
 
         // Validate slug format if present
-        if (data.slug && !/^[a-z0-9-/]+$/.test(data.slug)) {
+        if (data.slug && !/^[a-zA-Z0-9-/_.:?=&]+$/.test(data.slug)) {
             return NextResponse.json({
-                error: "Slug must contain only lowercase letters, numbers, hyphens, and forward slashes"
+                error: "Slug contains invalid characters. Only letters, numbers, hyphens, slashes, and basic URL characters are allowed."
             }, { status: 400 });
         }
 

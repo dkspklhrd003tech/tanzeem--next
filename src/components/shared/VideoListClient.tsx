@@ -19,26 +19,27 @@ export function VideoListClient({ vids }: { vids: any[] }) {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         {vids.map((v: any) => (
           <Link key={v.id}
-            href={`/videos/${v.slug}`}
-            className="rounded-2xl border border-border/50 overflow-hidden bg-card flex flex-col cursor-pointer group hover:border-primary/50 transition-all shadow-sm hover:shadow-md hover:-translate-y-1 duration-300">
+            href={v.slug.startsWith('http') ? v.slug : `/videos/${v.slug}`}
+            target={v.customFields?.openInNewTab ? "_blank" : undefined}
+            rel={v.customFields?.openInNewTab ? "noopener noreferrer" : undefined}
+            className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-xl border border-border/50 hover:border-primary/50 bg-primary-light/80 hover:bg-muted/50 transition-colors cursor-pointer group shadow-sm hover:shadow-md h-full">
 
-            {/* Thumbnail Placeholder */}
-            <div className="aspect-video bg-slate-900 relative flex items-center justify-center overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-950 opacity-80 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" />
-              <div className="relative z-10 w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center backdrop-blur-sm group-hover:bg-primary transition-colors shadow-lg">
-                <Play className="w-8 h-8 text-primary group-hover:text-white ml-1 transition-colors" />
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                {v.episodeNumber && <span className="text-xs font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded">Ep {v.episodeNumber}</span>}
+                <h3 className="font-semibold text-lg flex items-center gap-2 group-hover:text-primary transition-colors">
+                  {v.title}
+                  {v.isNew && <span className="text-[10px] uppercase font-bold tracking-wider bg-green-500 text-white px-2 py-0.5 rounded-full">New</span>}
+                </h3>
               </div>
+              {v.description && <p className="text-sm text-muted-foreground line-clamp-2">{v.description}</p>}
             </div>
 
-            <div className="p-5 flex-1">
-              <div className="flex justify-between items-start mb-2 gap-2">
-                <h3 className="font-bold text-lg leading-tight flex items-center gap-2 group-hover:text-primary transition-colors">
-                  {v.title}
-                  {v.isNew && <span className="text-[10px] uppercase font-bold tracking-wider bg-green-500 text-white px-2 py-0.5 rounded-full shadow-[0_0_8px_rgba(34,197,94,0.4)]">New</span>}
-                </h3>
-                {v.episodeNumber && <span className="shrink-0 text-xs font-semibold text-primary bg-primary/10 px-2 py-1 rounded">Ep {v.episodeNumber}</span>}
-              </div>
-              {v.description && <p className="text-sm text-muted-foreground line-clamp-3 mt-2">{v.description}</p>}
+            <div className="shrink-0 flex flex-col items-center justify-center gap-1 mt-2 md:mt-0">
+              <button className="h-10 w-10 flex items-center justify-center rounded-full bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-all scale-95 group-hover:scale-100 shadow-sm">
+                <Play className="w-5 h-5 ml-0.5" />
+              </button>
+              <span className="text-[11px] text-foreground font-medium transition-opacity">Watch Now</span>
             </div>
           </Link>
         ))}

@@ -35,6 +35,7 @@ interface StatsData {
   magazines: number; magazineDownloads: number;
   sermons: number; sermonsPublished: number;
   pressReleases: number; team: number; campaigns: number; locations: number;
+  disclaimerViews: number;
 }
 interface AudioCategory { category: string; count: number; plays: number; downloads: number; }
 interface BookCategory { category: string; count: number; downloads: number; }
@@ -116,6 +117,7 @@ const TOP_CARDS = [
   { key: "magazines" as keyof StatsData, label: "Magazines", icon: BookMarked, color: "bg-orange-500/10 text-orange-600", href: "/sitemanager/magazines" },
   { key: "sermons" as keyof StatsData, label: "Sermons", icon: Mic2, color: "bg-teal-500/10 text-teal-600", href: "/sitemanager/sermons" },
   { key: "unreadMessages" as keyof StatsData, label: "Unread Messages", icon: Mail, color: "bg-rose-500/10 text-rose-600", href: "/sitemanager/contact" },
+  { key: "disclaimerViews" as keyof StatsData, label: "Disclaimer Views", icon: EyeIcon, color: "bg-emerald-500/10 text-emerald-600", href: "/sitemanager/settings" },
 ];
 
 // ─── Sub-bar: shows a percentage bar relative to max ─────────────────────────

@@ -95,6 +95,12 @@ export function Dashboard() {
       icon: Users,
       color: "bg-indigo-500",
     },
+    {
+      title: "Disclaimer Views",
+      value: data?.stats?.disclaimerViews || 0,
+      icon: Eye,
+      color: "bg-rose-500",
+    },
   ];
 
   return (

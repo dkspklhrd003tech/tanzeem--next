@@ -38,6 +38,8 @@ export function WaveformPlayer({
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
 
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
   useEffect(() => {
     setIsMounted(true);
     if (!containerRef.current) return;
@@ -45,24 +47,28 @@ export function WaveformPlayer({
     // Native audio element allows instant streaming instead of waiting for full download
     const audio = new Audio();
     audio.src = audioUrl;
-    audio.crossOrigin = "anonymous";
     audio.preload = "metadata";
+    audioRef.current = audio;
 
     // Initialize WaveSurfer with native media element
-    const ws = WaveSurfer.create({
-      container: containerRef.current,
-      waveColor: "#5b6470ff",
-      progressColor: "#0d5844",
-      cursorColor: "transparent",
-      barWidth: 2,
-      barGap: 2,
-      barRadius: 2,
-      height: 80,
-      normalize: true,
-      media: audio,
-    });
-
-    wavesurferRef.current = ws;
+    let ws: any;
+    try {
+      ws = WaveSurfer.create({
+        container: containerRef.current,
+        waveColor: "#5b6470ff",
+        progressColor: "#0d5844",
+        cursorColor: "transparent",
+        barWidth: 2,
+        barGap: 2,
+        barRadius: 2,
+        height: 80,
+        normalize: true,
+        media: audio,
+      });
+      wavesurferRef.current = ws;
+    } catch (e) {
+      console.warn("WaveSurfer initialization failed, likely due to CORS/ORB. Audio will play natively.", e);
+    }
 
     // Ready immediately to allow instant streaming playback
     setIsReady(true);
@@ -72,36 +78,61 @@ export function WaveformPlayer({
         setDuration(audio.duration);
       }
     });
+    
+    // Add fallback events if ws didn't load
+    audio.addEventListener("play", () => setIsPlaying(true));
+    audio.addEventListener("pause", () => setIsPlaying(false));
+    audio.addEventListener("ended", () => setIsPlaying(false));
 
-    ws.on("play", () => setIsPlaying(true));
-    ws.on("pause", () => setIsPlaying(false));
-    ws.on("finish", () => setIsPlaying(false));
+    if (ws) {
+      ws.on("play", () => setIsPlaying(true));
+      ws.on("pause", () => setIsPlaying(false));
+      ws.on("finish", () => setIsPlaying(false));
 
-    const handleAudioProcess = () => {
-      const current = ws.getCurrentTime();
-      setCurrentTime(current);
+      const handleAudioProcess = () => {
+        const current = ws.getCurrentTime();
+        setCurrentTime(current);
 
-      // Trigger tracking exactly once when passing 10 seconds
-      if (current >= 10 && !trackedRef.current) {
-        trackedRef.current = true;
-        if (onTracked) onTracked();
-      }
-    };
+        // Trigger tracking exactly once when passing 10 seconds
+        if (current >= 10 && !trackedRef.current) {
+          trackedRef.current = true;
+          if (onTracked) onTracked();
+        }
+      };
 
-    ws.on("audioprocess", handleAudioProcess);
+      ws.on("audioprocess", handleAudioProcess);
 
-    ws.on("seeking", () => {
-      setCurrentTime(ws.getCurrentTime());
-    });
+      ws.on("seeking", () => {
+        setCurrentTime(ws.getCurrentTime());
+      });
+    } else {
+      // Fallback timeupdate
+      audio.addEventListener("timeupdate", () => {
+        setCurrentTime(audio.currentTime);
+        if (audio.currentTime >= 10 && !trackedRef.current) {
+          trackedRef.current = true;
+          if (onTracked) onTracked();
+        }
+      });
+    }
 
     return () => {
-      ws.destroy();
+      ws?.destroy();
+      audio.pause();
+      audio.removeAttribute('src');
+      audio.load();
     };
   }, [audioUrl]);
 
   const togglePlay = () => {
     if (wavesurferRef.current) {
       wavesurferRef.current.playPause();
+    } else if (audioRef.current) {
+      if (isPlaying) {
+        audioRef.current.pause();
+      } else {
+        audioRef.current.play().catch(e => console.error("Native play failed", e));
+      }
     }
   };
 
@@ -125,7 +156,6 @@ export function WaveformPlayer({
           {/* Play/Pause Button */}
           <button
             onClick={togglePlay}
-            disabled={!isReady}
             className="w-16 h-16 rounded-full bg-primary flex items-center justify-center hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
             aria-label={isPlaying ? "Pause" : "Play"}
           >
@@ -160,13 +190,6 @@ export function WaveformPlayer({
 
       {/* Waveform Section */}
       <div className="relative w-full">
-        {!isReady && (
-          <div className="absolute inset-0 flex items-center justify-center bg-foreground z-10">
-            <span className="text-sm font-medium animate-pulse text-primary">
-              Loading...
-            </span>
-          </div>
-        )}
         <div ref={containerRef} className="w-full relative cursor-pointer" />
 
         {/* Time bubble (like Soundcloud) */}
