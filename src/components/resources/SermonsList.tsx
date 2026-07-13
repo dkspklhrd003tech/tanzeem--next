@@ -64,7 +64,7 @@ export function SermonsList({ sermons }: SermonsListProps) {
                                                 {sermon.title}
                                             </h3>
                                             {sermon.titleUrdu && (
-                                                <h4 className="font-bold text-lg text-foreground font-amiri mt-1 line-clamp-1" dir="rtl">{sermon.titleUrdu}</h4>
+                                                <h4 className="font-bold text-xl tracking-wider text-foreground font-nastaleeq mt-1 line-clamp-1" dir="rtl">{sermon.titleUrdu}</h4>
                                             )}
                                             {sermon.speakerName && (
                                                 <p className="text-sm text-foreground-muted mt-2">{sermon.speakerName}</p>

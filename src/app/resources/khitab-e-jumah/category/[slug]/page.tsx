@@ -53,14 +53,14 @@ export default async function KhitabEJumahCategoryPage({ params }: Props) {
         <main className="min-h-screen bg-slate-50">
             <div className="container mx-auto py-6 md:py-12">
                 <div className="max-w-7xl mx-auto">
-                    <Button variant="ghost" asChild className="mb-6 -ml-4 text-muted-foreground">
+                    <Button variant="ghost" asChild className="mb-2 text-foreground">
                         <Link href="/resources/khitab-e-jumah">
                             <ArrowLeft className="w-4 h-4 mr-2" /> Back to Categories
                         </Link>
                     </Button>
 
                     <div className="pb-2 border-b border-border/50">
-                        <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-3">{category.name}</h1>
+                        <h1 className="text-3xl md:text-4xl text-center font-bold text-foreground mb-4">{category.name}</h1>
                         {category.urduName && (
                             <h2 className="text-2xl font-bold text-foreground font-amiri mb-4" dir="rtl">{category.urduName}</h2>
                         )}
@@ -97,7 +97,7 @@ export default async function KhitabEJumahCategoryPage({ params }: Props) {
                                                 {item.title}
                                             </h3>
                                             {item.titleUrdu && (
-                                                <h4 className="font-bold text-lg text-foreground font-amiri mt-1 line-clamp-1" dir="rtl">{item.titleUrdu}</h4>
+                                                <h4 className="font-bold text-xl tracking-wider text-foreground font-nastaleeq mt-1 line-clamp-1" dir="rtl">{item.titleUrdu}</h4>
                                             )}
                                         </div>
                                     </div>

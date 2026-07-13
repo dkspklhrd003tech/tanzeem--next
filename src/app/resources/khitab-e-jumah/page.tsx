@@ -4,7 +4,7 @@ import { eq, desc, and, asc } from "drizzle-orm";
 import { CTABanner } from "@/components/shared/CTABanner";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
-import { Headset } from "lucide-react";
+import { Headset, AudioLines } from "lucide-react";
 import type { Metadata } from "next";
 
 export const dynamic = "force-dynamic";
@@ -43,21 +43,28 @@ export default async function KhitabEJumahCategoriesPage() {
                     }>
                         {categories.map((cat: any) => {
                             const cleanSlug = cat.slug?.replace(/^\/+/, '') || '';
+                            const sermonCount = allSermons.filter(s => s.categoryId === cat.id).length;
+
                             return (
-                                <Link href={`/resources/khitab-e-jumah/category/${cleanSlug}`} key={cat.id}>
-                                    <Card className="cursor-pointer overflow-hidden hover:shadow-lg transition-all h-full group border-border/50 hover:border-primary/50">
-                                        <CardContent className="p-4 flex flex-row items-center gap-4 text-left">
-                                            <div className="w-12 h-12 shrink-0 rounded-2xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
-                                                <Headset className="w-6 h-6" />
-                                            </div>
-                                            <div className="flex flex-col flex-1">
-                                                <h3 className="font-bold text-lg md:text-xl text-foreground leading-tight mb-1">{cat.name}</h3>
-                                                {cat.urduName && (
-                                                    <h4 className="font-bold text-lg text-foreground font-amiri text-right" dir="rtl">{cat.urduName}</h4>
-                                                )}
-                                            </div>
-                                        </CardContent>
-                                    </Card>
+                                <Link href={`/resources/khitab-e-jumah/category/${cleanSlug}`} key={cat.id} className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-xl border border-border/50 hover:border-primary/50 bg-primary-light/80 hover:bg-muted/50 transition-colors cursor-pointer group shadow-sm hover:shadow-md h-full">
+                                    <div className="flex-1">
+                                        <div className="flex flex-col items-start gap-1 mb-1">
+                                            <h3 className="font-bold text-lg flex items-center gap-2 group-hover:text-primary transition-colors uppercase leading-snug line-clamp-2">
+                                                {cat.name}
+                                            </h3>
+                                            {cat.urduName && (
+                                                <h4 className="font-bold text-xl tracking-wider text-foreground font-nastaleeq mt-1 line-clamp-1" dir="rtl">{cat.urduName}</h4>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div className="shrink-0 flex flex-col items-center justify-center gap-1 mt-2 md:mt-0">
+                                        <button className="h-10 w-10 flex items-center justify-center rounded-full bg-[#0d5844]/10 text-[#0d5844] group-hover:bg-[#0d5844] group-hover:text-white transition-all scale-95 group-hover:scale-100 shadow-sm shrink-0">
+                                            <AudioLines className="w-6 h-6" />
+                                        </button>
+                                        <span className="text-[11px] text-foreground font-medium transition-opacity hidden md:block">
+                                            {sermonCount} Audios
+                                        </span>
+                                    </div>
                                 </Link>
                             );
                         })}
