@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { db } from "@/db";
 import { khitabAudioCategories, khitabAudios } from "@/db/schema";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, asc } from "drizzle-orm";
 import Link from "next/link";
 import { Mic, ArrowLeft, Calendar, FileText, AudioLines } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -45,7 +45,7 @@ export default async function KhitabEJumahCategoryPage({ params }: Props) {
         .select()
         .from(khitabAudios)
         .where(eq(khitabAudios.categoryId, category.id))
-        .orderBy(desc(khitabAudios.publishedAt));
+        .orderBy(asc(khitabAudios.order), desc(khitabAudios.publishedAt));
 
     const publishedItems = items.filter(item => item.isPublished);
 

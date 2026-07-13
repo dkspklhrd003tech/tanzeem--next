@@ -135,12 +135,15 @@ function SortableSermonCard({ id, item, onEdit, onDelete }: any) {
             <Button variant="ghost" size="icon" className="h-7 w-7 text-red-500 hover:text-red-600 hover:bg-red-500/10" onClick={() => onDelete(item)}>
               <XCircle className="h-3.5 w-3.5" />
             </Button>
+            <div {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing p-1.5 hover:bg-muted rounded text-muted-foreground transition-colors">
+              <GripVertical className="h-4 w-4" />
+            </div>
           </div>
         </div>
 
         <h3 className="font-bold text-base text-foreground leading-snug line-clamp-2 mb-1">{item.title}</h3>
         {item.titleUrdu && (
-            <h4 className="font-bold text-sm text-foreground leading-snug line-clamp-2 mb-2 font-amiri" dir="rtl">{item.titleUrdu}</h4>
+          <h4 className="font-bold text-sm text-foreground leading-snug line-clamp-2 mb-2 font-amiri" dir="rtl">{item.titleUrdu}</h4>
         )}
         <p className="text-xs text-muted-foreground font-mono truncate mb-4" title={item.slug}>
           /{item.slug}
@@ -239,7 +242,7 @@ export function SermonsManager() {
     const errors: Record<string, string> = {};
     if (!catFormData.name.trim()) errors.name = "Name is required";
     if (!catFormData.slug.trim()) errors.slug = "Slug is required";
-    
+
     if (Object.keys(errors).length > 0) {
       setCatFormErrors(errors);
       return;
@@ -284,12 +287,34 @@ export function SermonsManager() {
     });
   };
 
+  const handleSermonDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const oldIndex = activeSermons.findIndex(i => i.id === active.id);
+    const newIndex = activeSermons.findIndex(i => i.id === over.id);
+    const reordered = arrayMove(activeSermons, oldIndex, newIndex).map((item, idx) => ({ ...item, order: idx }));
+
+    setSermons(prev => {
+      const copy = [...prev];
+      reordered.forEach(r => {
+        const idx = copy.findIndex(s => s.id === r.id);
+        if (idx !== -1) copy[idx] = r;
+      });
+      return copy;
+    });
+
+    await fetch("/api/admin/khitab-audios", {
+      method: "PATCH", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ orders: reordered.map(i => ({ id: i.id, orderIndex: i.order })) }),
+    });
+  };
+
   // --- Sermon CRUD ---
   const handleSermonSave = async () => {
     const errors: Record<string, string> = {};
     if (!sermonFormData.title.trim()) errors.title = "Title is required";
     if (!sermonFormData.slug.trim()) errors.slug = "Slug is required";
-    
+
     if (mediaType === "audio" && !sermonFormData.audioUrl.trim()) errors.audioUrl = "Audio URL is required";
     if (mediaType === "video" && !sermonFormData.videoUrl.trim()) errors.videoUrl = "Video URL is required";
 
@@ -301,19 +326,26 @@ export function SermonsManager() {
     try {
       const url = editingSermonId ? `/api/admin/khitab-audios/${editingSermonId}` : "/api/admin/khitab-audios";
       const method = editingSermonId ? "PUT" : "POST";
-      const payload: any = { 
-        ...sermonFormData, 
+      const payload: any = {
+        ...sermonFormData,
         categoryId: activeCategory?.id,
         publishedAt: sermonFormData.publishedAt ? new Date(sermonFormData.publishedAt).toISOString() : null,
       };
 
+      if (!editingSermonId) {
+        // Find the lowest order in the current category to place the new item at the start
+        const categorySermons = sermons.filter(s => s.categoryId === activeCategory?.id);
+        const minOrder = categorySermons.length > 0 ? Math.min(...categorySermons.map(s => s.order || 0)) : 0;
+        payload.order = minOrder - 1;
+      }
+
       if (mediaType === "audio") payload.videoUrl = "";
       if (mediaType === "video") payload.audioUrl = "";
-      
+
       const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
       if (!res.ok) {
-         const errorData = await res.json().catch(() => ({}));
-         throw new Error(errorData.error || "Failed");
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || "Failed");
       }
       toast({ title: "Success", description: "Audio saved" });
       setIsSermonModalOpen(false);
@@ -397,7 +429,7 @@ export function SermonsManager() {
   const activeSermons = sermons
     .filter(s => s.categoryId === activeCategory?.id)
     .filter(s => s.title.toLowerCase().includes(searchQuery.toLowerCase()))
-    .sort((a, b) => new Date(b.publishedAt || b.createdAt || 0).getTime() - new Date(a.publishedAt || a.createdAt || 0).getTime());
+    .sort((a, b) => (a.order || 0) - (b.order || 0));
 
   return (
     <div className="space-y-6 max-w-7xl">
@@ -432,88 +464,92 @@ export function SermonsManager() {
 
       <div className="space-y-6">
 
-          {!activeCategory ? (
-            // CATEGORIES GRID
-            isLoading ? (
-              <div className="flex items-center justify-center py-20 text-muted-foreground"><Loader2 className="w-6 h-6 animate-spin text-primary mr-2" /> Loading Categories...</div>
-            ) : filteredCategories.length === 0 ? (
-              <div className="bg-card rounded-2xl border p-12 text-center text-muted-foreground">No Categories Found.</div>
-            ) : (
-              <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleCatDragEnd}>
-                <SortableContext items={filteredCategories.map(c => c.id)} strategy={rectSortingStrategy}>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                    {filteredCategories.map(cat => (
-                      <SortableCategoryCard key={cat.id} id={cat.id} item={cat} onClick={setActiveCategory}
-                        sermonCount={sermons.filter(s => s.categoryId === cat.id).length}
-                        onEdit={(item: any) => { setEditingCatId(item.id); setCatFormData({ name: item.name, urduName: item.urduName || "", slug: item.slug, description: item.description || "" }); setCatFormErrors({}); setIsCatModalOpen(true); }}
-                        onDelete={(item: CategoryItem) => setDeletingCat(item)} />
-                    ))}
-                  </div>
-                </SortableContext>
-              </DndContext>
-            )
+        {!activeCategory ? (
+          // CATEGORIES GRID
+          isLoading ? (
+            <div className="flex items-center justify-center py-20 text-muted-foreground"><Loader2 className="w-6 h-6 animate-spin text-primary mr-2" /> Loading Categories...</div>
+          ) : filteredCategories.length === 0 ? (
+            <div className="bg-card rounded-2xl border p-12 text-center text-muted-foreground">No Categories Found.</div>
           ) : (
-            // SERMONS GRID
-            <div className="space-y-6">
-              {/* File Drag-and-Drop Area for Audio */}
-              <div
-                onDragEnter={handleDrag}
-                onDragOver={handleDrag}
-                onDragLeave={handleDrag}
-                onDrop={handleDrop}
-                onClick={() => fileInputRef.current?.click()}
-                className={cn(
-                  "relative cursor-pointer py-10 px-6 border-2 border-dashed rounded-3xl transition-all duration-300 flex flex-col items-center justify-center text-center",
-                  dragActive ? "border-primary bg-primary/5 scale-[1.005]" : "border-border hover:border-muted-foreground/50 bg-card",
-                  isUploading && "pointer-events-none opacity-60"
-                )}
-              >
-                <input ref={fileInputRef} type="file" accept="audio/*,video/*" className="hidden" onChange={handleFileChange} />
-                {isUploading ? (
-                  <div className="flex flex-col items-center gap-3">
-                    <Loader2 className="h-10 w-10 text-primary animate-spin" />
-                    <p className="font-semibold text-foreground">Uploading Audio...</p>
-                    <p className="text-xs text-muted-foreground">This will only take a moment.</p>
+            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleCatDragEnd}>
+              <SortableContext items={filteredCategories.map(c => c.id)} strategy={rectSortingStrategy}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                  {filteredCategories.map(cat => (
+                    <SortableCategoryCard key={cat.id} id={cat.id} item={cat} onClick={setActiveCategory}
+                      sermonCount={sermons.filter(s => s.categoryId === cat.id).length}
+                      onEdit={(item: any) => { setEditingCatId(item.id); setCatFormData({ name: item.name, urduName: item.urduName || "", slug: item.slug, description: item.description || "" }); setCatFormErrors({}); setIsCatModalOpen(true); }}
+                      onDelete={(item: CategoryItem) => setDeletingCat(item)} />
+                  ))}
+                </div>
+              </SortableContext>
+            </DndContext>
+          )
+        ) : (
+          // SERMONS GRID
+          <div className="space-y-6">
+            {/* File Drag-and-Drop Area for Audio */}
+            <div
+              onDragEnter={handleDrag}
+              onDragOver={handleDrag}
+              onDragLeave={handleDrag}
+              onDrop={handleDrop}
+              onClick={() => fileInputRef.current?.click()}
+              className={cn(
+                "relative cursor-pointer py-10 px-6 border-2 border-dashed rounded-3xl transition-all duration-300 flex flex-col items-center justify-center text-center",
+                dragActive ? "border-primary bg-primary/5 scale-[1.005]" : "border-border hover:border-muted-foreground/50 bg-card",
+                isUploading && "pointer-events-none opacity-60"
+              )}
+            >
+              <input ref={fileInputRef} type="file" accept="audio/*,video/*" className="hidden" onChange={handleFileChange} />
+              {isUploading ? (
+                <div className="flex flex-col items-center gap-3">
+                  <Loader2 className="h-10 w-10 text-primary animate-spin" />
+                  <p className="font-semibold text-foreground">Uploading Audio...</p>
+                  <p className="text-xs text-muted-foreground">This will only take a moment.</p>
+                </div>
+              ) : (
+                <div className="flex flex-col items-center gap-3">
+                  <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-1">
+                    <Upload className="h-6 w-6" />
                   </div>
-                ) : (
-                  <div className="flex flex-col items-center gap-3">
-                    <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-1">
-                      <Upload className="h-6 w-6" />
-                    </div>
-                    <p className="font-bold text-foreground text-lg">Drag & Drop an Audio File here</p>
-                    <p className="text-sm text-muted-foreground max-w-sm">
-                      Or click anywhere to choose a file from your computer. Titles will auto-generate.
-                    </p>
-                  </div>
-                )}
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {activeSermons.map(sermon => (
-                  <SortableSermonCard key={sermon.id} id={sermon.id} item={sermon}
-                    onEdit={(item: any) => { 
-                      setEditingSermonId(item.id); 
-                      setSermonFormData({ 
-                        title: item.title, 
-                        titleUrdu: item.titleUrdu || "", 
-                        slug: item.slug, 
-                        excerpt: item.excerpt || "", 
-                        description: item.description || "", 
-                        audioUrl: item.audioUrl || "", 
-                        videoUrl: item.videoUrl || "",
-                        isPublished: item.isPublished,
-                        publishedAt: item.publishedAt ? new Date(item.publishedAt).toISOString().split("T")[0] : "",
-                      }); 
-                      setMediaType(item.videoUrl ? "video" : "audio");
-                      setSermonFormErrors({});
-                      setIsSermonModalOpen(true); 
-                    }}
-                    onDelete={(item: SermonItem) => setDeletingSermon(item)} />
-                ))}
-                {activeSermons.length === 0 && <div className="col-span-full py-10 text-center text-muted-foreground border border-dashed rounded-xl">No audios found in this category.</div>}
-              </div>
+                  <p className="font-bold text-foreground text-lg">Drag & Drop an Audio File here</p>
+                  <p className="text-sm text-muted-foreground max-w-sm">
+                    Or click anywhere to choose a file from your computer. Titles will auto-generate.
+                  </p>
+                </div>
+              )}
             </div>
-          )}
+
+            <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleSermonDragEnd}>
+              <SortableContext items={activeSermons.map(s => s.id)} strategy={rectSortingStrategy}>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {activeSermons.map(sermon => (
+                    <SortableSermonCard key={sermon.id} id={sermon.id} item={sermon}
+                      onEdit={(item: any) => {
+                        setEditingSermonId(item.id);
+                        setSermonFormData({
+                          title: item.title,
+                          titleUrdu: item.titleUrdu || "",
+                          slug: item.slug,
+                          excerpt: item.excerpt || "",
+                          description: item.description || "",
+                          audioUrl: item.audioUrl || "",
+                          videoUrl: item.videoUrl || "",
+                          isPublished: item.isPublished,
+                          publishedAt: item.publishedAt ? new Date(item.publishedAt).toISOString().split("T")[0] : "",
+                        });
+                        setMediaType(item.videoUrl ? "video" : "audio");
+                        setSermonFormErrors({});
+                        setIsSermonModalOpen(true);
+                      }}
+                      onDelete={(item: SermonItem) => setDeletingSermon(item)} />
+                  ))}
+                  {activeSermons.length === 0 && <div className="col-span-full py-10 text-center text-muted-foreground border border-dashed rounded-xl">No audios found in this category.</div>}
+                </div>
+              </SortableContext>
+            </DndContext>
+          </div>
+        )}
       </div>
 
       {/* Category Modal */}
@@ -583,7 +619,7 @@ export function SermonsManager() {
                 <Input className={cn(sermonFormErrors.slug && "border-destructive")} value={sermonFormData.slug} onChange={e => setSermonFormData({ ...sermonFormData, slug: e.target.value })} />
                 {sermonFormErrors.slug && <p className="text-xs text-destructive">{sermonFormErrors.slug}</p>}
               </div>
-              
+
               <div className="space-y-4 pt-2 border-t border-border mt-2">
                 <div className="flex gap-2 p-1 bg-muted rounded-full w-fit">
                   <Button
@@ -634,7 +670,7 @@ export function SermonsManager() {
                 description={`Are you sure you want to ${editingSermonId ? "update" : "add"} this item?`}
                 onConfirm={handleSermonSave}
               >
-                <Button className="bg-primary text-primary-foreground hover:bg-primary/95">
+                <Button className="bg-primary text-white">
                   {editingSermonId ? "Update Media" : "Save Media"}
                 </Button>
               </ConfirmDialog>

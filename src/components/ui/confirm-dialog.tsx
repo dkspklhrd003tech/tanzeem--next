@@ -75,7 +75,7 @@ export function ConfirmDialog({
           <AlertDialogAction
             onClick={handleConfirm}
             disabled={isPending}
-            className="cursor-pointer bg-[#0d5844] hover:bg-green-600 text-white"
+            className="cursor-pointer bg-primary hover:bg-primary/80 text-white"
           >
             {isPending ? (
               <span className="flex items-center gap-2">
@@ -83,7 +83,7 @@ export function ConfirmDialog({
                 Saving…
               </span>
             ) : (
-              "Continue"
+              "Confirm"
             )}
           </AlertDialogAction>
         </AlertDialogFooter>

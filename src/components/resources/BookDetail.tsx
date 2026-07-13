@@ -66,7 +66,7 @@ export function BookDetail({ book, backHref, backLabel }: BookDetailProps) {
           </div>
 
           {book.description && (
-            <p className="text-muted-foreground leading-relaxed">{book.description}</p>
+            <p className="text-foreground leading-relaxed">{book.description}</p>
           )}
 
           {book.fileUrl && (

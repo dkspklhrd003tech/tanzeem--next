@@ -65,7 +65,7 @@ export function VideoDetail({ video, backHref, backLabel }: VideoDetailProps) {
           </div>
 
           {video.description && (
-            <p className="text-muted-foreground leading-relaxed">{video.description}</p>
+            <p className="text-foreground leading-relaxed">{video.description}</p>
           )}
         </div>
       </div>

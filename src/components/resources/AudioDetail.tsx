@@ -88,16 +88,16 @@ export function AudioDetail({ audio, backHref, backLabel }: AudioDetailProps) {
           </div>
 
           {audio.description && (
-            <p className="text-muted-foreground leading-relaxed">{audio.description}</p>
+            <p className="text-foreground leading-relaxed">{audio.description}</p>
           )}
 
           {/* Media Player */}
           {audio.videoUrl ? (
             <VideoEmbed url={audio.videoUrl} />
           ) : audio.audioUrl ? (
-            <WaveformPlayer 
-              audioUrl={audio.audioUrl} 
-              title={audio.title} 
+            <WaveformPlayer
+              audioUrl={audio.audioUrl}
+              title={audio.title}
               speakerName={audio.speakerName || undefined}
               categoryName={audio.categoryName || undefined}
               publishedAt={audio.publishedAt}

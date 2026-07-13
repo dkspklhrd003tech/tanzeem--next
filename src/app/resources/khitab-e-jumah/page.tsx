@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { khitabAudios, khitabAudioCategories } from "@/db/schema";
-import { eq, desc, and } from "drizzle-orm";
+import { eq, desc, and, asc } from "drizzle-orm";
 import { CTABanner } from "@/components/shared/CTABanner";
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
@@ -29,7 +29,7 @@ export default async function KhitabEJumahCategoriesPage() {
         .select()
         .from(khitabAudios)
         .where(eq(khitabAudios.isPublished, true))
-        .orderBy(desc(khitabAudios.publishedAt));
+        .orderBy(asc(khitabAudios.order), desc(khitabAudios.publishedAt));
 
     return (
         <main className="min-h-screen">

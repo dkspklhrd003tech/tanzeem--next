@@ -637,6 +637,7 @@ export const khitabAudios = mysqlTable("khitab_audios", {
     publishedAt: timestamp("published_at"),
     metaTitle: varchar("meta_title", { length: 255 }),
     metaDescription: text("meta_description"),
+    order: int("order").default(0).notNull(),
     ...timestamps,
 });
 

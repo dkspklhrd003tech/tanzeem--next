@@ -72,7 +72,7 @@ export default async function HistoryOfTanzeemPage() {
           <div className="md:col-span-5 md:col-start-7">
             <h3 className="font-bold text-lg mb-2">{content.hero.quoteTitle}</h3>
             <div className="bg-primary-light p-6 rounded-lg relative">
-              <p className="text-muted-foreground leading-relaxed italic">
+              <p className="text-foreground leading-relaxed italic">
                 {content.hero.quoteText}
               </p>
             </div>
