@@ -421,7 +421,7 @@ export function CustomFieldBuilder({ entityType }: CustomFieldBuilderProps) {
   }
 
   return (
-    <div className="space-y-4 pt-4 border-t mt-8">
+    <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-lg font-bold">Custom Fields</h3>

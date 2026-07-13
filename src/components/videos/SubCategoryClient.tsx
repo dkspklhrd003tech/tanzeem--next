@@ -20,6 +20,7 @@ type SubCategory = {
   slug: string;
   description: string | null;
   imageUrl: string | null;
+  customFields?: Record<string, any>;
   videos: VideoItem[];
 };
 
@@ -77,50 +78,36 @@ export function SubCategoryClient({ subCategories, directVideos = [] }: { subCat
                 key={sub.id}
                 className="group flex flex-col items-center bg-transparent transition-all duration-300 text-left outline-none opacity-100"
               >
-                {playVideo ? (
-                  <Link
-                    href={`/videos/${playVideo.id}`}
-                    className="w-full aspect-video rounded-xl overflow-hidden bg-card border shadow-md group-hover:shadow-xl border-border group-hover:border-primary/40 transition-all duration-500 relative mb-4 block"
-                  >
-                    {sub.imageUrl ? (
-                      <img
-                        src={sub.imageUrl}
-                        alt={sub.name}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex flex-col items-center justify-center bg-muted/30">
-                        <span className="text-muted-foreground/50 text-sm font-medium">No Thumbnail</span>
-                      </div>
-                    )}
-                    <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <Video className="w-12 h-12 text-white drop-shadow-lg" />
+                <Link
+                  href={`/videos-by-category/${sub.slug}`}
+                  target={sub.customFields?.openInNewTab ? "_blank" : undefined}
+                  className="w-full aspect-video rounded-xl overflow-hidden bg-card border shadow-md group-hover:shadow-xl border-border group-hover:border-primary/40 transition-all duration-500 relative mb-4 block"
+                >
+                  {sub.imageUrl ? (
+                    <img
+                      src={sub.imageUrl}
+                      alt={sub.name}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center bg-muted/30">
+                      <span className="text-muted-foreground/50 text-sm font-medium">No Thumbnail</span>
                     </div>
-                  </Link>
-                ) : (
-                  <Link
-                    href={`/videos-by-category/${sub.slug}`}
-                    className="w-full aspect-video rounded-xl overflow-hidden bg-card border shadow-md group-hover:shadow-xl border-border group-hover:border-primary/40 transition-all duration-500 relative mb-4 block"
-                  >
-                    {sub.imageUrl ? (
-                      <img
-                        src={sub.imageUrl}
-                        alt={sub.name}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex flex-col items-center justify-center bg-muted/30">
-                        <span className="text-muted-foreground/50 text-sm font-medium">No Thumbnail</span>
-                      </div>
-                    )}
-                    <div className="absolute inset-0 bg-black/10 transition-opacity duration-300 opacity-0 group-hover:opacity-100" />
-                  </Link>
-                )}
+                  )}
+                  <div className="absolute inset-0 bg-black/10 transition-opacity duration-300 opacity-0 group-hover:opacity-100" />
+                </Link>
 
-                <Link href={`/videos-by-category/${sub.slug}`} className="text-center w-full px-2 hover:opacity-80 transition-opacity">
-                  <h3 className="text-lg md:text-xl font-semibold transition-colors duration-300 text-foreground group-hover:text-primary">
+                <Link href={`/videos-by-category/${sub.slug}`} target={sub.customFields?.openInNewTab ? "_blank" : undefined} className="text-center w-full px-2 hover:opacity-80 transition-opacity">
+                  <h3 className="text-lg md:text-xl font-semibold transition-colors duration-300 text-foreground group-hover:text-primary text-center mx-auto">
                     {sub.name}
                   </h3>
+                  {sub.customFields?.urduName && (
+                    <div className="w-full flex justify-center mt-1">
+                      <p className="text-lg md:text-2xl font-nastaleeq font-semibold text-foreground text-center" dir="rtl">
+                        {sub.customFields.urduName}
+                      </p>
+                    </div>
+                  )}
                   {sub.description && (
                     <p className="text-sm text-foreground-muted mt-2 line-clamp-2 max-w-xs mx-auto">{sub.description}</p>
                   )}

@@ -54,6 +54,7 @@ export default async function CategoryVideosPage({ params }: { params: Promise<{
       name: sub.name,
       description: sub.description,
       imageUrl: sub.imageUrl,
+      customFields: sub.customFields,
       videos: allVideos.filter((v) => v.categoryId === sub.id),
     };
   });

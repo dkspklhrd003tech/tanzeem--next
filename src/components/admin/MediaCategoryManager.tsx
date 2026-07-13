@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Switch } from "@/components/ui/switch";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { ImageUploader } from "./ImageUploader";
 import { toast } from "sonner";
@@ -57,6 +58,7 @@ interface SubCategory {
   title: string;
   image?: string;
   code?: string;
+  slug?: string;
   order?: number;
   customFields?: any;
   mediaItems: MediaItem[];
@@ -129,10 +131,87 @@ function SortableCategoryCard({ cat, onClick, onEdit, onDelete }: { cat: MainCat
   );
 }
 
+function SortableSubCatCard({ sub, mediaType, onClick, onEdit, onDelete }: { sub: any, mediaType: string, onClick: () => void, onEdit: () => void, onDelete: () => void }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: sub.id });
+  const style = { transform: CSS.Transform.toString(transform), transition, zIndex: isDragging ? 10 : 1, opacity: isDragging ? 0.8 : 1 };
+
+  return (
+    <div ref={setNodeRef} style={style} className="relative group border border-border/80 rounded-xl overflow-hidden bg-card hover:border-primary/50 transition-all shadow-sm cursor-pointer hover:shadow-md flex flex-col" onClick={onClick}>
+      <div {...attributes} {...listeners} className="absolute top-2 left-2 z-20 p-1.5 bg-background/80 backdrop-blur rounded-md border shadow-sm cursor-grab active:cursor-grabbing hover:bg-background transition-colors text-muted-foreground">
+        <GripVertical className="w-4 h-4" />
+      </div>
+      {mediaType === "video" && (
+        <div className="aspect-video bg-muted relative overflow-hidden">
+          {sub.image ? (
+            <img src={resolveMediaUrl(sub.image)} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt={sub.title} />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-muted-foreground"><ImageIcon className="w-8 h-8 opacity-20" /></div>
+          )}
+          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+            <span className="text-white font-medium bg-black/50 px-3 py-1.5 rounded-full text-xs">Manage Content</span>
+          </div>
+        </div>
+      )}
+      <div className="p-4 flex items-start justify-between flex-1 mt-4">
+        <div>
+          <h5 className="w-70 font-bold text-foreground truncate pr-2">{sub.code ? `${sub.code} | ` : ""}{sub.title}</h5>
+        </div>
+        <div className="flex items-center gap-1">
+          <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-primary hover:text-primary z-10" onClick={(e) => { e.stopPropagation(); onEdit(); }}>
+            <Edit className="w-4 h-4" />
+          </Button>
+          <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-destructive shrink-0 bg-destructive/10 hover:bg-destructive hover:text-white z-10" onClick={(e) => { e.stopPropagation(); onDelete(); }}>
+            <XCircle className="w-4 h-4" />
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SortableDirectVideoCard({ item, mediaType, onClick }: { item: any, mediaType: string, onClick: () => void }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id });
+  const style = { transform: CSS.Transform.toString(transform), transition, zIndex: isDragging ? 10 : 1, opacity: isDragging ? 0.8 : 1 };
+
+  const isYt = item.embedUrl?.includes("youtube") || item.mediaUrl?.includes("youtube");
+  let thumb = "";
+  if (isYt) {
+    const ytMatch = (item.embedUrl || item.mediaUrl).match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i);
+    if (ytMatch && ytMatch[1]) thumb = `https://img.youtube.com/vi/${ytMatch[1]}/hqdefault.jpg`;
+  }
+
+  return (
+    <div ref={setNodeRef} style={style} className="relative group border border-border/80 rounded-xl overflow-hidden bg-card hover:border-primary/50 transition-all shadow-sm cursor-pointer hover:shadow-md flex flex-col" onClick={onClick}>
+      <div {...attributes} {...listeners} className="absolute top-2 left-2 z-20 p-1.5 bg-background/80 backdrop-blur rounded-md border shadow-sm cursor-grab active:cursor-grabbing hover:bg-background transition-colors text-muted-foreground">
+        <GripVertical className="w-4 h-4" />
+      </div>
+      {mediaType === "video" && (
+        <div className="aspect-video bg-muted relative overflow-hidden">
+          {thumb ? (
+            <img src={thumb} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt={item.title} />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-muted-foreground"><Video className="w-8 h-8 opacity-20" /></div>
+          )}
+          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+            <span className="text-white font-medium bg-black/50 px-3 py-1.5 rounded-full text-xs">Edit Video</span>
+          </div>
+        </div>
+      )}
+      <div className="p-4 flex items-start justify-between flex-1 mt-4">
+        <div>
+          <h5 className="w-70 font-bold text-foreground truncate pr-2">{item.code ? `${item.code} | ` : ""}{item.title}</h5>
+          <p className="text-xs text-primary mt-1 font-medium">Direct Video</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
   const [categories, setCategories] = useState<MainCategory[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<string>("");
+  const [activeSubTab, setActiveSubTab] = useState<string>("");
   const [pendingAction, setPendingAction] = useState<{ title: string, desc: string, action: () => Promise<void> | void } | null>(null);
 
   const { uploadFile: chunkedUpload } = useChunkedUpload();
@@ -168,6 +247,84 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
     }
   };
 
+  const handleSubCatDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      if (!activeCategory) return;
+
+      const items = activeCategory.subCategories.filter(s => !s.id.endsWith('_direct'));
+      const oldIndex = items.findIndex((c) => c.id === active.id);
+      const newIndex = items.findIndex((c) => c.id === over.id);
+
+      const newItems = arrayMove(items, oldIndex, newIndex);
+      const updatedItems = newItems.map((c, idx) => ({ ...c, order: idx }));
+
+      setCategories(categories.map(c => {
+        if (c.id === activeCategory.id) {
+          return {
+            ...c,
+            subCategories: [...updatedItems, ...c.subCategories.filter(s => s.id.endsWith('_direct'))]
+          };
+        }
+        return c;
+      }));
+
+      try {
+        await Promise.all(
+          updatedItems.map(sub =>
+            fetch(`/api/${mediaType}-categories/${sub.id}`, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ order: sub.order })
+            })
+          )
+        );
+      } catch (err) {
+        toast.error("Failed to save sub-category order");
+      }
+    }
+  };
+
+  const handleMediaItemDragEnd = async (event: DragEndEvent, subId: string) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      if (!activeCategory) return;
+      const sub = activeCategory.subCategories.find(s => s.id === subId);
+      if (!sub) return;
+
+      const items = sub.mediaItems;
+      const oldIndex = items.findIndex((c) => c.id === active.id);
+      const newIndex = items.findIndex((c) => c.id === over.id);
+
+      const newItems = arrayMove(items, oldIndex, newIndex);
+      const updatedItems = newItems.map((c, idx) => ({ ...c, order: idx }));
+
+      setCategories(categories.map(c => {
+        if (c.id === activeCategory.id) {
+          return {
+            ...c,
+            subCategories: c.subCategories.map(s => s.id === sub.id ? { ...s, mediaItems: updatedItems } : s)
+          };
+        }
+        return c;
+      }));
+
+      try {
+        await Promise.all(
+          updatedItems.map(item =>
+            fetch(`/api/${mediaType === 'audio' ? 'audio' : 'videos'}/${item.id}`, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ order: item.order })
+            })
+          )
+        );
+      } catch (err) {
+        toast.error("Failed to save media order");
+      }
+    }
+  };
+
   React.useEffect(() => {
     fetchData();
   }, [mediaType]);
@@ -190,6 +347,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
           title: subCat.name,
           image: subCat.imageUrl || "",
           code: subCat.code || "",
+          slug: subCat.slug || "",
           order: subCat.order || 0,
           customFields: subCat.customFields || {},
           mediaItems: (mediaType === "audio" ? subCat.audioFiles : subCat.videos)?.map((item: any) => ({
@@ -302,6 +460,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
       const newSub: SubCategory = {
         id: data.id,
         title: `New Sub Category`,
+        slug: data.slug || "new-sub-category",
         image: "",
         code: "",
         order: 0,
@@ -314,10 +473,6 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
       ));
 
       setEditingSubCat({ cat: newSub, mainId });
-      setEditingMedia({
-        item: { id: "new", title: "", slug: "", mediaUrl: "", embedUrl: "", description: "", customFields: {} },
-        subId: newSub.id
-      });
     } catch (err) {
       toast.error("Failed to create sub category");
     }
@@ -330,6 +485,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: updatedSub.title,
+          slug: updatedSub.slug,
           imageUrl: updatedSub.image,
           code: updatedSub.code,
           order: updatedSub.order || 0,
@@ -392,7 +548,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
       if (httpMatch && httpMatch[1]) {
         url = httpMatch[1];
       } else {
-         // It's just iframe garbage without a url, return what they typed and let them fix it
+        // It's just iframe garbage without a url, return what they typed and let them fix it
       }
     }
 
@@ -572,6 +728,60 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
             </SortableContext>
           </DndContext>
         </div>
+      ) : activeCategory && activeSubTab ? (
+        <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
+          <div className="flex items-center gap-4 border-b pb-4">
+            <Button variant="outline" size="sm" onClick={() => setActiveSubTab("")}>
+              ← Back to {activeCategory.title}
+            </Button>
+            <div>
+              <h4 className="text-xl font-bold text-foreground">{activeCategory.subCategories.find(s => s.id === activeSubTab)?.title} Videos</h4>
+              <p className="text-sm text-muted-foreground">Manage media items inside this sub-category.</p>
+            </div>
+          </div>
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <h5 className="font-semibold text-lg">Media Items</h5>
+              <Button size="sm" variant="default" onClick={() => {
+                const sub = activeCategory.subCategories.find(s => s.id === activeSubTab);
+                if (sub) {
+                  setEditingMedia({
+                    item: { id: "new", title: "", slug: "", mediaUrl: "", embedUrl: "", description: "", customFields: {} },
+                    subId: sub.id
+                  });
+                }
+              }}>
+                <Plus className="w-4 h-4 mr-1" /> Add New Video
+              </Button>
+            </div>
+            {(() => {
+              const sub = activeCategory.subCategories.find(s => s.id === activeSubTab);
+              if (!sub || sub.mediaItems.length === 0) return (
+                <div className="p-12 text-center text-muted-foreground border border-dashed rounded-xl bg-muted/20">
+                  No videos here yet. Add a new video to start.
+                </div>
+              );
+              return (
+                <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleMediaItemDragEnd(e, sub.id)}>
+                  <SortableContext items={sub.mediaItems.map(m => m.id)} strategy={rectSortingStrategy}>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {sub.mediaItems.map((item) => (
+                        <SortableDirectVideoCard
+                          key={item.id}
+                          item={item}
+                          mediaType={mediaType}
+                          onClick={() => {
+                            setEditingMedia({ item: item, subId: sub.id });
+                          }}
+                        />
+                      ))}
+                    </div>
+                  </SortableContext>
+                </DndContext>
+              );
+            })()}
+          </div>
+        </div>
       ) : activeCategory ? (
         <div className="space-y-6 animate-in fade-in slide-in-from-right-4">
           <div className="flex items-center gap-4 border-b pb-4">
@@ -600,7 +810,6 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                     };
                     setCategories(categories.map(c => c.id === activeCategory.id ? { ...c, subCategories: [genSub!, ...c.subCategories] } : c));
                   }
-                  setEditingSubCat({ cat: genSub, mainId: activeCategory.id });
                   setEditingMedia({
                     item: { id: "new", title: "", slug: "", mediaUrl: "", embedUrl: "", description: "", customFields: {} },
                     subId: genSub.id
@@ -625,144 +834,65 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                 No sub-categories or videos here yet. Add a card or direct video to start.
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {activeCategory.subCategories.filter(s => !s.id.endsWith('_direct')).map((sub, i) => (
-                  <div
-                    key={`subCat-${sub.id}-${i}`}
-                    className="relative group border border-border/80 rounded-xl overflow-hidden bg-card hover:border-primary/50 transition-all shadow-sm cursor-pointer hover:shadow-md flex flex-col"
-                    onClick={() => {
-                      setEditingSubCat({ cat: sub, mainId: activeCategory.id });
-                      setEditingMedia({
-                        item: { id: "new", title: "", slug: "", mediaUrl: "", embedUrl: "", description: "", customFields: {} },
-                        subId: sub.id
-                      });
-                    }}
-                  >
-                    {mediaType === "video" && (
-                      <div className="aspect-video bg-muted relative overflow-hidden">
-                        {sub.image ? (
-                          <img src={resolveMediaUrl(sub.image)} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt={sub.title} />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-muted-foreground"><ImageIcon className="w-8 h-8 opacity-20" /></div>
-                        )}
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                          <span className="text-white font-medium bg-black/50 px-3 py-1.5 rounded-full text-xs">Manage Content</span>
+              <div className="space-y-8">
+                {activeCategory.subCategories.filter(s => !s.id.endsWith('_direct')).length > 0 && (
+                  <div>
+                    <h5 className="font-semibold text-sm text-muted-foreground mb-3 uppercase tracking-wider">Sub-categories</h5>
+                    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleSubCatDragEnd}>
+                      <SortableContext items={activeCategory.subCategories.filter(s => !s.id.endsWith('_direct')).map(s => s.id)} strategy={rectSortingStrategy}>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                          {activeCategory.subCategories.filter(s => !s.id.endsWith('_direct')).map((sub) => (
+                            <SortableSubCatCard
+                              key={sub.id}
+                              sub={sub}
+                              mediaType={mediaType}
+                              onClick={() => {
+                                setActiveSubTab(sub.id);
+                              }}
+                              onEdit={() => {
+                                setEditingSubCat({ cat: sub, mainId: activeCategory.id });
+                                setEditingMedia({
+                                  item: { id: "new", title: "", slug: "", mediaUrl: "", embedUrl: "", description: "", customFields: {} },
+                                  subId: sub.id
+                                });
+                              }}
+                              onDelete={() => {
+                                setPendingAction({
+                                  title: "Delete Sub-category",
+                                  desc: "Are you sure you want to delete this sub-category?",
+                                  action: async () => await removeSubCategory(activeCategory.id, sub.id)
+                                });
+                              }}
+                            />
+                          ))}
                         </div>
-                      </div>
-                    )}
-                    <div className="p-4 flex items-start justify-between flex-1">
-                      <div>
-                        <h5 className="w-70 font-bold text-foreground truncate pr-2">{sub.code ? `${sub.code} | ` : ""}{sub.title}</h5>
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 text-primary hover:text-primary z-10"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setEditingSubCat({ cat: sub, mainId: activeCategory.id });
-                            setEditingMedia({
-                              item: { id: "new", title: "", slug: "", mediaUrl: "", embedUrl: "", description: "", customFields: {} },
-                              subId: sub.id
-                            });
-                          }}
-                        >
-                          <Edit className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 text-destructive shrink-0 bg-destructive/10 hover:bg-destructive hover:text-white z-10"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setPendingAction({
-                              title: "Delete Sub-category",
-                              desc: "Are you sure you want to delete this sub-category?",
-                              action: async () => await removeSubCategory(activeCategory.id, sub.id)
-                            });
-                          }}
-                        >
-                          <XCircle className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </div>
+                      </SortableContext>
+                    </DndContext>
                   </div>
-                ))}
+                )}
 
-                {/* Render Direct Videos as Cards */}
-                {activeCategory.subCategories.find(s => s.id.endsWith('_direct'))?.mediaItems.map((item, i) => {
-                  const directSub = activeCategory.subCategories.find(s => s.id.endsWith('_direct'))!;
-                  const isYt = item.embedUrl?.includes("youtube") || item.mediaUrl?.includes("youtube");
-                  let thumb = "";
-                  if (isYt) {
-                    const ytMatch = (item.embedUrl || item.mediaUrl).match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i);
-                    if (ytMatch && ytMatch[1]) thumb = `https://img.youtube.com/vi/${ytMatch[1]}/hqdefault.jpg`;
-                  }
-
-                  return (
-                    <div
-                      key={`directItem-${item.id}-${i}`}
-                      className="relative group border border-border/80 rounded-xl overflow-hidden bg-card hover:border-primary/50 transition-all shadow-sm cursor-pointer hover:shadow-md flex flex-col"
-                      onClick={() => {
-                        setEditingSubCat({ cat: directSub, mainId: activeCategory.id });
-                        setEditingMedia({ item: item, subId: directSub.id });
-                      }}
-                    >
-                      {mediaType === "video" && (
-                        <div className="aspect-video bg-muted relative overflow-hidden">
-                          {thumb ? (
-                            <img src={thumb} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt={item.title} />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center text-muted-foreground"><Video className="w-8 h-8 opacity-20" /></div>
-                          )}
-                          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                            <span className="text-white font-medium bg-black/50 px-3 py-1.5 rounded-full text-xs">Edit Video</span>
-                          </div>
+                {activeCategory.subCategories.find(s => s.id.endsWith('_direct'))?.mediaItems.length ? (
+                  <div>
+                    <h5 className="font-semibold text-sm text-muted-foreground mb-3 uppercase tracking-wider">Direct Videos</h5>
+                    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleMediaItemDragEnd(e, activeCategory.subCategories.find(s => s.id.endsWith('_direct'))!.id)}>
+                      <SortableContext items={activeCategory.subCategories.find(s => s.id.endsWith('_direct'))!.mediaItems.map(m => m.id)} strategy={rectSortingStrategy}>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                          {activeCategory.subCategories.find(s => s.id.endsWith('_direct'))!.mediaItems.map((item) => (
+                            <SortableDirectVideoCard
+                              key={item.id}
+                              item={item}
+                              mediaType={mediaType}
+                              onClick={() => {
+                                const directSub = activeCategory.subCategories.find(s => s.id.endsWith('_direct'))!;
+                                setEditingMedia({ item: item, subId: directSub.id });
+                              }}
+                            />
+                          ))}
                         </div>
-                      )}
-                      <div className="p-4 flex items-start justify-between flex-1">
-                        <div>
-                          <h5 className="w-70 font-bold text-foreground truncate pr-2">{item.code ? `${item.code} | ` : ""}{item.title}</h5>
-                          <p className="text-xs text-primary mt-1 font-medium">Direct Video</p>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-primary hover:text-primary z-10"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setEditingSubCat({ cat: directSub, mainId: activeCategory.id });
-                              setEditingMedia({ item: item, subId: directSub.id });
-                            }}
-                          >
-                            <Edit className="w-4 h-4" />
-                          </Button>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 text-destructive shrink-0 bg-destructive/10 hover:bg-destructive hover:text-white z-10"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setPendingAction({
-                                title: "Delete Video",
-                                desc: "Are you sure you want to delete this video?",
-                                action: async () => await removeMediaItem(directSub.id, item.id)
-                              });
-                            }}
-                          >
-                            <XCircle className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
+                      </SortableContext>
+                    </DndContext>
+                  </div>
+                ) : null}
               </div>
             )}
           </div>
@@ -885,242 +1015,61 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                     <Label>Card Title</Label>
                     <Input
                       value={editingSubCat.cat.title}
-                      onChange={(e) => setEditingSubCat({ ...editingSubCat, cat: { ...editingSubCat.cat, title: e.target.value } })}
+                      onChange={(e) => setEditingSubCat({
+                        ...editingSubCat,
+                        cat: {
+                          ...editingSubCat.cat,
+                          title: e.target.value,
+                          slug: (!editingSubCat.cat.slug || editingSubCat.cat.slug === "new-sub-category" || editingSubCat.cat.slug === editingSubCat.cat.title.toLowerCase().replace(/[^a-z0-9]+/g, "-")) ? e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, "-") : editingSubCat.cat.slug
+                        }
+                      })}
                       onBlur={() => saveSubCategory(editingSubCat.mainId, editingSubCat.cat)}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label>Display Order</Label>
+                    <Label>Thumbnail Slug</Label>
                     <Input
-                      type="number"
-                      value={editingSubCat.cat.order || 0}
-                      onChange={(e) => setEditingSubCat({ ...editingSubCat, cat: { ...editingSubCat.cat, order: parseInt(e.target.value) || 0 } })}
+                      value={editingSubCat.cat.slug || ""}
+                      onChange={(e) => setEditingSubCat({ ...editingSubCat, cat: { ...editingSubCat.cat, slug: e.target.value } })}
                       onBlur={() => saveSubCategory(editingSubCat.mainId, editingSubCat.cat)}
                     />
+                    <div className="flex items-center space-x-2 pt-2">
+                      <Switch
+                        checked={editingSubCat.cat.customFields?.openInNewTab || false}
+                        onCheckedChange={(checked) => setEditingSubCat({ ...editingSubCat, cat: { ...editingSubCat.cat, customFields: { ...(editingSubCat.cat.customFields || {}), openInNewTab: checked } } })}
+                        onBlur={() => saveSubCategory(editingSubCat.mainId, editingSubCat.cat)}
+                      />
+                      <Label className="text-sm font-normal cursor-pointer">Open in New Tab</Label>
+                    </div>
                   </div>
                 </div>
               )}
+              <div className="space-y-2">
+                <Label>Urdu Name</Label>
+                <Input
+                  value={editingSubCat.cat.customFields?.urduName || ""}
+                  onChange={(e) => setEditingSubCat({ ...editingSubCat, cat: { ...editingSubCat.cat, customFields: { ...(editingSubCat.cat.customFields || {}), urduName: e.target.value } } })}
+                  onBlur={() => saveSubCategory(editingSubCat.mainId, editingSubCat.cat)}
+                  dir="rtl"
+                />
+              </div>
 
               {!editingSubCat.cat.id.endsWith("_direct") && (
                 <>
-                  <div className="space-y-2">
-                    <Label>Urdu Name</Label>
-                    <Input
-                      value={editingSubCat.cat.customFields?.urduName || ""}
-                      onChange={(e) => setEditingSubCat({ ...editingSubCat, cat: { ...editingSubCat.cat, customFields: { ...(editingSubCat.cat.customFields || {}), urduName: e.target.value } } })}
-                      onBlur={() => saveSubCategory(editingSubCat.mainId, editingSubCat.cat)}
-                      dir="rtl"
+                  <div className="space-y-2 mt-4">
+                    <Label>Thumbnail / Featured Image</Label>
+                    <ImageUploader
+                      value={editingSubCat.cat.image || ""}
+                      onChange={(url) => {
+                        setEditingSubCat({ ...editingSubCat, cat: { ...editingSubCat.cat, image: url } });
+                        saveSubCategory(editingSubCat.mainId, { ...editingSubCat.cat, image: url });
+                      }}
+                      aspectRatio={16 / 9}
                     />
                   </div>
-                  <CustomFieldRenderer
-                    entityType={`${mediaType}_category`}
-                    values={editingSubCat.cat.customFields || {}}
-                    onChange={(key, val) => setEditingSubCat({ ...editingSubCat, cat: { ...editingSubCat.cat, customFields: { ...(editingSubCat.cat.customFields || {}), [key]: val } } })}
-                  />
-                  <CustomFieldBuilder entityType={`${mediaType}_category`} />
                 </>
               )}
 
-              {/* Items List */}
-              <div className="space-y-4 pt-4 border-t">
-                <div className="flex justify-between items-center bg-muted/20 p-3 rounded-lg border">
-                  <div>
-                    <h4 className="font-semibold">Media Files ({editingSubCat.cat.mediaItems.length})</h4>
-                    <p className="text-xs text-muted-foreground">Click a file to edit it, or use the form below to add a new one.</p>
-                  </div>
-                  {editingMedia?.item.id !== "new" && (
-                    <Button type="button" size="sm" onClick={() => addMediaItem(editingSubCat.cat.id)}>
-                      <Plus className="w-4 h-4 mr-1" /> Add New File
-                    </Button>
-                  )}
-                </div>
-
-                {editingSubCat.cat.mediaItems.length > 0 && (
-                  <div className="space-y-2 mb-6 max-h-[300px] overflow-y-auto pr-2">
-                    {editingSubCat.cat.mediaItems.map((item, i) => (
-                      <div key={`modalItem-${item.id}-${i}`} className={cn("flex items-center justify-between p-3 border rounded-lg bg-card hover:border-primary/50 cursor-pointer", editingMedia?.item.id === item.id ? "ring-2 ring-primary border-primary" : "")} onClick={() => setEditingMedia({ item, subId: editingSubCat.cat.id })}>
-                        <div className="flex items-center gap-3 w-full overflow-hidden">
-                          <div className="w-10 h-10 shrink-0 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                            {mediaType === "video" ? <Video className="w-5 h-5" /> : <Headphones className="w-5 h-5" />}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="font-semibold text-sm truncate">{item.code ? `${item.code} | ` : ""}{item.title}</p>
-                            <p className="text-xs text-muted-foreground line-clamp-1 break-all pr-2">{item.mediaUrl || item.embedUrl || "No media URL"}</p>
-                            <div className="flex gap-4 mt-2 text-[11px] text-muted-foreground/80 font-medium">
-                              <span className="flex items-center gap-1.5" title="Plays / Views"><PlayCircle className="w-3.5 h-3.5" /> {item.playCount || item.viewCount || 0}</span>
-                              <span className="flex items-center gap-1.5" title="Shares"><Share2 className="w-3.5 h-3.5" /> {item.shareCount || 0}</span>
-                              <span className="flex items-center gap-1.5" title="Downloads"><Download className="w-3.5 h-3.5" /> {item.downloadCount || 0}</span>
-                            </div>
-                          </div>
-                        </div>
-                        <Button type="button" variant="ghost" size="sm" className="h-8 w-8 text-destructive shrink-0" onClick={(e) => {
-                          e.stopPropagation();
-                          setPendingAction({
-                            title: "Delete Media Item",
-                            desc: "Are you sure you want to remove this media file?",
-                            action: async () => await removeMediaItem(editingSubCat.cat.id, item.id)
-                          });
-                        }}>
-                          <XCircle className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {/* INLINE MEDIA ITEM FORM */}
-                {editingMedia && (
-                  <div className="mt-6 border rounded-xl overflow-hidden shadow-sm">
-                    <div className="bg-muted/40 p-3 border-b">
-                      <h4 className="font-semibold text-foreground flex items-center">
-                        {editingMedia.item.id === "new" ? <><Plus className="w-4 h-4 mr-2" /> Add New Media File</> : <><Edit className="w-4 h-4 mr-2" /> Edit Media File: {editingMedia.item.title}</>}
-                      </h4>
-                    </div>
-                    <div className="p-4 space-y-4 bg-card">
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="space-y-2">
-                          <Label>Title <span className="text-destructive">*</span></Label>
-                          <Input
-                            value={editingMedia.item.title}
-                            onChange={(e) => setEditingMedia({
-                              ...editingMedia,
-                              item: {
-                                ...editingMedia.item,
-                                title: e.target.value,
-                                slug: editingMedia.item.id === "new" ? e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, "-") : editingMedia.item.slug
-                              }
-                            })}
-                            placeholder="e.g. Episode 1"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label>Slug <span className="text-destructive">*</span></Label>
-                          <Input
-                            value={editingMedia.item.slug || ""}
-                            onChange={(e) => setEditingMedia({ ...editingMedia, item: { ...editingMedia.item, slug: e.target.value } })}
-                            placeholder="e.g. episode-1"
-                          />
-                        </div>
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label>{mediaType === "audio" ? "Audio File URL (.mp3)" : "Video File URL (.mp4, .webm)"}</Label>
-                        <div className="flex gap-2">
-                          <Input
-                            value={editingMedia.item.mediaUrl}
-                            onChange={(e) => {
-                              const newUrl = e.target.value;
-                              
-                              if (mediaType === "video") {
-                                const parsed = parseVideoInput(newUrl);
-                                setEditingMedia({ ...editingMedia, item: { ...editingMedia.item, mediaUrl: newUrl, embedUrl: parsed.embedSrc || editingMedia.item.embedUrl } });
-
-                                // Auto-fetch thumbnail to category if empty
-                                if (editingSubCat && !editingSubCat.cat.image && parsed.thumbnailUrl) {
-                                  setEditingSubCat({ ...editingSubCat, cat: { ...editingSubCat.cat, image: parsed.thumbnailUrl } });
-                                  toast.success("Thumbnail auto-fetched!");
-                                }
-                              } else {
-                                setEditingMedia({ ...editingMedia, item: { ...editingMedia.item, mediaUrl: newUrl } });
-                              }
-                            }}
-                            placeholder="https://..."
-                            className="flex-1"
-                          />
-                          <Button type="button" variant="outline" className="w-24 overflow-hidden relative">
-                            <UploadCloud className="w-4 h-4 mr-2" />
-                            Upload
-                            <input
-                              type="file"
-                              accept={mediaType === "audio" ? "audio/*" : "video/*"}
-                              className="absolute inset-0 opacity-0 cursor-pointer"
-                              onChange={async (e) => {
-                                if (!e.target.files?.length) return;
-                                const file = e.target.files[0];
-
-                                // 100MB limit for files
-                                const MAX_FILE_SIZE = 100 * 1024 * 1024;
-                                if (file.size > MAX_FILE_SIZE) {
-                                  toast.error("File is too large. Please select a file under 100MB.");
-                                  e.target.value = '';
-                                  return;
-                                }
-
-                                const fd = new FormData();
-                                fd.append("file", file);
-                                try {
-                                  toast.loading("Uploading...");
-                                  const data = await chunkedUpload(file, {
-                                    onProgress: (pct) => console.log(`[MediaCategoryManager] Upload progress: ${pct}%`),
-                                  });
-                                  toast.dismiss();
-                                  if (data.url) {
-                                    setEditingMedia({ ...editingMedia, item: { ...editingMedia.item, mediaUrl: data.url } });
-                                    toast.success("File URL applied");
-                                  }
-                                } catch (err: any) {
-                                  toast.dismiss();
-                                  console.error("[MediaCategoryManager] Upload error:", err);
-                                  toast.error("Upload failed: " + (err.message || "Unknown error"));
-                                }
-                              }}
-                            />
-                          </Button>
-                        </div>
-                      </div>
-
-                      {mediaType === "video" && (
-                        <div className="space-y-4">
-                          <div className="space-y-2">
-                            <Label>Embed Code (Optional iframe)</Label>
-                            <Textarea
-                              value={editingMedia.item.embedUrl || ""}
-                              onChange={(e) => {
-                                const val = e.target.value;
-                                const parsed = parseVideoInput(val);
-                                setEditingMedia({ ...editingMedia, item: { ...editingMedia.item, embedUrl: parsed.embedSrc || val, mediaUrl: editingMedia.item.mediaUrl || parsed.videoUrl } });
-                                
-                                if (editingSubCat && !editingSubCat.cat.image && parsed.thumbnailUrl) {
-                                  setEditingSubCat({ ...editingSubCat, cat: { ...editingSubCat.cat, image: parsed.thumbnailUrl } });
-                                }
-                              }}
-                              placeholder='<iframe src="https://www.youtube.com/embed/..." />'
-                              className="font-mono text-xs"
-                            />
-                            <p className="text-[10px] text-muted-foreground">If an embedded URL is provided, it will be used by the player instead of the Video File URL.</p>
-                          </div>
-                          {(parseVideoInput(editingMedia.item.mediaUrl || editingMedia.item.embedUrl || "").embedSrc || editingMedia.item.mediaUrl) && (
-                            <div className="space-y-2 pt-2">
-                              <Label>Video Preview</Label>
-                              <div className="rounded-md overflow-hidden bg-black aspect-video relative">
-                                {parseVideoInput(editingMedia.item.mediaUrl || editingMedia.item.embedUrl || "").embedSrc ? (
-                                  <iframe
-                                    src={parseVideoInput(editingMedia.item.mediaUrl || editingMedia.item.embedUrl || "").embedSrc}
-                                    title="Video Preview"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                    allowFullScreen
-                                    className="w-full h-full absolute inset-0"
-                                  />
-                                ) : (
-                                  <video src={editingMedia.item.mediaUrl} controls className="w-full h-full object-contain absolute inset-0" />
-                                )}
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      )}
-
-                      <CustomFieldRenderer
-                        entityType={mediaType}
-                        values={editingMedia.item.customFields || {}}
-                        onChange={(key, val) => setEditingMedia({ ...editingMedia, item: { ...editingMedia.item, customFields: { ...(editingMedia.item.customFields || {}), [key]: val } } })}
-                      />
-                      <CustomFieldBuilder entityType={mediaType} />
-
-                    </div>
-                  </div>
-                )}
-              </div>
             </div>
           )}
           <DialogFooter className="border-t pt-4">
@@ -1133,8 +1082,173 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                     desc: "Are you sure you want to save changes to this sub-category?",
                     action: () => saveSubCategory(editingSubCat.mainId, editingSubCat.cat)
                   });
-                }} className="bg-primary text-white hover:bg-primary/80">Save Card Changes</Button>
+                }} className="bg-primary text-white hover:bg-primary/80">Save Thumbnail</Button>
               )}
+            </div>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Media Item Manager Modal */}
+      {/* <Dialog open={!!editingMedia} onOpenChange={(v) => !v && setEditingMedia(null)}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>
+              {editingMedia?.item.id === "new" ? "Add New Media File" : `Edit Media File: ${editingMedia?.item.title}`}
+            </DialogTitle>
+            <DialogDescription className="sr-only">Upload or edit media details.</DialogDescription>
+          </DialogHeader>
+
+          {editingMedia && (
+            <div className="mt-2 border rounded-xl overflow-hidden shadow-sm">
+              <div className="p-4 space-y-4 bg-card">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Title <span className="text-destructive">*</span></Label>
+                    <Input
+                      value={editingMedia.item.title}
+                      onChange={(e) => setEditingMedia({
+                        ...editingMedia,
+                        item: {
+                          ...editingMedia.item,
+                          title: e.target.value,
+                          slug: editingMedia.item.id === "new" ? e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, "-") : editingMedia.item.slug
+                        }
+                      })}
+                      placeholder="e.g. Episode 1"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Slug <span className="text-destructive">*</span></Label>
+                    <Input
+                      value={editingMedia.item.slug || ""}
+                      onChange={(e) => setEditingMedia({ ...editingMedia, item: { ...editingMedia.item, slug: e.target.value } })}
+                      placeholder="e.g. episode-1"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>{mediaType === "audio" ? "Audio File URL (.mp3)" : "Video File URL (.mp4, .webm)"}</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      value={editingMedia.item.mediaUrl}
+                      onChange={(e) => {
+                        const newUrl = e.target.value;
+
+                        if (mediaType === "video") {
+                          const parsed = parseVideoInput(newUrl);
+                          setEditingMedia({ ...editingMedia, item: { ...editingMedia.item, mediaUrl: newUrl, embedUrl: parsed.embedSrc || editingMedia.item.embedUrl } });
+
+                          // Auto-fetch thumbnail to category if empty
+                          if (editingSubCat && !editingSubCat.cat.image && parsed.thumbnailUrl) {
+                            setEditingSubCat({ ...editingSubCat, cat: { ...editingSubCat.cat, image: parsed.thumbnailUrl } });
+                            toast.success("Thumbnail auto-fetched!");
+                          }
+                        } else {
+                          setEditingMedia({ ...editingMedia, item: { ...editingMedia.item, mediaUrl: newUrl } });
+                        }
+                      }}
+                      placeholder="https://..."
+                      className="flex-1"
+                    />
+                    <Button type="button" variant="outline" className="w-24 overflow-hidden relative">
+                      <UploadCloud className="w-4 h-4 mr-2" />
+                      Upload
+                      <input
+                        type="file"
+                        accept={mediaType === "audio" ? "audio/*" : "video/*"}
+                        className="absolute inset-0 opacity-0 cursor-pointer"
+                        onChange={async (e) => {
+                          if (!e.target.files?.length) return;
+                          const file = e.target.files[0];
+
+                          // 100MB limit for files
+                          const MAX_FILE_SIZE = 100 * 1024 * 1024;
+                          if (file.size > MAX_FILE_SIZE) {
+                            toast.error("File is too large. Please select a file under 100MB.");
+                            e.target.value = '';
+                            return;
+                          }
+
+                          const fd = new FormData();
+                          fd.append("file", file);
+                          try {
+                            toast.loading("Uploading...");
+                            const data = await chunkedUpload(file, {
+                              onProgress: (pct) => console.log(`[MediaCategoryManager] Upload progress: ${pct}%`),
+                            });
+                            toast.dismiss();
+                            if (data.url) {
+                              setEditingMedia({ ...editingMedia, item: { ...editingMedia.item, mediaUrl: data.url } });
+                              toast.success("File URL applied");
+                            }
+                          } catch (err: any) {
+                            toast.dismiss();
+                            console.error("[MediaCategoryManager] Upload error:", err);
+                            toast.error("Upload failed: " + (err.message || "Unknown error"));
+                          }
+                        }}
+                      />
+                    </Button>
+                  </div>
+                </div>
+
+                {mediaType === "video" && (
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label>Embed Code (Optional iframe)</Label>
+                      <Textarea
+                        value={editingMedia.item.embedUrl || ""}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          const parsed = parseVideoInput(val);
+                          setEditingMedia({ ...editingMedia, item: { ...editingMedia.item, embedUrl: parsed.embedSrc || val, mediaUrl: editingMedia.item.mediaUrl || parsed.videoUrl } });
+
+                          const sub = activeCategory?.subCategories.find(s => s.id === editingMedia.subId);
+                          if (sub && !sub.image && parsed.thumbnailUrl) {
+                            saveSubCategory(activeCategory!.id, { ...sub, image: parsed.thumbnailUrl });
+                          }
+                        }}
+                        placeholder='<iframe src="https://www.youtube.com/embed/..." />'
+                        className="font-mono text-xs"
+                      />
+                      <p className="text-[10px] text-muted-foreground">If an embedded URL is provided, it will be used by the player instead of the Video File URL.</p>
+                    </div>
+                    {(parseVideoInput(editingMedia.item.mediaUrl || editingMedia.item.embedUrl || "").embedSrc || editingMedia.item.mediaUrl) && (
+                      <div className="space-y-2 pt-2">
+                        <Label>Video Preview</Label>
+                        <div className="rounded-md overflow-hidden bg-black aspect-video relative">
+                          {parseVideoInput(editingMedia.item.mediaUrl || editingMedia.item.embedUrl || "").embedSrc ? (
+                            <iframe
+                              src={parseVideoInput(editingMedia.item.mediaUrl || editingMedia.item.embedUrl || "").embedSrc}
+                              title="Video Preview"
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                              allowFullScreen
+                              className="w-full h-full absolute inset-0"
+                            />
+                          ) : (
+                            <video src={editingMedia.item.mediaUrl} controls className="w-full h-full object-contain absolute inset-0" />
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                <CustomFieldRenderer
+                  entityType={mediaType}
+                  values={editingMedia.item.customFields || {}}
+                  onChange={(key, val) => setEditingMedia({ ...editingMedia, item: { ...editingMedia.item, customFields: { ...(editingMedia.item.customFields || {}), [key]: val } } })}
+                />
+                <CustomFieldBuilder entityType={mediaType} />
+
+              </div>
+            </div>
+          )}
+          <DialogFooter className="border-t pt-4">
+            <div className="pt-2 flex justify-end gap-4 w-full">
+              <Button variant="outline" onClick={() => setEditingMedia(null)} className="bg-destructive text-white hover:bg-destructive/80">Cancel</Button>
               {editingMedia && (
                 <Button type="button" disabled={isSavingItem} onClick={() => saveMediaItem(editingMedia.subId, editingMedia.item)} className="bg-primary text-white hover:bg-primary/80">
                   {isSavingItem ? (
@@ -1147,7 +1261,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
             </div>
           </DialogFooter>
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
 
 
 
@@ -1162,6 +1276,6 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
           setPendingAction(null);
         }}
       />
-    </div>
+    </div >
   );
 }
