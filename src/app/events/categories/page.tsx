@@ -11,7 +11,7 @@ const categories = [
 
 export default function EventCategoriesPage() {
   return (
-    <main className="min-h-screen bg-background">
+    <main className=" bg-background">
       <div className="container mx-auto py-6 md:py-8">
         <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Event Categories</h1>
         <p className="text-lg text-muted-foreground mb-8">Explore Tanzeem-e-Islami events organized by category.</p>

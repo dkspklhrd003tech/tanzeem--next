@@ -41,7 +41,7 @@ export default async function VideosByCategoryPage() {
   const display = cats.map((c) => ({ ...c, count: countMap[c.id] ?? 0 }));
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className=" bg-background">
       <div className="container mx-auto py-10 md:py-16">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
           {display.map((cat) => {

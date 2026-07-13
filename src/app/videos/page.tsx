@@ -21,10 +21,10 @@ export default async function VideosPage({
 }) {
   const sp = await searchParams;
   const categorySlug = sp.category ?? "";
-  const speakerSlug  = sp.speaker  ?? "";
-  const q            = sp.q        ?? "";
-  const pageNum      = Math.max(1, parseInt(sp.page ?? "1"));
-  const PER_PAGE     = 24;
+  const speakerSlug = sp.speaker ?? "";
+  const q = sp.q ?? "";
+  const pageNum = Math.max(1, parseInt(sp.page ?? "1"));
+  const PER_PAGE = 24;
 
   const [rawCats, speakersList, countRows] = await Promise.all([
     db.select().from(videoCategories).orderBy(desc(videoCategories.order), asc(videoCategories.name)),
@@ -48,14 +48,14 @@ export default async function VideosPage({
   }));
 
   const activeCatId = categorySlug ? (cats.find((c) => c.slug === categorySlug)?.id ?? null) : null;
-  const activeSpId  = speakerSlug  ? (speakersList.find((s) => s.slug === speakerSlug)?.id ?? null) : null;
+  const activeSpId = speakerSlug ? (speakersList.find((s) => s.slug === speakerSlug)?.id ?? null) : null;
 
   const conditions: any[] = [eq(videos.isPublished, true)];
   if (activeCatId) conditions.push(eq(videos.categoryId, activeCatId));
-  if (activeSpId)  conditions.push(eq(videos.speakerId,  activeSpId));
-  if (q.trim())    conditions.push(or(like(videos.title, `%${q.trim()}%`), like(videos.description, `%${q.trim()}%`)));
+  if (activeSpId) conditions.push(eq(videos.speakerId, activeSpId));
+  if (q.trim()) conditions.push(or(like(videos.title, `%${q.trim()}%`), like(videos.description, `%${q.trim()}%`)));
 
-  const where  = and(...conditions);
+  const where = and(...conditions);
   const offset = (pageNum - 1) * PER_PAGE;
 
   const [rows, totalResult] = await Promise.all([
@@ -69,11 +69,11 @@ export default async function VideosPage({
     db.select({ total: count() }).from(videos).where(where),
   ]);
 
-  const total      = Number(totalResult[0]?.total ?? 0);
+  const total = Number(totalResult[0]?.total ?? 0);
   const totalPages = Math.ceil(total / PER_PAGE);
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className=" bg-background">
       <Suspense>
         <VideoListing
           items={rows}

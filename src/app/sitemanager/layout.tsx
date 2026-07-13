@@ -665,7 +665,7 @@ export default function SiteManagerLayout({
     <AuthContext.Provider value={{ user, isLoading: isUserLoading }}>
       <div
         className={cn(
-          "min-h-screen sitemanager-admin-layout relative overflow-hidden",
+          " sitemanager-admin-layout relative overflow-hidden",
           isDark
             ? "dark bg-slate-950 text-slate-100"
             : "admin-light bg-slate-100 text-slate-900"
@@ -692,7 +692,7 @@ export default function SiteManagerLayout({
           initial={false}
           animate={{ marginLeft: isCollapsed ? 72 : 260 }}
           transition={{ duration: 0.2, ease: "easeInOut" }}
-          className="flex flex-col min-h-screen max-md:!ml-0 relative z-10"
+          className="flex flex-col  max-md:!ml-0 relative z-10"
         >
           <TopHeader
             isSidebarCollapsed={isCollapsed}

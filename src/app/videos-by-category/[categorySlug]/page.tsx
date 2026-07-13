@@ -78,7 +78,7 @@ export default async function CategoryVideosPage({ params }: { params: Promise<{
   }
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className=" bg-background">
       <div className="container mx-auto py-10 md:py-16">
         {subCategoriesWithVideos.length === 0 && directVideos.length === 0 ? (
           <div className="text-center py-20 border border-dashed rounded-xl">

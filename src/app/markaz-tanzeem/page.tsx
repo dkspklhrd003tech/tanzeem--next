@@ -12,7 +12,7 @@ const stats = [
 
 export default function MarkazTanzeemPage() {
   return (
-    <main className="min-h-screen bg-background">
+    <main className=" bg-background">
       <div className="container mx-auto py-12 md:py-16">
         <article className="prose prose-lg  max-w-4xl mx-auto">
           <h1>Markaz Tanzeem-e-Islami</h1>

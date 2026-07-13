@@ -115,7 +115,7 @@ export default async function AudioDetailPage({ params }: Props) {
   ]);
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className=" bg-background">
       <script id="jsonld-audio" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} />
       <script id="jsonld-audio-bc" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(bc) }} />
       <AudioPlayerPage item={item} related={related} customFieldSchema={customFieldSchema} />

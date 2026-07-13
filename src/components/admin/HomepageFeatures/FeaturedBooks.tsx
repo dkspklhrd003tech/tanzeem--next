@@ -288,7 +288,7 @@ export function FeaturedBooks() {
 
             {isModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm">
-                    <div className="w-full max-w-md bg-card border border-border rounded-2xl shadow-xl overflow-hidden relative">
+                    <div className="w-full max-w-md bg-card border border-border rounded-xl shadow-xl overflow-hidden relative">
                         <div className="p-6 border-b border-border flex justify-between items-center bg-muted/30">
                             <h3 className="font-bold text-xl text-foreground">{editingItem ? "Edit Book Details" : "Add New Book"}</h3>
                             <button type="button" onClick={closeModal} className="p-2 hover:bg-muted rounded-full transition-colors text-foreground-muted hover:text-foreground">

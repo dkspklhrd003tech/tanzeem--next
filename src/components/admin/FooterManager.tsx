@@ -755,7 +755,7 @@ export function FooterManager() {
                                         size="icon"
                                         variant="ghost"
                                         onClick={() => setEditingLink(link)}
-                                        className="h-5 w-5 text-muted-foreground hover:text-primary"
+                                        className="h-5 w-5 text-foreground hover:text-white"
                                       >
                                         <Edit className="h-2.5 w-2.5" />
                                       </Button>

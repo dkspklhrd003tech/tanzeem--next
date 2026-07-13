@@ -261,7 +261,7 @@ export default function PagesListPage() {
   }, [router, toast]);
 
   return (
-    <div className="space-y-6 max-w-7xl mx-auto p-6 min-h-screen text-foreground bg-background rounded-2xl border border-border shadow-2xl relative overflow-hidden">
+    <div className="space-y-6 max-w-7xl mx-auto p-6  text-foreground bg-background rounded-xl border border-border shadow-2xl relative overflow-hidden">
       {/* Ambient decorative glowing spots */}
       <div className="absolute top-[-10%] left-[-10%] w-[45%] h-[45%] bg-[#0d5844]/8 rounded-full blur-[140px] pointer-events-none" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[45%] h-[45%] bg-slate-300/40 rounded-full blur-[140px] pointer-events-none" />
@@ -289,7 +289,7 @@ export default function PagesListPage() {
       </div>
 
       {/* Global Page Banner Background Image Uploader */}
-      <Card className="relative z-10 bg-card backdrop-blur-md border border-border shadow-2xl overflow-hidden rounded-2xl">
+      <Card className="relative z-10 bg-card backdrop-blur-md border border-border shadow-2xl overflow-hidden rounded-xl">
         <CardHeader className="pb-3 flex flex-row items-center justify-between border-b border-border">
           <div>
             <CardTitle className="text-sm font-black uppercase tracking-wider text-foreground flex items-center gap-2">
@@ -462,7 +462,7 @@ export default function PagesListPage() {
       )}
 
       {/* Pages Card Container */}
-      <Card className="relative z-10 bg-card backdrop-blur-md border border-border shadow-2xl overflow-hidden rounded-2xl">
+      <Card className="relative z-10 bg-card backdrop-blur-md border border-border shadow-2xl overflow-hidden rounded-xl">
         <CardContent className="p-0">
           {isLoading ? (
             <div className="divide-y divide-slate-900">
@@ -674,7 +674,7 @@ export default function PagesListPage() {
                       <div
                         key={row.id}
                         className={cn(
-                          "relative flex flex-col rounded-2xl border p-4 bg-card backdrop-blur-md transition-all duration-300 shadow-sm",
+                          "relative flex flex-col rounded-xl border p-4 bg-card backdrop-blur-md transition-all duration-300 shadow-sm",
                           isSelected
                             ? "border-emerald-500 bg-primary/5 shadow-[0_0_15px_rgba(16,185,129,0.15)]"
                             : "border-input hover:border-border hover:bg-accent"

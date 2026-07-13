@@ -11,6 +11,7 @@ import { useChunkedUpload } from "@/hooks/useChunkedUpload";
 import { CustomFieldBuilder } from "@/components/admin/CustomFieldBuilder";
 import { CustomFieldRenderer } from "@/components/admin/CustomFieldRenderer";
 import { AudioUploader } from "@/components/admin/AudioUploader";
+import { PdfUploader } from "@/components/admin/PdfUploader";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 function slugify(text: string) {
@@ -35,6 +36,8 @@ export default function AudioFormPage({ id, speakerIdParam = "", categoryIdParam
     audioUrl: "",
     speakerId: speakerIdParam || "",
     categoryId: categoryIdParam || "",
+    pdfUrl: "",
+    fileSize: 0,
     isPublished: true,
     isNewAudio: false,
     customFields: {} as Record<string, any>
@@ -61,6 +64,8 @@ export default function AudioFormPage({ id, speakerIdParam = "", categoryIdParam
             title: data.item.title || "",
             slug: data.item.slug || "",
             audioUrl: data.item.audioUrl || "",
+            pdfUrl: data.item.pdfUrl || "",
+            fileSize: data.item.fileSize || 0,
             speakerId: data.item.speakerId || speakerIdParam || "",
             categoryId: data.item.categoryId || categoryIdParam || "",
             isPublished: data.item.isPublished ?? true,
@@ -157,12 +162,21 @@ export default function AudioFormPage({ id, speakerIdParam = "", categoryIdParam
           </div>
         </div>
 
-        <div className="space-y-2">
-          <Label>Audio File (MP3) <span className="text-destructive">*</span></Label>
-          <AudioUploader
-            value={formData.audioUrl}
-            onChange={(url) => setFormData(prev => ({ ...prev, audioUrl: url }))}
-          />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <Label>Audio File (MP3) <span className="text-destructive">*</span></Label>
+            <AudioUploader
+              value={formData.audioUrl}
+              onChange={(url, size) => setFormData(prev => ({ ...prev, audioUrl: url, fileSize: size || prev.fileSize }))}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>PDF Preview (Optional)</Label>
+            <PdfUploader
+              value={formData.pdfUrl}
+              onChange={(url) => setFormData(prev => ({ ...prev, pdfUrl: url }))}
+            />
+          </div>
         </div>
 
         <div className="flex items-center space-x-6 pt-2">

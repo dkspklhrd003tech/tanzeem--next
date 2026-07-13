@@ -4,7 +4,7 @@ export const metadata = { title: "Ameer Say Mulaqat | Tanzeem-e-Islami" };
 
 export default function AmeerSayMulaqatPage() {
   return (
-    <main className="min-h-screen bg-background">
+    <main className=" bg-background">
       <div className="container mx-auto py-12 md:py-16">
         <article className="prose prose-lg  max-w-4xl mx-auto">
           <h1>Ameer Say Mulaqat</h1>

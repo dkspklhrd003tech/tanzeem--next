@@ -241,7 +241,7 @@ export default async function SearchPage({ searchParams }: Props) {
   };
 
   return (
-    <main className="min-h-screen bg-background px-4 pt-6 pb-8 md:py-16">
+    <main className=" bg-background px-4 pt-6 pb-8 md:py-16">
       <div className="container mx-auto max-w-4xl">
         {/* Search header */}
         <div className="mb-6 text-center">

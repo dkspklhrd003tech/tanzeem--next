@@ -56,7 +56,7 @@ export default async function QuranicCirclesRoute({
   });
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className=" bg-background">
       <QuranicCirclesPage
         events={filtered}
         allEvents={allEvents}

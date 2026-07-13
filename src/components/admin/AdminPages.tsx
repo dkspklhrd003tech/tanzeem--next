@@ -303,7 +303,7 @@ export function AdminPages({ section }: AdminPagesProps) {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05, duration: 0.3 }}
                 onClick={() => setEditingId(String(page.id))}
-                className="group relative bg-card border border-border rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-lg hover:shadow-primary/8 hover:border-primary/30 hover:-translate-y-1"
+                className="group relative bg-card border border-border rounded-xl overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-lg hover:shadow-primary/8 hover:border-primary/30 hover:-translate-y-1"
               >
                 {/* Top accent bar */}
                 <div className="h-1.5 w-full bg-gradient-to-r from-primary to-primary-light" />
@@ -428,7 +428,7 @@ export function AdminPages({ section }: AdminPagesProps) {
             placeholder={`Search ${isAudioBooks ? "audio books" : "press releases"}...`}
             value={pageSearch}
             onChange={(e) => setPageSearch(e.target.value)}
-            className="pl-10 h-12 bg-background border-border/80 focus-visible:ring-primary/20 rounded-2xl"
+            className="pl-10 h-12 bg-background border-border/80 focus-visible:ring-primary/20 rounded-xl"
           />
         </div>
 
@@ -452,7 +452,7 @@ export function AdminPages({ section }: AdminPagesProps) {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.05, duration: 0.3 }}
                   onClick={() => setEditingId(String(item.id))}
-                  className="group relative bg-card border border-border rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-lg hover:shadow-[#0d5844]/8 hover:border-[#0d5844]/30 hover:-translate-y-1"
+                  className="group relative bg-card border border-border rounded-xl overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-lg hover:shadow-[#0d5844]/8 hover:border-[#0d5844]/30 hover:-translate-y-1"
                 >
                   {/* Top accent bar */}
                   <div className={`h-1.5 w-full bg-gradient-to-r ${hasMedia ? (isAudioBooks ? 'from-fuchsia-500 to-purple-600' : 'from-red-500 to-rose-600') : 'from-emerald-600 to-teal-500'}`} />

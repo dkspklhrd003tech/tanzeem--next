@@ -46,7 +46,7 @@ export default async function BooksByCategoryPage() {
   const display = cats.map((c) => ({ ...c, count: countMap[c.id] ?? 0 }));
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className=" bg-background">
       <div className="container mx-auto py-6 md:py-8">
         <p className="text-lg text-foreground-muted mb-6 max-w-2xl">
           Explore books organised by subject area for easy discovery.
@@ -60,7 +60,7 @@ export default async function BooksByCategoryPage() {
                 href={href}
                 className="group flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-1"
               >
-                <div className="w-full aspect-[4/3] rounded-2xl overflow-hidden shadow-md group-hover:shadow-xl border border-border transition-all bg-card mb-4">
+                <div className="w-full aspect-[4/3] rounded-xl overflow-hidden shadow-md group-hover:shadow-xl border border-border transition-all bg-card mb-4">
                   {cat.coverImage ? (
                     <img src={cat.coverImage} alt={cat.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   ) : (
@@ -73,7 +73,7 @@ export default async function BooksByCategoryPage() {
                   {cat.name}
                 </h3>
                 {cat.count > 0 && (
-                  <span className="text-sm text-muted-foreground font-medium mt-1">{cat.count} book{cat.count !== 1 ? "s" : ""}</span>
+                  <span className="text-sm text-primary border rounded-full px-3 py-1 border-primary bg-primary-light font-medium mt-1">{cat.count} book{cat.count !== 1 ? "s" : ""}</span>
                 )}
               </Link>
             );

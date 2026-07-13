@@ -10,7 +10,7 @@ const authors = [
 
 export default function BooksByAuthorPage() {
   return (
-    <main className="min-h-screen bg-background">
+    <main className=" bg-background">
       <div className="container mx-auto py-6 md:py-8">
         <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Books by Author</h1>
         <p className="text-lg text-muted-foreground mb-8">Browse books organized by author for easy discovery.</p>

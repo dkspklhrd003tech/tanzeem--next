@@ -27,14 +27,14 @@ export default async function KhitabEJumahPage() {
         .limit(50);
 
     return (
-        <main className="min-h-screen bg-background">
+        <main className=" bg-background">
             <div className="container mx-auto py-6 md:py-12">
                 <div className="max-w-4xl mx-auto">
                     <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Khitab-e-Jum&apos;ah (Friday Sermons)</h1>
                     <p className="text-lg text-muted-foreground mb-8">
                         Listen to the weekly Friday sermons by the Ameer of Tanzeem-e-Islami and other speakers.
                     </p>
-                    
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {items.map((item: any) => (
                             <Card key={item.id} className="overflow-hidden hover:shadow-md transition-all">
@@ -50,9 +50,9 @@ export default async function KhitabEJumahPage() {
                                             </p>
                                             {item.audioUrl && (
                                                 <div className="mt-3">
-                                                    <WaveformPlayer 
-                                                        audioUrl={item.audioUrl} 
-                                                        title={item.title} 
+                                                    <WaveformPlayer
+                                                        audioUrl={item.audioUrl}
+                                                        title={item.title}
                                                         publishedAt={item.createdAt}
                                                     />
                                                 </div>
@@ -62,7 +62,7 @@ export default async function KhitabEJumahPage() {
                                 </CardContent>
                             </Card>
                         ))}
-                        
+
                         {items.length === 0 && (
                             <div className="col-span-full py-12 text-center text-muted-foreground bg-muted/20 rounded-xl border border-dashed border-border">
                                 No sermons found. Please check back later.

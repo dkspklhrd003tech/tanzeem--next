@@ -80,7 +80,7 @@ export default async function MagazineDetailsPage({ params }: PageProps) {
     }
 
     return (
-        <main className="min-h-screen bg-zinc-50/50">
+        <main className=" bg-zinc-50/50">
             <div className="container mx-auto py-10 px-4 flex flex-col items-center mt-4">
                 <div className="w-full max-w-5xl mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <h1 className="text-2xl md:text-3xl font-bold text-foreground">
@@ -100,7 +100,7 @@ export default async function MagazineDetailsPage({ params }: PageProps) {
                 </div>
 
                 {targetLink.url ? (
-                    <div className="w-full max-w-5xl h-[85vh] rounded-2xl overflow-hidden border border-border shadow-xl bg-white relative">
+                    <div className="w-full max-w-5xl h-[85vh] rounded-xl overflow-hidden border border-border shadow-xl bg-white relative">
                         <iframe
                             src={targetLink.url}
                             className="w-full h-full border-none"

@@ -30,7 +30,7 @@ export default async function MagazinesPage() {
   }, {});
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className=" bg-background">
       <div className="container max-w-7xl mx-auto py-10">
 
         {/* Header */}

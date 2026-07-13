@@ -50,7 +50,7 @@ export default async function KhitabEJumahCategoryPage({ params }: Props) {
     const publishedItems = items.filter(item => item.isPublished);
 
     return (
-        <main className="min-h-screen bg-slate-50">
+        <main className=" bg-slate-50">
             <div className="container mx-auto py-6 md:py-12">
                 <div className="max-w-7xl mx-auto">
                     <Button variant="ghost" asChild className="mb-2 text-foreground">
@@ -93,7 +93,7 @@ export default async function KhitabEJumahCategoryPage({ params }: Props) {
                                                 <Calendar className="w-3.5 h-3.5" />
                                                 <span>{formattedDate}</span>
                                             </div>
-                                            <h3 className="font-bold text-lg flex items-center gap-2 group-hover:text-primary transition-colors uppercase leading-snug line-clamp-2">
+                                            <h3 className="font-bold text-md flex items-center gap-2 group-hover:text-primary transition-colors uppercase leading-snug line-clamp-3">
                                                 {item.title}
                                             </h3>
                                             {item.titleUrdu && (
@@ -112,7 +112,7 @@ export default async function KhitabEJumahCategoryPage({ params }: Props) {
                         })}
 
                         {publishedItems.length === 0 && (
-                            <div className="col-span-full py-12 text-center text-muted-foreground bg-white rounded-2xl border border-dashed border-border">
+                            <div className="col-span-full py-12 text-center text-muted-foreground bg-white rounded-xl border border-dashed border-border">
                                 No audio sermons found in this category.
                             </div>
                         )}

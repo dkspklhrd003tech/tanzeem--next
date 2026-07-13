@@ -46,7 +46,7 @@ export default async function SermonDetailPage({ params }: Props) {
     }
 
     return (
-        <main className="min-h-screen bg-background">
+        <main className=" bg-background">
             <h1 className="sr-only">{sermon.title}</h1>
             <AudioDetail audio={sermon} backHref={`/resources/khitab-e-jumah/`} backLabel="Back to Categories" />
         </main>

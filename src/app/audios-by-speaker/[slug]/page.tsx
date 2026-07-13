@@ -52,7 +52,7 @@ export default async function SpeakerAudiosPage({ params }: { params: Promise<{ 
 
   if (!speaker) {
     return (
-      <main className="min-h-screen bg-background">
+      <main className=" bg-background">
         <div className="container mx-auto py-12">
           <p className="text-center text-muted-foreground">Speaker not found or database is unreachable.</p>
         </div>
@@ -75,7 +75,7 @@ export default async function SpeakerAudiosPage({ params }: { params: Promise<{ 
         dangerouslySetInnerHTML={{ __html: JSON.stringify(bc) }}
       />
 
-      <main className="min-h-screen bg-muted/20 py-10">
+      <main className=" bg-muted/20 py-10">
 
         {/* Content Section */}
         <div className="container mx-auto">

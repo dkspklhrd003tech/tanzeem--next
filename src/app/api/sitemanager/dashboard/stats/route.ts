@@ -51,6 +51,7 @@ export async function GET(request: NextRequest) {
       videoViewTotal,
       bookDownloadTotal,
       magazineDownloadTotal,
+      globalStatsRes,
     ] = await Promise.all([
       db.select({ count: sql<number>`count(*)` }).from(pages),
       db.select({ count: sql<number>`count(*)` }).from(audio),
@@ -73,6 +74,35 @@ export async function GET(request: NextRequest) {
       db.select({ total: sql<number>`coalesce(sum(view_count), 0)` }).from(videos),
       db.select({ total: sql<number>`coalesce(sum(download_count), 0)` }).from(books),
       db.select({ total: sql<number>`coalesce(sum(download_count), 0)` }).from(magazines),
+      db.execute(sql`
+        SELECT 
+          (SELECT COALESCE(SUM(play_count), 0) FROM audio) +
+          (SELECT COALESCE(SUM(play_count), 0) FROM videos) +
+          (SELECT COALESCE(SUM(play_count), 0) FROM books) +
+          (SELECT COALESCE(SUM(play_count), 0) FROM magazines) +
+          (SELECT COALESCE(SUM(play_count), 0) FROM sermons) +
+          (SELECT COALESCE(SUM(play_count), 0) FROM khitab_audios) +
+          (SELECT COALESCE(SUM(play_count), 0) FROM audio_books) +
+          (SELECT COALESCE(SUM(play_count), 0) FROM downloads) AS total_plays,
+          
+          (SELECT COALESCE(SUM(download_count), 0) FROM audio) +
+          (SELECT COALESCE(SUM(download_count), 0) FROM videos) +
+          (SELECT COALESCE(SUM(download_count), 0) FROM books) +
+          (SELECT COALESCE(SUM(download_count), 0) FROM magazines) +
+          (SELECT COALESCE(SUM(download_count), 0) FROM sermons) +
+          (SELECT COALESCE(SUM(download_count), 0) FROM khitab_audios) +
+          (SELECT COALESCE(SUM(download_count), 0) FROM audio_books) +
+          (SELECT COALESCE(SUM(download_count), 0) FROM downloads) AS total_downloads,
+          
+          (SELECT COALESCE(SUM(share_count), 0) FROM audio) +
+          (SELECT COALESCE(SUM(share_count), 0) FROM videos) +
+          (SELECT COALESCE(SUM(share_count), 0) FROM books) +
+          (SELECT COALESCE(SUM(share_count), 0) FROM magazines) +
+          (SELECT COALESCE(SUM(share_count), 0) FROM sermons) +
+          (SELECT COALESCE(SUM(share_count), 0) FROM khitab_audios) +
+          (SELECT COALESCE(SUM(share_count), 0) FROM audio_books) +
+          (SELECT COALESCE(SUM(share_count), 0) FROM downloads) AS total_shares
+      `)
     ]);
 
     // ── Audio sub-categories ─────────────────────────────────────────────────
@@ -213,6 +243,9 @@ export async function GET(request: NextRequest) {
         bookDownloads: Number(bookDownloadTotal[0]?.total ?? 0),
         magazineDownloads: Number(magazineDownloadTotal[0]?.total ?? 0),
         disclaimerViews,
+        globalPlays: Number((globalStatsRes as any)?.[0]?.total_plays ?? (globalStatsRes as any)?.rows?.[0]?.total_plays ?? 0),
+        globalDownloads: Number((globalStatsRes as any)?.[0]?.total_downloads ?? (globalStatsRes as any)?.rows?.[0]?.total_downloads ?? 0),
+        globalShares: Number((globalStatsRes as any)?.[0]?.total_shares ?? (globalStatsRes as any)?.rows?.[0]?.total_shares ?? 0),
       },
       // sub-category breakdowns
       audioByCategory,

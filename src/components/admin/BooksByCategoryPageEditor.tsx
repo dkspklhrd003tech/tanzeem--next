@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import {
   Plus, Pencil, XCircle, Search, GripVertical, FileText,
-  Settings2, Check, UploadCloud, Loader2, ArrowLeft, Image as ImageIcon
+  Settings2, Check, UploadCloud, Loader2, ArrowLeft, Image as ImageIcon, XIcon
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -77,7 +77,7 @@ function SortableCategoryCard({ id, item, onEdit, onDelete, onClick, bookCount }
       ref={setNodeRef}
       style={style}
       className={cn(
-        "group relative flex flex-col bg-card rounded-2xl border border-border overflow-hidden transition-all duration-200 cursor-pointer",
+        "group relative flex flex-col bg-card rounded-xl border border-border overflow-hidden transition-all duration-200 cursor-pointer",
         isDragging ? "shadow-2xl border-primary scale-[1.02]" : "hover:shadow-md hover:border-primary/50"
       )}
       onClick={() => onClick(item)}
@@ -254,7 +254,7 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
     const errors: Record<string, string> = {};
     if (!catFormData.name.trim()) errors.name = "Name is required";
     if (!catFormData.slug.trim()) errors.slug = "Slug is required";
-    
+
     if (Object.keys(errors).length > 0) {
       setCatFormErrors(errors);
       return;
@@ -304,7 +304,7 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
     const errors: Record<string, string> = {};
     if (!bookFormData.title.trim()) errors.title = "Title is required";
     if (!bookFormData.slug.trim()) errors.slug = "Slug is required";
-    
+
     if (Object.keys(errors).length > 0) {
       setBookFormErrors(errors);
       return;
@@ -490,7 +490,7 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
             isLoading ? (
               <div className="flex items-center justify-center py-20 text-muted-foreground"><Loader2 className="w-6 h-6 animate-spin text-primary mr-2" /> Loading Books...</div>
             ) : filteredCategories.length === 0 ? (
-              <div className="bg-card rounded-2xl border p-12 text-center text-muted-foreground">No Books Found.</div>
+              <div className="bg-card rounded-xl border p-12 text-center text-muted-foreground">No Books Found.</div>
             ) : (
               <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleCatDragEnd}>
                 <SortableContext items={filteredCategories.map(c => c.id)} strategy={rectSortingStrategy}>
@@ -530,7 +530,7 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
                   </div>
                 ) : (
                   <div className="flex flex-col items-center gap-3">
-                    <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-1">
+                    <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary mb-1">
                       <UploadCloud className="h-6 w-6" />
                     </div>
                     <p className="font-bold text-foreground text-lg">Drag & Drop a PDF Book here</p>
@@ -574,13 +574,15 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
       {/* Category Modal */}
       {isCatModalOpen && (
         <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-card w-full max-w-md border border-border rounded-2xl shadow-xl relative overflow-hidden flex flex-col max-h-[90vh]">
-            <div className="p-6 border-b border-border flex justify-between items-center bg-muted/20">
-              <h2 className="text-xl font-bold flex items-center gap-2">
+          <div className="bg-card w-full max-w-md border border-border rounded-xl shadow-xl relative overflow-hidden flex flex-col max-h-[90vh]">
+            <button type="button" onClick={() => setIsCatModalOpen(false)} className="absolute top-4 right-4 rounded-full bg-red-500 text-white p-2 opacity-80 transition-all hover:opacity-100 hover:bg-red-600 hover:scale-105 z-10">
+              <XIcon className="w-4 h-4" />
+            </button>
+            <div className="p-6 border-b border-border flex items-center bg-muted/20">
+              <h2 className="text-xl font-bold flex items-center gap-2 pr-8">
                 <FileText className="h-5 w-5 text-primary" />
                 {editingCatId ? "Edit Category" : "Add Category"}
               </h2>
-              <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsCatModalOpen(false)}>×</Button>
             </div>
             <div className="overflow-y-auto p-6 flex-1 space-y-4">
               <div className="space-y-2">
@@ -623,13 +625,15 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
       {/* Book Modal */}
       {isBookModalOpen && (
         <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-card w-full max-w-md border border-border rounded-2xl shadow-xl relative overflow-hidden flex flex-col max-h-[90vh]">
-            <div className="p-6 border-b border-border flex justify-between items-center bg-muted/20">
-              <h2 className="text-xl font-bold flex items-center gap-2">
+          <div className="bg-card w-full max-w-md border border-border rounded-xl shadow-xl relative overflow-hidden flex flex-col max-h-[90vh]">
+            <button type="button" onClick={() => setIsBookModalOpen(false)} className="absolute top-4 right-4 rounded-full bg-red-500 text-white p-2 opacity-80 transition-all hover:opacity-100 hover:bg-red-600 hover:scale-105 z-10">
+              <XIcon className="w-4 h-4" />
+            </button>
+            <div className="p-6 border-b border-border flex items-center bg-muted/20">
+              <h2 className="text-xl font-bold flex items-center gap-2 pr-8">
                 <FileText className="h-5 w-5 text-primary" />
                 {editingBookId ? "Edit Book" : "Add Book"}
               </h2>
-              <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsBookModalOpen(false)}>×</Button>
             </div>
             <div className="overflow-y-auto p-6 flex-1 space-y-4">
               <div className="space-y-2">

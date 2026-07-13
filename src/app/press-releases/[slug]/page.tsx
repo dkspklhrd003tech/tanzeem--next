@@ -68,7 +68,7 @@ export default async function PressReleaseDetailsPage({ params }: PageProps) {
         : "Recent";
 
     return (
-        <main className="min-h-screen bg-zinc-50/50">
+        <main className=" bg-zinc-50/50">
 
             <div className="container mx-auto py-8 px-4 flex flex-col items-center">
                 <div className="w-full max-w-5xl z-40 mb-4">
@@ -98,7 +98,7 @@ export default async function PressReleaseDetailsPage({ params }: PageProps) {
                     </div>
                 </div>
                 {selectedItem.pdfUrl ? (
-                    <div className="w-full max-w-5xl h-[85vh] rounded-2xl overflow-hidden border border-border shadow-xl bg-white">
+                    <div className="w-full max-w-5xl h-[85vh] rounded-xl overflow-hidden border border-border shadow-xl bg-white">
                         <iframe
                             src={`${selectedItem.pdfUrl}#toolbar=1`}
                             className="w-full h-full border-none"
@@ -106,7 +106,7 @@ export default async function PressReleaseDetailsPage({ params }: PageProps) {
                         />
                     </div>
                 ) : (
-                    <div className="w-full max-w-3xl bg-white shadow-xl border border-zinc-200/80 rounded-2xl p-8 md:p-12 text-zinc-800 overflow-hidden flex flex-col">
+                    <div className="w-full max-w-3xl bg-white shadow-xl border border-zinc-200/80 rounded-xl p-8 md:p-12 text-zinc-800 overflow-hidden flex flex-col">
                         <div className="border-b-2 border-emerald-800 pb-5 mb-8 text-center">
                             <h3 className="font-amiri text-2xl font-extrabold text-emerald-800 tracking-wide">
                                 TANZEEM-E-ISLAMI

@@ -47,7 +47,7 @@ export default async function VideosBySpeakersPage() {
   const display = speakerRows.map((s) => ({ ...s, count: countMap[s.id] ?? 0 }));
 
   return (
-    <main className="min-h-screen bg-muted/20 py-10">
+    <main className=" bg-muted/20 py-10">
       <div className="container mx-auto">
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
           {display.map((sp) => {
@@ -62,7 +62,7 @@ export default async function VideosBySpeakersPage() {
               <Link
                 key={sp.id}
                 href={href}
-                className="bg-card rounded-2xl overflow-hidden shadow-sm border border-border hover:shadow-md hover:border-primary/40 transition-all duration-300 flex flex-col group"
+                className="bg-card rounded-xl overflow-hidden shadow-sm border border-border hover:shadow-md hover:border-primary/40 transition-all duration-300 flex flex-col group"
               >
                 <div className="aspect-[1/1] bg-[#f0f4f8] relative overflow-hidden flex items-end justify-center">
                   {sp.imageUrl ? (
@@ -78,11 +78,11 @@ export default async function VideosBySpeakersPage() {
                   )}
                 </div>
                 <div className="p-4 flex flex-col items-center justify-center bg-card">
-                  <h2 className="text-[17px] font-medium text-foreground text-center line-clamp-1 mb-2">
+                  <h2 className="text-[16px] font-medium text-foreground hover:text-primary text-center line-clamp-1 mb-2">
                     {sp.name}
                   </h2>
                   {sp.bio && (
-                    <p className="text-xl text-foreground text-center line-clamp-1 mb-2 font-nastaleeq" dir="rtl">
+                    <p className="text-xl text-foreground hover:text-primary text-center line-clamp-1 my-2 font-nastaleeq" dir="rtl">
                       {sp.bio}
                     </p>
                   )}

@@ -69,9 +69,9 @@ export default async function AudioBookDetailsPage({ params }: PageProps) {
         : "Recent";
 
     return (
-        <main className="min-h-screen bg-zinc-50/50">
+        <main className=" bg-zinc-50/50">
             {/* Header / Actions Bar */}
-            <div className="border-b bg-background sticky top-[72px] z-40 shadow-sm">
+            {/* <div className="border-b bg-background sticky top-[72px] z-40 shadow-sm">
                 <div className="container mx-auto px-4 py-4 flex flex-wrap items-center justify-between gap-4">
                     <Button variant="ghost" size="sm" asChild className="text-muted-foreground hover:text-foreground">
                         <Link href="/audio-books">
@@ -80,10 +80,11 @@ export default async function AudioBookDetailsPage({ params }: PageProps) {
                         </Link>
                     </Button>
                 </div>
-            </div>
+            </div> */}
 
             <div className="container mx-auto py-10 px-4">
-                <div className="max-w-7xl mx-auto bg-white rounded-2xl shadow-xl border border-border overflow-hidden flex flex-col md:flex-row">
+                <div className="max-w-7xl mx-auto bg-white rounded-xl shadow-xl border border-border overflow-hidden flex flex-col md:flex-row">
+
 
                     {/* Left: Image */}
                     <div className="w-full md:w-1/3 bg-muted relative aspect-[3/4] md:aspect-auto">

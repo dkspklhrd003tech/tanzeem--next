@@ -64,7 +64,7 @@ export default async function HistoryOfTanzeemPage() {
   }
 
   return (
-    <main className="min-h-screen bg-background flex flex-col">
+    <main className=" bg-background flex flex-col">
       {/* Hero Section */}
       <section className="mx-auto px-4 md:py-12 max-w-7xl">
 
@@ -117,7 +117,7 @@ export default async function HistoryOfTanzeemPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {/* RAFEEQ Card */}
-          <div className="bg-card rounded-2xl p-8 border shadow-sm flex flex-col items-center">
+          <div className="bg-card rounded-xl p-8 border shadow-sm flex flex-col items-center">
             <div className="mb-6 text-foreground">
               {/* Male Icon representation */}
               <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
@@ -140,7 +140,7 @@ export default async function HistoryOfTanzeemPage() {
           </div>
 
           {/* RAFEEQAH Card */}
-          <div className="bg-card rounded-2xl p-8 border shadow-sm flex flex-col items-center">
+          <div className="bg-card rounded-xl p-8 border shadow-sm flex flex-col items-center">
             <div className="mb-6 text-emerald-800 ">
               {/* Female Icon representation */}
               <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">

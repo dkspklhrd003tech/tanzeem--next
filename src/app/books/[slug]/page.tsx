@@ -64,7 +64,7 @@ export default async function BookDetailPage({ params }: Props) {
   ]);
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className=" bg-background">
       <script id="jsonld-book" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} />
       <script id="jsonld-book-bc" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(bc) }} />
       <div className="container max-w-5xl mx-auto py-10">
@@ -108,7 +108,7 @@ export default async function BookDetailPage({ params }: Props) {
 
           {book.fileUrl && (
             <div className="mt-4">
-              <div className="w-full h-[85vh] rounded-2xl overflow-hidden border border-border shadow-xl bg-white relative">
+              <div className="w-full h-[85vh] rounded-xl overflow-hidden border border-border shadow-xl bg-white relative">
                 <iframe
                   src={`${book.fileUrl}#toolbar=1`}
                   className="w-full h-full border-none"

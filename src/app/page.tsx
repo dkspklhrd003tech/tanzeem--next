@@ -161,14 +161,14 @@ async function HomeContent() {
   const bannerStyle = settingsMap.hero_banner_style || "slider";
   const finalSliders = bannerStyle === "fixed" && settingsMap.hero_fixed_image
     ? [{
-        id: "fixed-banner",
-        title: settingsMap.hero_fixed_title || "Homepage Banner",
-        imageUrl: settingsMap.hero_fixed_image,
-        linkUrl: settingsMap.hero_fixed_link || null,
-        order: 1,
-        isActive: true,
-        createdAt: new Date().toISOString()
-      }]
+      id: "fixed-banner",
+      title: settingsMap.hero_fixed_title || "Homepage Banner",
+      imageUrl: settingsMap.hero_fixed_image,
+      linkUrl: settingsMap.hero_fixed_link || null,
+      order: 1,
+      isActive: true,
+      createdAt: new Date().toISOString()
+    }]
     : activeSliders;
 
   if (settingsMap.homepage_social_links) {
@@ -242,7 +242,7 @@ export default function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <Suspense fallback={
-        <div className="min-h-screen flex items-center justify-center">
+        <div className=" flex items-center justify-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" />
         </div>
       }>

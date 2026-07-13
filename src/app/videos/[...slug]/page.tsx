@@ -54,7 +54,7 @@ export default async function VideoDetailRoute({ params }: Props) {
 
   if (!result) notFound();
   const rawItem = { ...result.videos, category: result.category, speaker: result.speaker };
-  
+
   let parsedCustomFields = rawItem.customFields;
   if (typeof rawItem.customFields === "string") {
     try {
@@ -114,7 +114,7 @@ export default async function VideoDetailRoute({ params }: Props) {
   ]);
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className=" bg-background">
       <script id="jsonld-video" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} />
       <script id="jsonld-video-bc" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(bc) }} />
       <VideoDetailPage item={item} related={related} customFieldSchema={customFieldSchema} />

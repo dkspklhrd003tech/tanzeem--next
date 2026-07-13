@@ -47,7 +47,7 @@ export function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4">
+    <div className=" flex items-center justify-center bg-background p-4">
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/10" />
 
@@ -61,7 +61,7 @@ export function AdminLogin() {
         transition={{ duration: 0.5 }}
         className="w-full max-w-md relative z-10"
       >
-        <div className="bg-card rounded-2xl shadow-xl border border-border p-8">
+        <div className="bg-card rounded-xl shadow-xl border border-border p-8">
           {/* Logo */}
           <div className="text-center mb-8">
             <div className="w-16 h-16 bg-primary rounded-xl flex items-center justify-center mx-auto mb-4">

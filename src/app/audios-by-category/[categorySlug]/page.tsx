@@ -85,7 +85,7 @@ export default async function CategoryAudiosPage({ params }: { params: Promise<{
   }
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className=" bg-background">
       <div className="container mx-auto py-10 md:py-16 max-w-7xl">
         <h1 className="text-3xl font-bold mb-8 text-foreground text-center">{mainCat.name}</h1>
 
@@ -120,7 +120,7 @@ export default async function CategoryAudiosPage({ params }: { params: Promise<{
                             <Calendar className="w-3.5 h-3.5" />
                             <span>{formattedDate}</span>
                           </div>
-                          <h3 className="font-bold text-lg flex items-center gap-2 group-hover:text-primary transition-colors uppercase leading-snug line-clamp-2">
+                          <h3 className="font-bold text-md flex items-center gap-2 group-hover:text-primary transition-colors uppercase leading-snug line-clamp-3">
                             {item.title}
                           </h3>
                         </div>
@@ -151,7 +151,7 @@ export default async function CategoryAudiosPage({ params }: { params: Promise<{
                       className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-xl border border-border/50 hover:border-primary/50 bg-primary-light/80 hover:bg-muted/50 transition-colors cursor-pointer group shadow-sm hover:shadow-md h-full"
                     >
                       <div className="flex-1">
-                        <h3 className="font-bold text-lg flex items-center gap-2 group-hover:text-primary transition-colors leading-snug line-clamp-2 text-left">
+                        <h3 className="font-bold text-md flex items-center gap-2 group-hover:text-primary transition-colors leading-snug line-clamp-2 text-left">
                           {sub.name}
                         </h3>
                         {sub.description && (

@@ -35,7 +35,7 @@ export default function NotFound() {
   // Don't render animations until mounted to prevent hydration errors
   if (!isMounted) {
     return (
-      <main className="min-h-screen bg-background flex items-center justify-center">
+      <main className=" bg-background flex items-center justify-center">
         <div className="text-center px-4 py-10">
           <div className="mb-8">
             <span className="text-8xl font-bold text-primary/20">404</span>
@@ -49,7 +49,7 @@ export default function NotFound() {
   }
 
   return (
-    <main className="min-h-screen bg-background flex items-center justify-center overflow-hidden relative" style={{ perspective: 1200 }}>
+    <main className=" bg-background flex items-center justify-center overflow-hidden relative" style={{ perspective: 1200 }}>
       <div className="text-center px-4 py-10 relative z-10 w-full max-w-2xl mx-auto">
         <motion.div
           className="mb-8 relative mx-auto w-full flex items-center justify-center"

@@ -10,7 +10,7 @@ import { useChunkedUpload } from "@/hooks/useChunkedUpload";
 
 interface AudioUploaderProps {
   value?: string;
-  onChange: (url: string) => void;
+  onChange: (url: string, size?: number) => void;
   label?: string;
   className?: string;
 }
@@ -44,7 +44,7 @@ export function AudioUploader({
       const result = await uploadFile(file, {
         onProgress: (pct) => setUploadProgress(pct),
       });
-      onChange(result.url);
+      onChange(result.url, file.size);
       toast({
         title: "Audio Uploaded",
         description: "Your audio file has been uploaded successfully.",
@@ -141,7 +141,7 @@ export function AudioUploader({
                 target="_blank"
                 rel="noreferrer"
                 title="Open audio file"
-                className="shrink-0 text-muted-foreground hover:text-primary transition-colors"
+                className="shrink-0 text-foreground hover:text-white transition-colors"
                 onClick={(e) => e.stopPropagation()}
               >
                 <ExternalLink className="h-4 w-4" />
@@ -207,7 +207,7 @@ export function AudioUploader({
           <div className="p-8 flex flex-col items-center justify-center gap-3 text-center">
             <div
               className={cn(
-                "w-14 h-14 rounded-2xl flex items-center justify-center transition-all",
+                "w-14 h-14 rounded-xl flex items-center justify-center transition-all",
                 dragActive ? "bg-primary/20 scale-110" : "bg-primary/10"
               )}
             >

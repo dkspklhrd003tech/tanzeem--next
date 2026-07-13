@@ -1329,7 +1329,7 @@ export default function OrganizationPageEditor() {
         {showPreview && (
           <div className={cn(
             "border-l border-border bg-white flex flex-col transition-all overflow-hidden",
-            isPreviewFullscreen ? "fixed inset-16 z-50 shadow-deep rounded-2xl" : "w-full lg:w-[480px] shrink-0"
+            isPreviewFullscreen ? "fixed inset-16 z-50 shadow-deep rounded-xl" : "w-full lg:w-[480px] shrink-0"
           )}>
             <div className="flex justify-between items-center bg-slate-50 px-4 py-2 border-b border-border text-xs text-muted-foreground">
               <span className="font-semibold flex items-center gap-1.5 text-primary">

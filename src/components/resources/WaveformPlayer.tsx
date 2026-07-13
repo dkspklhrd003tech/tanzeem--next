@@ -100,8 +100,8 @@ export function WaveformPlayer({
         code === 4
           ? "Audio format not supported or file unavailable."
           : code === 3
-          ? "Audio file is corrupted or encoding error."
-          : "Could not load audio. Check the file URL.";
+            ? "Audio file is corrupted or encoding error."
+            : "Could not load audio. Check the file URL.";
       setError(msg);
       setIsLoading(false);
     };
@@ -202,7 +202,7 @@ export function WaveformPlayer({
 
           {/* Title + speaker */}
           <div className="flex flex-col min-w-0">
-            <span className="text-gray-400 text-xs font-medium truncate">
+            <span className="text-white text-xs font-medium truncate">
               {speakerName || "Unknown Speaker"}
             </span>
             <h2 className="text-xl font-bold line-clamp-2 leading-tight">{title}</h2>

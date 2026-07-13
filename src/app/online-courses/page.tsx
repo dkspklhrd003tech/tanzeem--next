@@ -24,7 +24,7 @@ export default async function OnlineCoursesPage() {
 
   if (page && sections.length > 0) {
     return (
-      <main className="min-h-screen bg-background">
+      <main className=" bg-background">
         <DynamicPageContent sections={sections} />
       </main>
     );
@@ -32,7 +32,7 @@ export default async function OnlineCoursesPage() {
 
   if (page) {
     return (
-      <main className="min-h-screen bg-background">
+      <main className=" bg-background">
         <div className="container mx-auto py-6 md:py-8 max-w-4xl">
           <div className="prose prose-lg  max-w-none mx-auto"
             dangerouslySetInnerHTML={{ __html: getCleanContent(page.content) }}
@@ -43,7 +43,7 @@ export default async function OnlineCoursesPage() {
   }
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className=" bg-background">
       <div className="container mx-auto py-6 md:py-8">
         <article className="prose prose-lg  max-w-4xl mx-auto">
           <h1>Online Courses</h1>

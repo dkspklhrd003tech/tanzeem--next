@@ -23,7 +23,7 @@ export default async function KhitabEJumahCategoriesPage() {
     const categories = await db
         .select()
         .from(khitabAudioCategories)
-        .orderBy(desc(khitabAudioCategories.order), desc(khitabAudioCategories.createdAt));
+        .orderBy(asc(khitabAudioCategories.order), desc(khitabAudioCategories.createdAt));
 
     const allSermons = await db
         .select()
@@ -32,7 +32,7 @@ export default async function KhitabEJumahCategoriesPage() {
         .orderBy(asc(khitabAudios.order), desc(khitabAudios.publishedAt));
 
     return (
-        <main className="min-h-screen">
+        <main className="">
             <div className="container mx-auto py-6 md:py-10">
                 <div className="max-w-7xl mx-auto">
 
@@ -49,7 +49,7 @@ export default async function KhitabEJumahCategoriesPage() {
                                 <Link href={`/resources/khitab-e-jumah/category/${cleanSlug}`} key={cat.id} className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-xl border border-border/50 hover:border-primary/50 bg-primary-light/80 hover:bg-muted/50 transition-colors cursor-pointer group shadow-sm hover:shadow-md h-full">
                                     <div className="flex-1">
                                         <div className="flex flex-col items-start gap-1 mb-1">
-                                            <h3 className="font-bold text-lg flex items-center gap-2 group-hover:text-primary transition-colors uppercase leading-snug line-clamp-2">
+                                            <h3 className="font-bold text-md flex items-center gap-2 group-hover:text-primary transition-colors uppercase leading-snug line-clamp-3">
                                                 {cat.name}
                                             </h3>
                                             {cat.urduName && (

@@ -50,7 +50,7 @@ export default async function AudiosByCategoryPage() {
   const display = cats.map((c) => ({ ...c, count: countMap[c.id] ?? 0 }));
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className=" bg-background">
       <div className="container mx-auto py-10 md:py-16">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
           {display.map((cat) => {
@@ -62,7 +62,7 @@ export default async function AudiosByCategoryPage() {
                 className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-xl border border-border/50 hover:border-primary/50 bg-primary-light/80 hover:bg-muted/50 transition-colors cursor-pointer group shadow-sm hover:shadow-md h-full"
               >
                 <div className="flex-1">
-                  <h3 className="font-bold text-lg flex items-center gap-2 group-hover:text-primary transition-colors leading-snug line-clamp-2">
+                  <h3 className="font-bold text-md flex items-center gap-2 group-hover:text-primary transition-colors leading-snug line-clamp-2">
                     {cat.name}
                   </h3>
                   {cat.customFields?.urduName && (

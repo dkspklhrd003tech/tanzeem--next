@@ -34,7 +34,7 @@ export default async function OrganizationPage() {
   if (page && sections.length > 0) {
     const filteredSections = sections.filter((s) => s.type !== "hero");
     return (
-      <main className="min-h-screen bg-background">
+      <main className=" bg-background">
         <DynamicPageContent sections={filteredSections} />
       </main>
     );
@@ -43,7 +43,7 @@ export default async function OrganizationPage() {
   // ── CMS page with raw HTML content ────────────────────────────────────────
   if (page && page.content?.trim()) {
     return (
-      <main className="min-h-screen bg-background">
+      <main className=" bg-background">
         <div className="container mx-auto py-6 md:py-8 max-w-4xl">
           <div
             className="prose prose-lg  max-w-none mx-auto"

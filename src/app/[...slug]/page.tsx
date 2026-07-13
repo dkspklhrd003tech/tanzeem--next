@@ -77,7 +77,7 @@ const SEED_DATA: Record<string, { title: string; content: string; excerpt: strin
       <div class="space-y-6">
         <p class="text-lg leading-relaxed text-[#222222]">Our mission is to establish the Deen of Allah in its entirety, at all levels of human existence - individual as well as collective, societal as well as state.</p>
         <p class="text-lg leading-relaxed text-[#222222]">We believe that the struggle to establish the Islamic system of social justice is the ultimate obligation of every Muslim in the present era, and this struggle must be carried out in an organized manner through a disciplined jamaat (party).</p>
-        <div class="bg-primary/5 border border-primary/20 p-6 rounded-2xl mt-6">
+        <div class="bg-primary/5 border border-primary/20 p-6 rounded-xl mt-6">
           <h3 class="text-xl font-bold text-primary mb-4">Core Objectives</h3>
           <ul class="list-disc pl-6 space-y-2 text-lg text-foreground-muted">
               <li>To call people towards the deeply roots understanding of the Quran.</li>

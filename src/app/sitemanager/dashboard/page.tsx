@@ -9,7 +9,7 @@ import {
   Image, Mail, Database, TrendingUp, Plus, Upload, Menu,
   Clock, Globe, Globe2, EyeOff, Activity, ArrowRight, RefreshCw,
   ChevronDown, ChevronUp, Play, Download, Eye as EyeIcon,
-  HardDrive, Layers,
+  HardDrive, Layers, Share2,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -36,6 +36,7 @@ interface StatsData {
   sermons: number; sermonsPublished: number;
   pressReleases: number; team: number; campaigns: number; locations: number;
   disclaimerViews: number;
+  globalPlays: number; globalDownloads: number; globalShares: number;
 }
 interface AudioCategory { category: string; count: number; plays: number; downloads: number; }
 interface BookCategory { category: string; count: number; downloads: number; }
@@ -259,6 +260,45 @@ export default function DashboardPage() {
           <Button variant="ghost" size="sm" onClick={() => refreshStats()} className="self-start sm:self-auto text-muted-foreground">
             <RefreshCw className="h-3.5 w-3.5 mr-1.5" />Refresh
           </Button>
+        </div>
+      </motion.div>
+
+      {/* ── Global Stats ────────────────────────────────────────────── */}
+      <motion.div variants={item}>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-2">
+          <Card className="bg-gradient-to-br from-blue-500/10 to-blue-600/5 border-blue-500/20">
+            <CardContent className="p-4 flex items-center justify-between">
+              <div>
+                <p className="text-sm font-semibold text-blue-600 uppercase tracking-wide">Total Plays</p>
+                <p className="text-2xl font-bold text-foreground tabular-nums leading-tight mt-1">{statsLoading ? <Skeleton className="h-6 w-16" /> : fmt(stats?.globalPlays ?? 0)}</p>
+              </div>
+              <div className="h-10 w-10 rounded-full bg-blue-500/20 flex items-center justify-center">
+                <Play className="h-5 w-5 text-blue-600" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="bg-gradient-to-br from-emerald-500/10 to-emerald-600/5 border-emerald-500/20">
+            <CardContent className="p-4 flex items-center justify-between">
+              <div>
+                <p className="text-sm font-semibold text-emerald-600 uppercase tracking-wide">Total Downloads</p>
+                <p className="text-2xl font-bold text-foreground tabular-nums leading-tight mt-1">{statsLoading ? <Skeleton className="h-6 w-16" /> : fmt(stats?.globalDownloads ?? 0)}</p>
+              </div>
+              <div className="h-10 w-10 rounded-full bg-emerald-500/20 flex items-center justify-center">
+                <Download className="h-5 w-5 text-emerald-600" />
+              </div>
+            </CardContent>
+          </Card>
+          <Card className="bg-gradient-to-br from-purple-500/10 to-purple-600/5 border-purple-500/20">
+            <CardContent className="p-4 flex items-center justify-between">
+              <div>
+                <p className="text-sm font-semibold text-purple-600 uppercase tracking-wide">Total Shares</p>
+                <p className="text-2xl font-bold text-foreground tabular-nums leading-tight mt-1">{statsLoading ? <Skeleton className="h-6 w-16" /> : fmt(stats?.globalShares ?? 0)}</p>
+              </div>
+              <div className="h-10 w-10 rounded-full bg-purple-500/20 flex items-center justify-center">
+                <Share2 className="h-5 w-5 text-purple-600" />
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </motion.div>
 

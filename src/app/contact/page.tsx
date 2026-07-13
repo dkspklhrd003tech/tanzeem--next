@@ -60,7 +60,7 @@ export default async function ContactPage() {
   const webpage = webPageJsonLd({ title: DEFAULT_TITLE, description: DEFAULT_DESC, path: "/contact" });
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className=" bg-background">
       <script id="jsonld-contact-breadcrumb" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumb) }} />
       <script id="jsonld-contact-webpage" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webpage) }} />
       <ContactSection

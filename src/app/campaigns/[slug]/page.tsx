@@ -38,7 +38,7 @@ export default async function CampaignDetailsPage({ params }: { params: Promise<
     const blocks = customFields?.blocks || [];
 
     return (
-        <main className="min-h-screen bg-background">
+        <main className=" bg-background">
             <div className="max-w-4xl mx-auto py-8 md:py-12">
                 <div className="space-y-12">
                     {/* Dynamic Blocks */}
@@ -81,7 +81,7 @@ export default async function CampaignDetailsPage({ params }: { params: Promise<
                                     return (
                                         <div key={idx} className="space-y-4">
                                             {block.title && <h2 className="text-3xl text-center mx-auto font-bold text-foreground">{block.title}</h2>}
-                                            <div className="bg-muted/30 border border-border p-6 rounded-2xl flex items-center justify-between gap-4">
+                                            <div className="bg-muted/30 border border-border p-6 rounded-xl flex items-center justify-between gap-4">
                                                 <div className="flex items-center gap-4">
                                                     <div className="h-12 w-12 rounded-full bg-red-100 flex items-center justify-center text-red-600 flex-shrink-0">
                                                         <FileText className="h-6 w-6" />
@@ -152,11 +152,11 @@ export default async function CampaignDetailsPage({ params }: { params: Promise<
                                     return (
                                         <div key={idx} className="space-y-4">
                                             {block.title && <h2 className="text-3xl text-center mx-auto font-bold text-foreground">{block.title}</h2>}
-                                            <div className="aspect-video w-full rounded-2xl overflow-hidden bg-black shadow-lg">
-                                                <iframe 
-                                                    src={embedUrl} 
-                                                    className="w-full h-full border-0" 
-                                                    allowFullScreen 
+                                            <div className="aspect-video w-full rounded-xl overflow-hidden bg-black shadow-lg">
+                                                <iframe
+                                                    src={embedUrl}
+                                                    className="w-full h-full border-0"
+                                                    allowFullScreen
                                                     allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
                                                 ></iframe>
                                             </div>

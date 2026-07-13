@@ -299,7 +299,7 @@ export function AdminLayout({ children, currentSection, onExitAdmin }: AdminLayo
   const pathname = usePathname();
 
   return (
-    <div className="min-h-screen bg-background flex">
+    <div className=" bg-background flex">
       {/* Sidebar */}
       <motion.aside
         initial={false}

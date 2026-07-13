@@ -21,10 +21,10 @@ export default async function AudioPage({
 }) {
   const sp = await searchParams;
   const categorySlug = sp.category ?? "";
-  const speakerSlug  = sp.speaker  ?? "";
-  const q            = sp.q        ?? "";
-  const pageNum      = Math.max(1, parseInt(sp.page ?? "1"));
-  const PER_PAGE     = 24;
+  const speakerSlug = sp.speaker ?? "";
+  const q = sp.q ?? "";
+  const pageNum = Math.max(1, parseInt(sp.page ?? "1"));
+  const PER_PAGE = 24;
 
   // Fetch categories and speakers for filter tabs
   const [categories, speakersList] = await Promise.all([
@@ -43,13 +43,13 @@ export default async function AudioPage({
   // Build query filters
   const conditions: any[] = [eq(audio.isPublished, true)];
   if (activeCategoryId) conditions.push(eq(audio.categoryId, activeCategoryId));
-  if (activeSpeakerId)  conditions.push(eq(audio.speakerId,  activeSpeakerId));
+  if (activeSpeakerId) conditions.push(eq(audio.speakerId, activeSpeakerId));
 
   const { and: drizzleAnd, like, or } = await import("drizzle-orm");
   if (q.trim()) {
     conditions.push(
       or(
-        like(audio.title,       `%${q.trim()}%`),
+        like(audio.title, `%${q.trim()}%`),
         like(audio.description, `%${q.trim()}%`)
       )
     );
@@ -70,11 +70,11 @@ export default async function AudioPage({
     db.select({ total: drizzleCount() }).from(audio).where(where),
   ]);
 
-  const total     = Number(totalResult[0]?.total ?? 0);
+  const total = Number(totalResult[0]?.total ?? 0);
   const totalPages = Math.ceil(total / PER_PAGE);
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className=" bg-background">
       <Suspense>
         <AudioListing
           items={rows}

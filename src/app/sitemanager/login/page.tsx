@@ -222,7 +222,7 @@ function LoginForm() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-black p-4">
+    <div className=" flex items-center justify-center relative overflow-hidden bg-black p-4">
 
       {/* 3D Cinematic Canvas Layer */}
       <div className="absolute inset-0 z-0">

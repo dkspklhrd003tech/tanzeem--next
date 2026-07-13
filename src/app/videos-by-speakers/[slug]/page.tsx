@@ -54,7 +54,7 @@ export default async function SpeakerVideosPage({ params }: { params: Promise<{ 
     // If DB is unreachable or speaker doesn't exist, we can't show videos.
     // Instead of throwing a 404, we just render an empty state so the build doesn't crash.
     return (
-      <main className="min-h-screen bg-background">
+      <main className=" bg-background">
         <div className="container mx-auto py-12">
           <p className="text-center text-muted-foreground">Speaker not found or database is unreachable.</p>
         </div>
@@ -77,7 +77,7 @@ export default async function SpeakerVideosPage({ params }: { params: Promise<{ 
         dangerouslySetInnerHTML={{ __html: JSON.stringify(bc) }}
       />
 
-      <main className="min-h-screen bg-muted/20 py-10">
+      <main className=" bg-muted/20 py-10">
 
         {/* Content Section */}
         <div className="container mx-auto">
