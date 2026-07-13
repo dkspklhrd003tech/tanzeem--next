@@ -590,14 +590,14 @@ export default function OrganizationPageClient() {
 
   if (!loaded) {
     return (
-      <main className="min-h-screen bg-background flex items-center justify-center">
+      <main className=" bg-background flex items-center justify-center">
         <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
       </main>
     );
   }
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className=" bg-background">
       <OurHistory data={state.history} />
       <MissionStatement data={state.missionStatement} />
       <LeaderBio data={state.founder} />

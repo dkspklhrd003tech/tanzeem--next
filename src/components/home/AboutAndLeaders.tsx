@@ -98,7 +98,7 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
                     <div className="absolute inset-0 transition-opacity duration-1000 pointer-events-none" />
                     {/* Logo Panel */}
                     <motion.div
-                        className="w-32 h-32 md:w-48 md:h-48 p-4 bg-white rounded-2xl overflow-hidden flex items-center justify-center shadow-[0_0_40px_rgba(16,185,129,0.15)] relative z-10"
+                        className="w-32 h-32 md:w-48 md:h-48 p-4 bg-white rounded-xl overflow-hidden flex items-center justify-center shadow-[0_0_40px_rgba(16,185,129,0.15)] relative z-10"
                     >
                         <img
                             src={aboutImage}
@@ -154,7 +154,7 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
                             <div
                                 key={leader.id}
                                 role="listitem"
-                                className="leader-card group bg-white border border-border/50 rounded-2xl p-6 shadow-lg transition-all duration-700 flex flex-col sm:flex-row md:flex-col lg:flex-row gap-6 relative overflow-hidden text-center sm:text-left items-center sm:items-start"
+                                className="leader-card group bg-white border border-border/50 rounded-xl p-6 shadow-lg transition-all duration-700 flex flex-col sm:flex-row md:flex-col lg:flex-row gap-6 relative overflow-hidden text-center sm:text-left items-center sm:items-start"
                             >
 
                                 {/* Photo */}

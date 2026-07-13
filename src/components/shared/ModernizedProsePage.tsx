@@ -121,7 +121,7 @@ export function ModernizedProsePage({
     pathname === "/our-ideology";
 
   return (
-    <div className="min-h-screen bg-slate-50/50 ">
+    <div className=" bg-slate-50/50 ">
       {/* ── Gorgeous Hero Header (Unified via PageBanner) ── */}
       {isOrgOrIdeology && (
         <PageBanner
@@ -220,14 +220,14 @@ export function ModernizedProsePage({
       {/* ── Footer CTA Banner (Conditional) ── */}
       {
         ctaHeading && ctaButtonLabel && ctaButtonUrl && (
-          
-            <CTABanner
-              heading={ctaHeading}
-              subheading={ctaSubheading || ""}
-              buttonLabel={ctaButtonLabel}
-              buttonUrl={ctaButtonUrl}
-            />
-          
+
+          <CTABanner
+            heading={ctaHeading}
+            subheading={ctaSubheading || ""}
+            buttonLabel={ctaButtonLabel}
+            buttonUrl={ctaButtonUrl}
+          />
+
         )
       }
     </div>

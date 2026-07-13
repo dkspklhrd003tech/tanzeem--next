@@ -102,7 +102,7 @@ function SortableCategoryCard({ cat, onClick, onEdit, onDelete }: { cat: MainCat
           <p className="text-xs text-muted-foreground mt-1">{cat.subCategories?.length || 0} Sub-categories</p>
         </div>
         <div className="flex items-center gap-1">
-          <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary z-10" onClick={(e) => { e.stopPropagation(); onEdit(cat); }}>
+          <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-foreground hover:text-white z-10" onClick={(e) => { e.stopPropagation(); onEdit(cat); }}>
             <Edit className="w-4 h-4" />
           </Button>
           <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive z-10" onClick={(e) => { e.stopPropagation(); onDelete(cat); }}>

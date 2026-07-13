@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { Headphones, Download, Share2, Clock, Play, ArrowLeft } from "lucide-react";
+import { Headphones, Download, Share2, Clock, Play, ArrowLeft, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn, resolveMediaUrl } from "@/lib/utils";
@@ -21,6 +21,10 @@ type AudioItem = {
   category: { id: string; name: string; slug: string } | null;
   speaker: { id: string; name: string; slug: string; bio: string | null; avatar: string | null } | null;
   customFields?: any;
+  pdfUrl?: string | null;
+  downloadCount?: number;
+  shareCount?: number;
+  fileSize?: number | null;
 };
 
 interface AudioPlayerPageProps {
@@ -44,7 +48,11 @@ export function AudioPlayerPage({ item, related, customFieldSchema = [] }: Audio
   const handleTracked = async () => {
     try {
       setPlayCount((prev) => prev + 1);
-      await fetch(`/api/audio/${item.slug}/track`, { method: "POST" });
+      await fetch(`/api/track`, { 
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ entityType: "audio", entityId: item.id, actionType: "play" })
+      });
     } catch (e) {
       console.error("Failed to track play:", e);
     }
@@ -65,6 +73,28 @@ export function AudioPlayerPage({ item, related, customFieldSchema = [] }: Audio
       }
     } else {
       alert("Link copied to clipboard!");
+    }
+    
+    try {
+      await fetch(`/api/track`, { 
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ entityType: "audio", entityId: item.id, actionType: "share" })
+      });
+    } catch (e) {
+      console.error("Failed to track share:", e);
+    }
+  };
+
+  const handleDownload = async () => {
+    try {
+      await fetch(`/api/track`, { 
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ entityType: "audio", entityId: item.id, actionType: "download" })
+      });
+    } catch (e) {
+      console.error("Failed to track download:", e);
     }
   };
 
@@ -89,37 +119,72 @@ export function AudioPlayerPage({ item, related, customFieldSchema = [] }: Audio
               speakerName={item.speaker?.name}
               categoryName={item.category?.name}
               publishedAt={item.customFields?.publishedAt || null}
-              onTracked={handleTracked}
+              onTracked={() => handleTracked('play')}
             />
           </div>
 
           {/* Meta & Actions */}
           <div className="flex flex-wrap items-center justify-between gap-4 bg-card border border-border rounded-xl p-5">
-            <div className="flex flex-wrap items-center gap-4 text-sm text-foreground-muted">
-              {item.duration && (
-                <span className="flex items-center gap-1">
-                  <Clock className="h-4 w-4" />
-                  {formatDuration(item.duration)}
-                </span>
+            <div className="flex flex-wrap items-center gap-4 text-sm font-medium text-foreground-muted">
+              {item.category && (
+                <Badge variant="secondary" className="bg-primary/10 text-primary hover:bg-primary/20 border-0">
+                  {item.category.name}
+                </Badge>
               )}
-              <span className="flex items-center gap-1">
-                <Play className="h-4 w-4 text-primary" />
-                {playCount.toLocaleString()} Plays
-              </span>
+              {item.duration && (
+                <div className="flex items-center gap-1.5 text-foreground-muted">
+                  <Clock className="w-4 h-4" />
+                  <span>{formatDuration(item.duration)}</span>
+                </div>
+              )}
+              <div className="flex items-center gap-4 border-l border-border/50 pl-4">
+                <div className="flex items-center gap-1.5" title="Plays">
+                  <Headphones className="w-4 h-4" />
+                  <span>{playCount}</span>
+                </div>
+                <div className="flex items-center gap-1.5" title="Downloads">
+                  <Download className="w-4 h-4" />
+                  <span>{item.downloadCount || 0}</span>
+                </div>
+                <div className="flex items-center gap-1.5" title="Shares">
+                  <Share2 className="w-4 h-4" />
+                  <span>{item.shareCount || 0}</span>
+                </div>
+              </div>
+              {item.fileSize ? (
+                <div className="flex items-center gap-1.5 border-l border-border/50 pl-4" title="File Size">
+                  <span>{(item.fileSize / (1024 * 1024)).toFixed(2)} MB</span>
+                </div>
+              ) : null}
             </div>
 
             <div className="flex flex-wrap gap-3">
               <a
                 href={resolveMediaUrl(item.audioUrl)}
                 download
+                onClick={handleDownload}
                 className={cn(
                   "inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold",
                   "bg-primary text-primary-foreground transition-colors"
                 )}
               >
                 <Download className="h-4 w-4" />
-                Download
+                Download Audio
               </a>
+              {item.pdfUrl && (
+                <a
+                  href={resolveMediaUrl(item.pdfUrl)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={cn(
+                    "inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold",
+                    "bg-secondary text-secondary-foreground hover:bg-secondary/80 transition-colors"
+                  )}
+                >
+                  <FileText className="h-4 w-4" />
+                  View PDF
+                </a>
+              )}
               <Button variant="outline" size="sm" className="rounded-full" onClick={handleShare}>
                 <Share2 className="h-4 w-4 mr-2" />
                 Share

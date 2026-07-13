@@ -72,9 +72,9 @@ export function SocialHub({ initialPlatforms, initialAccounts, layout = "horizon
     const hash = window.location.hash.replace("#", "");
     if (hash) {
       // Find platform by slug or name matching the hash
-      const matched = initialPlatforms.find(p => 
+      const matched = initialPlatforms.find(p =>
         (p.anchorTag && p.anchorTag.toLowerCase() === hash.toLowerCase()) ||
-        p.slug.toLowerCase() === hash.toLowerCase() || 
+        p.slug.toLowerCase() === hash.toLowerCase() ||
         p.name.toLowerCase().includes(hash.toLowerCase())
       );
       if (matched) {
@@ -189,7 +189,7 @@ export function SocialHub({ initialPlatforms, initialAccounts, layout = "horizon
               }
               className={cn(
                 "flex items-center gap-2.5 px-5 py-3.5 rounded-full font-bold text-xs uppercase tracking-wider transition-all duration-300 border hover:scale-105",
-                isVertical && "w-full justify-start rounded-2xl"
+                isVertical && "w-full justify-start rounded-xl"
               )}
             >
               <Icon className="w-4 h-4 shrink-0" />
@@ -260,7 +260,7 @@ export function SocialHub({ initialPlatforms, initialAccounts, layout = "horizon
                     href={account.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full inline-flex items-center justify-center gap-1.5 px-6 py-3.5 rounded-2xl bg-[#0d5844] hover:bg-[#0b4837] text-white font-bold text-sm tracking-wide transition-all shadow-md active:scale-95"
+                    className="w-full inline-flex items-center justify-center gap-1.5 px-6 py-3.5 rounded-xl bg-[#0d5844] hover:bg-[#0b4837] text-white font-bold text-sm tracking-wide transition-all shadow-md active:scale-95"
                   >
                     <span className="line-clamp-1">{account.title}</span>
                     <ChevronRight className="w-5 h-5" />
@@ -287,7 +287,7 @@ export function SocialHub({ initialPlatforms, initialAccounts, layout = "horizon
 
       {/* Premium Glassmorphic Layout Orientation Toggle switcher */}
       <div className="flex justify-end mb-6 max-w-7xl mx-auto">
-        <div className="inline-flex bg-slate-100/80 backdrop-blur-md p-1 rounded-2xl border border-slate-200/50 shadow-sm">
+        <div className="inline-flex bg-slate-100/80 backdrop-blur-md p-1 rounded-xl border border-slate-200/50 shadow-sm">
           <button
             onClick={() => setCurrentLayout("horizontal")}
             className={cn(

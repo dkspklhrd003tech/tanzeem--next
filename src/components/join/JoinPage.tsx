@@ -104,11 +104,11 @@ export function JoinPage() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center px-4">
+      <div className=" bg-background flex items-center justify-center px-4">
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="bg-card border border-border rounded-2xl p-10 text-center max-w-md shadow-deep"
+          className="bg-card border border-border rounded-xl p-10 text-center max-w-md shadow-deep"
         >
           <CheckCircle className="h-14 w-14 text-primary mx-auto mb-5" />
           <h2 className="text-2xl font-bold text-foreground mb-3">JazakAllah Khair!</h2>
@@ -125,7 +125,7 @@ export function JoinPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className=" bg-background">
       {/* Hero */}
       <section className="bg-primary py-14 text-center relative overflow-hidden">
         <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)", backgroundSize: "28px 28px" }} aria-hidden="true" />
@@ -190,7 +190,7 @@ export function JoinPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.15 }}
           onSubmit={handleSubmit}
-          className="bg-card border border-border rounded-2xl p-6 md:p-8 shadow-sm space-y-5"
+          className="bg-card border border-border rounded-xl p-6 md:p-8 shadow-sm space-y-5"
         >
           <h2 className="text-lg font-bold text-foreground mb-1">Application Form</h2>
           <p className="text-sm text-foreground-muted mb-4">

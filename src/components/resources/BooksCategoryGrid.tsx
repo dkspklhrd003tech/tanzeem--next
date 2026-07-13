@@ -55,7 +55,7 @@ export function BooksCategoryGrid({ categoryName, initialItems }: BooksCategoryG
   const handleShare = async (item: Book) => {
     if (typeof window === "undefined" || typeof navigator === "undefined") return;
     const shareUrl = `${window.location.href}?book=${item.id}`;
-    
+
     try {
       if (navigator.clipboard) {
         await navigator.clipboard.writeText(shareUrl);
@@ -118,7 +118,7 @@ export function BooksCategoryGrid({ categoryName, initialItems }: BooksCategoryG
       </div>
 
       {filteredItems.length === 0 ? (
-        <div className="text-center py-20 bg-card border border-border rounded-2xl">
+        <div className="text-center py-20 bg-card border border-border rounded-xl">
           <AlertCircle className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
           <h3 className="text-lg font-bold text-foreground">No Books Found</h3>
         </div>
@@ -128,7 +128,7 @@ export function BooksCategoryGrid({ categoryName, initialItems }: BooksCategoryG
             <Link
               href={`/books/${item.slug}`}
               key={item.id}
-              className="group relative bg-card border bg-slate-50 rounded-2xl overflow-hidden cursor-pointer hover:-translate-y-1.5 transition-all duration-300 shadow-sm flex flex-col"
+              className="group relative bg-card border bg-slate-50 rounded-xl overflow-hidden cursor-pointer hover:-translate-y-1.5 transition-all duration-300 shadow-sm flex flex-col"
             >
               <div className="w-full aspect-[10/16] bg-muted relative border-b border-border">
                 {item.coverImage ? (

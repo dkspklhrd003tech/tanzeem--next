@@ -469,7 +469,7 @@ export function FeaturedVideos() {
                             initial={{ opacity: 0, scale: 0.95, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                            className="relative w-full max-w-2xl bg-card rounded-2xl shadow-2xl overflow-hidden border border-border flex flex-col max-h-[90vh]"
+                            className="relative w-full max-w-2xl bg-card rounded-xl shadow-2xl overflow-hidden border border-border flex flex-col max-h-[90vh]"
                         >
                             {/* Modal header */}
                             <div className="px-6 py-4 border-b border-border flex items-center justify-between sticky top-0 bg-card z-10">

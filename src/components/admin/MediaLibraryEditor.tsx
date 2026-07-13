@@ -63,7 +63,7 @@ export default function MediaLibraryEditor({ pageId, initialPageData, mediaType 
         </TabsList>
 
         <TabsContent value="library" className="space-y-6">
-          <div className="bg-card border border-border p-6 rounded-2xl shadow-sm">
+          <div className="bg-card border border-border p-6 rounded-xl shadow-sm">
             <MediaCategoryManager mediaType={mediaType} />
           </div>
         </TabsContent>
@@ -75,7 +75,7 @@ export default function MediaLibraryEditor({ pageId, initialPageData, mediaType 
               <CardContent className="space-y-4">
                 <div className="space-y-2"><Label>Title</Label><Input value={pageForm.title} onChange={e => setPageForm({ ...pageForm, title: e.target.value })} /></div>
                 <div className="space-y-2"><Label>Slug</Label><Input value={pageForm.slug} onChange={e => setPageForm({ ...pageForm, slug: e.target.value })} /></div>
-                
+
                 <div className="pt-4 space-y-4 border-t border-border mt-4">
                   <h4 className="font-semibold text-sm">SEO Meta Data</h4>
                   <div className="space-y-2"><Label>Meta Title</Label><Input value={pageForm.metaTitle || ""} onChange={e => setPageForm({ ...pageForm, metaTitle: e.target.value })} /></div>

@@ -77,7 +77,7 @@ function SortableCategoryCard({ id, item, onEdit, onDelete, onClick, sermonCount
       ref={setNodeRef}
       style={style}
       className={cn(
-        "group relative flex flex-col bg-card rounded-2xl border border-border overflow-hidden transition-all duration-200 cursor-pointer",
+        "group relative flex flex-col bg-card rounded-xl border border-border overflow-hidden transition-all duration-200 cursor-pointer",
         isDragging ? "shadow-2xl border-primary scale-[1.02]" : "hover:shadow-md hover:border-primary/50"
       )}
       onClick={() => onClick(item)}
@@ -100,7 +100,7 @@ function SortableCategoryCard({ id, item, onEdit, onDelete, onClick, sermonCount
             </div>
           </div>
         </div>
-        <h3 className="font-bold text-lg text-foreground leading-snug line-clamp-1">{item.name}</h3>
+        <h3 className="font-bold text-lg text-foreground leading-snug line-clamp-2">{item.name}</h3>
         {item.urduName && (
           <h4 className="font-bold text-base text-foreground mt-1 font-amiri" dir="rtl">{item.urduName}</h4>
         )}
@@ -119,7 +119,7 @@ function SortableSermonCard({ id, item, onEdit, onDelete }: any) {
       ref={setNodeRef}
       style={style}
       className={cn(
-        "group relative flex flex-col bg-card rounded-2xl border border-border overflow-hidden transition-all duration-200",
+        "group relative flex flex-col bg-card rounded-xl border border-border overflow-hidden transition-all duration-200",
         isDragging ? "shadow-2xl border-primary scale-[1.02]" : "hover:shadow-md hover:border-border/80"
       )}
     >
@@ -473,7 +473,7 @@ export default function SermonsPageEditor({ pageId, initialPageData }: { pageId:
             isLoading ? (
               <div className="flex items-center justify-center py-20 text-muted-foreground"><Loader2 className="w-6 h-6 animate-spin text-primary mr-2" /> Loading Categories...</div>
             ) : filteredCategories.length === 0 ? (
-              <div className="bg-card rounded-2xl border p-12 text-center text-muted-foreground">No Categories Found.</div>
+              <div className="bg-card rounded-xl border p-12 text-center text-muted-foreground">No Categories Found.</div>
             ) : (
               <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleCatDragEnd}>
                 <SortableContext items={filteredCategories.map(c => c.id)} strategy={rectSortingStrategy}>
@@ -513,7 +513,7 @@ export default function SermonsPageEditor({ pageId, initialPageData }: { pageId:
                   </div>
                 ) : (
                   <div className="flex flex-col items-center gap-3">
-                    <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-1">
+                    <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary mb-1">
                       <UploadCloud className="h-6 w-6" />
                     </div>
                     <p className="font-bold text-foreground text-lg">Drag & Drop a Video File here</p>
@@ -568,7 +568,7 @@ export default function SermonsPageEditor({ pageId, initialPageData }: { pageId:
       {/* Category Modal */}
       {isCatModalOpen && (
         <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-card w-full max-w-md border border-border rounded-2xl shadow-xl relative overflow-hidden flex flex-col max-h-[90vh]">
+          <div className="bg-card w-full max-w-md border border-border rounded-xl shadow-xl relative overflow-hidden flex flex-col max-h-[90vh]">
             <div className="p-6 border-b border-border flex justify-between items-center bg-muted/20">
               <h2 className="text-xl font-bold flex items-center gap-2">
                 <FileText className="h-5 w-5 text-primary" />
@@ -601,7 +601,7 @@ export default function SermonsPageEditor({ pageId, initialPageData }: { pageId:
       {/* Sermon Modal */}
       {isSermonModalOpen && (
         <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-card w-full max-w-2xl border border-border rounded-2xl shadow-xl relative overflow-hidden flex flex-col max-h-[90vh]">
+          <div className="bg-card w-full max-w-2xl border border-border rounded-xl shadow-xl relative overflow-hidden flex flex-col max-h-[90vh]">
             <div className="p-6 border-b border-border flex justify-between items-center bg-muted/20">
               <h2 className="text-xl font-bold flex items-center gap-2">
                 <Mic className="h-5 w-5 text-primary" />

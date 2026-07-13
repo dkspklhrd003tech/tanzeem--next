@@ -43,7 +43,7 @@ export function TeamGrid({ heading, members }: TeamGridProps) {
               transition={{ duration: 0.5, delay: index * 0.1 }}
               className="group"
             >
-              <div className="relative mb-6 rounded-2xl overflow-hidden aspect-[4/5] bg-card border border-border group-hover:border-primary/50 transition-all duration-300">
+              <div className="relative mb-6 rounded-xl overflow-hidden aspect-[4/5] bg-card border border-border group-hover:border-primary/50 transition-all duration-300">
                 {member.avatar ? (
                   <img
                     src={member.avatar}

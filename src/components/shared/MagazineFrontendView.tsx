@@ -31,7 +31,7 @@ export async function MagazineFrontendView({ pageId, slug }: { pageId: string, s
   }
 
   return (
-    <main className="min-h-screen bg-background py-8">
+    <main className=" bg-background py-8">
       <div className="max-w-7xl mx-auto">
         <MagazineClientView links={links} />
       </div>

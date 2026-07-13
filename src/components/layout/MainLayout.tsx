@@ -31,20 +31,20 @@ export function MainLayout({ children }: MainLayoutProps) {
 
   if (!isLoading && settings?.maintenance_mode === "true" && !isSiteManager) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-background p-4 text-center relative overflow-hidden">
+      <div className=" flex flex-col items-center justify-center bg-background p-4 text-center relative overflow-hidden">
         {/* Decorative background elements matching the admin layout */}
         <div className="absolute top-[-10%] left-[-10%] w-[45%] h-[45%] rounded-full blur-[140px] pointer-events-none bg-[#0d5844]/5" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[45%] h-[45%] rounded-full blur-[140px] pointer-events-none bg-slate-300/40" />
 
         <div className="max-w-md space-y-6 relative z-10 bg-card p-10 rounded-3xl shadow-xl border border-border">
           {settings.login_logo ? (
-            <img 
-              src={resolveMediaUrl(settings.login_logo)} 
-              alt="Logo" 
-              className="w-24 h-24 mx-auto mb-6 object-contain" 
+            <img
+              src={resolveMediaUrl(settings.login_logo)}
+              alt="Logo"
+              className="w-24 h-24 mx-auto mb-6 object-contain"
             />
           ) : (
-            <div className="w-24 h-24 mx-auto mb-6 bg-primary/10 rounded-2xl flex items-center justify-center">
+            <div className="w-24 h-24 mx-auto mb-6 bg-primary/10 rounded-xl flex items-center justify-center">
               <span className="text-4xl text-primary font-bold">ت</span>
             </div>
           )}
@@ -56,7 +56,7 @@ export function MainLayout({ children }: MainLayoutProps) {
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className=" flex flex-col">
       {/* BackToTop is handled globally in MainLayout */}
       {!isSiteManager && <BackToTop />}
       {!isSiteManager && <Header />}

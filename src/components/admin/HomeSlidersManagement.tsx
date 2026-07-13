@@ -573,7 +573,7 @@ export function HomeSlidersManagement() {
                             exit={{ opacity: 0, scale: 0.8, rotateX: -45, y: -20 }}
                             transition={{ type: "spring", stiffness: 350, damping: 30 }}
                             style={{ transformStyle: "preserve-3d", perspective: "1000px" }}
-                            className="relative w-full max-w-lg bg-card border border-border rounded-2xl shadow-2xl overflow-hidden"
+                            className="relative w-full max-w-lg bg-card border border-border rounded-xl shadow-2xl overflow-hidden"
                         >
                             <div className="flex justify-between items-center p-6 border-b border-border bg-muted/30">
                                 <h2 className="text-2xl font-bold text-foreground tracking-tight">
@@ -650,11 +650,11 @@ export function HomeSlidersManagement() {
                                     <ConfirmDialog
                                         title={editingSlider ? "Update Slider" : "Create Slider"}
                                         description={`Are you sure you want to ${editingSlider ? "update" : "create"} this homepage slider?`}
-                                        onConfirm={() =>
+                                        onConfirm={() => {
                                             document.getElementById("slider-form")?.dispatchEvent(
                                                 new Event("submit", { cancelable: true, bubbles: true })
-                                            )
-                                        }
+                                            );
+                                        }}
                                     >
                                         <Button
                                             type="button"
@@ -676,7 +676,11 @@ export function HomeSlidersManagement() {
                 onOpenChange={(open) => !open && setDeletingSliderId(null)}
                 title="Delete Slider"
                 description={`Are you sure you want to permanently delete the slider "${deletingSliderId?.title}"?`}
-                onConfirm={() => deletingSliderId && handleDelete(deletingSliderId.id, deletingSliderId.title)}
+                onConfirm={() => {
+                    if (deletingSliderId) {
+                        return handleDelete(deletingSliderId.id, deletingSliderId.title);
+                    }
+                }}
             />
         </div>
     );

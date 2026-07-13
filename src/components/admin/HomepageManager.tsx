@@ -53,7 +53,7 @@ export function HomepageManager() {
                     </TabsTrigger>
                 </TabsList>
 
-                <div className="bg-card rounded-2xl border border-border p-6 shadow-sm min-h-[500px]">
+                <div className="bg-card rounded-xl border border-border p-6 shadow-sm min-h-[500px]">
                     <TabsContent value="sliders" className="mt-0 outline-none">
                         <div className="max-w-7xl">
                             <HomeSlidersManagement />

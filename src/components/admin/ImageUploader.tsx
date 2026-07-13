@@ -322,7 +322,7 @@ export function ImageUploader({
         open={isCropping}
         onOpenChange={(open) => !open && !isUploading && setIsCropping(false)}
       >
-        <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden rounded-2xl">
+        <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden rounded-xl">
           <DialogHeader className="p-6 pb-0">
             <DialogTitle className="flex items-center gap-2">
               <CropIcon className="h-5 w-5 text-primary" />

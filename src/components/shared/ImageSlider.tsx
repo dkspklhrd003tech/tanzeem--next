@@ -42,7 +42,7 @@ export function ImageSlider({ slides }: ImageSliderProps) {
         <CarouselContent>
           {slides.map((slide, index) => (
             <CarouselItem key={index}>
-              <div className="relative aspect-[16/9] w-full rounded-2xl overflow-hidden shadow-lg border border-border">
+              <div className="relative aspect-[16/9] w-full rounded-xl overflow-hidden shadow-lg border border-border">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={slide.image}
@@ -59,7 +59,7 @@ export function ImageSlider({ slides }: ImageSliderProps) {
               <CarouselPrevious className="left-4 opacity-0 group-hover:opacity-100 transition-opacity bg-background/80 hover:bg-background" />
               <CarouselNext className="right-4 opacity-0 group-hover:opacity-100 transition-opacity bg-background/80 hover:bg-background" />
             </div>
-            
+
             {/* Pagination Dots */}
             <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 z-10">
               {Array.from({ length: count }).map((_, i) => (
@@ -67,8 +67,8 @@ export function ImageSlider({ slides }: ImageSliderProps) {
                   key={i}
                   className={cn(
                     "w-2.5 h-2.5 rounded-full transition-all duration-300",
-                    current === i + 1 
-                      ? "bg-primary w-6" 
+                    current === i + 1
+                      ? "bg-primary w-6"
                       : "bg-white/60 hover:bg-white/90"
                   )}
                   onClick={() => api?.scrollTo(i)}

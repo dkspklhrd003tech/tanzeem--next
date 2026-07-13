@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import {
   Plus, Pencil, XCircle, GripVertical, FileText, Settings2,
-  Loader2, ArrowLeft, Mic, Calendar, Upload
+  Loader2, ArrowLeft, Mic, Calendar, Upload, XIcon
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -79,7 +79,7 @@ function SortableCategoryCard({ id, item, onEdit, onDelete, onClick, khitabAudio
       ref={setNodeRef}
       style={style}
       className={cn(
-        "group relative flex flex-col bg-card rounded-2xl border border-border overflow-hidden transition-all duration-200 cursor-pointer",
+        "group relative flex flex-col bg-card rounded-xl border border-border overflow-hidden transition-all duration-200 cursor-pointer",
         isDragging ? "shadow-2xl border-primary scale-[1.02]" : "hover:shadow-md hover:border-primary/50"
       )}
       onClick={() => onClick(item)}
@@ -102,7 +102,7 @@ function SortableCategoryCard({ id, item, onEdit, onDelete, onClick, khitabAudio
             </div>
           </div>
         </div>
-        <h3 className="font-bold text-lg text-foreground leading-snug line-clamp-1">{item.name}</h3>
+        <h3 className="font-bold text-lg text-foreground leading-snug line-clamp-2">{item.name}</h3>
         {item.urduName && (
           <h4 className="font-bold text-base text-foreground mt-1 font-amiri" dir="rtl">{item.urduName}</h4>
         )}
@@ -121,7 +121,7 @@ function SortableKhitabAudioCard({ id, item, onEdit, onDelete }: any) {
       ref={setNodeRef}
       style={style}
       className={cn(
-        "group relative flex flex-col bg-card rounded-2xl border border-border overflow-hidden transition-all duration-200",
+        "group relative flex flex-col bg-card rounded-xl border border-border overflow-hidden transition-all duration-200",
         isDragging ? "shadow-2xl border-primary scale-[1.02]" : "hover:shadow-md hover:border-border/80"
       )}
     >
@@ -144,7 +144,7 @@ function SortableKhitabAudioCard({ id, item, onEdit, onDelete }: any) {
 
         <h3 className="font-bold text-base text-foreground leading-snug line-clamp-2 mb-1">{item.title}</h3>
         {item.titleUrdu && (
-            <h4 className="font-bold text-sm text-foreground leading-snug line-clamp-2 mb-2 font-amiri" dir="rtl">{item.titleUrdu}</h4>
+          <h4 className="font-bold text-sm text-foreground leading-snug line-clamp-2 mb-2 font-amiri" dir="rtl">{item.titleUrdu}</h4>
         )}
         <p className="text-xs text-muted-foreground font-mono truncate mb-4" title={item.slug}>
           /{item.slug}
@@ -224,7 +224,7 @@ export default function KhitabAudiosPageEditor({ pageId, initialPageData }: { pa
       const res = await fetch("/api/admin/khitab-audio-categories");
       if (res.ok) {
         const data = await res.json();
-        setCategories((data.items || []).sort((a: any, b: any) => (a.order || 0) - (b.order || 0)));
+        setCategories((data.items || []).sort((a: any, b: any) => (a.order || 0) - (b.order || 0) || new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()));
       }
     } catch (e) { console.error(e); }
     finally { setIsLoading(false); }
@@ -235,7 +235,7 @@ export default function KhitabAudiosPageEditor({ pageId, initialPageData }: { pa
       const res = await fetch("/api/admin/khitab-audios");
       if (res.ok) {
         const data = await res.json();
-        setKhitabAudios((data.items || []));
+        setKhitabAudios((data.items || []).sort((a: any, b: any) => (a.order || 0) - (b.order || 0) || new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()));
       }
     } catch (e) { console.error(e); }
   };
@@ -264,7 +264,7 @@ export default function KhitabAudiosPageEditor({ pageId, initialPageData }: { pa
     const errors: Record<string, string> = {};
     if (!catFormData.name.trim()) errors.name = "Name is required";
     if (!catFormData.slug.trim()) errors.slug = "Slug is required";
-    
+
     if (Object.keys(errors).length > 0) {
       setCatFormErrors(errors);
       return;
@@ -309,6 +309,20 @@ export default function KhitabAudiosPageEditor({ pageId, initialPageData }: { pa
     });
   };
 
+  const handleAudioDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const oldIndex = khitabAudios.findIndex(i => i.id === active.id);
+    const newIndex = khitabAudios.findIndex(i => i.id === over.id);
+    const reordered = arrayMove(khitabAudios, oldIndex, newIndex).map((item, idx) => ({ ...item, order: idx }));
+    setKhitabAudios(reordered);
+    await fetch("/api/admin/khitab-audios", {
+      method: "PATCH", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ orders: reordered.map(i => ({ id: i.id, orderIndex: i.order })) }),
+    });
+  };
+
+
   // --- KhitabAudio CRUD ---
   const handleKhitabAudioSave = async () => {
     const errors: Record<string, string> = {};
@@ -324,16 +338,16 @@ export default function KhitabAudiosPageEditor({ pageId, initialPageData }: { pa
     try {
       const url = editingKhitabAudioId ? `/api/admin/khitab-audios/${editingKhitabAudioId}` : "/api/admin/khitab-audios";
       const method = editingKhitabAudioId ? "PUT" : "POST";
-      const payload: any = { 
-        ...khitabAudioFormData, 
+      const payload: any = {
+        ...khitabAudioFormData,
         categoryId: activeCategory?.id,
         publishedAt: khitabAudioFormData.publishedAt ? new Date(khitabAudioFormData.publishedAt).toISOString() : null,
       };
-      
+
       const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
       if (!res.ok) {
-         const errorData = await res.json().catch(() => ({}));
-         throw new Error(errorData.error || "Failed");
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.error || "Failed");
       }
       toast({ title: "Success", description: "Audio saved" });
       setIsKhitabAudioModalOpen(false);
@@ -474,7 +488,7 @@ export default function KhitabAudiosPageEditor({ pageId, initialPageData }: { pa
             isLoading ? (
               <div className="flex items-center justify-center py-20 text-muted-foreground"><Loader2 className="w-6 h-6 animate-spin text-primary mr-2" /> Loading Categories...</div>
             ) : filteredCategories.length === 0 ? (
-              <div className="bg-card rounded-2xl border p-12 text-center text-muted-foreground">No Categories Found.</div>
+              <div className="bg-card rounded-xl border p-12 text-center text-muted-foreground">No Categories Found.</div>
             ) : (
               <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleCatDragEnd}>
                 <SortableContext items={filteredCategories.map(c => c.id)} strategy={rectSortingStrategy}>
@@ -514,7 +528,7 @@ export default function KhitabAudiosPageEditor({ pageId, initialPageData }: { pa
                   </div>
                 ) : (
                   <div className="flex flex-col items-center gap-3">
-                    <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-1">
+                    <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary mb-1">
                       <Upload className="h-6 w-6" />
                     </div>
                     <p className="font-bold text-foreground text-lg">Drag & Drop an Audio File here</p>
@@ -525,28 +539,32 @@ export default function KhitabAudiosPageEditor({ pageId, initialPageData }: { pa
                 )}
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {activeKhitabAudios.map(khitabAudio => (
-                  <SortableKhitabAudioCard key={khitabAudio.id} id={khitabAudio.id} item={khitabAudio}
-                    onEdit={(item: any) => { 
-                      setEditingKhitabAudioId(item.id); 
-                      setKhitabAudioFormData({ 
-                        title: item.title, 
-                        titleUrdu: item.titleUrdu || "", 
-                        slug: item.slug, 
-                        excerpt: item.excerpt || "", 
-                        description: item.description || "", 
-                        audioUrl: item.audioUrl || "", 
-                        isPublished: item.isPublished,
-                        publishedAt: item.publishedAt ? new Date(item.publishedAt).toISOString().split("T")[0] : "",
-                      }); 
-                      setKhitabAudioFormErrors({});
-                      setIsKhitabAudioModalOpen(true); 
-                    }}
-                    onDelete={(item: KhitabAudioItem) => setDeletingKhitabAudio(item)} />
-                ))}
-                {activeKhitabAudios.length === 0 && <div className="col-span-full py-10 text-center text-muted-foreground border border-dashed rounded-xl">No audios found in this category.</div>}
-              </div>
+              <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleAudioDragEnd}>
+                <SortableContext items={activeKhitabAudios.map(i => i.id)} strategy={rectSortingStrategy}>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {activeKhitabAudios.map(khitabAudio => (
+                      <SortableKhitabAudioCard key={khitabAudio.id} id={khitabAudio.id} item={khitabAudio}
+                        onEdit={(item: any) => {
+                          setEditingKhitabAudioId(item.id);
+                          setKhitabAudioFormData({
+                            title: item.title,
+                            titleUrdu: item.titleUrdu || "",
+                            slug: item.slug,
+                            excerpt: item.excerpt || "",
+                            description: item.description || "",
+                            audioUrl: item.audioUrl || "",
+                            isPublished: item.isPublished,
+                            publishedAt: item.publishedAt ? new Date(item.publishedAt).toISOString().split("T")[0] : "",
+                          });
+                          setKhitabAudioFormErrors({});
+                          setIsKhitabAudioModalOpen(true);
+                        }}
+                        onDelete={(item: KhitabAudioItem) => setDeletingKhitabAudio(item)} />
+                    ))}
+                    {activeKhitabAudios.length === 0 && <div className="col-span-full py-10 text-center text-muted-foreground border border-dashed rounded-xl">No audios found in this category.</div>}
+                  </div>
+                </SortableContext>
+              </DndContext>
             </div>
           )}
         </TabsContent>
@@ -570,13 +588,15 @@ export default function KhitabAudiosPageEditor({ pageId, initialPageData }: { pa
       {/* Category Modal */}
       {isCatModalOpen && (
         <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-card w-full max-w-md border border-border rounded-2xl shadow-xl relative overflow-hidden flex flex-col max-h-[90vh]">
-            <div className="p-6 border-b border-border flex justify-between items-center bg-muted/20">
-              <h2 className="text-xl font-bold flex items-center gap-2">
+          <div className="bg-card w-full max-w-md border border-border rounded-xl shadow-xl relative overflow-hidden flex flex-col max-h-[90vh]">
+            <button type="button" onClick={() => setIsCatModalOpen(false)} className="absolute top-4 right-4 rounded-full bg-red-500 text-white p-2 opacity-80 transition-all hover:opacity-100 hover:bg-red-600 hover:scale-105 z-10">
+              <XIcon className="w-4 h-4" />
+            </button>
+            <div className="p-6 border-b border-border flex items-center bg-muted/20">
+              <h2 className="text-xl font-bold flex items-center gap-2 pr-8">
                 <FileText className="h-5 w-5 text-primary" />
                 {editingCatId ? "Edit Category" : "Add Category"}
               </h2>
-              <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsCatModalOpen(false)}>×</Button>
             </div>
             <div className="overflow-y-auto p-6 flex-1 space-y-4">
               <div className="space-y-2">
@@ -611,13 +631,15 @@ export default function KhitabAudiosPageEditor({ pageId, initialPageData }: { pa
       {/* KhitabAudio Modal */}
       {isKhitabAudioModalOpen && (
         <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-card w-full max-w-2xl border border-border rounded-2xl shadow-xl relative overflow-hidden flex flex-col max-h-[90vh]">
-            <div className="p-6 border-b border-border flex justify-between items-center bg-muted/20">
-              <h2 className="text-xl font-bold flex items-center gap-2">
+          <div className="bg-card w-full max-w-2xl border border-border rounded-xl shadow-xl relative overflow-hidden flex flex-col max-h-[90vh]">
+            <button type="button" onClick={() => setIsKhitabAudioModalOpen(false)} className="absolute top-4 right-4 rounded-full bg-red-500 text-white p-2 opacity-80 transition-all hover:opacity-100 hover:bg-red-600 hover:scale-105 z-10">
+              <XIcon className="w-4 h-4" />
+            </button>
+            <div className="p-6 border-b border-border flex items-center bg-muted/20">
+              <h2 className="text-xl font-bold flex items-center gap-2 pr-8">
                 <Mic className="h-5 w-5 text-primary" />
                 {editingKhitabAudioId ? "Edit Audio" : "Add Audio"}
               </h2>
-              <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsKhitabAudioModalOpen(false)}>×</Button>
             </div>
             <div className="overflow-y-auto p-6 flex-1 space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

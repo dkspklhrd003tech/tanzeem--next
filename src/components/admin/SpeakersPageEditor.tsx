@@ -237,7 +237,7 @@ export default function SpeakersPageEditor({ pageId, initialPageData, mediaConte
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {speakersList.map(speaker => (
-                  <div key={speaker.id} onClick={() => setActiveSpeaker(speaker)} className="cursor-pointer group flex flex-col bg-card rounded-2xl border border-border overflow-hidden hover:border-primary/50 transition-colors">
+                  <div key={speaker.id} onClick={() => setActiveSpeaker(speaker)} className="cursor-pointer group flex flex-col bg-card rounded-xl border border-border overflow-hidden hover:border-primary/50 transition-colors">
                     <div className="aspect-square bg-muted relative border-b border-border">
                       {speaker.avatar ? (
                         <img src={speaker.avatar} alt={speaker.name} className="w-full h-full object-cover" />
@@ -344,7 +344,7 @@ export default function SpeakersPageEditor({ pageId, initialPageData, mediaConte
       {
         isSpeakerModalOpen && (
           <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-card w-full max-w-md border border-border rounded-2xl shadow-xl relative overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="bg-card w-full max-w-md border border-border rounded-xl shadow-xl relative overflow-hidden flex flex-col max-h-[90vh]">
               <div className="p-6 border-b border-border flex justify-between items-center bg-muted/20">
                 <h2 className="text-xl font-bold">{editingSpeakerId ? "Edit Speaker" : "Add Speaker"}</h2>
                 <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsSpeakerModalOpen(false)}>×</Button>
@@ -371,7 +371,7 @@ export default function SpeakersPageEditor({ pageId, initialPageData, mediaConte
       {
         isAudioModalOpen && (
           <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-card w-full max-w-md border border-border rounded-2xl shadow-xl relative overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="bg-card w-full max-w-md border border-border rounded-xl shadow-xl relative overflow-hidden flex flex-col max-h-[90vh]">
               <div className="p-6 border-b border-border flex justify-between items-center bg-muted/20">
                 <h2 className="text-xl font-bold">{editingAudioId ? "Edit Audio Speakers" : "Add Audio"}</h2>
                 <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsAudioModalOpen(false)}>×</Button>
@@ -400,7 +400,7 @@ export default function SpeakersPageEditor({ pageId, initialPageData, mediaConte
       {
         isVideoModalOpen && (
           <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-            <div className="bg-card w-full max-w-md border border-border rounded-2xl shadow-xl relative overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="bg-card w-full max-w-md border border-border rounded-xl shadow-xl relative overflow-hidden flex flex-col max-h-[90vh]">
               <div className="p-6 border-b border-border flex justify-between items-center bg-muted/20">
                 <h2 className="text-xl font-bold">{editingVideoId ? "Edit Video" : "Add Video"}</h2>
                 <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsVideoModalOpen(false)}>×</Button>

@@ -24,7 +24,7 @@ export function EmbedBlock({ source, aspectRatio = "video", caption }: EmbedBloc
   return (
     <section className="py-12 md:py-16 bg-background">
       <div className="container px-4 mx-auto max-w-5xl">
-        <div className={`relative w-full overflow-hidden rounded-2xl shadow-2xl bg-black ${ratioClasses[aspectRatio]}`}>
+        <div className={`relative w-full overflow-hidden rounded-xl shadow-2xl bg-black ${ratioClasses[aspectRatio]}`}>
           <iframe
             src={embedUrl}
             className="absolute inset-0 w-full h-full"

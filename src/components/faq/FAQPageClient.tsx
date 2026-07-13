@@ -54,10 +54,10 @@ export function FAQPageClient({ initialItems, pageTitle, pageExcerpt }: FAQPageC
     // English first, then Urdu, then by order
     const catA = getCategory(a.category).toLowerCase();
     const catB = getCategory(b.category).toLowerCase();
-    
+
     if (catA === 'english' && catB !== 'english') return -1;
     if (catA !== 'english' && catB === 'english') return 1;
-    
+
     // Within the same category, sort by order
     return a.order - b.order;
   });
@@ -72,13 +72,13 @@ export function FAQPageClient({ initialItems, pageTitle, pageExcerpt }: FAQPageC
   };
 
   return (
-    <div className="bg-background min-h-screen pb-20">
+    <div className="bg-background  pb-20">
       <FaqStyles />
 
       {/* Main Content Area */}
       <div className="max-w-7xl mx-auto -mt-10 relative z-20">
         {/* Search & Categories Bar */}
-        <div className="bg-card/95 border border-border/80 backdrop-blur-lg rounded-2xl shadow-xl p-6 space-y-6">
+        <div className="bg-card/95 border border-border/80 backdrop-blur-lg rounded-xl shadow-xl p-6 space-y-6">
           {/* Search Box */}
           <div className="relative">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
@@ -121,7 +121,7 @@ export function FAQPageClient({ initialItems, pageTitle, pageExcerpt }: FAQPageC
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                className="bg-card border border-border rounded-2xl p-12 text-center text-muted-foreground shadow-sm"
+                className="bg-card border border-border rounded-xl p-12 text-center text-muted-foreground shadow-sm"
               >
                 <Layers className="w-12 h-12 mx-auto text-muted-foreground/45 mb-4 animate-pulse" />
                 <h3 className="font-semibold text-foreground text-lg mb-1">No FAQs Found</h3>
@@ -143,7 +143,7 @@ export function FAQPageClient({ initialItems, pageTitle, pageExcerpt }: FAQPageC
                     exit={{ opacity: 0, y: -15 }}
                     transition={{ duration: 0.2, delay: Math.min(idx * 0.05, 0.4) }}
                     className={cn(
-                      "bg-card border rounded-2xl overflow-hidden transition-all shadow-sm duration-300",
+                      "bg-card border rounded-xl overflow-hidden transition-all shadow-sm duration-300",
                       isExpanded
                         ? "border-primary/40 ring-1 ring-primary/10 shadow-md bg-gradient-to-b from-card to-primary/5"
                         : "border-border/60 hover:border-primary/30"

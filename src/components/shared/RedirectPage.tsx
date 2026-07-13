@@ -41,12 +41,12 @@ export function RedirectPage({ title, url }: RedirectPageProps) {
   }, [url]);
 
   return (
-    <main className="min-h-screen bg-[#fafaf9]  flex flex-col">
+    <main className=" bg-[#fafaf9]  flex flex-col">
       {/* Dynamic site banner */}
       <PageBanner settings={settings} />
 
       <div className="flex-1 flex items-center justify-center py-16 px-4">
-        <div className="bg-white  border border-border/80 rounded-2xl p-8 max-w-md w-full text-center shadow-xl space-y-6 relative overflow-hidden">
+        <div className="bg-white  border border-border/80 rounded-xl p-8 max-w-md w-full text-center shadow-xl space-y-6 relative overflow-hidden">
           {/* Subtle accent border */}
           <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-primary via-emerald-500 to-primary" />
 

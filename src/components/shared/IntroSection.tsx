@@ -43,13 +43,13 @@ export function IntroSection({
           {/* Centered Image Just Below Heading */}
           {image && (
             <div className="w-full max-w-3xl mx-auto">
-              <div className="relative rounded-2xl overflow-hidden shadow-2xl transition-transform duration-500 hover:scale-[1.02]">
+              <div className="relative rounded-xl overflow-hidden shadow-2xl transition-transform duration-500 hover:scale-[1.02]">
                 <img
                   src={resolveMediaUrl(image)}
                   alt={imageAlt || heading}
                   className="w-full h-auto object-cover"
                 />
-                <div className="absolute inset-0 ring-1 ring-inset ring-black/10 rounded-2xl" />
+                <div className="absolute inset-0 ring-1 ring-inset ring-black/10 rounded-xl" />
               </div>
             </div>
           )}

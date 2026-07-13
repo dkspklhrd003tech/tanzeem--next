@@ -76,7 +76,7 @@ function SortableSpeakerCard({ speaker, onClick, onEdit, onDelete }: { speaker: 
   };
 
   return (
-    <div ref={setNodeRef} style={style} className="relative cursor-pointer group flex flex-col bg-card rounded-2xl border border-border overflow-hidden hover:border-primary/50 transition-colors shadow-sm" onClick={onClick}>
+    <div ref={setNodeRef} style={style} className="relative cursor-pointer group flex flex-col bg-card rounded-xl border border-border overflow-hidden hover:border-primary/50 transition-colors shadow-sm" onClick={onClick}>
       <div {...attributes} {...listeners} className="absolute top-2 left-2 z-20 p-1.5 bg-background/80 backdrop-blur rounded-md border shadow-sm cursor-grab active:cursor-grabbing hover:bg-background transition-colors text-muted-foreground">
         <GripVertical className="w-4 h-4" />
       </div>
@@ -452,7 +452,7 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
       {/* Speaker Modal */}
       {isSpeakerModalOpen && (
         <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-card w-full max-w-md border border-border rounded-2xl shadow-xl relative overflow-hidden flex flex-col max-h-[90vh]">
+          <div className="bg-card w-full max-w-md border border-border rounded-xl shadow-xl relative overflow-hidden flex flex-col max-h-[90vh]">
             <div className="p-6 border-b border-border flex justify-between items-center bg-muted/20">
               <h2 className="text-xl font-bold">{editingSpeakerId ? "Edit Speaker" : "Add Speaker"}</h2>
               <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsSpeakerModalOpen(false)}>×</Button>
@@ -484,7 +484,7 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
       {/* Video Modal */}
       {isVideoModalOpen && (
         <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-card w-full max-w-md border border-border rounded-2xl shadow-xl relative overflow-hidden flex flex-col max-h-[90vh]">
+          <div className="bg-card w-full max-w-md border border-border rounded-xl shadow-xl relative overflow-hidden flex flex-col max-h-[90vh]">
             <div className="p-6 border-b border-border flex justify-between items-center bg-muted/20">
               <h2 className="text-xl font-bold">{editingVideoId ? "Edit Video" : "Add Video"}</h2>
               <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsVideoModalOpen(false)}>×</Button>

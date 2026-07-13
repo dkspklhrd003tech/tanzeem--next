@@ -193,7 +193,7 @@ function RTE({ value, onChange }: { value: string; onChange: (v: string) => void
 
   return (
     <div className={cn("border border-border rounded-xl overflow-hidden bg-card focus-within:ring-2 focus-within:ring-primary/20 transition-all",
-      fullscreen && "fixed inset-4 z-50 flex flex-col shadow-2xl rounded-2xl")}>
+      fullscreen && "fixed inset-4 z-50 flex flex-col shadow-2xl rounded-xl")}>
       {toolbar}
       {htmlMode ? (
         <textarea className="w-full font-mono text-xs p-4 bg-muted/30 resize-none focus:outline-none"

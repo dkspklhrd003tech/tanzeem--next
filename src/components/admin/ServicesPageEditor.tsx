@@ -143,7 +143,7 @@ function SortableCard({ id, item, onEdit, onDelete }: SortableItemProps) {
       ref={setNodeRef}
       style={style}
       className={cn(
-        "group relative flex flex-col bg-card rounded-2xl border border-border overflow-hidden transition-all duration-200",
+        "group relative flex flex-col bg-card rounded-xl border border-border overflow-hidden transition-all duration-200",
         isDragging ? "shadow-2xl border-primary scale-[1.02]" : "hover:shadow-md hover:border-border/80"
       )}
     >
@@ -321,7 +321,7 @@ function SortableServiceBlock({ block, index, onUpdate, onUpdateTitle, onRemove 
     <div ref={setNodeRef} style={style} className="relative bg-muted/10 border border-border/50 p-4 rounded-xl group">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <div {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing text-muted-foreground hover:text-primary">
+          <div {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing text-foreground hover:text-white">
             <GripVertical className="h-4 w-4" />
           </div>
           <Badge variant="outline" className="bg-primary border border-primary uppercase text-[12px] text-white">{block.type}</Badge>
@@ -1010,7 +1010,7 @@ export default function ServicesPageEditor({ pageId, initialPageData }: Services
               <span>Loading Services...</span>
             </div>
           ) : filteredItems.length === 0 ? (
-            <div className="bg-card rounded-2xl border border-border p-12 text-center text-muted-foreground">
+            <div className="bg-card rounded-xl border border-border p-12 text-center text-muted-foreground">
               {searchQuery ? "No search results match your criteria." : "No Services found. Drop a image file above to add one!"}
             </div>
           ) : (
@@ -1047,7 +1047,7 @@ export default function ServicesPageEditor({ pageId, initialPageData }: Services
 
               {/* Main parameters */}
               <div className="lg:col-span-2 space-y-6">
-                <Card className="rounded-2xl border border-border">
+                <Card className="rounded-xl border border-border">
                   <CardHeader>
                     <CardTitle>Page Metadata</CardTitle>
                     <CardDescription>
@@ -1090,7 +1090,7 @@ export default function ServicesPageEditor({ pageId, initialPageData }: Services
                   </CardContent>
                 </Card>
 
-                <Card className="rounded-2xl border border-border">
+                <Card className="rounded-xl border border-border">
                   <CardHeader>
                     <CardTitle>Search Engine Optimization (SEO)</CardTitle>
                     <CardDescription>
@@ -1132,7 +1132,7 @@ export default function ServicesPageEditor({ pageId, initialPageData }: Services
 
               {/* Status and Action Column */}
               <div className="space-y-6">
-                <Card className="rounded-2xl border border-border">
+                <Card className="rounded-xl border border-border">
                   <CardHeader>
                     <CardTitle>Publishing Status</CardTitle>
                   </CardHeader>
@@ -1168,7 +1168,7 @@ export default function ServicesPageEditor({ pageId, initialPageData }: Services
       {/* CRUD Form Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-card w-full max-w-2xl border border-border rounded-2xl shadow-xl relative overflow-hidden flex flex-col max-h-[90vh]">
+          <div className="bg-card w-full max-w-2xl border border-border rounded-xl shadow-xl relative overflow-hidden flex flex-col max-h-[90vh]">
             <div className="p-6 border-b border-border flex justify-between items-center bg-muted/20">
               <h2 className="text-xl font-bold flex items-center gap-2">
                 <FileText className="h-5 w-5 text-primary" />

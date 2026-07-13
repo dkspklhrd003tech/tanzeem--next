@@ -99,7 +99,7 @@ export function NestedCategoryGrid({ heading, style = "capsule", categories = []
                       <button
                         key={sub.id || i}
                         onClick={() => setActiveSubCat(sub)}
-                        className="group relative rounded-2xl overflow-hidden aspect-video bg-muted border border-border hover:shadow-xl transition-all shadow-md flex flex-col text-left"
+                        className="group relative rounded-xl overflow-hidden aspect-video bg-muted border border-border hover:shadow-xl transition-all shadow-md flex flex-col text-left"
                       >
                         <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors z-10" />
                         {sub.image ? (
@@ -141,7 +141,7 @@ export function NestedCategoryGrid({ heading, style = "capsule", categories = []
               </h2>
             </div>
 
-            <div className="bg-card border border-border rounded-2xl overflow-hidden shadow-lg">
+            <div className="bg-card border border-border rounded-xl overflow-hidden shadow-lg">
               <ul className="divide-y divide-border">
                 {activeSubCat.mediaItems?.map((item, i) => (
                   <li key={item.id || i} className="group hover:bg-muted/50 transition-colors">

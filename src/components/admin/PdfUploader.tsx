@@ -10,7 +10,7 @@ export interface PdfUploaderProps {
     /** Current PDF URL (controlled) */
     value?: string;
     /** Called with the uploaded URL, or "" when removed */
-    onChange: (url: string) => void;
+    onChange: (url: string, size?: number) => void;
     className?: string;
 }
 
@@ -38,7 +38,7 @@ export function PdfUploader({ value = "", onChange, className }: PdfUploaderProp
             if (!res.ok) throw new Error("Upload failed");
 
             const data = await res.json();
-            onChange(data.url);
+            onChange(data.url, file.size);
             toast({ title: "PDF uploaded", description: "File attached successfully." });
         } catch (err) {
             console.error("PDF upload error:", err);
@@ -80,7 +80,7 @@ export function PdfUploader({ value = "", onChange, className }: PdfUploaderProp
                             size="sm"
                             onClick={() => fileInputRef.current?.click()}
                             disabled={isUploading}
-                            className="text-xs text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-lg h-7 px-2"
+                            className="text-xs text-foreground hover:text-white hover:bg-primary/10 rounded-lg h-7 px-2"
                         >
                             {isUploading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : "Replace"}
                         </Button>

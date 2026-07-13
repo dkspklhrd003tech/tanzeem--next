@@ -124,7 +124,7 @@ function SortableCard({ id, item, onEdit, onDelete }: SortableItemProps) {
       ref={setNodeRef}
       style={style}
       className={cn(
-        "group relative flex flex-col bg-card rounded-2xl border border-border overflow-hidden transition-all duration-200",
+        "group relative flex flex-col bg-card rounded-xl border border-border overflow-hidden transition-all duration-200",
         isDragging ? "shadow-2xl border-primary scale-[1.02]" : "hover:shadow-md hover:border-border/80"
       )}
     >
@@ -693,7 +693,7 @@ export default function PressReleasesPageEditor({ pageId, initialPageData }: Pre
               </div>
             ) : (
               <div className="flex flex-col items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center text-primary mb-1">
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary mb-1">
                   <UploadCloud className="h-6 w-6" />
                 </div>
                 <p className="font-bold text-foreground text-lg">
@@ -713,7 +713,7 @@ export default function PressReleasesPageEditor({ pageId, initialPageData }: Pre
               <span>Loading press releases...</span>
             </div>
           ) : filteredItems.length === 0 ? (
-            <div className="bg-card rounded-2xl border border-border p-12 text-center text-muted-foreground">
+            <div className="bg-card rounded-xl border border-border p-12 text-center text-muted-foreground">
               {searchQuery ? "No search results match your criteria." : "No press releases found. Drop a PDF file above to add one!"}
             </div>
           ) : (
@@ -750,7 +750,7 @@ export default function PressReleasesPageEditor({ pageId, initialPageData }: Pre
 
               {/* Main parameters */}
               <div className="lg:col-span-2 space-y-6">
-                <Card className="rounded-2xl border border-border">
+                <Card className="rounded-xl border border-border">
                   <CardHeader>
                     <CardTitle>Page Metadata</CardTitle>
                     <CardDescription>
@@ -793,7 +793,7 @@ export default function PressReleasesPageEditor({ pageId, initialPageData }: Pre
                   </CardContent>
                 </Card>
 
-                <Card className="rounded-2xl border border-border">
+                <Card className="rounded-xl border border-border">
                   <CardHeader>
                     <CardTitle>Search Engine Optimization (SEO)</CardTitle>
                     <CardDescription>
@@ -835,7 +835,7 @@ export default function PressReleasesPageEditor({ pageId, initialPageData }: Pre
 
               {/* Status and Action Column */}
               <div className="space-y-6">
-                <Card className="rounded-2xl border border-border">
+                <Card className="rounded-xl border border-border">
                   <CardHeader>
                     <CardTitle>Publishing Status</CardTitle>
                   </CardHeader>
@@ -871,7 +871,7 @@ export default function PressReleasesPageEditor({ pageId, initialPageData }: Pre
       {/* CRUD Form Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-card w-full max-w-2xl border border-border rounded-2xl shadow-xl relative overflow-hidden flex flex-col max-h-[90vh]">
+          <div className="bg-card w-full max-w-2xl border border-border rounded-xl shadow-xl relative overflow-hidden flex flex-col max-h-[90vh]">
             <div className="p-6 border-b border-border flex justify-between items-center bg-muted/20">
               <h2 className="text-xl font-bold flex items-center gap-2">
                 <FileText className="h-5 w-5 text-primary" />

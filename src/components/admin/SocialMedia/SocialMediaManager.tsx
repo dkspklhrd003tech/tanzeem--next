@@ -442,7 +442,7 @@ export function SocialMediaManager() {
                     {filteredAccounts.map((account) => (
                       <div
                         key={account.id}
-                        className="group relative bg-muted/30 border border-border/50 rounded-2xl p-5 hover:border-primary/50 hover:shadow-xl transition-all duration-300 overflow-hidden"
+                        className="group relative bg-muted/30 border border-border/50 rounded-xl p-5 hover:border-primary/50 hover:shadow-xl transition-all duration-300 overflow-hidden"
                       >
                         <div className="flex items-start gap-4">
                           <div className="relative shrink-0">

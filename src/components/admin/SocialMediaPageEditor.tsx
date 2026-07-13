@@ -142,7 +142,7 @@ function SortableAccountCard({ id, account, platformName, onEdit, onDelete }: So
       ref={setNodeRef}
       style={style}
       className={cn(
-        "group relative flex flex-col bg-card rounded-2xl border border-border overflow-hidden transition-all duration-200",
+        "group relative flex flex-col bg-card rounded-xl border border-border overflow-hidden transition-all duration-200",
         isDragging ? "shadow-2xl border-primary scale-[1.02]" : "hover:shadow-md hover:border-border/80"
       )}
     >
@@ -254,7 +254,7 @@ function SortablePlatformRow({ id, platform, onEdit, onDelete }: SortablePlatfor
       ref={setNodeRef}
       style={style}
       className={cn(
-        "flex items-center justify-between p-4 bg-card border rounded-2xl transition-all duration-200",
+        "flex items-center justify-between p-4 bg-card border rounded-xl transition-all duration-200",
         isDragging ? "shadow-lg border-primary scale-[1.01]" : "hover:border-border/80"
       )}
     >
@@ -889,7 +889,7 @@ export default function SocialMediaPageEditor({ pageId, initialPageData }: Socia
 
             {/* Left Sidebar - Platform Switchers */}
             <div className="w-full lg:w-64 shrink-0 space-y-2">
-              <Card className="rounded-2xl border border-border">
+              <Card className="rounded-xl border border-border">
                 <CardHeader className="p-4 border-b">
                   <CardTitle className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Platforms</CardTitle>
                 </CardHeader>
@@ -926,7 +926,7 @@ export default function SocialMediaPageEditor({ pageId, initialPageData }: Socia
 
             {/* Right Main Grid - Accounts List */}
             <div className="flex-1 space-y-4">
-              <Card className="rounded-2xl border border-border">
+              <Card className="rounded-xl border border-border">
                 <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 border-b border-border bg-muted/10">
                   <div>
                     <CardTitle className="text-xl font-bold flex items-center gap-2">
@@ -952,7 +952,7 @@ export default function SocialMediaPageEditor({ pageId, initialPageData }: Socia
                       <span>Loading Social Media...</span>
                     </div>
                   ) : activeAccounts.length === 0 ? (
-                    <div className="border border-dashed border-border rounded-2xl p-12 text-center text-muted-foreground">
+                    <div className="border border-dashed border-border rounded-xl p-12 text-center text-muted-foreground">
                       No handles registered under {activePlatformName}. Click "Add Social Card" to insert one!
                     </div>
                   ) : (
@@ -989,7 +989,7 @@ export default function SocialMediaPageEditor({ pageId, initialPageData }: Socia
 
         {/* Tab 2: Platforms Management */}
         <TabsContent value="platforms" className="space-y-6 outline-none">
-          <Card className="rounded-2xl border border-border">
+          <Card className="rounded-xl border border-border">
             <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 border-b border-border bg-muted/10">
               <div>
                 <CardTitle className="text-xl font-bold">Platform Tabs</CardTitle>
@@ -1008,7 +1008,7 @@ export default function SocialMediaPageEditor({ pageId, initialPageData }: Socia
                   <span>Loading platform tabs...</span>
                 </div>
               ) : platforms.length === 0 ? (
-                <div className="border border-dashed border-border rounded-2xl p-12 text-center text-muted-foreground">
+                <div className="border border-dashed border-border rounded-xl p-12 text-center text-muted-foreground">
                   No platforms created. Create one to enable tabs!
                 </div>
               ) : (
@@ -1046,7 +1046,7 @@ export default function SocialMediaPageEditor({ pageId, initialPageData }: Socia
 
               {/* Main parameters */}
               <div className="lg:col-span-2 space-y-6">
-                <Card className="rounded-2xl border border-border">
+                <Card className="rounded-xl border border-border">
                   <CardHeader>
                     <CardTitle>Page Metadata</CardTitle>
                     <CardDescription>
@@ -1091,7 +1091,7 @@ export default function SocialMediaPageEditor({ pageId, initialPageData }: Socia
 
               {/* SEO parameters */}
               <div className="space-y-6">
-                <Card className="rounded-2xl border border-border bg-muted/10">
+                <Card className="rounded-xl border border-border bg-muted/10">
                   <CardHeader>
                     <CardTitle className="text-lg">SEO optimization</CardTitle>
                     <CardDescription>Configure tags and canonical properties</CardDescription>
@@ -1171,7 +1171,7 @@ export default function SocialMediaPageEditor({ pageId, initialPageData }: Socia
       {/* CRUD Account Card Modal */}
       {isAccountModalOpen && (
         <div className="fixed inset-0 bg-background/85 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-card w-full max-w-lg border border-border rounded-2xl shadow-xl relative overflow-hidden flex flex-col max-h-[90vh]">
+          <div className="bg-card w-full max-w-lg border border-border rounded-xl shadow-xl relative overflow-hidden flex flex-col max-h-[90vh]">
             <div className="p-5 border-b border-border flex justify-between items-center bg-muted/20">
               <h2 className="text-lg font-bold flex items-center gap-2">
                 {editingAccount ? "Edit Social Account" : "Add New Social Account"}
@@ -1308,7 +1308,7 @@ export default function SocialMediaPageEditor({ pageId, initialPageData }: Socia
       {/* CRUD Platform Modal */}
       {isPlatformModalOpen && (
         <div className="fixed inset-0 bg-background/85 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-card w-full max-w-md border border-border rounded-2xl shadow-xl relative overflow-hidden flex flex-col">
+          <div className="bg-card w-full max-w-md border border-border rounded-xl shadow-xl relative overflow-hidden flex flex-col">
             <div className="p-5 border-b border-border flex justify-between items-center bg-muted/20">
               <h2 className="text-lg font-bold flex items-center gap-2">
                 {editingPlatform ? "Edit Platform Tab" : "Add Platform Tab"}

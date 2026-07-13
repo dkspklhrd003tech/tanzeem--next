@@ -101,7 +101,7 @@ export function PressReleasesGrid({ initialItems }: PressReleasesGridProps) {
 
       {/* Grid View */}
       {filteredItems.length === 0 ? (
-        <div className="text-center py-20 bg-card border border-border rounded-2xl">
+        <div className="text-center py-20 bg-card border border-border rounded-xl">
           <AlertCircle className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
           <h3 className="text-lg font-bold text-foreground">No Press Releases Found</h3>
         </div>
@@ -124,7 +124,7 @@ export function PressReleasesGrid({ initialItems }: PressReleasesGridProps) {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.4, delay: idx * 0.05 }}
-                  className="relative bg-card border bg-slate-100 rounded-2xl overflow-hidden cursor-pointer hover:-translate-y-1.5 transition-all duration-300 h-full flex flex-col"
+                  className="relative bg-card border bg-slate-100 rounded-xl overflow-hidden cursor-pointer hover:-translate-y-1.5 transition-all duration-300 h-full flex flex-col"
                 >
                   {/* Visual Top Bar */}
                   <div

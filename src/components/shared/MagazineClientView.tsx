@@ -27,7 +27,7 @@ export function MagazineClientView({ links }: { links: MagazineLink[] }) {
           <Link
             href={`/magazines/${link.slug}`}
             key={link.id}
-            className="group relative flex flex-col items-start justify-between p-6 overflow-hidden rounded-2xl bg-card border border-border/50 shadow-sm hover:shadow-2xl hover:shadow-primary/30 transition-all duration-500 text-left hover:-translate-y-1 animate-in fade-in slide-in-from-bottom-4 block w-full"
+            className="group relative flex flex-col items-start justify-between p-6 overflow-hidden rounded-xl bg-card border border-border/50 shadow-sm hover:shadow-2xl hover:shadow-primary/30 transition-all duration-500 text-left hover:-translate-y-1 animate-in fade-in slide-in-from-bottom-4 block w-full"
             style={{ animationDelay: `${index * 50}ms`, animationFillMode: "both" }}
           >
             {/* Cinematic background gradient that appears on hover */}

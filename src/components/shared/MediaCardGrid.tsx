@@ -50,7 +50,7 @@ export function MediaCardGrid({ heading, items, columns = 3, viewAllUrl = "/reso
               className="group cursor-pointer"
             >
               <Link href={item.link} className="block space-y-4">
-                <div className="relative aspect-video rounded-2xl overflow-hidden bg-card border border-border group-hover:border-primary/30 transition-all duration-300">
+                <div className="relative aspect-video rounded-xl overflow-hidden bg-card border border-border group-hover:border-primary/30 transition-all duration-300">
                   <img
                     src={item.image}
                     alt={item.title}

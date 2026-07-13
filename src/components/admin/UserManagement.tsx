@@ -279,7 +279,7 @@ export function UserManagement() {
                             exit={{ opacity: 0, scale: 0.8, rotateX: -45, y: -20, z: -100 }}
                             transition={{ type: "spring", stiffness: 350, damping: 30, mass: 1 }}
                             style={{ transformStyle: "preserve-3d", perspective: "1000px" }}
-                            className="relative w-full max-w-lg bg-card border border-border rounded-2xl shadow-2xl overflow-hidden"
+                            className="relative w-full max-w-lg bg-card border border-border rounded-xl shadow-2xl overflow-hidden"
                         >
                             <div className="flex justify-between items-center p-6 border-b border-border bg-muted/30">
                                 <h2 className="text-xl font-bold text-foreground">

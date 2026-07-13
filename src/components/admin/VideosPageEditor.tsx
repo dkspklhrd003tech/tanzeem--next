@@ -79,7 +79,7 @@ function SortableCategoryCard({ id, item, onEdit, onDelete, onClick, videoCount 
       ref={setNodeRef}
       style={style}
       className={cn(
-        "group relative flex flex-col bg-card rounded-2xl border border-border overflow-hidden transition-all duration-200 cursor-pointer",
+        "group relative flex flex-col bg-card rounded-xl border border-border overflow-hidden transition-all duration-200 cursor-pointer",
         isDragging ? "shadow-2xl border-primary scale-[1.02]" : "hover:shadow-md hover:border-primary/50"
       )}
       onClick={() => onClick(item)}
@@ -431,7 +431,7 @@ export default function VideosPageEditor({ pageId, initialPageData }: { pageId: 
             isLoading ? (
               <div className="flex items-center justify-center py-20 text-muted-foreground"><Loader2 className="w-6 h-6 animate-spin text-primary mr-2" /> Loading Videos...</div>
             ) : filteredCategories.length === 0 ? (
-              <div className="bg-card rounded-2xl border p-12 text-center text-muted-foreground">No Videos Found.</div>
+              <div className="bg-card rounded-xl border p-12 text-center text-muted-foreground">No Videos Found.</div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {filteredCategories.map(cat => (
@@ -470,7 +470,7 @@ export default function VideosPageEditor({ pageId, initialPageData }: { pageId: 
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {speakersList.map(speaker => (
-              <div key={speaker.id} className="group flex flex-col bg-card rounded-2xl border border-border overflow-hidden hover:border-primary/50 transition-colors">
+              <div key={speaker.id} className="group flex flex-col bg-card rounded-xl border border-border overflow-hidden hover:border-primary/50 transition-colors">
                 <div className="aspect-square bg-muted relative border-b border-border">
                   {speaker.avatar ? (
                     <img src={speaker.avatar} alt={speaker.name} className="w-full h-full object-cover" />
@@ -512,7 +512,7 @@ export default function VideosPageEditor({ pageId, initialPageData }: { pageId: 
       {/* Category Modal */}
       {isCatModalOpen && (
         <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-card w-full max-w-md border border-border rounded-2xl shadow-xl relative overflow-hidden flex flex-col">
+          <div className="bg-card w-full max-w-md border border-border rounded-xl shadow-xl relative overflow-hidden flex flex-col">
             <div className="p-6 border-b border-border flex justify-between items-center bg-muted/20">
               <h2 className="text-xl font-bold flex items-center gap-2">
                 <Video className="h-5 w-5 text-primary" />
@@ -546,7 +546,7 @@ export default function VideosPageEditor({ pageId, initialPageData }: { pageId: 
       {/* Speaker Modal */}
       {isSpeakerModalOpen && (
         <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-card w-full max-w-md border border-border rounded-2xl shadow-xl relative overflow-hidden flex flex-col max-h-[90vh]">
+          <div className="bg-card w-full max-w-md border border-border rounded-xl shadow-xl relative overflow-hidden flex flex-col max-h-[90vh]">
             <div className="p-6 border-b border-border flex justify-between items-center bg-muted/20">
               <h2 className="text-xl font-bold flex items-center gap-2">
                 <User className="h-5 w-5 text-primary" />
@@ -588,7 +588,7 @@ export default function VideosPageEditor({ pageId, initialPageData }: { pageId: 
       {/* Video Modal */}
       {isVideoModalOpen && (
         <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-card w-full max-w-xl border border-border rounded-2xl shadow-xl relative overflow-hidden flex flex-col max-h-[90vh]">
+          <div className="bg-card w-full max-w-xl border border-border rounded-xl shadow-xl relative overflow-hidden flex flex-col max-h-[90vh]">
             <div className="p-6 border-b border-border flex justify-between items-center bg-muted/20">
               <h2 className="text-xl font-bold flex items-center gap-2">
                 <Video className="h-5 w-5 text-primary" />
