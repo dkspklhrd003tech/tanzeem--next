@@ -22,7 +22,7 @@ export default async function VideosByCategoryPage() {
       })
       .from(videoCategories)
       .where(isNull(videoCategories.parentId))
-      .orderBy(desc(videoCategories.order), asc(videoCategories.name));
+      .orderBy(asc(videoCategories.order), asc(videoCategories.name));
 
     countRows = await db
       .select({ categoryId: videos.categoryId, total: count() })

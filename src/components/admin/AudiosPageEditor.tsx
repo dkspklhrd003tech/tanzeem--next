@@ -124,7 +124,7 @@ function SortableAudioCard({ id, item, speakerName, onEdit, onDelete }: any) {
           <img src={item.thumbnailUrl} alt={item.title} className="w-full h-full object-cover" />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center text-muted-foreground/50">
-            <Video className="w-6 h-6" />
+            <Video className="w-7 h-7" />
           </div>
         )}
       </div>

@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { Video, Share2, Clock, Eye, ExternalLink, ArrowLeft } from "lucide-react";
+import { Video, Share2, Clock, PlayCircle, ExternalLink, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
@@ -38,7 +38,11 @@ function formatDuration(secs: number | null) {
 
 /** Build an embeddable iframe src from a YouTube URL or embed URL. */
 function toEmbedSrc(videoUrl: string, embedUrl: string | null): string | null {
-  if (embedUrl) return embedUrl;
+  if (embedUrl) {
+    const srcMatch = embedUrl.match(/src=["']([^"']+)["']/i);
+    if (srcMatch && srcMatch[1]) return srcMatch[1];
+    return embedUrl;
+  }
   const yt = videoUrl.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
   if (yt) return `https://www.youtube.com/embed/${yt[1]}?rel=0`;
   return null;
@@ -46,7 +50,7 @@ function toEmbedSrc(videoUrl: string, embedUrl: string | null): string | null {
 
 export function VideoDetailPage({ item, related, customFieldSchema = [] }: { item: VideoItem; related: VideoItem[]; customFieldSchema?: any[] }) {
   const embedSrc = toEmbedSrc(item.videoUrl, item.embedUrl);
-  
+
   const [viewCount, setViewCount] = useState(item.playCount || item.viewCount || 0);
   const trackedRef = useRef(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -56,10 +60,10 @@ export function VideoDetailPage({ item, related, customFieldSchema = [] }: { ite
     trackedRef.current = true;
     try {
       setViewCount(prev => prev + 1);
-      await fetch(`/api/track`, { 
+      await fetch(`/api/track`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ entityType: "videos", entityId: item.id, actionType: "play" })
+        body: JSON.stringify({ entityType: "video", entityId: item.id, actionType: "play" })
       });
     } catch (e) {
       console.error("Failed to track video view:", e);
@@ -69,9 +73,9 @@ export function VideoDetailPage({ item, related, customFieldSchema = [] }: { ite
   // Cross-origin iframe tracking (Rumble, YT, Dailymotion, etc)
   useEffect(() => {
     if (!embedSrc) return;
-    
+
     let timer: NodeJS.Timeout;
-    
+
     const handleBlur = () => {
       // If the active element is our iframe, it means the user clicked inside it (likely Play)
       if (document.activeElement === iframeRef.current) {
@@ -93,6 +97,41 @@ export function VideoDetailPage({ item, related, customFieldSchema = [] }: { ite
 
 
 
+  let playerName = "External Site";
+  let externalLink = item.videoUrl || item.embedUrl;
+  if (externalLink) {
+    if (externalLink.includes("youtube") || externalLink.includes("youtu.be")) {
+      playerName = "YouTube";
+      if (externalLink.includes("/embed/")) {
+        const id = externalLink.split("/embed/")[1]?.split("?")[0];
+        if (id) externalLink = `https://www.youtube.com/watch?v=${id}`;
+      }
+    }
+    else if (externalLink.includes("vimeo")) {
+      playerName = "Vimeo";
+      if (externalLink.includes("player.vimeo.com/video/")) {
+        const id = externalLink.split("/video/")[1]?.split("?")[0];
+        if (id) externalLink = `https://vimeo.com/${id}`;
+      }
+    }
+    else if (externalLink.includes("dailymotion") || externalLink.includes("dai.ly")) {
+      playerName = "Dailymotion";
+      if (externalLink.includes("/embed/video/")) {
+        const id = externalLink.split("/embed/video/")[1]?.split("?")[0];
+        if (id) externalLink = `https://www.dailymotion.com/video/${id}`;
+      }
+    }
+    else if (externalLink.includes("ok.ru")) {
+      playerName = "OK.ru";
+      if (externalLink.includes("/videoembed/")) {
+        externalLink = externalLink.replace("/videoembed/", "/video/");
+      }
+    }
+    else if (externalLink.includes("facebook")) {
+      playerName = "Facebook";
+    }
+  }
+
   return (
     <div className="container max-w-7xl mx-auto py-10">
       <Link href="/videos-by-speakers" className="inline-flex items-center gap-2 text-sm text-foreground-muted hover:text-primary mb-6 transition-colors">
@@ -102,6 +141,40 @@ export function VideoDetailPage({ item, related, customFieldSchema = [] }: { ite
 
       <div className="grid lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-5">
+          {/* Meta */}
+          <div>
+            {item.category && <Badge variant="outline" className="text-primary border-primary/30 mb-3">{item.category.name}</Badge>}
+            <h1 className="text-xl md:text-2xl font-bold text-foreground leading-snug">{item.title}</h1>
+            <div className="flex flex-wrap items-center gap-4 text-sm text-foreground-muted mb-4">
+              {item.speaker && (
+                <Link href={`/videos?speaker=${item.speaker.slug}`} className="hover:text-primary font-medium transition-colors">
+                  {item.speaker.name}
+                </Link>
+              )}
+              {item.duration && <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" />{formatDuration(item.duration)}</span>}
+            </div>
+            <div className="flex flex-wrap gap-3 mt-6">
+              <div className="flex items-center gap-2 px-4 py-2 rounded-full text-sm bg-muted/50 text-foreground-muted font-medium border border-border">
+                <PlayCircle className="h-4 w-4" /> Played ({viewCount.toLocaleString()})
+              </div>
+              <ClientShareButton variant="default" className="w-auto px-4 py-2 text-sm bg-transparent border-border rounded-full" entityType="video" entityId={item.id} shareCount={item.shareCount} />
+              {(!embedSrc && item.videoUrl) ? (
+                <TrackedDownloadLink
+                  href={item.videoUrl}
+                  entityType="video"
+                  entityId={item.id}
+                  fileSize={item.fileSize}
+                  downloadCount={item.downloadCount}
+                  className="rounded-full px-4 py-2 h-auto bg-primary text-white text-sm shadow-none border-0"
+                />
+              ) : (
+                <a href={externalLink || undefined} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold bg-primary text-primary-foreground transition-colors">
+                  <ExternalLink className="h-4 w-4" /> Watch on {playerName}
+                </a>
+              )}
+            </div>
+          </div>
+
           {/* Video embed */}
           <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="rounded-xl overflow-hidden bg-black aspect-video">
             {embedSrc ? (
@@ -114,10 +187,10 @@ export function VideoDetailPage({ item, related, customFieldSchema = [] }: { ite
                 className="w-full h-full"
               />
             ) : (
-              <video 
-                controls 
-                src={item.videoUrl} 
-                className="w-full h-full" 
+              <video
+                controls
+                src={item.videoUrl}
+                className="w-full h-full"
                 poster={item.thumbnailUrl ?? undefined}
                 onTimeUpdate={(e) => {
                   if (e.currentTarget.currentTime > 10) {
@@ -130,38 +203,6 @@ export function VideoDetailPage({ item, related, customFieldSchema = [] }: { ite
             )}
           </motion.div>
 
-          {/* Meta */}
-          <div>
-            {item.category && <Badge variant="outline" className="text-primary border-primary/30 mb-3">{item.category.name}</Badge>}
-            <h1 className="text-2xl md:text-3xl font-bold text-foreground leading-snug mb-3">{item.title}</h1>
-            <div className="flex flex-wrap items-center gap-4 text-sm text-foreground-muted mb-4">
-              {item.speaker && (
-                <Link href={`/videos?speaker=${item.speaker.slug}`} className="hover:text-primary font-medium transition-colors">
-                  {item.speaker.name}
-                </Link>
-              )}
-              {item.duration && <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" />{formatDuration(item.duration)}</span>}
-              {viewCount > 0 && <span className="flex items-center gap-1 text-primary"><Eye className="h-3.5 w-3.5" />{viewCount.toLocaleString()} Views</span>}
-            </div>
-            <div className="flex flex-wrap gap-3 mt-6">
-              <ClientShareButton variant="default" className="w-auto px-4 py-2 text-sm bg-transparent border-border rounded-full" />
-              {(!embedSrc && item.videoUrl) ? (
-                <TrackedDownloadLink
-                  href={item.videoUrl}
-                  entityType="videos"
-                  entityId={item.id}
-                  fileSize={item.fileSize}
-                  downloadCount={item.downloadCount}
-                  className="rounded-full px-4 py-2 h-auto bg-primary text-white text-sm shadow-none border-0"
-                />
-              ) : (
-                <a href={item.videoUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold bg-primary text-primary-foreground transition-colors">
-                  <ExternalLink className="h-4 w-4" /> Watch on YouTube
-                </a>
-              )}
-            </div>
-          </div>
-
           {item.description && (
             <div className="bg-card border border-border rounded-xl p-5">
               <h2 className="text-sm font-semibold uppercase tracking-wide text-foreground-muted mb-3">Description</h2>
@@ -170,7 +211,7 @@ export function VideoDetailPage({ item, related, customFieldSchema = [] }: { ite
           )}
 
           {/* Dynamic Custom Fields */}
-          {customFieldSchema.length > 0 && Object.keys(item.customFields || {}).length > 0 && (
+          {/* {customFieldSchema.length > 0 && Object.keys(item.customFields || {}).length > 0 && (
             <div className="bg-card border border-border rounded-xl p-5 space-y-4">
               <h2 className="text-sm font-semibold uppercase tracking-wide text-foreground-muted mb-2">Additional Information</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -198,10 +239,12 @@ export function VideoDetailPage({ item, related, customFieldSchema = [] }: { ite
               </div>
             </div>
           )}
+          {/* end custom fields */}
+
         </div>
 
         {/* Sidebar */}
-        <div className="space-y-6">
+          {/* <div className="space-y-6">
           {item.speaker && (
             <div className="bg-card border border-border rounded-xl p-5">
               <h2 className="text-xs font-semibold uppercase tracking-wide text-foreground-muted mb-4">Speaker</h2>
@@ -242,8 +285,8 @@ export function VideoDetailPage({ item, related, customFieldSchema = [] }: { ite
               </div>
             </div>
           )}
+        </div> */}
         </div>
       </div>
-    </div>
-  );
+      );
 }

@@ -59,7 +59,7 @@ export function MediaCardGrid({ heading, items, columns = 3, viewAllUrl = "/reso
                   <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors" />
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="w-14 h-14 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center text-white scale-90 group-hover:scale-100 transition-transform duration-300">
-                      {item.type === "video" ? <Play className="w-6 h-6 fill-current" /> : <Headphones className="w-6 h-6" />}
+                      {item.type === "video" ? <Play className="w-6 h-6 fill-current" /> : <Headphones className="w-7 h-7" />}
                     </div>
                   </div>
                 </div>

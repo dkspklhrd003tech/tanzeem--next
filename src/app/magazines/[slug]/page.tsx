@@ -81,7 +81,7 @@ export default async function MagazineDetailsPage({ params }: PageProps) {
 
     return (
         <main className=" bg-zinc-50/50">
-            <div className="container mx-auto py-10 px-4 flex flex-col items-center mt-4">
+            <div className="container mx-auto py-10 flex flex-col items-center mt-4">
                 <div className="w-full max-w-5xl mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <h1 className="text-2xl md:text-3xl font-bold text-foreground">
                         {targetLink.title}

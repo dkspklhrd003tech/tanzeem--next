@@ -82,7 +82,7 @@ export default async function AudioBookDetailsPage({ params }: PageProps) {
                 </div>
             </div> */}
 
-            <div className="container mx-auto py-10 px-4">
+            <div className="container mx-auto py-10">
                 <div className="max-w-7xl mx-auto bg-white rounded-xl shadow-xl border border-border overflow-hidden flex flex-col md:flex-row">
 
 

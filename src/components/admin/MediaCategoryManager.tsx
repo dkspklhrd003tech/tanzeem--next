@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import { Plus, XCircle, Edit, Video, Headphones, Image as ImageIcon, X, UploadCloud, Loader2 } from "lucide-react";
+import { Plus, XCircle, Edit, Video, Headphones, Image as ImageIcon, X, UploadCloud, Loader2, PlayCircle, Share2, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -14,6 +15,7 @@ import { toast } from "sonner";
 import { CustomFieldRenderer } from "./CustomFieldRenderer";
 import { CustomFieldBuilder } from "./CustomFieldBuilder";
 import { cn, resolveMediaUrl } from "@/lib/utils";
+import { parseVideoInput } from "@/lib/video-parser";
 import {
   DndContext,
   closestCenter,
@@ -44,6 +46,10 @@ interface MediaItem {
   slug?: string;
   tags?: string;
   customFields?: any;
+  viewCount?: number;
+  playCount?: number;
+  shareCount?: number;
+  downloadCount?: number;
 }
 
 interface SubCategory {
@@ -99,7 +105,16 @@ function SortableCategoryCard({ cat, onClick, onEdit, onDelete }: { cat: MainCat
       <div className="p-4 flex items-start justify-between">
         <div>
           <h5 className="font-bold text-foreground text-lg">{cat.code ? `${cat.code} | ` : ""}{cat.title}</h5>
-          <p className="text-xs text-muted-foreground mt-1">{cat.subCategories?.length || 0} Sub-categories</p>
+          <div className="flex items-center gap-2 mt-2">
+            <Badge variant="secondary" className="text-[10px] uppercase font-semibold">
+              {cat.subCategories?.filter(s => !s.id.endsWith("_direct")).length || 0} Sub-categories
+            </Badge>
+            {cat.subCategories?.find(s => s.id.endsWith("_direct")) && (
+              <Badge variant="outline" className="text-[10px] uppercase font-semibold text-primary border-primary/20">
+                {cat.subCategories.find(s => s.id.endsWith("_direct"))?.mediaItems?.length || 0} Direct Videos
+              </Badge>
+            )}
+          </div>
         </div>
         <div className="flex items-center gap-1">
           <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-foreground hover:text-white z-10" onClick={(e) => { e.stopPropagation(); onEdit(cat); }}>
@@ -186,7 +201,11 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
             code: item.code || item.episodeNumber || "",
             slug: item.slug || "",
             tags: item.tags || "",
-            customFields: item.customFields || {}
+            customFields: item.customFields || {},
+            viewCount: item.viewCount || 0,
+            playCount: item.playCount || 0,
+            shareCount: item.shareCount || 0,
+            downloadCount: item.downloadCount || 0
           })) || []
         })) || []).sort((a: any, b: any) => (a.order || 0) - (b.order || 0))
       })).sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
@@ -359,6 +378,24 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
   const formatEmbedUrl = (url: string) => {
     if (!url) return "";
 
+    // If it's an iframe tag (or partial iframe snippet containing src), extract the src attribute
+    const srcMatch = url.match(/src=["']([^"']+)["']/i);
+    if (srcMatch && srcMatch[1]) {
+      url = srcMatch[1];
+    }
+
+    // Clean up random trailing iframe garbage if they pasted a partial iframe without src
+    if (url.includes("></iframe>") || url.includes("frameborder=")) {
+      // If we couldn't extract a src, and it's just garbage, we might want to return empty 
+      // but let's try to extract any http URL first
+      const httpMatch = url.match(/(https?:\/\/[^\s"']+)/i);
+      if (httpMatch && httpMatch[1]) {
+        url = httpMatch[1];
+      } else {
+         // It's just iframe garbage without a url, return what they typed and let them fix it
+      }
+    }
+
     // YouTube
     const ytMatch = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i);
     if (ytMatch && ytMatch[1]) return `https://www.youtube.com/embed/${ytMatch[1]}`;
@@ -375,7 +412,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
     const okMatch = url.match(/(?:ok\.ru\/(?:video|videoembed)\/)([0-9]+)/i);
     if (okMatch && okMatch[1]) return `https://ok.ru/videoembed/${okMatch[1]}`;
 
-    return url;
+    return url.trim();
   };
 
   const saveMediaItem = async (subId: string, item: MediaItem) => {
@@ -516,9 +553,9 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
           <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
             <SortableContext items={categories.map(c => c.id)} strategy={rectSortingStrategy}>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {categories.map((cat) => (
+                {categories.map((cat, i) => (
                   <SortableCategoryCard
-                    key={cat.id}
+                    key={`mainCat-${cat.id}-${i}`}
                     cat={cat}
                     onClick={() => setActiveTab(cat.id)}
                     onEdit={(c) => setEditingMainCat(c)}
@@ -591,7 +628,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {activeCategory.subCategories.filter(s => !s.id.endsWith('_direct')).map((sub, i) => (
                   <div
-                    key={sub.id || `sub-${i}`}
+                    key={`subCat-${sub.id}-${i}`}
                     className="relative group border border-border/80 rounded-xl overflow-hidden bg-card hover:border-primary/50 transition-all shadow-sm cursor-pointer hover:shadow-md flex flex-col"
                     onClick={() => {
                       setEditingSubCat({ cat: sub, mainId: activeCategory.id });
@@ -667,7 +704,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
 
                   return (
                     <div
-                      key={`direct-${item.id || i}`}
+                      key={`directItem-${item.id}-${i}`}
                       className="relative group border border-border/80 rounded-xl overflow-hidden bg-card hover:border-primary/50 transition-all shadow-sm cursor-pointer hover:shadow-md flex flex-col"
                       onClick={() => {
                         setEditingSubCat({ cat: directSub, mainId: activeCategory.id });
@@ -901,14 +938,19 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                 {editingSubCat.cat.mediaItems.length > 0 && (
                   <div className="space-y-2 mb-6 max-h-[300px] overflow-y-auto pr-2">
                     {editingSubCat.cat.mediaItems.map((item, i) => (
-                      <div key={item.id || `item-${i}`} className={cn("flex items-center justify-between p-3 border rounded-lg bg-card hover:border-primary/50 cursor-pointer", editingMedia?.item.id === item.id ? "ring-2 ring-primary border-primary" : "")} onClick={() => setEditingMedia({ item, subId: editingSubCat.cat.id })}>
+                      <div key={`modalItem-${item.id}-${i}`} className={cn("flex items-center justify-between p-3 border rounded-lg bg-card hover:border-primary/50 cursor-pointer", editingMedia?.item.id === item.id ? "ring-2 ring-primary border-primary" : "")} onClick={() => setEditingMedia({ item, subId: editingSubCat.cat.id })}>
                         <div className="flex items-center gap-3 w-full overflow-hidden">
                           <div className="w-10 h-10 shrink-0 rounded-full bg-primary/10 flex items-center justify-center text-primary">
                             {mediaType === "video" ? <Video className="w-5 h-5" /> : <Headphones className="w-5 h-5" />}
                           </div>
                           <div className="flex-1 min-w-0">
                             <p className="font-semibold text-sm truncate">{item.code ? `${item.code} | ` : ""}{item.title}</p>
-                            <p className="text-xs text-muted-foreground truncate">{item.mediaUrl || item.embedUrl || "No media URL"}</p>
+                            <p className="text-xs text-muted-foreground line-clamp-1 break-all pr-2">{item.mediaUrl || item.embedUrl || "No media URL"}</p>
+                            <div className="flex gap-4 mt-2 text-[11px] text-muted-foreground/80 font-medium">
+                              <span className="flex items-center gap-1.5" title="Plays / Views"><PlayCircle className="w-3.5 h-3.5" /> {item.playCount || item.viewCount || 0}</span>
+                              <span className="flex items-center gap-1.5" title="Shares"><Share2 className="w-3.5 h-3.5" /> {item.shareCount || 0}</span>
+                              <span className="flex items-center gap-1.5" title="Downloads"><Download className="w-3.5 h-3.5" /> {item.downloadCount || 0}</span>
+                            </div>
                           </div>
                         </div>
                         <Button type="button" variant="ghost" size="sm" className="h-8 w-8 text-destructive shrink-0" onClick={(e) => {
@@ -968,16 +1010,18 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                             value={editingMedia.item.mediaUrl}
                             onChange={(e) => {
                               const newUrl = e.target.value;
-                              setEditingMedia({ ...editingMedia, item: { ...editingMedia.item, mediaUrl: newUrl } });
+                              
+                              if (mediaType === "video") {
+                                const parsed = parseVideoInput(newUrl);
+                                setEditingMedia({ ...editingMedia, item: { ...editingMedia.item, mediaUrl: newUrl, embedUrl: parsed.embedSrc || editingMedia.item.embedUrl } });
 
-                              // Auto-fetch thumbnail if empty
-                              if (editingSubCat && !editingSubCat.cat.image) {
-                                const ytMatch = newUrl.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i);
-                                if (ytMatch && ytMatch[1]) {
-                                  const thumbUrl = `https://img.youtube.com/vi/${ytMatch[1]}/maxresdefault.jpg`;
-                                  setEditingSubCat({ ...editingSubCat, cat: { ...editingSubCat.cat, image: thumbUrl } });
+                                // Auto-fetch thumbnail to category if empty
+                                if (editingSubCat && !editingSubCat.cat.image && parsed.thumbnailUrl) {
+                                  setEditingSubCat({ ...editingSubCat, cat: { ...editingSubCat.cat, image: parsed.thumbnailUrl } });
                                   toast.success("Thumbnail auto-fetched!");
                                 }
+                              } else {
+                                setEditingMedia({ ...editingMedia, item: { ...editingMedia.item, mediaUrl: newUrl } });
                               }
                             }}
                             placeholder="https://..."
@@ -1026,27 +1070,43 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                       </div>
 
                       {mediaType === "video" && (
-                        <div className="space-y-2">
-                          <Label>Or Embed URL (YouTube, Vimeo, Dailymotion, OK.ru)</Label>
-                          <Input
-                            value={editingMedia.item.embedUrl || ""}
-                            onChange={(e) => {
-                              const newUrl = e.target.value;
-                              setEditingMedia({ ...editingMedia, item: { ...editingMedia.item, embedUrl: newUrl } });
-
-                              // Auto-fetch thumbnail if empty
-                              if (editingSubCat && !editingSubCat.cat.image) {
-                                const ytMatch = newUrl.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i);
-                                if (ytMatch && ytMatch[1]) {
-                                  const thumbUrl = `https://img.youtube.com/vi/${ytMatch[1]}/hqdefault.jpg`;
-                                  setEditingSubCat({ ...editingSubCat, cat: { ...editingSubCat.cat, image: thumbUrl } });
-                                  toast.success("Thumbnail auto-fetched!");
+                        <div className="space-y-4">
+                          <div className="space-y-2">
+                            <Label>Embed Code (Optional iframe)</Label>
+                            <Textarea
+                              value={editingMedia.item.embedUrl || ""}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                const parsed = parseVideoInput(val);
+                                setEditingMedia({ ...editingMedia, item: { ...editingMedia.item, embedUrl: parsed.embedSrc || val, mediaUrl: editingMedia.item.mediaUrl || parsed.videoUrl } });
+                                
+                                if (editingSubCat && !editingSubCat.cat.image && parsed.thumbnailUrl) {
+                                  setEditingSubCat({ ...editingSubCat, cat: { ...editingSubCat.cat, image: parsed.thumbnailUrl } });
                                 }
-                              }
-                            }}
-                            placeholder="https://www.youtube.com/embed/..."
-                          />
-                          <p className="text-[10px] text-muted-foreground">If an embedded URL is provided, it will be used by the player instead of the Video File URL.</p>
+                              }}
+                              placeholder='<iframe src="https://www.youtube.com/embed/..." />'
+                              className="font-mono text-xs"
+                            />
+                            <p className="text-[10px] text-muted-foreground">If an embedded URL is provided, it will be used by the player instead of the Video File URL.</p>
+                          </div>
+                          {(parseVideoInput(editingMedia.item.mediaUrl || editingMedia.item.embedUrl || "").embedSrc || editingMedia.item.mediaUrl) && (
+                            <div className="space-y-2 pt-2">
+                              <Label>Video Preview</Label>
+                              <div className="rounded-md overflow-hidden bg-black aspect-video relative">
+                                {parseVideoInput(editingMedia.item.mediaUrl || editingMedia.item.embedUrl || "").embedSrc ? (
+                                  <iframe
+                                    src={parseVideoInput(editingMedia.item.mediaUrl || editingMedia.item.embedUrl || "").embedSrc}
+                                    title="Video Preview"
+                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allowFullScreen
+                                    className="w-full h-full absolute inset-0"
+                                  />
+                                ) : (
+                                  <video src={editingMedia.item.mediaUrl} controls className="w-full h-full object-contain absolute inset-0" />
+                                )}
+                              </div>
+                            </div>
+                          )}
                         </div>
                       )}
 

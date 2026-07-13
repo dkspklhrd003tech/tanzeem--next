@@ -358,8 +358,7 @@ export default function PagesListPage() {
 
               {/* Arabesque geometric watermark */}
               <div
-                className="absolute inset-0 opacity-[0.03] pointer-events-none bg-repeat bg-center"
-                style={{ backgroundImage: `url('/images/pattern-arabesque.png')`, backgroundSize: '100px' }}
+                className="absolute inset-0 pointer-events-none opacity-5"
               />
 
               {/* Content */}

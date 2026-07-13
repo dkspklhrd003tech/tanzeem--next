@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Pencil, XCircle, Settings2, Loader2, User, ArrowLeft, Music, UploadCloud, Bot } from "lucide-react";
+import { Plus, Pencil, XCircle, Settings2, Loader2, User, ArrowLeft, Music, UploadCloud, Bot, PlayCircle, Share2, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -63,6 +63,10 @@ interface AudioItem {
   isPublished: boolean;
   isNew?: boolean;
   customFields?: any;
+  viewCount?: number;
+  playCount?: number;
+  shareCount?: number;
+  downloadCount?: number;
 }
 
 function SortableSpeakerCard({ speaker, onClick, onEdit, onDelete }: { speaker: SpeakerItem, onClick: () => void, onEdit: (s: SpeakerItem) => void, onDelete: (s: SpeakerItem) => void }) {
@@ -319,7 +323,12 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
                         <h3 className="font-bold">{audio.title}</h3>
                         {audio.isNew && <span className="text-[10px] uppercase font-bold tracking-wider bg-green-500 text-white px-2 py-0.5 rounded-full">New</span>}
                       </div>
-                      <p className="text-xs text-muted-foreground break-all">{audio.audioUrl || "No URL"}</p>
+                      <p className="text-xs text-muted-foreground break-all truncate">{audio.audioUrl || "No URL"}</p>
+                      <div className="flex gap-4 mt-2 text-[11px] text-muted-foreground/80 font-medium">
+                        <span className="flex items-center gap-1.5" title="Plays / Views"><PlayCircle className="w-3.5 h-3.5" /> {audio.playCount || audio.viewCount || 0}</span>
+                        <span className="flex items-center gap-1.5" title="Shares"><Share2 className="w-3.5 h-3.5" /> {audio.shareCount || 0}</span>
+                        <span className="flex items-center gap-1.5" title="Downloads"><Download className="w-3.5 h-3.5" /> {audio.downloadCount || 0}</span>
+                      </div>
                     </div>
                     <div className="flex gap-2 justify-end mt-4">
                       <Button variant="ghost" size="sm" onClick={() => router.push(`/sitemanager/media/audio/${audio.id}`)}><Pencil className="w-4 h-4" /></Button>

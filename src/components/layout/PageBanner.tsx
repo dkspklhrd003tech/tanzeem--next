@@ -134,8 +134,7 @@ export function PageBanner({ settings, titleOverride, breadcrumbsOverride, bgIma
 
       {/* Arabesque geometric watermark */}
       <div
-        className="absolute inset-0 opacity-[0.03] pointer-events-none bg-repeat bg-center"
-        style={{ backgroundImage: `url('/images/pattern-arabesque.png')`, backgroundSize: '180px' }}
+        className="absolute inset-0 opacity-[0.03] pointer-events-none"
       />
 
       {/* Content */}

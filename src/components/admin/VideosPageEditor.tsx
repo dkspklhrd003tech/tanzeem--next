@@ -31,6 +31,7 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { PageRecord } from "@/components/sitemanager/PageForm";
 import { ImageUploader } from "@/components/admin/ImageUploader";
+import { parseVideoInput } from "@/lib/video-parser";
 
 function slugify(text: string) {
   return text.toLowerCase().trim()
@@ -39,13 +40,7 @@ function slugify(text: string) {
     .replace(/^-+|-+$/g, "");
 }
 
-function toEmbedSrc(videoUrl: string, embedUrl: string | null): string | null {
-  if (embedUrl) return embedUrl;
-  if (!videoUrl) return null;
-  const yt = videoUrl.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
-  if (yt) return `https://www.youtube.com/embed/${yt[1]}?rel=0`;
-  return null;
-}
+
 
 interface CategoryItem {
   id: string;
@@ -132,7 +127,7 @@ function SortableVideoCard({ id, item, speakerName, onEdit, onDelete }: any) {
           <img src={item.thumbnailUrl} alt={item.title} className="w-full h-full object-cover" />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center text-muted-foreground/50">
-            <Video className="w-6 h-6" />
+            <Video className="w-7 h-7" />
           </div>
         )}
       </div>
@@ -619,19 +614,39 @@ export default function VideosPageEditor({ pageId, initialPageData }: { pageId: 
 
                 <div className="space-y-2 col-span-2">
                   <Label>Video URL <span className="text-destructive">*</span></Label>
-                  <Input className={cn(videoFormErrors.videoUrl && "border-destructive")} placeholder="https://youtube.com/..." value={videoFormData.videoUrl} onChange={e => setVideoFormData({ ...videoFormData, videoUrl: e.target.value })} />
+                  <Input
+                    className={cn(videoFormErrors.videoUrl && "border-destructive")}
+                    placeholder="https://youtube.com/..."
+                    value={videoFormData.videoUrl}
+                    onChange={e => {
+                      const val = e.target.value;
+                      const parsed = parseVideoInput(val);
+                      setVideoFormData({ ...videoFormData, videoUrl: val, embedUrl: parsed.embedSrc || videoFormData.embedUrl, thumbnailUrl: videoFormData.thumbnailUrl || parsed.thumbnailUrl });
+                    }}
+                  />
                   {videoFormErrors.videoUrl && <p className="text-xs text-destructive">{videoFormErrors.videoUrl}</p>}
                 </div>
-                <div className="space-y-2 col-span-2"><Label>Embed URL (Optional)</Label><Input placeholder="https://www.youtube.com/embed/..." value={videoFormData.embedUrl} onChange={e => setVideoFormData({ ...videoFormData, embedUrl: e.target.value })} /></div>
+                <div className="space-y-2 col-span-2">
+                  <Label>Embed URL (Optional)</Label>
+                  <Input
+                    placeholder="<iframe src='...' /> or URL"
+                    value={videoFormData.embedUrl}
+                    onChange={e => {
+                      const val = e.target.value;
+                      const parsed = parseVideoInput(val);
+                      setVideoFormData({ ...videoFormData, embedUrl: parsed.embedSrc || val, videoUrl: videoFormData.videoUrl || parsed.videoUrl, thumbnailUrl: videoFormData.thumbnailUrl || parsed.thumbnailUrl });
+                    }}
+                  />
+                </div>
 
                 {/* Iframe Preview */}
-                {(toEmbedSrc(videoFormData.videoUrl, videoFormData.embedUrl) || videoFormData.videoUrl) && (
+                {(parseVideoInput(videoFormData.videoUrl || videoFormData.embedUrl || "").embedSrc || videoFormData.videoUrl) && (
                   <div className="space-y-2 col-span-2 pt-2">
                     <Label>Video Preview</Label>
-                    <div className="rounded-md overflow-hidden bg-black aspect-video">
-                      {toEmbedSrc(videoFormData.videoUrl, videoFormData.embedUrl) ? (
+                    <div className="rounded-md overflow-hidden bg-black aspect-video relative">
+                      {parseVideoInput(videoFormData.videoUrl || videoFormData.embedUrl || "").embedSrc ? (
                         <iframe
-                          src={toEmbedSrc(videoFormData.videoUrl, videoFormData.embedUrl)!}
+                          src={parseVideoInput(videoFormData.videoUrl || videoFormData.embedUrl || "").embedSrc}
                           title="Video Preview"
                           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                           allowFullScreen

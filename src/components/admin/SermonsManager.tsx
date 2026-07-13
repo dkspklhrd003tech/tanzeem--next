@@ -15,6 +15,7 @@ import { cn } from "@/lib/utils";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useChunkedUpload } from "@/hooks/useChunkedUpload";
 import { AudioUploader } from "@/components/admin/AudioUploader";
+import { parseVideoInput } from "@/lib/video-parser";
 
 import {
   DndContext, closestCenter, KeyboardSensor, PointerSensor,
@@ -648,10 +649,35 @@ export function SermonsManager() {
                     {sermonFormErrors.audioUrl && <p className="text-xs text-destructive">{sermonFormErrors.audioUrl}</p>}
                   </div>
                 ) : (
-                  <div className="space-y-2">
-                    <Label>Video URL or Embed <span className="text-destructive">*</span></Label>
-                    <Input className={cn(sermonFormErrors.videoUrl && "border-destructive")} value={sermonFormData.videoUrl} onChange={e => setSermonFormData({ ...sermonFormData, videoUrl: e.target.value })} placeholder="Enter YouTube/Vimeo embed URL or direct video URL..." />
-                    {sermonFormErrors.videoUrl && <p className="text-xs text-destructive">{sermonFormErrors.videoUrl}</p>}
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label>Video URL or Embed <span className="text-destructive">*</span></Label>
+                      <Input 
+                        className={cn(sermonFormErrors.videoUrl && "border-destructive")} 
+                        value={sermonFormData.videoUrl} 
+                        onChange={e => {
+                          const val = e.target.value;
+                          const parsed = parseVideoInput(val);
+                          setSermonFormData({ ...sermonFormData, videoUrl: parsed.embedSrc || parsed.videoUrl || val });
+                        }} 
+                        placeholder="Enter YouTube/Vimeo embed URL or direct video URL..." 
+                      />
+                      {sermonFormErrors.videoUrl && <p className="text-xs text-destructive">{sermonFormErrors.videoUrl}</p>}
+                    </div>
+                    {parseVideoInput(sermonFormData.videoUrl || "").embedSrc && (
+                      <div className="space-y-2 pt-2">
+                        <Label>Video Preview</Label>
+                        <div className="rounded-md overflow-hidden bg-black aspect-video relative">
+                          <iframe
+                            src={parseVideoInput(sermonFormData.videoUrl || "").embedSrc}
+                            title="Video Preview"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                            className="w-full h-full absolute inset-0"
+                          />
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

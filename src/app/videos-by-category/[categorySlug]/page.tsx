@@ -60,22 +60,20 @@ export default async function CategoryVideosPage({ params }: { params: Promise<{
 
   let directVideos: any[] = [];
 
-  // Only fetch direct videos if we are inside a sub-category
-  if (mainCat.parentId !== null) {
-    directVideos = await db
-      .select({
-        id: videos.slug,
-        title: videos.title,
-        description: videos.description,
-        videoUrl: videos.videoUrl,
-        embedUrl: videos.embedUrl,
-        thumbnailUrl: videos.thumbnailUrl,
-        duration: videos.duration,
-      })
-      .from(videos)
-      .where(and(eq(videos.categoryId, mainCat.id), eq(videos.isPublished, true)))
-      .orderBy(asc(videos.order), asc(videos.title));
-  }
+  // Always fetch direct videos for this category
+  directVideos = await db
+    .select({
+      id: videos.slug,
+      title: videos.title,
+      description: videos.description,
+      videoUrl: videos.videoUrl,
+      embedUrl: videos.embedUrl,
+      thumbnailUrl: videos.thumbnailUrl,
+      duration: videos.duration,
+    })
+    .from(videos)
+    .where(and(eq(videos.categoryId, mainCat.id), eq(videos.isPublished, true)))
+    .orderBy(asc(videos.order), asc(videos.title));
 
   return (
     <main className=" bg-background">

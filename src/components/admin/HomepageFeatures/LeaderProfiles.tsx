@@ -191,7 +191,7 @@ export function LeaderProfiles() {
                                                 {member.avatar ? (
                                                     <img src={member.avatar} alt={member.name} className="w-full h-full object-cover" />
                                                 ) : (
-                                                    <div className="w-full h-full flex items-center justify-center text-muted-foreground"><ImageIcon className="w-6 h-6" /></div>
+                                                    <div className="w-full h-full flex items-center justify-center text-muted-foreground"><ImageIcon className="w-7 h-7" /></div>
                                                 )}
                                             </div>
                                         </td>

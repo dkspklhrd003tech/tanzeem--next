@@ -59,7 +59,7 @@ export default async function KhitabEJumahCategoriesPage() {
                                     </div>
                                     <div className="shrink-0 flex flex-col items-center justify-center gap-1 mt-2 md:mt-0">
                                         <button className="h-10 w-10 flex items-center justify-center rounded-full bg-[#0d5844]/10 text-[#0d5844] group-hover:bg-[#0d5844] group-hover:text-white transition-all scale-95 group-hover:scale-100 shadow-sm shrink-0">
-                                            <AudioLines className="w-6 h-6" />
+                                            <AudioLines className="w-7 h-7" />
                                         </button>
                                         <span className="text-[11px] text-foreground font-medium transition-opacity hidden md:block">
                                             {sermonCount} Audios

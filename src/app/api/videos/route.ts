@@ -86,8 +86,8 @@ export async function POST(request: NextRequest) {
     if (!data.title || !data.slug) {
       return NextResponse.json({ error: "Title and slug are required" }, { status: 400 });
     }
-    if (!data.videoUrl) {
-      return NextResponse.json({ error: "Video URL is required" }, { status: 400 });
+    if (!data.videoUrl && !data.embedUrl) {
+      return NextResponse.json({ error: "Video URL or Embed URL is required" }, { status: 400 });
     }
 
     const videoId = crypto.randomUUID();

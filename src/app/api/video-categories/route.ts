@@ -2,14 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { db } from "@/db";
 import { videoCategories } from "@/db/schema";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, asc } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
 
 import { videos } from "@/db/schema";
 
 export async function GET(req: NextRequest) {
   try {
-    const rawCategories = await db.select().from(videoCategories).orderBy(desc(videoCategories.order), desc(videoCategories.createdAt));
+    const rawCategories = await db.select().from(videoCategories).orderBy(asc(videoCategories.order), desc(videoCategories.createdAt));
     const allVideos = await db.select().from(videos);
     
     const categories = rawCategories
@@ -34,6 +34,7 @@ export async function GET(req: NextRequest) {
             description: "Directly attached media",
             order: 0,
             isActive: true,
+            customFields: null,
             createdAt: mainCat.createdAt,
             updatedAt: mainCat.updatedAt,
             videos: directMedia

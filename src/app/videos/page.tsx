@@ -27,7 +27,7 @@ export default async function VideosPage({
   const PER_PAGE = 24;
 
   const [rawCats, speakersList, countRows] = await Promise.all([
-    db.select().from(videoCategories).orderBy(desc(videoCategories.order), asc(videoCategories.name)),
+    db.select().from(videoCategories).orderBy(asc(videoCategories.order), asc(videoCategories.name)),
     db.select().from(speakers).orderBy(asc(speakers.order), asc(speakers.name)),
     db.select({ categoryId: videos.categoryId, total: count() }).from(videos).where(eq(videos.isPublished, true)).groupBy(videos.categoryId),
   ]);

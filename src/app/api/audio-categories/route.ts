@@ -2,14 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { db } from "@/db";
 import { audioCategories } from "@/db/schema";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, asc } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
 
 import { audio } from "@/db/schema";
 
 export async function GET(req: NextRequest) {
   try {
-    const rawCategories = await db.select().from(audioCategories).orderBy(desc(audioCategories.order), desc(audioCategories.createdAt));
+    const rawCategories = await db.select().from(audioCategories).orderBy(asc(audioCategories.order), desc(audioCategories.createdAt));
     const allAudio = await db.select().from(audio);
     
     const categories = rawCategories
@@ -33,6 +33,7 @@ export async function GET(req: NextRequest) {
             description: "Directly attached media",
             order: 0,
             isActive: true,
+            customFields: null,
             createdAt: mainCat.createdAt,
             updatedAt: mainCat.updatedAt,
             audioFiles: directMedia

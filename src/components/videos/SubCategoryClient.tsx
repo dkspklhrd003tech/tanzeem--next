@@ -1,6 +1,6 @@
 "use client";
 
-import { PlayCircle, Video, X } from "lucide-react";
+import { Video, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
@@ -38,35 +38,29 @@ export function SubCategoryClient({ subCategories, directVideos = [] }: { subCat
     <div className="space-y-12">
       {/* Direct Videos Grid (Only show when inside a sub-category) */}
       {directVideos.length > 0 && subCategories.length === 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {directVideos.map((video) => (
-            <Link
+            <Link key={video.id}
               href={`/videos/${video.id}`}
-              key={video.id}
-              className="group text-left bg-card border border-border hover:border-primary/50 hover:shadow-md transition-all duration-300 rounded-xl overflow-hidden flex flex-col block w-full"
-            >
-              <div className="w-full aspect-video bg-muted relative overflow-hidden">
-                {video.thumbnailUrl ? (
-                  <img src={video.thumbnailUrl} alt={video.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-primary/5">
-                    <Video className="w-8 h-8 text-primary/30" />
-                  </div>
-                )}
-                <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <PlayCircle className="w-12 h-12 text-white drop-shadow-lg" />
-                </div>
+              className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-xl border border-border/50 hover:border-primary/50 bg-card hover:bg-muted/50 transition-colors cursor-pointer group shadow-sm hover:shadow-md h-full">
+              <div>
+                <h3 className="font-semibold text-lg flex items-center gap-2 group-hover:text-primary transition-colors line-clamp-2">
+                  {video.title}
+                </h3>
+                {video.description && <p className="text-sm text-muted-foreground line-clamp-2 mt-1">{video.description}</p>}
+
                 {video.duration && (
-                  <span className="absolute bottom-2 right-2 bg-black/70 text-white text-[10px] px-1.5 py-0.5 rounded font-mono">
+                  <span className="inline-block mt-3 bg-muted text-muted-foreground text-[10px] px-2 py-0.5 rounded-full font-mono font-medium">
                     {formatDuration(video.duration)}
                   </span>
                 )}
               </div>
-              <div className="p-4 flex-1 flex flex-col">
-                <h4 className="font-semibold text-foreground text-sm line-clamp-2 leading-snug group-hover:text-primary transition-colors">{video.title}</h4>
-                {video.description && (
-                  <p className="text-xs text-foreground-muted mt-2 line-clamp-2">{video.description}</p>
-                )}
+
+              <div className="shrink-0 flex flex-col items-center justify-center gap-1">
+                <button className="h-10 w-10 flex items-center justify-center rounded-full bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-all scale-95 group-hover:scale-100 shadow-sm">
+                  <Video className="w-7 h-7" />
+                </button>
+                <span className="text-[11px] text-foreground font-medium transition-opacity">Watch Now</span>
               </div>
             </Link>
           ))}
@@ -100,7 +94,7 @@ export function SubCategoryClient({ subCategories, directVideos = [] }: { subCat
                       </div>
                     )}
                     <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <PlayCircle className="w-12 h-12 text-white drop-shadow-lg" />
+                      <Video className="w-12 h-12 text-white drop-shadow-lg" />
                     </div>
                   </Link>
                 ) : (

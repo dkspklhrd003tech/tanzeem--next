@@ -31,7 +31,7 @@ export default async function AudiosByCategoryPage() {
       })
       .from(audioCategories)
       .where(isNull(audioCategories.parentId))
-      .orderBy(desc(audioCategories.order), asc(audioCategories.name));
+      .orderBy(asc(audioCategories.order), asc(audioCategories.name));
 
     countRows = await db
       .select({ categoryId: audio.categoryId, total: count() })

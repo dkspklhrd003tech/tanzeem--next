@@ -28,7 +28,7 @@ export default async function AudioPage({
 
   // Fetch categories and speakers for filter tabs
   const [categories, speakersList] = await Promise.all([
-    db.select().from(audioCategories).orderBy(desc(audioCategories.order), asc(audioCategories.name)),
+    db.select().from(audioCategories).orderBy(asc(audioCategories.order), asc(audioCategories.name)),
     db.select().from(speakers).orderBy(asc(speakers.order), asc(speakers.name)),
   ]);
 

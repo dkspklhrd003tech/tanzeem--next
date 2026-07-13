@@ -154,7 +154,7 @@ export function ModernizedProsePage({
               </motion.div>
             )}
             {/* Subtle Arabesque Watermark inside the card */}
-            <div className="absolute inset-0 opacity-[0.01] pointer-events-none bg-repeat bg-center" style={{ backgroundImage: `url('/images/pattern-arabesque.png')` }} />
+            <div className="absolute inset-0 opacity-[0.01] pointer-events-none" />
 
             {/* Leader Template Centered Title & Dates */}
             {template === "leader" && (

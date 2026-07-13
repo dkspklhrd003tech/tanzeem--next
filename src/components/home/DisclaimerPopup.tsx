@@ -20,7 +20,7 @@ export function DisclaimerPopup({ enabled, imageUrl }: DisclaimerPopupProps) {
       setIsVisible(true);
       // Lock body scroll
       document.body.style.overflow = "hidden";
-      
+
       // Increment counter in DB
       fetch("/api/settings/disclaimer-view", { method: "POST" }).catch(console.error);
     }
@@ -47,9 +47,9 @@ export function DisclaimerPopup({ enabled, imageUrl }: DisclaimerPopupProps) {
           className="absolute top-6 right-6 z-10 p-2 bg-black/50 hover:bg-black/80 rounded-full text-white transition-colors"
           aria-label="Close disclaimer"
         >
-          <X className="w-6 h-6" />
+          <X className="w-7 h-7" />
         </button>
-        
+
         {/* Image Container */}
         <div className="relative w-full h-full">
           <Image

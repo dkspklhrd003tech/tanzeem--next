@@ -79,7 +79,7 @@ function SortableVideoRow({
                         <img src={vid.thumbnailUrl} alt={vid.title} className="w-full h-full object-cover" />
                     ) : (
                         <div className="text-muted-foreground">
-                            <Video className="w-6 h-6" />
+                            <Video className="w-7 h-7" />
                         </div>
                     )}
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none">

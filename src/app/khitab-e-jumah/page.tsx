@@ -41,7 +41,7 @@ export default async function KhitabEJumahPage() {
                                 <CardContent className="p-6">
                                     <div className="flex items-start gap-4">
                                         <div className="bg-primary/10 p-3 rounded-full text-primary shrink-0">
-                                            <Mic className="w-6 h-6" />
+                                            <Mic className="w-7 h-7" />
                                         </div>
                                         <div>
                                             <h3 className="font-semibold text-lg mb-2 line-clamp-2">{item.title}</h3>

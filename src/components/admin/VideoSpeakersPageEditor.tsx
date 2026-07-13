@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Pencil, XCircle, Settings2, Loader2, User, ArrowLeft, Video, UploadCloud, Bot } from "lucide-react";
+import { Plus, Pencil, XCircle, Settings2, Loader2, User, ArrowLeft, Video, UploadCloud, Bot, PlayCircle, Share2, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,6 +17,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import PageSeoManager from "./PageSeoManager";
 import { CustomFieldBuilder } from "./CustomFieldBuilder";
 import { CustomFieldRenderer } from "./CustomFieldRenderer";
+import { parseVideoInput } from "@/lib/video-parser";
 import {
   DndContext,
   closestCenter,
@@ -43,13 +44,7 @@ function slugify(text: string) {
     .replace(/^-+|-+$/g, "");
 }
 
-function toEmbedSrc(videoUrl: string, embedUrl: string | null): string | null {
-  if (embedUrl) return embedUrl;
-  if (!videoUrl) return null;
-  const yt = videoUrl.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
-  if (yt) return `https://www.youtube.com/embed/${yt[1]}?rel=0`;
-  return null;
-}
+
 
 interface SpeakerItem {
   id: string;
@@ -72,6 +67,10 @@ interface VideoItem {
   isPublished: boolean;
   isNew?: boolean;
   customFields?: any;
+  viewCount?: number;
+  playCount?: number;
+  shareCount?: number;
+  downloadCount?: number;
 }
 
 function SortableSpeakerCard({ speaker, onClick, onEdit, onDelete }: { speaker: SpeakerItem, onClick: () => void, onEdit: (s: SpeakerItem) => void, onDelete: (s: SpeakerItem) => void }) {
@@ -131,6 +130,11 @@ function SortableVideoCard({ video, onEdit, onDelete }: { video: VideoItem, onEd
           {video.isNew && <span className="text-[10px] uppercase font-bold tracking-wider bg-green-500 text-white px-2 py-0.5 rounded-full shrink-0">New</span>}
         </div>
         <p className="text-xs text-muted-foreground break-all line-clamp-1">{video.videoUrl || video.embedUrl || "No URL"}</p>
+        <div className="flex gap-4 mt-2 text-[11px] text-muted-foreground/80 font-medium">
+          <span className="flex items-center gap-1.5" title="Plays / Views"><PlayCircle className="w-3.5 h-3.5" /> {video.playCount || video.viewCount || 0}</span>
+          <span className="flex items-center gap-1.5" title="Shares"><Share2 className="w-3.5 h-3.5" /> {video.shareCount || 0}</span>
+          <span className="flex items-center gap-1.5" title="Downloads"><Download className="w-3.5 h-3.5" /> {video.downloadCount || 0}</span>
+        </div>
       </div>
       <div className="flex gap-2 justify-end mt-4 relative z-30" onPointerDown={e => e.stopPropagation()}>
         <Button variant="ghost" size="sm" onClick={() => onEdit(video)}><Pencil className="w-4 h-4" /></Button>
@@ -514,7 +518,15 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
               <div className="space-y-2">
                 <Label>Video File (MP4/WebM)</Label>
                 <div className="flex gap-2">
-                  <Input value={videoFormData.videoUrl} onChange={e => setVideoFormData({ ...videoFormData, videoUrl: e.target.value })} placeholder="https://... or upload" />
+                  <Input 
+                    value={videoFormData.videoUrl} 
+                    onChange={e => {
+                      const val = e.target.value;
+                      const parsed = parseVideoInput(val);
+                      setVideoFormData({ ...videoFormData, videoUrl: val, embedUrl: parsed.embedSrc || videoFormData.embedUrl, thumbnailUrl: videoFormData.thumbnailUrl || parsed.thumbnailUrl });
+                    }} 
+                    placeholder="https://... or upload" 
+                  />
                   <div className="relative">
                     <Button type="button" variant="secondary" className="whitespace-nowrap" disabled={isUploading}>
                       {isUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <UploadCloud className="w-4 h-4 mr-2" />}
@@ -526,24 +538,32 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
               </div>
               <div className="space-y-2">
                 <Label>Or Embed URL (YouTube/Vimeo etc.)</Label>
-                <Input value={videoFormData.embedUrl} onChange={e => setVideoFormData({ ...videoFormData, embedUrl: e.target.value })} placeholder="https://youtube.com/embed/..." />
+                <Input 
+                  value={videoFormData.embedUrl} 
+                  onChange={e => {
+                    const val = e.target.value;
+                    const parsed = parseVideoInput(val);
+                    setVideoFormData({ ...videoFormData, embedUrl: parsed.embedSrc || val, videoUrl: videoFormData.videoUrl || parsed.videoUrl, thumbnailUrl: videoFormData.thumbnailUrl || parsed.thumbnailUrl });
+                  }} 
+                  placeholder="https://youtube.com/embed/..." 
+                />
               </div>
               
               {/* Iframe Preview */}
-              {(toEmbedSrc(videoFormData.videoUrl, videoFormData.embedUrl) || videoFormData.videoUrl) && (
+              {(parseVideoInput(videoFormData.videoUrl || videoFormData.embedUrl || "").embedSrc || videoFormData.videoUrl) && (
                 <div className="space-y-2 pt-2">
                   <Label>Video Preview</Label>
-                  <div className="rounded-md overflow-hidden bg-black aspect-video">
-                    {toEmbedSrc(videoFormData.videoUrl, videoFormData.embedUrl) ? (
+                  <div className="rounded-md overflow-hidden bg-black aspect-video relative">
+                    {parseVideoInput(videoFormData.videoUrl || videoFormData.embedUrl || "").embedSrc ? (
                       <iframe
-                        src={toEmbedSrc(videoFormData.videoUrl, videoFormData.embedUrl)!}
+                        src={parseVideoInput(videoFormData.videoUrl || videoFormData.embedUrl || "").embedSrc}
                         title="Video Preview"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                         allowFullScreen
-                        className="w-full h-full border-0"
+                        className="w-full h-full absolute inset-0"
                       />
                     ) : (
-                      <video controls src={videoFormData.videoUrl} className="w-full h-full">
+                      <video controls src={videoFormData.videoUrl} className="w-full h-full absolute inset-0">
                         Your browser does not support the video element.
                       </video>
                     )}

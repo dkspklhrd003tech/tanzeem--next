@@ -81,7 +81,7 @@ function SortableCampaignRow({
                     {campaign.imageUrl ? (
                         <img src={campaign.imageUrl} alt={campaign.title} className="w-full h-full object-cover" />
                     ) : (
-                        <div className="w-full h-full flex items-center justify-center text-muted-foreground"><ImageIcon className="w-6 h-6" /></div>
+                        <div className="w-full h-full flex items-center justify-center text-muted-foreground"><ImageIcon className="w-7 h-7" /></div>
                     )}
                 </div>
             </td>

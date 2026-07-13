@@ -99,7 +99,7 @@ export function ContactSection({
         {/* Cinematic Background Elements */}
         <div className="absolute inset-0 top-0 h-full w-full bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-[size:48px_48px] pointer-events-none" />
         <div className="absolute top-0 right-0 w-[400px] h-[400px] rounded-full bg-[#137a5f] blur-[120px] -z-0 opacity-40 pointer-events-none" />
-        <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-repeat bg-center" style={{ backgroundImage: `url('/images/pattern-arabesque.png')`, backgroundSize: '400px' }} />
+        <div className="absolute inset-0 opacity-[0.03] pointer-events-none" />
 
         {/* Content Wrapper */}
         <div className="relative z-10 flex flex-col h-full">

@@ -85,7 +85,7 @@ function SortableSliderRow({
                         <img src={resolveMediaUrl(slider.imageUrl)} alt={slider.title} className="w-full h-full object-contain" />
                     ) : (
                         <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                            <ImageIcon className="w-6 h-6" />
+                            <ImageIcon className="w-7 h-7" />
                         </div>
                     )}
                 </div>
@@ -583,7 +583,7 @@ export function HomeSlidersManagement() {
                                     onClick={closeModal}
                                     className="text-foreground-muted hover:text-foreground transition-all p-2 hover:bg-muted rounded-full"
                                 >
-                                    <X className="w-6 h-6" />
+                                    <X className="w-7 h-7" />
                                 </button>
                             </div>
 

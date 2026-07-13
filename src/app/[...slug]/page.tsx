@@ -402,7 +402,7 @@ export default async function DynamicPage({ params }: PageProps) {
     let rawCategories: any[] = [];
     let allAudio: any[] = [];
     try {
-      rawCategories = await db.select().from(audioCategories).orderBy(desc(audioCategories.order));
+      rawCategories = await db.select().from(audioCategories).orderBy(asc(audioCategories.order));
       allAudio = await db.select().from(audio);
     } catch (err) {
       console.error("Failed to fetch audio categories or audio:", err);
@@ -454,7 +454,7 @@ export default async function DynamicPage({ params }: PageProps) {
     let rawCategories: any[] = [];
     let allVideos: any[] = [];
     try {
-      rawCategories = await db.select().from(videoCategories).orderBy(desc(videoCategories.order));
+      rawCategories = await db.select().from(videoCategories).orderBy(asc(videoCategories.order));
       allVideos = await db.select().from(videos);
     } catch (err) {
       console.error("Failed to fetch video categories or videos:", err);
