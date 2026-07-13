@@ -62,6 +62,7 @@ interface AudioBookItem {
   excerpt?: string | null;
   featuredImage?: string | null;
   audioUrl?: string | null;
+  authorName?: string | null;
   isPublished: boolean;
   publishedAt?: string | null;
   metaTitle?: string | null;
@@ -82,6 +83,7 @@ const defaultFormData = {
   content: "MP3 Audio Attached",
   excerpt: "",
   audioUrl: "",
+  authorName: "",
   featuredImage: "",
   isPublished: true,
   publishedAt: "",
@@ -416,6 +418,7 @@ export default function AudioBooksPageEditor({ pageId, initialPageData }: AudioB
         title: cleanedTitle,
         slug: slugify(cleanedTitle),
         audioUrl: data.url,
+        authorName: "",
         isPublished: true,
         publishedAt: new Date().toISOString().split("T")[0],
         metaTitle: cleanedTitle,
@@ -452,6 +455,7 @@ export default function AudioBooksPageEditor({ pageId, initialPageData }: AudioB
       content: item.content || "MP3 Audio Attached",
       excerpt: item.excerpt || "",
       audioUrl: item.audioUrl || "",
+      authorName: item.authorName || "",
       featuredImage: item.featuredImage || "",
       isPublished: item.isPublished,
       publishedAt: item.publishedAt ? new Date(item.publishedAt).toISOString().split("T")[0] : "",
@@ -501,6 +505,7 @@ export default function AudioBooksPageEditor({ pageId, initialPageData }: AudioB
         content: formData.content || "MP3 Audio Attached",
         excerpt: formData.excerpt || null,
         audioUrl: formData.audioUrl || null,
+        authorName: formData.authorName || null,
         featuredImage: formData.featuredImage || null,
         isPublished: formData.isPublished,
         publishedAt: formData.publishedAt ? new Date(formData.publishedAt).toISOString() : null,
@@ -898,6 +903,16 @@ export default function AudioBooksPageEditor({ pageId, initialPageData }: AudioB
                     placeholder="e.g. audio book on Academic Achievements"
                   />
                   {formErrors.title && <p className="text-xs text-destructive">{formErrors.title}</p>}
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="authorName">Author / Speaker Name</Label>
+                  <Input
+                    id="authorName"
+                    value={formData.authorName}
+                    onChange={(e) => setFormData({ ...formData, authorName: e.target.value })}
+                    placeholder="e.g. Dr. Israr Ahmad"
+                  />
                 </div>
 
                 <div className="space-y-2">

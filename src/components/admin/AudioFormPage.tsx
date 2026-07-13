@@ -170,13 +170,13 @@ export default function AudioFormPage({ id, speakerIdParam = "", categoryIdParam
               onChange={(url, size) => setFormData(prev => ({ ...prev, audioUrl: url, fileSize: size || prev.fileSize }))}
             />
           </div>
-          <div className="space-y-2">
+          {/* <div className="space-y-2">
             <Label>PDF Preview (Optional)</Label>
             <PdfUploader
               value={formData.pdfUrl}
               onChange={(url) => setFormData(prev => ({ ...prev, pdfUrl: url }))}
             />
-          </div>
+          </div> */}
         </div>
 
         <div className="flex items-center space-x-6 pt-2">

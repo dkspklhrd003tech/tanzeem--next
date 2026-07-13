@@ -23,6 +23,7 @@ export interface AudioBook {
   excerpt?: string | null;
   featuredImage?: string | null;
   audioUrl?: string | null;
+  authorName?: string | null;
   isPublished: boolean;
   publishedAt?: Date | string | null;
   createdAt?: Date | string | null;
@@ -159,10 +160,15 @@ export function AudioBooksGrid({ initialItems }: AudioBooksGridProps) {
                         </div>
                       </div>
 
-                      {/* Title */}
-                      <h3 className="font-bold text-foreground text-md leading-snug group-hover:text-primary transition-colors duration-200 line-clamp-2">
-                        {item.title}
-                      </h3>
+                      {/* Title + speaker */}
+                      <div className="flex flex-col min-w-0">
+                        <span className="text-gray-400 text-xs font-medium truncate mb-0.5">
+                          {item.authorName || "Unknown Speaker"}
+                        </span>
+                        <h3 className="font-bold text-foreground text-md leading-snug group-hover:text-primary transition-colors duration-200 line-clamp-2">
+                          {item.title}
+                        </h3>
+                      </div>
 
                       {/* Excerpt */}
                       {item.excerpt && (

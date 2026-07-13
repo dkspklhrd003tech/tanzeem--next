@@ -18,11 +18,31 @@ async function run() {
     const db = drizzle({ client: pool });
 
     const queries = [
-        `ALTER TABLE khitab_audios ADD COLUMN \`order\` int NOT NULL DEFAULT 0;`,
-        `ALTER TABLE khitab_audios ADD COLUMN file_size int;`,
-        `ALTER TABLE khitab_audios ADD COLUMN play_count int NOT NULL DEFAULT 0;`,
-        `ALTER TABLE khitab_audios ADD COLUMN download_count int NOT NULL DEFAULT 0;`,
-        `ALTER TABLE khitab_audios ADD COLUMN share_count int NOT NULL DEFAULT 0;`
+        `ALTER TABLE audio_books ADD COLUMN author_name varchar(255);`,
+        `ALTER TABLE audio ADD COLUMN file_size int DEFAULT 0;`,
+        `ALTER TABLE audio ADD COLUMN play_count int DEFAULT 0;`,
+        `ALTER TABLE audio ADD COLUMN download_count int DEFAULT 0;`,
+        `ALTER TABLE audio ADD COLUMN share_count int DEFAULT 0;`,
+        `ALTER TABLE videos ADD COLUMN file_size int DEFAULT 0;`,
+        `ALTER TABLE videos ADD COLUMN play_count int DEFAULT 0;`,
+        `ALTER TABLE videos ADD COLUMN download_count int DEFAULT 0;`,
+        `ALTER TABLE videos ADD COLUMN share_count int DEFAULT 0;`,
+        `ALTER TABLE magazines ADD COLUMN file_size int DEFAULT 0;`,
+        `ALTER TABLE magazines ADD COLUMN play_count int DEFAULT 0;`,
+        `ALTER TABLE magazines ADD COLUMN download_count int DEFAULT 0;`,
+        `ALTER TABLE magazines ADD COLUMN share_count int DEFAULT 0;`,
+        `ALTER TABLE books ADD COLUMN file_size int DEFAULT 0;`,
+        `ALTER TABLE books ADD COLUMN play_count int DEFAULT 0;`,
+        `ALTER TABLE books ADD COLUMN download_count int DEFAULT 0;`,
+        `ALTER TABLE books ADD COLUMN share_count int DEFAULT 0;`,
+        `ALTER TABLE audio_books ADD COLUMN file_size int DEFAULT 0;`,
+        `ALTER TABLE audio_books ADD COLUMN play_count int DEFAULT 0;`,
+        `ALTER TABLE audio_books ADD COLUMN download_count int DEFAULT 0;`,
+        `ALTER TABLE audio_books ADD COLUMN share_count int DEFAULT 0;`,
+        `ALTER TABLE khitab_audios ADD COLUMN file_size int DEFAULT 0;`,
+        `ALTER TABLE khitab_audios ADD COLUMN play_count int DEFAULT 0;`,
+        `ALTER TABLE khitab_audios ADD COLUMN download_count int DEFAULT 0;`,
+        `ALTER TABLE khitab_audios ADD COLUMN share_count int DEFAULT 0;`,
     ];
 
     for (const q of queries) {
@@ -34,7 +54,7 @@ async function run() {
         }
     }
     
-    console.log("Done syncing khitab_audios to local DB!");
+    console.log("Done syncing local DB!");
     process.exit(0);
 }
 

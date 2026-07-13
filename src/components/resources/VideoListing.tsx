@@ -20,6 +20,9 @@ type VideoItem = {
   thumbnailUrl: string | null;
   duration: number | null;
   viewCount: number;
+  playCount?: number;
+  downloadCount?: number;
+  shareCount?: number;
   category: { id: string; name: string; slug: string } | null;
   speaker: { id: string; name: string; slug: string } | null;
 };
@@ -147,9 +150,9 @@ export function VideoListing({
                   {item.category && <Badge variant="outline" className="text-[10px] mb-1.5 text-primary border-primary/20">{item.category.name}</Badge>}
                   <h3 className="text-sm font-semibold text-foreground line-clamp-2 group-hover:text-primary transition-colors leading-snug">{item.title}</h3>
                   {item.speaker && <p className="text-xs text-foreground-muted mt-1">{item.speaker.name}</p>}
-                  {item.viewCount > 0 && (
+                  {(item.playCount !== undefined ? item.playCount : item.viewCount) > 0 && (
                     <span className="flex items-center gap-1 mt-2 text-[10px] text-foreground-muted">
-                      <Eye className="h-3 w-3" /> {item.viewCount.toLocaleString()} views
+                      <Eye className="h-3 w-3" /> {(item.playCount !== undefined ? item.playCount : item.viewCount).toLocaleString()} views
                     </span>
                   )}
                 </div>

@@ -696,6 +696,7 @@ export const audioBooks = mysqlTable("audio_books", {
     featuredImageAlt: text("featured_image_alt"),
     audioUrl: text("audio_url"),
     fileSize: int("file_size"),
+    authorName: varchar("author_name", { length: 255 }),
     isPublished: boolean("is_published").default(true).notNull(),
     playCount: int("play_count").default(0).notNull(),
     downloadCount: int("download_count").default(0).notNull(),

@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { Headphones, Download, Share2, Clock, Play, ArrowLeft, FileText } from "lucide-react";
+import { Download, Share2, Clock, Play, ArrowLeft, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn, resolveMediaUrl } from "@/lib/utils";
@@ -48,7 +48,7 @@ export function AudioPlayerPage({ item, related, customFieldSchema = [] }: Audio
   const handleTracked = async () => {
     try {
       setPlayCount((prev) => prev + 1);
-      await fetch(`/api/track`, { 
+      await fetch(`/api/track`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ entityType: "audio", entityId: item.id, actionType: "play" })
@@ -74,9 +74,9 @@ export function AudioPlayerPage({ item, related, customFieldSchema = [] }: Audio
     } else {
       alert("Link copied to clipboard!");
     }
-    
+
     try {
-      await fetch(`/api/track`, { 
+      await fetch(`/api/track`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ entityType: "audio", entityId: item.id, actionType: "share" })
@@ -88,7 +88,7 @@ export function AudioPlayerPage({ item, related, customFieldSchema = [] }: Audio
 
   const handleDownload = async () => {
     try {
-      await fetch(`/api/track`, { 
+      await fetch(`/api/track`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ entityType: "audio", entityId: item.id, actionType: "download" })
@@ -119,7 +119,7 @@ export function AudioPlayerPage({ item, related, customFieldSchema = [] }: Audio
               speakerName={item.speaker?.name}
               categoryName={item.category?.name}
               publishedAt={item.customFields?.publishedAt || null}
-              onTracked={() => handleTracked('play')}
+              onTracked={handleTracked}
             />
           </div>
 
@@ -139,16 +139,8 @@ export function AudioPlayerPage({ item, related, customFieldSchema = [] }: Audio
               )}
               <div className="flex items-center gap-4 border-l border-border/50 pl-4">
                 <div className="flex items-center gap-1.5" title="Plays">
-                  <Headphones className="w-4 h-4" />
+                  <Play className="w-4 h-4" />
                   <span>{playCount}</span>
-                </div>
-                <div className="flex items-center gap-1.5" title="Downloads">
-                  <Download className="w-4 h-4" />
-                  <span>{item.downloadCount || 0}</span>
-                </div>
-                <div className="flex items-center gap-1.5" title="Shares">
-                  <Share2 className="w-4 h-4" />
-                  <span>{item.shareCount || 0}</span>
                 </div>
               </div>
               {item.fileSize ? (
@@ -170,6 +162,7 @@ export function AudioPlayerPage({ item, related, customFieldSchema = [] }: Audio
               >
                 <Download className="h-4 w-4" />
                 Download Audio
+                <span>{item.downloadCount || 0}</span>
               </a>
               {item.pdfUrl && (
                 <a
@@ -188,6 +181,7 @@ export function AudioPlayerPage({ item, related, customFieldSchema = [] }: Audio
               <Button variant="outline" size="sm" className="rounded-full" onClick={handleShare}>
                 <Share2 className="h-4 w-4 mr-2" />
                 Share
+                <span>{item.shareCount || 0}</span>
               </Button>
             </div>
           </div>
@@ -277,7 +271,7 @@ export function AudioPlayerPage({ item, related, customFieldSchema = [] }: Audio
                         <img src={r.thumbnailUrl} alt={r.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <Headphones className="h-5 w-5 text-muted-foreground/40" />
+                          <Play className="h-5 w-5 text-muted-foreground/40" />
                         </div>
                       )}
                     </div>

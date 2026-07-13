@@ -39,6 +39,14 @@ function slugify(text: string) {
     .replace(/^-+|-+$/g, "");
 }
 
+function toEmbedSrc(videoUrl: string, embedUrl: string | null): string | null {
+  if (embedUrl) return embedUrl;
+  if (!videoUrl) return null;
+  const yt = videoUrl.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+  if (yt) return `https://www.youtube.com/embed/${yt[1]}?rel=0`;
+  return null;
+}
+
 interface CategoryItem {
   id: string;
   name: string;
@@ -615,6 +623,28 @@ export default function VideosPageEditor({ pageId, initialPageData }: { pageId: 
                   {videoFormErrors.videoUrl && <p className="text-xs text-destructive">{videoFormErrors.videoUrl}</p>}
                 </div>
                 <div className="space-y-2 col-span-2"><Label>Embed URL (Optional)</Label><Input placeholder="https://www.youtube.com/embed/..." value={videoFormData.embedUrl} onChange={e => setVideoFormData({ ...videoFormData, embedUrl: e.target.value })} /></div>
+
+                {/* Iframe Preview */}
+                {(toEmbedSrc(videoFormData.videoUrl, videoFormData.embedUrl) || videoFormData.videoUrl) && (
+                  <div className="space-y-2 col-span-2 pt-2">
+                    <Label>Video Preview</Label>
+                    <div className="rounded-md overflow-hidden bg-black aspect-video">
+                      {toEmbedSrc(videoFormData.videoUrl, videoFormData.embedUrl) ? (
+                        <iframe
+                          src={toEmbedSrc(videoFormData.videoUrl, videoFormData.embedUrl)!}
+                          title="Video Preview"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                          className="w-full h-full border-0"
+                        />
+                      ) : (
+                        <video controls src={videoFormData.videoUrl} className="w-full h-full">
+                          Your browser does not support the video element.
+                        </video>
+                      )}
+                    </div>
+                  </div>
+                )}
 
                 <div className="space-y-2 col-span-2">
                   <Label>Thumbnail</Label>

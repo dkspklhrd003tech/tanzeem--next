@@ -43,6 +43,14 @@ function slugify(text: string) {
     .replace(/^-+|-+$/g, "");
 }
 
+function toEmbedSrc(videoUrl: string, embedUrl: string | null): string | null {
+  if (embedUrl) return embedUrl;
+  if (!videoUrl) return null;
+  const yt = videoUrl.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+  if (yt) return `https://www.youtube.com/embed/${yt[1]}?rel=0`;
+  return null;
+}
+
 interface SpeakerItem {
   id: string;
   name: string;
@@ -520,6 +528,28 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
                 <Label>Or Embed URL (YouTube/Vimeo etc.)</Label>
                 <Input value={videoFormData.embedUrl} onChange={e => setVideoFormData({ ...videoFormData, embedUrl: e.target.value })} placeholder="https://youtube.com/embed/..." />
               </div>
+              
+              {/* Iframe Preview */}
+              {(toEmbedSrc(videoFormData.videoUrl, videoFormData.embedUrl) || videoFormData.videoUrl) && (
+                <div className="space-y-2 pt-2">
+                  <Label>Video Preview</Label>
+                  <div className="rounded-md overflow-hidden bg-black aspect-video">
+                    {toEmbedSrc(videoFormData.videoUrl, videoFormData.embedUrl) ? (
+                      <iframe
+                        src={toEmbedSrc(videoFormData.videoUrl, videoFormData.embedUrl)!}
+                        title="Video Preview"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        className="w-full h-full border-0"
+                      />
+                    ) : (
+                      <video controls src={videoFormData.videoUrl} className="w-full h-full">
+                        Your browser does not support the video element.
+                      </video>
+                    )}
+                  </div>
+                </div>
+              )}
               <div className="flex items-center space-x-2 pt-2">
                 <input type="checkbox" id="isNewVideo" checked={videoFormData.isNew} onChange={e => setVideoFormData({ ...videoFormData, isNew: e.target.checked })} className="rounded border-gray-300" />
                 <Label htmlFor="isNewVideo" className="cursor-pointer">Mark as "New"</Label>

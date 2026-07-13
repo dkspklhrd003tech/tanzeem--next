@@ -200,7 +200,6 @@ export function WaveformPlayer({
             )}
           </button>
 
-          {/* Title + speaker */}
           <div className="flex flex-col min-w-0">
             <span className="text-white text-xs font-medium truncate">
               {speakerName || "Unknown Speaker"}

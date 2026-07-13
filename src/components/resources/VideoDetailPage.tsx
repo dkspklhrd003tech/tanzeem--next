@@ -6,6 +6,8 @@ import { Video, Share2, Clock, Eye, ExternalLink, ArrowLeft } from "lucide-react
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
+import { ClientShareButton } from "@/components/shared/ClientShareButton";
+import { TrackedDownloadLink } from "@/components/shared/TrackedDownloadLink";
 
 type VideoItem = {
   id: string;
@@ -17,6 +19,10 @@ type VideoItem = {
   thumbnailUrl: string | null;
   duration: number | null;
   viewCount: number;
+  playCount?: number;
+  downloadCount?: number;
+  shareCount?: number;
+  fileSize?: number;
   category: { id: string; name: string; slug: string } | null;
   speaker: { id: string; name: string; slug: string; bio: string | null; avatar: string | null } | null;
   customFields?: any;
@@ -41,7 +47,7 @@ function toEmbedSrc(videoUrl: string, embedUrl: string | null): string | null {
 export function VideoDetailPage({ item, related, customFieldSchema = [] }: { item: VideoItem; related: VideoItem[]; customFieldSchema?: any[] }) {
   const embedSrc = toEmbedSrc(item.videoUrl, item.embedUrl);
   
-  const [viewCount, setViewCount] = useState(item.viewCount);
+  const [viewCount, setViewCount] = useState(item.playCount || item.viewCount || 0);
   const trackedRef = useRef(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
@@ -50,7 +56,11 @@ export function VideoDetailPage({ item, related, customFieldSchema = [] }: { ite
     trackedRef.current = true;
     try {
       setViewCount(prev => prev + 1);
-      await fetch(`/api/videos/${item.slug}/track`, { method: "POST" });
+      await fetch(`/api/track`, { 
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ entityType: "videos", entityId: item.id, actionType: "play" })
+      });
     } catch (e) {
       console.error("Failed to track video view:", e);
     }
@@ -81,23 +91,7 @@ export function VideoDetailPage({ item, related, customFieldSchema = [] }: { ite
     };
   }, [embedSrc, item.slug]);
 
-  const handleShare = async () => {
-    if (typeof window === "undefined" || typeof navigator === "undefined") return;
-    try {
-      if (navigator.clipboard) await navigator.clipboard.writeText(window.location.href);
-    } catch (e) {
-      console.error("Failed to copy:", e);
-    }
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: item.title, url: window.location.href });
-      } catch (err: any) {
-        if (err.name !== "AbortError") console.error("Error sharing:", err);
-      }
-    } else {
-      alert("Link copied to clipboard!");
-    }
-  };
+
 
   return (
     <div className="container max-w-7xl mx-auto py-10">
@@ -149,13 +143,22 @@ export function VideoDetailPage({ item, related, customFieldSchema = [] }: { ite
               {item.duration && <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" />{formatDuration(item.duration)}</span>}
               {viewCount > 0 && <span className="flex items-center gap-1 text-primary"><Eye className="h-3.5 w-3.5" />{viewCount.toLocaleString()} Views</span>}
             </div>
-            <div className="flex gap-3">
-              <a href={item.videoUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold bg-primary text-primary-foreground transition-colors">
-                <ExternalLink className="h-4 w-4" /> Watch on YouTube
-              </a>
-              <Button variant="outline" size="sm" className="rounded-full" onClick={handleShare}>
-                <Share2 className="h-4 w-4 mr-2" /> Share
-              </Button>
+            <div className="flex flex-wrap gap-3 mt-6">
+              <ClientShareButton variant="default" className="w-auto px-4 py-2 text-sm bg-transparent border-border rounded-full" />
+              {(!embedSrc && item.videoUrl) ? (
+                <TrackedDownloadLink
+                  href={item.videoUrl}
+                  entityType="videos"
+                  entityId={item.id}
+                  fileSize={item.fileSize}
+                  downloadCount={item.downloadCount}
+                  className="rounded-full px-4 py-2 h-auto bg-primary text-white text-sm shadow-none border-0"
+                />
+              ) : (
+                <a href={item.videoUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold bg-primary text-primary-foreground transition-colors">
+                  <ExternalLink className="h-4 w-4" /> Watch on YouTube
+                </a>
+              )}
             </div>
           </div>
 

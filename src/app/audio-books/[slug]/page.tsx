@@ -108,7 +108,7 @@ export default async function AudioBookDetailsPage({ params }: PageProps) {
                             <span>{formattedDate}</span>
                         </div>
 
-                        <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
+                        <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-1">
                             {selectedItem.title}
                         </h1>
 
@@ -119,6 +119,7 @@ export default async function AudioBookDetailsPage({ params }: PageProps) {
                                     <WaveformPlayer
                                         audioUrl={selectedItem.audioUrl}
                                         title={selectedItem.title}
+                                        speakerName={selectedItem.authorName || undefined}
                                         publishedAt={selectedItem.publishedAt}
                                     />
                                     <div className="mt-4 flex justify-end">
