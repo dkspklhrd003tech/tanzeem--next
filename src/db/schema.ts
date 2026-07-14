@@ -1036,6 +1036,7 @@ export const campaigns = mysqlTable("campaigns", {
     isPublished: boolean("is_published").default(true).notNull(),
     metaTitle: varchar("meta_title", { length: 255 }),
     metaDescription: text("meta_description"),
+    orderIndex: int("order_index").default(0).notNull(),
     authorId: varchar("author_id", { length: 191 }).notNull(),
     ...timestamps,
 });

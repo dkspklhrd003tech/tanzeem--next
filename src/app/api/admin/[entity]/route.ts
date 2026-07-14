@@ -178,6 +178,12 @@ export async function GET(
                 query = query.where(eq((table as any).type, type)) as any;
             }
             results = await query.orderBy((table as any).order || (table as any).id, desc((table as any).name || (table as any).id)).limit(100);
+        } else if (entity === "services") {
+            // Return in admin-defined drag order (order asc), so grid matches frontend spotlight
+            results = await db.select().from(table).orderBy((table as any).order).limit(100);
+        } else if (entity === "campaigns") {
+            // Return in admin-defined drag order (orderIndex asc), so grid matches frontend spotlight
+            results = await db.select().from(table).orderBy((table as any).orderIndex).limit(100);
         } else {
             results = await db.select().from(table).orderBy(desc((table as any).updatedAt || (table as any).createdAt || (table as any).id)).limit(100);
         }

@@ -62,17 +62,19 @@ async function HomeContent() {
   try {
     activeCampaigns = [];
 
+    // Fetch spotlight services ordered by their admin-set position
     const publishedServices = await db
       .select()
       .from(services)
       .where(eq(services.isPublished, true))
-      .orderBy(desc(services.order), desc(services.createdAt));
+      .orderBy(services.order);
 
+    // Fetch spotlight campaigns ordered by their admin-set position
     const publishedCampaigns = await db
       .select()
       .from(campaigns)
       .where(eq(campaigns.isPublished, true))
-      .orderBy(desc(campaigns.createdAt));
+      .orderBy(campaigns.orderIndex);
 
     const spotlightServices = publishedServices.filter(s => {
       let fields = s.customFields as any;
@@ -80,38 +82,42 @@ async function HomeContent() {
         try { fields = JSON.parse(fields); } catch (e) { fields = {}; }
       }
       return fields && fields.showInSpotlight === true;
-    }).map(s => {
+    }).map((s, idx) => {
       let fields = s.customFields as any;
       if (typeof fields === 'string') {
         try { fields = JSON.parse(fields); } catch (e) { fields = {}; }
       }
+      // If slug is an external/absolute path, use it directly; otherwise prefix with /services/
+      const rawSlug = s.slug || "";
+      const linkUrl = (rawSlug.startsWith("/") || rawSlug.startsWith("http"))
+        ? rawSlug
+        : `/services/${rawSlug}`;
       return {
         id: s.id,
         title: s.title,
         imageUrl: s.imageUrl || "",
-        linkUrl: `/services/${s.slug}`,
+        linkUrl,
         openInNewTab: fields?.openInNewTab || false,
-        order: s.order,
-        createdAt: s.createdAt,
+        sortOrder: s.order * 10 + idx,
       };
     });
 
     const spotlightCampaigns = publishedCampaigns.filter(c => {
       return c.categoryId === "SpotLight Campaigns";
-    }).map(c => ({
+    }).map((c, idx) => ({
       id: c.id,
       title: c.title,
       imageUrl: c.thumbnailUrl || "",
       linkUrl: `/campaigns/${c.slug}`,
       openInNewTab: false,
-      order: 0,
-      createdAt: c.createdAt,
+      sortOrder: (c.orderIndex ?? 0) * 10 + idx,
     }));
 
-    activeCampaigns = [...activeCampaigns, ...spotlightServices, ...spotlightCampaigns].sort((a, b) => {
-      if (a.order !== b.order) return b.order - a.order;
-      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-    });
+    // Merge both sources, sort by their respective admin order, cap at 6
+    activeCampaigns = [...spotlightServices, ...spotlightCampaigns]
+      .sort((a, b) => a.sortOrder - b.sortOrder)
+      .slice(0, 6)
+      .map(({ sortOrder: _, ...rest }) => rest);
   } catch (error) { console.error("Failed to fetch campaigns or services:", error); }
 
   try {

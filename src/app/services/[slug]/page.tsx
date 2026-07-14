@@ -7,7 +7,7 @@ import Link from "next/link";
 import { CTABanner } from "@/components/shared/CTABanner";
 import { ImageSlider } from "@/components/shared/ImageSlider";
 import { Button } from "@/components/ui/button";
-import { FileText, PlayCircle } from "lucide-react";
+import { PlayCircle, Download } from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -42,7 +42,7 @@ export default async function ServiceDetailsPage({ params }: { params: Promise<{
             <div className="max-w-5xl mx-auto py-8 md:py-12">
                 <div className="space-y-12">
                     {/* Dynamic Blocks */}
-                    <div className="grid grid-cols-1 grid-cols-2 gap-6 space-y-12 pt-6">
+                    <div className="space-y-10 pt-6">
                         {blocks.map((block: any, idx: number) => {
                             if (!block.value) return null;
 
@@ -73,32 +73,49 @@ export default async function ServiceDetailsPage({ params }: { params: Promise<{
                                         </div>
                                     );
 
-                                case "pdf":
+                                case "pdf": {
                                     const pdfUrl = typeof block.value === 'string' ? block.value : block.value?.url;
                                     const pdfTitle = typeof block.value === 'string' ? null : block.value?.title;
                                     if (!pdfUrl) return null;
 
+                                    // Resolve absolute URL for Google Docs Viewer
+                                    const mediaBase = process.env.NEXT_PUBLIC_MEDIA_URL || '';
+                                    const absolutePdfUrl = pdfUrl.startsWith('http') ? pdfUrl : `${mediaBase}${pdfUrl}`;
+                                    const googleViewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(absolutePdfUrl)}&embedded=true`;
+
                                     return (
                                         <div key={idx} className="space-y-4">
-                                            {block.title && <h2 className="text-3xl text-center mx-auto font-bold text-foreground">{block.title}</h2>}
-                                            <div className="bg-muted/30 border border-border p-6 rounded-xl flex items-center justify-between gap-4">
-                                                <div className="flex items-center gap-4">
-                                                    <div className="h-12 w-12 rounded-full bg-red-100 flex items-center justify-center text-red-600 flex-shrink-0">
-                                                        <FileText className="h-6 w-6" />
-                                                    </div>
-                                                    <div>
-                                                        <h3 className="font-bold text-lg">{pdfTitle || "Document Attachment"}</h3>
-                                                        <p className="text-sm text-muted-foreground">Click to view or download the attached PDF document.</p>
-                                                    </div>
-                                                </div>
-                                                <Button asChild className="shrink-0 bg-primary hover:bg-primary/90 text-white rounded-full px-6">
-                                                    <a href={pdfUrl} target="_blank" rel="noopener noreferrer">
-                                                        View PDF
+                                            {/* Section heading */}
+                                            {block.title && (
+                                                <h2 className="text-3xl text-center mx-auto font-bold text-foreground">{block.title}</h2>
+                                            )}
+                                            {pdfTitle && (
+                                                <p className="text-center text-base text-muted-foreground font-medium">{pdfTitle}</p>
+                                            )}
+
+                                            {/* Inline PDF Viewer */}
+                                            <div className="w-full rounded-xl overflow-hidden border border-border shadow-lg bg-black/5">
+                                                <iframe
+                                                    src={googleViewerUrl}
+                                                    className="w-full border-0"
+                                                    style={{ height: "82vh", minHeight: "520px" }}
+                                                    title={pdfTitle || block.title || "PDF Document"}
+                                                    allowFullScreen
+                                                />
+                                            </div>
+
+                                            {/* Download fallback */}
+                                            <div className="flex justify-center">
+                                                <Button asChild variant="outline" className="gap-2 rounded-full px-6 border-primary text-primary hover:bg-primary hover:text-white transition-colors">
+                                                    <a href={absolutePdfUrl} target="_blank" rel="noopener noreferrer" download>
+                                                        <Download className="h-4 w-4" />
+                                                        Download PDF
                                                     </a>
                                                 </Button>
                                             </div>
                                         </div>
                                     );
+                                }
 
                                 case "thumbnails":
                                     if (!Array.isArray(block.value) || block.value.length === 0) return null;
