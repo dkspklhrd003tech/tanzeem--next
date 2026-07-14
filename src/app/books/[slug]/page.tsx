@@ -55,7 +55,6 @@ export default async function BookDetailPage({ params }: Props) {
     coverImage: book.coverImage,
     authorName: book.authorName,
     language: book.language,
-    datePublished: book.publishedAt,
   });
   const bc = breadcrumbJsonLd([
     { name: "Home", path: "/" },
