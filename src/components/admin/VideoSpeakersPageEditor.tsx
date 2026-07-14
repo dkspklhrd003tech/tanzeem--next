@@ -63,6 +63,7 @@ interface VideoItem {
   slug: string;
   videoUrl?: string;
   embedUrl?: string;
+  thumbnailUrl?: string;
   speakerId?: string;
   isPublished: boolean;
   isNew?: boolean;
@@ -433,7 +434,7 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <h2 className="text-xl font-bold">Speaker Videos</h2>
                 <div className="flex flex-wrap gap-2">
-                  <Button size="sm" onClick={() => { setEditingVideoId(null); setVideoFormData({ title: "", slug: "", videoUrl: "", embedUrl: "", isPublished: true, isNew: false, customFields: {} }); setIsVideoModalOpen(true); }}>
+                  <Button size="sm" onClick={() => { setEditingVideoId(null); setVideoFormData({ title: "", slug: "", videoUrl: "", embedUrl: "", thumbnailUrl: "", isPublished: true, isNew: false, customFields: {} }); setIsVideoModalOpen(true); }}>
                     <Plus className="w-4 h-4 mr-1" /> Add Video
                   </Button>
                 </div>
@@ -445,7 +446,7 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
                       <SortableVideoCard
                         key={video.id}
                         video={video}
-                        onEdit={(v) => { setEditingVideoId(v.id); setVideoFormData({ title: v.title, slug: v.slug, videoUrl: v.videoUrl || "", embedUrl: v.embedUrl || "", isPublished: v.isPublished, isNew: v.isNew || false, customFields: v.customFields || {} }); setIsVideoModalOpen(true); }}
+                        onEdit={(v) => { setEditingVideoId(v.id); setVideoFormData({ title: v.title, slug: v.slug, videoUrl: v.videoUrl || "", embedUrl: v.embedUrl || "", thumbnailUrl: v.thumbnailUrl || "", isPublished: v.isPublished, isNew: v.isNew || false, customFields: v.customFields || {} }); setIsVideoModalOpen(true); }}
                         onDelete={(v) => { setDeletingVideo(v); }}
                       />
                     ))}
