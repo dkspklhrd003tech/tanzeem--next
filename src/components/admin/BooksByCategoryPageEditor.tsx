@@ -207,7 +207,7 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
   // Auto-translate Urdu Name when adding a new category
   useEffect(() => {
     if (editingCatId) return; // Don't auto-translate when editing
-    
+
     const timeout = setTimeout(async () => {
       if (catFormData.name.trim().length > 2) {
         try {
@@ -516,7 +516,7 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
             ) : (
               <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleCatDragEnd}>
                 <SortableContext items={filteredCategories.map(c => c.id)} strategy={rectSortingStrategy}>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
                     {filteredCategories.map(cat => (
                       <SortableCategoryCard key={cat.id} id={cat.id} item={cat} onClick={setActiveCategory}
                         bookCount={books.filter(b => b.categoryId === cat.id).length}

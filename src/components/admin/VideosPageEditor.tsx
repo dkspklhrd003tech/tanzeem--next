@@ -376,7 +376,7 @@ export default function VideosPageEditor({ pageId, initialPageData }: { pageId: 
   const activeVideos = videosList
     .filter(b => b.categoryId === activeCategory?.id)
     .filter(b => b.title.toLowerCase().includes(searchQuery.toLowerCase()))
-    .sort((a, b) => new Date(b.publishedAt || b.createdAt || 0).getTime() - new Date(a.publishedAt || a.createdAt || 0).getTime());
+    .sort((a, b) => (a.order || 0) - (b.order || 0));
 
   return (
     <div className="space-y-6 max-w-7xl">

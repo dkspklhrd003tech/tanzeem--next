@@ -615,7 +615,7 @@ export default function PressReleasesPageEditor({ pageId, initialPageData }: Pre
       item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.slug.toLowerCase().includes(searchQuery.toLowerCase())
     )
-    .sort((a, b) => new Date(b.publishedAt || b.createdAt || 0).getTime() - new Date(a.publishedAt || a.createdAt || 0).getTime());
+    .sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
 
   return (
     <div className="space-y-6 max-w-7xl">

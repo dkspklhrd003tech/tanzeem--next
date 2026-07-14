@@ -38,7 +38,7 @@ export default async function BooksCategoryPage({ params }: { params: Promise<{ 
     })
     .from(books)
     .where(eq(books.categoryId, category.id))
-    .orderBy(asc(books.order), desc(books.publishedAt));
+    .orderBy(asc(books.order), desc(books.createdAt));
 
   return (
     <main className=" bg-background">
