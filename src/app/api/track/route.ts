@@ -7,8 +7,7 @@ import {
   magazines,
   sermons,
   khitabAudios,
-  audioBooks,
-  downloads
+  audioBooks
 } from "@/db/schema";
 import { eq, sql } from "drizzle-orm";
 
@@ -73,12 +72,6 @@ export async function POST(req: Request) {
         break;
       case "audioBook":
         table = audioBooks;
-        sqlIncrement = actionType === "play" ? sql`play_count + 1` :
-                       actionType === "download" ? sql`download_count + 1` :
-                       sql`share_count + 1`;
-        break;
-      case "download":
-        table = downloads;
         sqlIncrement = actionType === "play" ? sql`play_count + 1` :
                        actionType === "download" ? sql`download_count + 1` :
                        sql`share_count + 1`;

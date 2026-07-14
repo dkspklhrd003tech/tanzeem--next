@@ -82,8 +82,7 @@ export async function GET(request: NextRequest) {
           (SELECT COALESCE(SUM(play_count), 0) FROM magazines) +
           (SELECT COALESCE(SUM(play_count), 0) FROM sermons) +
           (SELECT COALESCE(SUM(play_count), 0) FROM khitab_audios) +
-          (SELECT COALESCE(SUM(play_count), 0) FROM audio_books) +
-          (SELECT COALESCE(SUM(play_count), 0) FROM downloads) AS total_plays,
+          (SELECT COALESCE(SUM(play_count), 0) FROM audio_books) AS total_plays,
           
           (SELECT COALESCE(SUM(download_count), 0) FROM audio) +
           (SELECT COALESCE(SUM(download_count), 0) FROM videos) +
@@ -91,8 +90,7 @@ export async function GET(request: NextRequest) {
           (SELECT COALESCE(SUM(download_count), 0) FROM magazines) +
           (SELECT COALESCE(SUM(download_count), 0) FROM sermons) +
           (SELECT COALESCE(SUM(download_count), 0) FROM khitab_audios) +
-          (SELECT COALESCE(SUM(download_count), 0) FROM audio_books) +
-          (SELECT COALESCE(SUM(download_count), 0) FROM downloads) AS total_downloads,
+          (SELECT COALESCE(SUM(download_count), 0) FROM audio_books) AS total_downloads,
           
           (SELECT COALESCE(SUM(share_count), 0) FROM audio) +
           (SELECT COALESCE(SUM(share_count), 0) FROM videos) +
@@ -100,8 +98,7 @@ export async function GET(request: NextRequest) {
           (SELECT COALESCE(SUM(share_count), 0) FROM magazines) +
           (SELECT COALESCE(SUM(share_count), 0) FROM sermons) +
           (SELECT COALESCE(SUM(share_count), 0) FROM khitab_audios) +
-          (SELECT COALESCE(SUM(share_count), 0) FROM audio_books) +
-          (SELECT COALESCE(SUM(share_count), 0) FROM downloads) AS total_shares
+          (SELECT COALESCE(SUM(share_count), 0) FROM audio_books) AS total_shares
       `)
     ]);
 

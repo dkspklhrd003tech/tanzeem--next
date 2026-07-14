@@ -74,7 +74,7 @@ const config: Config = {
 				heading: ["var(--font-heading)", "system-ui", "sans-serif"],
 				body: ["var(--font-body)", "Arial", "Helvetica", "sans-serif"],
 				amiri: ["var(--font-amiri)", "Amiri", "serif"],
-				nastaleeq: ["Jameel Noori Nastaleeq", "Noto Nastaliq Urdu", "serif"],
+				nastaleeq: ["Jameel Noori Nastaleeq", "serif"],
 				sans: ["var(--font-body)", "Arial", "Helvetica", "sans-serif"],
 			},
 

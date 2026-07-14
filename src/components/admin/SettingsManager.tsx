@@ -612,7 +612,7 @@ export function SettingsManager() {
                                                     {parts[1] && <span className="text-muted-foreground">&amp;</span>}
                                                     {parts[1] && (
                                                         <span
-                                                            style={{ fontFamily: "'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', serif", fontSize: "16px" }}
+                                                            style={{ fontFamily: "'Jameel Noori Nastaleeq', serif", fontSize: "16px" }}
                                                             dir="rtl" lang="ur"
                                                         >
                                                             {parts[1].trim()}
@@ -658,7 +658,7 @@ export function SettingsManager() {
                                                     <span>{gregStr}</span>
                                                     <span className="text-muted-foreground">&amp;</span>
                                                     <span
-                                                        style={{ fontFamily: "'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', serif", fontSize: "16px" }}
+                                                        style={{ fontFamily: "'Jameel Noori Nastaleeq', serif", fontSize: "16px" }}
                                                         dir="rtl" lang="ur"
                                                     >
                                                         {hijriStr}
@@ -826,7 +826,7 @@ export function SettingsManager() {
                                     <p className="text-xs text-muted-foreground mt-2">Upload the image to be shown in the popup.</p>
                                 </div>
                             </div>
-                            
+
                             <div className="space-y-6">
                                 <div className={`border rounded-xl p-6 transition-colors duration-300 ${settings.disclaimer_enabled === "true" ? "bg-amber-500/10 border-amber-500/20" : "bg-card border-border"}`}>
                                     <div className="flex items-center justify-between">
@@ -849,9 +849,9 @@ export function SettingsManager() {
                                     <h4 className="font-semibold text-foreground">Live Disclaimer Views</h4>
                                     <p className="text-3xl font-bold text-primary mt-2">{settings.disclaimer_views || 0}</p>
                                     <p className="text-sm text-muted-foreground mt-1">Total times the disclaimer has been displayed to visitors.</p>
-                                    <Button 
-                                        variant="outline" 
-                                        size="sm" 
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
                                         className="mt-4"
                                         onClick={() => handleSettingChange("disclaimer_views", "0")}
                                     >

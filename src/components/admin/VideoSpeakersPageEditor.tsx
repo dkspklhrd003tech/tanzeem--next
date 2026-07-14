@@ -71,6 +71,7 @@ interface VideoItem {
   playCount?: number;
   shareCount?: number;
   downloadCount?: number;
+  order?: number;
 }
 
 function SortableSpeakerCard({ speaker, onClick, onEdit, onDelete }: { speaker: SpeakerItem, onClick: () => void, onEdit: (s: SpeakerItem) => void, onDelete: (s: SpeakerItem) => void }) {
@@ -472,7 +473,7 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
             <div className="overflow-y-auto p-6 flex-1 space-y-4">
               <div className="space-y-2"><Label>Name</Label><Input value={speakerFormData.name} onChange={e => setSpeakerFormData({ ...speakerFormData, name: e.target.value, slug: editingSpeakerId ? speakerFormData.slug : slugify(e.target.value) })} /></div>
               <div className="space-y-2"><Label>Slug</Label><Input value={speakerFormData.slug} onChange={e => setSpeakerFormData({ ...speakerFormData, slug: e.target.value })} /></div>
-              <div className="space-y-2"><Label>Urdu Name</Label><Input value={speakerFormData.bio} onChange={e => setSpeakerFormData({ ...speakerFormData, bio: e.target.value })} className="text-center font-bold text-lg" dir="rtl" style={{ fontFamily: "'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', serif" }} placeholder="اردو نام" /></div>
+              <div className="space-y-2"><Label>Urdu Name</Label><Input value={speakerFormData.bio} onChange={e => setSpeakerFormData({ ...speakerFormData, bio: e.target.value })} className="text-center font-bold text-lg" dir="rtl" style={{ fontFamily: "'Jameel Noori Nastaleeq', serif" }} placeholder="اردو نام" /></div>
               <div className="space-y-2"><Label>Display Order</Label><Input type="number" value={speakerFormData.order} onChange={e => setSpeakerFormData({ ...speakerFormData, order: parseInt(e.target.value) || 0 })} /></div>
               <div className="space-y-2">
                 <Label>Speaker Photo</Label>
@@ -518,14 +519,14 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
               <div className="space-y-2">
                 <Label>Video File (MP4/WebM)</Label>
                 <div className="flex gap-2">
-                  <Input 
-                    value={videoFormData.videoUrl} 
+                  <Input
+                    value={videoFormData.videoUrl}
                     onChange={e => {
                       const val = e.target.value;
                       const parsed = parseVideoInput(val);
                       setVideoFormData({ ...videoFormData, videoUrl: val, embedUrl: parsed.embedSrc || videoFormData.embedUrl, thumbnailUrl: videoFormData.thumbnailUrl || parsed.thumbnailUrl });
-                    }} 
-                    placeholder="https://... or upload" 
+                    }}
+                    placeholder="https://... or upload"
                   />
                   <div className="relative">
                     <Button type="button" variant="secondary" className="whitespace-nowrap" disabled={isUploading}>
@@ -538,17 +539,17 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
               </div>
               <div className="space-y-2">
                 <Label>Or Embed URL (YouTube/Vimeo etc.)</Label>
-                <Input 
-                  value={videoFormData.embedUrl} 
+                <Input
+                  value={videoFormData.embedUrl}
                   onChange={e => {
                     const val = e.target.value;
                     const parsed = parseVideoInput(val);
                     setVideoFormData({ ...videoFormData, embedUrl: parsed.embedSrc || val, videoUrl: videoFormData.videoUrl || parsed.videoUrl, thumbnailUrl: videoFormData.thumbnailUrl || parsed.thumbnailUrl });
-                  }} 
-                  placeholder="https://youtube.com/embed/..." 
+                  }}
+                  placeholder="https://youtube.com/embed/..."
                 />
               </div>
-              
+
               {/* Iframe Preview */}
               {(parseVideoInput(videoFormData.videoUrl || videoFormData.embedUrl || "").embedSrc || videoFormData.videoUrl) && (
                 <div className="space-y-2 pt-2">

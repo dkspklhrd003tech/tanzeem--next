@@ -164,7 +164,7 @@ export function Header() {
                 <span className="text-secondary mx-0.5">&amp;</span>
                 <span
                   className="font-nastaleeq text-[16px] leading-none"
-                  style={{ fontFamily: "'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', serif" }}
+                  style={{ fontFamily: "'Jameel Noori Nastaleeq', serif" }}
                   dir="rtl"
                   lang="ur"
                 >

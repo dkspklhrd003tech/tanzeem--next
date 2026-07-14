@@ -8,7 +8,7 @@
 
 :root {
   /* ── Urdu Font Fallback (Jameel Noori) with Unicode Range ── */
-  --font-urdu-fallback: 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', serif;
+  --font-urdu-fallback: 'Jameel Noori Nastaleeq', serif;
 
   /* ── Brand Greens (primary identity — kept from project) ── */
   --primary: #0d5844;
@@ -164,7 +164,7 @@
   --font-heading: 'Plus Jakarta Sans', system-ui, sans-serif;
   --font-body: 'Kumbh Sans', Arial, Helvetica, sans-serif;
   --font-arabic: 'Noto Nastaliq Urdu', serif;
-  --font-nastaleeq: 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', serif;
+  --font-nastaleeq: 'Jameel Noori Nastaleeq', serif;
 }
 
 
@@ -271,12 +271,18 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-body), 'UrduAutoFallback', sans-serif;
   }
-  
-  h1, h2, h3, h4, h5, h6 {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: var(--font-heading), 'UrduAutoFallback', sans-serif;
   }
 }
@@ -406,7 +412,7 @@ li {
 [lang="ar"],
 [lang="ar"] span,
 [lang="ar"] p {
-  font-family: 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', serif !important;
+  font-family: 'Jameel Noori Nastaleeq', serif !important;
   direction: rtl !important;
   text-align: right !important;
 }

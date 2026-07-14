@@ -133,7 +133,7 @@ export default function SpeakerFormPage({ id, type = "audio" }: { id: string, ty
             onChange={e => setFormData({ ...formData, bio: e.target.value })}
             className="text-right font-bold text-lg"
             dir="rtl"
-            style={{ fontFamily: "'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', serif" }}
+            style={{ fontFamily: "'Jameel Noori Nastaleeq', serif" }}
             placeholder="اردو نام"
           />
         </div>

@@ -37,7 +37,7 @@ export function FaqStyles() {
 
         .faq-answer p.urdu,
         .faq-answer-inner p.urdu {
-            font-family: "Noto Nastaliq Urdu", "Jameel Noori Nastaleeq", "Nafees Nastaleeq", serif;
+            font-family: "Jameel Noori Nastaleeq", serif;
             font-size: 20px;
             text-align: right;
             direction: rtl;
