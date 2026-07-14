@@ -48,6 +48,12 @@ function revalidateEntityPaths(entity: string) {
             revalidatePath("/sermons");
         } else if (entity === "campaigns") {
             revalidatePath("/");
+            revalidatePath("/campaigns");
+            revalidatePath("/campaigns/[slug]");
+        } else if (entity === "services") {
+            revalidatePath("/");
+            revalidatePath("/services");
+            revalidatePath("/services/[slug]");
         } else if (entity === "book-categories" || entity === "books") {
             revalidatePath("/books-by-category");
         }

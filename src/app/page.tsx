@@ -87,14 +87,14 @@ async function HomeContent() {
 
     const spotlightServices = publishedServices.filter(s => {
       let fields = s.customFields as any;
-      if (typeof fields === 'string') {
-        try { fields = JSON.parse(fields); } catch (e) { fields = {}; }
+      while (typeof fields === 'string') {
+        try { fields = JSON.parse(fields); } catch (e) { break; }
       }
       return fields && fields.showInSpotlight === true;
     }).map((s, idx) => {
       let fields = s.customFields as any;
-      if (typeof fields === 'string') {
-        try { fields = JSON.parse(fields); } catch (e) { fields = {}; }
+      while (typeof fields === 'string') {
+        try { fields = JSON.parse(fields); } catch (e) { break; }
       }
       // If slug is an external/absolute path, use it directly; otherwise prefix with /services/
       const rawSlug = s.slug || "";

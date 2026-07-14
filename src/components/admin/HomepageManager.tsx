@@ -24,36 +24,36 @@ export function HomepageManager() {
 
             <Tabs defaultValue="sliders" className="w-full">
                 <TabsList className="mb-6 bg-muted/50 p-1 border border-border rounded-xl flex flex-wrap justify-center h-auto gap-1 shadow-sm max-w-full">
-                    <TabsTrigger value="sliders" className="py-2.5 px-6 rounded-lg text-sm font-medium transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm whitespace-nowrap">
-                        <ImageIcon className="w-4 h-4 mr-2" />
+                    <TabsTrigger value="sliders" className="py-2 px-4 rounded-lg text-sm font-medium transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm whitespace-nowrap">
+                        <ImageIcon className="w-4 h-4 mr-1" />
                         Hero Sliders
                     </TabsTrigger>
-                    <TabsTrigger value="about" className="py-2.5 px-6 rounded-lg text-sm font-medium transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm whitespace-nowrap">
-                        <Type className="w-4 h-4 mr-2" />
+                    <TabsTrigger value="about" className="py-2 px-4 rounded-lg text-sm font-medium transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm whitespace-nowrap">
+                        <Type className="w-4 h-4 mr-1" />
                         About & Mission
                     </TabsTrigger>
-                    <TabsTrigger value="leaders" className="py-2.5 px-6 rounded-lg text-sm font-medium transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm whitespace-nowrap">
-                        <Users className="w-4 h-4 mr-2" />
+                    <TabsTrigger value="leaders" className="py-2 px-4 rounded-lg text-sm font-medium transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm whitespace-nowrap">
+                        <Users className="w-4 h-4 mr-1" />
                         Leader Profiles
                     </TabsTrigger>
-                    <TabsTrigger value="videos" className="py-2.5 px-6 rounded-lg text-sm font-medium transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm whitespace-nowrap">
-                        <Video className="w-4 h-4 mr-2" />
+                    <TabsTrigger value="videos" className="py-2 px-4 rounded-lg text-sm font-medium transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm whitespace-nowrap">
+                        <Video className="w-4 h-4 mr-1" />
                         Featured Videos
                     </TabsTrigger>
-                    <TabsTrigger value="books" className="py-2.5 px-6 rounded-lg text-sm font-medium transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm whitespace-nowrap">
-                        <BookOpen className="w-4 h-4 mr-2" />
+                    <TabsTrigger value="books" className="py-2 px-4 rounded-lg text-sm font-medium transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm whitespace-nowrap">
+                        <BookOpen className="w-4 h-4 mr-1" />
                         Featured Books
                     </TabsTrigger>
-                    <TabsTrigger value="magazines" className="py-2.5 px-6 rounded-lg text-sm font-medium transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm whitespace-nowrap">
-                        <Layers className="w-4 h-4 mr-2" />
+                    <TabsTrigger value="magazines" className="py-2 px-4 rounded-lg text-sm font-medium transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm whitespace-nowrap">
+                        <Layers className="w-4 h-4 mr-1" />
                         Featured Magazines
                     </TabsTrigger>
-                    <TabsTrigger value="social" className="py-2.5 px-6 rounded-lg text-sm font-medium transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm whitespace-nowrap">
-                        <Share2 className="w-4 h-4 mr-2" />
+                    <TabsTrigger value="social" className="py-2 px-4 rounded-lg text-sm font-medium transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm whitespace-nowrap">
+                        <Share2 className="w-4 h-4 mr-1" />
                         Social Media
                     </TabsTrigger>
-                    <TabsTrigger value="seo" className="py-2.5 px-6 rounded-lg text-sm font-medium transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm whitespace-nowrap">
-                        <Search className="w-4 h-4 mr-2" />
+                    <TabsTrigger value="seo" className="py-2 px-4 rounded-lg text-sm font-medium transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm whitespace-nowrap">
+                        <Search className="w-4 h-4 mr-1" />
                         Basic SEO
                     </TabsTrigger>
                 </TabsList>
