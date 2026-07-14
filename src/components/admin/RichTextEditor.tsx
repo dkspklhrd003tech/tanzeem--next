@@ -131,7 +131,7 @@ export function RichTextEditor({
           className
         ),
         dir: "auto",
-        style: "font-family: 'Inter', 'Noto Nastaliq Urdu', 'Jameel Noori Nastaleeq', sans-serif; line-height: 1.8;",
+        style: "font-family: 'Inter', 'Jameel Noori Nastaleeq', sans-serif; line-height: 1.8;",
       },
     },
   });
@@ -359,13 +359,13 @@ export function RichTextEditor({
               </MenuButton>
               <MenuButton
                 onClick={() => {
-                  if (editor.isActive("textStyle", { fontFamily: "'Scheherazade New', 'Noto Nastaliq Urdu', serif" })) {
+                  if (editor.isActive("textStyle", { fontFamily: "'Scheherazade New', 'jameel noori nastaleeq', serif" })) {
                     editor.chain().focus().unsetFontFamily().run();
                   } else {
                     editor.chain().focus().setFontFamily("'Scheherazade New', 'Noto Nastaliq Urdu', serif").run();
                   }
                 }}
-                isActive={editor.isActive("textStyle", { fontFamily: "'Scheherazade New', 'Noto Nastaliq Urdu', serif" })}
+                isActive={editor.isActive("textStyle", { fontFamily: "'Scheherazade New', 'Jameel Noori Nastaleeq', serif" })}
                 tooltip="Arabic Text"
               >
                 <span className="font-bold text-sm leading-none" dir="rtl">ع</span>

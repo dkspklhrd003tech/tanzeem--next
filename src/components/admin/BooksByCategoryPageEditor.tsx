@@ -30,6 +30,7 @@ import { CSS } from "@dnd-kit/utilities";
 import { PageRecord } from "@/components/sitemanager/PageForm";
 import { ImageUploader } from "@/components/admin/ImageUploader";
 import { useChunkedUpload } from "@/hooks/useChunkedUpload";
+import { PdfUploader } from "@/components/admin/PdfUploader";
 
 function slugify(text: string) {
   return text.toLowerCase().trim()
@@ -202,6 +203,27 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
+
+  // Auto-translate Urdu Name when adding a new category
+  useEffect(() => {
+    if (editingCatId) return; // Don't auto-translate when editing
+    
+    const timeout = setTimeout(async () => {
+      if (catFormData.name.trim().length > 2) {
+        try {
+          const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(catFormData.name)}&langpair=en|ur`);
+          const data = await res.json();
+          if (data?.responseData?.translatedText) {
+            setCatFormData(prev => ({ ...prev, urduName: data.responseData.translatedText }));
+          }
+        } catch (err) {
+          console.error("Translation failed", err);
+        }
+      }
+    }, 800);
+
+    return () => clearTimeout(timeout);
+  }, [catFormData.name, editingCatId]);
 
   useEffect(() => {
     fetchCategories();
@@ -645,6 +667,13 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
                 <Label>Slug <span className="text-destructive">*</span></Label>
                 <Input className={cn(bookFormErrors.slug && "border-destructive")} value={bookFormData.slug} onChange={e => setBookFormData({ ...bookFormData, slug: e.target.value })} />
                 {bookFormErrors.slug && <p className="text-xs text-destructive">{bookFormErrors.slug}</p>}
+              </div>
+              <div className="space-y-2">
+                <Label>PDF Document</Label>
+                <PdfUploader
+                  value={bookFormData.fileUrl}
+                  onChange={(url) => setBookFormData(prev => ({ ...prev, fileUrl: url }))}
+                />
               </div>
               <div className="space-y-2">
                 <Label>Cover Image</Label>

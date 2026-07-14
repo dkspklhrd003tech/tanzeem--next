@@ -25,6 +25,7 @@ export default async function BooksByCategoryPage() {
         slug: bookCategories.slug,
         description: bookCategories.description,
         coverImage: bookCategories.coverImage,
+        urduName: bookCategories.urduName,
       })
       .from(bookCategories)
       .orderBy(asc(bookCategories.order), asc(bookCategories.name));
@@ -69,11 +70,16 @@ export default async function BooksByCategoryPage() {
                     </div>
                   )}
                 </div>
-                <h3 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors leading-snug">
-                  {cat.name}
+                <h3 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors leading-snug flex items-center justify-center gap-2 flex-wrap">
+                  <span>{cat.name}</span> -
+                  {cat.urduName && (
+                    <span className="font-nastaleeq text-xl" dir="rtl">
+                      {cat.urduName}
+                    </span>
+                  )}
                 </h3>
                 {cat.count > 0 && (
-                  <span className="text-sm text-primary border rounded-full px-3 py-1 border-primary bg-primary-light font-medium mt-1">{cat.count} book{cat.count !== 1 ? "s" : ""}</span>
+                  <span className="text-sm text-primary border rounded-full px-3 py-1 border-primary bg-primary-light/80 font-medium mt-1">{cat.count} Book{cat.count !== 1 ? "s" : ""}</span>
                 )}
               </Link>
             );

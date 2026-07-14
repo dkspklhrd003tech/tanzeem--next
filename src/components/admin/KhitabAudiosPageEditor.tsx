@@ -213,6 +213,40 @@ export default function KhitabAudiosPageEditor({ pageId, initialPageData }: { pa
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
+  // Auto-translate Category Urdu Name
+  useEffect(() => {
+    if (editingCatId) return;
+    const timeout = setTimeout(async () => {
+      if (catFormData.name.trim().length > 2) {
+        try {
+          const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(catFormData.name)}&langpair=en|ur`);
+          const data = await res.json();
+          if (data?.responseData?.translatedText) {
+            setCatFormData(prev => ({ ...prev, urduName: data.responseData.translatedText }));
+          }
+        } catch (err) {}
+      }
+    }, 800);
+    return () => clearTimeout(timeout);
+  }, [catFormData.name, editingCatId]);
+
+  // Auto-translate Khitab Audio Title Urdu
+  useEffect(() => {
+    if (editingKhitabAudioId) return;
+    const timeout = setTimeout(async () => {
+      if (khitabAudioFormData.title.trim().length > 2) {
+        try {
+          const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(khitabAudioFormData.title)}&langpair=en|ur`);
+          const data = await res.json();
+          if (data?.responseData?.translatedText) {
+            setKhitabAudioFormData(prev => ({ ...prev, titleUrdu: data.responseData.translatedText }));
+          }
+        } catch (err) {}
+      }
+    }, 800);
+    return () => clearTimeout(timeout);
+  }, [khitabAudioFormData.title, editingKhitabAudioId]);
+
   useEffect(() => {
     fetchCategories();
     fetchKhitabAudios();

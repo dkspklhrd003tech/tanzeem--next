@@ -75,7 +75,7 @@ interface VideoItem {
   order?: number;
 }
 
-function SortableSpeakerCard({ speaker, onClick, onEdit, onDelete }: { speaker: SpeakerItem, onClick: () => void, onEdit: (s: SpeakerItem) => void, onDelete: (s: SpeakerItem) => void }) {
+function SortableSpeakerCard({ speaker, videoCount, onClick, onEdit, onDelete }: { speaker: SpeakerItem, videoCount: number, onClick: () => void, onEdit: (s: SpeakerItem) => void, onDelete: (s: SpeakerItem) => void }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: speaker.id });
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -100,7 +100,10 @@ function SortableSpeakerCard({ speaker, onClick, onEdit, onDelete }: { speaker: 
       </div>
       <div className="p-4">
         <div className="flex justify-between items-start mb-2">
-          <h3 className="font-bold text-base line-clamp-1 group-hover:text-primary pl-1">{speaker.name}</h3>
+          <div>
+            <h3 className="font-bold text-base line-clamp-1 group-hover:text-primary pl-1">{speaker.name}</h3>
+            <p className="text-xs text-primary text-center rounded-full border border-primary bg-primary-light mt-0.5">{videoCount} {videoCount === 1 ? 'Video' : 'Videos'}</p>
+          </div>
           <div className="flex gap-1" onClick={e => e.stopPropagation()}>
             <Button variant="ghost" size="icon" className="h-6 w-6 text-green-500" onClick={() => onEdit(speaker)}><Pencil className="w-3 h-3" /></Button>
             <Button variant="ghost" size="icon" className="h-6 w-6 text-red-500" onClick={() => onDelete(speaker)}><XCircle className="w-3 h-3" /></Button>
@@ -397,6 +400,7 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
                       <SortableSpeakerCard
                         key={speaker.id}
                         speaker={speaker}
+                        videoCount={videosList.filter(v => v.speakerId === speaker.id).length}
                         onClick={() => setActiveSpeaker(speaker)}
                         onEdit={(s) => {
                           setEditingSpeakerId(s.id);

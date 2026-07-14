@@ -211,6 +211,40 @@ export function SermonsManager() {
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
   );
 
+  // Auto-translate Category Urdu Name
+  useEffect(() => {
+    if (editingCatId) return;
+    const timeout = setTimeout(async () => {
+      if (catFormData.name.trim().length > 2) {
+        try {
+          const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(catFormData.name)}&langpair=en|ur`);
+          const data = await res.json();
+          if (data?.responseData?.translatedText) {
+            setCatFormData(prev => ({ ...prev, urduName: data.responseData.translatedText }));
+          }
+        } catch (err) {}
+      }
+    }, 800);
+    return () => clearTimeout(timeout);
+  }, [catFormData.name, editingCatId]);
+
+  // Auto-translate Sermon Title Urdu
+  useEffect(() => {
+    if (editingSermonId) return;
+    const timeout = setTimeout(async () => {
+      if (sermonFormData.title.trim().length > 2) {
+        try {
+          const res = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(sermonFormData.title)}&langpair=en|ur`);
+          const data = await res.json();
+          if (data?.responseData?.translatedText) {
+            setSermonFormData(prev => ({ ...prev, titleUrdu: data.responseData.translatedText }));
+          }
+        } catch (err) {}
+      }
+    }, 800);
+    return () => clearTimeout(timeout);
+  }, [sermonFormData.title, editingSermonId]);
+
   useEffect(() => {
     fetchCategories();
     fetchSermons();

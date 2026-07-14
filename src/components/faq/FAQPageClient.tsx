@@ -21,10 +21,23 @@ interface FAQPageClientProps {
   pageExcerpt?: string;
 }
 
-// Check if string contains Urdu/Arabic characters
+// Check if string contains ANY Urdu/Arabic characters (good for short questions)
 function isUrduText(text: string): boolean {
   const urduPattern = /[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF]/;
   return urduPattern.test(text);
+}
+
+// Check if string is PREDOMINANTLY Urdu (good for long mixed answers)
+function isPrimarilyUrdu(text: string): boolean {
+  if (!text) return false;
+  const plainText = text.replace(/<[^>]+>/g, ''); // strip HTML
+  const urduMatch = plainText.match(/[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF]/g);
+  const englishMatch = plainText.match(/[a-zA-Z]/g);
+  
+  const urduCount = urduMatch ? urduMatch.length : 0;
+  const englishCount = englishMatch ? englishMatch.length : 0;
+  
+  return urduCount > englishCount;
 }
 
 export function FAQPageClient({ initialItems, pageTitle, pageExcerpt }: FAQPageClientProps) {
@@ -132,7 +145,7 @@ export function FAQPageClient({ initialItems, pageTitle, pageExcerpt }: FAQPageC
             ) : (
               filteredItems.map((item, idx) => {
                 const isUrduQ = isUrduText(item.question);
-                const isUrduA = isUrduText(item.answer);
+                const isUrduA = isPrimarilyUrdu(item.answer);
                 const isExpanded = expandedId === item.id;
 
                 return (
@@ -181,10 +194,10 @@ export function FAQPageClient({ initialItems, pageTitle, pageExcerpt }: FAQPageC
                           <div
                             className={cn(
                               "p-6 text-[#222222] max-w-none text-sm md:text-base leading-relaxed faq-answer faq-answer-inner",
-                              isUrduA && "faq-answer-urdu font-nastaleeq text-right text-lg md:text-xl leading-loose"
+                              isUrduA && "faq-answer-urdu font-nastaleeq text-right text-lg md:text-xl"
                             )}
                             dir={isUrduA ? "rtl" : "ltr"}
-                            style={isUrduA ? { fontFamily: "'Jameel Noori Nastaleeq', serif", fontSize: "20px", lineHeight: "2.2" } : undefined}
+                            style={isUrduA ? { fontFamily: "'Jameel Noori Nastaleeq', serif", fontSize: "22px", lineHeight: "2.2" } : undefined}
                             dangerouslySetInnerHTML={{ __html: item.answer }}
                           />
                         </motion.div>

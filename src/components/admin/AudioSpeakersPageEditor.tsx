@@ -69,7 +69,7 @@ interface AudioItem {
   downloadCount?: number;
 }
 
-function SortableSpeakerCard({ speaker, onClick, onEdit, onDelete }: { speaker: SpeakerItem, onClick: () => void, onEdit: (s: SpeakerItem) => void, onDelete: (s: SpeakerItem) => void }) {
+function SortableSpeakerCard({ speaker, audioCount, onClick, onEdit, onDelete }: { speaker: SpeakerItem, audioCount: number, onClick: () => void, onEdit: (s: SpeakerItem) => void, onDelete: (s: SpeakerItem) => void }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: speaker.id });
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -93,8 +93,11 @@ function SortableSpeakerCard({ speaker, onClick, onEdit, onDelete }: { speaker: 
         )}
       </div>
       <div className="p-4">
-        <div className="flex justify-between items-start mb-2">
-          <h3 className="font-bold text-base line-clamp-1 group-hover:text-primary pl-1">{speaker.name}</h3>
+        <div className="flex items-start mb-2">
+          <div>
+            <h3 className="font-bold text-base line-clamp-1 group-hover:text-primary pl-1">{speaker.name}</h3>
+            <p className="text-xs text-primary text-center rounded-full border border-primary bg-primary-light mt-0.5">{audioCount} {audioCount === 1 ? 'Audio' : 'Audios'}</p>
+          </div>
           <div className="flex gap-1" onClick={e => e.stopPropagation()}>
             <Button variant="ghost" size="icon" className="h-6 w-6 text-green-500" onClick={() => onEdit(speaker)}><Pencil className="w-3 h-3" /></Button>
             <Button variant="ghost" size="icon" className="h-6 w-6 text-red-500" onClick={() => onDelete(speaker)}><XCircle className="w-3 h-3" /></Button>
@@ -271,6 +274,7 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
                       <SortableSpeakerCard
                         key={speaker.id}
                         speaker={speaker}
+                        audioCount={audiosList.filter(a => a.speakerId === speaker.id).length}
                         onClick={() => setActiveSpeaker(speaker)}
                         onEdit={(s) => router.push(`/sitemanager/media/speaker/${s.id}`)}
                         onDelete={(s) => setDeletingSpeaker(s)}

@@ -7,7 +7,7 @@ async function verifyPage(slug: string) {
     where: eq(pages.slug, slug),
   });
   if (page) {
-    console.log(`SUCCESS: Page "${page.title}" found for slug "${slug}"`);
+    console.log(`SUCCESS: Page "${page.title}"found for slug "${slug}"`);
   } else {
     console.log(`FAILURE: Page NOT found for slug "${slug}"`);
   }
