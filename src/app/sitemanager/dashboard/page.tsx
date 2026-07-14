@@ -270,7 +270,7 @@ export default function DashboardPage() {
             <CardContent className="p-4 flex items-center justify-between">
               <div>
                 <p className="text-sm font-semibold text-blue-600 uppercase tracking-wide">Total Plays</p>
-                <p className="text-2xl font-bold text-foreground tabular-nums leading-tight mt-1">{statsLoading ? <Skeleton className="h-6 w-16" /> : fmt(stats?.globalPlays ?? 0)}</p>
+                <div className="text-2xl font-bold text-foreground tabular-nums leading-tight mt-1">{statsLoading ? <Skeleton className="h-6 w-16" /> : fmt(stats?.globalPlays ?? 0)}</div>
               </div>
               <div className="h-10 w-10 rounded-full bg-blue-500/20 flex items-center justify-center">
                 <Play className="h-5 w-5 text-blue-600" />
@@ -281,7 +281,7 @@ export default function DashboardPage() {
             <CardContent className="p-4 flex items-center justify-between">
               <div>
                 <p className="text-sm font-semibold text-emerald-600 uppercase tracking-wide">Total Downloads</p>
-                <p className="text-2xl font-bold text-foreground tabular-nums leading-tight mt-1">{statsLoading ? <Skeleton className="h-6 w-16" /> : fmt(stats?.globalDownloads ?? 0)}</p>
+                <div className="text-2xl font-bold text-foreground tabular-nums leading-tight mt-1">{statsLoading ? <Skeleton className="h-6 w-16" /> : fmt(stats?.globalDownloads ?? 0)}</div>
               </div>
               <div className="h-10 w-10 rounded-full bg-emerald-500/20 flex items-center justify-center">
                 <Download className="h-5 w-5 text-emerald-600" />
@@ -292,7 +292,7 @@ export default function DashboardPage() {
             <CardContent className="p-4 flex items-center justify-between">
               <div>
                 <p className="text-sm font-semibold text-purple-600 uppercase tracking-wide">Total Shares</p>
-                <p className="text-2xl font-bold text-foreground tabular-nums leading-tight mt-1">{statsLoading ? <Skeleton className="h-6 w-16" /> : fmt(stats?.globalShares ?? 0)}</p>
+                <div className="text-2xl font-bold text-foreground tabular-nums leading-tight mt-1">{statsLoading ? <Skeleton className="h-6 w-16" /> : fmt(stats?.globalShares ?? 0)}</div>
               </div>
               <div className="h-10 w-10 rounded-full bg-purple-500/20 flex items-center justify-center">
                 <Share2 className="h-5 w-5 text-purple-600" />
