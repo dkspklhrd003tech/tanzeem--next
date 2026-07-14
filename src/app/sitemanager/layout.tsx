@@ -112,14 +112,13 @@ const NAV_ITEMS: NavItem[] = [
     ],
   },
   { title: "Press Releases", href: "/sitemanager/pages/press-releases/edit", icon: FileText },
-  { title: "Khitab-e-Jum'ah (Audio)", href: "/sitemanager/pages/khitab-e-jumah-audio/edit", icon: Headphones },
   { title: "Pages", href: "/sitemanager/pages", icon: Home },
   // ── Content ──────────────────────────────────────────────────────────────
   { title: "Events", href: "/sitemanager/pages/events/edit", icon: Calendar },
   { title: "Services", href: "/sitemanager/pages/services/edit", icon: Sparkles },
   { title: "Campaigns", href: "/sitemanager/pages/campaigns/edit", icon: Sparkles },
   { title: "Jummah Venues", href: "/sitemanager/khitabat-addresses", icon: MapPin },
-  { title: "Sermons", href: "/sitemanager/sermons", icon: Mic },
+  { title: "Sermons / Khitab-e-Jum'ah (Audio)", href: "/sitemanager/sermons", icon: Mic },
   // ── System ───────────────────────────────────────────────────────────────
   { title: "Settings", href: "/sitemanager/settings", icon: Settings },
   { title: "Activity Log", href: "/sitemanager/activity", icon: History, superAdminOnly: true },

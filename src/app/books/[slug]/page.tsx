@@ -70,7 +70,7 @@ export default async function BookDetailPage({ params }: Props) {
       <div className="container max-w-5xl mx-auto py-10">
 
         {/* Back */}
-        <Link href="/books" className="inline-flex items-center gap-2 text-sm text-foreground-muted hover:text-primary mb-6 transition-colors">
+        <Link href="/books-by-category" className="inline-flex items-center gap-2 text-sm text-foreground-muted hover:text-primary mb-6 transition-colors">
           <ArrowLeft className="h-4 w-4" />
           Back to Books Library
         </Link>

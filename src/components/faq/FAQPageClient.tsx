@@ -158,7 +158,7 @@ export function FAQPageClient({ initialItems, pageTitle, pageExcerpt }: FAQPageC
                         isUrduQ && "text-right font-nastaleeq"
                       )}
                       dir={isUrduQ ? "rtl" : "ltr"}
-                      style={isUrduQ ? { fontFamily: "'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', serif" } : undefined}
+                      style={isUrduQ ? { fontFamily: "'Jameel Noori Nastaleeq', serif" } : undefined}
                     >
                       <span className="flex-1 pr-2 leading-relaxed">{item.question}</span>
                       <ChevronDown
