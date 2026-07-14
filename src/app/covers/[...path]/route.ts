@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { readFile, readdir } from "fs/promises";
-import { join } from "path";
-import { existsSync } from "fs";
+import { resolveMediaUrl } from "@/lib/utils";
 
 export async function GET(
     request: NextRequest,
@@ -10,53 +8,14 @@ export async function GET(
     try {
         const { path } = await params;
         const decodedPath = path.map(segment => decodeURIComponent(segment));
-        let filePath = join(/*turbopackIgnore: true*/ process.cwd(), "public", "covers", ...decodedPath);
-
-        if (!existsSync(filePath)) {
-            // Fuzzy search: if path is a single filename, search the covers folder for a file ending with that filename
-            if (decodedPath.length === 1) {
-                const filename = decodedPath[0];
-                const dir = join(/*turbopackIgnore: true*/ process.cwd(), "public", "covers");
-                if (existsSync(dir)) {
-                    const files = await readdir(dir);
-                    const match = files.find(f => f.toLowerCase().endsWith(`-${filename.toLowerCase()}`) || f.toLowerCase() === filename.toLowerCase());
-                    if (match) {
-                        filePath = join(dir, match);
-                    }
-                }
-            }
-        }
-
-        if (!existsSync(filePath)) {
-            return new NextResponse("File not found", { status: 404 });
-        }
-
-        const fileBuffer = await readFile(filePath);
+        const joinedPath = decodedPath.join('/');
         
-        // Determine content type
-        let contentType = "application/octet-stream";
-        const filename = filePath.toLowerCase();
-        if (filename.endsWith(".pdf")) {
-            contentType = "application/pdf";
-        } else if (filename.endsWith(".jpg") || filename.endsWith(".jpeg")) {
-            contentType = "image/jpeg";
-        } else if (filename.endsWith(".png")) {
-            contentType = "image/png";
-        } else if (filename.endsWith(".webp")) {
-            contentType = "image/webp";
-        } else if (filename.endsWith(".svg")) {
-            contentType = "image/svg+xml";
-        }
-
-        return new NextResponse(fileBuffer, {
-            headers: {
-                "Content-Type": contentType,
-                "Content-Disposition": "inline",
-                "Cache-Control": "public, max-age=31536000, immutable",
-            },
-        });
+        // Redirect to the Media CDN URL
+        const mediaUrl = resolveMediaUrl(`/covers/${joinedPath}`);
+        
+        return NextResponse.redirect(mediaUrl, 301);
     } catch (error) {
-        console.error("Error serving uploaded cover file:", error);
+        console.error("Error serving uploaded file redirect:", error);
         return new NextResponse("Internal server error", { status: 500 });
     }
 }

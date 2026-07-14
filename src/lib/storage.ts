@@ -1,5 +1,4 @@
 import { Client } from "basic-ftp";
-import { promises as fs } from "fs";
 import * as path from "path";
 import { Readable } from "stream";
 
