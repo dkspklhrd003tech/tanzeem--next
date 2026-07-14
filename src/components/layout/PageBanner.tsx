@@ -44,7 +44,9 @@ export function PageBanner({ settings, titleOverride, breadcrumbsOverride, bgIma
     // Skip fetching page data for dynamic resource detail routes to avoid unnecessary 404s
     const skipPrefixes = [
       "audio/", "videos/", "books/", "audio-books/", 
-      "magazines/", "campaigns/", "services/", "press-releases/"
+      "magazines/", "campaigns/", "services/", "press-releases/",
+      "events/", "books-by-category/", "videos-by-category/", 
+      "videos-by-speakers/", "audios-by-speaker/", "resources/khitab-e-jumah/"
     ];
     if (skipPrefixes.some(prefix => slug.startsWith(prefix))) return;
 
