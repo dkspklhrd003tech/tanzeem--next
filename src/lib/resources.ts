@@ -8,6 +8,8 @@ import {
   audioCategories,
   pressReleases,
   locations,
+  bookCategories,
+  videoCategories,
 } from "@/db/schema";
 import { eq, desc, and, like } from "drizzle-orm";
 
@@ -21,58 +23,76 @@ export async function getPublishedAudio(opts?: {
   if (opts?.speakerId) conditions.push(eq(audio.speakerId, opts.speakerId));
   if (opts?.categoryId) conditions.push(eq(audio.categoryId, opts.categoryId));
 
-  const rows = await db.query.audio.findMany({
-    where: and(...conditions),
-    with: { speaker: true, category: true },
-    orderBy: [desc(audio.publishedAt), desc(audio.createdAt)],
-    limit: opts?.limit ?? 100,
-  });
+  const rows = await db
+    .select({
+      audio: audio,
+      speaker: speakers,
+      category: audioCategories,
+    })
+    .from(audio)
+    .leftJoin(speakers, eq(audio.speakerId, speakers.id))
+    .leftJoin(audioCategories, eq(audio.categoryId, audioCategories.id))
+    .where(and(...conditions))
+    .orderBy(desc(audio.publishedAt), desc(audio.createdAt))
+    .limit(opts?.limit ?? 100);
 
   return rows.map((r) => ({
-    id: r.id,
-    title: r.title,
-    description: r.description,
-    audioUrl: r.audioUrl,
-    thumbnailUrl: r.thumbnailUrl,
-    publishedAt: r.publishedAt,
+    id: r.audio.id,
+    title: r.audio.title,
+    description: r.audio.description,
+    audioUrl: r.audio.audioUrl,
+    thumbnailUrl: r.audio.thumbnailUrl,
+    publishedAt: r.audio.publishedAt,
     speakerName: r.speaker?.name ?? null,
     categoryName: r.category?.name ?? null,
-    speakerId: r.speakerId,
-    categoryId: r.categoryId,
+    speakerId: r.audio.speakerId,
+    categoryId: r.audio.categoryId,
   }));
 }
 
 export async function getPublishedVideos(limit = 100) {
-  const rows = await db.query.videos.findMany({
-    where: eq(videos.isPublished, true),
-    with: { speaker: true, category: true },
-    orderBy: [desc(videos.publishedAt), desc(videos.createdAt)],
-    limit,
-  });
+  const rows = await db
+    .select({
+      videos: videos,
+      speaker: speakers,
+      category: videoCategories,
+    })
+    .from(videos)
+    .leftJoin(speakers, eq(videos.speakerId, speakers.id))
+    .leftJoin(videoCategories, eq(videos.categoryId, videoCategories.id))
+    .where(eq(videos.isPublished, true))
+    .orderBy(desc(videos.publishedAt), desc(videos.createdAt))
+    .limit(limit);
+
   return rows.map((r) => ({
-    id: r.id,
-    title: r.title,
-    videoUrl: r.videoUrl,
-    thumbnailUrl: r.thumbnailUrl,
+    id: r.videos.id,
+    title: r.videos.title,
+    videoUrl: r.videos.videoUrl,
+    thumbnailUrl: r.videos.thumbnailUrl,
     speakerName: r.speaker?.name ?? null,
     categoryName: r.category?.name ?? null,
   }));
 }
 
 export async function getPublishedBooks(limit = 100) {
-  const rows = await db.query.books.findMany({
-    where: eq(books.isPublished, true),
-    with: { category: true },
-    orderBy: [desc(books.publishedAt), desc(books.createdAt)],
-    limit,
-  });
+  const rows = await db
+    .select({
+      books: books,
+      category: bookCategories,
+    })
+    .from(books)
+    .leftJoin(bookCategories, eq(books.categoryId, bookCategories.id))
+    .where(eq(books.isPublished, true))
+    .orderBy(desc(books.publishedAt), desc(books.createdAt))
+    .limit(limit);
+
   return rows.map((r) => ({
-    id: r.id,
-    title: r.title,
-    authorName: r.authorName,
-    coverImage: r.coverImage,
-    fileUrl: r.fileUrl,
-    description: r.description,
+    id: r.books.id,
+    title: r.books.title,
+    authorName: r.books.authorName,
+    coverImage: r.books.coverImage,
+    fileUrl: r.books.fileUrl,
+    description: r.books.description,
     categoryName: r.category?.name ?? null,
   }));
 }

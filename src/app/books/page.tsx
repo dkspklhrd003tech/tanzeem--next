@@ -47,16 +47,25 @@ export default async function BooksPage({
   const where = and(...conditions);
   const offset = (pageNum - 1) * PER_PAGE;
 
-  const [rows, totalResult] = await Promise.all([
-    db.query.books.findMany({
-      where,
-      with: { category: true },
-      orderBy: [asc(books.order), desc(books.createdAt)],
-      limit: PER_PAGE,
-      offset,
-    }),
+  const [bookRows, totalResult] = await Promise.all([
+    db
+      .select({
+        books: books,
+        category: bookCategories,
+      })
+      .from(books)
+      .leftJoin(bookCategories, eq(books.categoryId, bookCategories.id))
+      .where(where)
+      .orderBy(asc(books.order), desc(books.createdAt))
+      .limit(PER_PAGE)
+      .offset(offset),
     db.select({ total: count() }).from(books).where(where),
   ]);
+
+  const rows = bookRows.map((r) => ({
+    ...r.books,
+    category: r.category,
+  }));
 
   const total = Number(totalResult[0]?.total ?? 0);
   const totalPages = Math.ceil(total / PER_PAGE);

@@ -242,7 +242,7 @@ function CampaignBlockBuilder({ blocks, onChange }: { blocks: CampaignBlock[], o
     const newBlock: CampaignBlock = {
       id: uuidv4(),
       type: type as BlockType,
-      value: (type === "thumbnails" || type === "slider") ? [] : "",
+      value: (type === "thumbnails" || type === "slider" || type === "video") ? [] : "",
     };
     onChange([...blocks, newBlock]);
   };
@@ -508,22 +508,54 @@ function SortableCampaignBlock({ block, index, onUpdate, onUpdateTitle, onRemove
       )}
       {block.type === "video" && (
         <div className="space-y-3">
-          <Input
-            placeholder="Paste Video Link or <iframe> code here (YouTube, Vimeo, Ok.ru)"
-            value={block.value || ""}
-            onChange={(e) => {
-              let val = e.target.value;
-              const iframeMatch = val.match(/<iframe.*?src=["'](.*?)["']/i);
-              if (iframeMatch && iframeMatch[1]) {
-                val = iframeMatch[1];
-                toast({ title: "Iframe Parsed", description: "Successfully extracted URL from iframe." });
-              }
-              onUpdate(val);
+          {/* Multi-URL list */}
+          {(Array.isArray(block.value) ? block.value : block.value ? [block.value] : []).map((url: string, vIdx: number) => (
+            <div key={vIdx} className="flex gap-2 items-center">
+              <Input
+                placeholder={`Video URL ${vIdx + 1} (YouTube, Vimeo, Ok.ru)`}
+                value={url}
+                onChange={(e) => {
+                  let val = e.target.value;
+                  const iframeMatch = val.match(/<iframe.*?src=["'](.*?)["']/i);
+                  if (iframeMatch && iframeMatch[1]) {
+                    val = iframeMatch[1];
+                    toast({ title: "Iframe Parsed", description: "Extracted URL from iframe code." });
+                  }
+                  const arr = Array.isArray(block.value) ? [...block.value] : block.value ? [block.value] : [];
+                  arr[vIdx] = val;
+                  onUpdate(arr);
+                }}
+                className="flex-1 font-mono text-xs"
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8 text-destructive hover:bg-destructive/10 shrink-0"
+                onClick={() => {
+                  const arr = Array.isArray(block.value) ? [...block.value] : block.value ? [block.value] : [];
+                  onUpdate(arr.filter((_: string, i: number) => i !== vIdx));
+                }}
+              >
+                <XCircle className="h-4 w-4" />
+              </Button>
+            </div>
+          ))}
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="w-full border-dashed"
+            onClick={() => {
+              const arr = Array.isArray(block.value) ? [...block.value] : block.value ? [block.value] : [];
+              onUpdate([...arr, ""]);
             }}
-          />
-          {block.value && (
-            <p className="text-xs text-muted-foreground break-all mt-1">
-              Clean URL saved: {block.value}
+          >
+            <Plus className="h-3 w-3 mr-1" /> Add Video URL
+          </Button>
+          {Array.isArray(block.value) && block.value.filter(Boolean).length > 0 && (
+            <p className="text-xs text-muted-foreground">
+              {block.value.filter(Boolean).length} video{block.value.filter(Boolean).length > 1 ? "s" : ""} — renders as grid-cols-2 on frontend
             </p>
           )}
         </div>
@@ -815,8 +847,8 @@ export default function CampaignsPageEditor({ pageId, initialPageData }: Campaig
     const errors: Record<string, string> = {};
     if (!formData.title.trim()) errors.title = "Title is required";
     if (!formData.slug.trim()) errors.slug = "Slug is required";
-    if (!/^[a-z0-9-]+$/.test(formData.slug)) {
-      errors.slug = "Slug must contain only lowercase letters, numbers, and hyphens";
+    if (!/^[a-zA-Z0-9._\-\/]+$/.test(formData.slug)) {
+      errors.slug = "Slug must not contain spaces or special characters";
     }
     if (!formData.thumbnailUrl) errors.thumbnailUrl = "Image Document is required";
 

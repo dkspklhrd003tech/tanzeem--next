@@ -59,16 +59,28 @@ export default async function AudioPage({
   const offset = (pageNum - 1) * PER_PAGE;
 
   const { count: drizzleCount } = await import("drizzle-orm");
-  const [rows, totalResult] = await Promise.all([
-    db.query.audio.findMany({
-      where,
-      with: { category: true, speaker: true },
-      orderBy: [desc(audio.createdAt)],
-      limit: PER_PAGE,
-      offset,
-    }),
+  const [audioRows, totalResult] = await Promise.all([
+    db
+      .select({
+        audio: audio,
+        category: audioCategories,
+        speaker: speakers,
+      })
+      .from(audio)
+      .leftJoin(audioCategories, eq(audio.categoryId, audioCategories.id))
+      .leftJoin(speakers, eq(audio.speakerId, speakers.id))
+      .where(where)
+      .orderBy(desc(audio.createdAt))
+      .limit(PER_PAGE)
+      .offset(offset),
     db.select({ total: drizzleCount() }).from(audio).where(where),
   ]);
+
+  const rows = audioRows.map((r) => ({
+    ...r.audio,
+    category: r.category,
+    speaker: r.speaker,
+  }));
 
   const total = Number(totalResult[0]?.total ?? 0);
   const totalPages = Math.ceil(total / PER_PAGE);

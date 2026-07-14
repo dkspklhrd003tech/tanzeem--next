@@ -478,8 +478,8 @@ export default function EventsPageEditor({ pageId, initialPageData }: EventsPage
     const errors: Record<string, string> = {};
     if (!formData.title.trim()) errors.title = "Title is required";
     if (!formData.slug.trim()) errors.slug = "Slug is required";
-    if (!/^[a-z0-9-]+$/.test(formData.slug)) {
-      errors.slug = "Slug must contain only lowercase letters, numbers, and hyphens";
+    if (!/^[a-zA-Z0-9._\-\/]+$/.test(formData.slug)) {
+      errors.slug = "Slug must not contain spaces or special characters";
     }
     if (!formData.imageUrl) errors.imageUrl = "Image Document is required";
     if (!formData.startDate) errors.startDate = "Published Date is required";

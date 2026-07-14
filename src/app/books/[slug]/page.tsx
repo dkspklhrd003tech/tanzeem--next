@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import Link from "next/link";
 import { db } from "@/lib/db";
-import { books } from "@/db/schema";
+import { books, bookCategories } from "@/db/schema";
 import { eq, and, ne, asc, desc } from "drizzle-orm";
 import { BookOpen, Download, Share2, ArrowLeft, FileText } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -31,22 +31,38 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function BookDetailPage({ params }: Props) {
   const { slug } = await params;
 
-  const book = await db.query.books.findFirst({
-    where: and(eq(books.slug, slug), eq(books.isPublished, true)),
-    with: { category: true },
-  });
-  if (!book) notFound();
+  const rows = await db
+    .select()
+    .from(books)
+    .leftJoin(bookCategories, eq(books.categoryId, bookCategories.id))
+    .where(and(eq(books.slug, slug), eq(books.isPublished, true)))
+    .limit(1);
 
-  const related = await db.query.books.findMany({
-    where: and(
-      eq(books.isPublished, true),
-      ne(books.id, book.id),
-      ...(book.categoryId ? [eq(books.categoryId, book.categoryId)] : [])
-    ),
-    with: { category: true },
-    orderBy: [asc(books.order), desc(books.createdAt)],
-    limit: 6,
-  });
+  if (rows.length === 0) notFound();
+
+  const book = {
+    ...rows[0].books,
+    category: rows[0].book_categories ?? null,
+  };
+
+  const relatedRows = await db
+    .select()
+    .from(books)
+    .leftJoin(bookCategories, eq(books.categoryId, bookCategories.id))
+    .where(
+      and(
+        eq(books.isPublished, true),
+        ne(books.id, book.id),
+        ...(book.categoryId ? [eq(books.categoryId, book.categoryId)] : [])
+      )
+    )
+    .orderBy(asc(books.order), desc(books.createdAt))
+    .limit(6);
+
+  const related = relatedRows.map((r) => ({
+    ...r.books,
+    category: r.book_categories ?? null,
+  }));
 
   const ld = bookJsonLd({
     title: book.title,

@@ -139,29 +139,38 @@ export default async function CampaignDetailsPage({ params }: { params: Promise<
                                         </div>
                                     );
 
-                                case "video":
-                                    if (!block.value) return null;
-                                    let embedUrl = block.value;
-                                    if (embedUrl.includes("youtube.com/watch?v=")) {
-                                        embedUrl = embedUrl.replace("watch?v=", "embed/").split("&")[0];
-                                    } else if (embedUrl.includes("youtu.be/")) {
-                                        embedUrl = embedUrl.replace("youtu.be/", "youtube.com/embed/").split("?")[0];
-                                    } else if (embedUrl.includes("ok.ru/video/")) {
-                                        embedUrl = embedUrl.replace("ok.ru/video/", "ok.ru/videoembed/");
-                                    }
+                                case "video": {
+                                    // Normalize: support both legacy string and new array format
+                                    const rawUrls: string[] = Array.isArray(block.value)
+                                        ? block.value
+                                        : block.value ? [block.value] : [];
+                                    const embedUrls = rawUrls
+                                        .filter(Boolean)
+                                        .map((u: string) => {
+                                            if (u.includes("youtube.com/watch?v=")) return u.replace("watch?v=", "embed/").split("&")[0];
+                                            if (u.includes("youtu.be/")) return u.replace("youtu.be/", "youtube.com/embed/").split("?")[0];
+                                            if (u.includes("ok.ru/video/")) return u.replace("ok.ru/video/", "ok.ru/videoembed/");
+                                            return u;
+                                        });
+                                    if (embedUrls.length === 0) return null;
                                     return (
                                         <div key={idx} className="space-y-4">
                                             {block.title && <h2 className="text-3xl text-center mx-auto font-bold text-foreground">{block.title}</h2>}
-                                            <div className="aspect-video w-full rounded-xl overflow-hidden bg-black shadow-lg">
-                                                <iframe
-                                                    src={embedUrl}
-                                                    className="w-full h-full border-0"
-                                                    allowFullScreen
-                                                    allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
-                                                ></iframe>
+                                            <div className={`grid gap-4 ${embedUrls.length === 1 ? "grid-cols-1" : "grid-cols-1 md:grid-cols-2"}`}>
+                                                {embedUrls.map((embedUrl: string, vIdx: number) => (
+                                                    <div key={vIdx} className="aspect-video w-full rounded-xl overflow-hidden bg-black shadow-lg">
+                                                        <iframe
+                                                            src={embedUrl}
+                                                            className="w-full h-full border-0"
+                                                            allowFullScreen
+                                                            allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+                                                        />
+                                                    </div>
+                                                ))}
                                             </div>
                                         </div>
                                     );
+                                }
 
                                 case "slider":
                                     if (!Array.isArray(block.value) || block.value.length === 0) return null;

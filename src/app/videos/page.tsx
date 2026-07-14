@@ -58,16 +58,28 @@ export default async function VideosPage({
   const where = and(...conditions);
   const offset = (pageNum - 1) * PER_PAGE;
 
-  const [rows, totalResult] = await Promise.all([
-    db.query.videos.findMany({
-      where,
-      with: { category: true, speaker: true },
-      orderBy: [desc(videos.createdAt)],
-      limit: PER_PAGE,
-      offset,
-    }),
+  const [videoRows, totalResult] = await Promise.all([
+    db
+      .select({
+        videos: videos,
+        category: videoCategories,
+        speaker: speakers,
+      })
+      .from(videos)
+      .leftJoin(videoCategories, eq(videos.categoryId, videoCategories.id))
+      .leftJoin(speakers, eq(videos.speakerId, speakers.id))
+      .where(where)
+      .orderBy(desc(videos.createdAt))
+      .limit(PER_PAGE)
+      .offset(offset),
     db.select({ total: count() }).from(videos).where(where),
   ]);
+
+  const rows = videoRows.map((r) => ({
+    ...r.videos,
+    category: r.category,
+    speaker: r.speaker,
+  }));
 
   const total = Number(totalResult[0]?.total ?? 0);
   const totalPages = Math.ceil(total / PER_PAGE);
