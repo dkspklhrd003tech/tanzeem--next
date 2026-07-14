@@ -45,7 +45,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
     return {
         title: `${targetLink.title} | Magazine`,
-        description: `Read the magazine issue: ${targetLink.title}`,
+        description: `Read the magazine: ${targetLink.title}`,
     };
 }
 
