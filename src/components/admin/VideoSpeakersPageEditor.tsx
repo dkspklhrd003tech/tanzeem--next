@@ -164,7 +164,7 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
 
   // Video Modal
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
-  const [videoFormData, setVideoFormData] = useState({ title: "", slug: "", videoUrl: "", embedUrl: "", isPublished: true, isNew: false, customFields: {} as Record<string, any> });
+  const [videoFormData, setVideoFormData] = useState({ title: "", slug: "", videoUrl: "", embedUrl: "", thumbnailUrl: "", isPublished: true, isNew: false, customFields: {} as Record<string, any> });
   const [editingVideoId, setEditingVideoId] = useState<string | null>(null);
   const [deletingVideo, setDeletingVideo] = useState<VideoItem | null>(null);
 
