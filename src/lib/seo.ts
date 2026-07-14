@@ -9,6 +9,7 @@
  */
 
 import type { Metadata } from "next";
+import { resolveMediaUrl } from "@/lib/utils";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -50,7 +51,7 @@ export function buildMetadata({
   schemaType: _schemaType = "WebPage",
 }: MetadataInput): Metadata {
   const url = `${SITE_URL}${path}`;
-  const image = ogImage ?? DEFAULT_OG_IMAGE;
+  const image = resolveMediaUrl(ogImage ?? DEFAULT_OG_IMAGE);
   const cleanTitle = title.replace(new RegExp(`\\s*\\|?\\s*${SITE_NAME}\\s*$`, 'i'), '').trim();
   const fullTitle = cleanTitle ? `${cleanTitle} | ${SITE_NAME}` : SITE_NAME;
 
@@ -167,7 +168,7 @@ export function audioJsonLd({
     description: description ?? undefined,
     contentUrl: audioUrl,
     url: `${SITE_URL}/audio/${slug}`,
-    thumbnailUrl: thumbnailUrl ?? undefined,
+    thumbnailUrl: thumbnailUrl ? resolveMediaUrl(thumbnailUrl) : undefined,
     duration: duration ? `PT${Math.floor(duration / 60)}M${duration % 60}S` : undefined,
     inLanguage: "ur",
     author: speakerName
@@ -205,7 +206,7 @@ export function videoJsonLd({
     description: description ?? undefined,
     contentUrl: videoUrl,
     url: `${SITE_URL}/videos/${slug}`,
-    thumbnailUrl: thumbnailUrl ?? `${DEFAULT_OG_IMAGE}`,
+    thumbnailUrl: resolveMediaUrl(thumbnailUrl ?? DEFAULT_OG_IMAGE),
     duration: duration ? `PT${Math.floor(duration / 60)}M${duration % 60}S` : undefined,
     inLanguage: "ur",
     author: speakerName
@@ -240,7 +241,7 @@ export function bookJsonLd({
     name: title,
     description: description ?? undefined,
     url: `${SITE_URL}/books/${slug}`,
-    image: coverImage ?? undefined,
+    image: coverImage ? resolveMediaUrl(coverImage) : undefined,
     inLanguage: language ?? "ur",
     author: authorName
       ? { "@type": "Person", name: authorName }
