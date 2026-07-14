@@ -28,8 +28,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!result) return { title: "Video Not Found" };
   const item = { ...result.videos, category: result.category, speaker: result.speaker };
   return buildMetadata({
-    title: item.metaTitle ?? item.title,
-    description: item.metaDescription ?? item.description ?? undefined,
+    title: item.metaTitle || item.title,
+    description: item.metaDescription || item.description || undefined,
     path: `/videos/${slug}`,
     ogImage: item.thumbnailUrl,
     keywords: ["Islamic video", "lecture", item.speaker?.name ?? "", item.category?.name ?? ""].filter(Boolean),

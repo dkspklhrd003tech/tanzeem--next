@@ -20,8 +20,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   });
   if (!book) return { title: "Book Not Found" };
   return buildMetadata({
-    title: book.metaTitle ?? book.title,
-    description: book.metaDescription ?? book.description ?? undefined,
+    title: book.metaTitle || book.title,
+    description: book.metaDescription || book.description || undefined,
     path: `/books/${slug}`,
     ogImage: book.coverImage,
     keywords: ["Islamic book", book.language, book.authorName ?? "", "free download"].filter(Boolean),

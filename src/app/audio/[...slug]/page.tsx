@@ -28,8 +28,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!result) return { title: "Audio Not Found" };
   const item = { ...result.audio, category: result.category, speaker: result.speaker };
   return buildMetadata({
-    title: item.metaTitle ?? item.title,
-    description: item.metaDescription ?? item.description ?? undefined,
+    title: item.metaTitle || item.title,
+    description: item.metaDescription || item.description || undefined,
     path: `/audio/${slug}`,
     ogImage: item.thumbnailUrl,
     keywords: ["Islamic audio", "lecture", item.speaker?.name ?? "", item.category?.name ?? ""].filter(Boolean),

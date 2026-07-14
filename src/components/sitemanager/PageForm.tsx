@@ -609,6 +609,29 @@ export function PageForm({ mode, initialData, parentPages = [] }: PageFormProps)
             </CardContent>
           </Card>
 
+          {/* Basic SEO */}
+          <Card>
+            <CardHeader className="p-5 pb-0">
+              <CardTitle className="text-sm">Basic SEO</CardTitle>
+            </CardHeader>
+            <CardContent className="p-5 space-y-4">
+              <div>
+                <Label htmlFor="metaTitle" className="text-xs font-semibold uppercase tracking-wide mb-1.5 block">Meta Title</Label>
+                <Input id="metaTitle" placeholder="Default is Page Title" value={form.metaTitle} onChange={e => set("metaTitle", e.target.value)} className={cn("text-sm", errors.metaTitle && "border-destructive")} />
+                {errors.metaTitle && <p className="text-xs text-destructive mt-1">{errors.metaTitle}</p>}
+              </div>
+              <div>
+                <Label htmlFor="metaDescription" className="text-xs font-semibold uppercase tracking-wide mb-1.5 block">Meta Description</Label>
+                <Textarea id="metaDescription" placeholder="Brief summary for search engine results snippets" value={form.metaDescription} rows={3} onChange={e => set("metaDescription", e.target.value)} className={cn("text-sm resize-none", errors.metaDescription && "border-destructive")} />
+                {errors.metaDescription && <p className="text-xs text-destructive mt-1">{errors.metaDescription}</p>}
+              </div>
+              <div>
+                <Label htmlFor="metaKeywords" className="text-xs font-semibold uppercase tracking-wide mb-1.5 block">Meta Keywords</Label>
+                <Input id="metaKeywords" placeholder="e.g. keywords, separated, by, commas" value={form.metaKeywords} onChange={e => set("metaKeywords", e.target.value)} className="text-sm" />
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Auto-save indicator */}
           {mode === "edit" && (
             <p className="text-[11px] text-muted-foreground/60 flex items-center gap-1 px-1">

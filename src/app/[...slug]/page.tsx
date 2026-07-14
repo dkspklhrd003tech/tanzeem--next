@@ -236,10 +236,11 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   if (!page || !page.isPublished) return { title: "Page Not Found" };
 
   return buildMetadata({
-    title: page.metaTitle ?? page.title,
-    description: page.metaDescription ?? page.excerpt ?? undefined,
+    title: page.metaTitle || page.title,
+    description: page.metaDescription || page.excerpt || undefined,
+    keywords: page.metaKeywords ? page.metaKeywords.split(',').map((k: string) => k.trim()) : [],
     path: `/${slug}`,
-    ogImage: (page as any).ogImage ?? page.featuredImage ?? null,
+    ogImage: (page as any).ogImage || page.featuredImage || null,
     noIndex: (page as any).noIndex ?? false,
   });
 }
@@ -327,8 +328,8 @@ export default async function DynamicPage({ params }: PageProps) {
 
   // Build JSON-LD for this page
   const webpage = webPageJsonLd({
-    title: page.metaTitle ?? page.title,
-    description: page.metaDescription ?? page.excerpt ?? undefined,
+    title: page.metaTitle || page.title,
+    description: page.metaDescription || page.excerpt || undefined,
     path: `/${slug}`,
     datePublished: page.publishedAt,
     dateModified: page.updatedAt,

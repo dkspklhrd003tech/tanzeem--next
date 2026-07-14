@@ -22,8 +22,8 @@ export async function generateMetadata(): Promise<Metadata> {
     }
 
     return buildMetadata({
-      title: page.metaTitle ?? page.title ?? "Policy",
-      description: page.metaDescription ?? page.excerpt ?? undefined,
+      title: page.metaTitle || page.title || "Policy",
+      description: page.metaDescription || page.excerpt || undefined,
       path: `/${PAGE_SLUG}`,
       ogImage: page.featuredImage ?? null,
       noIndex: false,
