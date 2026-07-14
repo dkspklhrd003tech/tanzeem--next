@@ -219,7 +219,7 @@ export default function SermonsPageEditor({ pageId, initialPageData }: { pageId:
           if (data?.responseData?.translatedText) {
             setCatFormData(prev => ({ ...prev, urduName: data.responseData.translatedText }));
           }
-        } catch (err) {}
+        } catch (err) { }
       }
     }, 800);
     return () => clearTimeout(timeout);
@@ -236,7 +236,7 @@ export default function SermonsPageEditor({ pageId, initialPageData }: { pageId:
           if (data?.responseData?.translatedText) {
             setSermonFormData(prev => ({ ...prev, titleUrdu: data.responseData.translatedText }));
           }
-        } catch (err) {}
+        } catch (err) { }
       }
     }, 800);
     return () => clearTimeout(timeout);
@@ -279,7 +279,7 @@ export default function SermonsPageEditor({ pageId, initialPageData }: { pageId:
         body: JSON.stringify({
           title: pageForm.title, slug: pageForm.slug, excerpt: pageForm.excerpt,
           content: pageForm.content, isPublished: pageForm.isPublished,
-          metaTitle: pageForm.metaTitle, metaDescription: pageForm.metaDescription, metaKeywords: pageForm.metaKeywords,
+          metaTitle: pageForm.metaTitle, metaDescription: pageForm.metaDescription,
         }),
       });
       if (!res.ok) throw new Error("Failed to save settings.");

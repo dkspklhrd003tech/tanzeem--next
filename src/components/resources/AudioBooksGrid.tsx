@@ -8,7 +8,7 @@ import {
   Search,
   ChevronRight,
   AlertCircle,
-  PlayCircle
+  AudioLines
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -107,7 +107,7 @@ export function AudioBooksGrid({ initialItems }: AudioBooksGridProps) {
           <h3 className="text-lg font-bold text-foreground">No Audio Books Found</h3>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
           {filteredItems.map((item, idx) => {
             const hasAudio = !!item.audioUrl;
             const dateStr = item.publishedAt || item.createdAt;
@@ -136,7 +136,7 @@ export function AudioBooksGrid({ initialItems }: AudioBooksGridProps) {
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                       <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                        <PlayCircle className="h-12 w-12 text-white" />
+                        <AudioLines className="h-12 w-12 text-white" />
                       </div>
                     </div>
                   ) : (

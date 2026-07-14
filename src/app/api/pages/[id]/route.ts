@@ -94,7 +94,6 @@ export async function PUT(
       showInMenu: data.showInMenu ?? existingPage.showInMenu,
       metaTitle: data.metaTitle ?? existingPage.metaTitle,
       metaDescription: data.metaDescription ?? existingPage.metaDescription,
-      metaKeywords: data.metaKeywords ?? existingPage.metaKeywords,
       publishedAt: data.isPublished && !existingPage.isPublished
         ? new Date()
         : existingPage.publishedAt,

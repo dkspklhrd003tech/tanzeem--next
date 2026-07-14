@@ -238,7 +238,6 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return buildMetadata({
     title: page.metaTitle || page.title,
     description: page.metaDescription || page.excerpt || undefined,
-    keywords: page.metaKeywords ? page.metaKeywords.split(',').map((k: string) => k.trim()) : [],
     path: `/${slug}`,
     ogImage: (page as any).ogImage || page.featuredImage || null,
     noIndex: (page as any).noIndex ?? false,

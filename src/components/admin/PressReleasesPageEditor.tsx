@@ -820,15 +820,6 @@ export default function PressReleasesPageEditor({ pageId, initialPageData }: Pre
                         placeholder="Brief summary for Google search listings"
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="seo-kw">Meta Keywords</Label>
-                      <Input
-                        id="seo-kw"
-                        value={pageForm.metaKeywords}
-                        onChange={(e) => setPageForm(prev => ({ ...prev, metaKeywords: e.target.value }))}
-                        placeholder="e.g. press release, statements, tanzeem, publications"
-                      />
-                    </div>
                   </CardContent>
                 </Card>
               </div>

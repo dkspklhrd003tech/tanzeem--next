@@ -262,7 +262,7 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
         body: JSON.stringify({
           title: pageForm.title, slug: pageForm.slug, excerpt: pageForm.excerpt,
           content: pageForm.content, isPublished: pageForm.isPublished,
-          metaTitle: pageForm.metaTitle, metaDescription: pageForm.metaDescription, metaKeywords: pageForm.metaKeywords,
+          metaTitle: pageForm.metaTitle, metaDescription: pageForm.metaDescription,
         }),
       });
       setLastSavedPage(new Date());
@@ -516,7 +516,7 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
             ) : (
               <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleCatDragEnd}>
                 <SortableContext items={filteredCategories.map(c => c.id)} strategy={rectSortingStrategy}>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
                     {filteredCategories.map(cat => (
                       <SortableCategoryCard key={cat.id} id={cat.id} item={cat} onClick={setActiveCategory}
                         bookCount={books.filter(b => b.categoryId === cat.id).length}

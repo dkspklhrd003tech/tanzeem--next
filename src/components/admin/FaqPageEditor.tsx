@@ -267,7 +267,7 @@ export default function FaqPageEditor({ pageId, initialPageData }: FaqPageEditor
     // Only reorder within the same category to maintain independent ordering
     const targetCategory = getCategory(faq.category);
     const categoryFaqs = faqs.filter(f => getCategory(f.category) === targetCategory).sort((a, b) => a.order - b.order);
-    
+
     const currentIndex = categoryFaqs.findIndex(f => f.id === faq.id);
     if (currentIndex === -1) return;
 
@@ -322,7 +322,7 @@ export default function FaqPageEditor({ pageId, initialPageData }: FaqPageEditor
     const matchesSearch =
       faq.question.toLowerCase().includes(faqSearch.toLowerCase()) ||
       faq.answer.toLowerCase().includes(faqSearch.toLowerCase());
-      
+
     const itemCat = getCategory(faq.category).toLowerCase();
     const matchesTab =
       selectedCategoryTab === "all" ||
@@ -333,10 +333,10 @@ export default function FaqPageEditor({ pageId, initialPageData }: FaqPageEditor
     // English first, then Urdu, then by order
     const catA = getCategory(a.category).toLowerCase();
     const catB = getCategory(b.category).toLowerCase();
-    
+
     if (catA === 'english' && catB !== 'english') return -1;
     if (catA !== 'english' && catB === 'english') return 1;
-    
+
     // Within the same category, sort by order
     return a.order - b.order;
   });
@@ -601,15 +601,6 @@ export default function FaqPageEditor({ pageId, initialPageData }: FaqPageEditor
                         placeholder="Brief summary for search engine results snippets"
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="seo-kw">Meta Keywords</Label>
-                      <Input
-                        id="seo-kw"
-                        value={pageForm.metaKeywords}
-                        onChange={(e) => setPageForm(prev => ({ ...prev, metaKeywords: e.target.value }))}
-                        placeholder="e.g. faq, beliefs, mission, methodology"
-                      />
-                    </div>
                   </CardContent>
                 </Card>
               </div>
@@ -744,7 +735,7 @@ export default function FaqPageEditor({ pageId, initialPageData }: FaqPageEditor
         onOpenChange={(open) => !open && setDeletingFaqItem(null)}
         title="Delete FAQ Item"
         description={`Are you sure you want to permanently delete the FAQ item "${deletingFaqItem?.question.substring(0, 50)}..."? This action cannot be undone.`}
-        onConfirm={() => deletingFaqItem && handleFaqDelete(deletingFaqItem.id)}
+        onConfirm={() => { if (deletingFaqItem) handleFaqDelete(deletingFaqItem.id); }}
       />
     </div>
   );

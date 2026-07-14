@@ -1090,7 +1090,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
       </Dialog>
 
       {/* Media Item Manager Modal */}
-      {/* <Dialog open={!!editingMedia} onOpenChange={(v) => !v && setEditingMedia(null)}>
+      <Dialog open={!!editingMedia} onOpenChange={(v) => !v && setEditingMedia(null)}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
@@ -1261,7 +1261,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
             </div>
           </DialogFooter>
         </DialogContent>
-      </Dialog> */}
+      </Dialog>
 
 
 

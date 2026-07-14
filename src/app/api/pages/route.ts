@@ -101,7 +101,6 @@ export async function POST(request: NextRequest) {
       showInMenu: data.showInMenu ?? false,
       metaTitle: data.metaTitle,
       metaDescription: data.metaDescription,
-      metaKeywords: data.metaKeywords,
       canonicalUrl: null,
       ogImage: null,
       schemaType: "WebPage",

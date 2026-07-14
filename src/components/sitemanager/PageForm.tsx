@@ -54,7 +54,6 @@ export interface PageFormData {
   showInMenu: boolean;
   metaTitle: string;
   metaDescription: string;
-  metaKeywords: string;
 }
 
 export interface PageRecord extends PageFormData {
@@ -74,7 +73,7 @@ interface PageFormProps {
 const EMPTY: PageFormData = {
   title: "", slug: "", content: "", excerpt: "", featuredImage: "",
   template: "default", parentId: "", isPublished: false, showInMenu: false,
-  metaTitle: "", metaDescription: "", metaKeywords: "",
+  metaTitle: "", metaDescription: "",
 };
 
 function slugify(text: string) {
@@ -268,8 +267,8 @@ export function PageForm({ mode, initialData, parentPages = [] }: PageFormProps)
       }
       // Content is no longer strictly required when publishing because a page might use the dynamic PageSectionBuilder.
     }
-    if (form.metaTitle.length > 70) e.metaTitle = "Max 70 characters.";
-    if (form.metaDescription.length > 160) e.metaDescription = "Max 160 characters.";
+    if (form.metaTitle.length > 60) e.metaTitle = "Max 60 characters.";
+    if (form.metaDescription.length > 155) e.metaDescription = "Max 155 characters.";
     setErrors(e);
     return Object.keys(e).length === 0;
   }
@@ -616,18 +615,37 @@ export function PageForm({ mode, initialData, parentPages = [] }: PageFormProps)
             </CardHeader>
             <CardContent className="p-5 space-y-4">
               <div>
-                <Label htmlFor="metaTitle" className="text-xs font-semibold uppercase tracking-wide mb-1.5 block">Meta Title</Label>
-                <Input id="metaTitle" placeholder="Default is Page Title" value={form.metaTitle} onChange={e => set("metaTitle", e.target.value)} className={cn("text-sm", errors.metaTitle && "border-destructive")} />
+                <div className="flex items-center justify-between mb-1.5">
+                  <Label htmlFor="metaTitle" className="text-xs font-semibold uppercase tracking-wide">Meta Title</Label>
+                  {charCount(form.metaTitle, 60)}
+                </div>
+                <Input
+                  id="metaTitle"
+                  placeholder="Default is Page Title"
+                  maxLength={60}
+                  value={form.metaTitle}
+                  onChange={e => set("metaTitle", e.target.value)}
+                  className={cn("text-sm", errors.metaTitle && "border-destructive")}
+                />
+                <p className="text-[10px] text-muted-foreground mt-1">Aim for 50–60 characters. Put the most important keyword first.</p>
                 {errors.metaTitle && <p className="text-xs text-destructive mt-1">{errors.metaTitle}</p>}
               </div>
               <div>
-                <Label htmlFor="metaDescription" className="text-xs font-semibold uppercase tracking-wide mb-1.5 block">Meta Description</Label>
-                <Textarea id="metaDescription" placeholder="Brief summary for search engine results snippets" value={form.metaDescription} rows={3} onChange={e => set("metaDescription", e.target.value)} className={cn("text-sm resize-none", errors.metaDescription && "border-destructive")} />
+                <div className="flex items-center justify-between mb-1.5">
+                  <Label htmlFor="metaDescription" className="text-xs font-semibold uppercase tracking-wide">Meta Description</Label>
+                  {charCount(form.metaDescription, 155)}
+                </div>
+                <Textarea
+                  id="metaDescription"
+                  placeholder="Brief summary for search engine results snippets"
+                  maxLength={155}
+                  value={form.metaDescription}
+                  rows={3}
+                  onChange={e => set("metaDescription", e.target.value)}
+                  className={cn("text-sm resize-none", errors.metaDescription && "border-destructive")}
+                />
+                <p className="text-[10px] text-muted-foreground mt-1">Aim for 120–155 characters to display correctly on desktop and mobile.</p>
                 {errors.metaDescription && <p className="text-xs text-destructive mt-1">{errors.metaDescription}</p>}
-              </div>
-              <div>
-                <Label htmlFor="metaKeywords" className="text-xs font-semibold uppercase tracking-wide mb-1.5 block">Meta Keywords</Label>
-                <Input id="metaKeywords" placeholder="e.g. keywords, separated, by, commas" value={form.metaKeywords} onChange={e => set("metaKeywords", e.target.value)} className="text-sm" />
               </div>
             </CardContent>
           </Card>
