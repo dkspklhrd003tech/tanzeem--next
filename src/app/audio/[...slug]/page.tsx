@@ -86,7 +86,7 @@ export default async function AudioDetailPage({ params }: Props) {
       and(
         eq(audio.isPublished, true),
         ne(audio.id, item.id),
-        item.categoryId ? eq(audio.categoryId, item.categoryId) : undefined
+        ...(item.categoryId ? [eq(audio.categoryId, item.categoryId)] : [])
       )
     )
     .orderBy(desc(audio.createdAt))

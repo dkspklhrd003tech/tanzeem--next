@@ -85,7 +85,7 @@ export default async function VideoDetailRoute({ params }: Props) {
       and(
         eq(videos.isPublished, true),
         ne(videos.id, item.id),
-        item.categoryId ? eq(videos.categoryId, item.categoryId) : undefined
+        ...(item.categoryId ? [eq(videos.categoryId, item.categoryId)] : [])
       )
     )
     .orderBy(desc(videos.createdAt))

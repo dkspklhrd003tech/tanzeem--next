@@ -41,7 +41,7 @@ export default async function BookDetailPage({ params }: Props) {
     where: and(
       eq(books.isPublished, true),
       ne(books.id, book.id),
-      book.categoryId ? eq(books.categoryId, book.categoryId) : undefined
+      ...(book.categoryId ? [eq(books.categoryId, book.categoryId)] : [])
     ),
     with: { category: true },
     orderBy: [asc(books.order), desc(books.createdAt)],
