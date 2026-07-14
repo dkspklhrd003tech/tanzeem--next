@@ -31,7 +31,7 @@ export function MainLayout({ children }: MainLayoutProps) {
 
   if (!isLoading && settings?.maintenance_mode === "true" && !isSiteManager) {
     return (
-      <div className=" flex flex-col items-center justify-center bg-background p-4 text-center relative overflow-hidden">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-background p-4 text-center relative overflow-hidden">
         {/* Decorative background elements matching the admin layout */}
         <div className="absolute top-[-10%] left-[-10%] w-[45%] h-[45%] rounded-full blur-[140px] pointer-events-none bg-[#0d5844]/5" />
         <div className="absolute bottom-[-10%] right-[-10%] w-[45%] h-[45%] rounded-full blur-[140px] pointer-events-none bg-slate-300/40" />
@@ -56,7 +56,7 @@ export function MainLayout({ children }: MainLayoutProps) {
   }
 
   return (
-    <div className=" flex flex-col">
+    <div className="min-h-screen flex flex-col">
       {/* BackToTop is handled globally in MainLayout */}
       {!isSiteManager && <BackToTop />}
       {!isSiteManager && <Header />}

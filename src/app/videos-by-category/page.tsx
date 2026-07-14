@@ -7,13 +7,15 @@ export const dynamic = "force-dynamic";
 
 export default async function VideosByCategoryPage() {
   let cats: any[] = [];
+  let allCats: any[] = [];
   let countRows: any[] = [];
   let countMap: Record<string, number> = {};
 
   try {
-    cats = await db
+    allCats = await db
       .select({
         id: videoCategories.id,
+        parentId: videoCategories.parentId,
         name: videoCategories.name,
         slug: videoCategories.slug,
         description: videoCategories.description,
@@ -21,8 +23,9 @@ export default async function VideosByCategoryPage() {
         customFields: videoCategories.customFields,
       })
       .from(videoCategories)
-      .where(isNull(videoCategories.parentId))
       .orderBy(asc(videoCategories.order), asc(videoCategories.name));
+
+    cats = allCats.filter(c => !c.parentId);
 
     countRows = await db
       .select({ categoryId: videos.categoryId, total: count() })
@@ -38,12 +41,19 @@ export default async function VideosByCategoryPage() {
     console.error("Failed to fetch video categories:", error);
   }
 
-  const display = cats.map((c) => ({ ...c, count: countMap[c.id] ?? 0 }));
+  const display = cats.map((c) => {
+    let total = countMap[c.id] ?? 0;
+    const subCatIds = allCats.filter(sub => sub.parentId === c.id).map(sub => sub.id);
+    subCatIds.forEach(subId => {
+      total += (countMap[subId] ?? 0);
+    });
+    return { ...c, count: total };
+  });
 
   return (
     <main className=" bg-background">
-      <div className="container mx-auto py-10 md:py-16">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
+      <div className="container mx-auto py-8 md:py-12">
+        <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
           {display.map((cat) => {
             const href = cat.slug ? `/videos-by-category/${cat.slug}` : "#";
             return (
