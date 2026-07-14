@@ -14,13 +14,22 @@ import { webPageJsonLd, buildMetadata } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
-export const metadata = buildMetadata({
-  title: "Home",
-  description:
-    "Tanzeem-e-Islami is working to re-establish Khilafah following the methodology of Prophet Muhammad (SAWS). Access Islamic lectures, books, videos, and educational resources.",
-  keywords: ["Tanzeem-e-Islami", "Dr. Israr Ahmed", "Islamic Lectures", "Khilafah", "Quran", "Hadith", "Islamic Education"],
-  path: "/",
-});
+export async function generateMetadata() {
+  const dbSettings = await db.select().from(settings);
+  const settingsMap = dbSettings.reduce((acc, s) => {
+    acc[s.key] = s.value;
+    return acc;
+  }, {} as Record<string, string>);
+
+  return buildMetadata({
+    title: settingsMap.homepage_meta_title || "Home",
+    description:
+      settingsMap.homepage_meta_description ||
+      "Tanzeem-e-Islami is working to re-establish Khilafah following the methodology of Prophet Muhammad (SAWS). Access Islamic lectures, books, videos, and educational resources.",
+    keywords: ["Tanzeem-e-Islami", "Dr. Israr Ahmed", "Islamic Lectures", "Khilafah", "Quran", "Hadith", "Islamic Education"],
+    path: "/",
+  });
+}
 
 async function HomeContent() {
   let activeSliders: any[] = [];

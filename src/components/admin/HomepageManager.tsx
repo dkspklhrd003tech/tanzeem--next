@@ -8,7 +8,8 @@ import { AboutMissionSettings } from "./HomepageFeatures/AboutMissionSettings";
 import { LeaderProfiles } from "./HomepageFeatures/LeaderProfiles";
 import { FeaturedVideos } from "./HomepageFeatures/FeaturedVideos";
 import { SocialMediaSettings } from "./HomepageFeatures/SocialMediaSettings";
-import { Settings, Image as ImageIcon, BookOpen, Layers, Target, Type, Users, Video, Share2 } from "lucide-react";
+import { HomepageSeoSettings } from "./HomepageFeatures/HomepageSeoSettings";
+import { Settings, Image as ImageIcon, BookOpen, Layers, Target, Type, Users, Video, Share2, Search } from "lucide-react";
 
 export function HomepageManager() {
     return (
@@ -50,6 +51,10 @@ export function HomepageManager() {
                     <TabsTrigger value="social" className="py-2.5 px-6 rounded-lg text-sm font-medium transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm whitespace-nowrap">
                         <Share2 className="w-4 h-4 mr-2" />
                         Social Media
+                    </TabsTrigger>
+                    <TabsTrigger value="seo" className="py-2.5 px-6 rounded-lg text-sm font-medium transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm whitespace-nowrap">
+                        <Search className="w-4 h-4 mr-2" />
+                        Basic SEO
                     </TabsTrigger>
                 </TabsList>
 
@@ -93,6 +98,12 @@ export function HomepageManager() {
                     <TabsContent value="social" className="mt-0 outline-none">
                         <div className="max-w-7xl">
                             <SocialMediaSettings />
+                        </div>
+                    </TabsContent>
+
+                    <TabsContent value="seo" className="mt-0 outline-none">
+                        <div className="max-w-7xl">
+                            <HomepageSeoSettings />
                         </div>
                     </TabsContent>
                 </div>
