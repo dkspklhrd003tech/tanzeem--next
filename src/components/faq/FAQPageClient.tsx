@@ -179,7 +179,12 @@ export function FAQPageClient({ initialItems, pageTitle, pageExcerpt }: FAQPageC
                           transition={{ duration: 0.25, ease: "easeInOut" }}
                         >
                           <div
-                            className="p-6 text-[#222222] max-w-none text-sm md:text-base leading-relaxed faq-answer faq-answer-inner"
+                            className={cn(
+                              "p-6 text-[#222222] max-w-none text-sm md:text-base leading-relaxed faq-answer faq-answer-inner",
+                              isUrduA && "faq-answer-urdu font-nastaleeq text-right text-lg md:text-xl leading-loose"
+                            )}
+                            dir={isUrduA ? "rtl" : "ltr"}
+                            style={isUrduA ? { fontFamily: "'Jameel Noori Nastaleeq', serif", fontSize: "20px", lineHeight: "2.2" } : undefined}
                             dangerouslySetInnerHTML={{ __html: item.answer }}
                           />
                         </motion.div>

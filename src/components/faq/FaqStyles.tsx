@@ -26,9 +26,17 @@ export function FaqStyles() {
             margin-bottom: 0;
         }
 
+        /* ---- Urdu Answer Container Overrides ---- */
+        .faq-answer-urdu p {
+            font-family: "Jameel Noori Nastaleeq", serif !important;
+            font-size: 20px !important;
+            line-height: 2.2 !important;
+            text-align: right !important;
+        }
+
         /* ---- highlighted Urdu paragraph ---- */
         // .urdu-arabic-text {
-        //     font-family: "Noto Nastaliq Urdu", "Jameel Noori Nastaleeq", "Nafees Nastaleeq", serif;
+        //     font-family: "Jameel Noori Nastaleeq", "Nafees Nastaleeq", serif;
         //     font-size: 20px;
         //     text-align: right;
         //     direction: rtl;
