@@ -35,9 +35,9 @@ export async function DELETE(
 
         await db.delete(books).where(eq(books.id, id));
 
-        return NextResponse.json({ success: true, message: "Book deleted" });
+        return NextResponse.json({ success: true, message: "Book Deleted" });
     } catch (error) {
-        console.error("Failed to delete book:", error);
-        return NextResponse.json({ error: "Failed to delete book" }, { status: 500 });
+        console.error("Failed to Delete Book:", error);
+        return NextResponse.json({ error: "Failed to Delete Book" }, { status: 500 });
     }
 }

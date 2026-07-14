@@ -39,10 +39,10 @@ export default async function ServiceDetailsPage({ params }: { params: Promise<{
 
     return (
         <main className=" bg-background">
-            <div className="max-w-4xl mx-auto py-8 md:py-12">
+            <div className="max-w-5xl mx-auto py-8 md:py-12">
                 <div className="space-y-12">
                     {/* Dynamic Blocks */}
-                    <div className="space-y-12 pt-6">
+                    <div className="grid grid-cols-1 grid-cols-2 gap-6 space-y-12 pt-6">
                         {blocks.map((block: any, idx: number) => {
                             if (!block.value) return null;
 
