@@ -563,11 +563,11 @@ export function FeaturedVideos() {
                                 <ConfirmDialog
                                     title={editingVideo ? "Update Video" : "Feature Video"}
                                     description={`Are you sure you want to ${editingVideo ? "update" : "feature"} this video broadcast?`}
-                                    onConfirm={() =>
+                                    onConfirm={() => {
                                         document
                                             .getElementById("videoForm")
-                                            ?.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }))
-                                    }
+                                            ?.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
+                                    }}
                                 >
                                     <button
                                         type="button"
@@ -596,7 +596,9 @@ export function FeaturedVideos() {
                 onOpenChange={(open) => !open && setDeletingVideo(null)}
                 title="Delete Video"
                 description={`Are you sure you want to permanently delete "${deletingVideo?.title}"?`}
-                onConfirm={() => deletingVideo && handleDelete(deletingVideo.id, deletingVideo.title)}
+                onConfirm={() => {
+                    if (deletingVideo) handleDelete(deletingVideo.id, deletingVideo.title);
+                }}
             />
         </div>
     );

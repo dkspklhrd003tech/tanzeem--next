@@ -65,6 +65,7 @@ function revalidateEntityPaths(entity: string) {
             revalidatePath("/videos-by-speakers");
         }
         revalidatePath("/", "layout");
+        revalidatePath("/", "page");
     } catch (e) {
         console.error("Revalidation failed:", e);
     }

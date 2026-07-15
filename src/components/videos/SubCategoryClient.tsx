@@ -108,6 +108,9 @@ export function SubCategoryClient({ subCategories, directVideos = [] }: { subCat
                       </p>
                     </div>
                   )}
+                  <span className="text-xs font-normal text-primary bg-primary/10 px-3 py-1 rounded-full mt-2 inline-block">
+                    {sub.videos.length} Videos
+                  </span>
                   {sub.description && (
                     <p className="text-sm text-foreground-muted mt-2 line-clamp-2 max-w-xs mx-auto">{sub.description}</p>
                   )}
@@ -117,8 +120,6 @@ export function SubCategoryClient({ subCategories, directVideos = [] }: { subCat
           })}
         </div>
       )}
-
-
     </div>
   );
 }

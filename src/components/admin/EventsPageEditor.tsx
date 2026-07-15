@@ -650,10 +650,10 @@ export default function EventsPageEditor({ pageId, initialPageData }: EventsPage
 
       <Tabs defaultValue="list" className="space-y-6">
         <TabsList className="bg-muted p-1 rounded-lg">
-          <TabsTrigger value="list" className="flex items-center gap-2 px-4 py-2 rounded">
+          <TabsTrigger value="list" className="flex items-center gap-2 px-4 py-2 rounded-lg">
             <FileText className="w-4 h-4" /> events Grid
           </TabsTrigger>
-          <TabsTrigger value="settings" className="flex items-center gap-2 px-4 py-2 rounded">
+          <TabsTrigger value="settings" className="flex items-center gap-2 px-4 py-2 rounded-lg">
             <Settings2 className="w-4 h-4" /> Page SEO & Setup
           </TabsTrigger>
         </TabsList>

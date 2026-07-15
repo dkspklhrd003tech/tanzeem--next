@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import {
   Plus, Pencil, XCircle, Search, FileText, Sparkles,
   Settings2, Check, AlertCircle, UploadCloud, Loader2, ArrowLeft,
-  GripVertical, Calendar, ExternalLink
+  GripVertical, Calendar, ExternalLink, Send
 } from "lucide-react";
 import { PageActionBar } from "@/components/admin/PageActionBar";
 import { Badge } from "@/components/ui/badge";
@@ -824,7 +824,7 @@ export default function ServicesPageEditor({ pageId, initialPageData }: Services
       isPublished: item.isPublished,
       metaTitle: item.metaTitle || "",
       metaDescription: item.metaDescription || "",
-      showInSpotlight: cFields?.showInSpotlight ?? true,
+      showInSpotlight: !!(item as any).isSpotlight,
       openInNewTab: cFields?.openInNewTab || false,
     });
     setFormErrors({});
@@ -869,9 +869,9 @@ export default function ServicesPageEditor({ pageId, initialPageData }: Services
         imageUrl: formData.imageUrl || null,
         customFields: {
           blocks: formData.blocks,
-          showInSpotlight: formData.showInSpotlight,
           openInNewTab: formData.openInNewTab
         },
+        isSpotlight: formData.showInSpotlight,
         isPublished: formData.isPublished,
         metaTitle: formData.metaTitle || null,
         metaDescription: formData.metaDescription || null,
@@ -990,30 +990,15 @@ export default function ServicesPageEditor({ pageId, initialPageData }: Services
 
   return (
     <div className="space-y-6 max-w-7xl">
-      <PageActionBar
-        mode="edit"
-        title={pageForm.title}
-        authorName={initialPageData.authorName}
-        updatedAt={initialPageData.updatedAt}
-        lastSaved={lastSavedPage}
-        previewUrl="/services"
-        seoUrl={`/sitemanager/pages/${pageId}/edit/seo`}
-        isPublished={pageForm.isPublished}
-        saving={isSavingPage}
-        onDuplicate={handleDuplicate}
-        onSaveDraft={() => {
-          setPageForm({ ...pageForm, isPublished: false });
-          document.getElementById("hidden-submit-page-btn")?.click();
-        }}
-        onPublish={() => {
-          setPageForm({ ...pageForm, isPublished: true });
-          document.getElementById("hidden-submit-page-btn")?.click();
-        }}
-      >
-        <Button onClick={handleOpenAddModal} className="ml-2 bg-primary text-primary-foreground hover:bg-primary/95">
+      <div className="flex justify-end items-center gap-3">
+        <Button onClick={() => document.getElementById("hidden-submit-page-btn")?.click()} disabled={isSavingPage} className="bg-primary text-primary-foreground hover:bg-primary/95 shadow-sm">
+          {isSavingPage ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Send className="w-4 h-4 mr-2" />}
+          Update Section
+        </Button>
+        <Button onClick={handleOpenAddModal} className="bg-primary text-primary-foreground hover:bg-primary/95 shadow-sm">
           <Plus className="w-4 h-4 mr-2" /> Add Release
         </Button>
-      </PageActionBar>
+      </div>
 
       {/* Hidden form trigger for page save */}
       <form onSubmit={handlePageSave} className="hidden">
@@ -1022,10 +1007,10 @@ export default function ServicesPageEditor({ pageId, initialPageData }: Services
 
       <Tabs defaultValue="list" className="space-y-6">
         <TabsList className="bg-muted p-1 rounded-lg">
-          <TabsTrigger value="list" className="flex items-center gap-2 px-4 py-2 rounded-lg">
+          <TabsTrigger value="list" className="flex items-center gap-2 px-4 py-2 rounded-lg-lg">
             <FileText className="w-4 h-4" /> Services Grid
           </TabsTrigger>
-          <TabsTrigger value="settings" className="flex items-center gap-2 px-4 py-2 rounded">
+          <TabsTrigger value="settings" className="flex items-center gap-2 px-4 py-2 rounded-lg">
             <Settings2 className="w-4 h-4" /> Page SEO & Setup
           </TabsTrigger>
         </TabsList>

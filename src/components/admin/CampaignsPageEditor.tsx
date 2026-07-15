@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import {
   Plus, Pencil, XCircle, Search, FileText, Sparkles,
   Settings2, Check, AlertCircle, UploadCloud, Loader2, ArrowLeft,
-  GripVertical, Calendar, ExternalLink
+  GripVertical, Calendar, ExternalLink, Send
 } from "lucide-react";
 import { PageActionBar } from "@/components/admin/PageActionBar";
 import { Badge } from "@/components/ui/badge";
@@ -99,6 +99,7 @@ const defaultFormData = {
   categoryId: "Campaigns",
   customFields: { blocks: [] as CampaignBlock[] },
   isPublished: true,
+  isFeatured: false,
   startsAt: "",
   metaTitle: "",
   metaDescription: "",
@@ -785,6 +786,7 @@ export default function CampaignsPageEditor({ pageId, initialPageData }: Campaig
         categoryId: "Campaigns",
         customFields: { blocks: [] },
         isPublished: true,
+        isFeatured: false,
         startsAt: new Date().toISOString().split("T")[0],
         metaTitle: cleanedTitle,
         metaDescription: `Campaign: ${cleanedTitle}`,
@@ -822,6 +824,7 @@ export default function CampaignsPageEditor({ pageId, initialPageData }: Campaig
       categoryId: item.categoryId || "Campaigns",
       customFields: cFields ? { blocks: cFields.blocks || [] } : { blocks: [] },
       isPublished: item.isPublished,
+      isFeatured: !!(item as any).isFeatured,
       startsAt: item.startsAt ? new Date(item.startsAt).toISOString().split("T")[0] : "",
       metaTitle: item.metaTitle || "",
       metaDescription: item.metaDescription || "",
@@ -869,6 +872,7 @@ export default function CampaignsPageEditor({ pageId, initialPageData }: Campaig
         categoryId: formData.categoryId || "Campaigns",
         customFields: { blocks: formData.customFields?.blocks || [] },
         isPublished: formData.isPublished,
+        isFeatured: formData.isFeatured,
         startsAt: formData.startsAt ? new Date(formData.startsAt).toISOString() : null,
         metaTitle: formData.metaTitle || null,
         metaDescription: formData.metaDescription || null,
@@ -987,30 +991,15 @@ export default function CampaignsPageEditor({ pageId, initialPageData }: Campaig
 
   return (
     <div className="space-y-6 max-w-7xl">
-      <PageActionBar
-        mode="edit"
-        title={pageForm.title}
-        authorName={initialPageData.authorName}
-        updatedAt={initialPageData.updatedAt}
-        lastSaved={lastSavedPage}
-        previewUrl="/campaigns"
-        seoUrl={`/sitemanager/pages/${pageId}/edit/seo`}
-        isPublished={pageForm.isPublished}
-        saving={isSavingPage}
-        onDuplicate={handleDuplicate}
-        onSaveDraft={() => {
-          setPageForm({ ...pageForm, isPublished: false });
-          document.getElementById("hidden-submit-page-btn")?.click();
-        }}
-        onPublish={() => {
-          setPageForm({ ...pageForm, isPublished: true });
-          document.getElementById("hidden-submit-page-btn")?.click();
-        }}
-      >
-        <Button onClick={handleOpenAddModal} className="bg-primary text-primary-foreground hover:bg-primary/95">
+      <div className="flex justify-end items-center gap-3">
+        <Button onClick={() => document.getElementById("hidden-submit-page-btn")?.click()} disabled={isSavingPage} className="bg-primary text-primary-foreground hover:bg-primary/95 shadow-sm">
+          {isSavingPage ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Send className="w-4 h-4 mr-2" />}
+          Update Section
+        </Button>
+        <Button onClick={handleOpenAddModal} className="bg-primary text-primary-foreground hover:bg-primary/95 shadow-sm">
           <Plus className="w-4 h-4 mr-2" /> Add Release
         </Button>
-      </PageActionBar>
+      </div>
 
       {/* Hidden form trigger for page save */}
       <form onSubmit={handlePageSave} className="hidden">
@@ -1019,10 +1008,10 @@ export default function CampaignsPageEditor({ pageId, initialPageData }: Campaig
 
       <Tabs defaultValue="list" className="space-y-6">
         <TabsList className="bg-muted p-1 rounded-lg">
-          <TabsTrigger value="list" className="flex items-center gap-2 px-4 py-2 rounded">
+          <TabsTrigger value="list" className="flex items-center gap-2 px-4 py-2 rounded-lg-lg">
             <FileText className="w-4 h-4" /> Campaigns Grid
           </TabsTrigger>
-          <TabsTrigger value="settings" className="flex items-center gap-2 px-4 py-2 rounded">
+          <TabsTrigger value="settings" className="flex items-center gap-2 px-4 py-2 rounded-lg-lg">
             <Settings2 className="w-4 h-4" /> Page SEO & Setup
           </TabsTrigger>
         </TabsList>
@@ -1282,6 +1271,17 @@ export default function CampaignsPageEditor({ pageId, initialPageData }: Campaig
                     <Switch
                       checked={formData.isPublished}
                       onCheckedChange={(checked) => setFormData(prev => ({ ...prev, isPublished: checked }))}
+                    />
+                  </div>
+                  
+                  <div className="flex items-center justify-between p-3 border border-border rounded-xl bg-emerald-500/10 border-emerald-500/20 mt-6 h-[42px] col-span-1 md:col-span-2">
+                    <div>
+                      <span className="text-sm font-bold text-emerald-700">Display in Featured Section</span>
+                      <p className="text-[10px] text-emerald-600/80">Toggle to feature this campaign directly on the homepage</p>
+                    </div>
+                    <Switch
+                      checked={formData.isFeatured}
+                      onCheckedChange={(checked) => setFormData(prev => ({ ...prev, isFeatured: checked }))}
                     />
                   </div>
                 </div>

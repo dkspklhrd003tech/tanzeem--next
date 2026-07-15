@@ -438,13 +438,13 @@ export function HomeSlidersManagement() {
                 <div className="flex items-center gap-2 p-1 bg-muted rounded-xl border border-border">
                     <button
                         onClick={() => updateBannerStyle("slider")}
-                        className={cn("px-4 py-2 rounded-lg text-sm font-medium transition-all", bannerStyle === "slider" ? "bg-background shadow text-foreground" : "text-muted-foreground")}
+                        className={cn("px-4 py-2 rounded-lg text-sm font-medium transition-all", bannerStyle === "slider" ? "bg-primary shadow text-muted" : "text-muted-foreground")}
                     >
                         Slider (Multiple)
                     </button>
                     <button
                         onClick={() => updateBannerStyle("fixed")}
-                        className={cn("px-4 py-2 rounded-lg text-sm font-medium transition-all", bannerStyle === "fixed" ? "bg-background shadow text-foreground" : "text-muted-foreground")}
+                        className={cn("px-4 py-2 rounded-lg text-sm font-medium transition-all", bannerStyle === "fixed" ? "bg-primary shadow text-muted" : "text-muted-foreground")}
                     >
                         Fixed (Single Banner)
                     </button>

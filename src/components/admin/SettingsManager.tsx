@@ -167,50 +167,50 @@ export function SettingsManager() {
                     <Settings className="w-8 h-8 text-primary" />
                     Settings
                 </h1>
-                <p className="text-sm text-foreground-muted mt-1">Manage global interface settings, brand identity, and monitor the live support Inbox in real-time.</p>
+                <p className="text-sm text-foreground mt-1">Manage global interface settings, brand identity, and monitor the live support Inbox in real-time.</p>
             </div>
 
-            <Tabs defaultValue="identity" className="w-full">
-                <TabsList className="mb-6 bg-transparent border-b border-border w-full justify-start rounded-none h-auto p-0 gap-x-4 gap-y-0 flex-wrap">
+            <Tabs defaultValue="layout" className="w-full">
+                <TabsList className="mb-6 bg-primary-light border-b border-border w-full justify-start rounded-lg h-auto p-4 gap-2 gap-y-0 flex-wrap">
 
                     <TabsTrigger
                         value="layout"
-                        className="rounded-none px-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground hover:bg-muted px-4 py-2"
+                        className="rounded-lg px-2 data-[state=inactive]:border data-[state=inactive]:border-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground bg-primary-light/80 px-4 py-2"
                     >
                         <LayoutTemplate className="w-4 h-4" /> Header &amp; Footer
                     </TabsTrigger>
 
                     <TabsTrigger
                         value="seo"
-                        className="rounded-none px-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground hover:bg-muted px-4 py-2"
+                        className="rounded-lg px-2 data-[state=inactive]:border data-[state=inactive]:border-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground bg-primary-light/80 px-4 py-2"
                     >
                         <Search className="w-4 h-4" /> SEO Intelligence
                     </TabsTrigger>
 
                     <TabsTrigger
                         value="site-identity"
-                        className="rounded-none px-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground hover:bg-muted px-4 py-2"
+                        className="rounded-lg px-2 data-[state=inactive]:border data-[state=inactive]:border-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground bg-primary-light/80 px-4 py-2"
                     >
                         <Globe className="w-4 h-4" /> Site Identity
                     </TabsTrigger>
 
                     <TabsTrigger
                         value="share-tools"
-                        className="rounded-none px-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground hover:bg-muted px-4 py-2"
+                        className="rounded-lg px-2 data-[state=inactive]:border data-[state=inactive]:border-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground bg-primary-light/80 px-4 py-2"
                     >
                         <Share2 className="w-4 h-4" /> Share Tools
                     </TabsTrigger>
 
                     <TabsTrigger
                         value="users"
-                        className="rounded-none px-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground hover:bg-muted px-4 py-2"
+                        className="rounded-lg px-2 data-[state=inactive]:border data-[state=inactive]:border-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground bg-primary-light/80 px-4 py-2"
                     >
                         <UsersIcon className="w-4 h-4" /> Users
                     </TabsTrigger>
 
                     <TabsTrigger
                         value="inbox"
-                        className="rounded-none px-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground hover:bg-muted px-4 py-2"
+                        className="rounded-lg px-2 data-[state=inactive]:border data-[state=inactive]:border-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground bg-primary-light/80 px-4 py-2"
                     >
                         <Mail className="w-4 h-4" /> Form
                         {submissions.filter(s => s.status !== 'replied').length > 0 && (
@@ -222,28 +222,28 @@ export function SettingsManager() {
 
                     <TabsTrigger
                         value="dates"
-                        className="rounded-none px-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground hover:bg-muted px-4 py-2"
+                        className="rounded-lg px-2 data-[state=inactive]:border data-[state=inactive]:border-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground bg-primary-light/80 px-4 py-2"
                     >
                         <Calendar className="w-4 h-4" /> Manage Dates
                     </TabsTrigger>
 
                     <TabsTrigger
                         value="login"
-                        className="rounded-none px-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground hover:bg-muted px-4 py-2"
+                        className="rounded-lg px-2 data-[state=inactive]:border data-[state=inactive]:border-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground bg-primary-light/80 px-4 py-2"
                     >
                         <Lock className="w-4 h-4" /> Login Auth
                     </TabsTrigger>
 
                     <TabsTrigger
                         value="disclaimer"
-                        className="rounded-none px-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground hover:bg-muted px-4 py-2"
+                        className="rounded-lg px-2 data-[state=inactive]:border data-[state=inactive]:border-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground bg-primary-light/80 px-4 py-2"
                     >
                         <MessageSquare className="w-4 h-4" /> Disclaimer Popup
                     </TabsTrigger>
 
                     <TabsTrigger
                         value="css"
-                        className="rounded-none px-2 data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:text-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground hover:bg-muted px-4 py-2"
+                        className="rounded-lg px-2 data-[state=inactive]:border data-[state=inactive]:border-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground bg-primary-light/80 px-4 py-2"
                     >
                         <Palette className="w-4 h-4" /> Global CSS
                     </TabsTrigger>
@@ -255,13 +255,13 @@ export function SettingsManager() {
                         <TabsList className="mb-6 bg-muted/40 border border-border rounded-xl p-1 h-auto gap-1 inline-flex">
                             <TabsTrigger
                                 value="header"
-                                className="rounded-lg px-4 py-2 text-sm font-semibold data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all text-muted-foreground"
+                                className="rounded-lg px-4 py-2 text-sm font-semibold data-[state=active]:bg-primary data-[state=active]:text-background data-[state=active]:shadow-sm transition-all text-muted-foreground"
                             >
                                 <LayoutTemplate className="w-4 h-4 mr-2" /> Header Builder
                             </TabsTrigger>
                             <TabsTrigger
                                 value="footer"
-                                className="rounded-lg px-4 py-2 text-sm font-semibold data-[state=active]:bg-background data-[state=active]:text-primary data-[state=active]:shadow-sm transition-all text-muted-foreground"
+                                className="rounded-lg px-4 py-2 text-sm font-semibold data-[state=active]:bg-primary data-[state=active]:text-background data-[state=active]:shadow-sm transition-all text-muted-foreground"
                             >
                                 <LayoutTemplate className="w-4 h-4 mr-2 rotate-180" /> Footer Builder
                             </TabsTrigger>

@@ -58,6 +58,7 @@ function revalidateEntityPaths(entity: string) {
             revalidatePath("/books-by-category");
         }
         revalidatePath("/", "layout");
+        revalidatePath("/", "page");
     } catch (e) {
         console.error("Revalidation failed:", e);
     }

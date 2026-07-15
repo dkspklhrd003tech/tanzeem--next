@@ -2,34 +2,25 @@ import { Suspense } from "react";
 import { Hero } from "@/components/home/Hero";
 import { AboutAndLeaders } from "@/components/home/AboutAndLeaders";
 import { SpotlightCampaigns } from "@/components/home/SpotlightCampaigns";
-import { MissionAndVideos } from "@/components/home/MissionAndVideos";
+import { MissionAndCampaigns } from "@/components/home/MissionAndCampaigns";
 import { PublicationsGrid } from "@/components/home/PublicationsGrid";
 import { CTA } from "@/components/home/CTA";
 import { db } from "@/db";
 import { homeSliders, books, magazines, teamMembers, homeCampaigns, services, videos, settings, pressReleases, campaigns } from "@/db/schema";
 import { LatestPressReleases } from "@/components/home/LatestPressReleases";
 import { DisclaimerPopup } from "@/components/home/DisclaimerPopup";
-import { eq, desc, asc, inArray, or } from "drizzle-orm";
+import { eq, desc, asc, inArray, or, and } from "drizzle-orm";
 import { webPageJsonLd, buildMetadata } from "@/lib/seo";
 
 export const dynamic = "force-dynamic";
 
-export async function generateMetadata() {
-  const dbSettings = await db.select().from(settings);
-  const settingsMap = dbSettings.reduce((acc, s) => {
-    acc[s.key] = s.value;
-    return acc;
-  }, {} as Record<string, string>);
-
-  return buildMetadata({
-    title: settingsMap.homepage_meta_title || "Home",
-    description:
-      settingsMap.homepage_meta_description ||
-      "Tanzeem-e-Islami is working to re-establish Khilafah following the methodology of Prophet Muhammad (SAWS). Access Islamic lectures, books, videos, and educational resources.",
-    keywords: ["Tanzeem-e-Islami", "Dr. Israr Ahmed", "Islamic Lectures", "Khilafah", "Quran", "Hadith", "Islamic Education"],
-    path: "/",
-  });
-}
+export const metadata = buildMetadata({
+  title: "Home",
+  description:
+    "Tanzeem-e-Islami is working to re-establish Khilafah following the methodology of Prophet Muhammad (SAWS). Access Islamic lectures, books, videos, and educational resources.",
+  keywords: ["Tanzeem-e-Islami", "Dr. Israr Ahmed", "Islamic Lectures", "Khilafah", "Quran", "Hadith", "Islamic Education"],
+  path: "/",
+});
 
 async function HomeContent() {
   let activeSliders: any[] = [];
@@ -37,7 +28,7 @@ async function HomeContent() {
   let featuredMagazines: any[] = [];
   let activeCampaigns: any[] = [];
   let team: any[] = [];
-  let featuredVideos: any[] = [];
+  let featuredCampaigns: any[] = [];
   let latestPress: any[] = [];
   let siteSettings: any[] = [];
   let platforms: any[] = [];
@@ -71,62 +62,50 @@ async function HomeContent() {
   try {
     activeCampaigns = [];
 
-    // Fetch spotlight services ordered by their admin-set position
     const publishedServices = await db
       .select()
       .from(services)
       .where(eq(services.isPublished, true))
-      .orderBy(services.order);
+      .orderBy(desc(services.order), desc(services.createdAt));
 
-    // Fetch spotlight campaigns ordered by their admin-set position
     const publishedCampaigns = await db
       .select()
       .from(campaigns)
       .where(eq(campaigns.isPublished, true))
-      .orderBy(campaigns.orderIndex);
+      .orderBy(desc(campaigns.createdAt));
 
-    const spotlightServices = publishedServices.filter(s => {
+    const spotlightServices = publishedServices.filter(s => s.isSpotlight === true).map(s => {
       let fields = s.customFields as any;
-      while (typeof fields === 'string') {
-        try { fields = JSON.parse(fields); } catch (e) { break; }
+      if (typeof fields === 'string') {
+        try { fields = JSON.parse(fields); } catch (e) { fields = {}; }
       }
-      return fields && fields.showInSpotlight === true;
-    }).map((s, idx) => {
-      let fields = s.customFields as any;
-      while (typeof fields === 'string') {
-        try { fields = JSON.parse(fields); } catch (e) { break; }
-      }
-      // If slug is an external/absolute path, use it directly; otherwise prefix with /services/
-      const rawSlug = s.slug || "";
-      const linkUrl = (rawSlug.startsWith("/") || rawSlug.startsWith("http"))
-        ? rawSlug
-        : `/services/${rawSlug}`;
       return {
         id: s.id,
         title: s.title,
         imageUrl: s.imageUrl || "",
-        linkUrl,
+        linkUrl: `/services/${s.slug}`,
         openInNewTab: fields?.openInNewTab || false,
-        sortOrder: s.order * 10 + idx,
+        order: s.order,
+        createdAt: s.createdAt,
       };
     });
 
     const spotlightCampaigns = publishedCampaigns.filter(c => {
       return c.categoryId === "SpotLight Campaigns";
-    }).map((c, idx) => ({
+    }).map(c => ({
       id: c.id,
       title: c.title,
       imageUrl: c.thumbnailUrl || "",
       linkUrl: `/campaigns/${c.slug}`,
       openInNewTab: false,
-      sortOrder: (c.orderIndex ?? 0) * 10 + idx,
+      order: 0,
+      createdAt: c.createdAt,
     }));
 
-    // Merge both sources, sort by their respective admin order, cap at 6
-    activeCampaigns = [...spotlightServices, ...spotlightCampaigns]
-      .sort((a, b) => a.sortOrder - b.sortOrder)
-      .slice(0, 6)
-      .map(({ sortOrder: _, ...rest }) => rest);
+    activeCampaigns = [...activeCampaigns, ...spotlightServices, ...spotlightCampaigns].sort((a, b) => {
+      if (a.order !== b.order) return b.order - a.order;
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+    });
   } catch (error) { console.error("Failed to fetch campaigns or services:", error); }
 
   try {
@@ -138,13 +117,20 @@ async function HomeContent() {
   } catch (error) { console.error("Failed to fetch team members:", error); }
 
   try {
-    featuredVideos = await db
+    const featuredList = await db
       .select()
-      .from(videos)
-      .where(eq(videos.isFeatured, true))
-      .orderBy(asc(videos.order), desc(videos.createdAt))
+      .from(campaigns)
+      .where(and(eq(campaigns.isPublished, true), eq(campaigns.isFeatured, true)))
+      .orderBy(desc(campaigns.createdAt))
       .limit(8);
-  } catch (error) { console.error("Failed to fetch videos:", error); }
+
+    featuredCampaigns = featuredList.map(c => ({
+      id: c.id,
+      title: c.title,
+      linkUrl: `/campaigns/${c.slug}`,
+      imageUrl: c.thumbnailUrl || ""
+    }));
+  } catch (error) { console.error("Failed to fetch featured campaigns:", error); }
 
   try {
     latestPress = await db
@@ -218,8 +204,8 @@ async function HomeContent() {
       {/* 3. Spotlight Campaigns */}
       <SpotlightCampaigns campaigns={activeCampaigns} />
 
-      {/* 4. Mission Banner + Featured Videos */}
-      <MissionAndVideos videos={featuredVideos} settings={settingsMap} />
+      {/* 4. Mission Banner + Featured Campaigns */}
+      <MissionAndCampaigns campaigns={featuredCampaigns} settings={settingsMap} />
 
       {/* 5. Latest Press Releases */}
       <LatestPressReleases
@@ -257,7 +243,7 @@ export default function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <Suspense fallback={
-        <div className=" flex items-center justify-center">
+        <div className="min-h-screen flex items-center justify-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary" />
         </div>
       }>

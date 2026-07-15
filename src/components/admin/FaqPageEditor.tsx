@@ -376,10 +376,10 @@ export default function FaqPageEditor({ pageId, initialPageData }: FaqPageEditor
 
       <Tabs defaultValue="items" className="space-y-6">
         <TabsList className="bg-muted p-1 rounded-lg">
-          <TabsTrigger value="items" className="flex items-center gap-2 px-4 py-2 rounded">
+          <TabsTrigger value="items" className="flex items-center gap-2 px-4 py-2 rounded-lg">
             <HelpCircle className="w-4 h-4" /> FAQ Items
           </TabsTrigger>
-          <TabsTrigger value="settings" className="flex items-center gap-2 px-4 py-2 rounded">
+          <TabsTrigger value="settings" className="flex items-center gap-2 px-4 py-2 rounded-lg">
             <Settings2 className="w-4 h-4" /> Page SEO & Setup
           </TabsTrigger>
         </TabsList>

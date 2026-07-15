@@ -872,13 +872,13 @@ export default function SocialMediaPageEditor({ pageId, initialPageData }: Socia
 
       <Tabs defaultValue="cards" className="space-y-6">
         <TabsList className="bg-muted p-1 rounded-lg">
-          <TabsTrigger value="cards" className="flex items-center gap-2 px-4 py-2 rounded">
+          <TabsTrigger value="cards" className="flex items-center gap-2 px-4 py-2 rounded-lg">
             <Layers className="w-4 h-4" /> Social Cards
           </TabsTrigger>
-          <TabsTrigger value="platforms" className="flex items-center gap-2 px-4 py-2 rounded">
+          <TabsTrigger value="platforms" className="flex items-center gap-2 px-4 py-2 rounded-lg">
             <Palette className="w-4 h-4" /> Platform Tabs
           </TabsTrigger>
-          <TabsTrigger value="settings" className="flex items-center gap-2 px-4 py-2 rounded">
+          <TabsTrigger value="settings" className="flex items-center gap-2 px-4 py-2 rounded-lg">
             <Settings2 className="w-4 h-4" /> Page SEO
           </TabsTrigger>
         </TabsList>

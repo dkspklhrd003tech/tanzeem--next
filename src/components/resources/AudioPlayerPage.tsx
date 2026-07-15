@@ -156,7 +156,7 @@ export function AudioPlayerPage({ item, related, customFieldSchema = [] }: Audio
                 download
                 onClick={handleDownload}
                 className={cn(
-                  "inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold",
+                  "inline-flex items-center gap-2 px-4 py-2 rounded-lg-full text-sm font-semibold",
                   "bg-primary text-primary-foreground transition-colors"
                 )}
               >
@@ -170,7 +170,7 @@ export function AudioPlayerPage({ item, related, customFieldSchema = [] }: Audio
                   target="_blank"
                   rel="noopener noreferrer"
                   className={cn(
-                    "inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold",
+                    "inline-flex items-center gap-2 px-4 py-2 rounded-lg-full text-sm font-semibold",
                     "bg-secondary text-secondary-foreground hover:bg-secondary/80 transition-colors"
                   )}
                 >

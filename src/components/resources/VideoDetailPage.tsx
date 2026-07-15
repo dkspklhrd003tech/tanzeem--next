@@ -154,7 +154,7 @@ export function VideoDetailPage({ item, related, customFieldSchema = [] }: { ite
               {item.duration && <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" />{formatDuration(item.duration)}</span>}
             </div>
             <div className="flex flex-wrap gap-3 mt-6">
-              <div className="flex items-center gap-2 px-4 py-2 rounded-full text-sm bg-muted/50 text-foreground-muted font-medium border border-border">
+              <div className="flex items-center gap-2 px-4 py-2 rounded-lg-full text-sm bg-muted/50 text-foreground-muted font-medium border border-border">
                 <PlayCircle className="h-4 w-4" /> Played ({viewCount.toLocaleString()})
               </div>
               <ClientShareButton variant="default" className="w-auto px-4 py-2 text-sm bg-transparent border-border rounded-full" entityType="video" entityId={item.id} shareCount={item.shareCount} />
@@ -168,7 +168,7 @@ export function VideoDetailPage({ item, related, customFieldSchema = [] }: { ite
                   className="rounded-full px-4 py-2 h-auto bg-primary text-white text-sm shadow-none border-0"
                 />
               ) : (
-                <a href={externalLink || undefined} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold bg-primary text-primary-foreground transition-colors">
+                <a href={externalLink || undefined} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg-full text-sm font-semibold bg-primary text-primary-foreground transition-colors">
                   <ExternalLink className="h-4 w-4" /> Watch on {playerName}
                 </a>
               )}
@@ -244,7 +244,7 @@ export function VideoDetailPage({ item, related, customFieldSchema = [] }: { ite
         </div>
 
         {/* Sidebar */}
-          {/* <div className="space-y-6">
+        {/* <div className="space-y-6">
           {item.speaker && (
             <div className="bg-card border border-border rounded-xl p-5">
               <h2 className="text-xs font-semibold uppercase tracking-wide text-foreground-muted mb-4">Speaker</h2>
@@ -286,7 +286,7 @@ export function VideoDetailPage({ item, related, customFieldSchema = [] }: { ite
             </div>
           )}
         </div> */}
-        </div>
       </div>
-      );
+    </div>
+  );
 }

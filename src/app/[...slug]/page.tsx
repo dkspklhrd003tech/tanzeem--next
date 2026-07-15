@@ -1,7 +1,7 @@
 import { notFound, redirect, permanentRedirect } from "next/navigation";
 import { db } from "@/db";
 import { pages, pageSections, audioCategories, videoCategories, audio, videos, speakers, bookCategories, books, settings } from "@/db/schema";
-import { eq, and, desc, sql } from "drizzle-orm";
+import { eq, and, desc, asc, sql } from "drizzle-orm";
 import { Metadata } from "next";
 import crypto from "crypto";
 import { DynamicPageContent } from "@/components/shared/DynamicPageContent";

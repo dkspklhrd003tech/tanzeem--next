@@ -37,17 +37,19 @@ export function SpotlightCampaigns({ campaigns }: { campaigns: HomeCampaign[] })
             );
 
             const cards = gsap.utils.toArray(".campaign-card");
-            gsap.fromTo(cards,
-                { opacity: 0, y: 100, scale: 0.9, rotateX: 20 },
-                {
-                    opacity: 1, y: 0, scale: 1, rotateX: 0,
-                    duration: 1.2,
-                    stagger: 0.15,
-                    ease: "expo.out",
-                    clearProps: "all",
-                    scrollTrigger: { trigger: gridRef.current, start: "top 75%" }
-                }
-            );
+            if (cards.length > 0) {
+                gsap.fromTo(cards,
+                    { opacity: 0, y: 100, scale: 0.9, rotateX: 20 },
+                    {
+                        opacity: 1, y: 0, scale: 1, rotateX: 0,
+                        duration: 1.2,
+                        stagger: 0.15,
+                        ease: "expo.out",
+                        clearProps: "all",
+                        scrollTrigger: { trigger: gridRef.current, start: "top 75%" }
+                    }
+                );
+            }
         }, sectionRef);
 
         return () => ctx.revert();
