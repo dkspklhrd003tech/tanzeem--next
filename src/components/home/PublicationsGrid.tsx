@@ -141,7 +141,7 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
                                         href={mag.buttonUrl || `/magazines/${mag.slug}`}
                                         className={cn(
                                             "group inline-flex items-center gap-3 border border-primary/50 text-[#222222] hover:text-white backdrop-blur-md",
-                                            "px-4 md:px-8 py-3.5 rounded-full text-sm font-bold tracking-wide uppercase shadow-lg",
+                                            "px-4 py-3 rounded-full text-sm font-bold tracking-wide uppercase shadow-lg",
                                             "hover:bg-primary hover:border-primary transition-all duration-500 hover:shadow-[0_0_30px_rgba(16,185,129,0.3)]",
                                             "focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
                                         )}
@@ -212,7 +212,7 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
                                         href={book.buttonUrl || `/books/${book.slug}`}
                                         className={cn(
                                             "group inline-flex items-center gap-3 border border-primary/50  text-[#222222] hover:text-white ackdrop-blur-md",
-                                            "px-4 md:px-8 py-3.5 rounded-full text-sm font-bold tracking-wide uppercase shadow-lg",
+                                            "px-4 md:px-6 py-3 rounded-full text-sm font-bold tracking-wide uppercase shadow-lg",
                                             "hover:bg-primary hover:border-primary transition-all duration-500 hover:shadow-[0_0_30px_rgba(16,185,129,0.3)]",
                                             "focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
                                         )}

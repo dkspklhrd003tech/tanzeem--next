@@ -89,17 +89,42 @@ export async function PUT(request: NextRequest, { params }: Ctx) {
       return NextResponse.json({ errors }, { status: 422 });
     }
 
-    const [existing] = await db.select().from(pages).where(or(eq(pages.id, id), eq(pages.slug, id))).limit(1);
-    if (!existing) return NextResponse.json({ error: "Page not found" }, { status: 404 });
+    let [existing] = await db.select().from(pages).where(or(eq(pages.id, id), eq(pages.slug, id))).limit(1);
+    
+    if (!existing) {
+      // Upsert fallback for hardcoded system pages (like "services", "campaigns")
+      const newId = id.length > 50 ? crypto.randomUUID() : id;
+      const newSlug = data.slug || id;
 
-    // Slug uniqueness check (exclude self)
-    if (data.slug && data.slug !== existing.slug) {
-      const [conflict] = await db.select({ id: pages.id })
-        .from(pages)
-        .where(and(eq(pages.slug, data.slug), not(eq(pages.id, existing.id))))
-        .limit(1);
+      const [conflict] = await db.select({ id: pages.id }).from(pages).where(eq(pages.slug, newSlug)).limit(1);
       if (conflict) {
         return NextResponse.json({ errors: { slug: "A page with this slug already exists." } }, { status: 422 });
+      }
+
+      await db.insert(pages).values({
+        id: newId,
+        title: data.title || id.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+        slug: newSlug,
+        content: data.content || "",
+        isPublished: data.isPublished ?? true,
+        metaTitle: data.metaTitle || data.title,
+        metaDescription: data.metaDescription || "",
+        authorId: user.id,
+        publishedAt: new Date(),
+      });
+
+      const [inserted] = await db.select().from(pages).where(eq(pages.id, newId)).limit(1);
+      existing = inserted;
+    } else {
+      // Slug uniqueness check (exclude self)
+      if (data.slug && data.slug !== existing.slug) {
+        const [conflict] = await db.select({ id: pages.id })
+          .from(pages)
+          .where(and(eq(pages.slug, data.slug), not(eq(pages.id, existing.id))))
+          .limit(1);
+        if (conflict) {
+          return NextResponse.json({ errors: { slug: "A page with this slug already exists." } }, { status: 422 });
+        }
       }
     }
 

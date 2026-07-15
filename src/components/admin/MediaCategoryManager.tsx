@@ -67,6 +67,7 @@ interface SubCategory {
 interface MainCategory {
   id: string;
   title: string;
+  slug?: string;
   code?: string;
   image?: string;
   order?: number;
@@ -338,6 +339,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
       const mapped = data.map((mainCat: any) => ({
         id: mainCat.id,
         title: mainCat.name,
+        slug: mainCat.slug || "",
         code: mainCat.code || "",
         image: mainCat.imageUrl || "",
         order: mainCat.order || 0,
@@ -388,22 +390,30 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
   const [isSavingItem, setIsSavingItem] = useState(false);
 
   // --- Main Category Handlers ---
-  const addMainCategory = async (title: string, code: string, imageUrl: string) => {
+  const addMainCategory = async (title: string, code: string, imageUrl: string, slug?: string, openInNewTab?: boolean) => {
     try {
       const res = await fetch(`/api/${mediaType}-categories`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: title, code, imageUrl, parentId: null })
+        body: JSON.stringify({ 
+          name: title, 
+          code, 
+          imageUrl, 
+          parentId: null,
+          slug: slug || undefined,
+          customFields: JSON.stringify({ openInNewTab: openInNewTab || false })
+        })
       });
       const data = await res.json();
 
       const newCat: MainCategory = {
         id: data.id,
         title,
+        slug: data.slug || "",
         code,
         image: imageUrl,
         order: 0,
-        customFields: {},
+        customFields: { openInNewTab: openInNewTab || false },
         subCategories: [],
       };
       setCategories([...categories, newCat]);
@@ -434,6 +444,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: updatedCat.title,
+          slug: updatedCat.slug,
           code: updatedCat.code,
           imageUrl: updatedCat.image,
           order: updatedCat.order || 0,
@@ -912,6 +923,14 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
               <Input name="title" required placeholder="e.g. Dars-e-Quran" />
             </div>
             <div className="space-y-2">
+              <Label>Optional Slug</Label>
+              <Input name="slug" placeholder="e.g. dars-e-quran (auto-generated if empty)" />
+              <div className="flex items-center space-x-2 pt-2">
+                <Switch name="openInNewTab" />
+                <Label className="text-sm font-normal cursor-pointer">Open in New Tab</Label>
+              </div>
+            </div>
+            <div className="space-y-2">
               <Label>Featured Image</Label>
               <ImageUploader
                 value={newMainCatImage}
@@ -927,7 +946,13 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                 setPendingAction({
                   title: "Create Main Category",
                   desc: "Are you sure you want to create this new main category?",
-                  action: () => addMainCategory(formData.get("title") as string, formData.get("code") as string, newMainCatImage)
+                  action: () => addMainCategory(
+                    formData.get("title") as string, 
+                    formData.get("code") as string, 
+                    newMainCatImage,
+                    formData.get("slug") as string,
+                    formData.get("openInNewTab") === "on"
+                  )
                 });
               }} className="bg-primary text-white hover:bg-primary/80">Create Tab</Button>
             </DialogFooter>
@@ -950,6 +975,21 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                   value={editingMainCat.title}
                   onChange={(e) => setEditingMainCat({ ...editingMainCat, title: e.target.value })}
                 />
+              </div>
+              <div className="space-y-2">
+                <Label>Optional Slug</Label>
+                <Input
+                  value={editingMainCat.slug || ""}
+                  placeholder="e.g. dars-e-quran"
+                  onChange={(e) => setEditingMainCat({ ...editingMainCat, slug: e.target.value })}
+                />
+                <div className="flex items-center space-x-2 pt-2">
+                  <Switch
+                    checked={editingMainCat.customFields?.openInNewTab || false}
+                    onCheckedChange={(checked) => setEditingMainCat({ ...editingMainCat, customFields: { ...(editingMainCat.customFields || {}), openInNewTab: checked } })}
+                  />
+                  <Label className="text-sm font-normal cursor-pointer">Open in New Tab</Label>
+                </div>
               </div>
               <div className="space-y-2">
                 <Label>Display Order</Label>
