@@ -131,7 +131,7 @@ const REQUIRED_FIELDS: Record<string, string[]> = {
 };
 
 function parseDateFields(data: any) {
-    const dateFields = ["publishedAt", "createdAt", "updatedAt", "startDate", "endDate"];
+    const dateFields = ["publishedAt", "createdAt", "updatedAt", "startDate", "endDate", "startsAt", "endsAt"];
     const parsed = { ...data };
     for (const field of dateFields) {
         if (parsed[field] !== undefined) {

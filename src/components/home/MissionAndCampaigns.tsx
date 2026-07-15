@@ -86,9 +86,9 @@ export function MissionAndCampaigns({ campaigns, settings }: MissionProps) {
                 <div className="container max-w-7xl mx-auto relative z-10 px-6">
 
                     <div className="mb-6 md:mb-10 text-center">
-                        <p className="text-primary font-bold tracking-widest uppercase text-xs mb-3">Featured</p>
+                        <p className="text-primary font-bold tracking-widest uppercase text-xs mb-3">Featured Campaigns</p>
                         <h2 id="campaigns-heading" className="spotlight_heading">
-                            Campaigns &amp; Events
+                            Regular Video Broadcasts
                         </h2>
                     </div>
 

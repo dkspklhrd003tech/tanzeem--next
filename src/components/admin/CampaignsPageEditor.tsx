@@ -1237,8 +1237,8 @@ export default function CampaignsPageEditor({ pageId, initialPageData }: Campaig
                         <SelectValue placeholder="Select Category" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Campaigns">Campaigns</SelectItem>
-                        <SelectItem value="SpotLight Campaigns">SpotLight Campaigns</SelectItem>
+                        <SelectItem value="SpotLight Campaigns">Spotlight (Services)</SelectItem>
+                        <SelectItem value="Campaigns">Featured (Campaigns)</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -1273,7 +1273,7 @@ export default function CampaignsPageEditor({ pageId, initialPageData }: Campaig
                       onCheckedChange={(checked) => setFormData(prev => ({ ...prev, isPublished: checked }))}
                     />
                   </div>
-                  
+
                   <div className="flex items-center justify-between p-3 border border-border rounded-xl bg-emerald-500/10 border-emerald-500/20 mt-6 h-[42px] col-span-1 md:col-span-2">
                     <div>
                       <span className="text-sm font-bold text-emerald-700">Display in Featured Section</span>

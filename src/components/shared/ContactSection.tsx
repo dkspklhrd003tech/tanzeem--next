@@ -121,7 +121,7 @@ export function ContactSection({
                   </div>
                   <div>
                     <h3 className="text-white font-semibold mb-1">Address</h3>
-                    <a href={`https://maps.google.com/?q=${encodeURIComponent(s.footer_address)}`} target="_blank" rel="noopener noreferrer" className="text-emerald-100/80 hover:text-white transition-colors leading-relaxed block text-[15px]">
+                    <a href={`https://maps.google.com/?q=${encodeURIComponent(s.footer_address)}`} target="_blank" rel="noopener noreferrer" className="text-white transition-colors leading-relaxed block text-[15px]">
                       {s.footer_address}
                     </a>
                   </div>
@@ -134,12 +134,12 @@ export function ContactSection({
                   <div>
                     <h3 className="text-white font-semibold mb-1">Call Us</h3>
                     {s.contact_phone && (
-                      <a href={`tel:${getCleanNumber(s.contact_phone)}`} className="text-emerald-100/80 hover:text-white transition-colors block text-[15px] mb-1">
+                      <a href={`tel:${getCleanNumber(s.contact_phone)}`} className="text-white transition-colors block text-[15px] mb-1">
                         Landline: {s.contact_phone}
                       </a>
                     )}
                     {s.whatsapp_number && (
-                      <a href={`tel:${getCleanNumber(s.whatsapp_number)}`} className="text-emerald-100/80 hover:text-white transition-colors block text-[15px]">
+                      <a href={`tel:${getCleanNumber(s.whatsapp_number)}`} className="text-white transition-colors block text-[15px]">
                         WhatsApp: {s.whatsapp_number}
                       </a>
                     )}
@@ -153,12 +153,12 @@ export function ContactSection({
                   <div>
                     <h3 className="text-white font-semibold mb-1">Email Us</h3>
                     {s.contact_email && (
-                      <a href={`mailto:${s.contact_email}`} className="text-emerald-100/70 hover:text-white transition-colors block text-[15px] mb-1">
+                      <a href={`mailto:${s.contact_email}`} className="text-white transition-colors block text-[15px] mb-1">
                         General: {s.contact_email}
                       </a>
                     )}
                     {s.contact_email_office && (
-                      <a href={`mailto:${s.contact_email_office}`} className="text-emerald-100/70 hover:text-white transition-colors block text-[15px]">
+                      <a href={`mailto:${s.contact_email_office}`} className="text-white transition-colors block text-[15px]">
                         Office: {s.contact_email_office}
                       </a>
                     )}

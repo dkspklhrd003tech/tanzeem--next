@@ -63,7 +63,8 @@ export function SpotlightCampaigns({ campaigns }: { campaigns: HomeCampaign[] })
                 <div ref={headerRef} className="mb-6 md:mb-10 text-center">
                     <p className="text-primary font-bold tracking-widest uppercase text-xs mb-3">Tanzeem Spotlight</p>
                     <h2 id="spotlight-heading" className="spotlight_heading">
-                        Campaigns &amp; Events
+                        Services, Announcements & Events
+
                     </h2>
                 </div>
 
