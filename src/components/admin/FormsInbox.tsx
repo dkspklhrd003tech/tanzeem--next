@@ -21,7 +21,7 @@ export function FormsInbox() {
       const res = await fetch("/api/contact");
       if (!res.ok) throw new Error("Failed to fetch");
       const data = await res.json();
-      setSubmissions(data.data?.submissions || []);
+      setSubmissions(data.submissions || []);
     } catch (err) {
       console.error(err);
       toast({ title: "Error", description: "Failed to load inbox", variant: "destructive" });

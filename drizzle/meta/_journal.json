@@ -50,6 +50,13 @@
       "when": 1784105225184,
       "tag": "0006_naive_red_ghost",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "5",
+      "when": 1784190582547,
+      "tag": "0007_illegal_sunfire",
+      "breakpoints": true
     }
   ]
 }

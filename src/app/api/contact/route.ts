@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
-import { formSubmissions, settings } from "@/db/schema";
+import { formSubmissions, settings, emailLogs } from "@/db/schema";
 import { desc, eq, and, count } from "drizzle-orm";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { contactFormSchema } from "@/lib/validations/api";
@@ -87,12 +87,76 @@ export async function POST(request: NextRequest) {
       emailHtml = emailHtml.replace(/\[subject\]/g, data.subject);
       emailHtml = emailHtml.replace(/\[msg\]/g, data.message);
 
-      // The user wants it to also be sent/displayed to the user entered email address,
-      // so we send it to both the admin and the user as a confirmation.
-      await sendEmail({
-        to: `${config.sendToEmail}, ${data.email}`,
-        subject: config.emailSubject || "New Contact Submission",
-        html: emailHtml,
+      // Build subject: resolve [subject] smart tag if present
+      let emailSubjectLine = config.emailSubject || `New Contact Submission: ${data.subject}`;
+      emailSubjectLine = emailSubjectLine.replace(/\[subject\]/g, data.subject);
+      emailSubjectLine = emailSubjectLine.replace(/\[name\]/g, data.name);
+
+      // Build from display name if configured
+      const fromDisplay = config.fromName && config.fromEmail
+        ? `"${config.fromName}" <${config.fromEmail}>`
+        : config.fromEmail || undefined;
+
+      let adminStatus = "FAILED";
+      let userStatus = "FAILED";
+      let adminDetails = "";
+      let userDetails = "";
+
+      // 1. Notify admin
+      try {
+        const adminRes = await sendEmail({
+          to: config.sendToEmail,
+          subject: emailSubjectLine,
+          html: emailHtml,
+          replyTo: data.email,
+          from: fromDisplay,
+        });
+        
+        if (adminRes && adminRes.success === false) {
+          adminDetails = adminRes.error || "Failed to send via SMTP";
+        } else {
+          adminStatus = "SUCCESS";
+          adminDetails = "Delivered via SMTP";
+        }
+      } catch (e: any) {
+        adminDetails = e.message || "Unknown error";
+      }
+
+      await db.insert(emailLogs).values({
+        id: crypto.randomUUID(),
+        formId: submissionId,
+        sentTo: config.sendToEmail,
+        status: adminStatus,
+        details: `Admin Notification: ${adminDetails}`,
+      });
+
+      // 2. Send confirmation copy to the user's entered email
+      try {
+        const userRes = await sendEmail({
+          to: data.email,
+          subject: `We received your message: ${data.subject}`,
+          html: emailHtml,
+          replyTo: config.replyTo || config.sendToEmail,
+          from: fromDisplay,
+        });
+        
+        if (userRes && userRes.success === false) {
+          userStatus = "FAILED";
+          userDetails = userRes.error || "Failed to send via SMTP";
+        } else {
+          userStatus = "SUCCESS";
+          userDetails = "Delivered via SMTP";
+        }
+      } catch (e: any) {
+        userDetails = e.message || "Unknown error";
+      }
+
+      await db.insert(emailLogs).values({
+        id: crypto.randomUUID(),
+        formId: submissionId,
+        sentTo: data.email,
+        status: userStatus,
+        details: `User Confirmation: ${userDetails}`,
       });
     }
 

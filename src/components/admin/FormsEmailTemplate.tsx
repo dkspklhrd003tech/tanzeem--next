@@ -15,26 +15,42 @@ const DEFAULT_TEMPLATE = `<!DOCTYPE html>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body style="padding: 0; margin: 0; font-family: Helvetica, Arial, sans-serif; background: #f0f0f0;">
-  <div style="background: #e5e5e5; padding: 20px;">
-    <div style="max-w: 600px; margin: 0 auto; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
-      <div style="padding: 20px; border-bottom: 1px solid #eee; text-align: center;">
-        <img src="https://tanzeemmedia.dks.com.pk/Image/Tanzeem-e-Islami_Logo.png" alt="Tanzeem-e-Islami" style="max-width: 180px; height: auto; display: inline-block;">
-      </div>
-      <div style="padding: 30px 20px;">
-        <h3 style="margin-top: 0; color: #333;">New Contact Submission</h3>
-        <table style="width: 100%; border-collapse: collapse;">
-          <tr><td style="padding: 8px 0; border-bottom: 1px solid #eee; font-weight: bold; width: 130px;">Full Name:</td><td style="padding: 8px 0; border-bottom: 1px solid #eee;">[name]</td></tr>
-          <tr><td style="padding: 8px 0; border-bottom: 1px solid #eee; font-weight: bold;">Email Address:</td><td style="padding: 8px 0; border-bottom: 1px solid #eee; color: #3b82f6;">[email]</td></tr>
-          <tr><td style="padding: 8px 0; border-bottom: 1px solid #eee; font-weight: bold;">Phone Number:</td><td style="padding: 8px 0; border-bottom: 1px solid #eee;">[phone]</td></tr>
-          <tr><td style="padding: 8px 0; border-bottom: 1px solid #eee; font-weight: bold;">Subject:</td><td style="padding: 8px 0; border-bottom: 1px solid #eee;">[subject]</td></tr>
-          <tr><td style="padding: 8px 0; border-bottom: 1px solid #eee; font-weight: bold;">Message:</td><td style="padding: 8px 0; border-bottom: 1px solid #eee;">[msg]</td></tr>
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background: #f0f0f0;">
+    <tr>
+      <td align="center" style="padding: 40px 20px;">
+        <!--[if mso]>
+        <table border="0" cellspacing="0" cellpadding="0" width="500"><tr><td>
+        <![endif]-->
+        <table border="0" cellspacing="0" cellpadding="0" style="max-width: 500px; width: 100%; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: left;">
+          <tr>
+            <td align="center" style="padding: 20px; border-bottom: 1px solid #eee; background: white;">
+              <img src="https://tanzeem.org/tanzeem-logo.webp" alt="Tanzeem-e-Islami" style="max-width: 180px; height: auto; display: inline-block; outline: none; border: none;">
+            </td>
+          </tr>
+          <tr>
+            <td style="padding: 30px 20px;">
+              <h3 style="margin-top: 0; color: #333; font-family: 'Outfit', Helvetica, Arial, sans-serif;">New Contact Submission</h3>
+              <table width="100%" border="0" cellspacing="0" cellpadding="0" style="border-collapse: collapse; font-size: 14px; line-height: 1.6;">
+                <tr><td style="padding: 8px 0; border-bottom: 1px solid #eee; font-weight: bold; width: 130px; color: #555;">Full Name:</td><td style="padding: 8px 0; border-bottom: 1px solid #eee; color: #222;">[name]</td></tr>
+                <tr><td style="padding: 8px 0; border-bottom: 1px solid #eee; font-weight: bold; color: #555;">Email Address:</td><td style="padding: 8px 0; border-bottom: 1px solid #eee; color: #3b82f6;">[email]</td></tr>
+                <tr><td style="padding: 8px 0; border-bottom: 1px solid #eee; font-weight: bold; color: #555;">Phone Number:</td><td style="padding: 8px 0; border-bottom: 1px solid #eee; color: #222;">[phone]</td></tr>
+                <tr><td style="padding: 8px 0; border-bottom: 1px solid #eee; font-weight: bold; color: #555;">Subject:</td><td style="padding: 8px 0; border-bottom: 1px solid #eee; color: #222;">[subject]</td></tr>
+                <tr><td style="padding: 8px 0; border-bottom: 1px solid #eee; font-weight: bold; color: #555;">Message:</td><td style="padding: 8px 0; border-bottom: 1px solid #eee; color: #222;">[msg]</td></tr>
+              </table>
+            </td>
+          </tr>
+          <tr>
+            <td align="center" style="background: #f9fafb; padding: 15px; color: #0d5844; font-size: 12px;">
+              &copy; 2026 Tanzeem.org. All Rights Reserved.
+            </td>
+          </tr>
         </table>
-      </div>
-      <div style="background: #f9fafb; padding: 15px; text-align: center; color: #0d5844; font-size: 12px;">
-        &copy; 2026 Tanzeem.org. All Rights Reserved.
-      </div>
-    </div>
-  </div>
+        <!--[if mso]>
+        </td></tr></table>
+        <![endif]-->
+      </td>
+    </tr>
+  </table>
 </body>
 </html>`;
 

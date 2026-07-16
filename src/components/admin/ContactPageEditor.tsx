@@ -498,9 +498,10 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
             </Button>
           </CardHeader>
           <CardContent className="p-6 bg-slate-50/30">
-            <Tabs defaultValue="configuration" className="w-full">
+            <Tabs defaultValue="email-configs" className="w-full">
               <TabsList className="flex flex-wrap gap-3 bg-transparent p-0 mb-6 h-auto border-none w-full justify-start">
-                <TabsTrigger value="configuration" className="rounded-xl px-6 py-3 bg-primary-light/80 border border-primary text-foreground text-sm font-bold tracking-wider uppercase data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md transition-all">Configuration</TabsTrigger>
+                <TabsTrigger value="email-configs" className="rounded-xl px-6 py-3 bg-primary-light/80 border border-primary text-foreground text-sm font-bold tracking-wider uppercase data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md transition-all">Email Configs</TabsTrigger>
+                <TabsTrigger value="email-template" className="rounded-xl px-6 py-3 bg-primary-light/80 border border-primary text-foreground text-sm font-bold tracking-wider uppercase data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md transition-all">Email Template</TabsTrigger>
                 <TabsTrigger value="inbox" className="relative rounded-xl px-6 py-3 bg-primary-light/80 border border-primary text-foreground text-sm font-bold tracking-wider uppercase data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md transition-all">
                   Inbox
                   {unreadCount > 0 && (
@@ -508,93 +509,9 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
                   )}
                 </TabsTrigger>
                 <TabsTrigger value="history" className="rounded-xl px-6 py-3 bg-primary-light/80 border border-primary text-foreground text-sm font-bold tracking-wider uppercase data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md transition-all">Sent History</TabsTrigger>
-                <TabsTrigger value="email-configs" className="rounded-xl px-6 py-3 bg-primary-light/80 border border-primary text-foreground text-sm font-bold tracking-wider uppercase data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md transition-all">Email Configs</TabsTrigger>
                 <TabsTrigger value="email-logs" className="rounded-xl px-6 py-3 bg-primary-light/80 border border-primary text-foreground text-sm font-bold tracking-wider uppercase data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md transition-all">Email Logs</TabsTrigger>
               </TabsList>
 
-              <TabsContent value="configuration">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg flex items-center gap-2">
-                      <Edit2 className="h-5 w-5 text-primary" /> Form Configuration
-                    </CardTitle>
-                    <CardDescription>Customize the labels and placeholders for the contact form.</CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div>
-                      <Label>Form Heading</Label>
-                      <Input value={settings.form_heading || ""} onChange={(e) => handleSettingChange("form_heading", e.target.value)} placeholder="e.g. Send a Message" />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label>Name Label</Label>
-                        <Input value={settings.form_name_label || ""} onChange={(e) => handleSettingChange("form_name_label", e.target.value)} placeholder="Full Name *" />
-                      </div>
-                      <div>
-                        <Label>Name Placeholder</Label>
-                        <Input value={settings.form_name_placeholder || ""} onChange={(e) => handleSettingChange("form_name_placeholder", e.target.value)} placeholder="Your name" />
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label>Email Label</Label>
-                        <Input value={settings.form_email_label || ""} onChange={(e) => handleSettingChange("form_email_label", e.target.value)} placeholder="Email Address *" />
-                      </div>
-                      <div>
-                        <Label>Email Placeholder</Label>
-                        <Input value={settings.form_email_placeholder || ""} onChange={(e) => handleSettingChange("form_email_placeholder", e.target.value)} placeholder="your@email.com" />
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label>Phone Label</Label>
-                        <Input value={settings.form_phone_label || ""} onChange={(e) => handleSettingChange("form_phone_label", e.target.value)} placeholder="Phone Number" />
-                      </div>
-                      <div>
-                        <Label>Phone Placeholder</Label>
-                        <Input value={settings.form_phone_placeholder || ""} onChange={(e) => handleSettingChange("form_phone_placeholder", e.target.value)} placeholder="+92 XXX XXX XXXX" />
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label>Subject Label</Label>
-                        <Input value={settings.form_subject_label || ""} onChange={(e) => handleSettingChange("form_subject_label", e.target.value)} placeholder="Subject *" />
-                      </div>
-                      <div>
-                        <Label>Subject Placeholder</Label>
-                        <Input value={settings.form_subject_placeholder || ""} onChange={(e) => handleSettingChange("form_subject_placeholder", e.target.value)} placeholder="What is this about?" />
-                      </div>
-                    </div>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label>Message Label</Label>
-                        <Input value={settings.form_message_label || ""} onChange={(e) => handleSettingChange("form_message_label", e.target.value)} placeholder="Message *" />
-                      </div>
-                      <div>
-                        <Label>Message Placeholder</Label>
-                        <Input value={settings.form_message_placeholder || ""} onChange={(e) => handleSettingChange("form_message_placeholder", e.target.value)} placeholder="Write your message here..." />
-                      </div>
-                    </div>
-                    <div>
-                      <Label>Submit Button Text</Label>
-                      <Input value={settings.form_submit_button || ""} onChange={(e) => handleSettingChange("form_submit_button", e.target.value)} placeholder="Send Message" />
-                    </div>
-                    <div className="pt-4 border-t border-border mt-4 space-y-4">
-                      <h4 className="font-semibold">Success Message</h4>
-                      <div>
-                        <Label>Success Heading</Label>
-                        <Input value={settings.form_success_heading || ""} onChange={(e) => handleSettingChange("form_success_heading", e.target.value)} placeholder="Message Sent Successfully!" />
-                      </div>
-                      <div>
-                        <Label>Success Description</Label>
-                        <Input value={settings.form_success_message || ""} onChange={(e) => handleSettingChange("form_success_message", e.target.value)} placeholder="Thank you for contacting us..." />
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <FormsEmailTemplate ref={emailTemplateRef} />
-              </TabsContent>
 
               <TabsContent value="inbox">
                 <FormsInbox />
@@ -606,6 +523,10 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
 
               <TabsContent value="email-configs">
                 <FormsEmailConfigs ref={emailConfigsRef} />
+              </TabsContent>
+
+              <TabsContent value="email-template">
+                <FormsEmailTemplate ref={emailTemplateRef} />
               </TabsContent>
 
               <TabsContent value="email-logs">

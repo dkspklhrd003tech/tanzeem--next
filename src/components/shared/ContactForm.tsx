@@ -16,6 +16,16 @@ export function ContactForm({ settings = {} }: { settings?: Record<string, strin
 
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
 
+  // Controlled state — prevents browser autocomplete from persisting stale values across reloads
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [subject, setSubject] = useState("");
+  const [message, setMessage] = useState("");
+
+  // Clear red borders as soon as the user starts interacting with any field
+  const clearErrors = () => { if (attemptedSubmit) setAttemptedSubmit(false); };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setAttemptedSubmit(true);
@@ -26,21 +36,17 @@ export function ContactForm({ settings = {} }: { settings?: Record<string, strin
 
     setIsSubmitting(true);
 
-    const formData = new FormData(e.currentTarget);
-
     try {
       const response = await fetch("/api/contact", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           formType: "contact",
-          name: formData.get("name"),
-          email: formData.get("email"),
-          phone: formData.get("phone"),
-          subject: formData.get("subject"),
-          message: formData.get("message"),
+          name: name.trim(),
+          email: email.trim(),
+          phone: phone.trim() || undefined,
+          subject: subject.trim(),
+          message: message.trim(),
         }),
       });
 
@@ -49,6 +55,9 @@ export function ContactForm({ settings = {} }: { settings?: Record<string, strin
       }
 
       setIsSubmitted(true);
+      // Reset all fields after successful submission
+      setName(""); setEmail(""); setPhone(""); setSubject(""); setMessage("");
+      setAttemptedSubmit(false);
       toast({
         title: "Message Sent!",
         description: "We'll get back to you as soon as possible.",
@@ -71,8 +80,8 @@ export function ContactForm({ settings = {} }: { settings?: Record<string, strin
         animate={{ opacity: 1, scale: 1 }}
         className="text-center py-12"
       >
-        <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <CheckCircle className="h-8 w-8 text-green-600" />
+        <div className="w-16 h-16 bg-primary-light rounded-full flex items-center justify-center mx-auto mb-4">
+          <CheckCircle className="h-8 w-8 text-primary" />
         </div>
         <h3 className="text-xl font-semibold text-foreground mb-2">
           {settings.form_success_heading || "Message Sent Successfully!"}
@@ -83,6 +92,7 @@ export function ContactForm({ settings = {} }: { settings?: Record<string, strin
         <Button
           variant="outline"
           onClick={() => setIsSubmitted(false)}
+          className="rounded-xl bg-primary text-primary-foreground"
         >
           Send Another Message
         </Button>
@@ -93,6 +103,7 @@ export function ContactForm({ settings = {} }: { settings?: Record<string, strin
   return (
     <motion.form
       noValidate
+      autoComplete="off"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       onSubmit={handleSubmit}
@@ -104,9 +115,12 @@ export function ContactForm({ settings = {} }: { settings?: Record<string, strin
           <Input
             id="name"
             name="name"
+            autoComplete="new-password"
+            value={name}
+            onChange={(e) => { setName(e.target.value); clearErrors(); }}
             placeholder={settings.form_name_placeholder || "Your name"}
             required
-            className={`bg-background ${attemptedSubmit ? "invalid:border-red-500 invalid:ring-red-500" : ""}`}
+            className={`bg-background ${attemptedSubmit && !name.trim() ? "border-red-500 ring-red-500 ring-1" : ""}`}
           />
         </div>
         <div className="space-y-2">
@@ -115,9 +129,12 @@ export function ContactForm({ settings = {} }: { settings?: Record<string, strin
             id="email"
             name="email"
             type="email"
+            autoComplete="new-password"
+            value={email}
+            onChange={(e) => { setEmail(e.target.value); clearErrors(); }}
             placeholder={settings.form_email_placeholder || "your@email.com"}
             required
-            className={`bg-background ${attemptedSubmit ? "invalid:border-red-500 invalid:ring-red-500" : ""}`}
+            className={`bg-background ${attemptedSubmit && !email.trim() ? "border-red-500 ring-red-500 ring-1" : ""}`}
           />
         </div>
       </div>
@@ -129,6 +146,9 @@ export function ContactForm({ settings = {} }: { settings?: Record<string, strin
             id="phone"
             name="phone"
             type="tel"
+            autoComplete="new-password"
+            value={phone}
+            onChange={(e) => { setPhone(e.target.value); clearErrors(); }}
             placeholder={settings.form_phone_placeholder || "+92 XXX XXX XXXX"}
             className="bg-background"
           />
@@ -138,9 +158,12 @@ export function ContactForm({ settings = {} }: { settings?: Record<string, strin
           <Input
             id="subject"
             name="subject"
+            autoComplete="new-password"
+            value={subject}
+            onChange={(e) => { setSubject(e.target.value); clearErrors(); }}
             placeholder={settings.form_subject_placeholder || "What is this about?"}
             required
-            className={`bg-background ${attemptedSubmit ? "invalid:border-red-500 invalid:ring-red-500" : ""}`}
+            className={`bg-background ${attemptedSubmit && !subject.trim() ? "border-red-500 ring-red-500 ring-1" : ""}`}
           />
         </div>
       </div>
@@ -150,10 +173,12 @@ export function ContactForm({ settings = {} }: { settings?: Record<string, strin
         <Textarea
           id="message"
           name="message"
+          value={message}
+          onChange={(e) => { setMessage(e.target.value); clearErrors(); }}
           placeholder={settings.form_message_placeholder || "Write your message here..."}
           rows={6}
           required
-          className={`bg-background ${attemptedSubmit ? "invalid:border-red-500 invalid:ring-red-500" : ""}`}
+          className={`bg-background ${attemptedSubmit && !message.trim() ? "border-red-500 ring-red-500 ring-1" : ""}`}
         />
       </div>
 

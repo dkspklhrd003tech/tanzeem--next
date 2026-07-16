@@ -15,13 +15,13 @@ export function FormsHistory() {
   const fetchHistory = async () => {
     setIsLoading(true);
     try {
-      // In a real app, you might fetch email logs or replied submissions
-      const res = await fetch("/api/admin/form-submissions");
+      // Fetch from the contact submissions API
+      const res = await fetch("/api/contact");
       if (!res.ok) throw new Error("Failed to fetch");
       const data = await res.json();
 
       // Filter for replied/sent messages
-      const sent = (data.items || []).filter((sub: any) => sub.isReplied);
+      const sent = (data.submissions || []).filter((sub: any) => sub.isReplied);
       setHistory(sent);
     } catch (err) {
       console.error(err);

@@ -8,6 +8,8 @@ export interface SendEmailOptions {
     subject: string;
     text?: string;
     html?: string;
+    replyTo?: string;
+    from?: string;
 }
 
 /**
@@ -52,11 +54,12 @@ export async function sendEmail(options: SendEmailOptions) {
 
         // Send email
         const mailOptions = {
-            from: finalConfig.smtp_from || '"Tanzeem-e-Islami" <noreply@tanzeem.org>',
+            from: options.from || finalConfig.smtp_from || '"Tanzeem-e-Islami" <noreply@tanzeem.org>',
             to: options.to,
             subject: options.subject,
             text: options.text,
             html: options.html,
+            ...(options.replyTo ? { replyTo: options.replyTo } : {}),
         };
 
         const info = await transporter.sendMail(mailOptions);
