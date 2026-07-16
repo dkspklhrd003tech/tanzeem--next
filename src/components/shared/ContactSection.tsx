@@ -93,8 +93,8 @@ export function ContactSection({
   return (
     <section className="flex flex-col lg:flex-row min-h-[calc(100vh-80px)] w-full bg-slate-50">
 
-      {/* ── LEFT PANEL: Sticky & Immersive (Dark Emerald) ── */}
-      <div className="relative lg:w-5/12 xl:w-1/3 bg-primary text-white flex flex-col p-4 md:p-6 lg:-10 overflow-hidden">
+      {/* ── LEFT PANEL: Sticky & Immersive ── */}
+      <div className="relative lg:w-3/12 bg-primary text-white flex flex-col p-4 md:p-6 lg:-10 overflow-hidden">
 
         {/* Cinematic Background Elements */}
         <div className="absolute inset-0 top-0 h-full w-full bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-[size:48px_48px] pointer-events-none" />
@@ -168,24 +168,17 @@ export function ContactSection({
             </div>
           </motion.div>
 
-        </div>
-      </div>
-
-      {/* ── RIGHT PANEL: Scrollable (Light Gray) ── */}
-      <div className="lg:w-7/12 xl:w-2/3 flex flex-col">
-        <div className="max-w-4xl mx-auto w-full p-4 md:p-6 lg:p-8 lg:py-10 space-y-12">
-
-          {/* Section 1: Send a Message Form */}
+          {/* Send a Message Form */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
           >
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 rounded-xl bg-white shadow-sm border border-slate-200 flex items-center justify-center">
+            <div className="flex items-center gap-3 mt-6 mb-4">
+              {/* <div className="w-12 h-12 rounded-xl bg-white shadow-sm border border-slate-200 flex items-center justify-center">
                 <Send className="w-5 h-5 text-[#0d5844]" />
-              </div>
-              <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">{s.form_heading || "Send a Message"}</h2>
+              </div> */}
+              <h2 className="text-sm font-bold text-emerald-400 uppercase tracking-widest">{s.form_heading || "Send a Message"}</h2>
             </div>
 
             {/* The form container is intentionally clean and borderless to blend with the premium layout */}
@@ -194,7 +187,14 @@ export function ContactSection({
             </div>
           </motion.div>
 
-          {/* Section 2: Regional Branches (Vertical Accordion) */}
+        </div>
+      </div>
+
+      {/* ── RIGHT PANEL: Scrollable (Light Gray) ── */}
+      <div className="lg:w-7/12 flex flex-col">
+        <div className="max-w-5xl mx-auto items-center justify-center w-full p-4 md:p-6 lg:p-8 lg:py-10 space-y-12">
+
+          {/* Regional Branches (Vertical Accordion) */}
           {branches.length > 0 && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}

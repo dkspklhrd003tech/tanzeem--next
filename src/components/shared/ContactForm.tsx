@@ -126,7 +126,7 @@ export function ContactForm({ settings = {} }: { settings?: Record<string, strin
     >
       <div className="grid md:grid-cols-2 gap-6">
         <div className="space-y-2">
-          <Label htmlFor="name">{settings.form_name_label || "Full Name *"}</Label>
+          <Label className="text-sm font-semibold text-foreground tracking-wide" htmlFor="name">{settings.form_name_label || "Full Name *"}</Label>
           <Input
             id="name"
             name="name"
@@ -139,7 +139,7 @@ export function ContactForm({ settings = {} }: { settings?: Record<string, strin
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="email">{settings.form_email_label || "Email Address *"}</Label>
+          <Label className="text-sm font-semibold text-foreground tracking-wide" htmlFor="email">{settings.form_email_label || "Email Address *"}</Label>
           <Input
             id="email"
             name="email"
@@ -156,7 +156,7 @@ export function ContactForm({ settings = {} }: { settings?: Record<string, strin
 
       <div className="grid md:grid-cols-2 gap-6">
         <div className="space-y-2">
-          <Label htmlFor="phone">{settings.form_phone_label || "Phone Number"}</Label>
+          <Label className="text-sm font-semibold text-foreground tracking-wide" htmlFor="phone">{settings.form_phone_label || "Phone Number"}</Label>
           <Input
             id="phone"
             name="phone"
@@ -169,7 +169,7 @@ export function ContactForm({ settings = {} }: { settings?: Record<string, strin
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="subject">{settings.form_subject_label || "Subject *"}</Label>
+          <Label className="text-sm font-semibold text-foreground tracking-wide" htmlFor="subject">{settings.form_subject_label || "Subject *"}</Label>
           <Input
             id="subject"
             name="subject"
@@ -184,7 +184,7 @@ export function ContactForm({ settings = {} }: { settings?: Record<string, strin
       </div>
 
       <div className="space-y-1">
-        <Label htmlFor="message">{settings.form_message_label || "Message *"}</Label>
+        <Label className="text-sm font-semibold text-foreground tracking-wide" htmlFor="message">{settings.form_message_label || "Message *"}</Label>
         <Textarea
           id="message"
           name="message"
