@@ -85,7 +85,7 @@ export function MissionAndCampaigns({ campaigns, settings }: MissionProps) {
                 <div className="absolute inset-0 bg-gradient-to-t from-background to-card/30 pointer-events-none" />
                 <div className="container max-w-7xl mx-auto relative z-10 px-6">
 
-                    <div className="mb-6 md:mb-10 text-center">
+                    <div className="mb-6 md:mb-8 text-center">
                         <p className="text-primary font-bold tracking-widest uppercase text-xs mb-3">Featured Campaigns</p>
                         <h2 id="campaigns-heading" className="spotlight_heading">
                             Regular Video Broadcasts
@@ -95,44 +95,35 @@ export function MissionAndCampaigns({ campaigns, settings }: MissionProps) {
                     <div ref={gridRef} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                         {campaigns.length > 0 ? campaigns.slice(0, 8).map((camp, i) => {
                             const card = (
-                                <div className="flex flex-col h-full bg-card/40 backdrop-blur-md rounded-[1.5rem] border border-border/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] group-hover:shadow-primary/30 group-hover:border-primary/30 group-hover:-translate-y-3 transition-all duration-700 overflow-hidden relative group/inner border border-primary-light hover:cursor-pointer">
-                                    <div className="absolute inset-0 bg-primary-light opacity-0 transition-opacity duration-700 pointer-events-none z-10" />
+                                <div className="flex flex-col h-full bg-card/60 backdrop-blur-md rounded-[1.5rem] border border-border/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] group-hover:shadow-primary/10 group-hover:border-primary/40 group-hover:bg-primary-light group-hover:-translate-y-3 transition-all duration-700 overflow-hidden relative group/inner">
 
-                                    {/* Image Container — 348x195 aspect ratio */}
-                                    <div className="relative w-full overflow-hidden" style={{ aspectRatio: '348 / 195' }}>
+                                    {/* Image Container */}
+                                    <div className="relative w-full overflow-hidden bg-muted/50" style={{ aspectRatio: '348 / 195' }}>
                                         {camp.imageUrl ? (
                                             <img
                                                 src={camp.imageUrl}
                                                 alt={camp.title}
-                                                className="w-full h-full object-cover group-hover:scale-110 group-hover:rotate-1 transition-transform duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)]"
+                                                className="w-full h-full object-cover group-hover/inner:scale-110 group-hover/inner:rotate-1 transition-transform duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)]"
                                                 onError={(e) => { e.currentTarget.style.display = "none"; }}
                                             />
                                         ) : (
-                                            <div className="w-full h-full flex flex-col items-center justify-center p-8 text-center bg-gradient-to-br from-muted to-muted/30" aria-hidden="true">
-                                                <ImageIcon className="w-12 h-12 text-primary/20 mb-4" />
+                                            <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center bg-primary-light" aria-hidden="true">
+                                                <ImageIcon className="w-12 h-12 text-foreground hover:text-primary mb-4" />
                                                 <span className="text-foreground/40 text-xs font-bold uppercase tracking-widest leading-tight border-l-2 border-primary/20">
-                                                    Thumbnail Pending
+                                                    Preview Pending
                                                 </span>
                                             </div>
                                         )}
 
-                                        {/* Overlay Gradient */}
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" aria-hidden="true" />
-
-                                        {/* Link Button Overlay */}
-                                        <div
-                                            className="absolute inset-0 flex items-center justify-center transform scale-50 opacity-0 group-hover:scale-100 group-hover:opacity-100 transition-all duration-500 ease-out pointer-events-none z-20"
-                                            aria-hidden="true"
-                                        >
-                                            <div className="bg-white/95 backdrop-blur-md p-4 rounded-full shadow-[0_0_30px_rgba(13,88,68,0.4)]">
-                                                <ArrowUpRight className="w-8 h-8 text-primary" />
-                                            </div>
+                                        {/* Link Icon Overlay */}
+                                        <div className="absolute top-4 right-4 bg-primary-light/40 hover backdrop-blur-md p-3 rounded-full transform translate-y-4 opacity-0 group-hover/inner:translate-y-0 group-hover/inner:opacity-100 transition-all duration-500 ease-out z-20" aria-hidden="true">
+                                            <ArrowUpRight className="w-5 h-5 text-white" />
                                         </div>
                                     </div>
 
                                     {/* Content */}
-                                    <div className="p-6 flex-1 flex flex-col justify-center items-center text-center duration-500 relative z-20">
-                                        <h3 className="font-bold text-foreground text-md md:text-lg line-clamp-2 leading-tight duration-500">
+                                    <div className="p-6 flex-1 flex flex-col justify-center items-center text-center transition-colors duration-500 relative z-20">
+                                        <h3 className="font-bold text-foreground text-md md:text-lg line-clamp-2 leading-tight group-hover/inner:text-primary transition-colors duration-500">
                                             {camp.title}
                                         </h3>
                                     </div>
