@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Mail, CheckCircle2, Loader2, Inbox, Trash2 } from "lucide-react";
+import { Mail, CheckCircle2, Loader2, Inbox, Trash2, AlertTriangle, X } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -94,7 +94,7 @@ export function FormsInbox() {
 
   const confirmDelete = async () => {
     if (!deleteId) return;
-    
+
     try {
       const res = await fetch(`/api/contact?id=${deleteId}`, {
         method: "DELETE",
@@ -217,15 +217,20 @@ export function FormsInbox() {
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogTitle className="flex items-center gap-2 text-red-600">
+              <AlertTriangle className="w-5 h-5" />
+              Are you sure to Delete this Message?
+            </AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the message and any associated logs.
+              This action cannot be undone. This will permanently delete this message.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700 text-white">
-              Delete
+            <AlertDialogCancel className="border border-primary text-primary hover:bg-primary hover:text-white flex items-center gap-2">
+              <X className="w-4 h-4" /> Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700 text-white hover:text-white flex items-center gap-2">
+              <Trash2 className="w-4 h-4" /> Delete
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
