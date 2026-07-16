@@ -4,6 +4,16 @@ import { useState, useEffect } from "react";
 import { Mail, CheckCircle2, Loader2, Inbox, Trash2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
@@ -13,6 +23,7 @@ export function FormsInbox() {
   const [submissions, setSubmissions] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [filter, setFilter] = useState<"ALL" | "UNREAD">("ALL");
+  const [deleteId, setDeleteId] = useState<string | null>(null);
   const { toast } = useToast();
 
   const fetchSubmissions = async () => {
@@ -76,21 +87,27 @@ export function FormsInbox() {
     }
   };
 
-  const handleDelete = async (e: React.MouseEvent, id: string) => {
+  const handleDeleteClick = (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
-    if (!confirm("Are you sure you want to delete this message? This action cannot be undone.")) return;
+    setDeleteId(id);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteId) return;
     
     try {
-      const res = await fetch(`/api/contact?id=${id}`, {
+      const res = await fetch(`/api/contact?id=${deleteId}`, {
         method: "DELETE",
       });
       if (!res.ok) throw new Error("Failed to delete message");
 
-      setSubmissions(prev => prev.filter(sub => sub.id !== id));
+      setSubmissions(prev => prev.filter(sub => sub.id !== deleteId));
       toast({ title: "Success", description: "Message deleted permanently." });
     } catch (err) {
       console.error(err);
       toast({ title: "Error", description: "Failed to delete message.", variant: "destructive" });
+    } finally {
+      setDeleteId(null);
     }
   };
 
@@ -174,7 +191,7 @@ export function FormsInbox() {
                         {format(new Date(sub.createdAt), "MMMM dd, yyyy")}
                       </span>
                       <button
-                        onClick={(e) => handleDelete(e, sub.id)}
+                        onClick={(e) => handleDeleteClick(e, sub.id)}
                         className="text-red-400 hover:text-red-600 opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100 p-1"
                         title="Delete permanently"
                       >
@@ -196,6 +213,23 @@ export function FormsInbox() {
           )}
         </CardContent>
       </Card>
+
+      <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the message and any associated logs.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete} className="bg-red-600 hover:bg-red-700 text-white">
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
