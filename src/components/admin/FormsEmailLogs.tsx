@@ -19,12 +19,15 @@ export function FormsEmailLogs() {
     try {
       // In a real implementation, you might want to fetch email-logs and join with forms
       const res = await fetch("/api/admin/email-logs");
-      if (!res.ok) throw new Error("Failed to fetch logs");
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.details || errorData.message || "Failed to fetch");
+      }
       const data = await res.json();
       setLogs(data.items || []);
     } catch (err) {
       console.error(err);
-      toast({ title: "Error", description: "Failed to load email logs", variant: "destructive" });
+      toast({ title: "Error", description: err instanceof Error ? err.message : "Failed to load email logs", variant: "destructive" });
     } finally {
       setIsLoading(false);
     }
@@ -38,7 +41,7 @@ export function FormsEmailLogs() {
     <div className="space-y-6">
 
       <Card className="rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
-        <CardHeader className="flex flex-row items-center justify-between bg-white border-b border-border py-6 px-8">
+        <CardHeader className="flex flex-row items-center justify-between bg-white border-b border-border py-6 px-6">
           <div>
             <CardTitle className="text-2xl font-bold flex items-center gap-2">
               <RefreshCw className="w-5 h-5 text-primary" /> Email Delivery Logs

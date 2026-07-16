@@ -17,7 +17,10 @@ export function FormsHistory() {
     try {
       // Fetch from the contact submissions API
       const res = await fetch("/api/contact");
-      if (!res.ok) throw new Error("Failed to fetch");
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.details || errorData.message || "Failed to fetch");
+      }
       const data = await res.json();
 
       // Filter for replied/sent messages

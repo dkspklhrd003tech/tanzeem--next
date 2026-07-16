@@ -19,7 +19,10 @@ export function FormsInbox() {
     setIsLoading(true);
     try {
       const res = await fetch("/api/contact");
-      if (!res.ok) throw new Error("Failed to fetch");
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}));
+        throw new Error(errorData.details || errorData.message || "Failed to fetch");
+      }
       const data = await res.json();
       setSubmissions(data.submissions || []);
     } catch (err) {
@@ -38,15 +41,15 @@ export function FormsInbox() {
     try {
       const unreadIds = submissions.filter(s => !s.isRead).map(s => s.id);
       if (unreadIds.length === 0) return;
-      
-      await Promise.all(unreadIds.map(id => 
+
+      await Promise.all(unreadIds.map(id =>
         fetch("/api/contact", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ id, isRead: true })
         })
       ));
-      
+
       setSubmissions(prev => prev.map(sub => ({ ...sub, isRead: true })));
       toast({ title: "Success", description: "All submissions marked as read." });
     } catch (err) {
@@ -63,8 +66,8 @@ export function FormsInbox() {
         body: JSON.stringify({ id, isRead: !currentStatus })
       });
       if (!res.ok) throw new Error("Failed to update status");
-      
-      setSubmissions(prev => prev.map(sub => 
+
+      setSubmissions(prev => prev.map(sub =>
         sub.id === id ? { ...sub, isRead: !currentStatus } : sub
       ));
     } catch (err) {
@@ -131,33 +134,33 @@ export function FormsInbox() {
           ) : (
             <div className="divide-y divide-slate-100">
               {filteredSubmissions.map((sub) => (
-                <div 
-                  key={sub.id} 
+                <div
+                  key={sub.id}
                   onClick={() => handleToggleRead(sub.id, sub.isRead)}
                   className={cn(
-                  "p-6 transition-colors hover:bg-slate-50 cursor-pointer relative",
-                  !sub.isRead && "bg-blue-50/30"
-                )}>
+                    "p-6 transition-colors hover:bg-primary-light/40 cursor-pointer relative",
+                    !sub.isRead && "bg-primary-light/40"
+                  )}>
                   {!sub.isRead && (
-                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-blue-500" />
+                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary" />
                   )}
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex items-center gap-2">
                       <h4 className="text-base font-bold text-slate-900">
                         {sub.email || sub.name || "Anonymous"}
                       </h4>
-                      {!sub.isRead && <span className="w-2 h-2 rounded-full bg-blue-500" />}
+                      {!sub.isRead && <span className="w-2.5 h-2.5 animate-pulse rounded-full bg-primary" />}
                     </div>
-                    <span className="text-xs font-medium text-slate-400 flex items-center gap-1">
-                      {format(new Date(sub.createdAt), "M/d/yyyy")}
+                    <span className="text-xs font-medium text-foreground flex items-center gap-1">
+                      {format(new Date(sub.createdAt), "MMMM dd, yyyy")}
                     </span>
                   </div>
 
-                  <p className="text-sm text-slate-600 mb-3 line-clamp-2 leading-relaxed">
+                  <p className="text-md text-foreground/80 mb-3 line-clamp-2 leading-relaxed">
                     {sub.message || "No message provided."}
                   </p>
 
-                  <div className="inline-flex items-center px-2.5 py-1 rounded bg-blue-50 text-blue-600 text-xs font-bold uppercase tracking-wider">
+                  <div className="inline-flex items-center px-2.5 py-1 rounded-lg bg-primary-light/80 text-primary text-xs font-bold uppercase tracking-wider">
                     {sub.formType || sub.formId || "Unknown Form"}
                   </div>
                 </div>

@@ -4,6 +4,8 @@ import { emailLogs } from "@/db/schema";
 import { desc, count } from "drizzle-orm";
 import { ApiError, ApiSuccess } from "@/lib/api-response";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);

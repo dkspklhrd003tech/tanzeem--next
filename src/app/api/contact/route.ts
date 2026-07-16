@@ -8,6 +8,8 @@ import { ApiError, ApiSuccess } from "@/lib/api-response";
 import { sendEmail } from "@/lib/email";
 import { inArray } from "drizzle-orm";
 
+export const dynamic = "force-dynamic";
+
 // GET - List form submissions (admin only)
 export async function GET(request: NextRequest) {
   try {

@@ -128,52 +128,52 @@ export const FormsEmailTemplate = forwardRef((props, ref) => {
         <h3 className="text-sm font-bold uppercase tracking-widest text-foreground">Email Template Configuration</h3>
       </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Editor Column */}
-          <div className="rounded-xl border border-primary-light/30 shadow-sm overflow-hidden bg-foreground flex flex-col min-h-[600px]">
-            <div className="flex items-center justify-between px-6 py-4 border-b border-primary-light/40">
-              <div className="flex items-center gap-2">
-                <Code className="w-4 h-4 text-blue-400" />
-                <span className="text-xs font-bold tracking-widest text-slate-400 uppercase">HTML Editor</span>
-              </div>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="h-7 text-xs bg-transparent text-slate-300 border-slate-600 hover:bg-slate-700 hover:text-white"
-                onClick={(e) => { e.preventDefault(); setTemplate(DEFAULT_TEMPLATE); }}
-              >
-                <RefreshCw className="w-3 h-3 mr-1" /> Reset to Default
-              </Button>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Editor Column */}
+        <div className="rounded-xl border border-primary-light/30 shadow-sm overflow-hidden bg-foreground flex flex-col min-h-[600px]">
+          <div className="flex items-center justify-between px-6 py-4 border-b border-primary-light/40">
+            <div className="flex items-center gap-2">
+              <Code className="w-4 h-4 text-blue-400" />
+              <span className="text-xs font-bold tracking-widest text-slate-400 uppercase">HTML Editor</span>
             </div>
-            <div className="flex-1 p-0 relative">
-              <textarea
-                value={template}
-                onChange={(e) => setTemplate(e.target.value)}
-                spellCheck="false"
-                className="absolute inset-0 w-full h-full bg-transparent text-slate-300 font-mono text-[13px] leading-relaxed p-6 resize-none focus:outline-none"
-                style={{ tabSize: 2 }}
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-7 text-xs bg-transparent text-slate-300 border-slate-600 hover:bg-slate-700 hover:text-white"
+              onClick={(e) => { e.preventDefault(); setTemplate(DEFAULT_TEMPLATE); }}
+            >
+              <RefreshCw className="w-3 h-3 mr-1" /> Reset to Default
+            </Button>
+          </div>
+          <div className="flex-1 p-0 relative">
+            <textarea
+              value={template}
+              onChange={(e) => setTemplate(e.target.value)}
+              spellCheck="false"
+              className="absolute inset-0 w-full h-full bg-transparent text-slate-300 font-mono text-[13px] leading-relaxed p-6 resize-none focus:outline-none"
+              style={{ tabSize: 2 }}
+            />
+          </div>
+        </div>
+
+        {/* Preview Column */}
+        <div className="rounded-2xl border border-slate-200 shadow-sm overflow-hidden bg-white flex flex-col min-h-[600px]">
+          <div className="flex items-center gap-2 px-6 py-4 border-b border-slate-100 bg-slate-50">
+            <MonitorPlay className="w-4 h-4 text-primary" />
+            <span className="text-xs font-bold tracking-widest text-foreground uppercase">Real-Time Preview</span>
+          </div>
+          <div className="flex-1 bg-slate-50/50 p-6 flex flex-col">
+            <div className="flex-1 w-full bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden relative">
+              <iframe
+                srcDoc={template}
+                title="Email Template Preview"
+                className="absolute inset-0 w-full h-full border-none"
+                sandbox="allow-same-origin"
               />
             </div>
           </div>
-
-          {/* Preview Column */}
-          <div className="rounded-2xl border border-slate-200 shadow-sm overflow-hidden bg-white flex flex-col min-h-[600px]">
-            <div className="flex items-center gap-2 px-6 py-4 border-b border-slate-100 bg-slate-50">
-              <MonitorPlay className="w-4 h-4 text-emerald-500" />
-              <span className="text-xs font-bold tracking-widest text-slate-500 uppercase">Real-Time Preview</span>
-            </div>
-            <div className="flex-1 bg-slate-50/50 p-6 flex flex-col">
-              <div className="flex-1 w-full bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden relative">
-                <iframe
-                  srcDoc={template}
-                  title="Email Template Preview"
-                  className="absolute inset-0 w-full h-full border-none"
-                  sandbox="allow-same-origin"
-                />
-              </div>
-            </div>
-          </div>
         </div>
+      </div>
     </div>
   );
 });
