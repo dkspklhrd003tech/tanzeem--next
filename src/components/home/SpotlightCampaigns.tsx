@@ -60,7 +60,7 @@ export function SpotlightCampaigns({ campaigns }: { campaigns: HomeCampaign[] })
             <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-background pointer-events-none" />
             <div className="container max-w-7xl mx-auto relative z-10">
 
-                <div ref={headerRef} className="mb-6 md:mb-10 text-center">
+                <div ref={headerRef} className="mb-6 md:mb-8 text-center">
                     <p className="text-primary font-bold tracking-widest uppercase text-xs mb-3">Tanzeem Spotlight</p>
                     <h2 id="spotlight-heading" className="spotlight_heading">
                         Services, Announcements & Events
