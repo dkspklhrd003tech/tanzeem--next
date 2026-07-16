@@ -182,7 +182,7 @@ export function ModernizedProsePage({
                     prose-li:text-slate-600  prose-li:mb-2
                     prose-ul:list-disc prose-ul:pl-6 prose-ul:mb-6
                     prose-ol:list-decimal prose-ol:pl-6 prose-ol:mb-6
-                    prose-blockquote:italic prose-blockquote:border-l-4 prose-blockquote:border-[#c8a84e] prose-blockquote:pl-6 prose-blockquote:text-slate-700  prose-blockquote:bg-slate-50  prose-blockquote:py-4 prose-blockquote:pr-4 prose-blockquote:rounded-r-2xl
+                    prose-blockquote:italic prose-blockquote:border-l-4 prose-blockquote:border-[#c8a84e] prose-blockquote:pl-6 prose-blockquote:text-foreground  prose-blockquote:bg-slate-50  prose-blockquote:py-4 prose-blockquote:pr-4 prose-blockquote:rounded-r-2xl
                     [&>*]:[unicode-bidi:plaintext] [&>*]:text-start"
               >
                 {featuredImage && template === "leader" && (

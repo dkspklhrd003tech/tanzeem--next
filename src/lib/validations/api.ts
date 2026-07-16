@@ -11,6 +11,6 @@ export const contactFormSchema = z.object({
   email: z.string().email("Invalid email format").max(255),
   phone: z.string().max(20).optional().nullable(),
   subject: z.string().min(3, "Subject is too short").max(200),
-  message: z.string().min(10, "Message is too short").max(2000),
+  message: z.string().min(2, "Message is too short").max(2000),
   department: z.string().optional().nullable(),
 });

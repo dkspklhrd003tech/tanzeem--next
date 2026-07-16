@@ -28,6 +28,10 @@ import {
     sermonCategories,
     khitabAudios,
     khitabAudioCategories,
+    forms,
+    formFields,
+    formEmailConfigs,
+    emailLogs,
 } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import { getCurrentUser } from "@/lib/auth";
@@ -92,6 +96,10 @@ const entityMap: Record<string, any> = {
     "khitab-audios": khitabAudios,
     "khitab-audio-categories": khitabAudioCategories,
     speakers,
+    forms,
+    "form-fields": formFields,
+    "form-email-configs": formEmailConfigs,
+    "email-logs": emailLogs,
 };
 
 function parseDateFields(data: any) {

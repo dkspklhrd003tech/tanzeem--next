@@ -152,6 +152,7 @@ const menuItems: any[] = [
       },
     ],
   },
+
   {
     title: "Global Settings",
     icon: Settings,
@@ -223,17 +224,24 @@ const menuItems: any[] = [
 ];
 
 function SidebarMenuItem({ item, currentSection, isCollapsed, level = 0 }: any) {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  
   const isActive = item.href?.includes(`section=${currentSection}`) ||
-    (currentSection === "dashboard" && item.href === "/sitemanager");
+    (currentSection === "dashboard" && item.href === "/sitemanager") ||
+    (pathname && item.href && item.href !== "/sitemanager" && pathname.startsWith(item.href));
+    
   const hasItems = item.items && item.items.length > 0;
 
   // Auto-expand if a child is active
   useEffect(() => {
-    if (hasItems && item.items.some((i: any) => i.href?.includes(`section=${currentSection}`))) {
+    if (hasItems && item.items.some((i: any) => 
+      i.href?.includes(`section=${currentSection}`) || 
+      (pathname && i.href && i.href !== "/sitemanager" && pathname.startsWith(i.href))
+    )) {
       setIsOpen(true);
     }
-  }, [currentSection, hasItems, item.items]);
+  }, [currentSection, hasItems, item.items, pathname]);
 
   const content = (
     <div className={cn(

@@ -9,13 +9,21 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 
-export function ContactForm() {
+export function ContactForm({ settings = {} }: { settings?: Record<string, string> }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const { toast } = useToast();
 
+  const [attemptedSubmit, setAttemptedSubmit] = useState(false);
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setAttemptedSubmit(true);
+
+    if (!e.currentTarget.checkValidity()) {
+      return;
+    }
+
     setIsSubmitting(true);
 
     const formData = new FormData(e.currentTarget);
@@ -67,10 +75,10 @@ export function ContactForm() {
           <CheckCircle className="h-8 w-8 text-green-600" />
         </div>
         <h3 className="text-xl font-semibold text-foreground mb-2">
-          Message Sent Successfully!
+          {settings.form_success_heading || "Message Sent Successfully!"}
         </h3>
         <p className="text-foreground-muted mb-6">
-          Thank you for contacting us. We&apos;ll respond within 24-48 hours.
+          {settings.form_success_message || "Thank you for contacting us. We'll respond within 24-48 hours."}
         </p>
         <Button
           variant="outline"
@@ -84,6 +92,7 @@ export function ContactForm() {
 
   return (
     <motion.form
+      noValidate
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       onSubmit={handleSubmit}
@@ -91,67 +100,66 @@ export function ContactForm() {
     >
       <div className="grid md:grid-cols-2 gap-6">
         <div className="space-y-2">
-          <Label htmlFor="name">Full Name *</Label>
+          <Label htmlFor="name">{settings.form_name_label || "Full Name *"}</Label>
           <Input
             id="name"
             name="name"
-            placeholder="Your name"
+            placeholder={settings.form_name_placeholder || "Your name"}
             required
-            className="bg-background"
+            className={`bg-background ${attemptedSubmit ? "invalid:border-red-500 invalid:ring-red-500" : ""}`}
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="email">Email Address *</Label>
+          <Label htmlFor="email">{settings.form_email_label || "Email Address *"}</Label>
           <Input
             id="email"
             name="email"
             type="email"
-            placeholder="your@email.com"
+            placeholder={settings.form_email_placeholder || "your@email.com"}
             required
-            className="bg-background"
+            className={`bg-background ${attemptedSubmit ? "invalid:border-red-500 invalid:ring-red-500" : ""}`}
           />
         </div>
       </div>
 
       <div className="grid md:grid-cols-2 gap-6">
         <div className="space-y-2">
-          <Label htmlFor="phone">Phone Number</Label>
+          <Label htmlFor="phone">{settings.form_phone_label || "Phone Number"}</Label>
           <Input
             id="phone"
             name="phone"
             type="tel"
-            placeholder="+92 XXX XXX XXXX"
+            placeholder={settings.form_phone_placeholder || "+92 XXX XXX XXXX"}
             className="bg-background"
           />
         </div>
         <div className="space-y-2">
-          <Label htmlFor="subject">Subject *</Label>
+          <Label htmlFor="subject">{settings.form_subject_label || "Subject *"}</Label>
           <Input
             id="subject"
             name="subject"
-            placeholder="What is this about?"
+            placeholder={settings.form_subject_placeholder || "What is this about?"}
             required
-            className="bg-background"
+            className={`bg-background ${attemptedSubmit ? "invalid:border-red-500 invalid:ring-red-500" : ""}`}
           />
         </div>
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="message">Message *</Label>
+      <div className="space-y-1">
+        <Label htmlFor="message">{settings.form_message_label || "Message *"}</Label>
         <Textarea
           id="message"
           name="message"
-          placeholder="Write your message here..."
+          placeholder={settings.form_message_placeholder || "Write your message here..."}
           rows={6}
           required
-          className="bg-background resize-none"
+          className={`bg-background ${attemptedSubmit ? "invalid:border-red-500 invalid:ring-red-500" : ""}`}
         />
       </div>
 
       <Button
         type="submit"
-        size="lg"
-        className="w-full md:w-auto bg-primary text-primary-foreground"
+        className="w-full md:w-auto rounded-xl bg-primary text-primary-foreground"
         disabled={isSubmitting}
       >
         {isSubmitting ? (
@@ -162,7 +170,7 @@ export function ContactForm() {
         ) : (
           <>
             <Send className="mr-2 h-4 w-4" />
-            Send Message
+            {settings.form_submit_button || "Send Message"}
           </>
         )}
       </Button>

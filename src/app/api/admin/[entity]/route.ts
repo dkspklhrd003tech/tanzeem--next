@@ -29,6 +29,11 @@ import {
     sermonCategories,
     khitabAudios,
     khitabAudioCategories,
+    forms,
+    formFields,
+    formEmailConfigs,
+    emailLogs,
+    formSubmissions,
 } from "@/db/schema";
 import { eq, desc } from "drizzle-orm";
 import { getCurrentUser } from "@/lib/auth";
@@ -101,6 +106,11 @@ const entityMap: Record<string, any> = {
     "video-categories": videoCategories,
     "audio-categories": audioCategories,
     speakers,
+    forms,
+    "form-fields": formFields,
+    "form-email-configs": formEmailConfigs,
+    "email-logs": emailLogs,
+    "form-submissions": formSubmissions,
 };
 
 const REQUIRED_FIELDS: Record<string, string[]> = {
@@ -128,6 +138,10 @@ const REQUIRED_FIELDS: Record<string, string[]> = {
     "audio-categories": ["name", "slug"],
     "sermon-categories": ["name", "slug"],
     speakers: ["name", "slug"],
+    forms: ["name", "slug"],
+    "form-fields": ["type", "label"],
+    "form-email-configs": ["subject", "targetEmail", "templateHtml"],
+    "email-logs": ["sentTo", "status"],
 };
 
 function parseDateFields(data: any) {

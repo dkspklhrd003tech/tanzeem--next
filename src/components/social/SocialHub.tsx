@@ -272,7 +272,7 @@ export function SocialHub({ initialPlatforms, initialAccounts, layout = "horizon
                 <div className="w-16 h-16 bg-slate-100 rounded-full mb-4 flex items-center justify-center text-slate-400">
                   <Globe className="w-8 h-8" />
                 </div>
-                <h4 className="text-lg font-bold text-slate-700 mb-1">No Active Accounts</h4>
+                <h4 className="text-lg font-bold text-foreground mb-1">No Active Accounts</h4>
                 <p className="text-xs text-slate-400 max-w-xs">We haven't listed any official links for this platform yet.</p>
               </div>
             )}

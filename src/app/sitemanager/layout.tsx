@@ -449,7 +449,7 @@ function Sidebar({
               <DropdownMenuSeparator />
               <DropdownMenuItem
                 onClick={onLogout}
-                className="text-destructive focus:text-destructive focus:bg-destructive/10"
+                className="cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10"
               >
                 <LogOut className="h-4 w-4" />
                 Logout

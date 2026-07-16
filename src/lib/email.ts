@@ -24,26 +24,35 @@ export async function sendEmail(options: SendEmailOptions) {
             return acc;
         }, {} as Record<string, string>);
 
+        const finalConfig = {
+            smtp_host: config.smtp_host || process.env.SMTP_HOST,
+            smtp_port: config.smtp_port || process.env.SMTP_PORT,
+            smtp_user: config.smtp_user || process.env.SMTP_USER,
+            smtp_pass: config.smtp_pass || process.env.SMTP_PASS,
+            smtp_secure: config.smtp_secure || process.env.SMTP_SECURE,
+            smtp_from: config.smtp_from || process.env.SMTP_FROM,
+        };
+
         // Ensure we have the minimum required settings
-        if (!config.smtp_host || !config.smtp_port || !config.smtp_user || !config.smtp_pass) {
+        if (!finalConfig.smtp_host || !finalConfig.smtp_port || !finalConfig.smtp_user || !finalConfig.smtp_pass) {
             console.warn("SMTP settings are incomplete. Email dispatch aborted.");
             return { success: false, error: "Incomplete SMTP configuration." };
         }
 
         // Initialize Nodemailer transporter with dynamic settings
         const transporter = nodemailer.createTransport({
-            host: config.smtp_host,
-            port: Number(config.smtp_port),
-            secure: config.smtp_secure === "true", // Use true for 465, false for other ports
+            host: finalConfig.smtp_host,
+            port: Number(finalConfig.smtp_port),
+            secure: finalConfig.smtp_secure === "true", // Use true for 465, false for other ports
             auth: {
-                user: config.smtp_user,
-                pass: config.smtp_pass,
+                user: finalConfig.smtp_user,
+                pass: finalConfig.smtp_pass,
             },
         });
 
         // Send email
         const mailOptions = {
-            from: config.smtp_from || '"Tanzeem-e-Islami" <noreply@tanzeem.org>',
+            from: finalConfig.smtp_from || '"Tanzeem-e-Islami" <noreply@tanzeem.org>',
             to: options.to,
             subject: options.subject,
             text: options.text,

@@ -715,12 +715,14 @@ export const audioBooks = mysqlTable("audio_books", {
 
 export const formSubmissions = mysqlTable("form_submissions", {
     id: varchar("id", { length: 191 }).primaryKey(),
+    formId: varchar("form_id", { length: 191 }),
     formType: varchar("form_type", { length: 100 }).notNull(),
     name: varchar("name", { length: 191 }),
     email: varchar("email", { length: 191 }),
     phone: varchar("phone", { length: 50 }),
     subject: varchar("subject", { length: 255 }),
     message: text("message"),
+    data: json("data"),
     isRead: boolean("is_read").default(false).notNull(),
     isReplied: boolean("is_replied").default(false).notNull(),
     repliedAt: timestamp("replied_at"),
@@ -1062,4 +1064,64 @@ export const campaignsRelations = relations(campaigns, ({ one }) => ({
 
 export const campaignCategoriesRelations = relations(campaignCategories, ({ many }) => ({
     campaigns: many(campaigns),
+}));
+
+// ============================================
+// DYNAMIC FORMS SYSTEM
+// ============================================
+
+export const forms = mysqlTable("forms", {
+    id: varchar("id", { length: 191 }).primaryKey(),
+    name: varchar("name", { length: 255 }).notNull(),
+    slug: varchar("slug", { length: 191 }).notNull().unique(),
+    description: text("description"),
+    isActive: boolean("is_active").default(true).notNull(),
+    ...timestamps,
+});
+
+export const formFields = mysqlTable("form_fields", {
+    id: varchar("id", { length: 191 }).primaryKey(),
+    formId: varchar("form_id", { length: 191 }).notNull(),
+    type: varchar("type", { length: 50 }).notNull(), // text, email, phone, textarea, checkbox, select
+    label: varchar("label", { length: 255 }).notNull(),
+    placeholder: varchar("placeholder", { length: 255 }),
+    isRequired: boolean("is_required").default(false).notNull(),
+    options: json("options"), // for selects/radios
+    order: int("order").default(0).notNull(),
+    ...timestamps,
+});
+
+export const formEmailConfigs = mysqlTable("form_email_configs", {
+    id: varchar("id", { length: 191 }).primaryKey(),
+    formId: varchar("form_id", { length: 191 }).notNull().unique(),
+    subject: varchar("subject", { length: 255 }).notNull(),
+    targetEmail: varchar("target_email", { length: 255 }).notNull(),
+    templateHtml: text("template_html").notNull(),
+    ...timestamps,
+});
+
+export const emailLogs = mysqlTable("email_logs", {
+    id: varchar("id", { length: 191 }).primaryKey(),
+    formId: varchar("form_id", { length: 191 }).notNull(),
+    sentTo: varchar("sent_to", { length: 255 }).notNull(),
+    status: varchar("status", { length: 50 }).notNull(), // SUCCESS, FAILED
+    details: text("details"),
+    ...timestamps,
+});
+
+export const formsRelations = relations(forms, ({ many, one }) => ({
+    fields: many(formFields),
+    emailConfig: one(formEmailConfigs, { fields: [forms.id], references: [formEmailConfigs.formId] })
+}));
+
+export const formFieldsRelations = relations(formFields, ({ one }) => ({
+    form: one(forms, { fields: [formFields.formId], references: [forms.id] })
+}));
+
+export const formEmailConfigsRelations = relations(formEmailConfigs, ({ one }) => ({
+    form: one(forms, { fields: [formEmailConfigs.formId], references: [forms.id] })
+}));
+
+export const emailLogsRelations = relations(emailLogs, ({ one }) => ({
+    form: one(forms, { fields: [emailLogs.formId], references: [forms.id] })
 }));

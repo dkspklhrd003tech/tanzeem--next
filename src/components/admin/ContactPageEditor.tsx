@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Plus, XCircle, Edit2, Save, ArrowLeft, RefreshCw, MapPin, Phone, Mail, Building2 } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Plus, XCircle, Edit2, Loader2, Save, ArrowLeft, RefreshCw, MapPin, Phone, Mail, Building2, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,6 +12,12 @@ import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { FormsInbox } from "./FormsInbox";
+import { FormsHistory } from "./FormsHistory";
+import { FormsEmailConfigs } from "./FormsEmailConfigs";
+import { FormsEmailLogs } from "./FormsEmailLogs";
+import { FormsEmailTemplate } from "./FormsEmailTemplate";
 import {
   DndContext,
   closestCenter,
@@ -129,13 +135,18 @@ function SortableLocationCard({ loc, onEdit, onDelete }: { loc: LocationRow, onE
 export default function ContactPageEditor({ pageId, title }: { pageId: string; title: string }) {
   const { toast } = useToast();
 
-  // Settings
   const [settings, setSettings] = useState<Record<string, string>>({});
   const [isSavingSettings, setIsSavingSettings] = useState(false);
+
+  const emailTemplateRef = useRef<{ save: () => Promise<void> }>(null);
+  const emailConfigsRef = useRef<{ save: () => Promise<void> }>(null);
 
   // Locations
   const [locations, setLocations] = useState<LocationRow[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Inbox
+  const [unreadCount, setUnreadCount] = useState(0);
 
   // Location Dialog
   const [isLocationDialogOpen, setIsLocationDialogOpen] = useState(false);
@@ -161,8 +172,9 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
     Promise.all([
       fetch("/api/settings").then((res) => res.json()),
       fetch("/api/sitemanager/locations").then((res) => res.json()),
+      fetch("/api/contact?isRead=false&limit=1").then((res) => res.json()),
     ])
-      .then(([settingsData, locationsData]) => {
+      .then(([settingsData, locationsData, inboxData]) => {
         let orderMap: Record<string, number> = {};
         if (settingsData?.settings?.contact) {
           setSettings(settingsData.settings.contact);
@@ -195,6 +207,9 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
           });
           setLocations(locs);
         }
+        if (inboxData?.data?.total) {
+          setUnreadCount(inboxData.data.total);
+        }
       })
       .finally(() => setIsLoading(false));
   }, []);
@@ -206,18 +221,18 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
   const saveSettings = async () => {
     setIsSavingSettings(true);
     try {
-      const res = await fetch("/api/settings", {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ settings, group: "contact" }),
-      });
-      if (res.ok) {
-        toast({ title: "Contact Settings saved!" });
-      } else {
-        toast({ variant: "destructive", title: "Failed to save settings." });
-      }
-    } catch {
-      toast({ variant: "destructive", title: "Network error" });
+      await Promise.all([
+        fetch("/api/settings", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ settings, group: "contact" }),
+        }).then(res => { if (!res.ok) throw new Error() }),
+        emailTemplateRef.current?.save?.(),
+        emailConfigsRef.current?.save?.()
+      ]);
+      toast({ title: "Success", description: "All form settings saved successfully!" });
+    } catch (e) {
+      toast({ variant: "destructive", title: "Failed to save some settings" });
     }
     setIsSavingSettings(false);
   };
@@ -323,7 +338,7 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
   }
 
   return (
-    <div className="space-y-6 max-w-6xl mx-auto pb-20">
+    <div className="space-y-6 max-w-[1400px] mx-auto pb-20 min-h-screen">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <div className="flex items-center gap-3">
@@ -469,6 +484,138 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
         </div>
       </div>
 
+      {/* Forms Management - Full Width */}
+      <div className="mt-8 w-full">
+        <Card className="rounded-3xl border border-slate-100 shadow-sm overflow-hidden bg-white">
+          <CardHeader className="flex flex-row items-center justify-between border-b border-border py-4 px-6 bg-slate-50/50">
+            <div className="flex items-center gap-2">
+              <MessageSquare className="w-5 h-5 text-primary" />
+              <CardTitle className="text-sm font-bold uppercase tracking-widest text-slate-700">Forms Management</CardTitle>
+            </div>
+            <Button onClick={saveSettings} disabled={isSavingSettings} className="bg-primary hover:bg-primary/90 text-white rounded-lg px-6 font-semibold">
+              {isSavingSettings ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+              Save Form
+            </Button>
+          </CardHeader>
+          <CardContent className="p-6 bg-slate-50/30">
+            <Tabs defaultValue="configuration" className="w-full">
+              <TabsList className="flex flex-wrap gap-3 bg-transparent p-0 mb-6 h-auto border-none w-full justify-start">
+                <TabsTrigger value="configuration" className="rounded-xl px-6 py-3 bg-primary-light/80 border border-primary text-foreground text-sm font-bold tracking-wider uppercase data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md transition-all">Configuration</TabsTrigger>
+                <TabsTrigger value="inbox" className="relative rounded-xl px-6 py-3 bg-primary-light/80 border border-primary text-foreground text-sm font-bold tracking-wider uppercase data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md transition-all">
+                  Inbox
+                  {unreadCount > 0 && (
+                    <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-green-500 shadow-sm animate-pulse" />
+                  )}
+                </TabsTrigger>
+                <TabsTrigger value="history" className="rounded-xl px-6 py-3 bg-primary-light/80 border border-primary text-foreground text-sm font-bold tracking-wider uppercase data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md transition-all">Sent History</TabsTrigger>
+                <TabsTrigger value="email-configs" className="rounded-xl px-6 py-3 bg-primary-light/80 border border-primary text-foreground text-sm font-bold tracking-wider uppercase data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md transition-all">Email Configs</TabsTrigger>
+                <TabsTrigger value="email-logs" className="rounded-xl px-6 py-3 bg-primary-light/80 border border-primary text-foreground text-sm font-bold tracking-wider uppercase data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md transition-all">Email Logs</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="configuration">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <Edit2 className="h-5 w-5 text-primary" /> Form Configuration
+                    </CardTitle>
+                    <CardDescription>Customize the labels and placeholders for the contact form.</CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div>
+                      <Label>Form Heading</Label>
+                      <Input value={settings.form_heading || ""} onChange={(e) => handleSettingChange("form_heading", e.target.value)} placeholder="e.g. Send a Message" />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label>Name Label</Label>
+                        <Input value={settings.form_name_label || ""} onChange={(e) => handleSettingChange("form_name_label", e.target.value)} placeholder="Full Name *" />
+                      </div>
+                      <div>
+                        <Label>Name Placeholder</Label>
+                        <Input value={settings.form_name_placeholder || ""} onChange={(e) => handleSettingChange("form_name_placeholder", e.target.value)} placeholder="Your name" />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label>Email Label</Label>
+                        <Input value={settings.form_email_label || ""} onChange={(e) => handleSettingChange("form_email_label", e.target.value)} placeholder="Email Address *" />
+                      </div>
+                      <div>
+                        <Label>Email Placeholder</Label>
+                        <Input value={settings.form_email_placeholder || ""} onChange={(e) => handleSettingChange("form_email_placeholder", e.target.value)} placeholder="your@email.com" />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label>Phone Label</Label>
+                        <Input value={settings.form_phone_label || ""} onChange={(e) => handleSettingChange("form_phone_label", e.target.value)} placeholder="Phone Number" />
+                      </div>
+                      <div>
+                        <Label>Phone Placeholder</Label>
+                        <Input value={settings.form_phone_placeholder || ""} onChange={(e) => handleSettingChange("form_phone_placeholder", e.target.value)} placeholder="+92 XXX XXX XXXX" />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label>Subject Label</Label>
+                        <Input value={settings.form_subject_label || ""} onChange={(e) => handleSettingChange("form_subject_label", e.target.value)} placeholder="Subject *" />
+                      </div>
+                      <div>
+                        <Label>Subject Placeholder</Label>
+                        <Input value={settings.form_subject_placeholder || ""} onChange={(e) => handleSettingChange("form_subject_placeholder", e.target.value)} placeholder="What is this about?" />
+                      </div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label>Message Label</Label>
+                        <Input value={settings.form_message_label || ""} onChange={(e) => handleSettingChange("form_message_label", e.target.value)} placeholder="Message *" />
+                      </div>
+                      <div>
+                        <Label>Message Placeholder</Label>
+                        <Input value={settings.form_message_placeholder || ""} onChange={(e) => handleSettingChange("form_message_placeholder", e.target.value)} placeholder="Write your message here..." />
+                      </div>
+                    </div>
+                    <div>
+                      <Label>Submit Button Text</Label>
+                      <Input value={settings.form_submit_button || ""} onChange={(e) => handleSettingChange("form_submit_button", e.target.value)} placeholder="Send Message" />
+                    </div>
+                    <div className="pt-4 border-t border-border mt-4 space-y-4">
+                      <h4 className="font-semibold">Success Message</h4>
+                      <div>
+                        <Label>Success Heading</Label>
+                        <Input value={settings.form_success_heading || ""} onChange={(e) => handleSettingChange("form_success_heading", e.target.value)} placeholder="Message Sent Successfully!" />
+                      </div>
+                      <div>
+                        <Label>Success Description</Label>
+                        <Input value={settings.form_success_message || ""} onChange={(e) => handleSettingChange("form_success_message", e.target.value)} placeholder="Thank you for contacting us..." />
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                <FormsEmailTemplate ref={emailTemplateRef} />
+              </TabsContent>
+
+              <TabsContent value="inbox">
+                <FormsInbox />
+              </TabsContent>
+
+              <TabsContent value="history">
+                <FormsHistory />
+              </TabsContent>
+
+              <TabsContent value="email-configs">
+                <FormsEmailConfigs ref={emailConfigsRef} />
+              </TabsContent>
+
+              <TabsContent value="email-logs">
+                <FormsEmailLogs />
+              </TabsContent>
+
+            </Tabs>
+          </CardContent>
+        </Card>
+      </div>
       <Dialog open={isLocationDialogOpen} onOpenChange={setIsLocationDialogOpen}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>

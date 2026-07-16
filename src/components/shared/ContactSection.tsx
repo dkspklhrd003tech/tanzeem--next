@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { MapPin, Phone, Mail, ChevronDown, Building2, MapPinned, Send, Globe } from "lucide-react";
+import { MapPin, Phone, Mail, ChevronDown, Building2, MapPinned, Send, Globe, User, MessagesSquare } from "lucide-react";
 import { ContactForm } from "./ContactForm";
 import { cn } from "@/lib/utils";
 
@@ -185,12 +185,12 @@ export function ContactSection({
               <div className="w-12 h-12 rounded-xl bg-white shadow-sm border border-slate-200 flex items-center justify-center">
                 <Send className="w-5 h-5 text-[#0d5844]" />
               </div>
-              <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">Send a Message</h2>
+              <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">{s.form_heading || "Send a Message"}</h2>
             </div>
 
             {/* The form container is intentionally clean and borderless to blend with the premium layout */}
             <div className="bg-primary-light rounded-[1rem] p-4 md:p-6 shadow-[0_8px_40px_rgb(0,0,0,0.04)] border border-slate-100">
-              <ContactForm />
+              <ContactForm settings={s} />
             </div>
           </motion.div>
 
@@ -250,7 +250,7 @@ export function ContactSection({
                         {branch.address && (
                           <div className="space-y-1 md:col-span-2">
                             <dt className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5"><MapPinned className="w-3.5 h-3.5" /> Address</dt>
-                            <dd className="font-medium text-slate-700 leading-relaxed max-w-xl">
+                            <dd className="font-medium text-foreground leading-relaxed max-w-xl">
                               <a href={`https://maps.google.com/?q=${encodeURIComponent(branch.address)}`} target="_blank" rel="noopener noreferrer" className="hover:text-[#0d5844] transition-colors hover:underline decoration-slate-300 underline-offset-4">
                                 {branch.address}
                               </a>
@@ -288,12 +288,12 @@ export function ContactSection({
                             {detail.title && (
                               <div className="mb-6 pb-4 border-b border-slate-200/60 flex items-center gap-3">
                                 <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center shrink-0 border border-emerald-100/50">
-                                  <MapPin className="w-4 h-4 text-[#0d5844]" />
+                                  <MapPin className="w-7 h-7 text-[#0d5844]" />
                                 </div>
                                 <div>
                                   <h4 className="font-bold text-lg text-slate-900">{detail.title}</h4>
                                   {detail.titleValue && (
-                                    <span className="text-sm text-slate-500 font-medium">{detail.titleValue}</span>
+                                    <span className="text-sm text-slate-600 font-medium">{detail.titleValue}</span>
                                   )}
                                 </div>
                               </div>
@@ -302,14 +302,14 @@ export function ContactSection({
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-8 text-[15px]">
                               {detail.naibAmeer && (
                                 <div className="space-y-1">
-                                  <span className="block text-sm font-bold text-primary/90 uppercase tracking-wider">{detail.leaderTitle || 'Ameer'}</span>
+                                  <span className="text-sm font-bold text-primary/90 uppercase tracking-wider flex items-center gap-1.5"><User className="w-4 h-4" /> {detail.leaderTitle || 'Ameer'}</span>
                                   <span className="block font-semibold text-slate-800">{detail.naibAmeer}</span>
                                 </div>
                               )}
                               {detail.address && (
                                 <div className="space-y-1 md:col-span-2">
-                                  <span className="block text-sm font-bold text-primary/90 uppercase tracking-wider">Postal Address</span>
-                                  <span className="block font-medium text-slate-800 leading-relaxed">
+                                  <span className="text-sm font-bold text-primary/90 uppercase tracking-wider flex items-center gap-1.5"><MapPinned className="w-4 h-4" /> Postal Address</span>
+                                  <span className="block font-medium text-slate-800 leading-relaxed line-clamp-2">
                                     {detail.addressUrl ? (
                                       <a href={detail.addressUrl} target={detail.addressUrlNewTab !== false ? "_blank" : "_self"} className="hover:text-[#0d5844] transition-colors hover:underline decoration-slate-300 underline-offset-4">
                                         {detail.address}
@@ -322,7 +322,7 @@ export function ContactSection({
                               )}
                               {detail.phone && (
                                 <div className="space-y-1">
-                                  <span className="block text-sm font-bold text-primary/90 uppercase tracking-wider">Phone</span>
+                                  <span className="text-sm font-bold text-primary/90 uppercase tracking-wider flex items-center gap-1.5"><Phone className="w-4 h-4" /> Phone</span>
                                   <span className="block font-semibold text-slate-800">
                                     {detail.phoneUrl ? (
                                       <a href={detail.phoneUrl} target={detail.phoneUrlNewTab !== false ? "_blank" : "_self"} className="hover:text-[#0d5844] transition-colors">{detail.phone}</a>
@@ -334,7 +334,7 @@ export function ContactSection({
                               )}
                               {detail.mobile && (
                                 <div className="space-y-1">
-                                  <span className="block text-sm font-bold text-primary/90 uppercase tracking-wider">Mobile</span>
+                                  <span className="text-sm font-bold text-primary/90 uppercase tracking-wider flex items-center gap-1.5"><MessagesSquare className="w-4 h-4" /> Whatsapp</span>
                                   <span className="block font-semibold text-slate-800">
                                     {detail.mobileUrl ? (
                                       <a href={detail.mobileUrl} target={detail.mobileUrlNewTab !== false ? "_blank" : "_self"} className="hover:text-[#0d5844] transition-colors">{detail.mobile}</a>
@@ -346,7 +346,7 @@ export function ContactSection({
                               )}
                               {detail.email && (
                                 <div className="space-y-1">
-                                  <span className="block text-sm font-bold text-primary/90 uppercase tracking-wider">Email</span>
+                                  <span className="text-sm font-bold text-primary/90 uppercase tracking-wider flex items-center gap-1.5"><Mail className="w-4 h-4" /> Email</span>
                                   <span className="block font-semibold text-slate-800">
                                     <a href={detail.emailUrl || `mailto:${detail.email}`} target={detail.emailUrlNewTab !== false ? "_blank" : "_self"} className="hover:text-[#0d5844] transition-colors">{detail.email}</a>
                                   </span>

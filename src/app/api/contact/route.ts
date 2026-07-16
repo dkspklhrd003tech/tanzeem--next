@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
-import { formSubmissions } from "@/db/schema";
+import { formSubmissions, settings } from "@/db/schema";
 import { desc, eq, and, count } from "drizzle-orm";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { contactFormSchema } from "@/lib/validations/api";
 import { ApiError, ApiSuccess } from "@/lib/api-response";
+import { sendEmail } from "@/lib/email";
+import { inArray } from "drizzle-orm";
 
 // GET - List form submissions (admin only)
 export async function GET(request: NextRequest) {
@@ -67,7 +69,52 @@ export async function POST(request: NextRequest) {
       message: data.message,
     });
 
+    // Fetch email configurations and template
+    const emailSettings = await db.select().from(settings).where(
+      inArray(settings.group, ["form_email", "contact"])
+    );
+
+    const config = emailSettings.reduce((acc, curr) => {
+      acc[curr.key] = curr.value;
+      return acc;
+    }, {} as Record<string, string>);
+
+    if (config.sendToEmail && config.email_template_html) {
+      let emailHtml = config.email_template_html;
+      emailHtml = emailHtml.replace(/\[name\]/g, data.name);
+      emailHtml = emailHtml.replace(/\[email\]/g, data.email);
+      emailHtml = emailHtml.replace(/\[phone\]/g, data.phone || "N/A");
+      emailHtml = emailHtml.replace(/\[subject\]/g, data.subject);
+      emailHtml = emailHtml.replace(/\[msg\]/g, data.message);
+
+      // The user wants it to also be sent/displayed to the user entered email address,
+      // so we send it to both the admin and the user as a confirmation.
+      await sendEmail({
+        to: `${config.sendToEmail}, ${data.email}`,
+        subject: config.emailSubject || "New Contact Submission",
+        html: emailHtml,
+      });
+    }
+
     return ApiSuccess({ id: submissionId }, 201);
+  } catch (error) {
+    return ApiError("Internal server error", 500, error);
+  }
+}
+
+// PUT - Update a submission (e.g. mark as read)
+export async function PUT(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { id, isRead } = body;
+
+    if (!id || typeof isRead !== "boolean") {
+      return ApiError("Invalid payload", 400);
+    }
+
+    await db.update(formSubmissions).set({ isRead }).where(eq(formSubmissions.id, id));
+
+    return ApiSuccess({ id, isRead });
   } catch (error) {
     return ApiError("Internal server error", 500, error);
   }
