@@ -85,7 +85,14 @@ export async function POST(request: NextRequest) {
       let emailHtml = config.email_template_html;
       emailHtml = emailHtml.replace(/\[name\]/g, data.name);
       emailHtml = emailHtml.replace(/\[email\]/g, data.email);
-      emailHtml = emailHtml.replace(/\[phone\]/g, data.phone || "N/A");
+      
+      if (data.phone && data.phone.trim() !== "") {
+        emailHtml = emailHtml.replace(/\[phone\]/g, data.phone);
+      } else {
+        // Remove the entire <tr> containing [phone]
+        emailHtml = emailHtml.replace(/<tr[^>]*>[\s\S]*?\[phone\][\s\S]*?<\/tr>/gi, "");
+      }
+      
       emailHtml = emailHtml.replace(/\[subject\]/g, data.subject);
       emailHtml = emailHtml.replace(/\[msg\]/g, data.message);
 
