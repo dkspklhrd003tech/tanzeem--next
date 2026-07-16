@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Mail, CheckCircle2, Loader2, Inbox } from "lucide-react";
+import { Mail, CheckCircle2, Loader2, Inbox, Trash2 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { format } from "date-fns";
@@ -76,6 +76,24 @@ export function FormsInbox() {
     }
   };
 
+  const handleDelete = async (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    if (!confirm("Are you sure you want to delete this message? This action cannot be undone.")) return;
+    
+    try {
+      const res = await fetch(`/api/contact?id=${id}`, {
+        method: "DELETE",
+      });
+      if (!res.ok) throw new Error("Failed to delete message");
+
+      setSubmissions(prev => prev.filter(sub => sub.id !== id));
+      toast({ title: "Success", description: "Message deleted permanently." });
+    } catch (err) {
+      console.error(err);
+      toast({ title: "Error", description: "Failed to delete message.", variant: "destructive" });
+    }
+  };
+
   const filteredSubmissions = submissions.filter(sub => {
     if (filter === "UNREAD") return !sub.isRead;
     return true;
@@ -138,7 +156,7 @@ export function FormsInbox() {
                   key={sub.id}
                   onClick={() => handleToggleRead(sub.id, sub.isRead)}
                   className={cn(
-                    "p-6 transition-colors hover:bg-primary-light/40 cursor-pointer relative",
+                    "p-6 transition-colors hover:bg-primary-light/40 cursor-pointer relative group",
                     !sub.isRead && "bg-primary-light/40"
                   )}>
                   {!sub.isRead && (
@@ -151,9 +169,18 @@ export function FormsInbox() {
                       </h4>
                       {!sub.isRead && <span className="w-2.5 h-2.5 animate-pulse rounded-full bg-primary" />}
                     </div>
-                    <span className="text-xs font-medium text-foreground flex items-center gap-1">
-                      {format(new Date(sub.createdAt), "MMMM dd, yyyy")}
-                    </span>
+                    <div className="flex items-center gap-4">
+                      <span className="text-xs font-medium text-foreground flex items-center gap-1">
+                        {format(new Date(sub.createdAt), "MMMM dd, yyyy")}
+                      </span>
+                      <button
+                        onClick={(e) => handleDelete(e, sub.id)}
+                        className="text-red-400 hover:text-red-600 opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100 p-1"
+                        title="Delete permanently"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
                   </div>
 
                   <p className="text-md text-foreground/80 mb-3 line-clamp-2 leading-relaxed">

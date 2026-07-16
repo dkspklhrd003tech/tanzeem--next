@@ -192,3 +192,25 @@ export async function PUT(request: NextRequest) {
     return ApiError("Internal server error", 500, error);
   }
 }
+
+// DELETE - Remove a submission
+export async function DELETE(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get("id");
+
+    if (!id) {
+      return ApiError("Submission ID is required", 400);
+    }
+
+    // Delete associated email logs first
+    await db.delete(emailLogs).where(eq(emailLogs.formId, id));
+    
+    // Delete the submission
+    await db.delete(formSubmissions).where(eq(formSubmissions.id, id));
+
+    return ApiSuccess({ id, deleted: true });
+  } catch (error) {
+    return ApiError("Internal server error", 500, error);
+  }
+}
