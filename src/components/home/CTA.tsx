@@ -109,7 +109,7 @@ export function CTA({ platforms }: CTAProps) {
       className="py-10 px-6 bg-primary"
     >
       {/* Subtle dot pattern and glow */}
-      <div className="absolute inset-0 bg-[url('/noise.png')] opacity-30 mix-blend-overlay pointer-events-none" />
+
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-white/10 rounded-full blur-[120px] pointer-events-none" aria-hidden="true" />
       <div
         className="absolute inset-0 opacity-[0.05] pointer-events-none"

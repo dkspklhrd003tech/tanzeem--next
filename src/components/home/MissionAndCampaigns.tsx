@@ -67,7 +67,7 @@ export function MissionAndCampaigns({ campaigns, settings }: MissionProps) {
 
             {/* 1. Mission Banner (Full Width) */}
             <div ref={missionRef} className="bg-primary/95 py-10 text-center shadow-[0_0_50px_rgba(16,185,129,0.3)] relative overflow-hidden">
-                <div className="absolute inset-0 bg-[url('/noise.png')] opacity-30 mix-blend-overlay pointer-events-none" />
+
                 <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-white/10 rounded-full -translate-y-1/2 translate-x-1/2 blur-[100px]" aria-hidden="true" />
                 <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-black/20 rounded-full translate-y-1/2 -translate-x-1/2 blur-[80px]" aria-hidden="true" />
 
