@@ -10,15 +10,12 @@ export function ApiError(message: string, status = 500, errorDetails?: any) {
     console.error(`[API Error] ${status} - ${message}:`, errorDetails);
   }
 
-  // Determine user-friendly message based on status
-  let sanitizedMessage = message;
-  if (status >= 500 && status < 600) {
-     // Never leak stack traces or db errors on 500s
-     sanitizedMessage = "An unexpected internal server error occurred.";
-  }
-
   return NextResponse.json(
-    { success: false, error: sanitizedMessage },
+    { 
+      success: false, 
+      error: message, 
+      details: errorDetails instanceof Error ? errorDetails.message : String(errorDetails)
+    },
     { status }
   );
 }
