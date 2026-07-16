@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Send, CheckCircle, Loader2 } from "lucide-react";
+import { Send, Loader2 } from "lucide-react";
+import { CheckCheckIcon } from "@animateicons/react/lucide";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -22,6 +23,16 @@ export function ContactForm({ settings = {} }: { settings?: Record<string, strin
   const [phone, setPhone] = useState("");
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    let timeout: NodeJS.Timeout;
+    if (isSubmitted) {
+      timeout = setTimeout(() => {
+        setIsSubmitted(false);
+      }, 5000);
+    }
+    return () => clearTimeout(timeout);
+  }, [isSubmitted]);
 
   // Clear red borders as soon as the user starts interacting with any field
   const clearErrors = () => { if (attemptedSubmit) setAttemptedSubmit(false); };
@@ -81,18 +92,22 @@ export function ContactForm({ settings = {} }: { settings?: Record<string, strin
         className="text-center py-12"
       >
         <div className="w-16 h-16 bg-primary-light rounded-full flex items-center justify-center mx-auto mb-4">
-          <CheckCircle className="h-8 w-8 text-primary" />
+          <CheckCheckIcon
+            size={55}
+            duration={1}
+            color="#0d5844"
+          />
         </div>
         <h3 className="text-xl font-semibold text-foreground mb-2">
           {settings.form_success_heading || "Message Sent Successfully!"}
         </h3>
-        <p className="text-foreground-muted mb-6">
+        <p className="text-foreground my-6">
           {settings.form_success_message || "Thank you for contacting us. We'll respond within 24-48 hours."}
         </p>
         <Button
           variant="outline"
           onClick={() => setIsSubmitted(false)}
-          className="rounded-xl bg-primary text-primary-foreground"
+          className="px-3 py-3 rounded-xl bg-primary text-primary-foreground"
         >
           Send Another Message
         </Button>
