@@ -20,44 +20,42 @@ export function Toaster() {
       return 'border-red-500/20 bg-red-950/60 text-red-200 backdrop-blur-md shadow-[0_8px_32px_rgba(239,68,68,0.15)]';
     }
 
-    const t = ((title ? String(title) : "") + (description ? " " + String(description) : "")).toLowerCase();
+    const t = ((title ? String(title) : "") + (description ? " " + String(description) : ""));
     if (
-      t.includes("success") || 
-      t.includes("successfully") || 
-      t.includes("saved") || 
-      t.includes("created") || 
-      t.includes("updated") || 
-      t.includes("uploaded") || 
-      t.includes("complete") || 
-      t.includes("dispatched") || 
-      t.includes("transmit") ||
-      t.includes("published") ||
-      t.includes("active")
+      t.includes("Success") ||
+      t.includes("Successfully") ||
+      t.includes("Saved") ||
+      t.includes("Created") ||
+      t.includes("Updated") ||
+      t.includes("Uploaded") ||
+      t.includes("Complete") ||
+      t.includes("Dispatched") ||
+      t.includes("Transmit") ||
+      t.includes("Published") ||
+      t.includes("Active")
     ) {
       return "border-emerald-500/20 bg-emerald-950/60 text-emerald-200 backdrop-blur-md shadow-[0_8px_32px_rgba(16,185,129,0.15)]";
     }
     if (
-      t.includes("error") || 
-      t.includes("invalid") || 
-      t.includes("failed") || 
-      t.includes("delete") || 
-      t.includes("remove")
+      t.includes("Error") ||
+      t.includes("Invalid") ||
+      t.includes("Failed") ||
+      t.includes("Delete") ||
+      t.includes("Remove")
     ) {
-      return "border-red-500/20 bg-red-950/60 text-red-200 backdrop-blur-md shadow-[0_8px_32px_rgba(239,68,68,0.15)]";
+      return "border-red-500/20 bg-red-600 text-red-100 backdrop-blur-md shadow-[0_8px_32px_rgba(239,68,68,0.15)]";
     }
     if (
-      t.includes("warning") || 
-      t.includes("caution") || 
-      t.includes("attention") || 
-      t.includes("awaiting")
+      t.includes("Warning") ||
+      t.includes("Caution") ||
+      t.includes("Attention") ||
+      t.includes("Awaiting")
     ) {
       return "border-amber-500/20 bg-amber-950/60 text-amber-200 backdrop-blur-md shadow-[0_8px_32px_rgba(245,158,11,0.15)]";
     }
     if (t.includes("identity") || t.includes("matrix") || t.includes("config")) {
       return "border-indigo-500/20 bg-indigo-950/60 text-indigo-200 backdrop-blur-md shadow-[0_8px_32px_rgba(79,70,229,0.15)]";
     }
-
-    return "border-slate-800 bg-slate-950/60 text-slate-100 backdrop-blur-md shadow-[0_8px_32px_rgba(0,0,0,0.3)]";
   };
 
   const getToastIcon = (title?: string, description?: string, variant?: string) => {
@@ -65,36 +63,36 @@ export function Toaster() {
       return <AlertTriangle className="h-5 w-5 text-red-400 shrink-0 mt-0.5 filter drop-shadow-[0_0_8px_rgba(239,68,68,0.3)]" />;
     }
 
-    const t = ((title ? String(title) : "") + (description ? " " + String(description) : "")).toLowerCase();
+    const t = ((title ? String(title) : "") + (description ? " " + String(description) : ""));
     if (
-      t.includes("success") || 
-      t.includes("successfully") || 
-      t.includes("saved") || 
-      t.includes("created") || 
-      t.includes("updated") || 
-      t.includes("uploaded") || 
-      t.includes("complete") || 
-      t.includes("dispatched") || 
-      t.includes("transmit") ||
-      t.includes("published") ||
-      t.includes("active")
+      t.includes("Success") ||
+      t.includes("Successfully") ||
+      t.includes("Saved") ||
+      t.includes("Created") ||
+      t.includes("Updated") ||
+      t.includes("Uploaded") ||
+      t.includes("Complete") ||
+      t.includes("Dispatched") ||
+      t.includes("Transmit") ||
+      t.includes("Published") ||
+      t.includes("Active")
     ) {
       return <CheckCircle2 className="h-5 w-5 text-emerald-400 shrink-0 mt-0.5 filter drop-shadow-[0_0_8px_rgba(16,185,129,0.3)]" />;
     }
     if (
-      t.includes("error") || 
-      t.includes("invalid") || 
-      t.includes("failed") || 
-      t.includes("delete") || 
-      t.includes("remove")
+      t.includes("Error") ||
+      t.includes("Invalid") ||
+      t.includes("Failed") ||
+      t.includes("Delete") ||
+      t.includes("Remove")
     ) {
       return <AlertTriangle className="h-5 w-5 text-red-400 shrink-0 mt-0.5 filter drop-shadow-[0_0_8px_rgba(239,68,68,0.3)]" />;
     }
     if (
-      t.includes("warning") || 
-      t.includes("caution") || 
-      t.includes("attention") || 
-      t.includes("awaiting")
+      t.includes("Warning") ||
+      t.includes("Caution") ||
+      t.includes("Attention") ||
+      t.includes("Awaiting")
     ) {
       return <AlertCircle className="h-5 w-5 text-amber-400 shrink-0 mt-0.5 filter drop-shadow-[0_0_8px_rgba(245,158,11,0.3)]" />;
     }
@@ -136,8 +134,8 @@ export function Toaster() {
             {action}
             <ToastClose className={cn(
               "absolute right-2 top-2 rounded-md p-1 transition-opacity opacity-0 group-hover:opacity-100 focus:opacity-100",
-              variant === 'destructive' 
-                ? 'text-red-400 hover:bg-red-500/10 hover:text-red-300' 
+              variant === 'destructive'
+                ? 'text-red-400 hover:bg-red-500/10 hover:text-red-300'
                 : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
             )} />
           </Toast>
