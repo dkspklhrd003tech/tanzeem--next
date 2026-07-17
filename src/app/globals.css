@@ -16,14 +16,9 @@
   --primary-foreground: #fefefc;
   /* --primary-dark: #007db3; */
 
-  /* ── Accent Blue (CTA / interactive — from tanzeem.org extraction) ── */
-  /* --accent-blue: #008ECA; */
-  /* --accent-blue-hover: #007db3; */
-  --accent-blue-light: #e6f3ff;
-
   /* ── Accent Gold ── */
-  --accent-gold: #c8a84e;
-  --accent-gold-dark: #a88a3a;
+  /* --accent-gold: #c8a84e;
+  --accent-gold-dark: #a88a3a; */
 
   /* ── Social Brand Colors (extracted palette) ── */
   --color-facebook: #4267b2;

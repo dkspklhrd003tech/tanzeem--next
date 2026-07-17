@@ -1114,14 +1114,7 @@ export default function SocialMediaPageEditor({ pageId, initialPageData }: Socia
                         className="w-full bg-background border border-input rounded-xl p-3 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
                       />
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="meta-keys">Keywords</Label>
-                      <Input
-                        id="meta-keys"
-                        value={pageForm.metaKeywords}
-                        onChange={(e) => setPageForm(prev => ({ ...prev,                         placeholder="comma separated values"
-                      />
-                    </div>
+
                     <div className="flex items-center justify-between p-2 pt-4 border-t border-border">
                       <div className="space-y-0.5">
                         <Label htmlFor="page-layout">Layout Orientation</Label>

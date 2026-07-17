@@ -84,7 +84,7 @@ interface SeoState {
   // BASIC
   metaTitle: string;
   metaDescription: string;
-    canonicalUrl: string;
+  canonicalUrl: string;
   robotsIndex: string;
   robotsFollow: string;
   author: string;
@@ -123,8 +123,8 @@ interface SeoState {
 const DEFAULT_SEO: SeoState = {
   metaTitle: "Organization | Tanzeem-e-Islami",
   metaDescription: "Learn about Tanzeem-e-Islami's history, mission, ideology, and leadership.",
-   Dr Israr Ahmed, Shujah Uddin Sheikh, Rafeeq, Rafeeqah",
-  canonicalUrl: "https://tanzeem.org/organization",
+
+  canonicalUrl: "/organization",
   robotsIndex: "index",
   robotsFollow: "follow",
   author: "Tanzeem-e-Islami",
@@ -133,7 +133,7 @@ const DEFAULT_SEO: SeoState = {
   ogImage: "",
   ogType: "website",
   twitterCard: "summary_large_image",
-  socialUrl: "https://tanzeem.org/organization",
+  socialUrl: "/organization",
   schemaType: "WebPage",
   schemaManualOverride: false,
   schemaJson: "",
@@ -947,12 +947,6 @@ export default function OrganizationPageEditor() {
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div>
-                      <Label className="text-xs font-bold uppercase">Keywords</Label>
-                      <Input
-                        value={seoState.metaKeywords}
-                        onChange={(e) => setSeoState(prev => ({ ...prev,                       />
-                    </div>
                     <div>
                       <Label className="text-xs font-bold uppercase">Canonical URL</Label>
                       <Input
