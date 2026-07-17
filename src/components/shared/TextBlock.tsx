@@ -5,12 +5,13 @@ import { cn } from "@/lib/utils";
 
 interface TextBlockProps {
   heading?: string;
+  subheading?: string;
   body?: string;
   align?: "left" | "center" | "right";
 }
 
-export function TextBlock({ heading, body, align = "left" }: TextBlockProps) {
-  if (!heading && !body) return null;
+export function TextBlock({ heading, subheading, body, align = "left" }: TextBlockProps) {
+  if (!heading && !body && !subheading) return null;
 
   return (
     <section className="py-12 bg-background">
@@ -25,6 +26,11 @@ export function TextBlock({ heading, body, align = "left" }: TextBlockProps) {
           align === "right" && "text-right"
         )}
       >
+        {subheading && (
+          <p className="section-label mb-2 text-sm">
+            {subheading}
+          </p>
+        )}
         {heading && (
           <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6">
             {heading}

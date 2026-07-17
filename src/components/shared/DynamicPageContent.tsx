@@ -13,6 +13,7 @@ import { EmbedBlock } from "@/components/shared/EmbedBlock";
 import { TextBlock } from "@/components/shared/TextBlock";
 import { ImageText } from "@/components/shared/ImageText";
 import { QuoteBanner } from "@/components/shared/QuoteBanner";
+import { OrgHero } from "@/components/shared/OrgHero";
 import { LeaderBio } from "@/components/shared/LeaderBio";
 import { IdeologyCards } from "@/components/shared/IdeologyCards";
 import { JoinCTA } from "@/components/shared/JoinCTA";
@@ -32,6 +33,7 @@ const ComponentMap: Record<string, React.FC<any>> = {
   embed: EmbedBlock,
   text_block: TextBlock,
   image_text: ImageText,
+  org_hero: OrgHero,
   quote_banner: QuoteBanner,
   leader_bio: LeaderBio,
   ideology_cards: IdeologyCards,

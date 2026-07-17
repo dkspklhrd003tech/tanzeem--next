@@ -2,26 +2,35 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, MapPin, Phone } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+interface JoinCardConfig {
+  title?: string;
+  location?: string;
+  phone?: string;
+  description?: string;
+  linkLabel?: string;
+  linkUrl?: string;
+}
 
 interface JoinCTAProps {
   heading?: string;
-  subheading?: string;
-  buttonLabel?: string;
-  buttonUrl?: string;
+  subtitle?: string;
+  cards?: JoinCardConfig[];
   bgColor?: string;
   textColor?: string;
 }
 
 export function JoinCTA({
   heading = "Join Tanzeem-e-Islami",
-  subheading,
-  buttonLabel = "Join Now",
-  buttonUrl = "/join-tanzeem",
+  subtitle,
+  cards = [],
   bgColor = "#0d5844",
   textColor = "#ffffff",
 }: JoinCTAProps) {
+  if (!heading && cards.length === 0) return null;
+
   return (
     <section
       className="py-16 relative overflow-hidden"
@@ -39,13 +48,13 @@ export function JoinCTA({
         aria-hidden="true"
       />
 
-      <div className="container max-w-3xl mx-auto relative z-10 text-center">
+      <div className="container max-w-5xl mx-auto relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="space-y-6"
+          className="text-center mb-10"
         >
           {heading && (
             <h2
@@ -54,43 +63,61 @@ export function JoinCTA({
               dangerouslySetInnerHTML={{ __html: heading }}
             />
           )}
-          {subheading && (
-            <div
-              className="text-base md:text-lg leading-relaxed opacity-80"
+          {subtitle && (
+            <p
+              className="mt-3 text-sm md:text-base max-w-2xl mx-auto leading-relaxed opacity-80"
               style={{ color: textColor }}
-              dangerouslySetInnerHTML={{ __html: subheading }}
+              dangerouslySetInnerHTML={{ __html: subtitle }}
             />
           )}
-          {buttonUrl && buttonLabel && (
-            <div>
-              <Link
-                href={buttonUrl}
-                className={cn(
-                  "inline-flex items-center gap-2",
-                  "px-8 py-3 rounded-full text-sm font-bold",
-                  "border-2 transition-all duration-200",
-                  "focus-visible:outline-2 focus-visible:outline-offset-2"
-                )}
-                style={{
-                  borderColor: textColor,
-                  color: bgColor,
-                  backgroundColor: textColor,
-                }}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLElement).style.backgroundColor = "transparent";
-                  (e.currentTarget as HTMLElement).style.color = textColor;
-                }}
-                onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLElement).style.backgroundColor = textColor;
-                  (e.currentTarget as HTMLElement).style.color = bgColor;
-                }}
-              >
-                {buttonLabel}
-                <ArrowRight className="w-4 h-4" aria-hidden="true" />
-              </Link>
-            </div>
-          )}
         </motion.div>
+
+        {cards.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-3xl mx-auto">
+            {cards.map((card, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.15, duration: 0.5 }}
+                className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-6 text-center"
+              >
+                {card.title && (
+                  <h3 className="text-xl font-bold text-accent-gold mb-3">{card.title}</h3>
+                )}
+                {card.location && (
+                  <p className="text-white/70 text-xs flex items-center justify-center gap-1.5 mb-1">
+                    <MapPin className="w-3 h-3" aria-hidden="true" />
+                    {card.location}
+                  </p>
+                )}
+                {card.phone && (
+                  <p className="text-white/70 text-xs flex items-center justify-center gap-1.5 mb-3">
+                    <Phone className="w-3 h-3" aria-hidden="true" />
+                    {card.phone}
+                  </p>
+                )}
+                {card.description && (
+                  <p className="text-white/60 text-sm leading-relaxed mb-4">{card.description}</p>
+                )}
+                {card.linkUrl && (
+                  <Link
+                    href={card.linkUrl}
+                    className={cn(
+                      "inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-bold",
+                      "border-2 border-white text-white",
+                      "hover:bg-white hover:text-[#0d5844] transition-colors",
+                    )}
+                  >
+                    {card.linkLabel || "Join Now"}
+                    <ArrowRight className="w-4 h-4" aria-hidden="true" />
+                  </Link>
+                )}
+              </motion.div>
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );
