@@ -31,7 +31,7 @@ interface PageRecord {
   isPublished: boolean;
   metaTitle: string;
   metaDescription: string;
-    authorName?: string | null;
+  authorName?: string | null;
   updatedAt?: string;
 }
 
@@ -130,7 +130,7 @@ export default function FaqPageEditor({ pageId, initialPageData }: FaqPageEditor
           isPublished: pageForm.isPublished,
           metaTitle: pageForm.metaTitle,
           metaDescription: pageForm.metaDescription,
-          
+
         }),
       });
 
@@ -363,7 +363,7 @@ export default function FaqPageEditor({ pageId, initialPageData }: FaqPageEditor
           document.getElementById("hidden-submit-page-btn")?.click();
         }}
       >
-        <Button onClick={() => handleOpenFaqModal()} className="bg-primary text-primary-foreground hover:bg-primary/95 ml-2">
+        <Button onClick={() => handleOpenFaqModal()} className="bg-primary text-white hover:bg-primary/95 ml-2">
           <Plus className="w-4 h-4 mr-2" /> Add FAQ Item
         </Button>
       </PageActionBar>
@@ -406,7 +406,7 @@ export default function FaqPageEditor({ pageId, initialPageData }: FaqPageEditor
                   className={cn(
                     "text-xs px-3 py-1.5 rounded-full border transition-all whitespace-nowrap capitalize",
                     selectedCategoryTab === cat
-                      ? "bg-primary text-primary-foreground border-primary"
+                      ? "bg-primary text-white border-primary"
                       : "bg-muted text-muted-foreground border-border hover:bg-card hover:text-foreground"
                   )}
                 >
@@ -626,7 +626,7 @@ export default function FaqPageEditor({ pageId, initialPageData }: FaqPageEditor
                     <Button
                       type="submit"
                       disabled={isSavingPage}
-                      className="w-full bg-primary text-primary-foreground hover:bg-primary/95"
+                      className="w-full bg-primary text-white hover:bg-primary/95"
                     >
                       {isSavingPage ? "Saving Configuration..." : "Save Page Settings"}
                     </Button>

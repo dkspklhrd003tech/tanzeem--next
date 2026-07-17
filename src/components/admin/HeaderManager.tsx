@@ -362,7 +362,7 @@ function MenuItemForm({
           size="sm"
           onClick={() => onSave(form)}
           disabled={!form.label?.trim() || !urlValid || isSaving}
-          className="bg-primary text-primary-foreground"
+          className="bg-primary text-white"
         >
           <Save className="h-3.5 w-3.5 mr-1.5" />
           {isSaving ? "Saving…" : "Save Item"}
@@ -779,7 +779,7 @@ export function HeaderManager() {
         >
           <Button
             disabled={savingSettings}
-            className="bg-primary text-primary-foreground rounded-full px-8"
+            className="bg-primary text-white rounded-full px-8"
           >
             <Save className="h-4 w-4 mr-2" />
             {savingSettings ? "Saving…" : "Save Header"}

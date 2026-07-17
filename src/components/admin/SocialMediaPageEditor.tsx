@@ -62,7 +62,7 @@ interface PageRecord {
   template: string;
   metaTitle: string;
   metaDescription: string;
-    authorName?: string | null;
+  authorName?: string | null;
   updatedAt?: string;
 }
 
@@ -440,7 +440,7 @@ export default function SocialMediaPageEditor({ pageId, initialPageData }: Socia
           isPublished: pageForm.isPublished,
           metaTitle: pageForm.metaTitle,
           metaDescription: pageForm.metaDescription,
-                  }),
+        }),
       });
 
       if (!res.ok) throw new Error("Failed to update page settings");
@@ -907,7 +907,7 @@ export default function SocialMediaPageEditor({ pageId, initialPageData }: Socia
                         className={cn(
                           "w-full text-left px-4 py-3 rounded-xl text-sm font-bold transition-all flex items-center justify-between",
                           activePlatformId === platform.id
-                            ? "bg-primary text-primary-foreground shadow-md"
+                            ? "bg-primary text-white shadow-md"
                             : "hover:bg-muted text-foreground"
                         )}
                       >
@@ -937,7 +937,7 @@ export default function SocialMediaPageEditor({ pageId, initialPageData }: Socia
                   <Button
                     disabled={!activePlatformId}
                     onClick={handleOpenAddAccount}
-                    className="bg-primary text-primary-foreground hover:bg-primary/95"
+                    className="bg-primary text-white hover:bg-primary/95"
                   >
                     <Plus className="w-4 h-4 mr-2" /> Add Social Card
                   </Button>
@@ -995,7 +995,7 @@ export default function SocialMediaPageEditor({ pageId, initialPageData }: Socia
                   Manage the tabs shown at the top of the social media page. Reorder them below.
                 </CardDescription>
               </div>
-              <Button onClick={handleOpenAddPlatform} className="bg-primary text-primary-foreground hover:bg-primary/95">
+              <Button onClick={handleOpenAddPlatform} className="bg-primary text-white hover:bg-primary/95">
                 <Plus className="w-4 h-4 mr-2" /> Add Platform Tab
               </Button>
             </CardHeader>
@@ -1145,7 +1145,7 @@ export default function SocialMediaPageEditor({ pageId, initialPageData }: Socia
                     <Button
                       type="submit"
                       disabled={isSavingPage}
-                      className="w-full bg-primary text-primary-foreground hover:bg-primary/95"
+                      className="w-full bg-primary text-white hover:bg-primary/95"
                     >
                       {isSavingPage ? "Saving Configuration..." : "Save Page Settings"}
                     </Button>

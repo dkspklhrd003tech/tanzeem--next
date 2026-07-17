@@ -206,7 +206,7 @@ export default function AudiosPageEditor({ pageId, initialPageData }: { pageId: 
         body: JSON.stringify({
           title: pageForm.title, slug: pageForm.slug, excerpt: pageForm.excerpt,
           content: pageForm.content, isPublished: pageForm.isPublished,
-          metaTitle: pageForm.metaTitle, metaDescription: pageForm.metaDescription, 
+          metaTitle: pageForm.metaTitle, metaDescription: pageForm.metaDescription,
         }),
       });
       toast({ title: "Saved", description: "Page settings updated." });
@@ -288,11 +288,11 @@ export default function AudiosPageEditor({ pageId, initialPageData }: { pageId: 
         }}
       >
         {!activeCategory ? (
-          <Button onClick={() => router.push("/sitemanager/media/category/new?type=audio-categories")} className="ml-2 bg-primary text-primary-foreground hover:bg-primary/95">
+          <Button onClick={() => router.push("/sitemanager/media/category/new?type=audio-categories")} className="ml-2 bg-primary text-white hover:bg-primary/95">
             <Plus className="w-4 h-4 mr-2" /> Add Category
           </Button>
         ) : (
-          <Button onClick={() => router.push(`/sitemanager/media/audio/new?category=${activeCategory.id}`)} className="ml-2 bg-primary text-primary-foreground hover:bg-primary/95">
+          <Button onClick={() => router.push(`/sitemanager/media/audio/new?category=${activeCategory.id}`)} className="ml-2 bg-primary text-white hover:bg-primary/95">
             <Plus className="w-4 h-4 mr-2" /> Add Audio Card
           </Button>
         )}

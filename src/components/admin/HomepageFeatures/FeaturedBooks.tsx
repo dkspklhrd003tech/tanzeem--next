@@ -244,7 +244,7 @@ export function FeaturedBooks() {
                     <h2 className="text-2xl font-bold text-foreground tracking-tight">Featured Books</h2>
                     <p className="text-sm text-foreground-muted mt-1">Manage Books Displayed in the Homepage Featured Section</p>
                 </div>
-                <button onClick={() => handleOpenModal()} className="flex items-center gap-2 bg-primary text-primary-foreground px-5 py-2.5 rounded-xl text-sm font-semibold transition-all shadow-sm hover:shadow-md active:scale-95">
+                <button onClick={() => handleOpenModal()} className="flex items-center gap-2 bg-primary text-white px-5 py-2.5 rounded-xl text-sm font-semibold transition-all shadow-sm hover:shadow-md active:scale-95">
                     <Plus className="w-4 h-4" /> Add New Book
                 </button>
             </div>

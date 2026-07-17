@@ -132,7 +132,7 @@ export function AudioPlayerPage({ item, related, customFieldSchema = [] }: Audio
                 onClick={handleDownload}
                 className={cn(
                   "inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold",
-                  "bg-primary text-primary-foreground transition-colors"
+                  "bg-primary text-white transition-colors"
                 )}
               >
                 <Download className="h-4 w-4" />

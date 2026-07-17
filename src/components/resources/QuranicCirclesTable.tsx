@@ -21,7 +21,7 @@ export function QuranicCirclesTable({ locations }: { locations: CircleLocation[]
   return (
     <div className="overflow-x-auto border border-border rounded-md">
       <table className="w-full text-sm">
-        <thead className="bg-primary text-primary-foreground">
+        <thead className="bg-primary text-white">
           <tr>
             <th className="text-left p-3 font-semibold">Circle</th>
             <th className="text-left p-3 font-semibold">City</th>

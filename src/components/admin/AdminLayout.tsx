@@ -226,17 +226,17 @@ const menuItems: any[] = [
 function SidebarMenuItem({ item, currentSection, isCollapsed, level = 0 }: any) {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
-  
+
   const isActive = item.href?.includes(`section=${currentSection}`) ||
     (currentSection === "dashboard" && item.href === "/sitemanager") ||
     (pathname && item.href && item.href !== "/sitemanager" && pathname.startsWith(item.href));
-    
+
   const hasItems = item.items && item.items.length > 0;
 
   // Auto-expand if a child is active
   useEffect(() => {
-    if (hasItems && item.items.some((i: any) => 
-      i.href?.includes(`section=${currentSection}`) || 
+    if (hasItems && item.items.some((i: any) =>
+      i.href?.includes(`section=${currentSection}`) ||
       (pathname && i.href && i.href !== "/sitemanager" && pathname.startsWith(i.href))
     )) {
       setIsOpen(true);
@@ -247,7 +247,7 @@ function SidebarMenuItem({ item, currentSection, isCollapsed, level = 0 }: any) 
     <div className={cn(
       "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors cursor-pointer",
       isActive
-        ? "bg-primary text-primary-foreground"
+        ? "bg-primary text-white"
         : "text-foreground-muted hover:text-primary hover:bg-muted/50",
       level > 0 && "py-1.5 text-sm"
     )}>
@@ -408,7 +408,7 @@ export function AdminLayout({ children, currentSection, onExitAdmin }: AdminLayo
                 <Button variant="ghost" className="flex items-center gap-2">
                   <Avatar className="h-8 w-8">
                     <AvatarImage src="" />
-                    <AvatarFallback className="bg-primary text-primary-foreground">
+                    <AvatarFallback className="bg-primary text-white">
                       A
                     </AvatarFallback>
                   </Avatar>

@@ -91,7 +91,7 @@ export function VideoListing({
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search videos…" className="pl-9" />
         </div>
-        <Button type="submit" className="bg-primary text-primary-foreground">Search</Button>
+        <Button type="submit" className="bg-primary text-white">Search</Button>
       </form>
 
 

@@ -104,7 +104,7 @@ export function ContentList<T extends { id: string | number }>({
           )}
         </div>
         {onAdd && (
-          <Button onClick={onAdd} className="bg-primary text-primary-foreground px-6 py-2.5 rounded-xl font-semibold shadow-sm hover:shadow-md transition-all active:scale-95">
+          <Button onClick={onAdd} className="bg-primary text-white px-6 py-2.5 rounded-xl font-semibold shadow-sm hover:shadow-md transition-all active:scale-95">
             <Plus className="h-4 w-4 mr-2" />
             Add New
           </Button>
@@ -258,7 +258,7 @@ export function ContentList<T extends { id: string | number }>({
                   size="sm"
                   onClick={() => setCurrentPage(page)}
                   className={cn(
-                    currentPage === page && "bg-primary text-primary-foreground"
+                    currentPage === page && "bg-primary text-white"
                   )}
                 >
                   {page}

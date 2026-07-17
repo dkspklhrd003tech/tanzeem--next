@@ -39,7 +39,7 @@ function SortablePlatformItem({ platform, isActive, togglePlatform }: any) {
         <GripVertical className="w-4 h-4" />
       </div>
       <Checkbox checked={isActive} onCheckedChange={() => togglePlatform(platform.id)} />
-      <div className={`p-1.5 rounded-md ${isActive ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>
+      <div className={`p-1.5 rounded-md ${isActive ? "bg-primary text-white" : "bg-muted text-muted-foreground"}`}>
         <Icon className="w-4 h-4" />
       </div>
       <span className="font-medium text-sm flex-1">{platform.label}</span>
@@ -193,7 +193,7 @@ export function ShareToolsManager() {
             </h2>
             <p className="text-sm text-muted-foreground mt-1">Configure the global floating share sidebar for your website.</p>
           </div>
-          <Button onClick={handleSave} disabled={isSaving} className="bg-primary text-primary-foreground hover:bg-primary/95">
+          <Button onClick={handleSave} disabled={isSaving} className="bg-primary text-white hover:bg-primary/95">
             {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : "Save Configuration"}
           </Button>
         </div>
@@ -418,7 +418,7 @@ export function ShareToolsManager() {
                   }}
                 >
                   <div
-                    className="bg-primary text-primary-foreground flex items-center justify-center p-2 cursor-pointer shadow-md w-full"
+                    className="bg-primary text-white flex items-center justify-center p-2 cursor-pointer shadow-md w-full"
                     style={{
                       borderRadius: settings.icon_style === "circle" ? "20px 20px 0 0" : (settings.share_position === "left" ? "8px 8px 0 0" : "8px 8px 0 0"),
                     }}

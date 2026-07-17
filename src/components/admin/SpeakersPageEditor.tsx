@@ -367,7 +367,7 @@ export default function SpeakersPageEditor({ pageId, initialPageData, mediaConte
               </div>
               <div className="p-6 border-t border-border bg-muted/20 flex justify-end gap-3">
                 <Button variant="outline" onClick={() => setIsSpeakerModalOpen(false)}>Cancel</Button>
-                <Button onClick={handleSpeakerSave} className="bg-primary text-primary-foreground">{editingSpeakerId ? "Update" : "Save"}</Button>
+                <Button onClick={handleSpeakerSave} className="bg-primary text-white">{editingSpeakerId ? "Update" : "Save"}</Button>
               </div>
             </div>
           </div>
@@ -396,7 +396,7 @@ export default function SpeakersPageEditor({ pageId, initialPageData, mediaConte
               </div>
               <div className="p-6 border-t border-border bg-muted/20 flex justify-end gap-3">
                 <Button variant="outline" onClick={() => setIsAudioModalOpen(false)}>Cancel</Button>
-                <Button onClick={handleAudioSave} className="bg-primary text-primary-foreground">{editingAudioId ? "Update" : "Save"}</Button>
+                <Button onClick={handleAudioSave} className="bg-primary text-white">{editingAudioId ? "Update" : "Save"}</Button>
               </div>
             </div>
           </div>
@@ -426,7 +426,7 @@ export default function SpeakersPageEditor({ pageId, initialPageData, mediaConte
               </div>
               <div className="p-6 border-t border-border bg-muted/20 flex justify-end gap-3">
                 <Button variant="outline" onClick={() => setIsVideoModalOpen(false)}>Cancel</Button>
-                <Button onClick={handleVideoSave} className="bg-primary text-primary-foreground">{editingVideoId ? "Update" : "Save"}</Button>
+                <Button onClick={handleVideoSave} className="bg-primary text-white">{editingVideoId ? "Update" : "Save"}</Button>
               </div>
             </div>
           </div>

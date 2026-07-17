@@ -205,7 +205,7 @@ function SidebarNavItem({
                     className={cn(
                       "block rounded-lg px-3 py-2 text-sm transition-colors ml-2",
                       isSubActive
-                        ? "bg-primary text-primary-foreground font-medium shadow-sm"
+                        ? "bg-primary text-white font-medium shadow-sm"
                         : "text-sidebar-foreground hover:bg-primary/50 hover:text-white"
                     )}
                   >

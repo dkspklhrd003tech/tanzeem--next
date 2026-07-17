@@ -296,7 +296,7 @@ export function KhitabatJummahPage({ addresses }: KhitabatJummahPageProps) {
                   className={cn(
                     "w-9 h-9 rounded-lg text-sm font-semibold transition-colors border",
                     isCurrent
-                      ? "bg-primary text-primary-foreground border-primary"
+                      ? "bg-primary text-white border-primary"
                       : "bg-card border-border hover:bg-muted text-foreground"
                   )}
                 >

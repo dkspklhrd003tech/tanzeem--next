@@ -51,7 +51,7 @@ interface PageRecord {
   isPublished: boolean;
   metaTitle: string;
   metaDescription: string;
-  }
+}
 
 interface AudioBookItem {
   id: string;
@@ -317,7 +317,7 @@ export default function AudioBooksPageEditor({ pageId, initialPageData }: AudioB
           isPublished: pageForm.isPublished,
           metaTitle: pageForm.metaTitle,
           metaDescription: pageForm.metaDescription,
-                  }),
+        }),
       });
 
       if (!res.ok) {
@@ -646,7 +646,7 @@ export default function AudioBooksPageEditor({ pageId, initialPageData }: AudioB
           document.getElementById("hidden-submit-page-btn")?.click();
         }}
       >
-        <Button onClick={handleOpenAddModal} className="ml-2 bg-primary text-primary-foreground hover:bg-primary/95">
+        <Button onClick={handleOpenAddModal} className="ml-2 bg-primary text-white hover:bg-primary/95">
           <Plus className="w-4 h-4 mr-2" /> Add Audio Book
         </Button>
       </PageActionBar>
@@ -853,7 +853,7 @@ export default function AudioBooksPageEditor({ pageId, initialPageData }: AudioB
                     <Button
                       type="submit"
                       disabled={isSavingPage}
-                      className="w-full bg-primary text-primary-foreground hover:bg-primary/95"
+                      className="w-full bg-primary text-white hover:bg-primary/95"
                     >
                       {isSavingPage ? "Saving Configuration..." : "Save Page Settings"}
                     </Button>
@@ -1015,7 +1015,7 @@ export default function AudioBooksPageEditor({ pageId, initialPageData }: AudioB
               <Button variant="outline" type="button" onClick={() => setIsModalOpen(false)}>
                 Cancel
               </Button>
-              <Button type="submit" form="press-release-form" className="bg-primary text-primary-foreground hover:bg-primary/95">
+              <Button type="submit" form="press-release-form" className="bg-primary text-white hover:bg-primary/95">
                 {editingItem ? "Save Changes" : "Create Release"}
               </Button>
             </div>

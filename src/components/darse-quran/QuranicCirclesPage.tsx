@@ -176,7 +176,7 @@ export function QuranicCirclesPage({
               "px-4 py-1.5 rounded-full text-xs font-medium border transition-colors",
               "focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2",
               !activeCity
-                ? "bg-primary text-primary-foreground border-primary"
+                ? "bg-primary text-white border-primary"
                 : "border-border text-foreground-muted hover:border-primary hover:text-primary"
             )}
           >
@@ -192,7 +192,7 @@ export function QuranicCirclesPage({
                 "px-4 py-1.5 rounded-full text-xs font-medium border transition-colors",
                 "focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2",
                 activeCity === city
-                  ? "bg-primary text-primary-foreground border-primary"
+                  ? "bg-primary text-white border-primary"
                   : "border-border text-foreground-muted hover:border-primary hover:text-primary"
               )}
             >

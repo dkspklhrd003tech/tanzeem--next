@@ -225,7 +225,8 @@ export default function VideosPageEditor({ pageId, initialPageData }: { pageId: 
         body: JSON.stringify({
           title: pageForm.title, slug: pageForm.slug, excerpt: pageForm.excerpt,
           content: pageForm.content, isPublished: pageForm.isPublished,
-          metaTitle: pageForm.metaTitle, metaDescription: pageForm.metaDescription,         }),
+          metaTitle: pageForm.metaTitle, metaDescription: pageForm.metaDescription,
+        }),
       });
       toast({ title: "Saved", description: "Page settings updated." });
     } catch (error) { toast({ variant: "destructive", title: "Error", description: "Failed to save settings." }); }
@@ -399,11 +400,11 @@ export default function VideosPageEditor({ pageId, initialPageData }: { pageId: 
         }}
       >
         {!activeCategory ? (
-          <Button onClick={() => { setEditingCatId(null); setCatFormData({ name: "", slug: "", description: "" }); setCatFormErrors({}); setIsCatModalOpen(true); }} className="ml-2 bg-primary text-primary-foreground hover:bg-primary/95">
+          <Button onClick={() => { setEditingCatId(null); setCatFormData({ name: "", slug: "", description: "" }); setCatFormErrors({}); setIsCatModalOpen(true); }} className="ml-2 bg-primary text-white hover:bg-primary/95">
             <Plus className="w-4 h-4 mr-2" /> Add Category
           </Button>
         ) : (
-          <Button onClick={() => { setEditingVideoId(null); setVideoFormData({ title: "", slug: "", description: "", videoUrl: "", embedUrl: "", thumbnailUrl: "", speakerId: "", isPublished: true }); setVideoFormErrors({}); setIsVideoModalOpen(true); }} className="ml-2 bg-primary text-primary-foreground hover:bg-primary/95">
+          <Button onClick={() => { setEditingVideoId(null); setVideoFormData({ title: "", slug: "", description: "", videoUrl: "", embedUrl: "", thumbnailUrl: "", speakerId: "", isPublished: true }); setVideoFormErrors({}); setIsVideoModalOpen(true); }} className="ml-2 bg-primary text-white hover:bg-primary/95">
             <Plus className="w-4 h-4 mr-2" /> Add Video
           </Button>
         )}
@@ -540,7 +541,7 @@ export default function VideosPageEditor({ pageId, initialPageData }: { pageId: 
             </div>
             <div className="p-6 border-t border-border bg-muted/20 flex justify-end gap-3">
               <Button variant="outline" onClick={() => setIsCatModalOpen(false)}>Cancel</Button>
-              <Button onClick={handleCatSave} className="bg-primary text-primary-foreground hover:bg-primary/95">
+              <Button onClick={handleCatSave} className="bg-primary text-white hover:bg-primary/95">
                 {editingCatId ? "Update Category" : "Save Category"}
               </Button>
             </div>
@@ -582,7 +583,7 @@ export default function VideosPageEditor({ pageId, initialPageData }: { pageId: 
             </div>
             <div className="p-6 border-t border-border bg-muted/20 flex justify-end gap-3">
               <Button variant="outline" onClick={() => setIsSpeakerModalOpen(false)}>Cancel</Button>
-              <Button onClick={handleSpeakerSave} className="bg-primary text-primary-foreground">
+              <Button onClick={handleSpeakerSave} className="bg-primary text-white">
                 {editingSpeakerId ? "Update Speaker" : "Save Speaker"}
               </Button>
             </div>
@@ -675,7 +676,7 @@ export default function VideosPageEditor({ pageId, initialPageData }: { pageId: 
             </div>
             <div className="p-6 border-t border-border bg-muted/20 flex justify-end gap-3">
               <Button variant="outline" onClick={() => setIsVideoModalOpen(false)}>Cancel</Button>
-              <Button onClick={handleVideoSave} className="bg-primary text-primary-foreground">
+              <Button onClick={handleVideoSave} className="bg-primary text-white">
                 {editingVideoId ? "Update Video" : "Save Video"}
               </Button>
             </div>

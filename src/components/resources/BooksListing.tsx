@@ -79,16 +79,16 @@ export function BooksListing({
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search books…" className="pl-9" />
         </div>
-        <Button type="submit" className="bg-primary text-primary-foreground">Search</Button>
+        <Button type="submit" className="bg-primary text-white">Search</Button>
       </form>
 
       {/* Language filter */}
       <div className="flex flex-wrap gap-2 mb-4">
-        <Link href={buildUrl({ language: "" })} className={cn("px-3 py-1.5 rounded-full text-xs font-medium border transition-colors", !activeLanguage ? "bg-primary text-primary-foreground border-primary" : "border-border text-foreground-muted hover:border-primary hover:text-primary")}>
+        <Link href={buildUrl({ language: "" })} className={cn("px-3 py-1.5 rounded-full text-xs font-medium border transition-colors", !activeLanguage ? "bg-primary text-white border-primary" : "border-border text-foreground-muted hover:border-primary hover:text-primary")}>
           All Languages
         </Link>
         {LANGUAGES.map((l) => (
-          <Link key={l.value} href={buildUrl({ language: l.value })} className={cn("px-3 py-1.5 rounded-full text-xs font-medium border transition-colors", activeLanguage === l.value ? "bg-primary text-primary-foreground border-primary" : "border-border text-foreground-muted hover:border-primary hover:text-primary")}>
+          <Link key={l.value} href={buildUrl({ language: l.value })} className={cn("px-3 py-1.5 rounded-full text-xs font-medium border transition-colors", activeLanguage === l.value ? "bg-primary text-white border-primary" : "border-border text-foreground-muted hover:border-primary hover:text-primary")}>
             {l.label}
           </Link>
         ))}

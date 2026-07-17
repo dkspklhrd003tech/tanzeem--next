@@ -623,7 +623,7 @@ export default function SermonsPageEditor({ pageId, initialPageData }: { pageId:
                 description={`Are you sure you want to ${editingCatId ? "update" : "create"} this category?`}
                 onConfirm={handleCatSave}
               >
-                <Button disabled={isUploading} className="bg-primary text-primary-foreground hover:bg-primary/95">
+                <Button disabled={isUploading} className="bg-primary text-white hover:bg-primary/95">
                   {editingCatId ? "Update Category" : "Save Category"}
                 </Button>
               </ConfirmDialog>
@@ -675,7 +675,7 @@ export default function SermonsPageEditor({ pageId, initialPageData }: { pageId:
                 description={`Are you sure you want to ${editingSermonId ? "update" : "add"} this video?`}
                 onConfirm={handleSermonSave}
               >
-                <Button disabled={isUploading} className="bg-primary text-primary-foreground hover:bg-primary/95">
+                <Button disabled={isUploading} className="bg-primary text-white hover:bg-primary/95">
                   {editingSermonId ? "Update Video" : "Save Video"}
                 </Button>
               </ConfirmDialog>

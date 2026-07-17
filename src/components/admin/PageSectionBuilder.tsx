@@ -262,7 +262,7 @@ export function PageSectionBuilder({ pageId, onSave }: PageSectionBuilderProps) 
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-bold">Page Sections</h3>
         <Select onValueChange={addSection}>
-          <SelectTrigger className="w-[200px] bg-primary text-primary-foreground">
+          <SelectTrigger className="w-[200px] bg-primary text-white">
             <Plus className="w-4 h-4 mr-2" />
             <SelectValue placeholder="Add Section" />
           </SelectTrigger>
@@ -1198,7 +1198,7 @@ function SectionConfigForm({ type, config: rawConfig, onUpdate }: { type: string
               </div>
             </div>
           </div>
-          
+
           <div className="flex items-center justify-between pt-4 border-t">
             <Label>Join Cards</Label>
             <Button size="sm" variant="outline" onClick={() => handleChange("cards", [
@@ -1208,7 +1208,7 @@ function SectionConfigForm({ type, config: rawConfig, onUpdate }: { type: string
               <Plus className="w-3 h-3 mr-1" /> Add Card
             </Button>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {(config.cards ?? []).map((card: any, i: number) => (
               <div key={i} className="space-y-3 bg-background p-4 rounded-lg border">
@@ -1218,7 +1218,7 @@ function SectionConfigForm({ type, config: rawConfig, onUpdate }: { type: string
                     handleChange("cards", (config.cards ?? []).filter((_: any, idx: number) => idx !== i));
                   }}><XCircle className="w-3 h-3" /></Button>
                 </div>
-                
+
                 <div className="space-y-1">
                   <Label className="text-[10px]">Title</Label>
                   <Input className="h-8 text-xs" value={card.title ?? ""} onChange={(e) => {

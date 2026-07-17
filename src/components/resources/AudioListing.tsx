@@ -102,7 +102,7 @@ export function AudioListing({
             className="pl-9"
           />
         </div>
-        <Button type="submit" className="bg-primary text-primary-foreground">Search</Button>
+        <Button type="submit" className="bg-primary text-white">Search</Button>
       </form>
 
       {/* Category tabs */}
@@ -113,7 +113,7 @@ export function AudioListing({
             className={cn(
               "px-3 py-1.5 rounded-full text-xs font-medium border transition-colors",
               !activeCategorySlug
-                ? "bg-primary text-primary-foreground border-primary"
+                ? "bg-primary text-white border-primary"
                 : "border-border text-foreground-muted hover:border-primary hover:text-primary"
             )}
           >
@@ -126,7 +126,7 @@ export function AudioListing({
               className={cn(
                 "px-3 py-1.5 rounded-full text-xs font-medium border transition-colors",
                 activeCategorySlug === cat.slug
-                  ? "bg-primary text-primary-foreground border-primary"
+                  ? "bg-primary text-white border-primary"
                   : "border-border text-foreground-muted hover:border-primary hover:text-primary"
               )}
             >

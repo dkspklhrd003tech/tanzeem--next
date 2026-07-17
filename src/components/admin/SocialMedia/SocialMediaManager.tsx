@@ -299,7 +299,7 @@ export function SocialMediaManager() {
                     className={cn(
                       "flex items-center justify-between py-3 rounded-xl text-left transition-all duration-200 group",
                       activePlatformId === p.id
-                        ? "bg-primary text-primary-foreground shadow-md scale-[1.02]"
+                        ? "bg-primary text-white shadow-md scale-[1.02]"
                         : "text-muted-foreground hover:bg-muted hover:text-foreground"
                     )}
                   >

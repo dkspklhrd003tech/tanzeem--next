@@ -515,7 +515,7 @@ export function FooterManager() {
                     >
                       <Button
                         disabled={savingSettings}
-                        className="bg-primary text-primary-foreground rounded-xl w-full"
+                        className="bg-primary text-white rounded-xl w-full"
                       >
                         {savingSettings ? (
                           <>
@@ -558,7 +558,7 @@ export function FooterManager() {
                     setAddingColumn(true);
                     setNewColumnTitle("");
                   }}
-                  className="bg-primary text-primary-foreground rounded-xl"
+                  className="bg-primary text-white rounded-xl"
                 >
                   <Plus className="h-4 w-4 mr-1.5" />
                   New Column
@@ -583,7 +583,7 @@ export function FooterManager() {
                       size="sm"
                       onClick={handleAddColumn}
                       disabled={!newColumnTitle.trim() || isSavingColumn}
-                      className="bg-primary text-primary-foreground"
+                      className="bg-primary text-white"
                     >
                       {isSavingColumn ? "Creating…" : "Create"}
                     </Button>
@@ -949,7 +949,7 @@ function LinkEditorForm({
           size="sm"
           onClick={() => onSave(form)}
           disabled={!form.label?.trim() || !urlValid || isSaving}
-          className="h-7 text-[10px] bg-primary text-primary-foreground"
+          className="h-7 text-[10px] bg-primary text-white"
         >
           {isSaving ? "Saving…" : "Save"}
         </Button>

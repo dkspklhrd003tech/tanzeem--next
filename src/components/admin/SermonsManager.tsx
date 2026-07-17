@@ -222,7 +222,7 @@ export function SermonsManager() {
           if (data?.responseData?.translatedText) {
             setCatFormData(prev => ({ ...prev, urduName: data.responseData.translatedText }));
           }
-        } catch (err) {}
+        } catch (err) { }
       }
     }, 800);
     return () => clearTimeout(timeout);
@@ -239,7 +239,7 @@ export function SermonsManager() {
           if (data?.responseData?.translatedText) {
             setSermonFormData(prev => ({ ...prev, titleUrdu: data.responseData.translatedText }));
           }
-        } catch (err) {}
+        } catch (err) { }
       }
     }, 800);
     return () => clearTimeout(timeout);
@@ -618,7 +618,7 @@ export function SermonsManager() {
                 description={`Are you sure you want to ${editingCatId ? "update" : "create"} this category?`}
                 onConfirm={handleCatSave}
               >
-                <Button disabled={isUploading} className="bg-primary text-primary-foreground hover:bg-primary/95">
+                <Button disabled={isUploading} className="bg-primary text-white hover:bg-primary/95">
                   {editingCatId ? "Update Category" : "Save Category"}
                 </Button>
               </ConfirmDialog>
@@ -686,15 +686,15 @@ export function SermonsManager() {
                   <div className="space-y-4">
                     <div className="space-y-2">
                       <Label>Video URL or Embed <span className="text-destructive">*</span></Label>
-                      <Input 
-                        className={cn(sermonFormErrors.videoUrl && "border-destructive")} 
-                        value={sermonFormData.videoUrl} 
+                      <Input
+                        className={cn(sermonFormErrors.videoUrl && "border-destructive")}
+                        value={sermonFormData.videoUrl}
                         onChange={e => {
                           const val = e.target.value;
                           const parsed = parseVideoInput(val);
                           setSermonFormData({ ...sermonFormData, videoUrl: parsed.embedSrc || parsed.videoUrl || val });
-                        }} 
-                        placeholder="Enter YouTube/Vimeo embed URL or direct video URL..." 
+                        }}
+                        placeholder="Enter YouTube/Vimeo embed URL or direct video URL..."
                       />
                       {sermonFormErrors.videoUrl && <p className="text-xs text-destructive">{sermonFormErrors.videoUrl}</p>}
                     </div>

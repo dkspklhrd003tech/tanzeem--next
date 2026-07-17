@@ -75,7 +75,7 @@ export function LatestPressReleases({ items }: Props) {
           <Link
             href="/press-releases"
             className={cn(
-              "group inline-flex items-center gap-3 border border-primary/50 bg-primary text-primary-foreground backdrop-blur-md",
+              "group inline-flex items-center gap-3 border border-primary/50 bg-primary text-white backdrop-blur-md",
               "px-8 py-3.5 rounded-full text-sm font-bold tracking-wide uppercase shadow-lg",
               "hover:bg-primary hover:border-primary transition-all duration-500 hover:shadow-[0_0_30px_rgba(16,185,129,0.3)]",
               "focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"

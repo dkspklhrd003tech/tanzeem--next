@@ -33,10 +33,10 @@ function isPrimarilyUrdu(text: string): boolean {
   const plainText = text.replace(/<[^>]+>/g, ''); // strip HTML
   const urduMatch = plainText.match(/[\u0600-\u06FF\u0750-\u077F\uFB50-\uFDFF\uFE70-\uFEFF]/g);
   const englishMatch = plainText.match(/[a-zA-Z]/g);
-  
+
   const urduCount = urduMatch ? urduMatch.length : 0;
   const englishCount = englishMatch ? englishMatch.length : 0;
-  
+
   return urduCount > englishCount;
 }
 
@@ -115,7 +115,7 @@ export function FAQPageClient({ initialItems, pageTitle, pageExcerpt }: FAQPageC
                   className={cn(
                     "text-xs md:text-sm px-4 py-2 rounded-full border font-medium transition-all whitespace-nowrap capitalize",
                     selectedCategory === cat
-                      ? "bg-primary text-primary-foreground border-primary shadow-sm"
+                      ? "bg-primary text-white border-primary shadow-sm"
                       : "bg-muted/50 text-primary border-primary/50 hover:bg-primary/70 hover:text-white"
                   )}
                 >
@@ -167,7 +167,7 @@ export function FAQPageClient({ initialItems, pageTitle, pageExcerpt }: FAQPageC
                       onClick={() => toggleExpand(item.id)}
                       className={cn(
                         "w-full px-6 py-5 flex items-center justify-between gap-4 text-left font-semibold text-foreground text-base md:text-lg transition-colors hover:text-primary",
-                        isExpanded && "bg-primary text-primary-foreground hover:text-primary-foreground",
+                        isExpanded && "bg-primary text-white hover:text-primary-foreground",
                         isUrduQ && "text-right font-nastaleeq"
                       )}
                       dir={isUrduQ ? "rtl" : "ltr"}

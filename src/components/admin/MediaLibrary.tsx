@@ -215,7 +215,7 @@ export function MediaLibrary() {
           <Button
             disabled={isUploading}
             onClick={() => fileInputRef.current?.click()}
-            className="bg-primary text-primary-foreground"
+            className="bg-primary text-white"
           >
             {isUploading ? (
               <Loader2 className="h-4 w-4 mr-2 animate-spin" />

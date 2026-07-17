@@ -172,7 +172,7 @@ export function UserManagement() {
                 </div>
                 <button
                     onClick={() => handleOpenModal()}
-                    className="flex items-center gap-2 bg-primary text-primary-foreground py-2 px-3 rounded-lg transition-colors"
+                    className="flex items-center gap-2 bg-primary text-white py-2 px-3 rounded-lg transition-colors"
                 >
                     <Plus className="w-4 h-4" />
                     Add User
@@ -394,7 +394,7 @@ export function UserManagement() {
                                         <Button
                                             type="button"
                                             disabled={isLoading}
-                                            className="px-6 py-2 bg-primary text-primary-foreground rounded-lg transition-colors font-medium text-sm disabled:opacity-50"
+                                            className="px-6 py-2 bg-primary text-white rounded-lg transition-colors font-medium text-sm disabled:opacity-50"
                                         >
                                             {isLoading ? "Saving..." : editingUser ? "Update User" : "Create User"}
                                         </Button>

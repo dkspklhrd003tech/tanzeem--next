@@ -635,7 +635,7 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
                 description={`Are you sure you want to ${editingCatId ? "update" : "create"} this book category?`}
                 onConfirm={handleCatSave}
               >
-                <Button disabled={isUploading} className="bg-primary text-primary-foreground hover:bg-primary/95">
+                <Button disabled={isUploading} className="bg-primary text-white hover:bg-primary/95">
                   {editingCatId ? "Update Category" : "Save Category"}
                 </Button>
               </ConfirmDialog>
@@ -691,7 +691,7 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
                 description={`Are you sure you want to ${editingBookId ? "update" : "add"} this book?`}
                 onConfirm={handleBookSave}
               >
-                <Button disabled={isUploading} className="bg-primary text-primary-foreground hover:bg-primary/95">
+                <Button disabled={isUploading} className="bg-primary text-white hover:bg-primary/95">
                   {editingBookId ? "Update Book" : "Save Book"}
                 </Button>
               </ConfirmDialog>

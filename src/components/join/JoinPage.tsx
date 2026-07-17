@@ -27,7 +27,7 @@ const TIERS = [
       "Monthly contribution to the organisation",
     ],
     color: "border-primary bg-primary/5",
-    activeColor: "border-primary bg-primary text-primary-foreground",
+    activeColor: "border-primary bg-primary text-white",
   },
   {
     id: "rafeeqah",
@@ -44,7 +44,7 @@ const TIERS = [
       "Monthly contribution to the organisation",
     ],
     color: "border-primary bg-primary/5",
-    activeColor: "border-primary bg-primary text-primary-foreground",
+    activeColor: "border-primary bg-primary text-white",
   },
 ];
 
@@ -116,7 +116,7 @@ export function JoinPage() {
             Your membership application has been received. A representative from Tanzeem-e-Islami
             will contact you shortly. May Allah bless your intention.
           </p>
-          <Button className="mt-6 bg-primary text-primary-foreground rounded-full" onClick={() => { setForm(EMPTY); setSubmitted(false); }}>
+          <Button className="mt-6 bg-primary text-white rounded-full" onClick={() => { setForm(EMPTY); setSubmitted(false); }}>
             Submit Another
           </Button>
         </motion.div>
@@ -231,7 +231,7 @@ export function JoinPage() {
           <Button
             type="submit"
             disabled={submitting || !form.tier}
-            className="w-full md:w-auto bg-primary text-primary-foreground rounded-full px-10 py-3 font-semibold"
+            className="w-full md:w-auto bg-primary text-white rounded-full px-10 py-3 font-semibold"
           >
             {submitting ? <><Loader2 className="h-4 w-4 animate-spin mr-2" />Submitting…</> : <><Send className="h-4 w-4 mr-2" />Submit Application</>}
           </Button>

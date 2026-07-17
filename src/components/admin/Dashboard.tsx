@@ -121,7 +121,7 @@ export function Dashboard() {
             <Calendar className="h-4 w-4 mr-2" />
             Last 30 Days
           </Button>
-          <Button asChild className="bg-primary text-primary-foreground rounded-xl px-6 font-semibold shadow-sm hover:shadow-md transition-all active:scale-95">
+          <Button asChild className="bg-primary text-white rounded-xl px-6 font-semibold shadow-sm hover:shadow-md transition-all active:scale-95">
             <Link href="/sitemanager/pages">Quick Add Page</Link>
           </Button>
         </div>

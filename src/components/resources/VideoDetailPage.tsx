@@ -160,7 +160,7 @@ export function VideoDetailPage({ item, related, customFieldSchema = [] }: { ite
                   className="rounded-full px-4 py-2 h-auto bg-primary text-white text-sm shadow-none border-0"
                 />
               ) : (
-                <a href={externalLink || undefined} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-primary text-primary-foreground transition-colors">
+                <a href={externalLink || undefined} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-primary text-white transition-colors">
                   <ExternalLink className="h-4 w-4" /> Watch on {playerName}
                 </a>
               )}

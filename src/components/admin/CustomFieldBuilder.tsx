@@ -429,7 +429,7 @@ export function CustomFieldBuilder({ entityType }: CustomFieldBuilderProps) {
             Define additional fields for this entry type. {fields.length > 0 && <span className="text-primary font-medium">{fields.length} field{fields.length > 1 ? "s" : ""} defined.</span>}
           </p>
         </div>
-        <Button onClick={handleSave} disabled={isSaving} size="sm" className="bg-primary text-primary-foreground">
+        <Button onClick={handleSave} disabled={isSaving} size="sm" className="bg-primary text-white">
           {isSaving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
           Save Schema
         </Button>

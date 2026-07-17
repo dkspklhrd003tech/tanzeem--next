@@ -139,7 +139,7 @@ export function MenuList() {
                         description={`Are you sure you want to ${editingMenu.id ? "update" : "create"} this navigation link?`}
                         onConfirm={handleSave}
                     >
-                        <Button className="bg-primary text-primary-foreground">
+                        <Button className="bg-primary text-white">
                             <Save className="h-4 w-4 mr-2" />
                             Save
                         </Button>
@@ -261,7 +261,7 @@ export function MenuList() {
                     <h1 className="text-3xl font-bold text-foreground">Menus</h1>
                     <p className="text-foreground-muted">Manage website navigation menus</p>
                 </div>
-                <Button onClick={() => setEditingMenu({ label: "", url: "", order: 0, isVisible: true })} className="bg-primary text-primary-foreground">
+                <Button onClick={() => setEditingMenu({ label: "", url: "", order: 0, isVisible: true })} className="bg-primary text-white">
                     <Plus className="h-4 w-4 mr-2" />
                     Add Menu Item
                 </Button>

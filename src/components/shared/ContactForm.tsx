@@ -107,7 +107,7 @@ export function ContactForm({ settings = {} }: { settings?: Record<string, strin
         <Button
           variant="outline"
           onClick={() => setIsSubmitted(false)}
-          className="px-3 py-3 rounded-xl bg-primary text-primary-foreground"
+          className="px-3 py-3 rounded-xl bg-primary text-white"
         >
           Send Another Message
         </Button>
@@ -199,7 +199,7 @@ export function ContactForm({ settings = {} }: { settings?: Record<string, strin
 
       <Button
         type="submit"
-        className="w-full md:w-auto rounded-xl bg-primary text-primary-foreground"
+        className="w-full md:w-auto rounded-xl bg-primary text-white"
         disabled={isSubmitting}
       >
         {isSubmitting ? (
