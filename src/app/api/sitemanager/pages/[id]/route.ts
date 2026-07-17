@@ -47,7 +47,7 @@ export async function GET(request: NextRequest, { params }: Ctx) {
       showInMenu: pages.showInMenu,
       metaTitle: pages.metaTitle,
       metaDescription: pages.metaDescription,
-      metaKeywords: pages.metaKeywords,
+      
       canonicalUrl: pages.canonicalUrl,
       ogImage: pages.ogImage,
       schemaType: pages.schemaType,
@@ -144,7 +144,7 @@ export async function PUT(request: NextRequest, { params }: Ctx) {
       showInMenu: data.showInMenu ?? existing.showInMenu,
       metaTitle: data.metaTitle !== undefined ? data.metaTitle : existing.metaTitle,
       metaDescription: data.metaDescription !== undefined ? data.metaDescription : existing.metaDescription,
-      metaKeywords: data.metaKeywords !== undefined ? data.metaKeywords : existing.metaKeywords,
+      
       canonicalUrl: data.canonicalUrl !== undefined ? data.canonicalUrl : existing.canonicalUrl,
       ogImage: data.ogImage !== undefined ? data.ogImage : existing.ogImage,
       schemaType: data.schemaType !== undefined ? data.schemaType : existing.schemaType,

@@ -210,6 +210,9 @@ export async function GET(request: NextRequest) {
     const disclaimerViewsSetting = await db.select().from(settings).where(eq(settings.key, "disclaimer_views")).limit(1);
     const disclaimerViews = Number(disclaimerViewsSetting[0]?.value || 0);
 
+    const disclaimerEnabledSetting = await db.select().from(settings).where(eq(settings.key, "disclaimer_enabled")).limit(1);
+    const disclaimerEnabled = disclaimerEnabledSetting[0]?.value === "true";
+
     const totalResources =
       Number(audioCount[0]?.count ?? 0) +
       Number(videosCount[0]?.count ?? 0) +
@@ -240,9 +243,10 @@ export async function GET(request: NextRequest) {
         bookDownloads: Number(bookDownloadTotal[0]?.total ?? 0),
         magazineDownloads: Number(magazineDownloadTotal[0]?.total ?? 0),
         disclaimerViews,
-        globalPlays: Number((globalStatsRes as any)?.[0]?.total_plays ?? (globalStatsRes as any)?.rows?.[0]?.total_plays ?? 0),
-        globalDownloads: Number((globalStatsRes as any)?.[0]?.total_downloads ?? (globalStatsRes as any)?.rows?.[0]?.total_downloads ?? 0),
-        globalShares: Number((globalStatsRes as any)?.[0]?.total_shares ?? (globalStatsRes as any)?.rows?.[0]?.total_shares ?? 0),
+        disclaimerEnabled,
+        globalPlays: Number((globalStatsRes as any)?.[0]?.[0]?.total_plays ?? 0),
+        globalDownloads: Number((globalStatsRes as any)?.[0]?.[0]?.total_downloads ?? 0),
+        globalShares: Number((globalStatsRes as any)?.[0]?.[0]?.total_shares ?? 0),
       },
       // sub-category breakdowns
       audioByCategory,

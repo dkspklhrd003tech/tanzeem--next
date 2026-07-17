@@ -76,8 +76,6 @@ interface MainCategory {
 }
 
 interface MediaCategoryManagerProps {
-  data: string; // Ignored, legacy
-  onChange: (val: string) => void; // Ignored, legacy
   mediaType: "audio" | "video";
 }
 

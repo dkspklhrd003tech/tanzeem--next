@@ -111,7 +111,6 @@ export const pages = mysqlTable("pages", {
     // ── Core SEO ──────────────────────────────────────────────────────────────
     metaTitle: varchar("meta_title", { length: 255 }),
     metaDescription: text("meta_description"),
-    metaKeywords: text("meta_keywords"),
     // ── Extended SEO (Phase 6) ────────────────────────────────────────────────
     canonicalUrl: text("canonical_url"),
     ogImage: text("og_image"),
@@ -164,7 +163,6 @@ export const posts = mysqlTable("posts", {
     tags: text("tags"),
     metaTitle: varchar("meta_title", { length: 255 }),
     metaDescription: text("meta_description"),
-    metaKeywords: text("meta_keywords"),
     authorId: varchar("author_id", { length: 191 }).notNull(),
     publishedAt: timestamp("published_at"),
     ...timestamps,
@@ -342,7 +340,6 @@ export const speakers = mysqlTable("speakers", {
     avatar: text("avatar"),
     metaTitle: varchar("meta_title", { length: 255 }),
     metaDescription: text("meta_description"),
-    metaKeywords: text("meta_keywords"),
     seoData: json("seo_data"),
     customFields: json("custom_fields"),
     order: int("order").default(0).notNull(),

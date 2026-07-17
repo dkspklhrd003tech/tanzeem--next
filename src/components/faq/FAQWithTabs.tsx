@@ -31,10 +31,10 @@ export function FAQWithTabs({ items }: { items: FAQEntry[] }) {
   const filtered = items.filter((i) => i.category === active);
 
   return (
-    <Tabs value={active} onValueChange={setActive}>
-      <TabsList className="flex flex-wrap h-auto gap-1 bg-muted/50 p-1 mb-8">
+    <Tabs value={active} onValueChange={setActive} className="w-full">
+      <TabsList className="mb-8">
         {categories.map((cat) => (
-          <TabsTrigger key={cat} value={cat} className="text-sm">
+          <TabsTrigger key={cat} value={cat}>
             {cat}
           </TabsTrigger>
         ))}

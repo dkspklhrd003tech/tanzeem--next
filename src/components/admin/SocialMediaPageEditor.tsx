@@ -62,8 +62,7 @@ interface PageRecord {
   template: string;
   metaTitle: string;
   metaDescription: string;
-  metaKeywords: string;
-  authorName?: string | null;
+    authorName?: string | null;
   updatedAt?: string;
 }
 
@@ -441,8 +440,7 @@ export default function SocialMediaPageEditor({ pageId, initialPageData }: Socia
           isPublished: pageForm.isPublished,
           metaTitle: pageForm.metaTitle,
           metaDescription: pageForm.metaDescription,
-          metaKeywords: pageForm.metaKeywords,
-        }),
+                  }),
       });
 
       if (!res.ok) throw new Error("Failed to update page settings");
@@ -870,16 +868,16 @@ export default function SocialMediaPageEditor({ pageId, initialPageData }: Socia
         <button id="hidden-submit-page-btn" type="submit"></button>
       </form>
 
-      <Tabs defaultValue="cards" className="space-y-6">
-        <TabsList className="bg-muted p-1 rounded-lg">
-          <TabsTrigger value="cards" className="flex items-center gap-2 px-4 py-2 rounded-lg">
-            <Layers className="w-4 h-4" /> Social Cards
+      <Tabs defaultValue="cards" variant="default" className="space-y-6">
+        <TabsList>
+          <TabsTrigger value="cards">
+            <Layers className="w-4 h-4 mr-2" /> Social Cards
           </TabsTrigger>
-          <TabsTrigger value="platforms" className="flex items-center gap-2 px-4 py-2 rounded-lg">
-            <Palette className="w-4 h-4" /> Platform Tabs
+          <TabsTrigger value="platforms">
+            <Palette className="w-4 h-4 mr-2" /> Platform Tabs
           </TabsTrigger>
-          <TabsTrigger value="settings" className="flex items-center gap-2 px-4 py-2 rounded-lg">
-            <Settings2 className="w-4 h-4" /> Page SEO
+          <TabsTrigger value="settings">
+            <Settings2 className="w-4 h-4 mr-2" /> Page SEO
           </TabsTrigger>
         </TabsList>
 
@@ -1121,8 +1119,7 @@ export default function SocialMediaPageEditor({ pageId, initialPageData }: Socia
                       <Input
                         id="meta-keys"
                         value={pageForm.metaKeywords}
-                        onChange={(e) => setPageForm(prev => ({ ...prev, metaKeywords: e.target.value }))}
-                        placeholder="comma separated values"
+                        onChange={(e) => setPageForm(prev => ({ ...prev,                         placeholder="comma separated values"
                       />
                     </div>
                     <div className="flex items-center justify-between p-2 pt-4 border-t border-border">

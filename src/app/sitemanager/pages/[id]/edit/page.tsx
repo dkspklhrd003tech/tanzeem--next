@@ -50,7 +50,7 @@ export default function EditPagePage({ params }: { params: Promise<{ id: string 
             isPublished: true,
             metaTitle: id.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
             metaDescription: "",
-            metaKeywords: "",
+            
           } as any);
         } else {
           setNotFound(true);

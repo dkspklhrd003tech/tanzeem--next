@@ -225,8 +225,7 @@ export default function VideosPageEditor({ pageId, initialPageData }: { pageId: 
         body: JSON.stringify({
           title: pageForm.title, slug: pageForm.slug, excerpt: pageForm.excerpt,
           content: pageForm.content, isPublished: pageForm.isPublished,
-          metaTitle: pageForm.metaTitle, metaDescription: pageForm.metaDescription, metaKeywords: pageForm.metaKeywords,
-        }),
+          metaTitle: pageForm.metaTitle, metaDescription: pageForm.metaDescription,         }),
       });
       toast({ title: "Saved", description: "Page settings updated." });
     } catch (error) { toast({ variant: "destructive", title: "Error", description: "Failed to save settings." }); }
@@ -415,17 +414,20 @@ export default function VideosPageEditor({ pageId, initialPageData }: { pageId: 
         <button id="hidden-submit-page-btn" type="submit"></button>
       </form>
 
-      <Tabs defaultValue="list" className="space-y-6">
-        <TabsList className="bg-transparent border border-border/50 p-1 rounded-full h-auto w-full flex items-center justify-between mb-8 overflow-x-auto">
+      <Tabs defaultValue="list" variant="pill" className="space-y-6">
+        <TabsList>
           {!activeCategory && (
-            <TabsTrigger value="speakers" className="flex-1 rounded-full py-2.5 data-[state=active]:bg-[#0d2d26] data-[state=active]:text-[#10b981] data-[state=active]:border data-[state=active]:border-[#10b981]/50 data-[state=inactive]:text-muted-foreground transition-all">
-              <User className="w-4 h-4 mr-2" /> Speakers
-            </TabsTrigger>
-          )}
-          {!activeCategory && (
-            <TabsTrigger value="settings" className="flex-1 rounded-full py-2.5 data-[state=active]:bg-[#0d2d26] data-[state=active]:text-[#10b981] data-[state=active]:border data-[state=active]:border-[#10b981]/50 data-[state=inactive]:text-muted-foreground transition-all">
-              <Settings2 className="w-4 h-4 mr-2" /> Page Setup
-            </TabsTrigger>
+            <>
+              <TabsTrigger value="list" className="flex-1">
+                <Video className="w-4 h-4 mr-2" /> Video Categories
+              </TabsTrigger>
+              <TabsTrigger value="speakers" className="flex-1">
+                <User className="w-4 h-4 mr-2" /> Speakers
+              </TabsTrigger>
+              <TabsTrigger value="settings" className="flex-1">
+                <Settings2 className="w-4 h-4 mr-2" /> Page Setup
+              </TabsTrigger>
+            </>
           )}
         </TabsList>
 

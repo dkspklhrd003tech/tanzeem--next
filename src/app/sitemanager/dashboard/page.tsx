@@ -35,7 +35,7 @@ interface StatsData {
   magazines: number; magazineDownloads: number;
   sermons: number; sermonsPublished: number;
   pressReleases: number; team: number; campaigns: number; locations: number;
-  disclaimerViews: number;
+  disclaimerViews: number; disclaimerEnabled?: boolean;
   globalPlays: number; globalDownloads: number; globalShares: number;
 }
 interface AudioCategory { category: string; count: number; plays: number; downloads: number; }
@@ -67,7 +67,7 @@ function getEntityColor(type: string) {
 // ─── Skeleton loaders ─────────────────────────────────────────────────────────
 function StatsSkeleton() {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 gap-3">
+    <div className="grid grid-cols-2 sm:grid-cols-10 lg:grid-cols-12 gap-3">
       {Array.from({ length: 8 }).map((_, i) => (
         <Card key={i}><CardContent className="p-4">
           <Skeleton className="h-8 w-8 rounded-lg mb-2.5" />
@@ -169,8 +169,8 @@ function KpiCard({
         <div className="grid grid-cols-3 gap-px bg-border">
           {metrics.map((m, i) => (
             <div key={`${m.label}-${i}`} className="bg-card px-3 py-2.5 text-center">
-              <p className="text-base font-bold text-foreground tabular-nums">{typeof m.value === "number" ? fmt(m.value) : m.value}</p>
-              <p className="text-[10px] text-muted-foreground flex items-center justify-center gap-0.5 mt-0.5">
+              <p className="text-primary text-lg font-bolder text-foreground tabular-nums">{typeof m.value === "number" ? fmt(m.value) : m.value}</p>
+              <p className="text-[11px] text-foreground flex items-center justify-center gap-0.5 mt-0.5">
                 <m.icon className="h-2.5 w-2.5" />{m.label}
               </p>
             </div>
@@ -306,19 +306,22 @@ export default function DashboardPage() {
       <motion.div variants={item}>
         {statsLoading ? <StatsSkeleton /> : (
           <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 gap-3">
-            {TOP_CARDS.map((card) => (
-              <Link key={card.key} href={card.href} className="group block">
-                <Card className="hover:shadow-md transition-all duration-200 hover:border-primary/30 cursor-pointer">
-                  <CardContent className="p-4">
-                    <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center mb-2.5", card.color)}>
-                      <card.icon className="h-4 w-4" />
-                    </div>
-                    <p className="text-xl font-bold text-foreground tabular-nums leading-tight">{stats?.[card.key] ?? 0}</p>
-                    <p className="text-[11px] text-muted-foreground mt-0.5 group-hover:text-primary transition-colors leading-tight">{card.label}</p>
-                  </CardContent>
-                </Card>
-              </Link>
-            ))}
+            {TOP_CARDS.map((card) => {
+              if (card.key === "disclaimerViews" && !stats?.disclaimerEnabled) return null;
+              return (
+                <Link key={card.key} href={card.href} className="group block">
+                  <Card className="hover:shadow-md transition-all duration-200 hover:border-primary/30 cursor-pointer">
+                    <CardContent className="p-4">
+                      <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center mb-2.5", card.color)}>
+                        <card.icon className="h-4 w-4" />
+                      </div>
+                      <p className="text-xl font-bold text-foreground tabular-nums leading-tight">{stats?.[card.key] ?? 0}</p>
+                      <p className="text-[11px] text-muted-foreground mt-0.5 group-hover:text-primary transition-colors leading-tight">{card.label}</p>
+                    </CardContent>
+                  </Card>
+                </Link>
+              );
+            })}
           </div>
         )}
       </motion.div>

@@ -15,7 +15,6 @@ export function SEOManager() {
   const [settings, setSettings] = useState({
     global_meta_title_suffix: "| Tanzeem-e-Islami",
     global_meta_description: "Tanzeem-e-Islami Is Working To Re-establish / Re-instate Khilafah By Following The Methodology Of Prophet Muhammad (SAWS)",
-    global_meta_keywords: "Tanzeem, Khilafah, Quran, Islam",
     og_image_default: "",
     google_analytics_id: "",
   });

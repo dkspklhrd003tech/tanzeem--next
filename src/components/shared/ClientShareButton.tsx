@@ -4,24 +4,18 @@ import { Share2, Check } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { useMediaTracking } from "@/hooks/useMediaTracking";
 
 export function ClientShareButton({ className, variant = "default", entityType, entityId, shareCount }: { className?: string, variant?: "default" | "icon", entityType?: string, entityId?: string, shareCount?: number }) {
   const [copied, setCopied] = useState(false);
-  const [count, setCount] = useState(shareCount || 0);
+  const { trackShare } = useMediaTracking(entityType, entityId);
   const { toast } = useToast();
 
   const handleShare = async () => {
     if (typeof window === "undefined" || typeof navigator === "undefined") return;
 
     if (entityType && entityId) {
-      try {
-        fetch("/api/track", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ entityType, entityId, actionType: "share" })
-        });
-        setCount(prev => prev + 1);
-      } catch (e) { }
+      await trackShare();
     }
 
     try {
@@ -56,7 +50,7 @@ export function ClientShareButton({ className, variant = "default", entityType, 
       )}
     >
       {copied ? <Check className="h-5 w-5 text-green-500" /> : <Share2 className="h-5 w-5" />}
-      {variant === "default" && (copied ? "Copied" : shareCount !== undefined ? `Share (${count})` : "Share")}
+      {variant === "default" && (copied ? "Copied" : "Share")}
     </button>
   );
 }

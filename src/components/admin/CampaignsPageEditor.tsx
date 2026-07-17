@@ -56,8 +56,7 @@ interface PageRecord {
   isPublished: boolean;
   metaTitle: string;
   metaDescription: string;
-  metaKeywords: string;
-  authorName?: string | null;
+    authorName?: string | null;
   updatedAt?: string;
 }
 
@@ -674,8 +673,7 @@ export default function CampaignsPageEditor({ pageId, initialPageData }: Campaig
           isPublished: pageForm.isPublished,
           metaTitle: pageForm.metaTitle,
           metaDescription: pageForm.metaDescription,
-          metaKeywords: pageForm.metaKeywords,
-        }),
+                  }),
       });
 
       if (!res.ok) {
@@ -1006,13 +1004,13 @@ export default function CampaignsPageEditor({ pageId, initialPageData }: Campaig
         <button id="hidden-submit-page-btn" type="submit"></button>
       </form>
 
-      <Tabs defaultValue="list" className="space-y-6">
-        <TabsList className="bg-muted p-1 rounded-lg">
-          <TabsTrigger value="list" className="flex items-center gap-2 px-4 py-2 rounded-lg-lg">
-            <FileText className="w-4 h-4" /> Campaigns Grid
+      <Tabs defaultValue="list" variant="default" className="space-y-6">
+        <TabsList>
+          <TabsTrigger value="list">
+            <FileText className="w-4 h-4 mr-2" /> Campaigns Grid
           </TabsTrigger>
-          <TabsTrigger value="settings" className="flex items-center gap-2 px-4 py-2 rounded-lg-lg">
-            <Settings2 className="w-4 h-4" /> Page SEO & Setup
+          <TabsTrigger value="settings">
+            <Settings2 className="w-4 h-4 mr-2" /> Page SEO & Setup
           </TabsTrigger>
         </TabsList>
 

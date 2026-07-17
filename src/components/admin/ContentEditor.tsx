@@ -79,8 +79,7 @@ export function ContentEditor({
     excerpt: initialData?.excerpt || "",
     metaTitle: initialData?.metaTitle || "",
     metaDescription: initialData?.metaDescription || "",
-    metaKeywords: initialData?.metaKeywords || "",
-    isPublished: initialData?.isPublished || false,
+        isPublished: initialData?.isPublished || false,
     isFeatured: initialData?.isFeatured || false,
     featuredImage: initialData?.featuredImage || "",
     featuredImageAlt: initialData?.featuredImageAlt || "",
@@ -319,8 +318,7 @@ export function ContentEditor({
                       id="metaKeywords"
                       placeholder="comma, separated, keywords"
                       value={formData.metaKeywords}
-                      onChange={(e) => setFormData({ ...formData, metaKeywords: e.target.value })}
-                    />
+                      onChange={(e) => setFormData({ ...formData,                     />
                   </div>
                 </div>
                 <div>

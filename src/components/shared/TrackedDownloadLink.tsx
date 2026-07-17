@@ -3,6 +3,7 @@
 import React from "react";
 import { Download } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useMediaTracking } from "@/hooks/useMediaTracking";
 
 interface Props extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
   entityType: string;
@@ -21,19 +22,10 @@ export function TrackedDownloadLink({
   href,
   ...props
 }: Props) {
-  const [count, setCount] = React.useState(downloadCount || 0);
+  const { trackDownload } = useMediaTracking(entityType, String(entityId));
 
   const handleDownload = async () => {
-    try {
-      setCount((prev) => prev + 1);
-      await fetch("/api/track", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ entityType, entityId, actionType: "download" }),
-      });
-    } catch (err) {
-      console.error("Track error:", err);
-    }
+    await trackDownload();
   };
 
   return (
@@ -55,9 +47,7 @@ export function TrackedDownloadLink({
           </>
         )}
       </a>
-      {downloadCount !== undefined && (
-        <span className="text-xs text-foreground-muted">{count} Downloads</span>
-      )}
+
     </div>
   );
 }

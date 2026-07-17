@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { motion } from "framer-motion";
 import { ClientShareButton } from "@/components/shared/ClientShareButton";
 import { TrackedDownloadLink } from "@/components/shared/TrackedDownloadLink";
+import { useMediaTracking } from "@/hooks/useMediaTracking";
 
 type VideoItem = {
   id: string;
@@ -50,24 +51,15 @@ function toEmbedSrc(videoUrl: string, embedUrl: string | null): string | null {
 
 export function VideoDetailPage({ item, related, customFieldSchema = [] }: { item: VideoItem; related: VideoItem[]; customFieldSchema?: any[] }) {
   const embedSrc = toEmbedSrc(item.videoUrl, item.embedUrl);
+  const { trackPlay } = useMediaTracking("video", item.id);
 
-  const [viewCount, setViewCount] = useState(item.playCount || item.viewCount || 0);
   const trackedRef = useRef(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
   const trackView = async () => {
     if (trackedRef.current) return;
     trackedRef.current = true;
-    try {
-      setViewCount(prev => prev + 1);
-      await fetch(`/api/track`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ entityType: "video", entityId: item.id, actionType: "play" })
-      });
-    } catch (e) {
-      console.error("Failed to track video view:", e);
-    }
+    await trackPlay();
   };
 
   // Cross-origin iframe tracking (Rumble, YT, Dailymotion, etc)
@@ -154,8 +146,8 @@ export function VideoDetailPage({ item, related, customFieldSchema = [] }: { ite
               {item.duration && <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" />{formatDuration(item.duration)}</span>}
             </div>
             <div className="flex flex-wrap gap-3 mt-6">
-              <div className="flex items-center gap-2 px-4 py-2 rounded-lg-full text-sm bg-muted/50 text-foreground-muted font-medium border border-border">
-                <PlayCircle className="h-4 w-4" /> Played ({viewCount.toLocaleString()})
+              <div className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm bg-muted/50 text-foreground-muted font-medium border border-border">
+                <PlayCircle className="h-4 w-4" /> Played
               </div>
               <ClientShareButton variant="default" className="w-auto px-4 py-2 text-sm bg-transparent border-border rounded-full" entityType="video" entityId={item.id} shareCount={item.shareCount} />
               {(!embedSrc && item.videoUrl) ? (
@@ -168,7 +160,7 @@ export function VideoDetailPage({ item, related, customFieldSchema = [] }: { ite
                   className="rounded-full px-4 py-2 h-auto bg-primary text-white text-sm shadow-none border-0"
                 />
               ) : (
-                <a href={externalLink || undefined} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg-full text-sm font-semibold bg-primary text-primary-foreground transition-colors">
+                <a href={externalLink || undefined} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-primary text-primary-foreground transition-colors">
                   <ExternalLink className="h-4 w-4" /> Watch on {playerName}
                 </a>
               )}

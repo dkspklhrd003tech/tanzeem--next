@@ -211,16 +211,6 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
                   <p className="text-xs text-muted-foreground text-right">{page.metaDescription?.length || 0}/160 characters optimally.</p>
                 </div>
 
-                {/* Keywords */}
-                <div className="space-y-2 border-t pt-6 mt-6">
-                  <div className="flex items-center justify-between">
-                    <Label className="text-base">Focus Keywords</Label>
-                    <Button variant="secondary" size="sm" onClick={() => simulateAiGeneration('metaKeywords', `SEO, ${page.title}, optimization`)} disabled={generating.metaKeywords}>
-                      {generating.metaKeywords ? <RefreshCw className="h-3 w-3 mr-1 animate-spin" /> : <SearchCode className="h-3 w-3 mr-1" />} Analyze & Extract
-                    </Button>
-                  </div>
-                  <Input placeholder="Comma separated keywords" value={page.metaKeywords || ""} onChange={e => setPage({ ...page, metaKeywords: e.target.value })} />
-                </div>
               </CardContent>
             </Card>
           </section>

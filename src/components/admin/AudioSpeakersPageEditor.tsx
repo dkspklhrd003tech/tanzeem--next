@@ -232,24 +232,25 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
       <Tabs
         key={activeSpeaker ? `speaker-${activeSpeaker.id}` : "speakers-list"}
         defaultValue={activeSpeaker ? "audios" : "speakers"}
+        variant="pill"
         className="space-y-6"
       >
-        <TabsList className="bg-transparent border border-border/50 p-1 rounded-full h-auto w-full max-w-3xl flex items-center justify-between mb-8 overflow-x-auto">
+        <TabsList>
           {!activeSpeaker ? (
             <>
-              <TabsTrigger value="speakers" className="flex-1 rounded-full py-2.5 data-[state=active]:bg-[#0d2d26] data-[state=active]:text-[#10b981] data-[state=active]:border data-[state=active]:border-[#10b981]/50 data-[state=inactive]:text-muted-foreground transition-all">
+              <TabsTrigger value="speakers" className="flex-1">
                 <User className="w-4 h-4 mr-2" /> Speakers
               </TabsTrigger>
-              <TabsTrigger value="settings" className="flex-1 rounded-full py-2.5 data-[state=active]:bg-[#0d2d26] data-[state=active]:text-[#10b981] data-[state=active]:border data-[state=active]:border-[#10b981]/50 data-[state=inactive]:text-muted-foreground transition-all">
+              <TabsTrigger value="settings" className="flex-1">
                 <Settings2 className="w-4 h-4 mr-2" /> Page Setup
               </TabsTrigger>
             </>
           ) : (
             <>
-              <TabsTrigger value="audios" className="flex-1 rounded-full py-2.5 data-[state=active]:bg-[#0d2d26] data-[state=active]:text-[#10b981] data-[state=active]:border data-[state=active]:border-[#10b981]/50 data-[state=inactive]:text-muted-foreground transition-all">
+              <TabsTrigger value="audios" className="flex-1">
                 <Music className="w-4 h-4 mr-2" /> Audios
               </TabsTrigger>
-              <TabsTrigger value="seo" className="flex-1 rounded-full py-2.5 data-[state=active]:bg-[#0d2d26] data-[state=active]:text-[#10b981] data-[state=active]:border data-[state=active]:border-[#10b981]/50 data-[state=inactive]:text-muted-foreground transition-all">
+              <TabsTrigger value="seo" className="flex-1">
                 <Bot className="w-4 h-4 mr-2" /> SEO Section
               </TabsTrigger>
             </>

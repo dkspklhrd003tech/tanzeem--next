@@ -222,18 +222,7 @@ export function AudioListing({
                   {item.speaker && (
                     <p className="text-xs text-foreground-muted mt-1">{item.speaker.name}</p>
                   )}
-                  <div className="flex items-center gap-3 mt-2 text-[10px] text-foreground-muted">
-                    {item.playCount > 0 && (
-                      <span className="flex items-center gap-1">
-                        <PlayCircle className="h-3 w-3" /> {item.playCount.toLocaleString()}
-                      </span>
-                    )}
-                    {item.downloadCount > 0 && (
-                      <span className="flex items-center gap-1">
-                        <Download className="h-3 w-3" /> {item.downloadCount.toLocaleString()}
-                      </span>
-                    )}
-                  </div>
+
                 </div>
               </Link>
             </motion.div>

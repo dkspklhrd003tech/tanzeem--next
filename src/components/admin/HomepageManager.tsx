@@ -24,14 +24,12 @@ function PageEditorWrapper({ id, EditorComponent }: { id: string, EditorComponen
                 else setPage({
                     id, slug: id, title: id.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
                     content: "", excerpt: "", isPublished: true, metaTitle: id.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
-                    metaDescription: "", metaKeywords: ""
-                });
+                    metaDescription: "",                 });
             })
             .catch(() => setPage({
                 id, slug: id, title: id.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
                 content: "", excerpt: "", isPublished: true, metaTitle: id.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
-                metaDescription: "", metaKeywords: ""
-            }));
+                metaDescription: "",             }));
     }, [id]);
 
     if (!page) return <div className="p-10 flex justify-center"><PageSpinner /></div>;
@@ -49,41 +47,41 @@ export function HomepageManager() {
                 <p className="text-foreground-muted">Manage the Dynamic Content Layout of the Main Landing Page</p>
             </div>
 
-            <Tabs defaultValue="sliders" className="w-full">
-                <TabsList className="mb-6 bg-muted/50 p-1 border border-border rounded-xl flex flex-wrap justify-center h-auto gap-1 shadow-sm max-w-full">
-                    <TabsTrigger value="sliders" className="py-2 px-4 rounded-lg text-sm font-medium transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm whitespace-nowrap">
+            <Tabs defaultValue="sliders" variant="bubble" className="w-full">
+                <TabsList>
+                    <TabsTrigger value="sliders">
                         <ImageIcon className="w-4 h-4 mr-1" />
                         Hero Sliders
                     </TabsTrigger>
-                    <TabsTrigger value="about" className="py-2 px-4 rounded-lg text-sm font-medium transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm whitespace-nowrap">
+                    <TabsTrigger value="about">
                         <Type className="w-4 h-4 mr-1" />
                         About & Mission
                     </TabsTrigger>
-                    <TabsTrigger value="leaders" className="py-2 px-4 rounded-lg text-sm font-medium transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm whitespace-nowrap">
+                    <TabsTrigger value="leaders">
                         <Users className="w-4 h-4 mr-1" />
                         Leader Profiles
                     </TabsTrigger>
-                    <TabsTrigger value="services" className="py-2 px-4 rounded-lg text-sm font-medium transition-all duration-300 ease-[cubic-bezier(0.4,1.4,0.3,1)] active:scale-[0.97] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm whitespace-nowrap">
+                    <TabsTrigger value="services">
                         <Sparkles className="w-4 h-4 mr-1" />
                         Spotlight (Services)
                     </TabsTrigger>
-                    <TabsTrigger value="campaigns" className="py-2 px-4 rounded-lg text-sm font-medium transition-all duration-300 ease-[cubic-bezier(0.4,1.4,0.3,1)] active:scale-[0.97] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm whitespace-nowrap">
+                    <TabsTrigger value="campaigns">
                         <Megaphone className="w-4 h-4 mr-1" />
                         Featured (Campaigns)
                     </TabsTrigger>
-                    <TabsTrigger value="magazines" className="py-2 px-4 rounded-lg text-sm font-medium transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm whitespace-nowrap">
+                    <TabsTrigger value="magazines">
                         <Layers className="w-4 h-4 mr-1" />
                         Featured Magazines
                     </TabsTrigger>
-                    <TabsTrigger value="books" className="py-2 px-4 rounded-lg text-sm font-medium transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm whitespace-nowrap">
+                    <TabsTrigger value="books">
                         <BookOpen className="w-4 h-4 mr-1" />
                         Featured Books
                     </TabsTrigger>
-                    <TabsTrigger value="social" className="py-2 px-4 rounded-lg text-sm font-medium transition-all data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm whitespace-nowrap">
+                    <TabsTrigger value="social">
                         <Share2 className="w-4 h-4 mr-1" />
                         Social Media
                     </TabsTrigger>
-                    <TabsTrigger value="seo" className="py-2 px-4 rounded-lg text-sm font-medium transition-all duration-300 ease-[cubic-bezier(0.4,1.4,0.3,1)] active:scale-[0.97] data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:shadow-sm whitespace-nowrap">
+                    <TabsTrigger value="seo">
                         <Search className="w-4 h-4 mr-1" />
                         Basic SEO
                     </TabsTrigger>

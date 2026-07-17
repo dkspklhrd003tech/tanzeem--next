@@ -31,8 +31,7 @@ interface PageRecord {
   isPublished: boolean;
   metaTitle: string;
   metaDescription: string;
-  metaKeywords: string;
-  authorName?: string | null;
+    authorName?: string | null;
   updatedAt?: string;
 }
 
@@ -131,7 +130,7 @@ export default function FaqPageEditor({ pageId, initialPageData }: FaqPageEditor
           isPublished: pageForm.isPublished,
           metaTitle: pageForm.metaTitle,
           metaDescription: pageForm.metaDescription,
-          metaKeywords: pageForm.metaKeywords,
+          
         }),
       });
 
@@ -374,13 +373,13 @@ export default function FaqPageEditor({ pageId, initialPageData }: FaqPageEditor
         <button id="hidden-submit-page-btn" type="submit"></button>
       </form>
 
-      <Tabs defaultValue="items" className="space-y-6">
-        <TabsList className="bg-muted p-1 rounded-lg">
-          <TabsTrigger value="items" className="flex items-center gap-2 px-4 py-2 rounded-lg">
-            <HelpCircle className="w-4 h-4" /> FAQ Items
+      <Tabs defaultValue="items" variant="default" className="space-y-6">
+        <TabsList>
+          <TabsTrigger value="items">
+            <HelpCircle className="w-4 h-4 mr-2" /> FAQ Items
           </TabsTrigger>
-          <TabsTrigger value="settings" className="flex items-center gap-2 px-4 py-2 rounded-lg">
-            <Settings2 className="w-4 h-4" /> Page SEO & Setup
+          <TabsTrigger value="settings">
+            <Settings2 className="w-4 h-4 mr-2" /> Page SEO & Setup
           </TabsTrigger>
         </TabsList>
 

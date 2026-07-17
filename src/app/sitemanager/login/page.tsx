@@ -14,9 +14,9 @@ import * as THREE from "three";
 function CinematicScene() {
   const group = useRef<THREE.Group>(null);
 
-  useFrame((state) => {
+  useFrame((state, delta) => {
     if (group.current) {
-      group.current.rotation.y = state.clock.elapsedTime * 0.05;
+      group.current.rotation.y += delta * 0.05;
     }
   });
 
@@ -95,6 +95,17 @@ function LoginForm() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
+  // Toast State
+  const [toastMsg, setToastMsg] = useState<{ message: string; type: "success" | "error" | "info" } | null>(null);
+  const toastTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const [showRememberModal, setShowRememberModal] = useState<{ show: boolean, targetState: boolean }>({ show: false, targetState: false });
+
+  const showToast = (message: string, type: "success" | "error" | "info" = "info") => {
+    setToastMsg({ message, type });
+    if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
+    toastTimeoutRef.current = setTimeout(() => setToastMsg(null), 3000);
+  };
+
   // Form Fields
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -126,8 +137,45 @@ function LoginForm() {
     }
   }, []);
 
-  const handleLoginSubmit = async (e: React.FormEvent) => {
+  const [showLoginConfirmModal, setShowLoginConfirmModal] = useState(false);
+  const [emptyFields, setEmptyFields] = useState<{ email?: boolean, password?: boolean }>({});
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (target.closest('button[type="submit"]')) return;
+
+      if (emptyFields.email || emptyFields.password) {
+        setEmptyFields({});
+        if (error === "Fill in Email and Password required fields.") {
+          setError(null);
+        }
+      }
+    };
+    
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, [emptyFields, error]);
+
+  const handleLoginSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+
+    const newEmptyFields = {
+      email: !email,
+      password: !password,
+    };
+
+    if (!email || !password) {
+      setEmptyFields(newEmptyFields);
+      setError("Fill in Email and Password required fields.");
+      return;
+    }
+
+    setEmptyFields({});
+    setShowLoginConfirmModal(true);
+  };
+
+  const executeLogin = async () => {
     setError(null);
     setIsLoading(true);
 
@@ -287,14 +335,14 @@ function LoginForm() {
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-1.5">Email Address</label>
                     <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                      <Mail className={cn("absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 transition-colors", (emptyFields.email || error) ? "text-red-500" : "text-gray-400")} />
                       <input
-                        type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
+                        type="email" required value={email} onChange={(e) => { setEmail(e.target.value); setEmptyFields(prev => ({ ...prev, email: false })); }}
                         placeholder="admin@tanzeem.org"
                         className={cn(
                           "w-full h-11 pl-8 pr-2 rounded-xl border text-sm transition-all",
                           "bg-gray-50 text-gray-900 placeholder:text-gray-400",
-                          error && "border-red-400 focus:border-red-400 focus:ring-red-200"
+                          (emptyFields.email || error) ? "border-red-500 focus:border-red-500 focus:ring-red-200" : "border-gray-200 focus:border-primary focus:ring-primary/20"
                         )}
                       />
                     </div>
@@ -308,14 +356,14 @@ function LoginForm() {
                       </button>
                     </div>
                     <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                      <Lock className={cn("absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 transition-colors", (emptyFields.password || error) ? "text-red-500" : "text-gray-400")} />
                       <input
-                        type={showPassword ? "text" : "password"} required value={password} onChange={(e) => setPassword(e.target.value)}
+                        type={showPassword ? "text" : "password"} required value={password} onChange={(e) => { setPassword(e.target.value); setEmptyFields(prev => ({ ...prev, password: false })); }}
                         placeholder="••••••••"
                         className={cn(
                           "w-full h-11 pl-8 pr-2 rounded-xl border text-sm transition-all",
                           "bg-gray-50 text-gray-900 placeholder:text-gray-400",
-                          error && "border-red-400 focus:border-red-400 focus:ring-red-200"
+                          (emptyFields.password || error) ? "border-red-500 focus:border-red-500 focus:ring-red-200" : "border-gray-200 focus:border-primary focus:ring-primary/20"
                         )}
                       />
                       <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
@@ -325,22 +373,28 @@ function LoginForm() {
                     <PasswordStrengthBar password={password} />
                   </div>
 
-                  <div className="flex items-center gap-2.5">
-                    <input
-                      id="remember-me" type="checkbox" checked={rememberMe} onChange={(e) => setRememberMe(e.target.checked)}
-                      className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary/30 accent-primary cursor-pointer"
-                    />
-                    <label htmlFor="remember-me" className="text-sm font-medium text-gray-600 cursor-pointer select-none">
-                      Remember me
+                  <div
+                    className="flex items-center gap-2.5 cursor-pointer group w-max"
+                    onClick={() => setShowRememberModal({ show: true, targetState: !rememberMe })}
+                  >
+                    <motion.div whileTap={{ scale: 0.8 }} className="flex items-center">
+                      <input
+                        id="remember-me" type="checkbox" readOnly checked={rememberMe}
+                        className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary/30 accent-primary cursor-pointer pointer-events-none"
+                      />
+                    </motion.div>
+                    <label className="text-sm font-medium text-gray-600 cursor-pointer select-none group-hover:text-primary transition-colors">
+                      Remember Me?
                     </label>
                   </div>
 
-                  <button
-                    type="submit" disabled={isLoading || !email || !password}
+                  <motion.button
+                    whileTap={{ scale: 0.98 }}
+                    type="submit" disabled={isLoading}
                     className="w-full h-12 mt-2 rounded-xl font-bold text-sm text-white transition-all bg-primary hover:bg-primary/90 focus:ring-2 focus:ring-primary/40 flex items-center justify-center gap-2 shadow-lg shadow-primary/30"
                   >
                     {isLoading ? <><Loader2 className="h-4 w-4 animate-spin" /> Authenticating...</> : "Sign In Securely"}
-                  </button>
+                  </motion.button>
                 </motion.form>
               )}
 
@@ -453,6 +507,142 @@ function LoginForm() {
           </div>
         </div>
       </motion.div>
+
+      {/* Login Confirmation Modal */}
+      <AnimatePresence>
+        {showLoginConfirmModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+          >
+            <motion.div
+              initial={{ scale: 0.8, y: 30, opacity: 0, rotateX: 20 }}
+              animate={{ scale: 1, y: 0, opacity: 1, rotateX: 0 }}
+              exit={{ scale: 0.8, y: -30, opacity: 0, rotateX: -20 }}
+              transition={{ type: "spring", damping: 20, stiffness: 300 }}
+              className="bg-white/90 backdrop-blur-2xl rounded-3xl p-8 max-w-sm w-full shadow-[0_0_80px_rgba(13,88,68,0.4)] border border-white/20 text-center relative overflow-hidden"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent pointer-events-none" />
+
+              <div className="mx-auto w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-6 shadow-inner relative z-10 border border-primary/20">
+                <Lock className="w-8 h-8 text-primary drop-shadow-md" />
+              </div>
+
+              <h3 className="text-2xl font-extrabold text-gray-900 mb-2 relative z-10">
+                Confirm Login
+              </h3>
+              <p className="text-gray-600 text-sm mb-8 relative z-10 font-medium">
+                Are you sure you want to securely sign in as an administrator?
+              </p>
+
+              <div className="flex gap-3 relative z-10">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setShowLoginConfirmModal(false)}
+                  className="flex-1 py-3 px-4 rounded-xl font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors shadow-sm"
+                >
+                  Cancel
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => {
+                    setShowLoginConfirmModal(false);
+                    executeLogin();
+                  }}
+                  className="flex-1 py-3 px-4 rounded-xl font-bold text-white transition-all shadow-lg bg-primary hover:bg-primary/90 shadow-primary/30 focus:ring-2 focus:ring-primary/40"
+                >
+                  Yes, Sign In
+                </motion.button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Cinematic Center Confirmation Modal for Remember Me */}
+      <AnimatePresence>
+        {showRememberModal.show && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+          >
+            <motion.div
+              initial={{ scale: 0.8, y: 30, opacity: 0, rotateX: 20 }}
+              animate={{ scale: 1, y: 0, opacity: 1, rotateX: 0 }}
+              exit={{ scale: 0.8, y: -30, opacity: 0, rotateX: -20 }}
+              transition={{ type: "spring", damping: 20, stiffness: 300 }}
+              className="bg-white/90 backdrop-blur-2xl rounded-3xl p-8 max-w-sm w-full shadow-[0_0_80px_rgba(13,88,68,0.4)] border border-white/20 text-center relative overflow-hidden"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent pointer-events-none" />
+
+              <div className="mx-auto w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-6 shadow-inner relative z-10 border border-primary/20">
+                {showRememberModal.targetState ? <Lock className="w-8 h-8 text-primary drop-shadow-md" /> : <EyeOff className="w-8 h-8 text-red-500 drop-shadow-md" />}
+              </div>
+
+              <h3 className="text-2xl font-extrabold text-gray-900 mb-2 relative z-10">
+                {showRememberModal.targetState ? "Secure Device?" : "Forget Device?"}
+              </h3>
+              <p className="text-gray-600 text-sm mb-8 relative z-10 font-medium">
+                {showRememberModal.targetState
+                  ? "We'll securely save your email to make future logins faster and easier for you."
+                  : "Your email will be removed from this device for future logins."}
+              </p>
+
+              <div className="flex gap-3 relative z-10">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setShowRememberModal({ show: false, targetState: false })}
+                  className="flex-1 py-3 px-4 rounded-xl font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors shadow-sm"
+                >
+                  Cancel
+                </motion.button>
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => {
+                    setRememberMe(showRememberModal.targetState);
+                    setShowRememberModal({ show: false, targetState: false });
+                    showToast(
+                      showRememberModal.targetState ? "Device Secured And Remembered." : "Device Forgotten.",
+                      showRememberModal.targetState ? "success" : "info"
+                    );
+                  }}
+                  className={cn(
+                    "flex-1 py-3 px-4 rounded-xl font-bold text-white transition-all shadow-lg",
+                    showRememberModal.targetState
+                      ? "bg-primary hover:bg-primary/90 shadow-primary/30 focus:ring-2 focus:ring-primary/40"
+                      : "bg-red-500 hover:bg-red-600 shadow-red-500/30 focus:ring-2 focus:ring-red-500/40"
+                  )}
+                >
+                  {showRememberModal.targetState ? "Yes, Secure It" : "Yes, Forget"}
+                </motion.button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Cinematic Toast Notification */}
+      <AnimatePresence>
+        {toastMsg && (
+          <motion.div
+            initial={{ opacity: 0, y: 50, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.9 }}
+            className="fixed bottom-10 left-1/2 -translate-x-1/2 z-50 bg-white/10 backdrop-blur-xl text-foreground px-6 py-3 rounded-full shadow-[0_0_30px_rgba(13,88,68,0.5)] border border-white/20 font-medium text-sm flex items-center gap-3"
+          >
+            {toastMsg.type === "success" ? <CheckCircle2 className="h-5 w-5 text-emerald-400" /> : <AlertCircle className="h-5 w-5 text-red-600" />}
+            <span>{toastMsg.message}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

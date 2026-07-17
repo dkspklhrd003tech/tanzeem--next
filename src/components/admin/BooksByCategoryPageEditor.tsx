@@ -499,10 +499,10 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
         </div>
       </div>
 
-      <Tabs defaultValue="list" className="space-y-6">
-        <TabsList className="bg-muted p-1 rounded-lg">
-          <TabsTrigger value="list" className="px-4 py-2"><FileText className="w-4 h-4 mr-2" /> Content Library</TabsTrigger>
-          {!activeCategory && <TabsTrigger value="settings" className="px-4 py-2"><Settings2 className="w-4 h-4 mr-2" /> Page Setup</TabsTrigger>}
+      <Tabs defaultValue="list" variant="default" className="space-y-6">
+        <TabsList>
+          <TabsTrigger value="list"><FileText className="w-4 h-4 mr-2" /> Content Library</TabsTrigger>
+          {!activeCategory && <TabsTrigger value="settings"><Settings2 className="w-4 h-4 mr-2" /> Page Setup</TabsTrigger>}
         </TabsList>
 
         <TabsContent value="list" className="space-y-6">

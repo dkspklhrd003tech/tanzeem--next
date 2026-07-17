@@ -84,8 +84,7 @@ interface SeoState {
   // BASIC
   metaTitle: string;
   metaDescription: string;
-  metaKeywords: string;
-  canonicalUrl: string;
+    canonicalUrl: string;
   robotsIndex: string;
   robotsFollow: string;
   author: string;
@@ -124,7 +123,7 @@ interface SeoState {
 const DEFAULT_SEO: SeoState = {
   metaTitle: "Organization | Tanzeem-e-Islami",
   metaDescription: "Learn about Tanzeem-e-Islami's history, mission, ideology, and leadership.",
-  metaKeywords: "Tanzeem-e-Islami, Dr Israr Ahmed, Shujah Uddin Sheikh, Rafeeq, Rafeeqah",
+   Dr Israr Ahmed, Shujah Uddin Sheikh, Rafeeq, Rafeeqah",
   canonicalUrl: "https://tanzeem.org/organization",
   robotsIndex: "index",
   robotsFollow: "follow",
@@ -417,13 +416,13 @@ export default function OrganizationPageEditor() {
         {/* Navigation Sidebar */}
         <div className="w-full lg:w-64 border-r border-border bg-card/50 flex flex-col shrink-0">
           <div className="p-4 border-b border-border">
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <Tabs value={activeTab} onValueChange={setActiveTab} variant="bubble" className="w-full">
               <TabsList className="grid grid-cols-2 w-full">
-                <TabsTrigger value="sections" className="text-xs font-semibold">
+                <TabsTrigger value="sections">
                   <LayoutGrid className="w-3.5 h-3.5 mr-1" />
                   Sections
                 </TabsTrigger>
-                <TabsTrigger value="seo" className="text-xs font-semibold">
+                <TabsTrigger value="seo">
                   <Globe2 className="w-3.5 h-3.5 mr-1" />
                   SEO Panel
                 </TabsTrigger>
@@ -952,8 +951,7 @@ export default function OrganizationPageEditor() {
                       <Label className="text-xs font-bold uppercase">Keywords</Label>
                       <Input
                         value={seoState.metaKeywords}
-                        onChange={(e) => setSeoState(prev => ({ ...prev, metaKeywords: e.target.value }))}
-                      />
+                        onChange={(e) => setSeoState(prev => ({ ...prev,                       />
                     </div>
                     <div>
                       <Label className="text-xs font-bold uppercase">Canonical URL</Label>

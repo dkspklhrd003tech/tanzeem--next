@@ -16,6 +16,7 @@ import { FooterManager } from "./FooterManager";
 import { SiteIdentityManager } from "./SiteIdentityManager";
 import { UserManagement } from "./UserManagement";
 import { ShareToolsManager } from "./ShareToolsManager";
+import { Switch } from "@/components/ui/switch";
 
 interface FormSubmission {
     id: string;
@@ -170,48 +171,30 @@ export function SettingsManager() {
                 <p className="text-sm text-foreground mt-1">Manage global interface settings, brand identity, and monitor the live support Inbox in real-time.</p>
             </div>
 
-            <Tabs defaultValue="layout" className="w-full">
-                <TabsList className="mb-6 bg-primary-light border-b border-border w-full justify-start rounded-lg h-auto p-4 gap-2 gap-y-0 flex-wrap">
+            <Tabs defaultValue="layout" variant="bubble" className="w-full">
+                <TabsList>
 
-                    <TabsTrigger
-                        value="layout"
-                        className="rounded-lg px-2 data-[state=inactive]:border data-[state=inactive]:border-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground bg-primary-light/80 px-4 py-2"
-                    >
+                    <TabsTrigger value="layout">
                         <LayoutTemplate className="w-4 h-4" /> Header &amp; Footer
                     </TabsTrigger>
 
-                    <TabsTrigger
-                        value="seo"
-                        className="rounded-lg px-2 data-[state=inactive]:border data-[state=inactive]:border-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground bg-primary-light/80 px-4 py-2"
-                    >
+                    <TabsTrigger value="seo">
                         <Search className="w-4 h-4" /> SEO Intelligence
                     </TabsTrigger>
 
-                    <TabsTrigger
-                        value="site-identity"
-                        className="rounded-lg px-2 data-[state=inactive]:border data-[state=inactive]:border-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground bg-primary-light/80 px-4 py-2"
-                    >
+                    <TabsTrigger value="site-identity">
                         <Globe className="w-4 h-4" /> Site Identity
                     </TabsTrigger>
 
-                    <TabsTrigger
-                        value="share-tools"
-                        className="rounded-lg px-2 data-[state=inactive]:border data-[state=inactive]:border-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground bg-primary-light/80 px-4 py-2"
-                    >
+                    <TabsTrigger value="share-tools">
                         <Share2 className="w-4 h-4" /> Share Tools
                     </TabsTrigger>
 
-                    <TabsTrigger
-                        value="users"
-                        className="rounded-lg px-2 data-[state=inactive]:border data-[state=inactive]:border-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground bg-primary-light/80 px-4 py-2"
-                    >
+                    <TabsTrigger value="users">
                         <UsersIcon className="w-4 h-4" /> Users
                     </TabsTrigger>
 
-                    <TabsTrigger
-                        value="inbox"
-                        className="rounded-lg px-2 data-[state=inactive]:border data-[state=inactive]:border-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground bg-primary-light/80 px-4 py-2"
-                    >
+                    <TabsTrigger value="inbox">
                         <Mail className="w-4 h-4" /> Form
                         {submissions.filter(s => s.status !== 'replied').length > 0 && (
                             <Badge className="ml-1 bg-red-500 hover:bg-red-600 text-[10px] items-center justify-center">
@@ -220,49 +203,31 @@ export function SettingsManager() {
                         )}
                     </TabsTrigger>
 
-                    <TabsTrigger
-                        value="dates"
-                        className="rounded-lg px-2 data-[state=inactive]:border data-[state=inactive]:border-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground bg-primary-light/80 px-4 py-2"
-                    >
+                    <TabsTrigger value="dates">
                         <Calendar className="w-4 h-4" /> Manage Dates
                     </TabsTrigger>
 
-                    <TabsTrigger
-                        value="login"
-                        className="rounded-lg px-2 data-[state=inactive]:border data-[state=inactive]:border-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground bg-primary-light/80 px-4 py-2"
-                    >
+                    <TabsTrigger value="login">
                         <Lock className="w-4 h-4" /> Login Auth
                     </TabsTrigger>
 
-                    <TabsTrigger
-                        value="disclaimer"
-                        className="rounded-lg px-2 data-[state=inactive]:border data-[state=inactive]:border-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground bg-primary-light/80 px-4 py-2"
-                    >
+                    <TabsTrigger value="disclaimer">
                         <MessageSquare className="w-4 h-4" /> Disclaimer Popup
                     </TabsTrigger>
 
-                    <TabsTrigger
-                        value="css"
-                        className="rounded-lg px-2 data-[state=inactive]:border data-[state=inactive]:border-primary font-semibold transition-all flex items-center gap-2 text-foreground-muted hover:text-foreground bg-primary-light/80 px-4 py-2"
-                    >
+                    <TabsTrigger value="css">
                         <Palette className="w-4 h-4" /> Global CSS
                     </TabsTrigger>
                 </TabsList>
 
                 {/* HEADER + FOOTER TAB — merged with inner sub-tabs */}
                 <TabsContent value="layout" className="animate-in fade-in-50 duration-500">
-                    <Tabs defaultValue="header" className="w-full">
-                        <TabsList className="mb-6 bg-muted/40 border border-border rounded-xl p-1 h-auto gap-1 inline-flex">
-                            <TabsTrigger
-                                value="header"
-                                className="rounded-lg px-4 py-2 text-sm font-semibold data-[state=active]:bg-primary data-[state=active]:text-background data-[state=active]:shadow-sm transition-all text-muted-foreground"
-                            >
+                    <Tabs defaultValue="header" variant="pill" className="w-full">
+                        <TabsList>
+                            <TabsTrigger value="header">
                                 <LayoutTemplate className="w-4 h-4 mr-2" /> Header Builder
                             </TabsTrigger>
-                            <TabsTrigger
-                                value="footer"
-                                className="rounded-lg px-4 py-2 text-sm font-semibold data-[state=active]:bg-primary data-[state=active]:text-background data-[state=active]:shadow-sm transition-all text-muted-foreground"
-                            >
+                            <TabsTrigger value="footer">
                                 <LayoutTemplate className="w-4 h-4 mr-2 rotate-180" /> Footer Builder
                             </TabsTrigger>
                         </TabsList>
@@ -737,15 +702,10 @@ export function SettingsManager() {
                                         <h4 className="font-semibold text-foreground">Maintenance Mode</h4>
                                         <p className="text-sm text-muted-foreground mt-1">When active, the frontend will display a maintenance page. You will still be able to access the admin panel.</p>
                                     </div>
-                                    <label className="relative inline-flex items-center cursor-pointer">
-                                        <input
-                                            type="checkbox"
-                                            className="sr-only peer"
-                                            checked={settings.maintenance_mode === "true"}
-                                            onChange={(e) => handleSettingChange("maintenance_mode", e.target.checked ? "true" : "false")}
-                                        />
-                                        <div className="w-11 h-6 bg-muted peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
-                                    </label>
+                                    <Switch 
+                                        checked={settings.maintenance_mode === "true"}
+                                        onCheckedChange={(checked) => handleSettingChange("maintenance_mode", checked ? "true" : "false")}
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -834,30 +794,27 @@ export function SettingsManager() {
                                             <h4 className="font-semibold text-foreground">Enable Disclaimer Popup</h4>
                                             <p className="text-sm text-muted-foreground mt-1">Toggle whether the disclaimer popup is active on the homepage.</p>
                                         </div>
-                                        <label className="relative inline-flex items-center cursor-pointer">
-                                            <input
-                                                type="checkbox"
-                                                className="sr-only peer"
-                                                checked={settings.disclaimer_enabled === "true"}
-                                                onChange={(e) => handleSettingChange("disclaimer_enabled", e.target.checked ? "true" : "false")}
-                                            />
-                                            <div className="w-11 h-6 bg-muted peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-primary/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
-                                        </label>
+                                        <Switch 
+                                            checked={settings.disclaimer_enabled === "true"}
+                                            onCheckedChange={(checked) => handleSettingChange("disclaimer_enabled", checked ? "true" : "false")}
+                                        />
                                     </div>
                                 </div>
-                                <div className={`bg-card border border-border rounded-xl p-6 transition-opacity duration-300 ${settings.disclaimer_enabled === "true" ? "opacity-100" : "opacity-50 pointer-events-none"}`}>
-                                    <h4 className="font-semibold text-foreground">Live Disclaimer Views</h4>
-                                    <p className="text-3xl font-bold text-primary mt-2">{settings.disclaimer_views || 0}</p>
-                                    <p className="text-sm text-muted-foreground mt-1">Total times the disclaimer has been displayed to visitors.</p>
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        className="mt-4"
-                                        onClick={() => handleSettingChange("disclaimer_views", "0")}
-                                    >
-                                        Reset Counter
-                                    </Button>
-                                </div>
+                                {settings.disclaimer_enabled === "true" && (
+                                    <div className="bg-card border border-border rounded-xl p-6 transition-opacity duration-300 opacity-100">
+                                        <h4 className="font-semibold text-foreground">Live Disclaimer Views</h4>
+                                        <p className="text-3xl font-bold text-primary mt-2">{settings.disclaimer_views || 0}</p>
+                                        <p className="text-sm text-muted-foreground mt-1">Total times the disclaimer has been displayed to visitors.</p>
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            className="mt-4"
+                                            onClick={() => handleSettingChange("disclaimer_views", "0")}
+                                        >
+                                            Reset Counter
+                                        </Button>
+                                    </div>
+                                )}
                             </div>
                         </div>
 

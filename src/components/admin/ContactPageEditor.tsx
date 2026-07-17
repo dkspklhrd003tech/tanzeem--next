@@ -498,18 +498,18 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
             </Button>
           </CardHeader>
           <CardContent className="p-6 bg-slate-50/30">
-            <Tabs defaultValue="email-configs" className="w-full">
-              <TabsList className="flex flex-wrap gap-3 bg-transparent p-0 mb-6 h-auto border-none w-full justify-start">
-                <TabsTrigger value="email-configs" className="rounded-xl px-6 py-3 bg-primary-light/80 border border-primary text-foreground text-sm font-bold tracking-wider uppercase data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md transition-all">Email Configs</TabsTrigger>
-                <TabsTrigger value="email-template" className="rounded-xl px-6 py-3 bg-primary-light/80 border border-primary text-foreground text-sm font-bold tracking-wider uppercase data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md transition-all">Email Template</TabsTrigger>
-                <TabsTrigger value="inbox" className="relative rounded-xl px-6 py-3 bg-primary-light/80 border border-primary text-foreground text-sm font-bold tracking-wider uppercase data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md transition-all">
+            <Tabs defaultValue="email-configs" variant="bubble" className="w-full">
+              <TabsList>
+                <TabsTrigger value="email-configs">Email Configs</TabsTrigger>
+                <TabsTrigger value="email-template">Email Template</TabsTrigger>
+                <TabsTrigger value="inbox" className="relative">
                   Inbox
                   {unreadCount > 0 && (
                     <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-green-500 shadow-sm animate-pulse" />
                   )}
                 </TabsTrigger>
-                <TabsTrigger value="history" className="rounded-xl px-6 py-3 bg-primary-light/80 border border-primary text-foreground text-sm font-bold tracking-wider uppercase data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md transition-all">Sent History</TabsTrigger>
-                <TabsTrigger value="email-logs" className="rounded-xl px-6 py-3 bg-primary-light/80 border border-primary text-foreground text-sm font-bold tracking-wider uppercase data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md transition-all">Email Logs</TabsTrigger>
+                <TabsTrigger value="history">Sent History</TabsTrigger>
+                <TabsTrigger value="email-logs">Email Logs</TabsTrigger>
               </TabsList>
 
 

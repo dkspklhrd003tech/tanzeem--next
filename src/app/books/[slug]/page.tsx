@@ -8,6 +8,7 @@ import { BookOpen, Download, Share2, ArrowLeft, FileText } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { buildMetadata, bookJsonLd, breadcrumbJsonLd } from "@/lib/seo";
 import { ClientShareButton } from "@/components/shared/ClientShareButton";
+import { TrackedDownloadLink } from "@/components/shared/TrackedDownloadLink";
 
 export const dynamic = "force-dynamic";
 
@@ -98,19 +99,20 @@ export default async function BookDetailPage({ params }: Props) {
               )}
               <div className="flex flex-wrap items-center gap-3">
                 <h1 className="text-2xl md:text-3xl font-bold text-foreground leading-snug">{book.title}</h1>
-                <ClientShareButton variant="icon" />
+                <ClientShareButton variant="icon" entityType="book" entityId={book.id} />
               </div>
             </div>
 
             {book.fileUrl && (
-              <a
+              <TrackedDownloadLink
                 href={book.fileUrl}
-                download
+                entityType="book"
+                entityId={book.id}
                 className="inline-flex items-center justify-center gap-2 bg-primary text-white hover:bg-primary/80 border-primary border h-12 font-medium shadow-sm rounded-md px-6 py-2 text-sm font-semibold transition-colors shrink-0"
               >
                 <Download className="h-4 w-4" />
                 Download PDF
-              </a>
+              </TrackedDownloadLink>
             )}
           </div>
 

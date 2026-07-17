@@ -152,7 +152,7 @@ export async function POST(request: NextRequest) {
       showInMenu:      data.showInMenu || originalPage?.showInMenu || false,
       metaTitle:       data.metaTitle || originalPage?.metaTitle || null,
       metaDescription: data.metaDescription || originalPage?.metaDescription || null,
-      metaKeywords:    data.metaKeywords || originalPage?.metaKeywords || null,
+      
       canonicalUrl:    null,
       ogImage:         null,
       schemaType:      originalPage?.schemaType || "WebPage",

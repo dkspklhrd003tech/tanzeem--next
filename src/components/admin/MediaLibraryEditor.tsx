@@ -26,8 +26,7 @@ export default function MediaLibraryEditor({ pageId, initialPageData, mediaType 
         body: JSON.stringify({
           title: pageForm.title, slug: pageForm.slug, excerpt: pageForm.excerpt,
           content: pageForm.content, isPublished: pageForm.isPublished,
-          metaTitle: pageForm.metaTitle, metaDescription: pageForm.metaDescription, metaKeywords: pageForm.metaKeywords,
-        }),
+          metaTitle: pageForm.metaTitle, metaDescription: pageForm.metaDescription,         }),
       });
       toast({ title: "Saved", description: "Page settings updated." });
     } catch (error) { toast({ variant: "destructive", title: "Error", description: "Failed to save settings." }); }
@@ -52,12 +51,12 @@ export default function MediaLibraryEditor({ pageId, initialPageData, mediaType 
         </div>
       </div>
 
-      <Tabs defaultValue="library" className="space-y-6">
-        <TabsList className="bg-muted p-1 rounded-lg">
-          <TabsTrigger value="library" className="px-4 py-2">
+      <Tabs defaultValue="library" variant="default" className="space-y-6">
+        <TabsList>
+          <TabsTrigger value="library">
             <PlaySquare className="w-4 h-4 mr-2" /> {mediaType === "audio" ? "Audio Library" : "Video Library"}
           </TabsTrigger>
-          <TabsTrigger value="settings" className="px-4 py-2">
+          <TabsTrigger value="settings">
             <Settings2 className="w-4 h-4 mr-2" /> Page Setup & SEO
           </TabsTrigger>
         </TabsList>

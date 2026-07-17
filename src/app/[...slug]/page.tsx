@@ -216,7 +216,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
           showInMenu: true,
           metaTitle: null,
           metaDescription: null,
-          metaKeywords: null,
+          
           canonicalUrl: null,
           ogImage: null,
           schemaType: "WebPage",
@@ -270,7 +270,7 @@ export default async function DynamicPage({ params }: PageProps) {
           showInMenu: true,
           metaTitle: null,
           metaDescription: null,
-          metaKeywords: null,
+          
           canonicalUrl: null,
           ogImage: null,
           schemaType: "WebPage",

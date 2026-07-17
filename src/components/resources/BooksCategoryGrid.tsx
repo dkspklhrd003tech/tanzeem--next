@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { useMediaTracking } from "@/hooks/useMediaTracking";
 
 export interface Book {
   id: string;
@@ -37,6 +38,8 @@ export function BooksCategoryGrid({ categoryName, initialItems }: BooksCategoryG
   const printIframeRef = useRef<HTMLIFrameElement>(null);
   const { toast } = useToast();
 
+  const { trackShare, trackDownload } = useMediaTracking("book");
+
   useEffect(() => {
     if (selectedItem) document.body.style.overflow = "hidden";
     else document.body.style.overflow = "";
@@ -55,6 +58,8 @@ export function BooksCategoryGrid({ categoryName, initialItems }: BooksCategoryG
   const handleShare = async (item: Book) => {
     if (typeof window === "undefined" || typeof navigator === "undefined") return;
     const shareUrl = `${window.location.href}?book=${item.id}`;
+    
+    await trackShare(item.id);
 
     try {
       if (navigator.clipboard) {
@@ -76,8 +81,9 @@ export function BooksCategoryGrid({ categoryName, initialItems }: BooksCategoryG
     }
   };
 
-  const handleDownload = (item: Book) => {
+  const handleDownload = async (item: Book) => {
     if (!item.fileUrl) return;
+    await trackDownload(item.id);
     const link = document.createElement("a");
     link.href = item.fileUrl;
     link.download = `${item.slug || "book"}.pdf`;

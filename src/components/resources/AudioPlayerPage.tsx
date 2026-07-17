@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn, resolveMediaUrl } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { WaveformPlayer } from "./WaveformPlayer";
+import { useMediaTracking } from "@/hooks/useMediaTracking";
 
 type AudioItem = {
   id: string;
@@ -43,19 +44,10 @@ function formatDuration(seconds: number | null) {
 }
 
 export function AudioPlayerPage({ item, related, customFieldSchema = [] }: AudioPlayerPageProps) {
-  const [playCount, setPlayCount] = React.useState(item.playCount);
+  const { trackPlay, trackShare, trackDownload } = useMediaTracking("audio", item.id);
 
   const handleTracked = async () => {
-    try {
-      setPlayCount((prev) => prev + 1);
-      await fetch(`/api/track`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ entityType: "audio", entityId: item.id, actionType: "play" })
-      });
-    } catch (e) {
-      console.error("Failed to track play:", e);
-    }
+    await trackPlay();
   };
 
   const handleShare = async () => {
@@ -75,27 +67,11 @@ export function AudioPlayerPage({ item, related, customFieldSchema = [] }: Audio
       alert("Link copied to clipboard!");
     }
 
-    try {
-      await fetch(`/api/track`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ entityType: "audio", entityId: item.id, actionType: "share" })
-      });
-    } catch (e) {
-      console.error("Failed to track share:", e);
-    }
+    await trackShare();
   };
 
   const handleDownload = async () => {
-    try {
-      await fetch(`/api/track`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ entityType: "audio", entityId: item.id, actionType: "download" })
-      });
-    } catch (e) {
-      console.error("Failed to track download:", e);
-    }
+    await trackDownload();
   };
 
   return (
@@ -138,9 +114,8 @@ export function AudioPlayerPage({ item, related, customFieldSchema = [] }: Audio
                 </div>
               )}
               <div className="flex items-center gap-4 border-l border-border/50 pl-4">
-                <div className="flex items-center gap-1.5" title="Plays">
+                <div className="flex items-center gap-1.5" title="Play">
                   <Play className="w-4 h-4" />
-                  <span>{playCount}</span>
                 </div>
               </div>
               {item.fileSize ? (
@@ -156,13 +131,12 @@ export function AudioPlayerPage({ item, related, customFieldSchema = [] }: Audio
                 download
                 onClick={handleDownload}
                 className={cn(
-                  "inline-flex items-center gap-2 px-4 py-2 rounded-lg-full text-sm font-semibold",
+                  "inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold",
                   "bg-primary text-primary-foreground transition-colors"
                 )}
               >
                 <Download className="h-4 w-4" />
                 Download Audio
-                <span>{item.downloadCount || 0}</span>
               </a>
               {item.pdfUrl && (
                 <a
@@ -170,7 +144,7 @@ export function AudioPlayerPage({ item, related, customFieldSchema = [] }: Audio
                   target="_blank"
                   rel="noopener noreferrer"
                   className={cn(
-                    "inline-flex items-center gap-2 px-4 py-2 rounded-lg-full text-sm font-semibold",
+                    "inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold",
                     "bg-secondary text-secondary-foreground hover:bg-secondary/80 transition-colors"
                   )}
                 >
@@ -181,7 +155,6 @@ export function AudioPlayerPage({ item, related, customFieldSchema = [] }: Audio
               <Button variant="outline" size="sm" className="rounded-full" onClick={handleShare}>
                 <Share2 className="h-4 w-4 mr-2" />
                 Share
-                <span>{item.shareCount || 0}</span>
               </Button>
             </div>
           </div>

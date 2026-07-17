@@ -234,7 +234,7 @@ export default function MenuBuilderPage() {
       </div>
 
       {/* ── Location tabs ── */}
-      <Tabs value={location} onValueChange={v => setLocation(v as Location)}>
+      <Tabs value={location} onValueChange={v => setLocation(v as Location)} variant="bubble">
         <TabsList>
           {LOCATIONS.map(l => (
             <TabsTrigger key={l.id} value={l.id} className="gap-2">
