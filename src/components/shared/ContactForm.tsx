@@ -135,7 +135,7 @@ export function ContactForm({ settings = {} }: { settings?: Record<string, strin
             onChange={(e) => { setName(e.target.value); clearErrors(); }}
             placeholder={settings.form_name_placeholder || "Your name"}
             required
-            className={`bg-background ${attemptedSubmit && !name.trim() ? "border-red-500 ring-red-500 ring-1" : ""}`}
+            className={`bg-background rounded-lg h-12 ${attemptedSubmit && !name.trim() ? "border-red-500 ring-red-500 ring-1" : ""}`}
           />
         </div>
         <div className="space-y-2">
@@ -149,7 +149,7 @@ export function ContactForm({ settings = {} }: { settings?: Record<string, strin
             onChange={(e) => { setEmail(e.target.value); clearErrors(); }}
             placeholder={settings.form_email_placeholder || "your@email.com"}
             required
-            className={`bg-background ${attemptedSubmit && !email.trim() ? "border-red-500 ring-red-500 ring-1" : ""}`}
+            className={`bg-background rounded-lg h-12 ${attemptedSubmit && !email.trim() ? "border-red-500 ring-red-500 ring-1" : ""}`}
           />
         </div>
       </div>
@@ -165,7 +165,7 @@ export function ContactForm({ settings = {} }: { settings?: Record<string, strin
             value={phone}
             onChange={(e) => { setPhone(e.target.value); clearErrors(); }}
             placeholder={settings.form_phone_placeholder || "+92 XXX XXX XXXX"}
-            className="bg-background"
+            className="bg-background rounded-lg h-12"
           />
         </div>
         <div className="space-y-2">
@@ -178,7 +178,7 @@ export function ContactForm({ settings = {} }: { settings?: Record<string, strin
             onChange={(e) => { setSubject(e.target.value); clearErrors(); }}
             placeholder={settings.form_subject_placeholder || "What is this about?"}
             required
-            className={`bg-background ${attemptedSubmit && !subject.trim() ? "border-red-500 ring-red-500 ring-1" : ""}`}
+            className={`bg-background rounded-lg h-12 ${attemptedSubmit && !subject.trim() ? "border-red-500 ring-red-500 ring-1" : ""}`}
           />
         </div>
       </div>
@@ -193,13 +193,13 @@ export function ContactForm({ settings = {} }: { settings?: Record<string, strin
           placeholder={settings.form_message_placeholder || "Write your message here..."}
           rows={6}
           required
-          className={`bg-background ${attemptedSubmit && !message.trim() ? "border-red-500 ring-red-500 ring-1" : ""}`}
+          className={`bg-background rounded-lg ${attemptedSubmit && !message.trim() ? "border-red-500 ring-red-500 ring-1" : ""}`}
         />
       </div>
 
       <Button
         type="submit"
-        className="w-full md:w-auto rounded-xl bg-primary text-white"
+        className="w-full md:w-auto rounded-lg bg-primary text-white"
         disabled={isSubmitting}
       >
         {isSubmitting ? (

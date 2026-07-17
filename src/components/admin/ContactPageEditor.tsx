@@ -94,8 +94,20 @@ function SortableLocationCard({ loc, onEdit, onDelete }: { loc: LocationRow, onE
             <button {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing hover:bg-muted p-1 rounded -ml-2 text-muted-foreground">
               <GripVertical className="h-4 w-4" />
             </button>
-            <h4 className="font-bold text-foreground text-lg leading-none">{loc.name}</h4>
-            {!loc.isActive && <span className="bg-destructive/10 text-destructive text-[10px] px-2 py-0.5 rounded-full font-bold">Hidden</span>}
+            <h4 className="font-bold text-foreground text-lg leading-none flex items-center gap-1.5">
+              {loc.name.includes(" / ") ? (
+                <>
+                  <span>{loc.name.split(" / ")[0]}</span>
+                  <span className="text-muted-foreground font-normal">/</span>
+                  <span style={{ fontFamily: "'Jameel Noori Nastaleeq', serif", fontSize: "1.15em", transform: "translateY(2px)" }}>
+                    {loc.name.split(" / ").slice(1).join(" / ")}
+                  </span>
+                </>
+              ) : (
+                loc.name
+              )}
+            </h4>
+            {!loc.isActive && <span className="bg-destructive/10 text-destructive text-[10px] px-2 py-0.5 rounded-full font-bold ml-2">Hidden</span>}
           </div>
           <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground mt-1">
             {loc.city && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" /> {loc.city}</span>}
@@ -545,9 +557,30 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <div className="grid grid-cols-2 gap-4">
-              <div className="col-span-2">
-                <Label>Branch Name / Tab Label <span className="text-destructive">*</span></Label>
-                <Input value={editingLocation?.name || ""} onChange={(e) => setEditingLocation({ ...editingLocation, name: e.target.value })} placeholder="e.g. Lahore / لاہور" />
+              <div className="col-span-2 sm:col-span-1">
+                <Label>Branch Name (English) <span className="text-destructive">*</span></Label>
+                <Input 
+                  value={(editingLocation?.name || "").split(" / ")[0] || ""} 
+                  onChange={(e) => {
+                    const parts = (editingLocation?.name || "").split(" / ");
+                    const urdu = parts.length > 1 ? parts.slice(1).join(" / ") : "";
+                    setEditingLocation({ ...editingLocation, name: `${e.target.value}${urdu ? " / " + urdu : ""}` })
+                  }} 
+                  placeholder="e.g. Markaz" 
+                />
+              </div>
+              <div className="col-span-2 sm:col-span-1">
+                <Label>Branch Name (Urdu) <span className="text-destructive">*</span></Label>
+                <Input 
+                  dir="rtl"
+                  style={{ fontFamily: "'Jameel Noori Nastaleeq', serif", fontSize: "20px" }}
+                  value={(editingLocation?.name || "").split(" / ").slice(1).join(" / ") || ""} 
+                  onChange={(e) => {
+                    const en = (editingLocation?.name || "").split(" / ")[0] || "";
+                    setEditingLocation({ ...editingLocation, name: `${en}${e.target.value ? " / " + e.target.value : ""}` })
+                  }} 
+                  placeholder="مرکز" 
+                />
               </div>
               <div className="col-span-2 sm:col-span-1">
                 <Label>City</Label>

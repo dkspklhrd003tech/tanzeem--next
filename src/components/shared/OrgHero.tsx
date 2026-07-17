@@ -22,16 +22,14 @@ export function OrgHero({
   if (!hasContent && !backgroundImage) return null;
 
   return (
-    <section className="relative w-full overflow-hidden" style={{ minHeight: 320 }}>
-      {/* Background */}
-      {backgroundImage ? (
+    <section className="relative w-full overflow-hidden bg-slate-50" style={{ minHeight: 400 }}>
+      {/* Background Image (Mosque drawing etc.) */}
+      {backgroundImage && (
         <div
-          className="absolute inset-0 z-0 bg-contain bg-center"
+          className="absolute inset-0 z-0 bg-contain bg-top bg-no-repeat opacity-80"
           style={{ backgroundImage: `url('${backgroundImage}')` }}
           aria-hidden="true"
         />
-      ) : (
-        <div className="absolute inset-0 z-0 bg-primary" aria-hidden="true" />
       )}
 
 
@@ -49,7 +47,7 @@ export function OrgHero({
 
       {/* Content */}
       <motion.div
-        className="container relative z-20 px-4 py-16 md:py-20 text-center flex flex-col items-center justify-center"
+        className="container relative z-20 px-4 py-16 md:py-24 mt-20 text-center flex flex-col items-center justify-center"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
@@ -57,19 +55,22 @@ export function OrgHero({
         style={{ minHeight: 320 }}
       >
         {topLabel && (
-          <p className="text-white/60 text-xs md:text-sm uppercase tracking-[0.25em] mb-4 font-semibold">
+          <p className="text-slate-800 text-xs md:text-sm uppercase tracking-[0.15em] mb-4 font-bold">
             {topLabel}
           </p>
         )}
         {quoteText && (
-          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-white leading-snug max-w-4xl drop-shadow-lg uppercase tracking-wide">
+          <h1 className="text-2xl md:text-4xl lg:text-5xl font-black text-slate-900 leading-[1.2] max-w-5xl uppercase tracking-wide">
             {quoteText}
           </h1>
         )}
         {attribution && (
-          <p className="mt-5 text-white/80 text-sm md:text-base font-semibold">
-            {attribution}
-          </p>
+          <div className="mt-6 flex flex-col items-center">
+            <span className="bg-[#22a13f] text-white px-2 py-0.5 text-sm md:text-lg font-bold">
+              {attribution}
+            </span>
+            <span className="text-slate-400 text-xs md:text-sm mt-1.5 font-medium tracking-wide">Scholar Tanzeem-e-Islami</span>
+          </div>
         )}
       </motion.div>
     </section>

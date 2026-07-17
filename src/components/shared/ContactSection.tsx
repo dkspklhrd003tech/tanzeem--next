@@ -222,7 +222,17 @@ export function ContactSection({
                           : "bg-white text-slate-600 border-slate-200 hover:border-[#0d5844]/30 hover:text-[#0d5844]"
                       )}
                     >
-                      {branch.name}
+                      {branch.name.includes(" / ") ? (
+                        <span className="flex items-center gap-1.5">
+                          <span>{branch.name.split(" / ")[0]}</span>
+                          <span className={isActive ? "text-white/60" : "text-slate-300"}>/</span>
+                          <span style={{ fontFamily: "'Jameel Noori Nastaleeq', serif", fontSize: "1.15em", transform: "translateY(2px)" }}>
+                            {branch.name.split(" / ").slice(1).join(" / ")}
+                          </span>
+                        </span>
+                      ) : (
+                        branch.name
+                      )}
                     </button>
                   );
                 })}
@@ -284,45 +294,31 @@ export function ContactSection({
                     {branch.details && branch.details.length > 0 && (
                       <div className="space-y-6">
                         {branch.details.map((detail, idx) => (
-                          <div key={detail.id || idx} className="bg-primary-light rounded-xl p-6 border border-primary/40">
+                          <div key={detail.id || idx} className="bg-primary-light rounded-xl p-4 md:p-5 border border-primary/40">
                             {detail.title && (
-                              <div className="mb-6 pb-4 border-b border-slate-200/60 flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center shrink-0 border border-emerald-100/50">
-                                  <MapPin className="w-7 h-7 text-[#0d5844]" />
+                              <div className="mb-4 pb-3 border-b border-slate-200/60 flex items-center gap-2.5">
+                                <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center shrink-0 border border-emerald-100/50">
+                                  <MapPin className="w-4 h-4 text-[#0d5844]" />
                                 </div>
                                 <div>
-                                  <h4 className="font-bold text-lg text-slate-900">{detail.title}</h4>
+                                  <h4 className="font-bold text-base text-slate-900 leading-tight">{detail.title}</h4>
                                   {detail.titleValue && (
-                                    <span className="text-sm text-slate-600 font-medium">{detail.titleValue}</span>
+                                    <span className="text-xs text-slate-600 font-medium">{detail.titleValue}</span>
                                   )}
                                 </div>
                               </div>
                             )}
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-y-6 gap-x-8 text-[15px]">
+                            <div className="grid grid-cols-1 gap-4 text-[14px]">
                               {detail.naibAmeer && (
-                                <div className="space-y-1">
-                                  <span className="text-sm font-bold text-primary/90 uppercase tracking-wider flex items-center gap-1.5"><User className="w-4 h-4" /> {detail.leaderTitle || 'Ameer'}</span>
+                                <div className="space-y-0.5">
+                                  <span className="text-xs font-bold text-primary/90 uppercase tracking-wider flex items-center gap-1.5"><User className="w-3.5 h-3.5" /> {detail.leaderTitle || 'Ameer'}</span>
                                   <span className="block font-semibold text-slate-800">{detail.naibAmeer}</span>
                                 </div>
                               )}
-                              {detail.address && (
-                                <div className="space-y-1 md:col-span-2">
-                                  <span className="text-sm font-bold text-primary/90 uppercase tracking-wider flex items-center gap-1.5"><MapPinned className="w-4 h-4" /> Postal Address</span>
-                                  <span className="block font-medium text-slate-800 leading-relaxed line-clamp-2">
-                                    {detail.addressUrl ? (
-                                      <a href={detail.addressUrl} target={detail.addressUrlNewTab !== false ? "_blank" : "_self"} className="hover:text-[#0d5844] transition-colors hover:underline decoration-slate-300 underline-offset-4">
-                                        {detail.address}
-                                      </a>
-                                    ) : (
-                                      detail.address
-                                    )}
-                                  </span>
-                                </div>
-                              )}
                               {detail.phone && (
-                                <div className="space-y-1">
-                                  <span className="text-sm font-bold text-primary/90 uppercase tracking-wider flex items-center gap-1.5"><Phone className="w-4 h-4" /> Phone</span>
+                                <div className="space-y-0.5">
+                                  <span className="text-xs font-bold text-primary/90 uppercase tracking-wider flex items-center gap-1.5"><Phone className="w-3.5 h-3.5" /> Phone</span>
                                   <span className="block font-semibold text-slate-800">
                                     {detail.phoneUrl ? (
                                       <a href={detail.phoneUrl} target={detail.phoneUrlNewTab !== false ? "_blank" : "_self"} className="hover:text-[#0d5844] transition-colors">{detail.phone}</a>
@@ -333,8 +329,8 @@ export function ContactSection({
                                 </div>
                               )}
                               {detail.mobile && (
-                                <div className="space-y-1">
-                                  <span className="text-sm font-bold text-primary/90 uppercase tracking-wider flex items-center gap-1.5"><MessagesSquare className="w-4 h-4" /> Whatsapp</span>
+                                <div className="space-y-0.5">
+                                  <span className="text-xs font-bold text-primary/90 uppercase tracking-wider flex items-center gap-1.5"><MessagesSquare className="w-3.5 h-3.5" /> Whatsapp</span>
                                   <span className="block font-semibold text-slate-800">
                                     {detail.mobileUrl ? (
                                       <a href={detail.mobileUrl} target={detail.mobileUrlNewTab !== false ? "_blank" : "_self"} className="hover:text-[#0d5844] transition-colors">{detail.mobile}</a>
@@ -345,10 +341,24 @@ export function ContactSection({
                                 </div>
                               )}
                               {detail.email && (
-                                <div className="space-y-1">
-                                  <span className="text-sm font-bold text-primary/90 uppercase tracking-wider flex items-center gap-1.5"><Mail className="w-4 h-4" /> Email</span>
+                                <div className="space-y-0.5">
+                                  <span className="text-xs font-bold text-primary/90 uppercase tracking-wider flex items-center gap-1.5"><Mail className="w-3.5 h-3.5" /> Email</span>
                                   <span className="block font-semibold text-slate-800">
                                     <a href={detail.emailUrl || `mailto:${detail.email}`} target={detail.emailUrlNewTab !== false ? "_blank" : "_self"} className="hover:text-[#0d5844] transition-colors">{detail.email}</a>
+                                  </span>
+                                </div>
+                              )}
+                              {detail.address && (
+                                <div className="space-y-0.5 sm:col-span-4">
+                                  <span className="text-xs font-bold text-primary/90 uppercase tracking-wider flex items-center gap-1.5"><MapPinned className="w-3.5 h-3.5" /> Postal Address</span>
+                                  <span className="block font-medium text-slate-800 leading-snug">
+                                    {detail.addressUrl ? (
+                                      <a href={detail.addressUrl} target={detail.addressUrlNewTab !== false ? "_blank" : "_self"} className="hover:text-[#0d5844] transition-colors hover:underline decoration-slate-300 underline-offset-4">
+                                        {detail.address}
+                                      </a>
+                                    ) : (
+                                      detail.address
+                                    )}
                                   </span>
                                 </div>
                               )}
