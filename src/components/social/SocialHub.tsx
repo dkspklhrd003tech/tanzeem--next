@@ -291,7 +291,7 @@ export function SocialHub({ initialPlatforms, initialAccounts, layout = "horizon
           <button
             onClick={() => setCurrentLayout("horizontal")}
             className={cn(
-              "flex items-center gap-2 px-4 py-2 rounded-lg-xl text-xs font-black tracking-wide uppercase transition-all duration-300",
+              "flex items-center gap-2 px-4 py-2 rounded-lg text-xs font-black tracking-wide uppercase transition-all duration-300",
               currentLayout === "horizontal"
                 ? "bg-[#0d5844] text-white shadow-md scale-[1.03]"
                 : "text-slate-500 hover:text-[#0d5844]"

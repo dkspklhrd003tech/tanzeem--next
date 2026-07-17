@@ -237,7 +237,7 @@ export function Header() {
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="w-64 h-8 pl-3 pr-9 rounded-full border-border bg-card text-xs"
                       />
-                      <button type="submit" aria-label="Submit search" className="absolute right-1 top-1/2 -translate-y-1/2 text-foreground-muted hover:text-foreground transition-colors p-2 rounded-full bg-primary-light">
+                      <button type="submit" aria-label="Submit search" className="absolute right-1 top-1/2 -translate-y-1/2 text-foreground-muted hover:text-foreground transition-colors p-2 rounded-full">
                         <Search className="h-3 w-3" aria-hidden="true" />
                       </button>
                     </form>

@@ -46,7 +46,6 @@ interface ContentEditorProps {
     excerpt?: string;
     metaTitle?: string;
     metaDescription?: string;
-    metaKeywords?: string;
     isPublished?: boolean;
     isFeatured?: boolean;
     featuredImage?: string;
@@ -79,7 +78,7 @@ export function ContentEditor({
     excerpt: initialData?.excerpt || "",
     metaTitle: initialData?.metaTitle || "",
     metaDescription: initialData?.metaDescription || "",
-        isPublished: initialData?.isPublished || false,
+    isPublished: initialData?.isPublished || false,
     isFeatured: initialData?.isFeatured || false,
     featuredImage: initialData?.featuredImage || "",
     featuredImageAlt: initialData?.featuredImageAlt || "",
@@ -249,8 +248,6 @@ export function ContentEditor({
               ) : contentType === "pages" && (initialData?.id === '56f118be-bcad-42a0-a60a-37300adc8a39' || initialData?.id === 'e34f44a9-bd26-4433-a962-250991321181') ? (
                 <div>
                   <MediaCategoryManager
-                    data={formData.content}
-                    onChange={(content) => setFormData({ ...formData, content })}
                     mediaType={initialData?.id === '56f118be-bcad-42a0-a60a-37300adc8a39' ? 'audio' : 'video'}
                   />
                 </div>
@@ -312,15 +309,7 @@ export function ContentEditor({
                       onChange={(e) => setFormData({ ...formData, metaTitle: e.target.value })}
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="metaKeywords" className="text-xs font-medium mb-1 block">Meta Keywords</Label>
-                    <Input
-                      id="metaKeywords"
-                      placeholder="comma, separated, keywords"
-                      value={formData.metaKeywords}
-                      onChange={(e) => setFormData({ ...formData,                     />
                   </div>
-                </div>
                 <div>
                   <Label htmlFor="metaDescription" className="text-xs font-medium mb-1 block">Meta Description</Label>
                   <Textarea
