@@ -250,8 +250,8 @@ export function PageSectionBuilder({ pageId, onSave }: PageSectionBuilderProps) 
           heading: "Join Tanzeem-e-Islami",
           subtitle: "Become a part of the movement for the re-establishment of the Islamic system.",
           cards: [
-            { title: "RAFEEQ", image: "", location: "Head Office", phone: "+92 42 3586 9501", email: "markaz@tanzeem.org", description: "", linkLabel: "Join as Rafeeq", linkUrl: "/join-rafeeq" },
-            { title: "RAFEEQAH", image: "", location: "Head Office", phone: "+92 42 3586 9501", email: "khwateen@tanzeem.org", description: "", linkLabel: "Join as Rafeeqah", linkUrl: "/join-rafeeqah" }
+            { title: "RAFEEQ", image: "", location: "Head Office", phone: "+92 42 3586 9501", email: "markaz@tanzeem.org", linkLabel: "Join as Rafeeq", linkUrl: "/join-rafeeq", linkNewTab: false },
+            { title: "RAFEEQAH", image: "", location: "Head Office", phone: "+92 42 3586 9501", email: "khwateen@tanzeem.org", linkLabel: "Join as Rafeeqah", linkUrl: "/join-rafeeqah", linkNewTab: false }
           ]
         };
       case "nested_category_grid":
@@ -1306,7 +1306,7 @@ function SectionConfigForm({ type, config: rawConfig, onUpdate }: { type: string
             <Label>Join Cards</Label>
             <Button size="sm" variant="outline" onClick={() => handleChange("cards", [
               ...(config.cards ?? []),
-              { title: "", location: "", phone: "", description: "", linkLabel: "Join Now", linkUrl: "" },
+              { title: "", image: "", location: "", phone: "", email: "", linkLabel: "Join Now", linkUrl: "", linkNewTab: false },
             ])}>
               <Plus className="w-3 h-3 mr-1" /> Add Card
             </Button>
@@ -1322,51 +1322,41 @@ function SectionConfigForm({ type, config: rawConfig, onUpdate }: { type: string
                   }}><XCircle className="w-3 h-3" /></Button>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2">
-                  <div className="space-y-1">
-                    <Label className="text-[10px]">Title</Label>
-                    <Input className="h-8 text-xs" value={card.title ?? ""} onChange={(e) => {
-                      const c = [...(config.cards ?? [])]; c[i] = { ...c[i], title: e.target.value }; handleChange("cards", c);
-                    }} placeholder="RAFEEQ" />
-                  </div>
-                  <div className="space-y-1">
-                    <Label className="text-[10px]">Image</Label>
-                    <ImageUploader
-                      value={card.image ?? ""}
-                      onChange={(url) => {
-                        const c = [...(config.cards ?? [])]; c[i] = { ...c[i], image: url }; handleChange("cards", c);
-                      }}
-                      aspectRatio={1}
-                    />
-                  </div>
+                <div className="space-y-1">
+                  <Label className="text-[10px]">Title</Label>
+                  <Input className="h-8 text-xs" value={card.title ?? ""} onChange={(e) => {
+                    const c = [...(config.cards ?? [])]; c[i] = { ...c[i], title: e.target.value }; handleChange("cards", c);
+                  }} placeholder="RAFEEQ" />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-[10px]">Image</Label>
+                  <ImageUploader
+                    value={card.image ?? ""}
+                    onChange={(url) => {
+                      const c = [...(config.cards ?? [])]; c[i] = { ...c[i], image: url }; handleChange("cards", c);
+                    }}
+                    aspectRatio={1}
+                  />
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <div className="space-y-1">
-                    <Label className="text-[10px]">Location / Address</Label>
+                    <Label className="text-[10px]">Location</Label>
                     <Input className="h-8 text-xs" value={card.location ?? ""} onChange={(e) => {
                       const c = [...(config.cards ?? [])]; c[i] = { ...c[i], location: e.target.value }; handleChange("cards", c);
                     }} placeholder="Head Office" />
                   </div>
                   <div className="space-y-1">
-                    <Label className="text-[10px]">Phone / Landline</Label>
+                    <Label className="text-[10px]">Phone No.</Label>
                     <Input className="h-8 text-xs" value={card.phone ?? ""} onChange={(e) => {
                       const c = [...(config.cards ?? [])]; c[i] = { ...c[i], phone: e.target.value }; handleChange("cards", c);
                     }} placeholder="+92 42..." />
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-2">
-                  <div className="space-y-1">
-                    <Label className="text-[10px]">Email</Label>
-                    <Input className="h-8 text-xs" value={card.email ?? ""} onChange={(e) => {
-                      const c = [...(config.cards ?? [])]; c[i] = { ...c[i], email: e.target.value }; handleChange("cards", c);
-                    }} placeholder="markaz@tanzeem.org" />
-                  </div>
-                  <div className="space-y-1">
-                    <Label className="text-[10px]">Description</Label>
-                    <Textarea className="text-xs" rows={1} value={card.description ?? ""} onChange={(e) => {
-                      const c = [...(config.cards ?? [])]; c[i] = { ...c[i], description: e.target.value }; handleChange("cards", c);
-                    }} />
-                  </div>
+                <div className="space-y-1">
+                  <Label className="text-[10px]">Email</Label>
+                  <Input className="h-8 text-xs" value={card.email ?? ""} onChange={(e) => {
+                    const c = [...(config.cards ?? [])]; c[i] = { ...c[i], email: e.target.value }; handleChange("cards", c);
+                  }} placeholder="markaz@tanzeem.org" />
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <div className="space-y-1">
@@ -1381,6 +1371,12 @@ function SectionConfigForm({ type, config: rawConfig, onUpdate }: { type: string
                       const c = [...(config.cards ?? [])]; c[i] = { ...c[i], linkUrl: e.target.value }; handleChange("cards", c);
                     }} placeholder="/join" />
                   </div>
+                </div>
+                <div className="flex items-center justify-between border p-2 rounded-lg bg-background mt-2">
+                  <Label className="text-[10px] font-medium cursor-pointer" htmlFor={`join-newtab-${i}`}>Open Link in New Tab</Label>
+                  <Switch id={`join-newtab-${i}`} checked={card.linkNewTab ?? false} onCheckedChange={(v) => {
+                    const c = [...(config.cards ?? [])]; c[i] = { ...c[i], linkNewTab: v }; handleChange("cards", c);
+                  }} />
                 </div>
               </div>
             ))}

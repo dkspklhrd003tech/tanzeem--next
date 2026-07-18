@@ -7,11 +7,14 @@ import { cn } from "@/lib/utils";
 
 interface JoinCardConfig {
   title?: string;
+  image?: string;
   location?: string;
   phone?: string;
+  email?: string;
   description?: string;
   linkLabel?: string;
   linkUrl?: string;
+  linkNewTab?: boolean;
 }
 
 interface JoinCTAProps {
@@ -104,6 +107,8 @@ export function JoinCTA({
                 {card.linkUrl && (
                   <Link
                     href={card.linkUrl}
+                    target={card.linkNewTab ? "_blank" : undefined}
+                    rel={card.linkNewTab ? "noopener noreferrer" : undefined}
                     className={cn(
                       "inline-flex items-center gap-2 px-5 py-2 rounded-full text-sm font-bold",
                       "border-2 border-white text-white",
