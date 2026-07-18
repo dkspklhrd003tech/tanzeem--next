@@ -22,7 +22,7 @@ export function OrgHero({
   if (!hasContent && !backgroundImage) return null;
 
   return (
-    <section className="relative w-full overflow-hidden bg-slate-50" style={{ minHeight: 400 }}>
+    <section className="relative w-full my-6 overflow-hidden bg-slate-50" style={{ minHeight: 400 }}>
       {/* Background Image (Mosque drawing etc.) */}
       {backgroundImage && (
         <div
@@ -55,21 +55,21 @@ export function OrgHero({
         style={{ minHeight: 320 }}
       >
         {topLabel && (
-          <p className="text-slate-800 text-xs md:text-sm uppercase tracking-[0.15em] mb-4 font-bold">
+          <p className="text-primary text-xs md:text-sm uppercase tracking-[0.15em] mb-4 font-bold">
             {topLabel}
           </p>
         )}
         {quoteText && (
-          <h1 className="text-2xl md:text-4xl lg:text-5xl font-black text-slate-900 leading-[1.2] max-w-5xl uppercase tracking-wide">
+          <h1 className="text-2xl md:text-4xl lg:text-5xl font-black text-foreground leading-[1.2] max-w-5xl uppercase tracking-wide">
             {quoteText}
           </h1>
         )}
         {attribution && (
           <div className="mt-6 flex flex-col items-center">
-            <span className="bg-[#22a13f] text-white px-2 py-0.5 text-sm md:text-lg font-bold">
+            <span className="bg-primary text-white rounded-lg px-2 py-0.5 text-sm md:text-lg font-bold">
               {attribution}
             </span>
-            <span className="text-slate-400 text-xs md:text-sm mt-1.5 font-medium tracking-wide">Scholar Tanzeem-e-Islami</span>
+            <span className="text-foreground text-xs md:text-sm mt-1.5 font-medium tracking-wide">Scholar Tanzeem-e-Islami</span>
           </div>
         )}
       </motion.div>
