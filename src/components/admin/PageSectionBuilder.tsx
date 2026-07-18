@@ -96,7 +96,18 @@ export function PageSectionBuilder({ pageId, onSave }: PageSectionBuilderProps) 
       const res = await fetch(`/api/admin/page_sections?pageId=${pageId}`);
       if (res.ok) {
         const data = await res.json();
-        setSections(data.items || []);
+        const parsedItems = (data.items || []).map((item: any) => {
+          if (typeof item.config === "string") {
+            try {
+              item.config = JSON.parse(item.config);
+            } catch (e) {
+              item.config = {};
+            }
+          }
+          return item;
+        });
+        setSections(parsedItems);
+        onSave(parsedItems);
       }
     } catch (err) {
       console.error("Failed to fetch sections", err);
@@ -334,8 +345,17 @@ export function PageSectionBuilder({ pageId, onSave }: PageSectionBuilderProps) 
  * - objects → {}
  * Deep-clones one level so nested arrays of objects are also sanitized.
  */
-function sanitizeConfig(config: any): any {
+function sanitizeConfig(rawConfig: any): any {
+  let config = rawConfig;
+  if (typeof config === "string") {
+    try {
+      config = JSON.parse(config);
+    } catch {
+      return {};
+    }
+  }
   if (!config || typeof config !== "object") return {};
+  
   const out: any = {};
   for (const [k, v] of Object.entries(config)) {
     if (v === null || v === undefined) {
