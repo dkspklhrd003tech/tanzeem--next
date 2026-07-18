@@ -66,13 +66,13 @@ async function HomeContent() {
       .select()
       .from(services)
       .where(eq(services.isPublished, true))
-      .orderBy(desc(services.order), desc(services.createdAt));
+      .orderBy(asc(services.order), desc(services.createdAt));
 
     const publishedCampaigns = await db
       .select()
       .from(campaigns)
       .where(eq(campaigns.isPublished, true))
-      .orderBy(desc(campaigns.createdAt));
+      .orderBy(asc(campaigns.orderIndex), desc(campaigns.createdAt));
 
     const spotlightServices = publishedServices.filter(s => s.isSpotlight === true).map(s => {
       let fields = s.customFields as any;
@@ -98,12 +98,12 @@ async function HomeContent() {
       imageUrl: c.thumbnailUrl || "",
       linkUrl: `/campaigns/${c.slug}`,
       openInNewTab: false,
-      order: 0,
+      order: c.orderIndex || 0,
       createdAt: c.createdAt,
     }));
 
     activeCampaigns = [...activeCampaigns, ...spotlightServices, ...spotlightCampaigns].sort((a, b) => {
-      if (a.order !== b.order) return b.order - a.order;
+      if (a.order !== b.order) return a.order - b.order;
       return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     });
   } catch (error) { console.error("Failed to fetch campaigns or services:", error); }

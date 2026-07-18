@@ -64,7 +64,7 @@ const tabsTriggerVariants = cva(
   {
     variants: {
       variant: {
-        default: "h-[calc(100%-1px)] flex-1 gap-1.5 rounded-lg px-2 py-1 text-sm font-medium data-[state=active]:bg-primary data-[state=active]:text-white data-[state=inactive]:bg-primary-light/80 data-[state=inactive]:text-foreground data-[state=active]:shadow-sm focus-visible:ring-[3px] focus-visible:outline-1 focus-visible:border-ring focus-visible:ring-ring/50",
+        default: "h-[calc(100%-1px)] flex-1 gap-1.5 rounded-lg px-3 py-1 text-sm font-medium data-[state=active]:bg-primary data-[state=active]:text-white data-[state=inactive]:bg-primary-light/80 data-[state=inactive]:text-foreground data-[state=active]:shadow-sm focus-visible:ring-[3px] focus-visible:outline-1 focus-visible:border-ring focus-visible:ring-ring/50",
         bubble: "rounded-lg px-4 py-2 text-sm font-semibold gap-2 border border-transparent data-[state=inactive]:border-primary data-[state=inactive]:text-foreground-muted data-[state=inactive]:bg-primary-light/80 hover:text-foreground data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md active:scale-95",
         pill: "rounded-lg px-4 py-2 text-sm font-medium gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=inactive]:hover:bg-muted/50 data-[state=inactive]:text-foreground-muted active:scale-95",
         underline: "rounded-none border-b-2 border-transparent px-4 py-2 text-sm font-medium data-[state=active]:border-primary data-[state=active]:text-primary data-[state=inactive]:text-muted-foreground hover:text-primary",
