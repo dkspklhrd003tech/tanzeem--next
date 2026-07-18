@@ -108,9 +108,8 @@ export function IdeologySection({ pillars }: IdeologySectionProps) {
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1, duration: 0.5 }}
                 className={cn(
-                  "bg-card border border-border rounded-xl p-6",
+                  "bg-card border border-primary/30 rounded-xl p-6 transition-colors duration-300 hover:bg-primary-light",
                   "flex flex-col items-center text-center gap-4",
-                  "hover:shadow-mid transition-shadow duration-300"
                 )}
               >
                 {/* Icon circle */}

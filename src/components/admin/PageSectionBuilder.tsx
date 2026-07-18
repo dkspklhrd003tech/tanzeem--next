@@ -6,7 +6,7 @@ import {
   Plus,
   XCircle,
   GripVertical,
-  Settings2,
+  Pencil,
   Eye,
   EyeOff,
   ChevronDown,
@@ -181,7 +181,7 @@ export function PageSectionBuilder({ pageId, onSave }: PageSectionBuilderProps) 
       case "hero":
         return { title: "", subtitle: "", backgroundImage: "" };
       case "intro":
-        return { heading: "", subheading: "", body: "", image: "", alignment: "top", showButton: false, buttonLabel: "", buttonUrl: "", buttonNewTab: false };
+        return { heading: "", subheading: "", body: "", image: "", alignment: "top", showButton: false, buttonLabel: "", buttonUrl: "", buttonNewTab: false, imageWidth: "" };
       case "cta_banner":
         return { heading: "", subheading: "", buttonLabel: "", buttonUrl: "" };
       case "stats":
@@ -355,7 +355,7 @@ function sanitizeConfig(rawConfig: any): any {
     }
   }
   if (!config || typeof config !== "object") return {};
-  
+
   const out: any = {};
   for (const [k, v] of Object.entries(config)) {
     if (v === null || v === undefined) {
@@ -425,19 +425,19 @@ function SortableItem({ section, isExpanded, onToggleExpand, onRemove, onUpdate 
           </div>
 
           <div className="flex items-center gap-2">
+            <Button variant="ghost" size="icon" onClick={onToggleExpand}>
+              <Pencil className="!size-5" />
+            </Button>
             <Button
               variant="ghost"
               size="icon"
               onClick={() => onUpdate({ isActive: !section.isActive })}
               title={section.isActive ? "Hide" : "Show"}
             >
-              {section.isActive ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4 text-destructive" />}
-            </Button>
-            <Button variant="ghost" size="icon" onClick={onToggleExpand}>
-              {isExpanded ? <ChevronUp className="w-4 h-4" /> : <Settings2 className="w-4 h-4" />}
+              {section.isActive ? <Eye className="!size-5" /> : <EyeOff className="!size-5 text-destructive" />}
             </Button>
             <Button variant="ghost" size="icon" onClick={() => onRemove(section.id)} className="text-destructive hover:bg-destructive/80">
-              <XCircle className="w-4 h-4" />
+              <XCircle className="!size-5" />
             </Button>
           </div>
         </div>
@@ -516,17 +516,28 @@ function SectionConfigForm({ type, config: rawConfig, onUpdate }: { type: string
                 aspectRatio={1.2}
               />
             </div>
-            <div className="space-y-2">
-              <Label>Alignment</Label>
-              <Select value={config.alignment || "left"} onValueChange={(val) => handleChange("alignment", val)}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="top">Top (Image on Top)</SelectItem>
-                  <SelectItem value="bottom">Bottom (Image on Bottom)</SelectItem>
-                  <SelectItem value="left">Left (Image on Left)</SelectItem>
-                  <SelectItem value="right">Right (Image on Right)</SelectItem>
-                </SelectContent>
-              </Select>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label>Alignment</Label>
+                <Select value={config.alignment || "left"} onValueChange={(val) => handleChange("alignment", val)}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="top">Top (Image on Top)</SelectItem>
+                    <SelectItem value="bottom">Bottom (Image on Bottom)</SelectItem>
+                    <SelectItem value="left">Left (Image on Left)</SelectItem>
+                    <SelectItem value="right">Right (Image on Right)</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Image Max Width (px)</Label>
+                <Input
+                  value={config.imageWidth || ""}
+                  onChange={(e) => handleChange("imageWidth", e.target.value)}
+                  placeholder="e.g. 400 (leave blank for auto)"
+                  type="number"
+                />
+              </div>
             </div>
           </div>
           <div className="space-y-4 pt-4 border-t border-border/50">

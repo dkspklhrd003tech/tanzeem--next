@@ -16,6 +16,7 @@ interface IntroSectionProps {
   buttonLabel?: string;
   buttonUrl?: string;
   buttonNewTab?: boolean;
+  imageWidth?: string;
 }
 
 export function IntroSection({
@@ -30,6 +31,7 @@ export function IntroSection({
   buttonLabel = "",
   buttonUrl = "",
   buttonNewTab = false,
+  imageWidth = "",
 }: IntroSectionProps) {
   const isHorizontal = alignment === "left" || alignment === "right";
 
@@ -69,8 +71,11 @@ export function IntroSection({
   );
 
   const imageContent = image ? (
-    <div className={cn("w-full", !isHorizontal && "max-w-3xl mx-auto")}>
-      <div className="relative overflow-hidden">
+    <div className={cn("w-full flex", !isHorizontal ? "justify-center max-w-3xl mx-auto" : "justify-center")}>
+      <div 
+        className="relative overflow-hidden w-full"
+        style={imageWidth ? { maxWidth: `${imageWidth}px` } : undefined}
+      >
         <img
           src={resolveMediaUrl(image)}
           alt={imageAlt || heading}
