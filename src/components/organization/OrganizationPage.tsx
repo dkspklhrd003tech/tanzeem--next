@@ -149,11 +149,16 @@ export const EMPTY_STATE: OrganizationPageState = {
 
 // ─── Hook to load state ───────────────────────────────────────────────────────
 
-export function useOrganizationPageState() {
-  const [state, setState] = useState<OrganizationPageState>(EMPTY_STATE);
-  const [loaded, setLoaded] = useState(false);
+export function useOrganizationPageState(initialData?: OrganizationPageState | null) {
+  const [state, setState] = useState<OrganizationPageState>(initialData || EMPTY_STATE);
+  const [loaded, setLoaded] = useState(!!initialData);
 
   useEffect(() => {
+    if (initialData) {
+      setLoaded(true);
+      return;
+    }
+    
     try {
       const raw = localStorage.getItem(LS_KEY);
       if (raw) {
@@ -164,10 +169,11 @@ export function useOrganizationPageState() {
       // ignore
     }
     setLoaded(true);
-  }, []);
+  }, [initialData]);
 
   const save = useCallback((next: OrganizationPageState) => {
     setState(next);
+    // We still save to localStorage as a fallback backup during edits
     localStorage.setItem(LS_KEY, JSON.stringify(next));
   }, []);
 
@@ -585,8 +591,8 @@ function JoinUS({ data }: { data: JoinState }) {
 
 // ─── Main Page Component ──────────────────────────────────────────────────────
 
-export default function OrganizationPageClient() {
-  const { state, loaded } = useOrganizationPageState();
+export default function OrganizationPageClient({ initialData }: { initialData?: OrganizationPageState }) {
+  const { state, loaded } = useOrganizationPageState(initialData);
 
   if (!loaded) {
     return (

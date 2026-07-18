@@ -156,9 +156,10 @@ const DEFAULT_SEO: SeoState = {
 };
 
 export default function OrganizationPageEditor() {
-  const { state: savedState, save: saveState, loaded } = useOrganizationPageState();
-  const [localState, setLocalState] = useState<OrganizationPageState>(EMPTY_STATE);
+  const [localState, setLocalState] = useState<OrganizationPageState>(INITIAL_DEMO_DATA);
   const [seoState, setSeoState] = useState<SeoState>(DEFAULT_SEO);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
 
   // Navigation / Tab states
   const [activeSection, setActiveSection] = useState<string>("heroBanner");
@@ -169,36 +170,77 @@ export default function OrganizationPageEditor() {
   const [imageErrors, setImageErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    if (loaded) {
-      // If the localStorage is clean (all empty), initialize with our default demo template
-      const isClean = !savedState.heroBanner.quoteText && !savedState.history.heading;
-      if (isClean) {
+    async function fetchPage() {
+      try {
+        const res = await fetch("/api/sitemanager/pages/organization");
+        if (res.ok) {
+          const data = await res.json();
+          const p = data.page;
+          if (p.content && p.content.startsWith("{")) {
+            setLocalState(JSON.parse(p.content));
+          } else {
+            setLocalState(INITIAL_DEMO_DATA);
+          }
+          if (p.seoData) {
+            setSeoState(JSON.parse(p.seoData));
+          } else {
+            setSeoState({
+              ...DEFAULT_SEO,
+              metaTitle: p.metaTitle || DEFAULT_SEO.metaTitle,
+              metaDescription: p.metaDescription || DEFAULT_SEO.metaDescription,
+            });
+          }
+        } else {
+          setLocalState(INITIAL_DEMO_DATA);
+        }
+      } catch (err) {
+        console.error("Failed to fetch organization page data", err);
         setLocalState(INITIAL_DEMO_DATA);
-      } else {
-        setLocalState(savedState);
+      } finally {
+        setIsLoading(false);
       }
     }
-  }, [loaded, savedState]);
-
-  // Load SEO State
-  useEffect(() => {
-    try {
-      const savedSeo = localStorage.getItem("tanzeem_org_seo_organization");
-      if (savedSeo) {
-        setSeoState(JSON.parse(savedSeo));
-      }
-    } catch {
-      // ignore
-    }
+    fetchPage();
   }, []);
 
-  const handleSave = () => {
-    saveState(localState);
-    localStorage.setItem("tanzeem_org_seo_organization", JSON.stringify(seoState));
-    toast({
-      title: "Content Saved Successfully",
-      description: "Changes have been persisted and are live on the organization page.",
-    });
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      const payload = {
+        title: "Organization",
+        slug: "organization",
+        content: JSON.stringify(localState),
+        metaTitle: seoState.metaTitle || null,
+        metaDescription: seoState.metaDescription || null,
+        seoData: JSON.stringify(seoState),
+        isPublished: true,
+      };
+
+      const res = await fetch(`/api/sitemanager/pages/organization`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error ?? "Failed to save to database");
+      }
+
+      toast({
+        title: "Content Saved Successfully",
+        description: "Changes have been persisted and are live on the organization page.",
+      });
+    } catch (err: any) {
+      console.error("Save error:", err);
+      toast({
+        variant: "destructive",
+        title: "Save Failed",
+        description: err.message ?? "An unexpected error occurred.",
+      });
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   // Image Upload helper converting to Blob URL (and generating temporary local display)
@@ -386,6 +428,14 @@ export default function OrganizationPageEditor() {
     }
   }, null, 2);
 
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col h-[calc(100vh-8rem)] overflow-hidden border border-border bg-background rounded-xl">
       {/* Top Banner Toolbar */}
@@ -404,9 +454,9 @@ export default function OrganizationPageEditor() {
             {showPreview ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             {showPreview ? "Hide Preview" : "Show Preview"}
           </Button>
-          <Button onClick={handleSave} size="sm" className="bg-primary hover:bg-primary/90 text-white flex items-center gap-1.5 shadow-sm">
+          <Button onClick={handleSave} size="sm" className="bg-primary hover:bg-primary/90 text-white flex items-center gap-1.5 shadow-sm" disabled={isSaving}>
             <Save className="w-4 h-4" />
-            Save Live Changes
+            {isSaving ? "Saving..." : "Save Live Changes"}
           </Button>
         </div>
       </div>

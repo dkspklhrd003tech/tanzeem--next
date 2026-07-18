@@ -40,8 +40,31 @@ export default async function OrganizationPage() {
     );
   }
 
-  // ── CMS page with raw HTML content ────────────────────────────────────────
+  // ── CMS page with content ────────────────────────────────────────
   if (page && page.content?.trim()) {
+    let parsedContent = null;
+    try {
+      if (page.content.startsWith("{")) {
+        parsedContent = JSON.parse(page.content);
+      }
+    } catch (e) {
+      // It's not valid JSON, treat as raw HTML
+    }
+
+    if (parsedContent && parsedContent.heroBanner) {
+      // It's our OrganizationPageState JSON
+      return (
+        <>
+          <script id="jsonld-org-breadcrumb" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd([
+            { name: "Home", path: "/" },
+            { name: "Organization", path: "/organization" },
+          ])) }} />
+          <OrganizationPageClient initialData={parsedContent} />
+        </>
+      );
+    }
+
+    // Fallback to raw HTML
     return (
       <main className=" bg-background">
         <div className="container mx-auto py-6 md:py-8 max-w-4xl">
