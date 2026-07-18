@@ -34,7 +34,7 @@ export function IntroSection({
   const isHorizontal = alignment === "left" || alignment === "right";
 
   const textContent = (
-    <div className={cn("flex flex-col gap-6", isHorizontal ? "text-left" : "text-center mx-auto max-w-4xl")}>
+    <div className={cn("flex flex-col gap-4", isHorizontal ? "text-left" : "text-center mx-auto max-w-4xl")}>
       <div className="space-y-4">
         {subheading && (
           <span className={cn("text-primary font-bold uppercase tracking-wider text-sm block", !isHorizontal && "text-center")}>
@@ -74,7 +74,7 @@ export function IntroSection({
         <img
           src={resolveMediaUrl(image)}
           alt={imageAlt || heading}
-          className="w-full h-auto object-cover"
+          className="w-full h-auto object-contain"
         />
         <div className="absolute inset-0" />
       </div>
@@ -89,17 +89,25 @@ export function IntroSection({
       <div className="container px-4 mx-auto relative z-10">
         {isHorizontal ? (
           <div className={cn(
-            "grid grid-cols-1 md:grid-cols-2 gap-12 items-center max-w-7xl mx-auto",
+            "grid grid-cols-1 lg:grid-cols-12 gap-12 items-center max-w-7xl mx-auto",
           )}>
             {alignment === "left" ? (
               <>
-                {imageContent}
-                {textContent}
+                <div className="lg:col-span-5">
+                  {imageContent}
+                </div>
+                <div className="lg:col-span-7">
+                  {textContent}
+                </div>
               </>
             ) : (
               <>
-                {textContent}
-                {imageContent}
+                <div className="lg:col-span-7">
+                  {textContent}
+                </div>
+                <div className="lg:col-span-5">
+                  {imageContent}
+                </div>
               </>
             )}
           </div>

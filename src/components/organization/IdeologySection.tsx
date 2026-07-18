@@ -86,9 +86,8 @@ export function IdeologySection({ pillars }: IdeologySectionProps) {
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="mb-12 text-center"
+          className="mb-6 text-center"
         >
-          <p className="section-label mb-2 text-sm">Our Ideology</p>
           <h2
             id="ideology-heading"
             className="text-3xl md:text-4xl font-bold text-foreground"
