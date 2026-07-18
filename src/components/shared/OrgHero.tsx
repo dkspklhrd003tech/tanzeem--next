@@ -60,7 +60,7 @@ export function OrgHero({
           </p>
         )}
         {quoteText && (
-          <h1 className="text-2xl md:text-4xl lg:text-5xl font-black text-foreground leading-[1.2] max-w-5xl uppercase tracking-wide">
+          <h1 className="text-2xl md:text-4xl font-black text-foreground leading-[1.2] max-w-5xl uppercase tracking-wide">
             {quoteText}
           </h1>
         )}

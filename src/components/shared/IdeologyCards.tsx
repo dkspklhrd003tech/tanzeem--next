@@ -50,7 +50,6 @@ export function IdeologyCards({ heading, cards = [] }: IdeologyCardsProps) {
             viewport={{ once: true }}
             className="mb-12 text-center"
           >
-            <p className="section-label mb-2 text-sm">Our Ideology</p>
             <h2
               id="ideology-cards-heading"
               className="text-3xl md:text-4xl font-bold text-foreground"

@@ -310,13 +310,13 @@ function MissionStatement({ data }: { data: MissionStatementState }) {
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          {data.subheading && (
-            <p className="section-label mb-2 text-sm">{data.subheading}</p>
-          )}
           {data.heading && (
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
               {data.heading}
             </h2>
+          )}
+          {data.subheading && (
+            <p className="section-label mb-2 text-sm">{data.subheading}</p>
           )}
           {data.body && (
             <div

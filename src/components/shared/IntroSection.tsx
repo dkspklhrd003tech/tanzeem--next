@@ -43,7 +43,7 @@ export function IntroSection({
             {subheading}
           </span>
         )}
-        <h2 className={cn("text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-tight", !isHorizontal && "text-center")}>
+        <h2 className={cn("text-2xl md:text-4xl font-bold text-foreground leading-tight", !isHorizontal && "text-center")}>
           {heading}
         </h2>
       </div>
@@ -72,7 +72,7 @@ export function IntroSection({
 
   const imageContent = image ? (
     <div className={cn("w-full flex", !isHorizontal ? "justify-center max-w-3xl mx-auto" : "justify-center")}>
-      <div 
+      <div
         className="relative overflow-hidden w-full"
         style={imageWidth ? { maxWidth: `${imageWidth}px` } : undefined}
       >

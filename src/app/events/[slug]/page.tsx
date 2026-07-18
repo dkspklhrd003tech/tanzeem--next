@@ -49,7 +49,7 @@ export default async function EventDetailPage({ params }: Props) {
                 className="w-full aspect-video rounded-xl object-cover shadow-lg mb-8"
               />
             )}
-            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">{event.title}</h1>
+            <h1 className="text-2xl md:text-4xl font-bold text-foreground mb-4">{event.title}</h1>
 
             <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
               <span className="flex items-center gap-2">
