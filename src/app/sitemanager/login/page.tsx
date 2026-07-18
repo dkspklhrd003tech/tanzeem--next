@@ -140,6 +140,8 @@ function LoginForm() {
   const [showLoginConfirmModal, setShowLoginConfirmModal] = useState(false);
   const [emptyFields, setEmptyFields] = useState<{ email?: boolean, password?: boolean }>({});
 
+  const hasBgImage = settings.login_bg_image && settings.login_bg_image !== "null" && settings.login_bg_image !== "undefined" && settings.login_bg_image.trim() !== "";
+
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
@@ -273,23 +275,25 @@ function LoginForm() {
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden bg-black p-4">
 
       {/* 3D Cinematic Canvas Layer */}
-      <div className="absolute inset-0 z-0">
-        <Canvas camera={{ position: [0, 0, 5], fov: 60 }}>
-          <ambientLight intensity={0.5} />
-          <pointLight position={[10, 10, 10]} intensity={1} color="#0d5844" />
-          <CinematicScene />
-        </Canvas>
-      </div>
+      {!hasBgImage && (
+        <div className="absolute inset-0 z-0">
+          <Canvas camera={{ position: [0, 0, 5], fov: 60 }}>
+            <ambientLight intensity={0.5} />
+            <pointLight position={[10, 10, 10]} intensity={1} color="#0d5844" />
+            <CinematicScene />
+          </Canvas>
+        </div>
+      )}
 
       {/* Dynamic Background Image Overlay */}
-      {settings.login_bg_image && (
+      {hasBgImage && (
         <div
-          className="absolute inset-0 z-0 bg-cover bg-center opacity-40 mix-blend-overlay transition-opacity duration-1000"
+          className="absolute inset-0 z-0 bg-cover bg-center transition-opacity duration-1000"
           style={{ backgroundImage: `url('${resolveMediaUrl(settings.login_bg_image)}')` }}
         />
       )}
 
-      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/80 z-0" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/80 z-0 pointer-events-none" />
 
       {/* Main Card */}
       <motion.div

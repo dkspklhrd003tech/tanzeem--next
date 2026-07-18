@@ -33,6 +33,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
+import { Slider } from "@/components/ui/slider";
 import {
   Select,
   SelectContent,
@@ -1343,6 +1344,21 @@ function SectionConfigForm({ type, config: rawConfig, onUpdate }: { type: string
                       const c = [...(config.cards ?? [])]; c[i] = { ...c[i], image: url }; handleChange("cards", c);
                     }}
                     aspectRatio={1}
+                  />
+                </div>
+                <div className="space-y-2 pt-2 pb-1">
+                  <div className="flex items-center justify-between">
+                    <Label className="text-[10px]">Image Width (%)</Label>
+                    <span className="text-[10px] text-muted-foreground">{card.imageWidth ?? 100}%</span>
+                  </div>
+                  <Slider
+                    value={[card.imageWidth ?? 100]}
+                    min={20}
+                    max={100}
+                    step={5}
+                    onValueChange={([val]) => {
+                      const c = [...(config.cards ?? [])]; c[i] = { ...c[i], imageWidth: val }; handleChange("cards", c);
+                    }}
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-2">

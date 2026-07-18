@@ -57,6 +57,13 @@
       "when": 1784190582547,
       "tag": "0007_illegal_sunfire",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "5",
+      "when": 1784369460337,
+      "tag": "0008_parallel_sphinx",
+      "breakpoints": true
     }
   ]
 }

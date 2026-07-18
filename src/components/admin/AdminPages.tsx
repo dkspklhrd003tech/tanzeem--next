@@ -35,6 +35,8 @@ import { SiteIdentityManager } from "./SiteIdentityManager";
 import { FooterManager } from "./FooterManager";
 import { SEOManager } from "./SEOManager";
 import { ActivityManager } from "./ActivityManager";
+import { ProfileManager } from "./ProfileManager";
+import { ChangePasswordManager } from "./ChangePasswordManager";
 
 interface AdminPagesProps {
   section: string;
@@ -645,6 +647,16 @@ export function AdminPages({ section }: AdminPagesProps) {
   // Activity Section
   if (section === "activity") {
     return <ActivityManager />;
+  }
+
+  // Profile Section
+  if (section === "profile") {
+    return <ProfileManager />;
+  }
+
+  // Change Password Section
+  if (section === "change-password") {
+    return <ChangePasswordManager />;
   }
 
   // Default: Coming Soon

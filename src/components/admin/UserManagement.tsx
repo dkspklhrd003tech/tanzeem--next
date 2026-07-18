@@ -378,19 +378,18 @@ export function UserManagement() {
                                     </div>
                                 </div>
 
-                                <div className="flex justify-end gap-3 pt-6 border-t border-border mt-6">
+                                <div className="flex justify-end gap-3 pt-6 border-t border-border">
                                     <button
                                         type="button"
                                         onClick={closeModal}
-                                        className="py-2 hover:bg-muted text-foreground-muted hover:text-foreground rounded-lg transition-colors font-medium text-sm"
+                                        className="py-2 px-4 text-destructive border border-destructive hover:bg-destructive hover:text-muted rounded-lg transition-colors font-medium text-sm"
                                     >
                                         Cancel
                                     </button>
                                     <ConfirmDialog
                                         title={editingUser ? "Update User" : "Create User"}
                                         description={`Are you sure you want to ${editingUser ? "update" : "create"} this user account?`}
-                                        onConfirm={() => document.getElementById("user-form")?.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }))}
-                                    >
+                                        onConfirm={() => { document.getElementById("user-form")?.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true })); }}>
                                         <Button
                                             type="button"
                                             disabled={isLoading}
@@ -410,8 +409,7 @@ export function UserManagement() {
                 onOpenChange={(open) => !open && setDeletingUser(null)}
                 title="Delete User"
                 description={`Are you sure you want to permanently delete ${deletingUser?.name || 'this user'}? This action cannot be undone.`}
-                onConfirm={() => deletingUser && handleDelete(deletingUser.id, deletingUser.name)}
-            />
+                onConfirm={() => { if (deletingUser) handleDelete(deletingUser.id, deletingUser.name); }} />
         </div>
     );
 }

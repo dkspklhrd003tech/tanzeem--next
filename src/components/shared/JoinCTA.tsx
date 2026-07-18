@@ -15,6 +15,7 @@ interface JoinCardConfig {
   linkLabel?: string;
   linkUrl?: string;
   linkNewTab?: boolean;
+  imageWidth?: number;
 }
 
 interface JoinCTAProps {
@@ -55,7 +56,7 @@ export function JoinCTA({
         </motion.div>
 
         {cards.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
             {cards.map((card, i) => (
               <motion.div
                 key={i}
@@ -63,31 +64,27 @@ export function JoinCTA({
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.15, duration: 0.5 }}
-                className="bg-card border border-border rounded-2xl overflow-hidden shadow-sm hover:shadow-mid transition-all flex flex-col group"
+                className="bg-card border border-border rounded-lg overflow-hidden shadow-sm hover:shadow-mid transition-all flex flex-col group"
               >
                 {/* Image Section */}
                 {card.image && (
-                  <div className="w-full aspect-video bg-muted relative overflow-hidden">
-                    <img 
-                      src={card.image} 
-                      alt={card.title || "Join Image"} 
-                      className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500" 
-                    />
+                  <div className="w-full relative overflow-hidden flex justify-center mt-6">
+                    <div style={{ width: card.imageWidth ? `${card.imageWidth}%` : '100%' }} className="mx-auto">
+                      <img
+                        src={card.image}
+                        alt={card.title || "Join Image"}
+                        className="object-contain w-full h-auto mx-auto group-hover:scale-105 transition-transform duration-500"
+                      />
+                    </div>
                   </div>
                 )}
-                
-                <div className="p-8 flex flex-col flex-1 items-center text-center">
+
+                <div className="p-6 flex flex-col flex-1 items-center text-center">
                   {card.title && (
-                    <h3 className="text-2xl font-bold text-foreground mb-6">{card.title}</h3>
+                    <h3 className="text-xl font-bold text-foreground mb-6">{card.title}</h3>
                   )}
 
-                  <div className="space-y-3 mb-8 flex-1 w-full">
-                    {card.location && (
-                      <p className="text-muted-foreground text-sm flex items-center justify-center gap-2">
-                        <MapPin className="w-4 h-4 text-primary shrink-0" aria-hidden="true" />
-                        <span>{card.location}</span>
-                      </p>
-                    )}
+                  <div className="space-y-3 mb-4 flex-1 w-full">
                     {card.phone && (
                       <p className="text-muted-foreground text-sm flex items-center justify-center gap-2">
                         <Phone className="w-4 h-4 text-primary shrink-0" aria-hidden="true" />
@@ -100,8 +97,11 @@ export function JoinCTA({
                         <span>{card.email}</span>
                       </p>
                     )}
-                    {card.description && (
-                      <p className="text-muted-foreground text-sm mt-4 leading-relaxed">{card.description}</p>
+                    {card.location && (
+                      <p className="text-muted-foreground text-sm flex items-center justify-center gap-2">
+                        <MapPin className="w-4 h-4 text-primary shrink-0" aria-hidden="true" />
+                        <span>{card.location}</span>
+                      </p>
                     )}
                   </div>
 

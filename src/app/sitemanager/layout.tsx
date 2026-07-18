@@ -312,7 +312,7 @@ function Sidebar({
         transition={{ duration: 0.2, ease: "easeInOut" }}
         className={cn(
           "fixed left-0 top-0 h-screen z-50 flex flex-col",
-          "bg-sidebar border-r border-sidebar-border shadow-sm",
+          "bg-primary-light border-r border-sidebar-border shadow-sm",
           // On mobile: slide in/out as overlay
           "max-md:transition-transform max-md:duration-300",
           isMobileOpen ? "max-md:translate-x-0" : "max-md:-translate-x-full"
@@ -516,18 +516,6 @@ function TopHeader({
       {/* Right: search, notifications, user */}
       <TooltipProvider delayDuration={300}>
         <div className="flex items-center gap-2">
-          {/* Search — hidden on mobile */}
-          <div className="relative hidden lg:block">
-            <input
-              type="search"
-              placeholder="Search..."
-              className={cn(
-                "h-8 pl-8 pr-4 w-40 rounded-lg text-sm bg-muted border border-border",
-                "text-muted-foreground placeholder:text-muted-foreground",
-                "focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all"
-              )}
-            />
-          </div>
 
           {/* Notification bell */}
           <Button variant="ghost" size="icon" className="relative" aria-label="Notifications">

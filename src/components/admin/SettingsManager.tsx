@@ -194,14 +194,7 @@ export function SettingsManager() {
                         <UsersIcon className="w-4 h-4" /> Users
                     </TabsTrigger>
 
-                    <TabsTrigger value="inbox">
-                        <Mail className="w-4 h-4" /> Form
-                        {submissions.filter(s => s.status !== 'replied').length > 0 && (
-                            <Badge className="ml-1 bg-red-500 hover:bg-red-600 text-[10px] items-center justify-center">
-                                {submissions.filter(s => s.status !== 'replied').length}
-                            </Badge>
-                        )}
-                    </TabsTrigger>
+
 
                     <TabsTrigger value="dates">
                         <Calendar className="w-4 h-4" /> Manage Dates
@@ -387,96 +380,7 @@ export function SettingsManager() {
                     <UserManagement />
                 </TabsContent>
 
-                {/* INBOX TAB */}
-                <TabsContent value="inbox" className="animate-in fade-in-50 duration-500">
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-                        {/* Messages List */}
-                        <div className="lg:col-span-1 bg-card border border-border rounded-xl overflow-hidden shadow-sm flex flex-col h-[600px]">
-                            <div className="p-4 border-b border-border bg-muted/30">
-                                <h3 className="font-bold flex items-center gap-2"><Mail className="w-4 h-4 text-primary" /> Inbox</h3>
-                            </div>
-                            <div className="overflow-y-auto flex-1 p-2 space-y-2">
-                                {submissions.length === 0 ? (
-                                    <p className="text-sm text-center text-muted-foreground p-4">Inbox is currently empty.</p>
-                                ) : (
-                                    submissions.map(sub => (
-                                        <button
-                                            key={sub.id}
-                                            onClick={() => setActiveSubmission(sub)}
-                                            className={`w-full text-left p-3 rounded-lg border transition-all ${activeSubmission?.id === sub.id ? 'bg-primary/5 border-primary shadow-sm' : 'border-border hover:bg-muted bg-card'}`}
-                                        >
-                                            <div className="flex justify-between items-start mb-1">
-                                                <span className="font-bold text-sm truncate pr-2">{sub.name}</span>
-                                                {sub.status === 'replied' ? (
-                                                    <CheckCircle2 className="w-3 h-3 text-green-500 shrink-0 mt-1" />
-                                                ) : (
-                                                    <Badge className="text-[10px] px-1.5 h-4 bg-blue-500">NEW</Badge>
-                                                )}
-                                            </div>
-                                            <p className="text-xs text-foreground-muted truncate">{sub.subject || 'Website Inquiry'}</p>
-                                            <p className="text-[10px] text-muted-foreground mt-2">{new Date(sub.createdAt).toLocaleDateString()}</p>
-                                        </button>
-                                    ))
-                                )}
-                            </div>
-                        </div>
-
-                        {/* Message Reader & Reply Interface */}
-                        <div className="lg:col-span-2 bg-card border border-border rounded-xl overflow-hidden shadow-sm h-[600px] flex flex-col">
-                            {activeSubmission ? (
-                                <>
-                                    <div className="p-6 border-b border-border bg-background flex-none">
-                                        <div className="flex justify-between items-start mb-4">
-                                            <div>
-                                                <h2 className="text-xl font-bold mb-1">{activeSubmission.subject || 'Website Inquiry'}</h2>
-                                                <p className="text-sm flex items-center gap-2">
-                                                    From: <span className="font-semibold text-primary">{activeSubmission.name}</span>
-                                                    <span className="text-muted-foreground">({activeSubmission.email})</span>
-                                                </p>
-                                            </div>
-                                            <Badge variant={activeSubmission.status === 'replied' ? "secondary" : "default"}>
-                                                {activeSubmission.status === 'replied' ? 'Answered' : 'Awaiting Reply'}
-                                            </Badge>
-                                        </div>
-                                    </div>
-
-                                    <div className="p-6 overflow-y-auto border-b border-border bg-muted/10 flex-1">
-                                        <div className="bg-[#fefefc] p-4 rounded-xl shadow-sm border border-border/50 text-sm leading-relaxed whitespace-pre-wrap">
-                                            {activeSubmission.message}
-                                        </div>
-                                    </div>
-
-                                    <div className="p-4 bg-background flex-none">
-                                        <p className="text-sm font-medium mb-2 flex items-center gap-2">
-                                            <Send className="w-4 h-4" /> Reply via SMTP
-                                        </p>
-                                        <RichTextEditor
-                                            content={replyMessage}
-                                            onChange={(content) => setReplyMessage(content)}
-                                            placeholder={`Draft your electronic reply to ${activeSubmission.name}...`}
-                                        />
-                                        <div className="flex justify-end">
-                                            <Button
-                                                onClick={() => sendReply(activeSubmission.id)}
-                                                disabled={!replyMessage.trim() || isReplying}
-                                                className="w-full sm:w-auto"
-                                            >
-                                                {isReplying ? "Dispatching..." : "Transmit Reply"}
-                                            </Button>
-                                        </div>
-                                    </div>
-                                </>
-                            ) : (
-                                <div className="h-full flex items-center justify-center text-muted-foreground flex-col">
-                                    <MessageSquare className="w-12 h-12 mb-4 text-border" />
-                                    <p>Select a message to view and reply</p>
-                                </div>
-                            )}
-                        </div>
-
-                    </div>
-                </TabsContent>
 
                 {/* DATES TAB */}
                 <TabsContent value="dates" className="animate-in fade-in-50 duration-500">

@@ -5,3 +5,5 @@ export { ContentEditor } from "./ContentEditor";
 export { AdminPages } from "./AdminPages";
 export { AdminLogin } from "./AdminLogin";
 export { MediaLibrary } from "./MediaLibrary";
+export { ProfileManager } from "./ProfileManager";
+export { ChangePasswordManager } from "./ChangePasswordManager";
