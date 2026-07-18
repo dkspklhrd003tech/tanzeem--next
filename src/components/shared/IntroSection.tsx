@@ -49,7 +49,7 @@ export function IntroSection({
       <div className="w-full mt-2">
         <div
           className={cn(
-            "prose prose-lg text-foreground-muted max-w-none [&>*]:[unicode-bidi:plaintext] [&>*]:text-start",
+            "prose prose-lg text-foreground max-w-none [&>*]:[unicode-bidi:plaintext] [&>*]:text-justify",
             !isHorizontal && "mx-auto"
           )}
           dangerouslySetInnerHTML={{ __html: body }}
@@ -57,7 +57,7 @@ export function IntroSection({
       </div>
 
       {showButton && buttonLabel && buttonUrl && (
-        <div className={cn("flex mt-4", isHorizontal ? "justify-end")}>
+        <div className={cn("flex mt-4", isHorizontal ? "justify-end" : "justify-center")}>
           <Button asChild size="lg" className="rounded-lg px-4 py-1 text-base font-semibold">
             <Link href={buttonUrl.startsWith("http") ? buttonUrl : buttonUrl} target={buttonNewTab || buttonUrl.startsWith("http") ? "_blank" : undefined} rel={buttonNewTab || buttonUrl.startsWith("http") ? "noopener noreferrer" : undefined}>
               {buttonLabel}
