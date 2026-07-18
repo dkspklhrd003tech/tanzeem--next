@@ -22,7 +22,7 @@ export function OrgHero({
   if (!hasContent && !backgroundImage) return null;
 
   return (
-    <section className="relative w-full my-6 overflow-hidden bg-slate-50" style={{ minHeight: 400 }}>
+    <section className="relative w-full py-6 overflow-hidden bg-slate-50" style={{ minHeight: 400 }}>
       {/* Background Image (Mosque drawing etc.) */}
       {backgroundImage && (
         <div

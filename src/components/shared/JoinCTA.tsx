@@ -68,8 +68,8 @@ export function JoinCTA({
               >
                 {/* Image Section */}
                 {card.image && (
-                  <div className="w-full relative overflow-hidden flex justify-center mt-6">
-                    <div style={{ width: card.imageWidth ? `${card.imageWidth}%` : '100%' }} className="mx-auto">
+                  <div className="w-full relative overflow-hidden flex justify-center mt-8">
+                    <div style={{ width: card.imageWidth ? `${card.imageWidth}%` : '40%' }} className="mx-auto">
                       <img
                         src={card.image}
                         alt={card.title || "Join Image"}
@@ -86,19 +86,19 @@ export function JoinCTA({
 
                   <div className="space-y-3 mb-4 flex-1 w-full">
                     {card.phone && (
-                      <p className="text-muted-foreground text-sm flex items-center justify-center gap-2">
+                      <p className="text-foreground text-sm flex items-center justify-center gap-2">
                         <Phone className="w-4 h-4 text-primary shrink-0" aria-hidden="true" />
                         <span>{card.phone}</span>
                       </p>
                     )}
                     {card.email && (
-                      <p className="text-muted-foreground text-sm flex items-center justify-center gap-2">
+                      <p className="text-foreground text-sm flex items-center justify-center gap-2">
                         <Mail className="w-4 h-4 text-primary shrink-0" aria-hidden="true" />
                         <span>{card.email}</span>
                       </p>
                     )}
                     {card.location && (
-                      <p className="text-muted-foreground text-sm flex items-center justify-center gap-2">
+                      <p className="text-foreground text-sm flex items-center justify-center gap-2">
                         <MapPin className="w-4 h-4 text-primary shrink-0" aria-hidden="true" />
                         <span>{card.location}</span>
                       </p>
