@@ -32,7 +32,7 @@ export function IntroSection({
   buttonNewTab = false,
 }: IntroSectionProps) {
   const isHorizontal = alignment === "left" || alignment === "right";
-  
+
   const textContent = (
     <div className={cn("flex flex-col gap-6", isHorizontal ? "text-left" : "text-center mx-auto max-w-4xl")}>
       <div className="space-y-4">
@@ -58,7 +58,7 @@ export function IntroSection({
 
       {showButton && buttonLabel && buttonUrl && (
         <div className={cn("flex mt-4", isHorizontal ? "justify-start" : "justify-center")}>
-          <Button asChild size="lg" className="rounded-full px-8 text-base font-semibold shadow-lg hover:-translate-y-1 transition-transform">
+          <Button asChild size="lg" className="rounded-lg px-4 py-1 text-base font-semibold">
             <Link href={buttonUrl.startsWith("http") ? buttonUrl : buttonUrl} target={buttonNewTab || buttonUrl.startsWith("http") ? "_blank" : undefined} rel={buttonNewTab || buttonUrl.startsWith("http") ? "noopener noreferrer" : undefined}>
               {buttonLabel}
             </Link>
@@ -70,13 +70,13 @@ export function IntroSection({
 
   const imageContent = image ? (
     <div className={cn("w-full", !isHorizontal && "max-w-3xl mx-auto")}>
-      <div className="relative rounded-xl overflow-hidden shadow-2xl transition-transform duration-500 hover:scale-[1.02]">
+      <div className="relative overflow-hidden">
         <img
           src={resolveMediaUrl(image)}
           alt={imageAlt || heading}
           className="w-full h-auto object-cover"
         />
-        <div className="absolute inset-0 ring-1 ring-inset ring-black/10 rounded-xl" />
+        <div className="absolute inset-0" />
       </div>
     </div>
   ) : null;

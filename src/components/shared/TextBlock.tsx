@@ -16,10 +16,10 @@ interface TextBlockProps {
   buttonNewTab?: boolean;
 }
 
-export function TextBlock({ 
-  heading, 
-  subheading, 
-  body, 
+export function TextBlock({
+  heading,
+  subheading,
+  body,
   align = "left",
   showButton = false,
   buttonLabel = "",
@@ -62,14 +62,14 @@ export function TextBlock({
             dangerouslySetInnerHTML={{ __html: body }}
           />
         )}
-        
+
         {/* Action Button */}
         {showButton && buttonLabel && buttonUrl && (
           <div className={cn(
             "mt-8 flex",
             align === "center" ? "justify-center" : align === "right" ? "justify-end" : "justify-start"
           )}>
-            <Button asChild size="lg" className="rounded-full px-8 text-base font-semibold shadow-lg hover:-translate-y-1 transition-transform">
+            <Button asChild size="lg" className="rounded-lg px-4 py-1 text-base font-semibold">
               <Link href={buttonUrl.startsWith("http") ? buttonUrl : buttonUrl} target={buttonNewTab || buttonUrl.startsWith("http") ? "_blank" : undefined} rel={buttonNewTab || buttonUrl.startsWith("http") ? "noopener noreferrer" : undefined}>
                 {buttonLabel}
               </Link>
