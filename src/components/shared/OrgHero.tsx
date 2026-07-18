@@ -66,7 +66,7 @@ export function OrgHero({
         )}
         {attribution && (
           <div className="mt-6 flex flex-col items-center">
-            <span className="bg-primary text-white rounded-lg px-2 py-0.5 text-sm md:text-lg font-bold">
+            <span className="bg-primary text-white rounded-lg px-3 py-0.5 text-sm md:text-lg font-bold">
               {attribution}
             </span>
             <span className="text-foreground text-xs md:text-sm mt-1.5 font-medium tracking-wide">Scholar Tanzeem-e-Islami</span>

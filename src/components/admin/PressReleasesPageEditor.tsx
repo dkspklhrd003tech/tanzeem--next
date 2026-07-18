@@ -475,8 +475,8 @@ export default function PressReleasesPageEditor({ pageId, initialPageData }: Pre
     const errors: Record<string, string> = {};
     if (!formData.title.trim()) errors.title = "Title is required";
     if (!formData.slug.trim()) errors.slug = "Slug is required";
-    if (!/^[a-zA-Z0-9._\-\/]+$/.test(formData.slug)) {
-      errors.slug = "Slug must not contain spaces or special characters";
+    if (!/^[a-zA-Z0-9-/_.:?=&]+$/.test(formData.slug)) {
+      errors.slug = "Slug contains invalid characters";
     }
     if (!formData.pdfUrl) errors.pdfUrl = "PDF Document is required";
     if (!formData.publishedAt) errors.publishedAt = "Published Date is required";

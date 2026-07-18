@@ -508,8 +508,8 @@ export default function SocialMediaPageEditor({ pageId, initialPageData }: Socia
     const errors: Record<string, string> = {};
     if (!platformFormData.name.trim()) errors.name = "Name is required";
     if (!platformFormData.slug.trim()) errors.slug = "Slug is required";
-    if (!/^[a-zA-Z0-9._\-\/]+$/.test(platformFormData.slug)) {
-      errors.slug = "Slug must not contain spaces or special characters";
+    if (!/^[a-zA-Z0-9-/_.:?=&]+$/.test(platformFormData.slug)) {
+      errors.slug = "Slug contains invalid characters";
     }
 
     if (Object.keys(errors).length > 0) {
