@@ -441,19 +441,6 @@ export function PageForm({ mode, initialData, parentPages = [] }: PageFormProps)
               <div className="flex border-b border-border">
                 <button
                   type="button"
-                  onClick={() => setActiveTab("content")}
-                  className={cn(
-                    "flex items-center gap-2 px-5 py-3 text-sm font-medium border-b-2 transition-colors",
-                    activeTab === "content"
-                      ? "border-primary text-primary"
-                      : "border-transparent text-muted-foreground"
-                  )}
-                >
-                  <FileText className="h-4 w-4" />
-                  Rich Text
-                </button>
-                <button
-                  type="button"
                   onClick={() => setActiveTab("sections")}
                   className={cn(
                     "flex items-center gap-2 px-5 py-3 text-sm font-medium border-b-2 transition-colors",
@@ -467,6 +454,19 @@ export function PageForm({ mode, initialData, parentPages = [] }: PageFormProps)
                   <span className="ml-1 text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded-full font-semibold">
                     Dynamic
                   </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("content")}
+                  className={cn(
+                    "flex items-center gap-2 px-5 py-3 text-sm font-medium border-b-2 transition-colors",
+                    activeTab === "content"
+                      ? "border-primary text-primary"
+                      : "border-transparent text-muted-foreground"
+                  )}
+                >
+                  <FileText className="h-4 w-4" />
+                  Rich Text
                 </button>
                 <button
                   type="button"

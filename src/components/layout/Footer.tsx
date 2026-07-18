@@ -8,6 +8,10 @@ import {
   Mail,
   MapPin,
   AudioLines,
+  BookOpen,
+  PlayCircle,
+  Layers,
+  ChevronRight,
 } from "lucide-react";
 
 const TwitterX = (props: React.SVGProps<SVGSVGElement>) => (
@@ -205,12 +209,22 @@ function FooterColumn({ column }: { column: MenuNode }) {
       </h3>
       <ul className="space-y-2">
         {links.map((link) => {
+          const lowerLabel = column.label.toLowerCase();
+          let Icon = ChevronRight;
+          if (lowerLabel.includes("audio")) Icon = AudioLines;
+          else if (lowerLabel.includes("book") || lowerLabel.includes("article")) Icon = BookOpen;
+          else if (lowerLabel.includes("video")) Icon = PlayCircle;
+          else if (lowerLabel.includes("about")) Icon = Layers;
+
           const resolved = resolveMenuLink(link.url, link.isOpenInNew);
           if (!resolved.href) return null;
+
           const content = (
-            <AudioLines className="!size-4 text-white shrink-0" aria-hidden="true" />
-            <span className="text-white hover:underline transition-colors text-sm focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2 rounded-sm">
-              {link.label}
+            <span className="flex items-center gap-2 group">
+              <Icon className="w-4 h-4 text-white transition-colors group-hover:text-primary-foreground shrink-0" aria-hidden="true" />
+              <span className="text-white group-hover:underline transition-colors text-sm focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2 rounded-sm">
+                {link.label}
+              </span>
             </span>
           );
           return (

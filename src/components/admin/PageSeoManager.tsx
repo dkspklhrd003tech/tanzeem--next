@@ -71,21 +71,95 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
     setSaving(false);
   };
 
-  const simulateAiGeneration = (field: string, newValue: string | any, delayMs = 1500) => {
+  const simulateAiGeneration = (field: string, promptText: string, delayMs = 1500) => {
     setGenerating(prev => ({ ...prev, [field]: true }));
     setTimeout(() => {
-      setPage((prev: any) => ({
-        ...prev,
-        [field]: newValue,
-      }));
+      let extractedText = "";
+      if (page.sections && Array.isArray(page.sections)) {
+        extractedText = page.sections.map((sec: any) => {
+          const c = sec.config || {};
+          return [c.heading, c.title, c.subheading, c.body, c.description, c.quoteText].filter(Boolean).join(" ");
+        }).join(" ");
+      } else if (page.content) {
+        extractedText = page.content;
+      }
+      extractedText = extractedText.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+
+      let newValue = "";
+      if (field === "metaTitle") {
+        newValue = `${page.title || "Page"} | Tanzeem-e-Islami`;
+      } else if (field === "metaDescription") {
+        newValue = extractedText.length > 20 
+          ? extractedText.substring(0, 155).trim() + "..." 
+          : `Discover comprehensive insights on ${page.title || "Tanzeem-e-Islami"}. Learn more about our mission.`;
+      } else if (field === "featuredImageAlt") {
+        newValue = `Illustration representing ${page.title || "Tanzeem-e-Islami"}`;
+      } else {
+        newValue = promptText;
+      }
+
+      setPage((prev: any) => ({ ...prev, [field]: newValue }));
       setGenerating(prev => ({ ...prev, [field]: false }));
-      toast({ title: `AI generation for ${field} completed!` });
+      toast({ title: `Smart Generation for ${field} completed!` });
     }, delayMs);
   };
 
-  const simulateNestedAiGeneration = (field: string, nestedField: string, newValue: string | any, delayMs = 1500) => {
+  const simulateNestedAiGeneration = (field: string, nestedField: string, promptText: string, delayMs = 1500) => {
     setGenerating(prev => ({ ...prev, [`${field}.${nestedField}`]: true }));
     setTimeout(() => {
+      let extractedText = "";
+      let faqs: {q: string, a: string}[] = [];
+      if (page.sections && Array.isArray(page.sections)) {
+        page.sections.forEach((sec: any) => {
+          const c = sec.config || {};
+          const textChunks = [c.heading, c.title, c.subheading, c.body, c.description, c.quoteText];
+          extractedText += " " + textChunks.filter(Boolean).join(" ");
+          
+          if (sec.type === "accordion" && c.items) {
+            c.items.forEach((item: any) => {
+              if (item.question && item.answer) {
+                faqs.push({ q: item.question, a: item.answer.replace(/<[^>]+>/g, ' ').trim() });
+              }
+            });
+          }
+        });
+      } else if (page.content) {
+        extractedText = page.content;
+      }
+      extractedText = extractedText.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+
+      let newValue: any = "";
+      if (field === "geo") {
+        if (nestedField === "summary") {
+          newValue = extractedText.length > 50 
+            ? `This page provides a detailed overview of ${page.title}. Key points include: ${extractedText.substring(0, 300)}...` 
+            : `An in-depth summary of ${page.title}.`;
+        } else if (nestedField === "entities") {
+          newValue = "Tanzeem-e-Islami, Quran, Sunnah, Islamic System, Khilafat";
+        }
+      } else if (field === "aeo") {
+        if (nestedField === "faq") {
+          if (faqs.length > 0) {
+            newValue = faqs.map(f => `Q: ${f.q}\nA: ${f.a}`).join("\n\n");
+          } else {
+            newValue = `Q: What is the main purpose of this page?\nA: This page provides important information regarding ${page.title}.`;
+          }
+        }
+      } else if (field === "schema") {
+        if (nestedField === "json") {
+          const schemaObj = {
+            "@context": "https://schema.org",
+            "@type": "WebPage",
+            "name": page.title || "Page",
+            "description": extractedText.length > 20 ? extractedText.substring(0, 150) : `Learn about ${page.title || "us"}`,
+            "publisher": { "@type": "Organization", "name": "Tanzeem-e-Islami" }
+          };
+          newValue = JSON.stringify(schemaObj, null, 2);
+        }
+      } else {
+        newValue = promptText;
+      }
+
       setPage((prev: any) => ({
         ...prev,
         seoData: {
@@ -97,7 +171,7 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
         }
       }));
       setGenerating(prev => ({ ...prev, [`${field}.${nestedField}`]: false }));
-      toast({ title: `AI generation completed!` });
+      toast({ title: `Smart Generation completed!` });
     }, delayMs);
   };
 
@@ -182,7 +256,7 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
                   <div className="flex items-center justify-between">
                     <Label className="text-base">Meta Title</Label>
                     <div className="flex gap-2">
-                      <Button variant="secondary" size="sm" onClick={() => simulateAiGeneration('metaTitle', `Optimize: ${page.title} - Official Site`)} disabled={generating.metaTitle}>
+                      <Button variant="secondary" size="sm" onClick={() => simulateAiGeneration('metaTitle', `${page.title} - Tanzeem-e-Islami`)} disabled={generating.metaTitle}>
                         {generating.metaTitle ? <RefreshCw className="h-3 w-3 mr-1 animate-spin" /> : <Wand2 className="h-3 w-3 mr-1" />} Generate
                       </Button>
                       <Button variant="outline" size="sm" onClick={() => simulateAiGeneration('metaTitle', `Improvement on ${page.metaTitle || page.title}`)} disabled={generating.metaTitle}>
