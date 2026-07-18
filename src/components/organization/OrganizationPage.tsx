@@ -209,7 +209,7 @@ function HeroBanner({ data }: { data: HeroBannerState }) {
 
       {/* Content */}
       <motion.div
-        className="container relative z-20 px-4 py-16 md:py-20 text-center flex flex-col items-center justify-center"
+        className="container relative z-20 px-4 py-8 md:py-20 text-center flex flex-col items-center justify-center"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
@@ -507,7 +507,7 @@ function JoinUS({ data }: { data: JoinState }) {
   if (!data.heading && data.cards.length === 0) return null;
 
   return (
-    <section className="py-16 relative overflow-hidden" style={{ backgroundColor: "#0d5844" }}>
+    <section className="py-8 relative overflow-hidden" style={{ backgroundColor: "#0d5844" }}>
       {/* Decorative circles */}
       <div className="absolute top-0 right-0 w-72 h-72 rounded-full opacity-[0.06] -translate-y-1/2 translate-x-1/3 blur-3xl bg-white" aria-hidden="true" />
       <div className="absolute bottom-0 left-0 w-56 h-56 rounded-full opacity-[0.06] translate-y-1/3 -translate-x-1/4 blur-3xl bg-white" aria-hidden="true" />

@@ -393,6 +393,17 @@ function SortableItem({ section, isExpanded, onToggleExpand, onRemove, onUpdate 
 
   const label = SECTION_TYPES.find(t => t.value === section.type)?.label || section.type;
 
+  const getReferenceText = (config: any, type: string) => {
+    if (!config) return `TYPE: ${type}`;
+    const text = config.heading || config.title || config.quoteText || config.quote || config.name;
+    if (text) return text;
+    if (config.body && typeof config.body === "string") {
+      const stripped = config.body.replace(/<[^>]+>/g, '').trim();
+      if (stripped) return stripped.length > 40 ? stripped.substring(0, 40) + '...' : stripped;
+    }
+    return `TYPE: ${type}`;
+  };
+
   return (
     <div ref={setNodeRef} style={style} className="group">
       <Card className="border-border hover:border-primary/30 transition-all shadow-sm">
@@ -407,7 +418,9 @@ function SortableItem({ section, isExpanded, onToggleExpand, onRemove, onUpdate 
             </div>
             <div>
               <p className="font-bold text-foreground">{label}</p>
-              <p className="text-xs text-foreground-muted uppercase tracking-wider">Type: {section.type}</p>
+              <p className="text-xs text-foreground-muted truncate max-w-[200px] sm:max-w-xs md:max-w-md">
+                {getReferenceText(section.config, section.type)}
+              </p>
             </div>
           </div>
 

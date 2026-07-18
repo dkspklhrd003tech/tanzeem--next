@@ -20,7 +20,7 @@ interface SermonsListProps {
 
 export function SermonsList({ sermons }: SermonsListProps) {
     return (
-        <section aria-labelledby="sermons-heading" className="py-14 md:py-16">
+        <section aria-labelledby="sermons-heading" className="py-14 md:py-8">
             <div className="container mx-auto">
                 <h1
                     id="sermons-heading"
@@ -31,7 +31,7 @@ export function SermonsList({ sermons }: SermonsListProps) {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {sermons.length === 0 ? (
-                        <div className="col-span-3 py-16 text-center text-foreground-muted">
+                        <div className="col-span-3 py-8 text-center text-foreground-muted">
                             <MessageSquare
                                 className="h-12 w-12 mx-auto mb-3 opacity-30"
                                 aria-hidden="true"

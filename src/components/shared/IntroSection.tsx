@@ -83,7 +83,7 @@ export function IntroSection({
 
   return (
     <section
-      className="py-16 md:py-10 overflow-hidden relative"
+      className="py-8 md:py-10 overflow-hidden relative"
       style={{ backgroundColor }}
     >
       <div className="container px-4 mx-auto relative z-10">

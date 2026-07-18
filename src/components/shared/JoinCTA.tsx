@@ -33,7 +33,7 @@ export function JoinCTA({
 
   return (
     <section
-      className="py-16 relative overflow-hidden"
+      className="py-8 relative overflow-hidden"
       style={{ backgroundColor: bgColor }}
     >
       {/* Decorative circles */}

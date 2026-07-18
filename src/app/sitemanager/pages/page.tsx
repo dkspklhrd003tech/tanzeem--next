@@ -623,7 +623,7 @@ export default function PagesListPage() {
                             className="h-8 w-8 text-muted-foreground hover:text-white hover:bg-primary rounded-lg transition-all duration-200"
                             title="Edit Page"
                           >
-                            <Link href={`/sitemanager/pages/${row.id}/edit`}>
+                            <Link href={row.slug === "organization" ? "/sitemanager/pages/organization" : row.slug === "policy" ? "/sitemanager/pages/policy" : `/sitemanager/pages/${row.id}/edit`}>
                               <Edit2 className="h-4 w-4" />
                             </Link>
                           </Button>
@@ -736,7 +736,7 @@ export default function PagesListPage() {
                         </div>
 
                         <div className="flex-1">
-                          <Link href={`/sitemanager/pages/${row.id}/edit`} className="font-bold text-foreground hover:text-primary transition-colors line-clamp-2 mb-1 filter drop-shadow-sm">
+                          <Link href={row.slug === "organization" ? "/sitemanager/pages/organization" : row.slug === "policy" ? "/sitemanager/pages/policy" : `/sitemanager/pages/${row.id}/edit`} className="font-bold text-foreground hover:text-primary transition-colors line-clamp-2 mb-1 filter drop-shadow-sm">
                             {row.title}
                           </Link>
                           <div className="flex items-center gap-1.5">
@@ -754,7 +754,7 @@ export default function PagesListPage() {
                           </div>
                           <div className="flex items-center gap-1">
                             <Button asChild variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-white hover:bg-primary rounded-lg transition-all" title="Edit Page">
-                              <Link href={`/sitemanager/pages/${row.id}/edit`}><Edit2 className="h-3.5 w-3.5" /></Link>
+                              <Link href={row.slug === "organization" ? "/sitemanager/pages/organization" : row.slug === "policy" ? "/sitemanager/pages/policy" : `/sitemanager/pages/${row.id}/edit`}><Edit2 className="h-3.5 w-3.5" /></Link>
                             </Button>
                             <Button variant="ghost" size="icon" onClick={() => window.open(`/${row.slug}`, '_blank', 'noopener,noreferrer')} className="h-7 w-7 text-muted-foreground hover:text-indigo-600 hover:bg-indigo-500/10 rounded-lg transition-all" title="View Live">
                               <Eye className="h-3.5 w-3.5" />

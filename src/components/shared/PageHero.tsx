@@ -35,7 +35,7 @@ export function PageHero({ title, subtitle, backgroundImage }: PageHeroProps) {
 
       {/* Content */}
       <motion.div
-        className="container relative z-20 px-4 py-16"
+        className="container relative z-20 px-4 py-8"
         initial={{ opacity: 0, y: 16 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}

@@ -231,7 +231,7 @@ export function MenuBuilder({ items, onChange, onEditItem }: Props) {
 
   if (topLevel.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-16 text-center border-2 border-dashed border-border rounded-xl">
+      <div className="flex flex-col items-center justify-center py-8 text-center border-2 border-dashed border-border rounded-xl">
         <Globe2 className="h-10 w-10 text-muted-foreground/30 mb-3" />
         <p className="text-sm font-medium text-muted-foreground">No menu items yet</p>
         <p className="text-xs text-muted-foreground/60 mt-1">Add items from the left panel or click + Add Item</p>

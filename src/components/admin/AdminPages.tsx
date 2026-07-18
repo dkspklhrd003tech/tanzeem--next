@@ -287,7 +287,7 @@ export function AdminPages({ section }: AdminPagesProps) {
 
         {/* Card Grid */}
         {filteredPages.length === 0 ? (
-          <div className="flex items-center justify-center py-16 text-foreground-muted">
+          <div className="flex items-center justify-center py-8 text-foreground-muted">
             <div className="text-center">
               <FileText className="h-12 w-12 mx-auto mb-3 opacity-30" />
               <p className="text-lg font-medium">No pages found</p>
@@ -434,7 +434,7 @@ export function AdminPages({ section }: AdminPagesProps) {
 
         {/* Card Grid */}
         {filteredItems.length === 0 ? (
-          <div className="flex items-center justify-center py-16 text-foreground-muted">
+          <div className="flex items-center justify-center py-8 text-foreground-muted">
             <div className="text-center">
               <FileText className="h-12 w-12 mx-auto mb-3 opacity-30" />
               <p className="text-lg font-medium">No {isAudioBooks ? "audio books" : "press releases"} found</p>

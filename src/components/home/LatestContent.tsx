@@ -14,7 +14,7 @@ export function LatestContent() {
   return (
     <>
       {/* Mission Banner */}
-      <section className="py-16 md:py-16 bg-primary relative overflow-hidden">
+      <section className="py-8 md:py-8 bg-primary relative overflow-hidden">
         {/* Pattern overlay */}
         <div className="absolute inset-0 opacity-[0.04]" style={{
           backgroundImage: `url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='1' fill-rule='evenodd'%3E%3Cpath d='M20 0L40 20L20 40L0 20z' fill-opacity='0.05'/%3E%3C/g%3E%3C/svg%3E")`,

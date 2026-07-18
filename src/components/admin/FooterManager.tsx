@@ -605,7 +605,7 @@ export function FooterManager() {
                   ))}
                 </div>
               ) : columns.length === 0 ? (
-                <div className="text-center py-16 border border-dashed border-border rounded-xl">
+                <div className="text-center py-8 border border-dashed border-border rounded-xl">
                   <LayoutTemplate className="h-10 w-10 text-muted-foreground/30 mx-auto mb-3" />
                   <p className="text-sm font-medium text-foreground-muted">No footer columns set up.</p>
                   <Button

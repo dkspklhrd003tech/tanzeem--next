@@ -26,7 +26,7 @@ export function MediaCardGrid({ heading, items, columns = 3, viewAllUrl = "/reso
   };
 
   return (
-    <section className="py-16 md:py-10 bg-background">
+    <section className="py-8 md:py-10 bg-background">
       <div className="container px-4 mx-auto">
         {heading && (
           <div className="flex flex-col md:flex-row items-end justify-between gap-6 mb-12">

@@ -19,7 +19,7 @@ interface AccordionProps {
 
 export function Accordion({ heading, items }: AccordionProps) {
   return (
-    <section className="py-16 md:py-10 bg-background">
+    <section className="py-8 md:py-10 bg-background">
       <div className="container px-4 mx-auto max-w-4xl">
         {heading && (
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-10 text-foreground">

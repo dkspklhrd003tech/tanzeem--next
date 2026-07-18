@@ -45,7 +45,7 @@ export function RedirectPage({ title, url }: RedirectPageProps) {
       {/* Dynamic site banner */}
       <PageBanner settings={settings} />
 
-      <div className="flex-1 flex items-center justify-center py-16 px-4">
+      <div className="flex-1 flex items-center justify-center py-8 px-4">
         <div className="bg-white  border border-border/80 rounded-xl p-8 max-w-md w-full text-center shadow-xl space-y-6 relative overflow-hidden">
           {/* Subtle accent border */}
           <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-primary via-emerald-500 to-primary" />

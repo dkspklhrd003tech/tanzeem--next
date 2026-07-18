@@ -47,7 +47,7 @@ export function OrgHero({
 
       {/* Content */}
       <motion.div
-        className="container relative z-20 px-4 py-16 md:py-24 mt-20 text-center flex flex-col items-center justify-center"
+        className="container relative z-20 px-4 py-8 md:py-24 mt-20 text-center flex flex-col items-center justify-center"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}

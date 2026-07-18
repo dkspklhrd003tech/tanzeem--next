@@ -275,7 +275,7 @@ export function MediaLibrary() {
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
       ) : filteredMedia.length === 0 ? (
-        <div className="text-center py-16 border-2 border-dashed border-border rounded-xl">
+        <div className="text-center py-8 border-2 border-dashed border-border rounded-xl">
           <p className="text-foreground-muted">No media files found.</p>
         </div>
       ) : viewMode === "grid" ? (

@@ -133,7 +133,7 @@ export default async function SearchPage({ searchParams }: Props) {
         {searchTerm ? (
           <SearchResultsClient results={results} searchTerm={searchTerm} />
         ) : (
-          <div className="text-center py-16 bg-card border border-dashed border-border rounded-xl">
+          <div className="text-center py-8 bg-card border border-dashed border-border rounded-xl">
             <Search className="h-10 w-10 text-foreground-muted mx-auto mb-3" />
             <h3 className="text-lg font-semibold text-foreground mb-1">Ready to Search</h3>
             <p className="text-sm text-foreground-muted max-w-sm mx-auto">

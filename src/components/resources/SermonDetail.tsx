@@ -42,7 +42,7 @@ export function SermonDetail({ sermon }: SermonDetailProps) {
     const embedUrl = isYouTube && videoUrl ? getYouTubeEmbedUrl(videoUrl) : null;
 
     return (
-        <article className="container mx-auto py-14 md:py-16 max-w-4xl">
+        <article className="container mx-auto py-14 md:py-8 max-w-4xl">
             {/* Header */}
             <header>
                 {sermonDate && (
@@ -75,9 +75,9 @@ export function SermonDetail({ sermon }: SermonDetailProps) {
             {audioUrl && (
                 <div className="mt-8">
                     <h2 className="text-lg font-semibold text-foreground mb-3">Audio</h2>
-                    <WaveformPlayer 
-                        audioUrl={audioUrl} 
-                        title={title} 
+                    <WaveformPlayer
+                        audioUrl={audioUrl}
+                        title={title}
                         speakerName={speakerName || undefined}
                         publishedAt={sermonDate}
                     />

@@ -5,7 +5,7 @@ export const metadata = { title: "Zamana Gawah Hai | Tanzeem-e-Islami" };
 export default function ZamanaGawahHayPage() {
   return (
     <main className=" bg-background">
-      <div className="container mx-auto py-12 md:py-16">
+      <div className="container mx-auto py-12 md:py-8">
         <article className="prose prose-lg  max-w-4xl mx-auto">
           <h1>Zamana Gawah Hai</h1>
           <p className="lead text-xl text-muted-foreground mb-8">

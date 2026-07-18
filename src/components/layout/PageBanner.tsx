@@ -43,9 +43,9 @@ export function PageBanner({ settings, titleOverride, breadcrumbsOverride, bgIma
 
     // Skip fetching page data for dynamic resource detail routes to avoid unnecessary 404s
     const skipPrefixes = [
-      "audio/", "videos/", "books/", "audio-books/", 
+      "audio/", "videos/", "books/", "audio-books/",
       "magazines/", "campaigns/", "services/", "press-releases/",
-      "events/", "books-by-category/", "videos-by-category/", 
+      "events/", "books-by-category/", "videos-by-category/",
       "videos-by-speakers/", "audios-by-speaker/", "resources/khitab-e-jumah/"
     ];
     if (skipPrefixes.some(prefix => slug.startsWith(prefix))) return;
@@ -116,7 +116,7 @@ export function PageBanner({ settings, titleOverride, breadcrumbsOverride, bgIma
 
   return (
     <section
-      className="relative overflow-hidden flex items-center justify-center text-center w-full py-16 md:py-24"
+      className="relative overflow-hidden flex items-center justify-center text-center w-full py-8 md:py-24"
       style={{
         minHeight: bannerHeight !== "auto" ? bannerHeight : undefined,
         backgroundColor: overlayColor, // Base background color fallback

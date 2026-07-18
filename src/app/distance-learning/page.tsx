@@ -38,7 +38,7 @@ export default async function DistanceLearningPage() {
 
   return (
     <main className=" bg-background">
-      <div className="container mx-auto py-12 md:py-16">
+      <div className="container mx-auto py-12 md:py-8">
         <article className="prose prose-lg  max-w-4xl mx-auto mb-12">
           <h1>Distance Learning</h1>
           <p className="lead text-xl text-muted-foreground mb-8">

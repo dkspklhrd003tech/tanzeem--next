@@ -398,7 +398,7 @@ isActive: boolean
 
 ```
 Mobile:  py-14 (3.5rem)
-Desktop: md:py-16 (4rem)
+Desktop: md:py-8 (4rem)
 ```
 
 #### Grid Gaps

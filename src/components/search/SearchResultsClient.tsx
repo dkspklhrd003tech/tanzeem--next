@@ -89,7 +89,7 @@ export function SearchResultsClient({ results, searchTerm }: Props) {
 
   if (results.length === 0) {
     return (
-      <div className="text-center py-16 bg-card border border-dashed border-border rounded-xl">
+      <div className="text-center py-8 bg-card border border-dashed border-border rounded-xl">
         <AlertCircle className="h-10 w-10 text-foreground-muted mx-auto mb-3" />
         <h3 className="text-lg font-semibold text-foreground mb-1">No Results Found</h3>
         <p className="text-sm text-foreground-muted max-w-sm mx-auto">

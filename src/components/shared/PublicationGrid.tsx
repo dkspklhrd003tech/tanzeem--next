@@ -19,7 +19,7 @@ interface PublicationGridProps {
 
 export function PublicationGrid({ heading, publications, viewAllUrl }: PublicationGridProps) {
   return (
-    <section className="py-16 md:py-10 bg-card/30">
+    <section className="py-8 md:py-10 bg-card/30">
       <div className="container px-4 mx-auto">
         {heading && (
           <div className="flex flex-col md:flex-row items-end justify-between gap-6 mb-12">
