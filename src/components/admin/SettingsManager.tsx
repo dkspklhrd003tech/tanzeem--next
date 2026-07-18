@@ -461,7 +461,7 @@ export function SettingsManager() {
 
                             {/* Date Preview */}
                             <div className="p-4 rounded-lg bg-muted/40 border border-border max-w-md">
-                                <span className="text-xs font-semibold text-muted-foreground block mb-1">LIVE PREVIEW ON FRONTEND</span>
+                                <span className="text-xs font-semibold text-muted-foreground block mb-1">LIVE PREVIEW Date Header Top</span>
                                 <span className="text-sm font-bold text-foreground flex items-center gap-1.5 flex-wrap">
                                     {(() => {
                                         const toUrduNumerals = (n: string) =>
@@ -606,7 +606,7 @@ export function SettingsManager() {
                                         <h4 className="font-semibold text-foreground">Maintenance Mode</h4>
                                         <p className="text-sm text-muted-foreground mt-1">When active, the frontend will display a maintenance page. You will still be able to access the admin panel.</p>
                                     </div>
-                                    <Switch 
+                                    <Switch
                                         checked={settings.maintenance_mode === "true"}
                                         onCheckedChange={(checked) => handleSettingChange("maintenance_mode", checked ? "true" : "false")}
                                     />
@@ -698,7 +698,7 @@ export function SettingsManager() {
                                             <h4 className="font-semibold text-foreground">Enable Disclaimer Popup</h4>
                                             <p className="text-sm text-muted-foreground mt-1">Toggle whether the disclaimer popup is active on the homepage.</p>
                                         </div>
-                                        <Switch 
+                                        <Switch
                                             checked={settings.disclaimer_enabled === "true"}
                                             onCheckedChange={(checked) => handleSettingChange("disclaimer_enabled", checked ? "true" : "false")}
                                         />
