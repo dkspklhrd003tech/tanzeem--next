@@ -57,7 +57,7 @@ export function IntroSection({
       </div>
 
       {showButton && buttonLabel && buttonUrl && (
-        <div className={cn("flex mt-4", isHorizontal ? "justify-start" : "justify-center")}>
+        <div className={cn("flex mt-4", isHorizontal ? "justify-end")}>
           <Button asChild size="lg" className="rounded-lg px-4 py-1 text-base font-semibold">
             <Link href={buttonUrl.startsWith("http") ? buttonUrl : buttonUrl} target={buttonNewTab || buttonUrl.startsWith("http") ? "_blank" : undefined} rel={buttonNewTab || buttonUrl.startsWith("http") ? "noopener noreferrer" : undefined}>
               {buttonLabel}
