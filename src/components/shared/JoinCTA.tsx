@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { ArrowRight, MapPin, Phone, Mail } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, resolveMediaUrl } from "@/lib/utils";
 
 interface JoinCardConfig {
   title?: string;
@@ -71,7 +71,7 @@ export function JoinCTA({
                   <div className="w-full relative overflow-hidden flex justify-center mt-8">
                     <div style={{ width: card.imageWidth ? `${card.imageWidth}%` : '40%' }} className="mx-auto">
                       <img
-                        src={card.image}
+                        src={resolveMediaUrl(card.image)}
                         alt={card.title || "Join Image"}
                         className="object-contain w-full h-auto mx-auto group-hover:scale-105 transition-transform duration-500"
                       />

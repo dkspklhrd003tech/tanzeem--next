@@ -1,7 +1,8 @@
 "use client";
 
-import { motion } from "framer-motion";
 import React from "react";
+import { motion } from "framer-motion";
+import { cn, resolveMediaUrl } from "@/lib/utils";
 
 interface OrgHeroProps {
   topLabel?: string;
@@ -27,7 +28,7 @@ export function OrgHero({
       {backgroundImage && (
         <div
           className="absolute inset-0 z-0 bg-contain bg-top bg-no-repeat opacity-80"
-          style={{ backgroundImage: `url('${backgroundImage}')` }}
+          style={{ backgroundImage: `url('${resolveMediaUrl(backgroundImage)}')` }}
           aria-hidden="true"
         />
       )}
@@ -37,7 +38,7 @@ export function OrgHero({
       {decorativeImage && (
         <div className="absolute right-0 top-0 h-full w-1/3 z-10 opacity-30 pointer-events-none">
           <img
-            src={decorativeImage}
+            src={resolveMediaUrl(decorativeImage)}
             alt=""
             className="h-full w-full object-cover object-left"
             aria-hidden="true"

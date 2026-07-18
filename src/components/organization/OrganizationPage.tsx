@@ -7,7 +7,7 @@ import {
   ArrowRight, User, BookOpen, Star, Compass, Target,
   MapPin, Phone, Building2,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, resolveMediaUrl } from "@/lib/utils";
 import type { LucideIcon } from "lucide-react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -193,7 +193,7 @@ function HeroBanner({ data }: { data: HeroBannerState }) {
       {data.backgroundImage ? (
         <div
           className="absolute inset-0 z-0 bg-contain bg-center"
-          style={{ backgroundImage: `url('${data.backgroundImage}')` }}
+          style={{ backgroundImage: `url('${resolveMediaUrl(data.backgroundImage)}')` }}
           aria-hidden="true"
         />
       ) : (
@@ -205,7 +205,7 @@ function HeroBanner({ data }: { data: HeroBannerState }) {
       {data.decorativeImage && (
         <div className="absolute right-0 top-0 h-full w-1/3 z-10 opacity-30 pointer-events-none">
           <img
-            src={data.decorativeImage}
+            src={resolveMediaUrl(data.decorativeImage)}
             alt=""
             className="h-full w-full object-cover object-left"
             aria-hidden="true"
@@ -290,7 +290,7 @@ function OurHistory({ data }: { data: HistoryState }) {
             <div className="md:w-80 shrink-0">
               <div className="rounded-xl overflow-hidden shadow-lg">
                 <img
-                  src={data.sideImage}
+                  src={resolveMediaUrl(data.sideImage)}
                   alt="Our History"
                   className="w-full h-auto object-cover"
                 />
@@ -356,7 +356,7 @@ function LeaderBio({ data }: { data: LeaderState }) {
               <div className="w-48 h-48 rounded-xl overflow-hidden border-2 border-primary/20 bg-background">
                 {data.avatar ? (
                   <img
-                    src={data.avatar}
+                    src={resolveMediaUrl(data.avatar)}
                     alt={data.name || "Leader photo"}
                     className="w-full h-full object-cover"
                     onError={(e) => {
