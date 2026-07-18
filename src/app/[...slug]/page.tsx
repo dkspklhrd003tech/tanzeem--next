@@ -605,7 +605,7 @@ export default async function DynamicPage({ params }: PageProps) {
         <ModernizedProsePage
           title={page.title}
           excerpt={page.excerpt}
-          content={page.content}
+          content=""
           slug={slug}
           breadcrumbs={crumbs}
           featuredImage={page.featuredImage}
