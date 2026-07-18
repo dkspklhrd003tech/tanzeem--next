@@ -38,7 +38,7 @@ async function HomeContent() {
       .select()
       .from(homeSliders)
       .where(eq(homeSliders.isActive, true))
-      .orderBy(desc(homeSliders.order), desc(homeSliders.createdAt));
+      .orderBy(asc(homeSliders.order), desc(homeSliders.createdAt));
   } catch (error) { console.error("Failed to fetch sliders:", error); }
 
   try {
@@ -113,7 +113,7 @@ async function HomeContent() {
       .select()
       .from(teamMembers)
       .where(eq(teamMembers.isActive, true))
-      .orderBy(desc(teamMembers.order), desc(teamMembers.createdAt));
+      .orderBy(asc(teamMembers.order), desc(teamMembers.createdAt));
   } catch (error) { console.error("Failed to fetch team members:", error); }
 
   try {
@@ -121,7 +121,7 @@ async function HomeContent() {
       .select()
       .from(campaigns)
       .where(and(eq(campaigns.isPublished, true), eq(campaigns.isFeatured, true)))
-      .orderBy(desc(campaigns.createdAt))
+      .orderBy(asc(campaigns.orderIndex), desc(campaigns.createdAt))
       .limit(8);
 
     featuredCampaigns = featuredList.map(c => ({

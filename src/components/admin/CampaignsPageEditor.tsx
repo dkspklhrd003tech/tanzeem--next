@@ -1227,6 +1227,17 @@ export default function CampaignsPageEditor({ pageId, initialPageData }: Campaig
                   {formErrors.slug && <p className="text-xs text-destructive">{formErrors.slug}</p>}
                 </div>
 
+                <div className="flex items-center justify-between p-3 border border-border rounded-xl bg-emerald-500/10 border-emerald-500/20 mt-6 h-[42px] col-span-1 md:col-span-2">
+                  <div>
+                    <span className="text-sm font-bold text-emerald-700">Display in Featured Section</span>
+                    <p className="text-[10px] text-emerald-600/80">Toggle to feature this campaign directly on the homepage</p>
+                  </div>
+                  <Switch
+                    checked={formData.isFeatured}
+                    onCheckedChange={(checked) => setFormData(prev => ({ ...prev, isFeatured: checked }))}
+                  />
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label>Category <span className="text-destructive">*</span></Label>
@@ -1272,16 +1283,6 @@ export default function CampaignsPageEditor({ pageId, initialPageData }: Campaig
                     />
                   </div>
 
-                  <div className="flex items-center justify-between p-3 border border-border rounded-xl bg-emerald-500/10 border-emerald-500/20 mt-6 h-[42px] col-span-1 md:col-span-2">
-                    <div>
-                      <span className="text-sm font-bold text-emerald-700">Display in Featured Section</span>
-                      <p className="text-[10px] text-emerald-600/80">Toggle to feature this campaign directly on the homepage</p>
-                    </div>
-                    <Switch
-                      checked={formData.isFeatured}
-                      onCheckedChange={(checked) => setFormData(prev => ({ ...prev, isFeatured: checked }))}
-                    />
-                  </div>
                 </div>
 
                 <div className="border border-border/80 rounded-xl p-4 bg-muted/10 space-y-3">
