@@ -13,6 +13,8 @@ interface ImageTextProps {
   imagePosition?: "left" | "right";
   buttonLabel?: string;
   buttonUrl?: string;
+  showButton?: boolean;
+  buttonNewTab?: boolean;
 }
 
 export function ImageText({
@@ -23,6 +25,8 @@ export function ImageText({
   imagePosition = "right",
   buttonLabel,
   buttonUrl,
+  showButton = false,
+  buttonNewTab = false,
 }: ImageTextProps) {
   if (!heading && !body && !image) return null;
 
@@ -79,10 +83,12 @@ export function ImageText({
                 dangerouslySetInnerHTML={{ __html: body }}
               />
             )}
-            {buttonLabel && buttonUrl && (
+            {showButton && buttonLabel && buttonUrl && (
               <div className="pt-2">
                 <Link
-                  href={buttonUrl}
+                  href={buttonUrl.startsWith("http") ? buttonUrl : buttonUrl}
+                  target={buttonNewTab || buttonUrl.startsWith("http") ? "_blank" : undefined}
+                  rel={buttonNewTab || buttonUrl.startsWith("http") ? "noopener noreferrer" : undefined}
                   className={cn(
                     "inline-flex items-center gap-2 bg-primary text-white",
                     "px-6 py-2.5 rounded-full text-sm font-semibold",

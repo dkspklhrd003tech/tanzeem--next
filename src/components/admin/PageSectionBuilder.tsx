@@ -132,39 +132,45 @@ export function PageSectionBuilder({ pageId, onSave }: PageSectionBuilderProps) 
   };
 
   const addSection = (type: string) => {
-    const newSection: Section = {
-      id: uuidv4(),
-      type,
-      order: sections.length,
-      config: getDefaultConfig(type),
-      isActive: true,
-    };
-    const updated = [...sections, newSection];
-    setSections(updated);
-    setExpandedId(newSection.id);
-    onSave(updated);
+    setSections((prevSections) => {
+      const newSection: Section = {
+        id: uuidv4(),
+        type,
+        order: prevSections.length,
+        config: getDefaultConfig(type),
+        isActive: true,
+      };
+      const updated = [...prevSections, newSection];
+      setExpandedId(newSection.id);
+      onSave(updated);
+      return updated;
+    });
   };
 
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
   const removeSection = (id: string) => {
-    const updated = sections.filter((s) => s.id !== id);
-    setSections(updated);
-    onSave(updated);
+    setSections((prev) => {
+      const updated = prev.filter((s) => s.id !== id);
+      onSave(updated);
+      return updated;
+    });
     setDeletingId(null);
   };
 
   const updateSection = (id: string, updates: Partial<Section>) => {
-    const updated = sections.map((s) => (s.id === id ? { ...s, ...updates } : s));
-    setSections(updated);
-    onSave(updated);
+    setSections((prev) => {
+      const updated = prev.map((s) => (s.id === id ? { ...s, ...updates } : s));
+      onSave(updated);
+      return updated;
+    });
   };
   const getDefaultConfig = (type: string) => {
     switch (type) {
       case "hero":
         return { title: "", subtitle: "", backgroundImage: "" };
       case "intro":
-        return { heading: "", subheading: "", body: "", image: "", alignment: "left" };
+        return { heading: "", subheading: "", body: "", image: "", alignment: "top", showButton: false, buttonLabel: "", buttonUrl: "", buttonNewTab: false };
       case "cta_banner":
         return { heading: "", subheading: "", buttonLabel: "", buttonUrl: "" };
       case "stats":
@@ -181,7 +187,7 @@ export function PageSectionBuilder({ pageId, onSave }: PageSectionBuilderProps) 
         return { source: "", aspectRatio: "video" };
       // ── New section types ────────────────────────────────────────────
       case "text_block":
-        return { heading: "", subheading: "", body: "", align: "left" };
+        return { heading: "", subheading: "", body: "", align: "left", showButton: false, buttonLabel: "", buttonUrl: "", buttonNewTab: false };
       case "org_hero":
         return {
           topLabel: "WELCOME TO ISLAMIC MISSIONARY",
@@ -199,6 +205,8 @@ export function PageSectionBuilder({ pageId, onSave }: PageSectionBuilderProps) 
           imagePosition: "right",  // "left" | "right"
           buttonLabel: "",
           buttonUrl: "",
+          showButton: false,
+          buttonNewTab: false,
         };
       case "quote_banner":
         return {
@@ -262,8 +270,8 @@ export function PageSectionBuilder({ pageId, onSave }: PageSectionBuilderProps) 
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-bold">Page Sections</h3>
         <Select onValueChange={addSection}>
-          <SelectTrigger className="w-[200px] bg-primary text-white">
-            <Plus className="w-4 h-4 mr-2" />
+          <SelectTrigger className="w-[150px] bg-primary !text-muted">
+            <Plus className="w-4 h-4 text-white" />
             <SelectValue placeholder="Add Section" />
           </SelectTrigger>
           <SelectContent>
@@ -302,7 +310,9 @@ export function PageSectionBuilder({ pageId, onSave }: PageSectionBuilderProps) 
         onOpenChange={(isOpen) => !isOpen && setDeletingId(null)}
         title="Remove Section"
         description="Are you sure you want to remove this section? This will delete all its content and configuration."
-        onConfirm={() => deletingId && removeSection(deletingId)}
+        onConfirm={() => {
+          if (deletingId) removeSection(deletingId);
+        }}
       />
 
       {sections.length === 0 && (
@@ -478,11 +488,38 @@ function SectionConfigForm({ type, config: rawConfig, onUpdate }: { type: string
               <Select value={config.alignment || "left"} onValueChange={(val) => handleChange("alignment", val)}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="left">Left (Image on Right)</SelectItem>
-                  <SelectItem value="right">Right (Image on Left)</SelectItem>
+                  <SelectItem value="top">Top (Image on Top)</SelectItem>
+                  <SelectItem value="bottom">Bottom (Image on Bottom)</SelectItem>
+                  <SelectItem value="left">Left (Image on Left)</SelectItem>
+                  <SelectItem value="right">Right (Image on Right)</SelectItem>
                 </SelectContent>
               </Select>
             </div>
+          </div>
+          <div className="space-y-4 pt-4 border-t border-border/50">
+            <div className="flex items-center justify-between">
+              <div>
+                <Label>Show Action Button</Label>
+                <p className="text-xs text-muted-foreground">Add an optional button below the content.</p>
+              </div>
+              <Switch checked={config.showButton} onCheckedChange={(val) => handleChange("showButton", val)} />
+            </div>
+            {config.showButton && (
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Button Label</Label>
+                  <Input value={config.buttonLabel || ""} onChange={(e) => handleChange("buttonLabel", e.target.value)} placeholder="Read More" />
+                </div>
+                <div className="space-y-2">
+                  <Label>Button Link/URL</Label>
+                  <Input value={config.buttonUrl || ""} onChange={(e) => handleChange("buttonUrl", e.target.value)} placeholder="/about or https://..." />
+                </div>
+                <div className="flex items-center gap-2 mt-2 col-span-2">
+                  <Switch checked={config.buttonNewTab} onCheckedChange={(val) => handleChange("buttonNewTab", val)} />
+                  <Label className="text-xs">Open in new tab</Label>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       );
@@ -827,6 +864,31 @@ function SectionConfigForm({ type, config: rawConfig, onUpdate }: { type: string
               </SelectContent>
             </Select>
           </div>
+          <div className="space-y-4 pt-4 border-t border-border/50">
+            <div className="flex items-center justify-between">
+              <div>
+                <Label>Show Action Button</Label>
+                <p className="text-xs text-muted-foreground">Add an optional button below the content.</p>
+              </div>
+              <Switch checked={config.showButton} onCheckedChange={(val) => handleChange("showButton", val)} />
+            </div>
+            {config.showButton && (
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Button Label</Label>
+                  <Input value={config.buttonLabel || ""} onChange={(e) => handleChange("buttonLabel", e.target.value)} placeholder="Read More" />
+                </div>
+                <div className="space-y-2">
+                  <Label>Button Link/URL</Label>
+                  <Input value={config.buttonUrl || ""} onChange={(e) => handleChange("buttonUrl", e.target.value)} placeholder="/about or https://..." />
+                </div>
+                <div className="flex items-center gap-2 mt-2 col-span-2">
+                  <Switch checked={config.buttonNewTab} onCheckedChange={(val) => handleChange("buttonNewTab", val)} />
+                  <Label className="text-xs">Open in new tab</Label>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       );
 
@@ -891,13 +953,29 @@ function SectionConfigForm({ type, config: rawConfig, onUpdate }: { type: string
                 <Label>Image Alt Text</Label>
                 <Input value={config.imageAlt ?? ""} onChange={(e) => handleChange("imageAlt", e.target.value)} placeholder="Describe the image" />
               </div>
-              <div className="space-y-2">
-                <Label>Button Label (optional)</Label>
-                <Input value={config.buttonLabel ?? ""} onChange={(e) => handleChange("buttonLabel", e.target.value)} placeholder="Read More" />
-              </div>
-              <div className="space-y-2">
-                <Label>Button URL</Label>
-                <Input value={config.buttonUrl ?? ""} onChange={(e) => handleChange("buttonUrl", e.target.value)} placeholder="/page-slug" />
+              <div className="space-y-4 pt-2 mt-2 border-t border-border/50">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <Label>Show Action Button</Label>
+                  </div>
+                  <Switch checked={config.showButton} onCheckedChange={(val) => handleChange("showButton", val)} />
+                </div>
+                {config.showButton && (
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label>Button Label</Label>
+                      <Input value={config.buttonLabel ?? ""} onChange={(e) => handleChange("buttonLabel", e.target.value)} placeholder="Read More" />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Button URL</Label>
+                      <Input value={config.buttonUrl ?? ""} onChange={(e) => handleChange("buttonUrl", e.target.value)} placeholder="/page-slug" />
+                    </div>
+                    <div className="flex items-center gap-2 mt-2">
+                      <Switch checked={config.buttonNewTab} onCheckedChange={(val) => handleChange("buttonNewTab", val)} />
+                      <Label className="text-xs">Open in new tab</Label>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>

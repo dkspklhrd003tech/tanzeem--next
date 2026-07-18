@@ -591,23 +591,6 @@ export function PageForm({ mode, initialData, parentPages = [] }: PageFormProps)
             </CardContent>
           </Card>
 
-          {/* Featured image URL */}
-          <Card>
-            <CardContent className="p-5">
-              <Label htmlFor="featImg" className="text-xs font-semibold uppercase tracking-wide mb-1.5 block">Featured Image URL</Label>
-              {form.featuredImage && (
-                <div className="relative rounded-lg overflow-hidden aspect-video mb-3 bg-muted">
-                  <img src={form.featuredImage} alt="Featured" className="w-full h-full object-cover" />
-                  <button type="button" onClick={() => set("featuredImage", "")}
-                    className="absolute top-1.5 right-1.5 bg-black/60 hover:bg-black/80 text-white rounded-full p-0.5 transition-colors">
-                    <AlertCircle className="h-3.5 w-3.5" />
-                  </button>
-                </div>
-              )}
-              <Input id="featImg" placeholder="https://…" value={form.featuredImage} onChange={e => set("featuredImage", e.target.value)} className="text-sm" />
-            </CardContent>
-          </Card>
-
           {/* Basic SEO */}
           <Card>
             <CardHeader className="p-5 pb-0">

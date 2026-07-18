@@ -2,15 +2,30 @@
 
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 interface TextBlockProps {
   heading?: string;
   subheading?: string;
   body?: string;
   align?: "left" | "center" | "right";
+  showButton?: boolean;
+  buttonLabel?: string;
+  buttonUrl?: string;
+  buttonNewTab?: boolean;
 }
 
-export function TextBlock({ heading, subheading, body, align = "left" }: TextBlockProps) {
+export function TextBlock({ 
+  heading, 
+  subheading, 
+  body, 
+  align = "left",
+  showButton = false,
+  buttonLabel = "",
+  buttonUrl = "",
+  buttonNewTab = false
+}: TextBlockProps) {
   if (!heading && !body && !subheading) return null;
 
   return (
@@ -46,6 +61,20 @@ export function TextBlock({ heading, subheading, body, align = "left" }: TextBlo
               prose-li:text-foreground-muted"
             dangerouslySetInnerHTML={{ __html: body }}
           />
+        )}
+        
+        {/* Action Button */}
+        {showButton && buttonLabel && buttonUrl && (
+          <div className={cn(
+            "mt-8 flex",
+            align === "center" ? "justify-center" : align === "right" ? "justify-end" : "justify-start"
+          )}>
+            <Button asChild size="lg" className="rounded-full px-8 text-base font-semibold shadow-lg hover:-translate-y-1 transition-transform">
+              <Link href={buttonUrl.startsWith("http") ? buttonUrl : buttonUrl} target={buttonNewTab || buttonUrl.startsWith("http") ? "_blank" : undefined} rel={buttonNewTab || buttonUrl.startsWith("http") ? "noopener noreferrer" : undefined}>
+                {buttonLabel}
+              </Link>
+            </Button>
+          </div>
         )}
       </motion.div>
     </section>

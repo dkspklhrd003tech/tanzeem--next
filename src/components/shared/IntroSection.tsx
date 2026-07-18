@@ -1,6 +1,8 @@
 "use client";
 
 import { cn, resolveMediaUrl } from "@/lib/utils";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 interface IntroSectionProps {
   heading: string;
@@ -8,8 +10,12 @@ interface IntroSectionProps {
   body: string;
   image?: string;
   imageAlt?: string;
-  alignment?: "left" | "right";
+  alignment?: "left" | "right" | "top" | "bottom";
   backgroundColor?: string;
+  showButton?: boolean;
+  buttonLabel?: string;
+  buttonUrl?: string;
+  buttonNewTab?: boolean;
 }
 
 export function IntroSection({
@@ -18,50 +24,100 @@ export function IntroSection({
   body,
   image,
   imageAlt,
-  alignment = "left",
+  alignment = "top",
   backgroundColor = "transparent",
+  showButton = false,
+  buttonLabel = "",
+  buttonUrl = "",
+  buttonNewTab = false,
 }: IntroSectionProps) {
+  const isHorizontal = alignment === "left" || alignment === "right";
+  
+  const textContent = (
+    <div className={cn("flex flex-col gap-6", isHorizontal ? "text-left" : "text-center mx-auto max-w-4xl")}>
+      <div className="space-y-4">
+        {subheading && (
+          <span className={cn("text-primary font-bold uppercase tracking-wider text-sm block", !isHorizontal && "text-center")}>
+            {subheading}
+          </span>
+        )}
+        <h2 className={cn("text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-tight", !isHorizontal && "text-center")}>
+          {heading}
+        </h2>
+      </div>
+
+      <div className="w-full mt-2">
+        <div
+          className={cn(
+            "prose prose-lg text-foreground-muted max-w-none [&>*]:[unicode-bidi:plaintext] [&>*]:text-start",
+            !isHorizontal && "mx-auto"
+          )}
+          dangerouslySetInnerHTML={{ __html: body }}
+        />
+      </div>
+
+      {showButton && buttonLabel && buttonUrl && (
+        <div className={cn("flex mt-4", isHorizontal ? "justify-start" : "justify-center")}>
+          <Button asChild size="lg" className="rounded-full px-8 text-base font-semibold shadow-lg hover:-translate-y-1 transition-transform">
+            <Link href={buttonUrl.startsWith("http") ? buttonUrl : buttonUrl} target={buttonNewTab || buttonUrl.startsWith("http") ? "_blank" : undefined} rel={buttonNewTab || buttonUrl.startsWith("http") ? "noopener noreferrer" : undefined}>
+              {buttonLabel}
+            </Link>
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+
+  const imageContent = image ? (
+    <div className={cn("w-full", !isHorizontal && "max-w-3xl mx-auto")}>
+      <div className="relative rounded-xl overflow-hidden shadow-2xl transition-transform duration-500 hover:scale-[1.02]">
+        <img
+          src={resolveMediaUrl(image)}
+          alt={imageAlt || heading}
+          className="w-full h-auto object-cover"
+        />
+        <div className="absolute inset-0 ring-1 ring-inset ring-black/10 rounded-xl" />
+      </div>
+    </div>
+  ) : null;
+
   return (
     <section
-      className="py-16 md:py-10 overflow-hidden"
+      className="py-16 md:py-10 overflow-hidden relative"
       style={{ backgroundColor }}
     >
-      <div className="container px-4 mx-auto">
-        <div className="flex flex-col gap-8 max-w-5xl mx-auto">
-          {/* Header Content */}
-          <div className="space-y-4 text-center">
-            {subheading && (
-              <span className="text-primary font-bold uppercase tracking-wider text-sm block">
-                {subheading}
-              </span>
+      <div className="container px-4 mx-auto relative z-10">
+        {isHorizontal ? (
+          <div className={cn(
+            "grid grid-cols-1 md:grid-cols-2 gap-12 items-center max-w-7xl mx-auto",
+          )}>
+            {alignment === "left" ? (
+              <>
+                {imageContent}
+                {textContent}
+              </>
+            ) : (
+              <>
+                {textContent}
+                {imageContent}
+              </>
             )}
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-tight">
-              {heading}
-            </h2>
           </div>
-
-          {/* Centered Image Just Below Heading */}
-          {image && (
-            <div className="w-full max-w-3xl mx-auto">
-              <div className="relative rounded-xl overflow-hidden shadow-2xl transition-transform duration-500 hover:scale-[1.02]">
-                <img
-                  src={resolveMediaUrl(image)}
-                  alt={imageAlt || heading}
-                  className="w-full h-auto object-cover"
-                />
-                <div className="absolute inset-0 ring-1 ring-inset ring-black/10 rounded-xl" />
-              </div>
-            </div>
-          )}
-
-          {/* Body Content */}
-          <div className="w-full mt-4">
-            <div
-              className="prose prose-lg text-foreground-muted max-w-none [&>*]:[unicode-bidi:plaintext] [&>*]:text-start"
-              dangerouslySetInnerHTML={{ __html: body }}
-            />
+        ) : (
+          <div className="flex flex-col gap-10 max-w-5xl mx-auto">
+            {alignment === "top" ? (
+              <>
+                {imageContent}
+                {textContent}
+              </>
+            ) : (
+              <>
+                {textContent}
+                {imageContent}
+              </>
+            )}
           </div>
-        </div>
+        )}
       </div>
     </section>
   );
