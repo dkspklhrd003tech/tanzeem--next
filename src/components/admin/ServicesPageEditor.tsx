@@ -167,7 +167,7 @@ function SortableCard({ id, item, onEdit, onDelete }: SortableItemProps) {
               variant="ghost"
               size="icon"
               className="h-7 w-7 text-blue-500 hover:text-blue-600 hover:bg-blue-500/10"
-              onClick={() => window.open(`/services/${item.slug}`, '_blank')}
+              onClick={() => window.open(item.slug.startsWith("http") ? item.slug : `/services/${item.slug}`, '_blank')}
               title="View on Frontend"
             >
               <ExternalLink className="h-3.5 w-3.5" />

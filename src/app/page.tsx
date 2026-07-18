@@ -83,7 +83,7 @@ async function HomeContent() {
         id: s.id,
         title: s.title,
         imageUrl: s.imageUrl || "",
-        linkUrl: `/services/${s.slug}`,
+        linkUrl: s.slug.startsWith("http") ? s.slug : `/services/${s.slug}`,
         openInNewTab: fields?.openInNewTab || false,
         order: s.order,
         createdAt: s.createdAt,
@@ -96,7 +96,7 @@ async function HomeContent() {
       id: c.id,
       title: c.title,
       imageUrl: c.thumbnailUrl || "",
-      linkUrl: `/campaigns/${c.slug}`,
+      linkUrl: c.slug.startsWith("http") ? c.slug : `/campaigns/${c.slug}`,
       openInNewTab: false,
       order: c.orderIndex || 0,
       createdAt: c.createdAt,
@@ -127,7 +127,7 @@ async function HomeContent() {
     featuredCampaigns = featuredList.map(c => ({
       id: c.id,
       title: c.title,
-      linkUrl: `/campaigns/${c.slug}`,
+      linkUrl: c.slug.startsWith("http") ? c.slug : `/campaigns/${c.slug}`,
       imageUrl: c.thumbnailUrl || ""
     }));
   } catch (error) { console.error("Failed to fetch featured campaigns:", error); }

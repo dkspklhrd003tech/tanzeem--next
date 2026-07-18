@@ -118,7 +118,7 @@ export function CampaignsGrid({ initialItems }: CampaignsGridProps) {
               : "Recent";
 
             return (
-              <Link href={`/campaigns/${item.slug || item.id}`} key={item.id} className="block group">
+              <Link href={item.slug?.startsWith("http") ? item.slug : `/campaigns/${item.slug || item.id}`} key={item.id} className="block group" target={item.slug?.startsWith("http") ? "_blank" : undefined}>
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
