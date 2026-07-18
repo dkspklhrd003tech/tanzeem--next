@@ -7,6 +7,7 @@ import {
   Phone,
   Mail,
   MapPin,
+  AudioLines,
 } from "lucide-react";
 
 const TwitterX = (props: React.SVGProps<SVGSVGElement>) => (
@@ -111,8 +112,8 @@ export function Footer() {
                 )
               )}
               {settings.footer_landline && (
-                <a 
-                  href={settings.footer_landline_url ? `tel:${settings.footer_landline_url}` : `tel:${settings.footer_landline}`} 
+                <a
+                  href={settings.footer_landline_url ? `tel:${settings.footer_landline_url}` : `tel:${settings.footer_landline}`}
                   target={settings.footer_landline_new_tab !== 'false' ? "_blank" : undefined}
                   rel={EXTERNAL_LINK_REL}
                   className="flex items-center gap-2.5 text-white hover:text-primary-foreground transition-colors text-sm focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2 rounded-sm"
@@ -133,8 +134,8 @@ export function Footer() {
                 </a>
               )}
               {settings.contact_email && (
-                <a 
-                  href={settings.contact_email_url ? `mailto:${settings.contact_email_url}` : `mailto:${settings.contact_email}`} 
+                <a
+                  href={settings.contact_email_url ? `mailto:${settings.contact_email_url}` : `mailto:${settings.contact_email}`}
                   target={settings.contact_email_new_tab !== 'false' ? "_blank" : undefined}
                   rel={EXTERNAL_LINK_REL}
                   className="flex items-center gap-2.5 text-white hover:text-primary-foreground transition-colors text-sm break-all focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2 rounded-sm"
@@ -207,6 +208,7 @@ function FooterColumn({ column }: { column: MenuNode }) {
           const resolved = resolveMenuLink(link.url, link.isOpenInNew);
           if (!resolved.href) return null;
           const content = (
+            <AudioLines className="!size-4 text-white shrink-0" aria-hidden="true" />
             <span className="text-white hover:underline transition-colors text-sm focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2 rounded-sm">
               {link.label}
             </span>
