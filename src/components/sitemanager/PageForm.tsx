@@ -226,7 +226,7 @@ export function PageForm({ mode, initialData, parentPages = [] }: PageFormProps)
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const autoSaveRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   // "content" = rich text editor tab, "sections" = section builder tab, "seo" = SEO Center
-  const [activeTab, setActiveTab] = useState<"content" | "sections" | "seo">("content");
+  const [activeTab, setActiveTab] = useState<"content" | "sections" | "seo">("sections");
   // Sections are managed by PageSectionBuilder internally; we only need to
   // trigger a DB persist on explicit save (draft / publish).
   const sectionsRef = useRef<any[]>([]);

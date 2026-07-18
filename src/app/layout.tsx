@@ -118,20 +118,7 @@ export default async function RootLayout({
         {globalCss && (
           <style dangerouslySetInnerHTML={{ __html: globalCss }} />
         )}
-        {/* Google tag (gtag.js) */}
-        <Script
-          async
-          src="https://www.googletagmanager.com/gtag/js?id=G-B6P9KW8X46"
-          strategy="afterInteractive"
-        />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-B6P9KW8X46');
-          `}
-        </Script>
+
         {/* Organisation JSON-LD — present on every page */}
         <script
           id="jsonld-organisation"

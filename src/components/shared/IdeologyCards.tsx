@@ -34,14 +34,26 @@ interface IdeologyCard {
 interface IdeologyCardsProps {
   heading?: string;
   cards?: IdeologyCard[];
+  backgroundImage?: string;
 }
 
-export function IdeologyCards({ heading, cards = [] }: IdeologyCardsProps) {
+export function IdeologyCards({ heading, cards = [], backgroundImage }: IdeologyCardsProps) {
   if (cards.length === 0) return null;
 
   return (
-    <section aria-labelledby="ideology-cards-heading" className="py-14 bg-background border-t border-border">
-      <div className="container max-w-7xl mx-auto">
+    <section aria-labelledby="ideology-cards-heading" className="py-14 bg-background border-t border-border relative">
+      {backgroundImage && (
+        <div 
+          className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none"
+          style={{
+            backgroundImage: `url('${backgroundImage}')`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
+          }}
+        />
+      )}
+      <div className="container max-w-7xl mx-auto relative z-10">
 
         {heading && (
           <motion.div

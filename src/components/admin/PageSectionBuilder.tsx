@@ -238,6 +238,7 @@ export function PageSectionBuilder({ pageId, onSave }: PageSectionBuilderProps) 
       case "ideology_cards":
         return {
           heading: "Our Ideology",
+          backgroundImage: "",
           cards: [
             { icon: "book", title: "Quran ul Kareem", urduTitle: "قرآن الکریم", description: "", linkLabel: "Learn More", linkUrl: "" },
             { icon: "star", title: "Prophethood", urduTitle: "نبوت", description: "", linkLabel: "Learn More", linkUrl: "" },
@@ -1091,9 +1092,15 @@ function SectionConfigForm({ type, config: rawConfig, onUpdate }: { type: string
     case "ideology_cards":
       return (
         <div className="space-y-6">
-          <div className="space-y-2">
-            <Label>Section Heading</Label>
-            <Input value={config.heading ?? "Our Ideology"} onChange={(e) => handleChange("heading", e.target.value)} />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Section Heading</Label>
+              <Input value={config.heading ?? "Our Ideology"} onChange={(e) => handleChange("heading", e.target.value)} />
+            </div>
+            <div className="space-y-2">
+              <Label>Background Image (Optional)</Label>
+              <ImageUploader value={config.backgroundImage ?? ""} onChange={(url) => handleChange("backgroundImage", url)} aspectRatio={16 / 9} />
+            </div>
           </div>
           <div className="flex items-center justify-between pt-4 border-t">
             <Label>Cards</Label>
