@@ -1,18 +1,66 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/db";
-import { pageSections } from "@/db/schema";
+import { pageSections, pages } from "@/db/schema";
 import { eq, asc } from "drizzle-orm";
 import { v4 as uuidv4 } from "uuid";
 import { revalidatePath } from "next/cache";
-import { pages } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth";
 
 async function requireAuth(request: NextRequest): Promise<NextResponse | null> {
-    const user = await getCurrentUser(request);
-    if (!user) {
-        return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const user = await getCurrentUser(request);
+  if (!user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+  return null;
+}
+
+/** Revalidate every possible URL path that might be cached for this slug */
+function revalidateAllPaths(rawSlug: string) {
+  const slug = rawSlug.replace(/^\/+/, "");
+  const segments = slug.split("/");
+
+  // Collect every possible URL the user could have arrived at this page from
+  const paths = new Set<string>();
+
+  // 1. Canonical path
+  paths.add(`/${slug}`);
+
+  // 2. Without leading segment (e.g. "organization/our-ideology/basic-belief" → "our-ideology/basic-belief")
+  if (segments.length > 1) {
+    paths.add(`/${segments.slice(1).join("/")}`);
+  }
+
+  // 3. Without first two segments (e.g. → "basic-belief")
+  if (segments.length > 2) {
+    paths.add(`/${segments.slice(2).join("/")}`);
+  }
+
+  // 4. Without "organization/" prefix
+  const withoutOrg = slug.replace(/^organization\//, "");
+  if (withoutOrg !== slug) {
+    paths.add(`/${withoutOrg}`);
+    // also strip one more level
+    const withoutOrgParts = withoutOrg.split("/");
+    if (withoutOrgParts.length > 1) {
+      paths.add(`/${withoutOrgParts.slice(1).join("/")}`);
     }
-    return null;
+  }
+
+  // 5. With "organization/" prefix (if not already there)
+  if (!slug.startsWith("organization/")) {
+    paths.add(`/organization/${slug}`);
+  }
+
+  // 6. Policy special route
+  if (slug === "policy") paths.add("/policy");
+
+  for (const p of paths) {
+    try { revalidatePath(p); } catch (_) { /* ignore */ }
+  }
+
+  // Always bust the catch-all route and home
+  try { revalidatePath("/[...slug]", "page"); } catch (_) { /* ignore */ }
+  try { revalidatePath("/"); } catch (_) { /* ignore */ }
 }
 
 // GET - List sections for a specific page
@@ -68,21 +116,12 @@ export async function POST(request: NextRequest) {
         isActive: s.isActive !== false,
       });
     }
+
     // Revalidate the cache for this page so changes show up immediately
     try {
       const [page] = await db.select({ slug: pages.slug }).from(pages).where(eq(pages.id, pageId)).limit(1);
-      if (page && page.slug) {
-        const cleanSlug = page.slug.replace(/^\/+/, "");
-        revalidatePath(`/${cleanSlug}`);
-        if (!cleanSlug.startsWith("organization/")) {
-          revalidatePath(`/organization/${cleanSlug}`);
-        } else {
-          revalidatePath(`/organization/${cleanSlug.replace(/^[^/]+\//, "")}`);
-        }
-        if (cleanSlug === "policy") {
-          revalidatePath("/policy", "page");
-        }
-        revalidatePath("/[...slug]", "page");
+      if (page?.slug) {
+        revalidateAllPaths(page.slug);
       }
     } catch (revalErr) {
       console.error("Cache revalidation failed in page_sections:", revalErr);

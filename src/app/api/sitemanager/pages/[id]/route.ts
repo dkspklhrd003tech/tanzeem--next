@@ -7,6 +7,30 @@ import { revalidatePath } from "next/cache";
 
 export const dynamic = "force-dynamic";
 
+/** Revalidate every possible URL that might be cached for a given slug */
+function revalidateAllPaths(rawSlug: string) {
+  const slug = rawSlug.replace(/^\/+/, "");
+  const segments = slug.split("/");
+  const paths = new Set<string>();
+
+  paths.add(`/${slug}`);
+  if (segments.length > 1) paths.add(`/${segments.slice(1).join("/")}`);
+  if (segments.length > 2) paths.add(`/${segments.slice(2).join("/")}`);
+
+  const withoutOrg = slug.replace(/^organization\//, "");
+  if (withoutOrg !== slug) {
+    paths.add(`/${withoutOrg}`);
+    const woParts = withoutOrg.split("/");
+    if (woParts.length > 1) paths.add(`/${woParts.slice(1).join("/")}`);
+  }
+  if (!slug.startsWith("organization/")) paths.add(`/organization/${slug}`);
+  if (slug === "policy") { try { revalidatePath("/policy", "page"); } catch (_) {} }
+
+  for (const p of paths) { try { revalidatePath(p); } catch (_) {} }
+  try { revalidatePath("/[...slug]", "page"); } catch (_) {}
+  try { revalidatePath("/"); } catch (_) {}
+}
+
 type Ctx = { params: Promise<{ id: string }> };
 
 function validateUpdate(data: any) {
@@ -154,29 +178,12 @@ export async function PUT(request: NextRequest, { params }: Ctx) {
       publishedAt: (!wasPublished && nowPublished) ? new Date() : existing.publishedAt,
     }).where(eq(pages.id, existing.id));
 
-    // Clear Next.js cache for the page
+    // Clear Next.js ISR cache for all possible URL variants of this page
     const updatedSlugRaw = data.slug ?? existing.slug;
-    const updatedSlug = updatedSlugRaw.replace(/^\/+/, "");
-    const existingSlugClean = existing.slug.replace(/^\/+/, "");
+    const existingSlug = existing.slug ?? "";
     try {
-      revalidatePath(`/${updatedSlug}`);
-      revalidatePath(`/${existingSlugClean}`);
-      if (!updatedSlug.startsWith("organization/")) {
-        revalidatePath(`/organization/${updatedSlug}`);
-      } else {
-        revalidatePath(`/organization/${updatedSlug.replace(/^[^/]+\//, "")}`);
-      }
-      if (!existingSlugClean.startsWith("organization/")) {
-        revalidatePath(`/organization/${existingSlugClean}`);
-      } else {
-        revalidatePath(`/organization/${existingSlugClean.replace(/^[^/]+\//, "")}`);
-      }
-      // Bust the dedicated /policy page route if this is the policy page
-      if (updatedSlug === "policy" || existingSlugClean === "policy") {
-        revalidatePath("/policy", "page");
-      }
-      revalidatePath("/[...slug]", "page");
-      revalidatePath("/");
+      revalidateAllPaths(updatedSlugRaw);
+      if (existingSlug !== updatedSlugRaw) revalidateAllPaths(existingSlug);
     } catch (revalErr) {
       console.error("Cache revalidation failed:", revalErr);
     }

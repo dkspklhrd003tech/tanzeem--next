@@ -38,7 +38,7 @@ const STATIC_PILLARS: Required<IdeologyPillar>[] = [
     urduTitle: "قرآن الکریم",
     description:
       "The Quran is the final and complete word of Allah (SWT), revealed to Prophet Muhammad (SAWS). It is the ultimate guide for all aspects of human life — individual, social, and political.",
-    href: "/our-ideology/basic-belief",
+    href: "/organization/our-ideology/basic-belief",
     linkLabel: "Our Belief",
   },
   {
@@ -46,7 +46,7 @@ const STATIC_PILLARS: Required<IdeologyPillar>[] = [
     urduTitle: "نبوت",
     description:
       "Belief in the Prophethood of Muhammad (SAWS) as the final messenger and complete exemplar of the Quranic message. His Sunnah is the practical model for an Islamic life.",
-    href: "/our-ideology/methodology",
+    href: "/organization/our-ideology/methodology",
     linkLabel: "Learn More",
   },
   {
@@ -54,7 +54,7 @@ const STATIC_PILLARS: Required<IdeologyPillar>[] = [
     urduTitle: "دینِ قیّم",
     description:
       "Islam is a complete and comprehensive way of life covering every dimension of human existence. It demands total submission to Allah in all spheres.",
-    href: "/our-ideology/our-obligations",
+    href: "/organization/our-ideology/our-obligations",
     linkLabel: "Our Obligations",
   },
   {
@@ -62,7 +62,7 @@ const STATIC_PILLARS: Required<IdeologyPillar>[] = [
     urduTitle: "ہمارا عقیدہ",
     description:
       "Tanzeem-e-Islami works to re-establish the Khilafah and implement the principles of Islam across social, political, and economic spheres as ordained by Allah (SWT).",
-    href: "/our-ideology/foundation",
+    href: "/organization/our-ideology/foundation",
     linkLabel: "Foundation",
   },
 ];

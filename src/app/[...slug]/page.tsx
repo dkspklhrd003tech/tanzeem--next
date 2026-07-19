@@ -526,10 +526,10 @@ export default async function DynamicPage({ params }: PageProps) {
     ctaButtonUrl = "/our-ideology";
   } else if (normalizedSlug === "our-ideology") {
     ideologyCards = [
-      { title: "Basic Belief", href: "/our-ideology/basic-belief", description: "Fundamental Islamic beliefs and principles" },
-      { title: "Our Obligations", href: "/our-ideology/our-obligations", description: "Our duties and responsibilities as Muslims" },
-      { title: "Methodology", href: "/our-ideology/methodology", description: "Our approach and method of work" },
-      { title: "Foundation", href: "/our-ideology/foundation", description: "The foundational principles of our movement" },
+      { title: "Basic Belief",     href: "/organization/our-ideology/basic-belief",     description: "Fundamental Islamic beliefs and principles" },
+      { title: "Our Obligations",  href: "/organization/our-ideology/our-obligations",  description: "Our duties and responsibilities as Muslims" },
+      { title: "Methodology",      href: "/organization/our-ideology/methodology",       description: "Our approach and method of work" },
+      { title: "Foundation",       href: "/organization/our-ideology/foundation",        description: "The foundational principles of our movement" },
     ];
   } else if (normalizedSlug === "our-ideology/basic-belief") {
     accordionItems = [
