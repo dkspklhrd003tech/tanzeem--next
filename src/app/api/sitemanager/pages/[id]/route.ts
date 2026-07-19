@@ -155,22 +155,24 @@ export async function PUT(request: NextRequest, { params }: Ctx) {
     }).where(eq(pages.id, existing.id));
 
     // Clear Next.js cache for the page
-    const updatedSlug = data.slug ?? existing.slug;
+    const updatedSlugRaw = data.slug ?? existing.slug;
+    const updatedSlug = updatedSlugRaw.replace(/^\/+/, "");
+    const existingSlugClean = existing.slug.replace(/^\/+/, "");
     try {
       revalidatePath(`/${updatedSlug}`);
-      revalidatePath(`/${existing.slug}`);
+      revalidatePath(`/${existingSlugClean}`);
       if (!updatedSlug.startsWith("organization/")) {
         revalidatePath(`/organization/${updatedSlug}`);
       } else {
         revalidatePath(`/organization/${updatedSlug.replace(/^[^/]+\//, "")}`);
       }
-      if (!existing.slug.startsWith("organization/")) {
-        revalidatePath(`/organization/${existing.slug}`);
+      if (!existingSlugClean.startsWith("organization/")) {
+        revalidatePath(`/organization/${existingSlugClean}`);
       } else {
-        revalidatePath(`/organization/${existing.slug.replace(/^[^/]+\//, "")}`);
+        revalidatePath(`/organization/${existingSlugClean.replace(/^[^/]+\//, "")}`);
       }
       // Bust the dedicated /policy page route if this is the policy page
-      if (updatedSlug === "policy" || existing.slug === "policy") {
+      if (updatedSlug === "policy" || existingSlugClean === "policy") {
         revalidatePath("/policy", "page");
       }
       revalidatePath("/[...slug]", "page");

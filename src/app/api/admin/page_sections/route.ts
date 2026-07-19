@@ -72,13 +72,14 @@ export async function POST(request: NextRequest) {
     try {
       const [page] = await db.select({ slug: pages.slug }).from(pages).where(eq(pages.id, pageId)).limit(1);
       if (page && page.slug) {
-        revalidatePath(`/${page.slug}`);
-        if (!page.slug.startsWith("organization/")) {
-          revalidatePath(`/organization/${page.slug}`);
+        const cleanSlug = page.slug.replace(/^\/+/, "");
+        revalidatePath(`/${cleanSlug}`);
+        if (!cleanSlug.startsWith("organization/")) {
+          revalidatePath(`/organization/${cleanSlug}`);
         } else {
-          revalidatePath(`/organization/${page.slug.replace(/^[^/]+\//, "")}`);
+          revalidatePath(`/organization/${cleanSlug.replace(/^[^/]+\//, "")}`);
         }
-        if (page.slug === "policy") {
+        if (cleanSlug === "policy") {
           revalidatePath("/policy", "page");
         }
         revalidatePath("/[...slug]", "page");
