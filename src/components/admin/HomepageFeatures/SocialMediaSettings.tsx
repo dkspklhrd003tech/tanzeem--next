@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Save, Plus, XCircle, GripVertical } from "lucide-react";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -21,6 +21,40 @@ export function SocialMediaSettings() {
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
     const { toast } = useToast();
+
+    // Drag and Drop state
+    const dragItem = useRef<number | null>(null);
+    const dragOverItem = useRef<number | null>(null);
+
+    const handleDragStart = (e: React.DragEvent<HTMLDivElement>, index: number) => {
+        dragItem.current = index;
+        e.dataTransfer.effectAllowed = "move";
+        // Optional: set drag image or style
+        setTimeout(() => {
+            if (e.target instanceof HTMLElement) {
+                e.target.classList.add("opacity-50");
+            }
+        }, 0);
+    };
+
+    const handleDragEnter = (e: React.DragEvent<HTMLDivElement>, index: number) => {
+        dragOverItem.current = index;
+    };
+
+    const handleDragEnd = (e: React.DragEvent<HTMLDivElement>) => {
+        if (e.target instanceof HTMLElement) {
+            e.target.classList.remove("opacity-50");
+        }
+        
+        if (dragItem.current !== null && dragOverItem.current !== null && dragItem.current !== dragOverItem.current) {
+            const _links = [...links];
+            const draggedItemContent = _links.splice(dragItem.current, 1)[0];
+            _links.splice(dragOverItem.current, 0, draggedItemContent);
+            setLinks(_links);
+        }
+        dragItem.current = null;
+        dragOverItem.current = null;
+    };
 
     useEffect(() => {
         fetchSettings();
@@ -163,14 +197,27 @@ export function SocialMediaSettings() {
                 ) : (
                     <div className="space-y-4">
                         {links.map((link, index) => (
-                            <div key={link.id} className="flex flex-col md:flex-row gap-4 items-start md:items-center bg-background p-4 rounded-xl border border-border shadow-sm">
-                                <div className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
+                            <div 
+                                key={link.id} 
+                                draggable
+                                onDragStart={(e) => handleDragStart(e, index)}
+                                onDragEnter={(e) => handleDragEnter(e, index)}
+                                onDragEnd={handleDragEnd}
+                                onDragOver={(e) => e.preventDefault()} // necessary to allow dropping
+                                className="flex flex-col md:flex-row gap-4 items-start md:items-center bg-[#f8fafc] p-4 rounded-xl border border-slate-200 shadow-sm transition-all hover:shadow-md cursor-move"
+                            >
+                                <div className="flex items-center justify-center cursor-grab active:cursor-grabbing text-slate-400 hover:text-slate-600 px-2 py-4 md:py-0">
+                                    <GripVertical className="w-5 h-5" />
+                                </div>
+                                
+                                <div className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 w-full cursor-default" onDragStart={e => e.preventDefault()} draggable={true}>
                                     <div className="space-y-1.5">
                                         <label className="text-xs font-semibold text-muted-foreground">Platform Name</label>
                                         <Input
                                             placeholder="e.g. YouTube"
                                             value={link.name}
                                             onChange={(e) => updateLink(link.id, "name", e.target.value)}
+                                            className="bg-white"
                                         />
                                     </div>
                                     <div className="space-y-1.5">
@@ -179,7 +226,6 @@ export function SocialMediaSettings() {
                                             value={link.icon} 
                                             onValueChange={(val) => {
                                                 updateLink(link.id, "icon", val);
-                                                // Optional: auto-update color if they pick a standard icon
                                                 const colorMap: Record<string, string> = {
                                                     youtube: "#dc2626", facebook: "#2563eb", twitter: "#000000",
                                                     whatsapp: "#22c55e", instagram: "#e1306c", telegram: "#229ED9",
@@ -191,7 +237,7 @@ export function SocialMediaSettings() {
                                                 }
                                             }}
                                         >
-                                            <SelectTrigger>
+                                            <SelectTrigger className="bg-white">
                                                 <SelectValue placeholder="Select icon..." />
                                             </SelectTrigger>
                                             <SelectContent>
@@ -215,6 +261,7 @@ export function SocialMediaSettings() {
                                             placeholder="e.g. /social-media#youtube"
                                             value={link.url}
                                             onChange={(e) => updateLink(link.id, "url", e.target.value)}
+                                            className="bg-white"
                                         />
                                     </div>
                                     <div className="space-y-1.5">
@@ -222,26 +269,28 @@ export function SocialMediaSettings() {
                                         <div className="flex gap-2">
                                             <Input
                                                 type="color"
-                                                className="w-12 p-1 h-9 cursor-pointer"
+                                                className="w-12 p-1 h-9 cursor-pointer bg-white"
                                                 value={link.color}
                                                 onChange={(e) => updateLink(link.id, "color", e.target.value)}
                                             />
                                             <Input
-                                                className="flex-1"
+                                                className="flex-1 bg-white"
                                                 value={link.color}
                                                 onChange={(e) => updateLink(link.id, "color", e.target.value)}
                                             />
                                         </div>
                                     </div>
                                 </div>
-                                <Button
-                                    variant="ghost"
-                                    size="icon"
-                                    className="text-destructive hover:bg-destructive/80 hover:text-destructive shrink-0 mt-6 md:mt-0"
-                                    onClick={() => removeLink(link.id)}
-                                >
-                                    <XCircle className="w-4 h-4" />
-                                </Button>
+                                <div className="flex h-full items-center justify-center pt-6 md:pt-0">
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="text-red-500 hover:bg-red-50 hover:text-red-600 shrink-0"
+                                        onClick={() => removeLink(link.id)}
+                                    >
+                                        <XCircle className="w-5 h-5" />
+                                    </Button>
+                                </div>
                             </div>
                         ))}
                     </div>
