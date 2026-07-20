@@ -18,6 +18,9 @@ import { LeaderBio } from "@/components/shared/LeaderBio";
 import { IdeologyCards } from "@/components/shared/IdeologyCards";
 import { JoinCTA } from "@/components/shared/JoinCTA";
 import { NestedCategoryGrid } from "@/components/shared/NestedCategoryGrid";
+import { AudiosCallingSection } from "@/components/shared/calling-sections/AudiosCallingSection";
+import { VideosCallingSection } from "@/components/shared/calling-sections/VideosCallingSection";
+import { BooksCallingSection } from "@/components/shared/calling-sections/BooksCallingSection";
 import type { CmsSectionData } from "@/lib/page-helpers";
 
 const ComponentMap: Record<string, React.FC<any>> = {
@@ -39,6 +42,9 @@ const ComponentMap: Record<string, React.FC<any>> = {
   ideology_cards: IdeologyCards,
   join_cta: JoinCTA,
   nested_category_grid: NestedCategoryGrid,
+  audios_calling: AudiosCallingSection,
+  videos_calling: VideosCallingSection,
+  books_calling: BooksCallingSection,
 };
 
 interface DynamicPageContentProps {

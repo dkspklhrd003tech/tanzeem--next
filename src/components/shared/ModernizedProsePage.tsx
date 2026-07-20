@@ -144,7 +144,7 @@ export function ModernizedProsePage({
                 initial={{ opacity: 0, scale: 0.98 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.5, delay: 0.1 }}
-                className="rounded-3xl overflow-hidden shadow-deep border border-slate-200/50 aspect-[21/9] bg-slate-100"
+                className="rounded-3xl overflow-hidden shadow-deep border border-slate-200/50 aspect-[21/9] bg-white"
               >
                 <img
                   src={featuredImage}
@@ -157,7 +157,7 @@ export function ModernizedProsePage({
             <div className="absolute inset-0 opacity-[0.01] pointer-events-none" />
 
             {/* Leader Template Centered Title & Dates */}
-            {template === "leader" && (
+            {/* {template === "leader" && (
               <div className="text-center mb-6 border-b border-slate-100 ">
                 <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900  tracking-tight mb-2">
                   {title}
@@ -168,7 +168,7 @@ export function ModernizedProsePage({
                   </h3>
                 )}
               </div>
-            )}
+            )} */}
 
             {/* Page Content Renderer */}
             {cleanContent ? (

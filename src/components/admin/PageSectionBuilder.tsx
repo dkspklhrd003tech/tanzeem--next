@@ -80,11 +80,15 @@ const SECTION_TYPES = [
   { value: "ideology_cards", label: "Ideology / Feature Cards" },
   { value: "join_cta", label: "Join Us CTA" },
   { value: "nested_category_grid", label: "Nested Categories Grid (Audio/Video)" },
+  { value: "audios_calling", label: "Audios Calling" },
+  { value: "videos_calling", label: "Videos Calling" },
+  { value: "books_calling", label: "Books Calling" },
 ];
 
 export function PageSectionBuilder({ pageId, onSave }: PageSectionBuilderProps) {
   const [sections, setSections] = useState<Section[]>([]);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [selectKey, setSelectKey] = useState(0);
 
   useEffect(() => {
     if (pageId && pageId !== "new") {
@@ -157,6 +161,7 @@ export function PageSectionBuilder({ pageId, onSave }: PageSectionBuilderProps) 
       onSave(updated);
       return updated;
     });
+    setSelectKey(k => k + 1);
   };
 
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -271,6 +276,30 @@ export function PageSectionBuilder({ pageId, onSave }: PageSectionBuilderProps) 
             }
           ]
         };
+      case "audios_calling":
+        return {
+          heading: "Latest Audios",
+          fetchUrl: "",
+          limit: 6,
+          buttonLabel: "View All",
+          buttonUrl: ""
+        };
+      case "videos_calling":
+        return {
+          heading: "Latest Videos",
+          fetchUrl: "",
+          limit: 6,
+          buttonLabel: "View All",
+          buttonUrl: ""
+        };
+      case "books_calling":
+        return {
+          heading: "Latest Books",
+          fetchUrl: "",
+          limit: 6,
+          buttonLabel: "View All",
+          buttonUrl: ""
+        };
       default:
         return {};
     }
@@ -280,7 +309,7 @@ export function PageSectionBuilder({ pageId, onSave }: PageSectionBuilderProps) 
     <div className="space-y-6">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-bold">Page Sections</h3>
-        <Select onValueChange={addSection}>
+        <Select key={selectKey} onValueChange={addSection}>
           <SelectTrigger className="w-[150px] bg-primary !text-muted">
             <Plus className="w-4 h-4 text-white" />
             <SelectValue placeholder="Add Section" />
@@ -1403,6 +1432,46 @@ function SectionConfigForm({ type, config: rawConfig, onUpdate }: { type: string
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      );
+
+    case "audios_calling":
+    case "videos_calling":
+    case "books_calling":
+      return (
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <Label>Heading</Label>
+            <Input value={config.heading ?? ""} onChange={(e) => handleChange("heading", e.target.value)} placeholder="e.g. Latest Audios" />
+          </div>
+          <div className="space-y-2">
+            <Label>Data Source URL</Label>
+            <Input value={config.fetchUrl ?? ""} onChange={(e) => handleChange("fetchUrl", e.target.value)} placeholder="e.g. /audio/category/dars-e-quran or /audios-by-speaker/dr-israr-ahmad" />
+            <p className="text-[10px] text-muted-foreground">Enter the category or speaker URL. The system will fetch the newest items from it.</p>
+          </div>
+          <div className="space-y-2 pb-2">
+            <div className="flex items-center justify-between">
+              <Label>Items to Display (Limit)</Label>
+              <span className="text-xs text-muted-foreground">{config.limit ?? 6} items</span>
+            </div>
+            <Slider
+              value={[config.limit ?? 6]}
+              min={3}
+              max={12}
+              step={1}
+              onValueChange={([val]) => handleChange("limit", val)}
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Button Label (Optional)</Label>
+              <Input value={config.buttonLabel ?? ""} onChange={(e) => handleChange("buttonLabel", e.target.value)} placeholder="View All" />
+            </div>
+            <div className="space-y-2">
+              <Label>Button URL (Optional)</Label>
+              <Input value={config.buttonUrl ?? ""} onChange={(e) => handleChange("buttonUrl", e.target.value)} placeholder="/audio/category/dars-e-quran" />
+            </div>
           </div>
         </div>
       );

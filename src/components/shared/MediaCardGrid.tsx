@@ -16,9 +16,10 @@ interface MediaCardGridProps {
   items: MediaItem[];
   columns?: 2 | 3 | 4;
   viewAllUrl?: string;
+  viewAllLabel?: string;
 }
 
-export function MediaCardGrid({ heading, items, columns = 3, viewAllUrl = "/resources" }: MediaCardGridProps) {
+export function MediaCardGrid({ heading, items, columns = 3, viewAllUrl = "/resources", viewAllLabel = "View All Resources" }: MediaCardGridProps) {
   const gridCols = {
     2: "sm:grid-cols-2",
     3: "sm:grid-cols-2 lg:grid-cols-3",
@@ -34,7 +35,7 @@ export function MediaCardGrid({ heading, items, columns = 3, viewAllUrl = "/reso
               {heading}
             </h2>
             <Link href={viewAllUrl} className="text-primary font-bold inline-flex items-center gap-2 hover:underline">
-              View All Resources <ArrowRight className="w-4 h-4" />
+              {viewAllLabel} <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         )}

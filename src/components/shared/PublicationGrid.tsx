@@ -15,9 +15,10 @@ interface PublicationGridProps {
   heading?: string;
   publications: Publication[];
   viewAllUrl?: string;
+  viewAllLabel?: string;
 }
 
-export function PublicationGrid({ heading, publications, viewAllUrl }: PublicationGridProps) {
+export function PublicationGrid({ heading, publications, viewAllUrl, viewAllLabel = "View All Publications" }: PublicationGridProps) {
   return (
     <section className="py-8 md:py-10 bg-card/30">
       <div className="container px-4 mx-auto">
@@ -28,7 +29,7 @@ export function PublicationGrid({ heading, publications, viewAllUrl }: Publicati
             </h2>
             {viewAllUrl && (
               <Link href={viewAllUrl} className="text-primary font-bold inline-flex items-center gap-2 hover:underline">
-                View All Publications <ArrowRight className="w-4 h-4" />
+                {viewAllLabel} <ArrowRight className="w-4 h-4" />
               </Link>
             )}
           </div>
