@@ -53,15 +53,15 @@ export function IntroSection({
               </h3>
             )}
           </div>
-          
+
           {/* Floated Image + Body Content */}
           <div className="prose prose-lg prose-emerald max-w-none 
-                    prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-slate-800 
+                    prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-foreground 
                     prose-h2:text-2xl prose-h2:pl-3 prose-h2:mt-10 prose-h2:mb-4
                     prose-h3:text-xl prose-h3:font-semibold prose-h3:mt-8 prose-h3:mb-3
-                    prose-p:text-slate-600 prose-p:leading-relaxed prose-p:mb-6
-                    prose-strong:text-slate-800 prose-strong:font-bold
-                    prose-li:text-slate-600 prose-li:mb-2
+                    prose-p:text-foreground prose-p:leading-relaxed prose-p:mb-6
+                    prose-strong:text-foreground prose-strong:font-bold
+                    prose-li:text-foreground prose-li:mb-2
                     prose-ul:list-disc prose-ul:pl-6 prose-ul:mb-6
                     prose-ol:list-decimal prose-ol:pl-6 prose-ol:mb-6
                     prose-blockquote:italic prose-blockquote:pl-6 prose-blockquote:text-foreground prose-blockquote:bg-slate-50 prose-blockquote:py-4 prose-blockquote:pr-4 prose-blockquote:rounded-r-2xl
