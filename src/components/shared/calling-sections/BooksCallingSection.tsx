@@ -1,7 +1,7 @@
 import { db } from "@/lib/db";
 import { books, bookCategories, users } from "@/db/schema";
 import { eq, desc, and } from "drizzle-orm";
-import { PublicationGrid } from "@/components/shared/PublicationGrid";
+import { CallingCardGrid } from "@/components/shared/CallingCardGrid";
 
 interface CallingSectionProps {
   heading?: string;
@@ -44,17 +44,16 @@ export async function BooksCallingSection({ heading, fetchUrl, limit = 6, button
 
   if (results.length === 0) return null;
 
-  const publications = results.map(row => ({
+  const items = results.map(row => ({
     title: row.book.title,
-    cover: row.book.coverImage || "",
-    author: row.author?.name || undefined,
+    type: "book" as const,
     link: `/books/${row.book.slug}`
   }));
 
   return (
-    <PublicationGrid
+    <CallingCardGrid
       heading={heading}
-      publications={publications}
+      items={items}
       viewAllUrl={buttonUrl}
       viewAllLabel={buttonLabel}
     />

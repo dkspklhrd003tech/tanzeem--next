@@ -34,7 +34,7 @@ export function MediaCardGrid({ heading, items, columns = 3, viewAllUrl = "/reso
             <h2 className="text-3xl md:text-4xl font-bold text-foreground">
               {heading}
             </h2>
-            <Link href={viewAllUrl} className="text-primary font-bold inline-flex items-center gap-2 hover:underline">
+            <Link href={viewAllUrl} className="text-white bg-primary px-4 py-2 rounded-full text-sm font-bold inline-flex items-center gap-2 hover:underline">
               {viewAllLabel} <ArrowRight className="w-4 h-4" />
             </Link>
           </div>

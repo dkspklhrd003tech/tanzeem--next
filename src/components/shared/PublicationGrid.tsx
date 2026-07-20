@@ -28,7 +28,7 @@ export function PublicationGrid({ heading, publications, viewAllUrl, viewAllLabe
               {heading}
             </h2>
             {viewAllUrl && (
-              <Link href={viewAllUrl} className="text-primary font-bold inline-flex items-center gap-2 hover:underline">
+              <Link href={viewAllUrl} className="text-white bg-primary px-4 py-2 rounded-full text-sm font-bold inline-flex items-center gap-2">
                 {viewAllLabel} <ArrowRight className="w-4 h-4" />
               </Link>
             )}

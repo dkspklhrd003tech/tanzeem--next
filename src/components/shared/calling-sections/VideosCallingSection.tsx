@@ -1,7 +1,7 @@
 import { db } from "@/lib/db";
 import { videos, videoCategories, speakers } from "@/db/schema";
 import { eq, desc, and } from "drizzle-orm";
-import { MediaCardGrid } from "@/components/shared/MediaCardGrid";
+import { CallingCardGrid } from "@/components/shared/CallingCardGrid";
 
 interface CallingSectionProps {
   heading?: string;
@@ -53,16 +53,14 @@ export async function VideosCallingSection({ heading, fetchUrl, limit = 6, butto
 
   const items = results.map(row => ({
     title: row.video.title,
-    image: row.video.thumbnailUrl || row.speaker?.profileImage || "",
     type: "video" as const,
     link: `/video/${row.video.slug}`
   }));
 
   return (
-    <MediaCardGrid
+    <CallingCardGrid
       heading={heading}
       items={items}
-      columns={3}
       viewAllUrl={buttonUrl}
       viewAllLabel={buttonLabel}
     />

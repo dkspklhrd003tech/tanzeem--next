@@ -203,7 +203,7 @@ export function VideoDetailPage({ item, related, customFieldSchema = [] }: { ite
           )}
 
           {/* Dynamic Custom Fields */}
-          {/* {customFieldSchema.length > 0 && Object.keys(item.customFields || {}).length > 0 && (
+          {customFieldSchema.length > 0 && Object.keys(item.customFields || {}).length > 0 && (
             <div className="bg-card border border-border rounded-xl p-5 space-y-4">
               <h2 className="text-sm font-semibold uppercase tracking-wide text-foreground-muted mb-2">Additional Information</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -231,33 +231,36 @@ export function VideoDetailPage({ item, related, customFieldSchema = [] }: { ite
               </div>
             </div>
           )}
-          {/* end custom fields */}
 
         </div>
 
         {/* Sidebar */}
-        {/* <div className="space-y-6">
+        <div className="space-y-6">
           {item.speaker && (
-            <div className="bg-card border border-border rounded-xl p-5">
-              <h2 className="text-xs font-semibold uppercase tracking-wide text-foreground-muted mb-4">Speaker</h2>
+            <div className="bg-primary-light border border-primary/80 rounded-lg p-5">
+              <h2 className="text-xs font-semibold uppercase tracking-wide text-primary mb-4">Speaker</h2>
               <div className="flex items-center gap-3">
                 {item.speaker.avatar ? (
                   <img src={item.speaker.avatar} alt={item.speaker.name} className="w-12 h-12 rounded-full object-cover" />
                 ) : (
-                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-lg">{item.speaker.name[0]}</div>
+                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-lg">
+                    {item.speaker.name[0]}
+                  </div>
                 )}
                 <div>
                   <p className="font-semibold text-foreground text-sm">{item.speaker.name}</p>
                   {item.speaker.bio && <p className="text-xs text-foreground-muted mt-0.5 line-clamp-2">{item.speaker.bio}</p>}
                 </div>
               </div>
-              <Link href={`/videos-by-speakers/${item.speaker.slug}`} className="mt-3 block text-xs text-primary hover:underline">More by {item.speaker.name} →</Link>
+              <Link href={`/videos-by-speakers/${item.speaker.slug}`} className="mt-3 block text-xs text-primary hover:underline">
+                More by {item.speaker.name} →
+              </Link>
             </div>
           )}
 
           {related.length > 0 && (
-            <div className="bg-card border border-border rounded-xl p-5">
-              <h2 className="text-xs font-semibold uppercase tracking-wide text-foreground-muted mb-4">Related Videos</h2>
+            <div className="bg-primary-light border border-primary/80 rounded-lg p-5">
+              <h2 className="text-xs font-semibold uppercase tracking-wide text-primary mb-4">Related Videos</h2>
               <div className="space-y-3">
                 {related.map((r) => (
                   <Link key={r.id} href={`/videos/${r.slug}`} className="flex gap-3 group">
@@ -265,7 +268,9 @@ export function VideoDetailPage({ item, related, customFieldSchema = [] }: { ite
                       {r.thumbnailUrl ? (
                         <img src={r.thumbnailUrl} alt={r.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center"><Video className="h-5 w-5 text-muted-foreground/40" /></div>
+                        <div className="w-full h-full flex items-center justify-center">
+                          <Video className="h-5 w-5 text-muted-foreground/40" />
+                        </div>
                       )}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -277,7 +282,7 @@ export function VideoDetailPage({ item, related, customFieldSchema = [] }: { ite
               </div>
             </div>
           )}
-        </div> */}
+        </div>
       </div>
     </div>
   );

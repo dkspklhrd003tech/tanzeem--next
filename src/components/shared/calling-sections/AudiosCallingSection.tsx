@@ -1,7 +1,7 @@
 import { db } from "@/lib/db";
 import { audio, audioCategories, speakers } from "@/db/schema";
 import { eq, desc, and } from "drizzle-orm";
-import { MediaCardGrid } from "@/components/shared/MediaCardGrid";
+import { CallingCardGrid } from "@/components/shared/CallingCardGrid";
 
 interface CallingSectionProps {
   heading?: string;
@@ -53,16 +53,14 @@ export async function AudiosCallingSection({ heading, fetchUrl, limit = 6, butto
 
   const items = results.map(row => ({
     title: row.audio.title,
-    image: row.audio.thumbnailUrl || row.speaker?.profileImage || "",
     type: "audio" as const,
     link: `/audio/${row.audio.slug}`
   }));
 
   return (
-    <MediaCardGrid
+    <CallingCardGrid
       heading={heading}
       items={items}
-      columns={3}
       viewAllUrl={buttonUrl}
       viewAllLabel={buttonLabel}
     />

@@ -216,7 +216,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
           showInMenu: true,
           metaTitle: null,
           metaDescription: null,
-          
+
           canonicalUrl: null,
           ogImage: null,
           schemaType: "WebPage",
@@ -270,7 +270,7 @@ export default async function DynamicPage({ params }: PageProps) {
           showInMenu: true,
           metaTitle: null,
           metaDescription: null,
-          
+
           canonicalUrl: null,
           ogImage: null,
           schemaType: "WebPage",
@@ -526,10 +526,10 @@ export default async function DynamicPage({ params }: PageProps) {
     ctaButtonUrl = "/our-ideology";
   } else if (normalizedSlug === "our-ideology") {
     ideologyCards = [
-      { title: "Basic Belief",     href: "/organization/our-ideology/basic-belief",     description: "Fundamental Islamic beliefs and principles" },
-      { title: "Our Obligations",  href: "/organization/our-ideology/our-obligations",  description: "Our duties and responsibilities as Muslims" },
-      { title: "Methodology",      href: "/organization/our-ideology/methodology",       description: "Our approach and method of work" },
-      { title: "Foundation",       href: "/organization/our-ideology/foundation",        description: "The foundational principles of our movement" },
+      { title: "Basic Belief", href: "/organization/our-ideology/basic-belief", description: "Fundamental Islamic beliefs and principles" },
+      { title: "Our Obligations", href: "/organization/our-ideology/our-obligations", description: "Our duties and responsibilities as Muslims" },
+      { title: "Methodology", href: "/organization/our-ideology/methodology", description: "Our approach and method of work" },
+      { title: "Foundation", href: "/organization/our-ideology/foundation", description: "The foundational principles of our movement" },
     ];
   } else if (normalizedSlug === "our-ideology/basic-belief") {
     accordionItems = [
@@ -651,44 +651,44 @@ export default async function DynamicPage({ params }: PageProps) {
             {sections.length > 0 && (
               <DynamicPageContent sections={parsedSections as any} />
             )}
-            
+
             {founderMedia && (
               <div className="space-y-4">
-              {founderMedia.audios.length > 0 && (
-                <div className="py-2 container mx-auto">
-                  <div className="flex flex-col md:flex-row items-end justify-between gap-6 mb-8">
-                    <h2 className="text-3xl md:text-4xl font-bold text-foreground">Latest Audios</h2>
-                    <Link href={speakerSlugLinks.audios} className="text-primary font-bold inline-flex items-center gap-2 hover:underline">
-                      View All Resources <ArrowRight className="w-4 h-4" />
-                    </Link>
+                {founderMedia.audios.length > 0 && (
+                  <div className="py-2 container mx-auto">
+                    <div className="flex flex-col md:flex-row items-end justify-between gap-6 mb-8">
+                      <h2 className="text-3xl md:text-4xl font-bold text-foreground">Latest Audios</h2>
+                      <Link href={speakerSlugLinks.audios} className="text-white bg-primary px-4 py-2 rounded-full text-sm font-bold inline-flex items-center gap-2 hover:underline">
+                        View All Resources <ArrowRight className="w-4 h-4" />
+                      </Link>
+                    </div>
+                    <AudioListClient audios={founderMedia.audios} />
                   </div>
-                  <AudioListClient audios={founderMedia.audios} />
-                </div>
-              )}
-              {founderMedia.videos.length > 0 && (
-                <div className="py-10 container mx-auto px-4">
-                  <div className="flex flex-col md:flex-row items-end justify-between gap-6 mb-8">
-                    <h2 className="text-3xl md:text-4xl font-bold text-foreground">Latest Videos</h2>
-                    <Link href={speakerSlugLinks.videos} className="text-primary font-bold inline-flex items-center gap-2 hover:underline">
-                      View All Resources <ArrowRight className="w-4 h-4" />
-                    </Link>
+                )}
+                {founderMedia.videos.length > 0 && (
+                  <div className="py-10 container mx-auto px-4">
+                    <div className="flex flex-col md:flex-row items-end justify-between gap-6 mb-8">
+                      <h2 className="text-3xl md:text-4xl font-bold text-foreground">Latest Videos</h2>
+                      <Link href={speakerSlugLinks.videos} className="text-white bg-primary px-4 py-2 rounded-full text-sm font-bold inline-flex items-center gap-2 hover:underline">
+                        View All Resources <ArrowRight className="w-4 h-4" />
+                      </Link>
+                    </div>
+                    <VideoListClient vids={founderMedia.videos} />
                   </div>
-                  <VideoListClient vids={founderMedia.videos} />
-                </div>
-              )}
-              {founderMedia.books.length > 0 && (
-                <PublicationGrid
-                  heading="Latest Books"
-                  viewAllUrl="/books-by-category"
-                  publications={founderMedia.books.map((b: any) => ({
-                    title: b.title,
-                    cover: b.coverImage || '/images/default-book.jpg',
-                    link: `/books/${b.slug}`
-                  }))}
-                />
-              )}
-            </div>
-          )}
+                )}
+                {founderMedia.books.length > 0 && (
+                  <PublicationGrid
+                    heading="Latest Books"
+                    viewAllUrl="/books-by-category"
+                    publications={founderMedia.books.map((b: any) => ({
+                      title: b.title,
+                      cover: b.coverImage || '/images/default-book.jpg',
+                      link: `/books/${b.slug}`
+                    }))}
+                  />
+                )}
+              </div>
+            )}
           </ModernizedProsePage>
         );
       })()}
