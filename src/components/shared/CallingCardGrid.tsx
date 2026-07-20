@@ -20,7 +20,7 @@ interface CallingCardGridProps {
 
 export function CallingCardGrid({ heading, items, viewAllUrl, viewAllLabel }: CallingCardGridProps) {
   return (
-    <div className="py-8">
+    <div className="container mx-auto py-8">
       {/* Header */}
       {(heading || viewAllUrl) && (
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
