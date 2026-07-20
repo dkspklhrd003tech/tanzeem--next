@@ -87,10 +87,10 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
                 <div className="container max-w-7xl mx-auto relative z-10">
                     <div className="pub-header flex flex-col items-center md:items-start text-center md:text-left md:flex-row justify-between md:items-center mb-8 gap-6">
                         <div>
-                            <p className="text-primary font-bold tracking-widest uppercase text-xs mb-3">Our Magazines</p>
-                            <h2 id="magazines-heading" className="spotlight_heading max-w-3xl">
+                            <h2 id="magazines-heading" className="spotlight_heading">Our Magazines</h2>
+                            <p className="text-foreground font-medium tracking-normal uppercase text-sm">
                                 Books And Literature Of Tanzeem-e-Islami &amp; Anjuman Khuddam Ul Quran
-                            </h2>
+                            </p>
                         </div>
                         <Link
                             href="/magazines"
@@ -163,10 +163,10 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
                 <div className="container max-w-7xl mx-auto relative z-10">
                     <div className="pub-header flex flex-col md:flex-row justify-between items-center md:items-start text-center md:text-left md:items-center mb-16 gap-6">
                         <div>
-                            <p className="text-primary font-bold tracking-widest uppercase text-xs mb-3">Our Books</p>
-                            <h2 id="books-heading" className="spotlight_heading max-w-3xl">
+                            <h2 id="books-heading" className="spotlight_heading">Our Books</h2>
+                            <p className="text-foreground font-medium tracking-normal uppercase text-sm">
                                 Message of Iqamat ud Din &amp; Ruju llul Quran Through Our Periodicals.
-                            </h2>
+                            </p>
                         </div>
                         <Link
                             href="/books"

@@ -6,6 +6,7 @@ import { Save, Plus, XCircle, GripVertical } from "lucide-react";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 type SocialLink = {
     id: string;
@@ -174,11 +175,39 @@ export function SocialMediaSettings() {
                                     </div>
                                     <div className="space-y-1.5">
                                         <label className="text-xs font-semibold text-muted-foreground">Icon SVG (Slug)</label>
-                                        <Input
-                                            placeholder="e.g. youtube, facebook, instagram"
-                                            value={link.icon}
-                                            onChange={(e) => updateLink(link.id, "icon", e.target.value.toLowerCase())}
-                                        />
+                                        <Select 
+                                            value={link.icon} 
+                                            onValueChange={(val) => {
+                                                updateLink(link.id, "icon", val);
+                                                // Optional: auto-update color if they pick a standard icon
+                                                const colorMap: Record<string, string> = {
+                                                    youtube: "#dc2626", facebook: "#2563eb", twitter: "#000000",
+                                                    whatsapp: "#22c55e", instagram: "#e1306c", telegram: "#229ED9",
+                                                    tiktok: "#000000", web: "#0ea5e9", soundcloud: "#ff5500",
+                                                    rumble: "#85c742", pinterest: "#bd081c"
+                                                };
+                                                if (colorMap[val]) {
+                                                    updateLink(link.id, "color", colorMap[val]);
+                                                }
+                                            }}
+                                        >
+                                            <SelectTrigger>
+                                                <SelectValue placeholder="Select icon..." />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="youtube">YouTube</SelectItem>
+                                                <SelectItem value="facebook">Facebook</SelectItem>
+                                                <SelectItem value="twitter">X (Twitter)</SelectItem>
+                                                <SelectItem value="whatsapp">WhatsApp</SelectItem>
+                                                <SelectItem value="instagram">Instagram</SelectItem>
+                                                <SelectItem value="telegram">Telegram</SelectItem>
+                                                <SelectItem value="tiktok">TikTok / Snack Video</SelectItem>
+                                                <SelectItem value="web">Web</SelectItem>
+                                                <SelectItem value="soundcloud">SoundCloud</SelectItem>
+                                                <SelectItem value="rumble">Rumble</SelectItem>
+                                                <SelectItem value="pinterest">Pinterest</SelectItem>
+                                            </SelectContent>
+                                        </Select>
                                     </div>
                                     <div className="space-y-1.5">
                                         <label className="text-xs font-semibold text-muted-foreground">URL Target</label>

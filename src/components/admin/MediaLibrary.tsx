@@ -167,11 +167,21 @@ export function MediaLibrary() {
 
   const copyToClipboard = (url: string) => {
     const fullUrl = `${window.location.origin}${url}`;
-    navigator.clipboard.writeText(fullUrl);
-    toast({
-      title: "URL Copied",
-      description: "Direct link copied to clipboard.",
-    });
+    navigator.clipboard.writeText(fullUrl)
+      .then(() => {
+        toast({
+          title: "URL Copied",
+          description: "Direct link copied to clipboard.",
+        });
+      })
+      .catch((err) => {
+        console.error("Clipboard write failed", err);
+        toast({
+          title: "Copy Failed",
+          description: "Please copy the URL manually.",
+          variant: "destructive",
+        });
+      });
   };
 
   const filteredMedia = media.filter(

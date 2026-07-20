@@ -69,8 +69,10 @@ export function LatestPressReleases({ items }: Props) {
       <div className="container max-w-7xl mx-auto relative z-10">
         <div ref={headerRef} className="flex flex-col md:flex-row items-center md:items-end justify-between mb-8 gap-6 text-center md:text-left">
           <div>
-            <p className="text-primary font-bold tracking-widest uppercase text-xs mb-3">News & Updates</p>
-            <h2 id="press-heading" className="spotlight_heading">Latest Press Releases</h2>
+            <h2 id="press-heading" className="spotlight_heading">News & Updates</h2>
+            <p className="text-foreground font-medium tracking-normal uppercase text-sm">
+              Latest Press Releases
+            </p>
           </div>
           <Link
             href="/press-releases"

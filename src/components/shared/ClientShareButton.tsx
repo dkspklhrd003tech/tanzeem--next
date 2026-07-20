@@ -14,10 +14,6 @@ export function ClientShareButton({ className, variant = "default", entityType, 
   const handleShare = async () => {
     if (typeof window === "undefined" || typeof navigator === "undefined") return;
 
-    if (entityType && entityId) {
-      await trackShare();
-    }
-
     try {
       if (navigator.clipboard) {
         await navigator.clipboard.writeText(window.location.href);
@@ -28,7 +24,9 @@ export function ClientShareButton({ className, variant = "default", entityType, 
     } catch (err) {
       console.error("Failed to copy:", err);
     }
-
+    if (entityType && entityId) {
+      trackShare().catch(console.error);
+    }
     if (navigator.share) {
       try {
         await navigator.share({ title: document.title, url: window.location.href });

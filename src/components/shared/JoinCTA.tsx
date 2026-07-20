@@ -32,7 +32,7 @@ export function JoinCTA({
   if (!heading && cards.length === 0) return null;
 
   return (
-    <section className="py-16 relative bg-background border-t border-border">
+    <section className="py-12 relative bg-background border-t border-border">
       <div className="container max-w-5xl mx-auto relative z-10 px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}

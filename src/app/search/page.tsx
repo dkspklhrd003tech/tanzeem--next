@@ -20,6 +20,7 @@ import { Search, Calendar, FileText, Music, Video, Book, Newspaper, AlertCircle,
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { SearchResultsClient } from "@/components/search/SearchResultsClient";
+import { LiveSearchInput } from "@/components/search/LiveSearchInput";
 
 export const dynamic = "force-dynamic";
 
@@ -112,21 +113,15 @@ export default async function SearchPage({ searchParams }: Props) {
 
         {/* Search input bar */}
         <div className="mb-6">
-          <form action="/search" method="GET" className="relative flex gap-2">
+          <div className="relative flex gap-2">
             <div className="relative flex-1">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-foreground-muted" />
-              <Input
-                name="q"
-                defaultValue={searchTerm}
-                placeholder="Search resources, topics, or speakers..."
-                className="pl-12 h-12 text-md bg-[#fefefc] border-border rounded-xl"
-                autoFocus
-              />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-foreground-muted z-10" />
+              <LiveSearchInput defaultValue={searchTerm} />
             </div>
-            <Button type="submit" className="h-12 px-6 bg-primary hover:bg-primary/95 text-white font-semibold rounded-xl">
+            <Button className="h-12 px-6 bg-primary text-white font-semibold rounded-xl">
               Search
             </Button>
-          </form>
+          </div>
         </div>
 
 

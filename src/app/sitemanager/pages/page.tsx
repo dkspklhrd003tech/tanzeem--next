@@ -36,8 +36,12 @@ function timeAgo(d: string) {
 }
 
 function copySlug(slug: string, toast: any) {
-  navigator.clipboard.writeText(`/${slug}`);
-  toast({ title: "Copied!", description: `/${slug}` });
+  navigator.clipboard.writeText(`/${slug}`)
+    .then(() => toast({ title: "Copied!", description: `/${slug}` }))
+    .catch((err) => {
+      console.error("Copy failed", err);
+      toast({ title: "Copy Failed", description: "Browser blocked clipboard access.", variant: "destructive" });
+    });
 }
 
 export default function PagesListPage() {
@@ -530,6 +534,7 @@ export default function PagesListPage() {
 
                         <div className="flex-1 min-w-0">
                           <Link
+                            prefetch={false}
                             href={`/sitemanager/pages/${row.id}/edit`}
                             className="text-sm font-bold text-foreground hover:text-primary transition-colors truncate block filter drop-shadow-sm"
                           >
@@ -623,7 +628,7 @@ export default function PagesListPage() {
                             className="h-8 w-8 text-muted-foreground hover:text-white hover:bg-primary rounded-lg transition-all duration-200"
                             title="Edit Page"
                           >
-                            <Link href={row.slug === "organization" ? "/sitemanager/pages/organization" : row.slug === "policy" ? "/sitemanager/pages/policy" : `/sitemanager/pages/${row.id}/edit`}>
+                            <Link prefetch={false} href={row.slug === "organization" ? "/sitemanager/pages/organization" : row.slug === "policy" ? "/sitemanager/pages/policy" : `/sitemanager/pages/${row.id}/edit`}>
                               <Edit2 className="h-4 w-4" />
                             </Link>
                           </Button>
@@ -736,7 +741,7 @@ export default function PagesListPage() {
                         </div>
 
                         <div className="flex-1">
-                          <Link href={row.slug === "organization" ? "/sitemanager/pages/organization" : row.slug === "policy" ? "/sitemanager/pages/policy" : `/sitemanager/pages/${row.id}/edit`} className="font-bold text-foreground hover:text-primary transition-colors line-clamp-2 mb-1 filter drop-shadow-sm">
+                          <Link prefetch={false} href={row.slug === "organization" ? "/sitemanager/pages/organization" : row.slug === "policy" ? "/sitemanager/pages/policy" : `/sitemanager/pages/${row.id}/edit`} className="font-bold text-foreground hover:text-primary transition-colors line-clamp-2 mb-1 filter drop-shadow-sm">
                             {row.title}
                           </Link>
                           <div className="flex items-center gap-1.5">
@@ -754,7 +759,7 @@ export default function PagesListPage() {
                           </div>
                           <div className="flex items-center gap-1">
                             <Button asChild variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-white hover:bg-primary rounded-lg transition-all" title="Edit Page">
-                              <Link href={row.slug === "organization" ? "/sitemanager/pages/organization" : row.slug === "policy" ? "/sitemanager/pages/policy" : `/sitemanager/pages/${row.id}/edit`}><Edit2 className="h-3.5 w-3.5" /></Link>
+                              <Link prefetch={false} href={row.slug === "organization" ? "/sitemanager/pages/organization" : row.slug === "policy" ? "/sitemanager/pages/policy" : `/sitemanager/pages/${row.id}/edit`}><Edit2 className="h-3.5 w-3.5" /></Link>
                             </Button>
                             <Button variant="ghost" size="icon" onClick={() => window.open(`/${row.slug}`, '_blank', 'noopener,noreferrer')} className="h-7 w-7 text-muted-foreground hover:text-indigo-600 hover:bg-indigo-500/10 rounded-lg transition-all" title="View Live">
                               <Eye className="h-3.5 w-3.5" />

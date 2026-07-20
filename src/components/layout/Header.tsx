@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X, Search, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -27,6 +27,26 @@ export function Header() {
   const [displayDate, setDisplayDate] = useState<{ greg: string; hijri: string } | null>(null);
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  // Sync state with URL
+  useEffect(() => {
+    const q = searchParams?.get("q");
+    if (q !== null && q !== searchQuery) {
+      setSearchQuery(q);
+    }
+  }, [searchParams]);
+
+  // Handle live search
+  const handleLiveSearch = (val: string) => {
+    setSearchQuery(val);
+
+    // If we are already on the search page, update the results in real-time
+    if (pathname === "/search") {
+      router.replace(`/search?q=${encodeURIComponent(val.trim())}`);
+    }
+  };
 
   // Single shared source of truth for nav + settings (SWR-deduped across components).
   const { items: navigation, isLoading: navLoading } = useNavigation("main", true);
@@ -134,7 +154,7 @@ export function Header() {
       {/* Top Social Bar */}
       {mounted && (
         <div className="bg-primary border-b border-border text-secondary py-2 hidden md:block">
-          <div className="container mx-auto flex justify-between items-center gap-4 text-sm">
+          <div className="max-w-[1320px] mx-auto px-4 xl:px-0 flex justify-between items-center gap-4 text-sm">
             <div className="flex items-center gap-6">
               {/* Social links are driven entirely by settings — no hardcoded fallbacks. */}
               {settings.youtube_url && (
@@ -179,14 +199,14 @@ export function Header() {
       {/* Main Navigation */}
       <motion.header
         className={cn(
-          "sticky top-0 z-50 transition-all duration-300 px-4 bg-card border-b border-border",
+          "sticky top-0 z-50 transition-all duration-300 bg-card border-b border-border",
           isScrolled && "shadow-md"
         )}
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.3 }}
       >
-        <div className="container mx-auto !p-0">
+        <div className="max-w-[1320px] mx-auto px-4 xl:px-0">
           <div className="flex items-center justify-between h-16 md:h-20">
             {/* Logo */}
             <Link href="/" className="flex items-center gap-3 shrink-0">
@@ -228,19 +248,25 @@ export function Header() {
                   ))}
                   {/* Search */}
                   {settings.header_show_search !== "false" && (
-                    <form onSubmit={handleSearchSubmit} className="relative ml-4 flex items-center">
+                    <div className="relative ml-4 flex items-center">
                       <Input
-                        type="search"
+                        type="text"
                         placeholder="Search..."
                         aria-label="Search the site"
                         value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        className="w-64 h-8 pl-3 pr-9 rounded-full border-border bg-card text-xs"
+                        onChange={(e) => handleLiveSearch(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            e.preventDefault();
+                            handleSearchSubmit(e as any);
+                          }
+                        }}
+                        className="w-40 h-8 pl-3 pr-9 rounded-full border-primary-light/50 bg-primary-light/50 text-foreground text-xs"
                       />
-                      <button type="submit" aria-label="Submit search" className="absolute right-1 top-1/2 -translate-y-1/2 text-foreground-muted hover:text-foreground transition-colors p-2 rounded-full">
+                      <button type="button" onClick={handleSearchSubmit} aria-label="Submit search" className="absolute right-1 top-1/2 -translate-y-1/2 text-primary transition-colors p-2 rounded-full">
                         <Search className="h-3 w-3" aria-hidden="true" />
                       </button>
-                    </form>
+                    </div>
                   )}
                 </>
               )}
@@ -320,21 +346,27 @@ export function Header() {
                 className="w-full max-w-lg"
                 onClick={(e) => e.stopPropagation()}
               >
-                <form onSubmit={handleSearchSubmit} className="relative">
+                <div className="relative">
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-foreground-muted" aria-hidden="true" />
                   <Input
-                    type="search"
+                    type="text"
                     placeholder="Search..."
                     aria-label="Search the site"
                     value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onChange={(e) => handleLiveSearch(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault();
+                        handleSearchSubmit(e as any);
+                      }
+                    }}
                     className="pl-12 pr-12 h-14 text-lg bg-card rounded-xl"
                     autoFocus
                   />
                   <Button type="button" variant="ghost" size="sm" className="absolute right-2 top-1/2 -translate-y-1/2" onClick={() => setIsSearchOpen(false)}>
                     <X className="h-5 w-5" />
                   </Button>
-                </form>
+                </div>
               </motion.div>
             </motion.div>
           )
@@ -348,8 +380,8 @@ function getMenuItemClass(isTopLevel: boolean, isActive: boolean = false) {
   return cn(
     "transition-colors focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2",
     isTopLevel
-      ? cn("flex items-center gap-1 py-2 px-3 text-[13px] font-medium hover:text-primary", isActive ? "text-primary" : "text-[#222222]")
-      : cn("flex w-full items-center justify-between px-5 py-2.5 text-[13px] hover:bg-primary hover:text-primary-foreground border-b border-border/30 last:border-0 group", isActive ? "text-primary bg-primary/5" : "text-[#222222]")
+      ? cn("flex items-center gap-1 py-2 px-3 text-[16px] font-medium hover:text-primary", isActive ? "text-primary" : "text-[#222222]")
+      : cn("flex w-full items-center justify-between px-5 py-2.5 text-[16px] hover:bg-primary hover:text-primary-foreground border-b border-border/30 last:border-0 group", isActive ? "text-primary bg-primary/5" : "text-[#222222]")
   );
 }
 

@@ -115,12 +115,12 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
                     {/* Text Content */}
                     <div className="flex-1 flex flex-col justify-center relative z-10 items-center md:items-start text-center md:text-left">
                         <p className="sub_title">About Us</p>
-                        <h2
+                        <h1
                             id="about-heading"
                             className="text-2xl md:text-3xl font-bold mb-3"
                         >
                             {aboutTitle}
-                        </h2>
+                        </h1>
                         <div
                             className="text-[#222222] leading-relaxed text-sm md:text-base mb-6 max-w-none prose-p:my-2"
                             dangerouslySetInnerHTML={{ __html: aboutDesc }}
@@ -184,9 +184,9 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
                                         <p className="sub_title">
                                             {leader.designation || "Leader"}
                                         </p>
-                                        <h3 className="text-xl md:text-2xl font-bold  mb-3">
+                                        <h2 className="text-xl md:text-2xl font-bold  mb-3">
                                             {leader.name}
-                                        </h3>
+                                        </h2>
                                         {leader.bio && (
                                             <p className=" text-sm leading-relaxed line-clamp-4">
                                                 {leader.bio}

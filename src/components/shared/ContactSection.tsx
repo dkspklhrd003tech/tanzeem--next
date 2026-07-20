@@ -292,34 +292,34 @@ export function ContactSection({
 
                     {/* Complex Detailed Addresses Array */}
                     {branch.details && branch.details.length > 0 && (
-                      <div className="space-y-6">
+                      <div className="space-y-4">
                         {branch.details.map((detail, idx) => (
-                          <div key={detail.id || idx} className="bg-primary-light rounded-xl p-4 md:p-5 border border-primary/40">
+                          <div key={detail.id || idx} className="bg-primary-light/50 rounded-xl p-4 border border-primary/20">
                             {detail.title && (
-                              <div className="mb-4 pb-3 border-b border-slate-200/60 flex items-center gap-2.5">
-                                <div className="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center shrink-0 border border-emerald-100/50">
-                                  <MapPin className="w-4 h-4 text-[#0d5844]" />
+                              <div className="mb-4 flex items-start gap-3">
+                                <div className="w-9 h-9 rounded-lg bg-white flex items-center justify-center shrink-0 shadow-sm border border-primary-light/80">
+                                  <MapPin className="w-6 h-6 text-primary" />
                                 </div>
-                                <div>
-                                  <h4 className="font-bold text-base text-slate-900 leading-tight">{detail.title}</h4>
+                                <div className="flex flex-col gap-0.5">
+                                  <h4 className="font-bold text-base text-foreground">{detail.title}:</h4>
                                   {detail.titleValue && (
-                                    <span className="text-xs text-slate-600 font-medium">{detail.titleValue}</span>
+                                    <span className="text-sm text-foreground/80 font-medium">{detail.titleValue}</span>
                                   )}
                                 </div>
                               </div>
                             )}
 
-                            <div className="grid grid-cols-1 gap-4 text-[14px]">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-[14px]">
                               {detail.naibAmeer && (
-                                <div className="space-y-0.5">
-                                  <span className="text-xs font-bold text-primary/90 uppercase tracking-wider flex items-center gap-1.5"><User className="w-3.5 h-3.5" /> {detail.leaderTitle || 'Ameer'}</span>
-                                  <span className="block font-semibold text-slate-800">{detail.naibAmeer}</span>
+                                <div className="space-y-1">
+                                  <span className="text-[14px] font-bold text-primary uppercase tracking-widest flex items-center gap-1.5"><User className="w-3.5 h-3.5" /> {detail.leaderTitle || 'Ameer'}</span>
+                                  <span className="block font-bold text-slate-900">{detail.naibAmeer}</span>
                                 </div>
                               )}
                               {detail.phone && (
-                                <div className="space-y-0.5">
-                                  <span className="text-xs font-bold text-primary/90 uppercase tracking-wider flex items-center gap-1.5"><Phone className="w-3.5 h-3.5" /> Phone</span>
-                                  <span className="block font-semibold text-slate-800">
+                                <div className="space-y-1">
+                                  <span className="text-[14px] font-bold text-primary uppercase tracking-widest flex items-center gap-1.5"><Phone className="w-3.5 h-3.5" /> Phone</span>
+                                  <span className="block font-bold text-slate-900">
                                     {detail.phoneUrl ? (
                                       <a href={detail.phoneUrl} target={detail.phoneUrlNewTab !== false ? "_blank" : "_self"} className="hover:text-[#0d5844] transition-colors">{detail.phone}</a>
                                     ) : (
@@ -329,9 +329,9 @@ export function ContactSection({
                                 </div>
                               )}
                               {detail.mobile && (
-                                <div className="space-y-0.5">
-                                  <span className="text-xs font-bold text-primary/90 uppercase tracking-wider flex items-center gap-1.5"><MessagesSquare className="w-3.5 h-3.5" /> Whatsapp</span>
-                                  <span className="block font-semibold text-slate-800">
+                                <div className="space-y-1">
+                                  <span className="text-[14px] font-bold text-primary uppercase tracking-widest flex items-center gap-1.5"><MessagesSquare className="w-3.5 h-3.5" /> Whatsapp</span>
+                                  <span className="block font-bold text-slate-900">
                                     {detail.mobileUrl ? (
                                       <a href={detail.mobileUrl} target={detail.mobileUrlNewTab !== false ? "_blank" : "_self"} className="hover:text-[#0d5844] transition-colors">{detail.mobile}</a>
                                     ) : (
@@ -341,19 +341,19 @@ export function ContactSection({
                                 </div>
                               )}
                               {detail.email && (
-                                <div className="space-y-0.5">
-                                  <span className="text-xs font-bold text-primary/90 uppercase tracking-wider flex items-center gap-1.5"><Mail className="w-3.5 h-3.5" /> Email</span>
-                                  <span className="block font-semibold text-slate-800">
+                                <div className="space-y-1">
+                                  <span className="text-[14px] font-bold text-primary uppercase tracking-widest flex items-center gap-1.5"><Mail className="w-3.5 h-3.5" /> Email</span>
+                                  <span className="block font-bold text-slate-900">
                                     <a href={detail.emailUrl || `mailto:${detail.email}`} target={detail.emailUrlNewTab !== false ? "_blank" : "_self"} className="hover:text-[#0d5844] transition-colors">{detail.email}</a>
                                   </span>
                                 </div>
                               )}
                               {detail.address && (
-                                <div className="space-y-0.5 sm:col-span-4">
-                                  <span className="text-xs font-bold text-primary/90 uppercase tracking-wider flex items-center gap-1.5"><MapPinned className="w-3.5 h-3.5" /> Postal Address</span>
+                                <div className="space-y-1 sm:col-span-2 lg:col-span-4 mt-1">
+                                  <span className="text-[14px] font-bold text-primary uppercase tracking-widest flex items-center gap-1.5"><MapPinned className="w-3.5 h-3.5" /> Postal Address</span>
                                   <span className="block font-medium text-slate-800 leading-snug">
                                     {detail.addressUrl ? (
-                                      <a href={detail.addressUrl} target={detail.addressUrlNewTab !== false ? "_blank" : "_self"} className="hover:text-[#0d5844] transition-colors hover:underline decoration-slate-300 underline-offset-4">
+                                      <a href={detail.addressUrl} target={detail.addressUrlNewTab !== false ? "_blank" : "_self"} className="hover:text-[#0d5844] transition-colors">
                                         {detail.address}
                                       </a>
                                     ) : (

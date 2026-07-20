@@ -86,10 +86,10 @@ export function MissionAndCampaigns({ campaigns, settings }: MissionProps) {
                 <div className="container max-w-7xl mx-auto relative z-10 px-6">
 
                     <div className="mb-6 md:mb-8 text-center">
-                        <p className="text-primary font-bold tracking-widest uppercase text-xs mb-3">Featured Campaigns</p>
-                        <h2 id="campaigns-heading" className="spotlight_heading">
+                        <h2 id="campaigns-heading" className="spotlight_heading">Featured Campaigns</h2>
+                        <p className="text-foreground font-medium tracking-normal uppercase text-sm">
                             Regular Video Broadcasts
-                        </h2>
+                        </p>
                     </div>
 
                     <div ref={gridRef} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">

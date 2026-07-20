@@ -161,10 +161,13 @@ export function SearchResultsClient({ results, searchTerm }: Props) {
                   </span>
                 )}
               </div>
-              <h3 className="text-lg font-bold text-foreground hover:text-primary mb-2 line-clamp-2">
+              <h3 className="text-lg font-bold text-foreground hover:text-primary mb-1 line-clamp-2">
                 <Link href={item.link}>{item.title}</Link>
               </h3>
-              <div className="mt-4 flex justify-start">
+              <div className="text-[12px] text-primary/70 truncate mb-3 font-medium">
+                <Link href={item.link}>{item.link}</Link>
+              </div>
+              <div className="mt-auto flex justify-start pt-2">
                 <Link
                   href={item.link}
                   className="text-sm font-semibold text-primary px-3 py-2 border border-[#0d5844] rounded-full flex items-center gap-1 group"

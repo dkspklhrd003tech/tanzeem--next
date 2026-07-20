@@ -59,8 +59,6 @@ export function BooksCategoryGrid({ categoryName, initialItems }: BooksCategoryG
     if (typeof window === "undefined" || typeof navigator === "undefined") return;
     const shareUrl = `${window.location.href}?book=${item.id}`;
     
-    await trackShare(item.id);
-
     try {
       if (navigator.clipboard) {
         await navigator.clipboard.writeText(shareUrl);
@@ -71,6 +69,9 @@ export function BooksCategoryGrid({ categoryName, initialItems }: BooksCategoryG
     } catch (e) {
       console.error("Failed to copy:", e);
     }
+
+    // Track without blocking
+    trackShare(item.id).catch(console.error);
 
     if (navigator.share) {
       try {
