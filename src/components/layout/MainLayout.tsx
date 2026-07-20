@@ -48,7 +48,7 @@ export function MainLayout({ children }: MainLayoutProps) {
               <span className="text-4xl text-primary font-bold">ت</span>
             </div>
           )}
-          <h1 className="text-3xl md:text-4xl font-bold text-foreground font-amiri text-[#0d5844]">Under Maintenance</h1>
+          <h1 className="text-3xl md:text-4xl font-bold text-foreground font-nastaleeq text-[#0d5844]">Under Maintenance</h1>
           <p className="text-muted-foreground text-base">We are currently performing scheduled maintenance on the website. Please check back shortly. Jazakallah Khair for your patience.</p>
         </div>
       </div>

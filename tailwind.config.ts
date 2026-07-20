@@ -40,11 +40,6 @@ const config: Config = {
 				accent: {
 					DEFAULT: "var(--accent)",
 					foreground: "var(--accent-foreground)",
-					blue: "var(--accent-blue)",
-					"blue-hover": "var(--accent-blue-hover)",
-					"blue-light": "var(--accent-blue-light)",
-					gold: "var(--accent-gold)",
-					"gold-dark": "var(--accent-gold-dark)",
 				},
 				destructive: {
 					DEFAULT: "var(--destructive)",
@@ -72,10 +67,9 @@ const config: Config = {
 			// ── Font Families ─────────────────────────────────────────────────────
 			fontFamily: {
 				heading: ["var(--font-heading)", "system-ui", "sans-serif"],
-				body: ["var(--font-body)", "Arial", "Helvetica", "sans-serif"],
-				amiri: ["var(--font-amiri)", "Amiri", "serif"],
-				nastaleeq: ["Jameel Noori Nastaleeq", "serif"],
-				sans: ["var(--font-body)", "Arial", "Helvetica", "sans-serif"],
+				body: ["var(--font-body)", "sans-serif"],
+				nastaleeq: ["var(--font-nastaleeq)", "Jameel Noori Nastaleeq", "serif"],
+				sans: ["var(--font-body)", "sans-serif"],
 			},
 
 			// ── Border Radius ─────────────────────────────────────────────────────

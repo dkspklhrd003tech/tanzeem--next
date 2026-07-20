@@ -148,7 +148,7 @@ export function RichTextEditor({
   useEffect(() => {
     if (!editor) return;
     if (defaultToUrdu) {
-      editor.chain().focus().setTextAlign("right").setFontFamily("'Scheherazade New', 'Noto Nastaliq Urdu', serif").run();
+      editor.chain().focus().setTextAlign("right").setFontFamily("'Scheherazade New', 'Jameel Noori Nastaleeq', serif").run();
     } else {
       editor.chain().focus().setTextAlign("left").unsetFontFamily().run();
     }
@@ -362,7 +362,7 @@ export function RichTextEditor({
                   if (editor.isActive("textStyle", { fontFamily: "'Scheherazade New', 'jameel noori nastaleeq', serif" })) {
                     editor.chain().focus().unsetFontFamily().run();
                   } else {
-                    editor.chain().focus().setFontFamily("'Scheherazade New', 'Noto Nastaliq Urdu', serif").run();
+                    editor.chain().focus().setFontFamily("'Scheherazade New', 'Jameel Noori Nastaleeq', serif").run();
                   }
                 }}
                 isActive={editor.isActive("textStyle", { fontFamily: "'Scheherazade New', 'Jameel Noori Nastaleeq', serif" })}

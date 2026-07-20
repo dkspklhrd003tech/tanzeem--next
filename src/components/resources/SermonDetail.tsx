@@ -54,7 +54,7 @@ export function SermonDetail({ sermon }: SermonDetailProps) {
                         })}
                     </p>
                 )}
-                <h1 className="font-amiri text-3xl md:text-4xl text-primary font-bold mt-2">
+                <h1 className="font-nastaleeq text-3xl md:text-4xl text-primary font-bold mt-2">
                     {title}
                 </h1>
                 <p className="text-foreground-muted mt-1">

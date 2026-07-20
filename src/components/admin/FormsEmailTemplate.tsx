@@ -14,7 +14,7 @@ const DEFAULT_TEMPLATE = `<!DOCTYPE html>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body style="padding: 0; margin: 0; font-family: Helvetica, Arial, sans-serif; background: #f0f0f0;">
+<body style="padding: 0; margin: 0; font-family: sans-serif; background: #f0f0f0;">
   <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background: #e5e5e5;">
     <tr>
       <td align="center" style="padding: 20px;">
@@ -29,7 +29,7 @@ const DEFAULT_TEMPLATE = `<!DOCTYPE html>
           </tr>
           <tr>
             <td style="padding: 30px 20px;">
-              <h3 style="margin-top: 0; color: #333; font-family: 'Outfit', Helvetica, Arial, sans-serif;">Contact Form</h3>
+              <h3 style="margin-top: 0; color: #333; font-family: 'Outfit', sans-serif;">Contact Form</h3>
               <table width="100%" border="0" cellspacing="0" cellpadding="0" style="border-collapse: collapse; font-size: 14px; line-height: 1.6;">
                 <tr><td style="padding: 8px 0; border-bottom: 1px solid #eee; font-weight: bold; width: 130px; color: #333;">Full Name:</td><td style="padding: 8px 0; border-bottom: 1px solid #eee; color: #333;">[name]</td></tr>
                 <tr><td style="padding: 8px 0; border-bottom: 1px solid #eee; font-weight: bold; color: #333;">Email Address:</td><td style="padding: 8px 0; border-bottom: 1px solid #eee; color: #3b82f6;">[email]</td></tr>

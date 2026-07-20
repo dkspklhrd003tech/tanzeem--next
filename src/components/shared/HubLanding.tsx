@@ -20,7 +20,7 @@ export function HubLanding({ title, subtitle, cards }: HubLandingProps) {
   return (
     <div className="container mx-auto py-6 md:py-8">
       <div className="max-w-4xl mb-10">
-        <h1 className="font-amiri text-3xl md:text-4xl text-primary font-bold">{title}</h1>
+        <h1 className="font-nastaleeq text-3xl md:text-4xl text-primary font-bold">{title}</h1>
         {subtitle && <p className="mt-3 text-foreground-muted leading-relaxed">{subtitle}</p>}
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">

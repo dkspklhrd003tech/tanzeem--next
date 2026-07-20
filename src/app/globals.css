@@ -14,11 +14,6 @@
   --primary: #0d5844;
   --primary-light: color-mix(in srgb, var(--primary) 10%, white);
   --primary-foreground: #fefefc;
-  /* --primary-dark: #007db3; */
-
-  /* ── Accent Gold ── */
-  /* --accent-gold: #c8a84e;
-  --accent-gold-dark: #a88a3a; */
 
   /* ── Social Brand Colors (extracted palette) ── */
   --color-facebook: #4267b2;
@@ -157,8 +152,7 @@
 
   /* ── Font Families ── */
   --font-heading: 'Plus Jakarta Sans', system-ui, sans-serif;
-  --font-body: 'Kumbh Sans', Arial, Helvetica, sans-serif;
-  --font-arabic: 'Noto Nastaliq Urdu', serif;
+  --font-body: 'Kumbh Sans', sans-serif;
   --font-nastaleeq: 'Jameel Noori Nastaleeq', serif;
 }
 
@@ -176,11 +170,6 @@
   --color-primary-foreground: var(--primary-foreground);
   --color-primary-light: var(--primary-light);
   --color-primary-dark: var(--primary-dark);
-  --color-accent-blue: var(--accent-blue);
-  --color-accent-blue-hover: var(--accent-blue-hover);
-  --color-accent-blue-light: var(--accent-blue-light);
-  --color-accent-gold: var(--accent-gold);
-  --color-accent-gold-dark: var(--accent-gold-dark);
   --color-facebook: var(--color-facebook);
   --color-whatsapp: var(--color-whatsapp);
   --color-youtube: var(--color-youtube);
@@ -250,14 +239,14 @@
   /* ── Font Families ── */
   --font-family-heading: var(--font-heading);
   --font-family-body: var(--font-body);
-  --font-family-amiri: var(--font-amiri), 'Amiri', serif;
+  --font-family-amiri: var(--font-nastaleeq), 'Amiri', serif;
   --font-family-nastaleeq: var(--font-nastaleeq);
 }
 
 /* ── Custom Urdu Font with Unicode Range ── */
 @font-face {
   font-family: 'UrduAutoFallback';
-  src: local('Jameel Noori Nastaleeq'), local('Noto Nastaliq Urdu');
+  src: local('Jameel Noori Nastaleeq');
   /* Covers Arabic/Urdu character ranges */
   unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF;
 }
@@ -380,21 +369,14 @@ header svg {
   font-family: var(--font-body);
 }
 
-.font-amiri {
-  font-family: var(--font-amiri), 'Amiri', serif;
-}
-
-/* Set Helvetica font for span and p tags for english text by default and keep LTR direction */
+/* Enforce default LTR direction for English text */
 span,
 p,
 li {
-  /* font-family: Helvetica, Arial, sans-serif; */
   direction: ltr;
-  /* color: var(--color-foreground); */
-  /* text-align: left; */
 }
 
-/* Enforce Jameel Noori Nastaleeq, Noto Nastaliq Urdu and RTL layout for Urdu/Arabic text */
+/* Enforce Jameel Noori Nastaleeq, Jameel Noori Nastaleeq and RTL layout for Urdu/Arabic text */
 .font-urdu,
 .font-nastaleeq,
 .font-urdu span,

@@ -229,7 +229,7 @@ export function Header() {
                   </div>
                   <div className="hidden sm:block">
                     <h1 className="text-lg md:text-xl font-bold text-primary">
-                      Tanzeem<span className="text-accent-gold">-e-</span>Islami
+                      Tanzeem-e-Islami
                     </h1>
                     <p className="text-[10px] text-foreground-muted -mt-0.5" style={{ fontFamily: "'Scheherazade New', serif" }}>
                       تنظیمِ اسلامی

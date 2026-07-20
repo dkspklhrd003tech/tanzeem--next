@@ -299,8 +299,6 @@ isActive: boolean
 | `--primary-foreground` | `#fefefc` | Text on primary backgrounds |
 | `--primary-light` | `#007a4d` | Hover states, lighter accents |
 | `--primary-dark` | `--primary` | Active states, deeper accents |
-| `--accent-gold` | `#c8a84e` | Logo accent, decorative highlights |
-| `--accent-gold-dark` | `#a88a3a` | Gold hover/active states |
 
 #### Semantic Colors
 

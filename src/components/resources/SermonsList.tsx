@@ -24,7 +24,7 @@ export function SermonsList({ sermons }: SermonsListProps) {
             <div className="container mx-auto">
                 <h1
                     id="sermons-heading"
-                    className="font-amiri text-3xl md:text-4xl text-primary font-bold mb-8"
+                    className="font-nastaleeq text-3xl md:text-4xl text-primary font-bold mb-8"
                 >
                     Khitab-e-Jum&apos;ah
                 </h1>

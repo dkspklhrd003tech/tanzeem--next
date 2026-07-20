@@ -102,7 +102,7 @@ function SortableCategoryCard({ id, item, onEdit, onDelete, onClick, sermonCount
         </div>
         <h3 className="font-bold text-lg text-foreground leading-snug line-clamp-2">{item.name}</h3>
         {item.urduName && (
-          <h4 className="font-bold text-base text-foreground mt-1 font-amiri" dir="rtl">{item.urduName}</h4>
+          <h4 className="font-bold text-base text-foreground mt-1 font-nastaleeq" dir="rtl">{item.urduName}</h4>
         )}
         <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{item.description}</p>
       </div>
@@ -142,7 +142,7 @@ function SortableSermonCard({ id, item, onEdit, onDelete }: any) {
 
         <h3 className="font-bold text-base text-foreground leading-snug line-clamp-2 mb-1">{item.title}</h3>
         {item.titleUrdu && (
-          <h4 className="font-bold text-sm text-foreground leading-snug line-clamp-2 mb-2 font-amiri" dir="rtl">{item.titleUrdu}</h4>
+          <h4 className="font-bold text-sm text-foreground leading-snug line-clamp-2 mb-2 font-nastaleeq" dir="rtl">{item.titleUrdu}</h4>
         )}
         <p className="text-xs text-muted-foreground font-mono truncate mb-4" title={item.slug}>
           /{item.slug}

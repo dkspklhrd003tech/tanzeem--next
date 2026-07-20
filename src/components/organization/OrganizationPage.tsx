@@ -158,7 +158,7 @@ export function useOrganizationPageState(initialData?: OrganizationPageState | n
       setLoaded(true);
       return;
     }
-    
+
     try {
       const raw = localStorage.getItem(LS_KEY);
       if (raw) {
@@ -550,7 +550,7 @@ function JoinUS({ data }: { data: JoinState }) {
                 className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-xl p-6 text-center"
               >
                 {card.title && (
-                  <h3 className="text-xl font-bold text-accent-gold mb-3">{card.title}</h3>
+                  <h3 className="text-xl font-bold mb-3">{card.title}</h3>
                 )}
                 {card.location && (
                   <p className="text-white/70 text-xs flex items-center justify-center gap-1.5 mb-1">

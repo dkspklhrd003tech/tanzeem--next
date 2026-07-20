@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Amiri, Plus_Jakarta_Sans, Kumbh_Sans } from "next/font/google";
+import { Plus_Jakarta_Sans, Kumbh_Sans } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { MainLayout } from "@/components/layout";
@@ -19,14 +19,6 @@ const kumbhSans = Kumbh_Sans({
   variable: "--font-body",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
-  display: "swap",
-});
-
-// ── Arabic / Urdu font: Amiri ────────────────────────────────────────────────
-const amiri = Amiri({
-  variable: "--font-amiri",
-  subsets: ["latin", "arabic"],
-  weight: ["400", "700"],
   display: "swap",
 });
 
@@ -110,11 +102,7 @@ export default async function RootLayout({
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        {/* Noto Nastaliq Urdu — Urdu running text */}
-        <link
-          href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&display=swap"
-          rel="stylesheet"
-        />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         {globalCss && (
           <style dangerouslySetInnerHTML={{ __html: globalCss }} />
         )}
@@ -127,7 +115,7 @@ export default async function RootLayout({
         />
       </head>
       <body
-        className={`${plusJakartaSans.variable} ${kumbhSans.variable} ${amiri.variable} antialiased bg-background text-foreground font-body`}
+        className={`${plusJakartaSans.variable} ${kumbhSans.variable} antialiased bg-background text-foreground font-body`}
       >
         <MainLayout>{children}</MainLayout>
 

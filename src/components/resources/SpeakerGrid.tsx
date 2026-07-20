@@ -23,7 +23,7 @@ export function SpeakerGrid({ speakers }: { speakers: SpeakerItem[] }) {
             {speaker.avatar ? (
               <img src={speaker.avatar} alt={speaker.name} className="w-full h-full object-cover" />
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-2xl font-amiri text-primary">
+              <div className="w-full h-full flex items-center justify-center text-2xl font-nastaleeq text-primary">
                 {speaker.name.charAt(0)}
               </div>
             )}

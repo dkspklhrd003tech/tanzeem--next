@@ -14,7 +14,7 @@ export function MagazineGrid({ items, seriesTitle }: { items: MagazineItem[]; se
   return (
     <div>
       {seriesTitle && (
-        <h2 className="font-amiri text-2xl font-bold text-primary mb-6">{seriesTitle}</h2>
+        <h2 className="font-nastaleeq text-2xl font-bold text-primary mb-6">{seriesTitle}</h2>
       )}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
         {items.map((issue) => (
@@ -23,7 +23,7 @@ export function MagazineGrid({ items, seriesTitle }: { items: MagazineItem[]; se
               {issue.coverImage ? (
                 <img src={issue.coverImage} alt={issue.title} className="w-full h-full object-cover" />
               ) : (
-                <div className="w-full h-full flex items-center justify-center text-primary font-amiri text-lg p-4 text-center">
+                <div className="w-full h-full flex items-center justify-center text-primary font-nastaleeq text-lg p-4 text-center">
                   {issue.title}
                 </div>
               )}

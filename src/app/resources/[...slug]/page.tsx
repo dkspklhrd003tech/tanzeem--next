@@ -127,7 +127,7 @@ export default async function ResourceSubPage({ params, searchParams }: Props) {
           <Link href="/resources" className="text-sm text-primary hover:underline">
             ← Resources
           </Link>
-          <h1 className="font-amiri text-3xl md:text-4xl font-bold text-primary mt-2">{title}</h1>
+          <h1 className="font-nastaleeq text-3xl md:text-4xl font-bold text-primary mt-2">{title}</h1>
         </div>
 
         {path === "audios" && (
@@ -142,7 +142,7 @@ export default async function ResourceSubPage({ params, searchParams }: Props) {
             <SpeakerGrid speakers={speakerList} />
             {sp.speaker && (
               <div className="mt-12">
-                <h2 className="font-amiri text-xl font-bold text-primary mb-4">Lectures</h2>
+                <h2 className="font-nastaleeq text-xl font-bold text-primary mb-4">Lectures</h2>
                 <AudioList items={audioItems} showFilters={false} />
               </div>
             )}
@@ -157,7 +157,7 @@ export default async function ResourceSubPage({ params, searchParams }: Props) {
         {path === "videos" && (
           <>
             <ExternalVideoLinks />
-            <h2 className="font-amiri text-xl font-bold text-primary mb-4 mt-4">Tanzeem Videos</h2>
+            <h2 className="font-nastaleeq text-xl font-bold text-primary mb-4 mt-4">Tanzeem Videos</h2>
             <VideoGrid items={videoItems} />
           </>
         )}
@@ -216,7 +216,7 @@ export default async function ResourceSubPage({ params, searchParams }: Props) {
           <Link href={`/resources/magazines/${seriesSlug}`} className="text-sm text-primary hover:underline">
             ← {seriesTitle}
           </Link>
-          <h1 className="font-amiri text-3xl md:text-4xl font-bold text-primary mt-2">
+          <h1 className="font-nastaleeq text-3xl md:text-4xl font-bold text-primary mt-2">
             {seriesTitle} — {year}
           </h1>
           {items.length > 0 ? (

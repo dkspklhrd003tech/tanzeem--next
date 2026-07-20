@@ -62,7 +62,7 @@ export default async function KhitabEJumahCategoryPage({ params }: Props) {
                     <div className="pb-2 border-b border-border/50">
                         <h1 className="text-3xl md:text-4xl text-center font-bold text-foreground mb-4">{category.name}</h1>
                         {category.urduName && (
-                            <h2 className="text-2xl font-bold text-foreground font-amiri mb-4" dir="rtl">{category.urduName}</h2>
+                            <h2 className="text-2xl font-bold text-foreground font-nastaleeq mb-4" dir="rtl">{category.urduName}</h2>
                         )}
                         {category.description && (
                             <p className="text-lg text-muted-foreground">{category.description}</p>

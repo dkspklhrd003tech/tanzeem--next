@@ -1405,7 +1405,7 @@ export default function OrganizationPageEditor() {
                   )}
                   <span className="text-[8px] text-white/50 tracking-widest uppercase relative z-10 mb-2">{localState.heroBanner.topLabel}</span>
                   <h1 className="text-sm md:text-base font-bold relative z-10 max-w-xs">{localState.heroBanner.quoteText}</h1>
-                  <p className="text-[10px] text-accent-gold mt-3 font-semibold relative z-10">{localState.heroBanner.attribution}</p>
+                  <p className="text-[10px] mt-3 font-semibold relative z-10">{localState.heroBanner.attribution}</p>
                 </div>
 
                 {/* ② History section preview */}
@@ -1492,7 +1492,7 @@ export default function OrganizationPageEditor() {
                   <div className="grid grid-cols-2 gap-3">
                     {localState.join.cards.map((card, idx) => (
                       <div key={idx} className="bg-white/10 border border-white/20 p-3 rounded-lg text-center">
-                        <span className="text-[10px] font-bold text-accent-gold block">{card.title}</span>
+                        <span className="text-[10px] font-bold block">{card.title}</span>
                         <span className="text-[8px] text-white/50 block mt-1">{card.location}</span>
                         <p className="text-[9px] text-white/60 mt-1 line-clamp-2">{card.description}</p>
                       </div>

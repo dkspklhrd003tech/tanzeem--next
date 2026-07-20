@@ -407,7 +407,7 @@ export function AdminPages({ section }: AdminPagesProps) {
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-border mb-2">
           <div>
-            <h1 className="text-3xl font-bold text-foreground tracking-tight font-amiri text-[#0d5844]">
+            <h1 className="text-3xl font-bold text-foreground tracking-tight font-nastaleeq text-[#0d5844]">
               {isAudioBooks ? "Audio Books" : "Press Releases"}
             </h1>
             <p className="text-sm text-foreground-muted mt-1">

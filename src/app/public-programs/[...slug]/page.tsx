@@ -32,7 +32,7 @@ export default async function PublicProgramSubPage({ params }: Props) {
         <Link href="/public-programs" className="text-sm text-primary hover:underline">
           ← Public Programs
         </Link>
-        <h1 className="font-amiri text-3xl md:text-4xl font-bold text-primary mt-2">{title}</h1>
+        <h1 className="font-nastaleeq text-3xl md:text-4xl font-bold text-primary mt-2">{title}</h1>
         {path === "quranic-circles" && (
           <p className="text-foreground-muted mt-2">
             Weekly Quranic study circles across Pakistan. Contact your local coordinator for timings.

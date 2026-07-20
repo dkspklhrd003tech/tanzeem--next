@@ -108,7 +108,7 @@ export default async function PressReleaseDetailsPage({ params }: PageProps) {
                 ) : (
                     <div className="w-full max-w-3xl bg-white shadow-xl border border-zinc-200/80 rounded-xl p-8 md:p-12 text-zinc-800 overflow-hidden flex flex-col">
                         <div className="border-b-2 border-emerald-800 pb-5 mb-8 text-center">
-                            <h3 className="font-amiri text-2xl font-extrabold text-emerald-800 tracking-wide">
+                            <h3 className="font-nastaleeq text-2xl font-extrabold text-emerald-800 tracking-wide">
                                 TANZEEM-E-ISLAMI
                             </h3>
                             <p className="text-xs uppercase tracking-widest text-muted-foreground mt-1">
