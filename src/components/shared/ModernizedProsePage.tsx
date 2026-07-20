@@ -120,12 +120,13 @@ export function ModernizedProsePage({
     pathname === "/mission-statement" ||
     pathname === "/our-ideology";
 
-  const isLeader = template === "leader";
+  const isFounderOrAmeer = pathname === "/the-founder" || pathname === "/the-ameer";
+  const isLeader = template === "leader" || isFounderOrAmeer;
 
   return (
     <div className=" bg-slate-50/50 ">
       {/* ── Gorgeous Hero Header (Unified via PageBanner) ── */}
-      {isOrgOrIdeology && !isLeader && (
+      {isOrgOrIdeology && (
         <PageBanner
           titleOverride={displayTitle}
           breadcrumbsOverride={breadcrumbs.map(c => ({ label: c.name, href: c.path }))}
@@ -134,7 +135,7 @@ export function ModernizedProsePage({
       )}
 
       {/* ── Main Layout Body ── */}
-      <div className={cn("container mx-auto", isLeader ? "pt-12" : "")}>
+      <div className="container mx-auto">
         <div className="grid grid-cols-1 gap-6 md:gap-8 items-start">
 
           {/* Left / Main Column — Article Text */}
@@ -160,7 +161,7 @@ export function ModernizedProsePage({
 
             {/* Leader Template Centered Title & Dates */}
             {isLeader && (
-              <div className="text-center mb-8 pb-6">
+              <div className="text-center mb-8 pb-6 border-b border-slate-100">
                 <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight mb-2">
                   {title}
                 </h2>
