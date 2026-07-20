@@ -41,7 +41,7 @@ export function CallingCardGrid({ heading, items, viewAllUrl, viewAllLabel }: Ca
       )}
 
       {/* Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {items.map((item, idx) => {
           let IconComponent = AudioLines;
           let actionText = "Listen Now";
@@ -61,14 +61,14 @@ export function CallingCardGrid({ heading, items, viewAllUrl, viewAllLabel }: Ca
               className="group block rounded-xl bg-primary/5 hover:bg-primary/10 transition-colors p-5 border border-transparent hover:border-primary/20"
             >
               <div className="flex items-center justify-between gap-4 h-full">
-                <p className="text-sm md:text-base font-semibold text-foreground line-clamp-3 leading-snug flex-1 group-hover:text-primary transition-colors">
+                <p className="text-xs font-semibold text-foreground line-clamp-3 leading-snug flex-1 group-hover:text-primary transition-colors">
                   {item.title}
                 </p>
                 <div className="flex flex-col items-center shrink-0">
                   <div className="w-12 h-12 rounded-full bg-primary/15 flex items-center justify-center text-primary mb-1.5 group-hover:scale-105 transition-transform">
                     <IconComponent className="w-5 h-5" />
                   </div>
-                  <span className="text-[10px] font-bold text-foreground">{actionText}</span>
+                  <span className="text-[10px] font-semibold text-foreground">{actionText}</span>
                 </div>
               </div>
             </Link>
