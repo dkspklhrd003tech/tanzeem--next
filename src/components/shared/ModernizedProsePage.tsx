@@ -120,8 +120,7 @@ export function ModernizedProsePage({
     pathname === "/mission-statement" ||
     pathname === "/our-ideology";
 
-  const isFounderOrAmeer = pathname === "/the-founder" || pathname === "/the-ameer";
-  const isLeader = template === "leader" || isFounderOrAmeer;
+  const isLeader = template === "leader";
 
   return (
     <div className=" bg-slate-50/50 ">
@@ -160,18 +159,18 @@ export function ModernizedProsePage({
             <div className="absolute inset-0 opacity-[0.01] pointer-events-none" />
 
             {/* Leader Template Centered Title & Dates */}
-            {isLeader && (
-              <div className="text-center mb-8 pb-6 border-b border-slate-100">
-                <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight mb-2">
+            {/* {template === "leader" && (
+              <div className="text-center mb-6 border-b border-slate-100 ">
+                <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900  tracking-tight mb-2">
                   {title}
                 </h2>
                 {excerpt && (
-                  <h3 className="text-center text-primary font-bold uppercase tracking-wider text-sm md:text-base">
+                  <h3 className="text-center !text-emerald-700  font-bold uppercase tracking-wider text-sm md:text-base">
                     {excerpt}
                   </h3>
                 )}
               </div>
-            )}
+            )} */}
 
             {/* Page Content Renderer */}
             {cleanContent ? (
@@ -188,8 +187,8 @@ export function ModernizedProsePage({
                     prose-blockquote:italic prose-blockquote:pl-6 prose-blockquote:text-foreground  prose-blockquote:bg-slate-50  prose-blockquote:py-4 prose-blockquote:pr-4 prose-blockquote:rounded-r-2xl
                     [&>*]:[unicode-bidi:plaintext] [&>*]:text-start"
               >
-                {featuredImage && isLeader && (
-                  <div className="w-full max-w-xs mx-auto md:ml-0 md:mr-8 md:float-left md:w-[320px] md:mb-4 mb-6">
+                {featuredImage && template === "leader" && (
+                  <div className="w-full max-w-xs mx-auto md:ml-0 md:mr-8 md:float-left md:w-[320px] md:mb-4 mb-6 rounded-3xl overflow-hidden shadow-mid bg-slate-100">
                     <img
                       src={featuredImage}
                       alt={title}
