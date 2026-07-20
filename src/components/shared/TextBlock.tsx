@@ -29,7 +29,7 @@ export function TextBlock({
   if (!heading && !body && !subheading) return null;
 
   return (
-    <section className="py-6 bg-background">
+    <section className="py-12 bg-background">
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         whileInView={{ opacity: 1, y: 0 }}
