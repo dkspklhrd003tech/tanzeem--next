@@ -601,10 +601,17 @@ export default async function DynamicPage({ params }: PageProps) {
       />
 
       {/* Section-builder content (all 15 section types supported) */}
-      {sections.length > 0 && page.template !== "leader" ? (
-        slug.startsWith("organization/") ? (
+      {sections.length > 0 && page.template !== "leader" ? (() => {
+        const parsedSections = sections.map(s => {
+          let config = s.config;
+          if (typeof config === "string") {
+            try { config = JSON.parse(config); } catch (e) { config = {}; }
+          }
+          return { ...s, config };
+        });
+        return slug.startsWith("organization/") ? (
           <main className="bg-background">
-            <DynamicPageContent sections={sections as any} />
+            <DynamicPageContent sections={parsedSections as any} />
           </main>
         ) : (
           <ModernizedProsePage
@@ -616,10 +623,10 @@ export default async function DynamicPage({ params }: PageProps) {
             featuredImage={page.featuredImage}
             template={page.template || undefined}
           >
-            <DynamicPageContent sections={sections as any} />
+            <DynamicPageContent sections={parsedSections as any} />
           </ModernizedProsePage>
-        )
-      ) : (page.slug === 'audios-by-category' || page.slug === 'videos-by-category') ? (
+        );
+      })() : (page.slug === 'audios-by-category' || page.slug === 'videos-by-category') ? (
         <div className="py-6">
           <NestedCategoryGrid
             heading={page.title}
