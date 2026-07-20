@@ -153,116 +153,116 @@ export function AudioPlayerPage({ item, related, customFieldSchema = [] }: Audio
                 </a>
               )}
               <Button variant="outline" size="sm" className={cn("inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold", "bg-primary text-white transition-colors")} onClick={handleShare}>
-              <Share2 className="h-4 w-4 mr-2" />
-              Share
-            </Button>
-          </div>
-        </div>
-
-        {/* Description */}
-        {item.description && (
-          <div className="bg-card border border-border rounded-xl p-5">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-foreground-muted mb-3">Description</h2>
-            <p className="text-foreground-muted leading-relaxed text-sm">{item.description}</p>
-          </div>
-        )}
-
-        {/* Dynamic Custom Fields */}
-        {customFieldSchema.length > 0 && Object.keys(item.customFields || {}).length > 0 && (
-          <div className="bg-card border border-border rounded-xl p-5 space-y-4">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-foreground-muted mb-2">Additional Information</h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {customFieldSchema.map((field) => {
-                const val = item.customFields?.[field.fieldKey];
-                if (val === undefined || val === null || val === "") return null;
-
-                return (
-                  <div key={field.id} className="space-y-1">
-                    <p className="text-xs text-foreground-muted uppercase tracking-wider">{field.label}</p>
-                    {field.fieldType === "url" || field.fieldType === "file" ? (
-                      <a href={val} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline break-all">
-                        {val}
-                      </a>
-                    ) : field.fieldType === "toggle" ? (
-                      <p className="text-sm font-medium">{val ? "Yes" : "No"}</p>
-                    ) : (
-                      <p className="text-sm font-medium" dir={typeof val === 'string' && /[\u0600-\u06FF]/.test(val) ? "rtl" : "ltr"}>
-                        {val}
-                      </p>
-                    )}
-                  </div>
-                );
-              })}
+                <Share2 className="h-4 w-4 mr-2" />
+                Share
+              </Button>
             </div>
           </div>
-        )}
-      </div>
 
-      {/* Sidebar — speaker + related */}
-      <div className="space-y-6">
-        {/* Speaker card */}
-        {item.speaker && (
-          <div className="bg-primary-light border border-primary/80 rounded-lg p-5">
-            <h2 className="text-xs font-semibold uppercase tracking-wide text-primary mb-4">Speaker</h2>
-            <div className="flex items-center gap-3">
-              {item.speaker.avatar ? (
-                <img src={item.speaker.avatar} alt={item.speaker.name} className="w-12 h-12 rounded-full object-cover" />
-              ) : (
-                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-lg">
-                  {item.speaker.name[0]}
-                </div>
-              )}
-              <div>
-                <p className="font-semibold text-foreground text-sm">{item.speaker.name}</p>
-                {item.speaker.bio && (
-                  <p className="text-xs text-foreground-muted mt-0.5 line-clamp-2">{item.speaker.bio}</p>
-                )}
+          {/* Description */}
+          {item.description && (
+            <div className="bg-card border border-border rounded-xl p-5">
+              <h2 className="text-sm font-semibold uppercase tracking-wide text-foreground-muted mb-3">Description</h2>
+              <p className="text-foreground-muted leading-relaxed text-sm">{item.description}</p>
+            </div>
+          )}
+
+          {/* Dynamic Custom Fields */}
+          {customFieldSchema.length > 0 && Object.keys(item.customFields || {}).length > 0 && (
+            <div className="bg-card border border-border rounded-xl p-5 space-y-4">
+              <h2 className="text-sm font-semibold uppercase tracking-wide text-foreground-muted mb-2">Additional Information</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {customFieldSchema.map((field) => {
+                  const val = item.customFields?.[field.fieldKey];
+                  if (val === undefined || val === null || val === "") return null;
+
+                  return (
+                    <div key={field.id} className="space-y-1">
+                      <p className="text-xs text-foreground-muted uppercase tracking-wider">{field.label}</p>
+                      {field.fieldType === "url" || field.fieldType === "file" ? (
+                        <a href={val} target="_blank" rel="noopener noreferrer" className="text-sm text-primary hover:underline break-all">
+                          {val}
+                        </a>
+                      ) : field.fieldType === "toggle" ? (
+                        <p className="text-sm font-medium">{val ? "Yes" : "No"}</p>
+                      ) : (
+                        <p className="text-sm font-medium" dir={typeof val === 'string' && /[\u0600-\u06FF]/.test(val) ? "rtl" : "ltr"}>
+                          {val}
+                        </p>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </div>
-            <Link
-              href={`/audios-by-speaker/${item.speaker.slug}`}
-              className="mt-3 block text-xs text-primary hover:underline"
-            >
-              More by {item.speaker.name} →
-            </Link>
-          </div>
-        )}
+          )}
+        </div>
 
-        {/* Related */}
-        {related.length > 0 && (
-          <div className="bg-primary-light border border-primary/80 rounded-lg p-5">
-            <h2 className="text-xs font-semibold uppercase tracking-wide text-primary mb-4">Related Lectures</h2>
-            <div className="space-y-3">
-              {related.map((r) => (
-                <Link
-                  key={r.id}
-                  href={`/audio/${r.slug}`}
-                  className="flex gap-3 group"
-                >
-                  <div className="w-16 h-12 rounded-lg overflow-hidden bg-muted shrink-0">
-                    {r.thumbnailUrl ? (
-                      <img src={r.thumbnailUrl} alt={r.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <Play className="h-5 w-5 text-muted-foreground/40" />
-                      </div>
-                    )}
+        {/* Sidebar — speaker + related */}
+        <div className="space-y-6">
+          {/* Speaker card */}
+          {item.speaker && (
+            <div className="bg-primary-light border border-primary/80 rounded-lg p-5">
+              <h2 className="text-xs font-semibold uppercase tracking-wide text-primary mb-4">Speaker</h2>
+              <div className="flex items-center gap-3">
+                {item.speaker.avatar ? (
+                  <img src={item.speaker.avatar} alt={item.speaker.name} className="w-12 h-12 rounded-full object-cover" />
+                ) : (
+                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-lg">
+                    {item.speaker.name[0]}
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium text-foreground group-hover:text-primary line-clamp-2 leading-snug transition-colors">
-                      {r.title}
-                    </p>
-                    {r.speaker && (
-                      <p className="text-[10px] text-foreground-muted mt-0.5">{r.speaker.name}</p>
-                    )}
-                  </div>
-                </Link>
-              ))}
+                )}
+                <div>
+                  <p className="font-semibold text-foreground text-sm">{item.speaker.name}</p>
+                  {item.speaker.bio && (
+                    <p className="text-xs text-foreground-muted mt-0.5 line-clamp-2">{item.speaker.bio}</p>
+                  )}
+                </div>
+              </div>
+              <Link
+                href={`/audios-by-speaker/${item.speaker.slug}`}
+                className="mt-3 block text-xs text-primary hover:underline"
+              >
+                More by {item.speaker.name} →
+              </Link>
             </div>
-          </div>
-        )}
+          )}
+
+          {/* Related Lectures */}
+          {related.length > 0 && (
+            <div className="bg-primary-light border border-primary/80 rounded-lg p-5">
+              <h2 className="text-xs font-semibold uppercase tracking-wide text-primary mb-4">Related Lectures</h2>
+              <div className="space-y-3">
+                {related.map((r) => (
+                  <Link
+                    key={r.id}
+                    href={`/audio/${r.slug}`}
+                    className="flex gap-3 group"
+                  >
+                    <div className="w-16 h-12 rounded-lg overflow-hidden bg-muted shrink-0">
+                      {r.thumbnailUrl ? (
+                        <img src={r.thumbnailUrl} alt={r.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <Play className="h-5 w-5 text-muted-foreground/40" />
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-xs font-medium text-foreground group-hover:text-primary line-clamp-2 leading-snug transition-colors">
+                        {r.title}
+                      </p>
+                      {r.speaker && (
+                        <p className="text-[10px] text-foreground-muted mt-0.5">{r.speaker.name}</p>
+                      )}
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
-    </div>
     </div >
   );
 }
