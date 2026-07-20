@@ -43,11 +43,11 @@ export function ClientShareButton({ className, variant = "default", entityType, 
       className={cn(
         "flex items-center justify-center gap-2 transition-colors",
         variant === "default" && "w-full border border-border rounded-full px-6 py-2.5 text-sm text-foreground-muted hover:border-primary hover:text-primary",
-        variant === "icon" && "text-foreground-muted hover:text-primary p-2 rounded-full hover:bg-muted",
+        variant === "icon" && "border border-primary/20 bg-primary text-white rounded-lg",
         className
       )}
     >
-      {copied ? <Check className="h-5 w-5 text-green-500" /> : <Share2 className="h-5 w-5" />}
+      {copied ? <Check className="h-4 w-4 text-green-500" /> : <Share2 className="h-4 w-4" />}
       {variant === "default" && (copied ? "Copied" : "Share")}
     </button>
   );

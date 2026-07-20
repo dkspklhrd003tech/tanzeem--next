@@ -113,13 +113,13 @@ export function AudioPlayerPage({ item, related, customFieldSchema = [] }: Audio
                   <span>{formatDuration(item.duration)}</span>
                 </div>
               )}
-              <div className="flex items-center gap-4 border-l border-border/50 pl-4">
-                <div className="flex items-center gap-1.5" title="Play">
+              <div className="flex items-center gap-4 border-l border-border/50">
+                <div className="flex text-foreground items-center gap-1.5" title="Play">
                   <Play className="w-4 h-4" />
                 </div>
               </div>
               {item.fileSize ? (
-                <div className="flex items-center gap-1.5 border-l border-border/50 pl-4" title="File Size">
+                <div className="flex text-foreground items-center gap-1.5 border-l border-border/50" title="File Size">
                   <span>{(item.fileSize / (1024 * 1024)).toFixed(2)} MB</span>
                 </div>
               ) : null}
@@ -152,7 +152,7 @@ export function AudioPlayerPage({ item, related, customFieldSchema = [] }: Audio
                   View PDF
                 </a>
               )}
-              <Button variant="outline" size="sm" className="rounded-full" onClick={handleShare}>
+              <Button variant="outline" size="sm" className="border border-primary/20 bg-primary text-white rounded-full" onClick={handleShare}>
                 <Share2 className="h-4 w-4 mr-2" />
                 Share
               </Button>

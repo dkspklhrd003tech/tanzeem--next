@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { db } from "@/lib/db";
 import { audio, customFieldDefinitions, audioCategories, speakers } from "@/db/schema";
-import { eq, and, ne, desc } from "drizzle-orm";
+import { eq, and, ne, desc, asc } from "drizzle-orm";
 import { AudioPlayerPage } from "@/components/resources/AudioPlayerPage";
 import { buildMetadata, audioJsonLd, breadcrumbJsonLd } from "@/lib/seo";
 
@@ -86,10 +86,11 @@ export default async function AudioDetailPage({ params }: Props) {
       and(
         eq(audio.isPublished, true),
         ne(audio.id, item.id),
-        ...(item.categoryId ? [eq(audio.categoryId, item.categoryId)] : [])
+        ...(item.categoryId ? [eq(audio.categoryId, item.categoryId)] : []),
+        ...(item.speakerId ? [eq(audio.speakerId, item.speakerId)] : [])
       )
     )
-    .orderBy(desc(audio.createdAt))
+    .orderBy(asc(audio.title))
     .limit(6);
 
   const related = relatedQuery.map((row) => ({

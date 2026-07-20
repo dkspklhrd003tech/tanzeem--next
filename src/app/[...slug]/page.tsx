@@ -600,8 +600,7 @@ export default async function DynamicPage({ params }: PageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(bc) }}
       />
 
-      {/* Section-builder content (all 15 section types supported) */}
-      {sections.length > 0 && page.template !== "leader" ? (() => {
+      {(() => {
         const parsedSections = sections.map(s => {
           let config = s.config;
           if (typeof config === "string") {
@@ -609,50 +608,52 @@ export default async function DynamicPage({ params }: PageProps) {
           }
           return { ...s, config };
         });
-        return slug.startsWith("organization/") ? (
-          <main className="bg-background">
-            <DynamicPageContent sections={parsedSections as any} />
-          </main>
-        ) : (
+
+        if (page.slug === 'audios-by-category' || page.slug === 'videos-by-category') {
+          return (
+            <div className="py-6">
+              <NestedCategoryGrid
+                heading={page.title}
+                style={page.slug === 'audios-by-category' ? 'capsule' : 'image_card'}
+                categories={mediaGridData}
+              />
+            </div>
+          );
+        }
+
+        // For non-leader organization pages with sections, render without ModernizedProsePage wrapper
+        if (sections.length > 0 && page.template !== "leader" && slug.startsWith("organization/")) {
+          return (
+            <main className="bg-background">
+              <DynamicPageContent sections={parsedSections as any} />
+            </main>
+          );
+        }
+
+        // For all other pages (including leader templates and pages with/without sections)
+        return (
           <ModernizedProsePage
             title={page.title}
             excerpt={page.excerpt}
-            content=""
+            content={page.content}
             slug={slug}
             breadcrumbs={crumbs}
             featuredImage={page.featuredImage}
             template={page.template || undefined}
+            stats={stats}
+            accordionItems={accordionItems}
+            ideologyCards={ideologyCards}
+            ctaHeading={ctaHeading}
+            ctaSubheading={ctaSubheading}
+            ctaButtonLabel={ctaButtonLabel}
+            ctaButtonUrl={ctaButtonUrl}
           >
-            <DynamicPageContent sections={parsedSections as any} />
-          </ModernizedProsePage>
-        );
-      })() : (page.slug === 'audios-by-category' || page.slug === 'videos-by-category') ? (
-        <div className="py-6">
-          <NestedCategoryGrid
-            heading={page.title}
-            style={page.slug === 'audios-by-category' ? 'capsule' : 'image_card'}
-            categories={mediaGridData}
-          />
-        </div>
-      ) : (
-        <ModernizedProsePage
-          title={page.title}
-          excerpt={page.excerpt}
-          content={page.content}
-          slug={slug}
-          breadcrumbs={crumbs}
-          featuredImage={page.featuredImage}
-          template={page.template || undefined}
-          stats={stats}
-          accordionItems={accordionItems}
-          ideologyCards={ideologyCards}
-          ctaHeading={ctaHeading}
-          ctaSubheading={ctaSubheading}
-          ctaButtonLabel={ctaButtonLabel}
-          ctaButtonUrl={ctaButtonUrl}
-        >
-          {founderMedia && (
-            <div className="space-y-4">
+            {sections.length > 0 && (
+              <DynamicPageContent sections={parsedSections as any} />
+            )}
+            
+            {founderMedia && (
+              <div className="space-y-4">
               {founderMedia.audios.length > 0 && (
                 <div className="py-2 container mx-auto">
                   <div className="flex flex-col md:flex-row items-end justify-between gap-6 mb-8">
@@ -688,8 +689,9 @@ export default async function DynamicPage({ params }: PageProps) {
               )}
             </div>
           )}
-        </ModernizedProsePage>
-      )}
+          </ModernizedProsePage>
+        );
+      })()}
     </>
   );
 }

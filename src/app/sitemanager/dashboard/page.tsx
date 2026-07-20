@@ -294,7 +294,7 @@ export default function DashboardPage() {
                 <p className="text-sm font-semibold text-purple-600 uppercase tracking-wide">Total Shares</p>
                 <div className="text-2xl font-bold text-foreground tabular-nums leading-tight mt-1">{statsLoading ? <Skeleton className="h-6 w-16" /> : fmt(stats?.globalShares ?? 0)}</div>
               </div>
-              <div className="h-10 w-10 rounded-full bg-purple-500/20 flex items-center justify-center">
+              <div className="h-10 w-10 border border-primary/20 bg-primary text-white rounded-lg flex items-center justify-center">
                 <Share2 className="h-5 w-5 text-purple-600" />
               </div>
             </CardContent>

@@ -188,7 +188,7 @@ export function ShareToolsManager() {
       <div className="flex-1 space-y-4">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-2xl font-bold tracking-tight flex items-center gap-3">
+            <h2 className="border border-primary/20 bg-primary text-white rounded-lg">
               <Share2 className="w-6 h-6 text-primary" /> Share Tools Configuration
             </h2>
             <p className="text-sm text-muted-foreground mt-1">Configure the global floating share sidebar for your website.</p>
@@ -418,7 +418,7 @@ export function ShareToolsManager() {
                   }}
                 >
                   <div
-                    className="bg-primary text-white flex items-center justify-center p-2 cursor-pointer shadow-md w-full"
+                    className="border border-primary/20 bg-primary text-white rounded-lg"
                     style={{
                       borderRadius: settings.icon_style === "circle" ? "20px 20px 0 0" : (settings.share_position === "left" ? "8px 8px 0 0" : "8px 8px 0 0"),
                     }}
