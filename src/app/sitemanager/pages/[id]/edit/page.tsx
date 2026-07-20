@@ -34,36 +34,41 @@ export default function EditPagePage({ params }: { params: Promise<{ id: string 
   useEffect(() => {
     if (id === "organization") return;
 
-    Promise.all([
-      fetch(`/api/sitemanager/pages/${id}`),
-      fetch("/api/sitemanager/pages?limit=100&sort=az"),
-    ]).then(async ([pageRes, listRes]) => {
-      if (!pageRes.ok) {
-        const hardcodedIds = ["services", "campaigns", "events", "sermons", "faqs", "contact", "history-of-tanzeem-e-islami"];
-        if (hardcodedIds.includes(id)) {
-          setPage({
-            id,
-            slug: id,
-            title: id.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
-            content: "",
-            excerpt: "",
-            isPublished: true,
-            metaTitle: id.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
-            metaDescription: "",
-            
-          } as any);
-        } else {
-          setNotFound(true);
+    // Fetch the page data immediately and render
+    fetch(`/api/sitemanager/pages/${id}`)
+      .then(async (pageRes) => {
+        if (!pageRes.ok) {
+          const hardcodedIds = ["services", "campaigns", "events", "sermons", "faqs", "contact", "history-of-tanzeem-e-islami"];
+          if (hardcodedIds.includes(id)) {
+            setPage({
+              id,
+              slug: id,
+              title: id.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+              content: "",
+              excerpt: "",
+              isPublished: true,
+              metaTitle: id.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+              metaDescription: "",
+            } as any);
+          } else {
+            setNotFound(true);
+          }
+          return;
         }
-        return;
-      }
-      const { page } = await pageRes.json();
-      setPage(page);
-      if (listRes.ok) {
-        const { pages } = await listRes.json();
-        setParentPages((pages ?? []).map((p: any) => ({ id: p.id, title: p.title })));
-      }
-    }).catch(() => setNotFound(true));
+        const { page } = await pageRes.json();
+        setPage(page);
+      })
+      .catch(() => setNotFound(true));
+
+    // Fetch parent pages in the background (used only by PageForm template settings)
+    fetch("/api/sitemanager/pages?limit=100&sort=az")
+      .then(async (listRes) => {
+        if (listRes.ok) {
+          const { pages } = await listRes.json();
+          setParentPages((pages ?? []).map((p: any) => ({ id: p.id, title: p.title })));
+        }
+      })
+      .catch(() => {});
   }, [id]);
 
   if (id === "organization") {
