@@ -141,7 +141,7 @@ export function SocialMediaSettings() {
     };
 
     const updateLink = (id: string, field: keyof SocialLink, value: string) => {
-        setLinks(links.map(l => l.id === id ? { ...l, [field]: value } : l));
+        setLinks(prev => prev.map(l => l.id === id ? { ...l, [field]: value } : l));
     };
 
     if (isLoading) {
