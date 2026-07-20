@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
@@ -19,6 +19,17 @@ import { resolveMenuLink, EXTERNAL_LINK_REL } from "@/lib/security";
 import { useSettings } from "@/hooks/use-settings";
 import { useNavigation, type MenuNode } from "@/hooks/use-navigation";
 
+function SearchParamSync({ onQuery }: { onQuery: (q: string) => void }) {
+  const searchParams = useSearchParams();
+  useEffect(() => {
+    const q = searchParams?.get("q");
+    if (q !== null) {
+      onQuery(q);
+    }
+  }, [searchParams, onQuery]);
+  return null;
+}
+
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -28,15 +39,6 @@ export function Header() {
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
-
-  // Sync state with URL
-  useEffect(() => {
-    const q = searchParams?.get("q");
-    if (q !== null && q !== searchQuery) {
-      setSearchQuery(q);
-    }
-  }, [searchParams]);
 
   // Handle live search
   const handleLiveSearch = (val: string) => {
@@ -146,6 +148,10 @@ export function Header() {
 
   return (
     <>
+      <Suspense fallback={null}>
+        <SearchParamSync onQuery={(q) => { if (q !== searchQuery) setSearchQuery(q); }} />
+      </Suspense>
+
       {/* Skip to main content link — keyboard-first (WCAG 2.4.1) */}
       <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary focus:text-primary-foreground focus:rounded-md focus:shadow-lg">
         Skip to main content
