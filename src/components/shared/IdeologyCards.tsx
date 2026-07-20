@@ -43,7 +43,7 @@ export function IdeologyCards({ heading, cards = [], backgroundImage }: Ideology
   return (
     <section aria-labelledby="ideology-cards-heading" className="py-14 bg-background border-t border-border relative">
       {backgroundImage && (
-        <div 
+        <div
           className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none"
           style={{
             backgroundImage: `url('${backgroundImage}')`,
@@ -112,7 +112,7 @@ export function IdeologyCards({ heading, cards = [], backgroundImage }: Ideology
 
                 {/* Description */}
                 {card.description && (
-                  <p className="text-foreground-muted text-sm leading-relaxed flex-1">
+                  <p className="text-foreground text-sm leading-relaxed flex-1">
                     {card.description}
                   </p>
                 )}

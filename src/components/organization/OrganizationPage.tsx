@@ -479,7 +479,7 @@ function IdeologySection({ data }: { data: IdeologyState }) {
 
                 {/* Description */}
                 {card.description && (
-                  <p className="text-foreground-muted text-sm leading-relaxed flex-1">
+                  <p className="text-foreground text-sm leading-relaxed flex-1">
                     {card.description}
                   </p>
                 )}

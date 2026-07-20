@@ -134,7 +134,7 @@ export function IdeologySection({ pillars }: IdeologySectionProps) {
                 </div>
 
                 {/* Description */}
-                <p className="text-foreground-muted text-sm leading-relaxed flex-1">
+                <p className="text-foreground text-sm leading-relaxed flex-1">
                   {pillar.description}
                 </p>
 

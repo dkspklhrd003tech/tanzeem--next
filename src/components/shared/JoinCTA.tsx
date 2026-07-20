@@ -49,7 +49,7 @@ export function JoinCTA({
           )}
           {subtitle && (
             <p
-              className="mt-4 text-base md:text-lg max-w-2xl mx-auto leading-relaxed text-muted-foreground"
+              className="mt-4 text-base md:text-lg max-w-2xl mx-auto leading-relaxed text-foreground"
               dangerouslySetInnerHTML={{ __html: subtitle }}
             />
           )}
