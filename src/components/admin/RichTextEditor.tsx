@@ -75,7 +75,7 @@ const MenuButton = ({
           disabled={disabled}
           className={cn(
             "h-8 w-8 rounded-md transition-all",
-            isActive ? "bg-primary/20 text-primary hover:bg-primary/30" : "text-foreground-muted hover:bg-muted"
+            isActive ? "bg-primary/20 text-primary hover:bg-primary/70" : "text-primary hover:bg-primary/20"
           )}
         >
           {children}
@@ -95,7 +95,6 @@ export function RichTextEditor({
   className,
   defaultToUrdu = false,
 }: RichTextEditorProps) {
-  // Sanitize legacy inline fonts from WordPress migration
   const sanitizeHtml = (html: string) => {
     if (!html) return html;
     return html
