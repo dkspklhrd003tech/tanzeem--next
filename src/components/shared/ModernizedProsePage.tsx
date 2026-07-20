@@ -175,18 +175,18 @@ export function ModernizedProsePage({
               <article
                 className="prose prose-lg prose-emerald  max-w-none 
                     prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-slate-800 
-                    prose-h2:text-2xl prose-h2:border-l-4 prose-h2:border-primary prose-h2:pl-3 prose-h2:mt-10 prose-h2:mb-4
+                    prose-h2:text-2xl prose-h2:pl-3 prose-h2:mt-10 prose-h2:mb-4
                     prose-h3:text-xl prose-h3:font-semibold prose-h3:mt-8 prose-h3:mb-3
                     prose-p:text-slate-600  prose-p:leading-relaxed prose-p:mb-6
                     prose-strong:text-slate-800  prose-strong:font-bold
                     prose-li:text-slate-600  prose-li:mb-2
                     prose-ul:list-disc prose-ul:pl-6 prose-ul:mb-6
                     prose-ol:list-decimal prose-ol:pl-6 prose-ol:mb-6
-                    prose-blockquote:italic prose-blockquote:border-l-4 prose-blockquote:border-[#c8a84e] prose-blockquote:pl-6 prose-blockquote:text-foreground  prose-blockquote:bg-slate-50  prose-blockquote:py-4 prose-blockquote:pr-4 prose-blockquote:rounded-r-2xl
+                    prose-blockquote:italic prose-blockquote:pl-6 prose-blockquote:text-foreground  prose-blockquote:bg-slate-50  prose-blockquote:py-4 prose-blockquote:pr-4 prose-blockquote:rounded-r-2xl
                     [&>*]:[unicode-bidi:plaintext] [&>*]:text-start"
               >
                 {featuredImage && template === "leader" && (
-                  <div className="w-full max-w-xs mx-auto md:ml-0 md:mr-8 md:float-left md:w-[320px] md:mb-4 mb-6 rounded-3xl overflow-hidden shadow-mid border border-slate-200/50 bg-slate-100">
+                  <div className="w-full max-w-xs mx-auto md:ml-0 md:mr-8 md:float-left md:w-[320px] md:mb-4 mb-6 rounded-3xl overflow-hidden shadow-mid bg-slate-100">
                     <img
                       src={featuredImage}
                       alt={title}
@@ -197,7 +197,7 @@ export function ModernizedProsePage({
                 <div dangerouslySetInnerHTML={{ __html: cleanContent }} />
               </article>
             ) : !children ? (
-              <div className="text-center py-12 text-muted-foreground italic">
+              <div className="text-center py-12 text-foreground italic">
                 No content available for this page yet. Edit this page in the Site Manager.
               </div>
             ) : null}
