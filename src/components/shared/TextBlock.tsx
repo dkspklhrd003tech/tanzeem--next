@@ -58,7 +58,9 @@ export function TextBlock({
               prose-p:text-foreground-muted prose-p:leading-relaxed
               prose-a:text-primary prose-a:no-underline hover:prose-a:underline
               prose-strong:text-foreground prose-blockquote:border-primary
-              prose-li:text-foreground-muted"
+              prose-ul:flex prose-ul:flex-wrap prose-ul:gap-2 prose-ul:list-none prose-ul:p-0 prose-ul:m-0 prose-ul:mt-4
+              prose-li:bg-primary/5 prose-li:text-primary prose-li:px-4 prose-li:py-1.5 prose-li:rounded-full prose-li:text-sm prose-li:font-semibold prose-li:m-0 prose-li:border prose-li:border-primary/10 prose-li:shadow-sm
+              prose-ol:list-decimal prose-ol:pl-6 prose-ol:mb-6 prose-ol:text-foreground-muted"
             dangerouslySetInnerHTML={{ __html: body }}
           />
         )}

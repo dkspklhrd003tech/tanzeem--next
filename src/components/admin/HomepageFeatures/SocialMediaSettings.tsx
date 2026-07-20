@@ -7,6 +7,7 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ImageUploader } from "@/components/admin/ImageUploader";
 
 type SocialLink = {
     id: string;
@@ -221,39 +222,17 @@ export function SocialMediaSettings() {
                                         />
                                     </div>
                                     <div className="space-y-1.5">
-                                        <label className="text-xs font-semibold text-muted-foreground">Icon SVG (Slug)</label>
-                                        <Select 
-                                            value={link.icon} 
-                                            onValueChange={(val) => {
-                                                updateLink(link.id, "icon", val);
-                                                const colorMap: Record<string, string> = {
-                                                    youtube: "#dc2626", facebook: "#2563eb", twitter: "#000000",
-                                                    whatsapp: "#22c55e", instagram: "#e1306c", telegram: "#229ED9",
-                                                    tiktok: "#000000", web: "#0ea5e9", soundcloud: "#ff5500",
-                                                    rumble: "#85c742", pinterest: "#bd081c"
-                                                };
-                                                if (colorMap[val]) {
-                                                    updateLink(link.id, "color", colorMap[val]);
-                                                }
-                                            }}
-                                        >
-                                            <SelectTrigger className="bg-white">
-                                                <SelectValue placeholder="Select icon..." />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="youtube">YouTube</SelectItem>
-                                                <SelectItem value="facebook">Facebook</SelectItem>
-                                                <SelectItem value="twitter">X (Twitter)</SelectItem>
-                                                <SelectItem value="whatsapp">WhatsApp</SelectItem>
-                                                <SelectItem value="instagram">Instagram</SelectItem>
-                                                <SelectItem value="telegram">Telegram</SelectItem>
-                                                <SelectItem value="tiktok">TikTok / Snack Video</SelectItem>
-                                                <SelectItem value="web">Web</SelectItem>
-                                                <SelectItem value="soundcloud">SoundCloud</SelectItem>
-                                                <SelectItem value="rumble">Rumble</SelectItem>
-                                                <SelectItem value="pinterest">Pinterest</SelectItem>
-                                            </SelectContent>
-                                        </Select>
+                                        <label className="text-xs font-semibold text-muted-foreground">Icon SVG</label>
+                                        <ImageUploader
+                                            value={link.icon && link.icon.startsWith("http") ? link.icon : undefined} // Fallback to avoid breaking if it's a legacy slug
+                                            onChange={(url) => updateLink(link.id, "icon", url)}
+                                            disableCrop={true}
+                                            className="h-full min-h-[40px]"
+                                        />
+                                        {/* If it's a legacy slug like 'youtube', just show it textually as fallback so they know to upload */}
+                                        {link.icon && !link.icon.startsWith("http") && !link.icon.startsWith("/") && (
+                                            <p className="text-[10px] text-orange-500 mt-1">Legacy Icon: {link.icon}. Please upload a new SVG.</p>
+                                        )}
                                     </div>
                                     <div className="space-y-1.5">
                                         <label className="text-xs font-semibold text-muted-foreground">URL Target</label>

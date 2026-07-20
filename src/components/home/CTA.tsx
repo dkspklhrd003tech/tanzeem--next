@@ -153,7 +153,10 @@ export function CTA({ platforms }: CTAProps) {
           {platforms.map((platform, i) => {
             const slugOrIcon = platform.slug || platform.icon || "globe";
             const href = platform.url || `/social-media#${slugOrIcon}`;
-            const Icon = iconMap[slugOrIcon.toLowerCase()] || (() => <Globe className="h-7 w-7" aria-hidden="true" />);
+            const isUrl = slugOrIcon.startsWith("http") || slugOrIcon.startsWith("/");
+            const Icon = isUrl
+              ? () => <img src={slugOrIcon} alt={platform.name} className="h-7 w-7 object-contain brightness-0 invert" aria-hidden="true" />
+              : (iconMap[slugOrIcon.toLowerCase()] || (() => <Globe className="h-7 w-7" aria-hidden="true" />));
             const originalColor = platform.themeColor || platform.color || "#0d5844";
 
             return (
