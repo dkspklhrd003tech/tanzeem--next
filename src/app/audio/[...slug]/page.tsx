@@ -86,8 +86,10 @@ export default async function AudioDetailPage({ params }: Props) {
       and(
         eq(audio.isPublished, true),
         ne(audio.id, item.id),
-        ...(item.categoryId ? [eq(audio.categoryId, item.categoryId)] : []),
-        ...(item.speakerId ? [eq(audio.speakerId, item.speakerId)] : [])
+        // Prioritize speaker match over category match for related audios
+        ...(item.speakerId 
+            ? [eq(audio.speakerId, item.speakerId)] 
+            : item.categoryId ? [eq(audio.categoryId, item.categoryId)] : [])
       )
     )
     .orderBy(asc(audio.title))
