@@ -95,8 +95,16 @@ export function RichTextEditor({
   className,
   defaultToUrdu = false,
 }: RichTextEditorProps) {
+  // Sanitize legacy inline fonts from WordPress migration
+  const sanitizeHtml = (html: string) => {
+    if (!html) return html;
+    return html
+      .replace(/font-family:\s*['"]?Kumbh Sans['"]?;?/gi, "");
+  };
+
+  const initialContent = sanitizeHtml(content);
   const [showHTML, setShowHTML] = useState(false);
-  const [htmlValue, setHtmlValue] = useState(content);
+  const [htmlValue, setHtmlValue] = useState(initialContent);
 
   const editor = useEditor({
     extensions: [
@@ -118,11 +126,17 @@ export function RichTextEditor({
       Image,
     ],
     immediatelyRender: false,
-    content,
+    content: initialContent,
     onUpdate: ({ editor }) => {
       const html = editor.getHTML();
-      setHtmlValue(html);
-      onChange(html);
+      // Sanitize dynamically to strip legacy fonts upon typing/pasting
+      let sanitized = sanitizeHtml(html);
+
+      // Minor cleanup for empty inline styles left behind
+      sanitized = sanitized.replace(/ style=""/g, "");
+
+      setHtmlValue(sanitized);
+      onChange(sanitized);
     },
     editorProps: {
       attributes: {
@@ -137,11 +151,12 @@ export function RichTextEditor({
   });
 
   useEffect(() => {
-    if (editor && content !== editor.getHTML()) {
+    const sanitized = sanitizeHtml(content);
+    if (editor && sanitized !== editor.getHTML()) {
       if (!showHTML) {
-        editor.commands.setContent(content);
+        editor.commands.setContent(sanitized);
       }
-      setHtmlValue(content);
+      setHtmlValue(sanitized);
     }
   }, [content, editor, showHTML]);
 

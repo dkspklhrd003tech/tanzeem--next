@@ -239,7 +239,6 @@
   /* ── Font Families ── */
   --font-family-heading: var(--font-heading);
   --font-family-body: var(--font-body);
-  --font-family-amiri: var(--font-nastaleeq), 'Amiri', serif;
   --font-family-nastaleeq: var(--font-nastaleeq);
 }
 

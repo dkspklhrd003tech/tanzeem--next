@@ -9,8 +9,8 @@
 - **Animation:** Framer Motion
 - **Database:** MySQL via Drizzle ORM
 - **Content:** Hybrid static + CMS-driven (WordPress migration target)
-- **Fonts:** Amiri (UI), Noto Nastaliq Urdu (Urdu), Jameel Noori Nastaleeq (calligraphic)
-- **Analytics:** Google Analytics (G-B6P9KW8X46)
+- **Fonts:** Jameel Noori Nastaleeq (calligraphic)
+- **Analytics:** Google Analytics
 
 ---
 
@@ -350,10 +350,8 @@ isActive: boolean
 
 | Token | Font Stack | Usage |
 |-------|-----------|-------|
-| `--font-amiri` | Amiri (Google Font) | Display headings, Arabic/Urdu text |
 | `font-body` | system-ui, -apple-system, sans-serif | Body text, UI elements |
-| `font-urdu` | Noto Nastaliq Urdu | Urdu content |
-| `font-nastaleeq` | Jameel Noori Nastaleeq, Noto Nastaliq Urdu | Calligraphic Urdu (RTL) |
+| `font-nastaleeq` | Jameel Noori Nastaleeq | Calligraphic Urdu (RTL) |
 
 #### Type Scale
 
