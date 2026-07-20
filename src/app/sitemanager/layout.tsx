@@ -363,7 +363,7 @@ function Sidebar({
           {/* Mobile close */}
           <button
             onClick={onMobileClose}
-            className="md:hidden p-1 rounded text-sidebar-foreground/60 hover:text-sidebar-foreground"
+            className="md:hidden p-1 rounded-full text-sidebar-foreground/60 hover:text-sidebar-foreground"
           >
             <X className="h-5 w-5" />
           </button>
@@ -388,7 +388,7 @@ function Sidebar({
           <button
             onClick={onCollapse}
             className={cn(
-              "hidden md:flex w-full items-center gap-2 px-3 py-2 rounded-lg text-xs text-sidebar-foreground/60",
+              "hidden md:flex w-full items-center gap-2 px-3 py-2 rounded-full text-xs text-sidebar-foreground/60",
               "hover:bg-primary/10 hover:text-primary transition-colors"
             )}
           >
@@ -407,7 +407,7 @@ function Sidebar({
             <DropdownMenuTrigger asChild>
               <button
                 className={cn(
-                  "flex items-center gap-2.5 w-full px-2 py-2 rounded-lg",
+                  "flex items-center gap-2.5 w-full px-2 py-2 rounded-full",
                   "hover:bg-primary/10 transition-colors group"
                 )}
               >
@@ -487,7 +487,7 @@ function TopHeader({
         {/* Mobile hamburger */}
         <button
           onClick={onMobileMenuOpen}
-          className="md:hidden p-2 rounded-lg hover:bg-muted transition-colors"
+          className="md:hidden p-2 rounded-full hover:bg-muted transition-colors"
           aria-label="Open menu"
         >
           <Menu className="h-5 w-5" />
@@ -526,7 +526,7 @@ function TopHeader({
           {/* User dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex items-center gap-2 pl-1 pr-2 py-1 rounded-lg hover:bg-muted transition-colors">
+              <button className="flex items-center gap-2 pl-1 pr-2 py-1 rounded-full hover:bg-muted transition-colors">
                 <Avatar className="h-8 w-8">
                   {user?.avatar && <AvatarImage src={user.avatar} />}
                   <AvatarFallback className="bg-primary/20 text-primary text-xs font-semibold">

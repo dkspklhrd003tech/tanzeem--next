@@ -109,7 +109,7 @@ export function AboutMissionSettings() {
                     <button
                         type="button"
                         disabled={isSaving}
-                        className="flex items-center gap-2 bg-primary text-white px-6 py-2.5 rounded-xl font-semibold shadow-sm hover:shadow-md transition-all active:scale-95 disabled:opacity-50"
+                        className="flex items-center gap-2 bg-primary text-white px-6 py-2.5 rounded-full font-semibold shadow-sm hover:shadow-md transition-all active:scale-95 disabled:opacity-50"
                     >
                         {isSaving ? (
                             <div className="w-4 h-4 border-2 border-white/30 border-t-[#fefefc] rounded-full animate-spin"></div>

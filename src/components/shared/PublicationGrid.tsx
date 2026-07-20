@@ -60,7 +60,7 @@ export function PublicationGrid({ heading, publications, viewAllUrl, viewAllLabe
                     >
                       <BookOpen className="w-4 h-4" /> Read Online
                     </Link>
-                    <button className="w-full py-2 bg-white/10 text-white font-bold rounded hover:bg-white/20 transition-colors flex items-center justify-center gap-2 text-sm backdrop-blur-md">
+                    <button className="w-full py-2 bg-white/10 text-white font-bold rounded-full hover:bg-white/20 transition-colors flex items-center justify-center gap-2 text-sm backdrop-blur-md">
                       <Download className="w-4 h-4" /> Download
                     </button>
                   </div>

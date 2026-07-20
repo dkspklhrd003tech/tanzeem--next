@@ -466,7 +466,7 @@ export function SocialMediaManager() {
                           <Button
                             variant="secondary"
                             size="sm"
-                            className="flex-1 rounded-lg"
+                            className="flex-1 rounded-full"
                             onClick={() => {
                               setCurrentAccount(account);
                               setAccountDialogOpen(true);
@@ -477,7 +477,7 @@ export function SocialMediaManager() {
                           <Button
                             variant="destructive"
                             size="sm"
-                            className="flex-1 rounded-lg"
+                            className="flex-1 rounded-full"
                             onClick={() => setDeletingAccountId(account.id)}
                           >
                             <XCircle className="w-3.5 h-3.5 mr-2" /> Delete

@@ -90,7 +90,7 @@ export function FormsManager() {
                 onChange={(e) => setNewFormName(e.target.value)}
                 className="w-[180px] bg-white rounded-xl hidden md:flex"
               />
-              <Button onClick={handleCreate} disabled={!newFormName.trim() || isCreating} className="bg-primary hover:bg-primary/90 text-white shadow-md rounded-xl px-6 py-5 font-bold tracking-wider text-xs">
+              <Button onClick={handleCreate} disabled={!newFormName.trim() || isCreating} className="bg-primary hover:bg-primary/90 text-white shadow-md rounded-full px-6 py-5 font-bold tracking-wider text-xs">
                 {isCreating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Plus className="w-4 h-4 mr-2" />}
                 CREATE NEW FORM
               </Button>

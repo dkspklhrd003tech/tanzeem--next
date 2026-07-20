@@ -102,7 +102,7 @@ function ToolBtn({ onClick, active = false, disabled = false, tip, children }: {
       <TooltipTrigger asChild>
         <button type="button" onClick={onClick} disabled={disabled}
           className={cn(
-            "h-7 w-7 rounded flex items-center justify-center transition-colors text-sm",
+            "h-7 w-7 rounded-full flex items-center justify-center transition-colors text-sm",
             "disabled:opacity-40 disabled:cursor-not-allowed",
             active ? "bg-primary/15 text-primary" : "text-muted-foreground hover:bg-muted hover:text-foreground"
           )}>

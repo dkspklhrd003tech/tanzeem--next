@@ -379,7 +379,7 @@ export function ImageUploader({
               <Button
                 onClick={handleUpload}
                 disabled={isUploading}
-                className="bg-white border border-primary text-primary hover:text-white hover:bg-primary rounded-xl px-8"
+                className="bg-white border border-primary text-primary hover:text-white hover:bg-primary rounded-full px-8"
               >
                 {isUploading ? (
                   <>

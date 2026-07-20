@@ -199,7 +199,7 @@ export function ContactForm({ settings = {} }: { settings?: Record<string, strin
 
       <Button
         type="submit"
-        className="w-full md:w-auto rounded-lg bg-primary text-white"
+        className="w-full md:w-auto rounded-full bg-primary text-white"
         disabled={isSubmitting}
       >
         {isSubmitting ? (

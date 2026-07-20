@@ -117,11 +117,11 @@ export function Dashboard() {
           <p className="text-sm text-foreground-muted mt-1">Welcome back! Here's a real-time snapshot of your platform.</p>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="outline" className="rounded-xl px-5 border-border hover:bg-muted font-medium transition-all">
+          <Button variant="outline" className="rounded-full px-5 border-border hover:bg-muted font-medium transition-all">
             <Calendar className="h-4 w-4 mr-2" />
             Last 30 Days
           </Button>
-          <Button asChild className="bg-primary text-white rounded-xl px-6 font-semibold shadow-sm hover:shadow-md transition-all active:scale-95">
+          <Button asChild className="bg-primary text-white rounded-full px-6 font-semibold shadow-sm hover:shadow-md transition-all active:scale-95">
             <Link href="/sitemanager/pages">Quick Add Page</Link>
           </Button>
         </div>

@@ -643,7 +643,7 @@ export function HomeSlidersManagement() {
                                     <button
                                         type="button"
                                         onClick={closeModal}
-                                        className="px-6 py-2.5 bg-muted text-foreground rounded-xl font-medium hover:bg-muted/80 transition-all active:scale-95"
+                                        className="px-6 py-2.5 bg-muted text-foreground rounded-full font-medium hover:bg-muted/80 transition-all active:scale-95"
                                     >
                                         Cancel
                                     </button>
@@ -659,7 +659,7 @@ export function HomeSlidersManagement() {
                                         <Button
                                             type="button"
                                             disabled={isLoading || isUploading}
-                                            className="px-8 py-2.5 bg-[#0d5844] text-[#fefefc] rounded-xl font-semibold shadow-md active:scale-95 transition-all disabled:opacity-50"
+                                            className="px-8 py-2.5 bg-[#0d5844] text-[#fefefc] rounded-full font-semibold shadow-md active:scale-95 transition-all disabled:opacity-50"
                                         >
                                             {isLoading ? "Saving..." : editingSlider ? "Update Slider" : "Create Slider"}
                                         </Button>

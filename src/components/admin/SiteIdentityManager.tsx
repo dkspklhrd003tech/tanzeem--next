@@ -96,7 +96,7 @@ export function SiteIdentityManager() {
           description="Are you sure you want to update the site's core identity and branding assets?"
           onConfirm={handleSave}
         >
-          <Button disabled={isSaving} className="bg-[#0d5844] hover:bg-[#0a4636] rounded-xl px-8">
+          <Button disabled={isSaving} className="bg-[#0d5844] hover:bg-[#0a4636] rounded-full px-8">
             {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
             Save Changes
           </Button>

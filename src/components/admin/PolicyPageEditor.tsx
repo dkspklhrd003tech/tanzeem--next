@@ -179,7 +179,7 @@ export function PolicyPageEditor() {
           </a>{" "}
           with slug <code className="px-1.5 py-0.5 bg-muted rounded text-xs font-mono">policy</code>, then return here.
         </p>
-        <Button variant="outline" onClick={fetchPage} className="rounded-xl">
+        <Button variant="outline" onClick={fetchPage} className="rounded-full">
           <RefreshCw className="w-4 h-4 mr-2" /> Retry
         </Button>
       </div>
@@ -217,7 +217,7 @@ export function PolicyPageEditor() {
             size="sm"
             onClick={handleTogglePublish}
             className={cn(
-              "rounded-xl px-4 font-bold text-xs transition-all",
+              "rounded-full px-4 font-bold text-xs transition-all",
               form.isPublished
                 ? "bg-amber-50 border-amber-300 text-amber-700 hover:bg-amber-100"
                 : "bg-emerald-50 border-emerald-300 text-emerald-700 hover:bg-emerald-100"
@@ -238,7 +238,7 @@ export function PolicyPageEditor() {
           >
             <Button
               disabled={isSaving}
-              className="bg-[#0d5844] hover:bg-[#0a4636] rounded-xl px-8"
+              className="bg-[#0d5844] hover:bg-[#0a4636] rounded-full px-8"
             >
               {isSaving
                 ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Saving…</>

@@ -33,9 +33,9 @@ const tabsListVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-muted text-muted-foreground h-12 w-fit rounded-lg p-[3px]",
-        bubble: "mb-6 bg-primary-light border-b border-border w-full justify-start rounded-lg h-auto p-4 gap-2 gap-y-2 flex-wrap shadow-sm",
-        pill: "bg-transparent border border-border/50 p-1 rounded-lg h-auto flex overflow-x-auto gap-1 w-full max-w-3xl mb-8",
+        default: "bg-muted text-muted-foreground h-12 w-fit rounded-full p-[3px]",
+        bubble: "mb-6 bg-primary-light border-b border-border w-full justify-start rounded-full h-auto p-4 gap-2 gap-y-2 flex-wrap shadow-sm",
+        pill: "bg-transparent border border-border/50 p-1 rounded-full h-auto flex overflow-x-auto gap-1 w-full max-w-3xl mb-8",
         underline: "bg-transparent border-b border-border w-full justify-start h-auto p-0 gap-4 flex-nowrap overflow-x-auto",
       },
     },
@@ -64,9 +64,9 @@ const tabsTriggerVariants = cva(
   {
     variants: {
       variant: {
-        default: "h-[calc(100%-1px)] flex-1 gap-1.5 rounded-lg px-3 py-1 text-sm font-medium data-[state=active]:bg-primary data-[state=active]:text-white data-[state=inactive]:bg-primary-light/80 data-[state=inactive]:text-foreground data-[state=active]:shadow-sm focus-visible:ring-[3px] focus-visible:outline-1 focus-visible:border-ring focus-visible:ring-ring/50",
-        bubble: "rounded-lg px-4 py-2 text-sm font-semibold gap-2 border border-transparent data-[state=inactive]:border-primary data-[state=inactive]:text-foreground-muted data-[state=inactive]:bg-primary-light/80 hover:text-foreground data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md active:scale-95",
-        pill: "rounded-lg px-4 py-2 text-sm font-medium gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=inactive]:hover:bg-muted/50 data-[state=inactive]:text-foreground-muted active:scale-95",
+        default: "h-[calc(100%-1px)] flex-1 gap-1.5 rounded-full px-3 py-1 text-sm font-medium data-[state=active]:bg-primary data-[state=active]:text-white data-[state=inactive]:bg-primary-light/80 data-[state=inactive]:text-foreground data-[state=active]:shadow-sm focus-visible:ring-[3px] focus-visible:outline-1 focus-visible:border-ring focus-visible:ring-ring/50",
+        bubble: "rounded-full px-4 py-2 text-sm font-semibold gap-2 border border-transparent data-[state=inactive]:border-primary data-[state=inactive]:text-foreground-muted data-[state=inactive]:bg-primary-light/80 hover:text-foreground data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-md active:scale-95",
+        pill: "rounded-full px-4 py-2 text-sm font-medium gap-2 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=inactive]:hover:bg-muted/50 data-[state=inactive]:text-foreground-muted active:scale-95",
         underline: "rounded-none border-b-2 border-transparent px-4 py-2 text-sm font-medium data-[state=active]:border-primary data-[state=active]:text-primary data-[state=inactive]:text-muted-foreground hover:text-primary",
       },
     },

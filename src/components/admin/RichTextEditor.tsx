@@ -205,7 +205,7 @@ export function RichTextEditor({
                 type="button"
                 onClick={toggleHTML}
                 className={cn(
-                  "h-8 px-2.5 rounded-md text-xs font-bold tracking-wide transition-all border flex items-center gap-1.5",
+                  "h-8 px-2.5 rounded-full text-xs font-bold tracking-wide transition-all border flex items-center gap-1.5",
                   showHTML
                     ? "bg-[#0d5844] text-white border-[#0d5844] hover:bg-[#0a4534]"
                     : "bg-muted text-foreground-muted border-border hover:bg-muted/80"

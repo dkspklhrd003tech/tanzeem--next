@@ -457,7 +457,7 @@ export default function FaqPageEditor({ pageId, initialPageData }: FaqPageEditor
                               <Button
                                 variant="ghost"
                                 size="icon"
-                                className="h-5 w-5 rounded-sm"
+                                className="h-5 w-5 rounded-full"
                                 disabled={index === 0}
                                 onClick={() => handleReorder(faq, "up")}
                               >
@@ -466,7 +466,7 @@ export default function FaqPageEditor({ pageId, initialPageData }: FaqPageEditor
                               <Button
                                 variant="ghost"
                                 size="icon"
-                                className="h-5 w-5 rounded-sm"
+                                className="h-5 w-5 rounded-full"
                                 disabled={index === filteredFaqs.length - 1}
                                 onClick={() => handleReorder(faq, "down")}
                               >

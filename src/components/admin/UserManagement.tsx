@@ -382,7 +382,7 @@ export function UserManagement() {
                                     <button
                                         type="button"
                                         onClick={closeModal}
-                                        className="py-2 px-4 text-destructive border border-destructive hover:bg-destructive hover:text-muted rounded-lg transition-colors font-medium text-sm"
+                                        className="py-2 px-4 text-destructive border border-destructive hover:bg-destructive hover:text-muted rounded-full transition-colors font-medium text-sm"
                                     >
                                         Cancel
                                     </button>
@@ -393,7 +393,7 @@ export function UserManagement() {
                                         <Button
                                             type="button"
                                             disabled={isLoading}
-                                            className="px-6 py-2 bg-primary text-white rounded-lg transition-colors font-medium text-sm disabled:opacity-50"
+                                            className="px-6 py-2 bg-primary text-white rounded-full transition-colors font-medium text-sm disabled:opacity-50"
                                         >
                                             {isLoading ? "Saving..." : editingUser ? "Update User" : "Create User"}
                                         </Button>

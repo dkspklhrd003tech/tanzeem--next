@@ -42,8 +42,8 @@ export function ClientShareButton({ className, variant = "default", entityType, 
       title="Share"
       className={cn(
         "flex items-center justify-center gap-2 transition-colors",
-        variant === "default" && "w-full border border-border rounded-full px-6 py-2.5 text-sm text-foreground-muted hover:border-primary hover:text-primary",
-        variant === "icon" && "border border-primary/20 bg-primary text-white rounded-lg",
+        variant === "default" && "w-full rounded-full px-6 py-2.5 text-sm text-foreground-muted hover:border-primary hover:text-primary",
+        variant === "icon" && "bg-white text-primary rounded-full",
         className
       )}
     >

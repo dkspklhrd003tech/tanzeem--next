@@ -91,7 +91,7 @@ function SortableLocationCard({ loc, onEdit, onDelete }: { loc: LocationRow, onE
       <div className="flex items-start justify-between w-full">
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-2">
-            <button {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing hover:bg-muted p-1 rounded -ml-2 text-muted-foreground">
+            <button {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing hover:bg-muted p-1 rounded-full -ml-2 text-muted-foreground">
               <GripVertical className="h-4 w-4" />
             </button>
             <h4 className="font-bold text-foreground text-lg leading-none flex items-center gap-1.5">
@@ -504,7 +504,7 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
               <MessageSquare className="w-5 h-5 text-primary" />
               <CardTitle className="text-sm font-bold uppercase tracking-widest text-slate-700">Forms Management</CardTitle>
             </div>
-            <Button onClick={saveSettings} disabled={isSavingSettings} className="bg-primary hover:bg-primary/90 text-white rounded-lg px-6 font-semibold">
+            <Button onClick={saveSettings} disabled={isSavingSettings} className="bg-primary hover:bg-primary/90 text-white rounded-full px-6 font-semibold">
               {isSavingSettings ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
               Save Form
             </Button>

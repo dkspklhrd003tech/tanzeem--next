@@ -284,7 +284,7 @@ export default function PagesListPage() {
             </span>
           </p>
         </div>
-        <Button asChild size="sm" className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold px-4 py-2 rounded-xl transition-all duration-300 transform hover:scale-[1.02] shadow-[0_4px_20px_rgba(16,185,129,0.2)]">
+        <Button asChild size="sm" className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold px-4 py-2 rounded-full transition-all duration-300 transform hover:scale-[1.02] shadow-[0_4px_20px_rgba(16,185,129,0.2)]">
           <Link href="/sitemanager/pages/new">
             <Plus className="h-4 w-4 mr-1.5" />
             Create Page
@@ -307,7 +307,7 @@ export default function PagesListPage() {
             <Button
               variant="outline"
               size="sm"
-              className="bg-red-500/10 hover:bg-red-500/20 border-red-500/30 text-red-600 hover:text-red-100 text-xs font-bold rounded-xl px-3 py-1.5 h-8 transition-all duration-200"
+              className="bg-red-500/10 hover:bg-red-500/20 border-red-500/30 text-red-600 hover:text-red-100 text-xs font-bold rounded-full px-3 py-1.5 h-8 transition-all duration-200"
               onClick={handleRemoveBanner}
               disabled={isUploadingBanner}
             >
@@ -625,7 +625,7 @@ export default function PagesListPage() {
                             asChild
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8 text-muted-foreground hover:text-white hover:bg-primary rounded-lg transition-all duration-200"
+                            className="h-8 w-8 text-muted-foreground hover:text-white hover:bg-primary rounded-full transition-all duration-200"
                             title="Edit Page"
                           >
                             <Link prefetch={false} href={row.slug === "organization" ? "/sitemanager/pages/organization" : row.slug === "policy" ? "/sitemanager/pages/policy" : `/sitemanager/pages/${row.id}/edit`}>
@@ -758,7 +758,7 @@ export default function PagesListPage() {
                             <span>{row.updatedAt ? timeAgo(row.updatedAt) : "—"}</span>
                           </div>
                           <div className="flex items-center gap-1">
-                            <Button asChild variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-white hover:bg-primary rounded-lg transition-all" title="Edit Page">
+                            <Button asChild variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground hover:text-white hover:bg-primary rounded-full transition-all" title="Edit Page">
                               <Link prefetch={false} href={row.slug === "organization" ? "/sitemanager/pages/organization" : row.slug === "policy" ? "/sitemanager/pages/policy" : `/sitemanager/pages/${row.id}/edit`}><Edit2 className="h-3.5 w-3.5" /></Link>
                             </Button>
                             <Button variant="ghost" size="icon" onClick={() => window.open(`/${row.slug}`, '_blank', 'noopener,noreferrer')} className="h-7 w-7 text-muted-foreground hover:text-indigo-600 hover:bg-indigo-500/10 rounded-lg transition-all" title="View Live">

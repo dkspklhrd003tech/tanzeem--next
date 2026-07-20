@@ -64,7 +64,7 @@ export function DarseQuranFilters() {
                         <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                         Showing <span className="font-bold text-foreground">152</span> active locations
                     </p>
-                    <button className="flex items-center gap-2 bg-[#0d5844] hover:bg-[#0a4535] text-[#fefefc] px-6 py-2.5 rounded-lg text-sm font-bold shadow-md transition-colors w-full sm:w-auto justify-center">
+                    <button className="flex items-center gap-2 bg-[#0d5844] hover:bg-[#0a4535] text-[#fefefc] px-6 py-2.5 rounded-full text-sm font-bold shadow-md transition-colors w-full sm:w-auto justify-center">
                         <RotateCcw className="w-4 h-4" />
                         Reset Filters
                     </button>

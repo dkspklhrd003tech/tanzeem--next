@@ -548,7 +548,7 @@ export function SettingsManager() {
                                 description="Are you sure you want to update the date display settings on the website?"
                                 onConfirm={() => saveSettings()}
                             >
-                                <Button disabled={isSaving} className="bg-[#0d5844] hover:bg-[#0a4636] text-[#fefefc] rounded-xl px-10 font-bold shadow-md transition-all active:scale-95">
+                                <Button disabled={isSaving} className="bg-[#0d5844] hover:bg-[#0a4636] text-[#fefefc] rounded-full px-10 font-bold shadow-md transition-all active:scale-95">
                                     {isSaving ? "Saving..." : "Save Date"}
                                 </Button>
                             </ConfirmDialog>
@@ -620,7 +620,7 @@ export function SettingsManager() {
                                 description="Are you sure you want to update the login interface configuration?"
                                 onConfirm={() => saveSettings()}
                             >
-                                <Button disabled={isSaving} className="bg-[#0d5844] hover:bg-[#0a4636] text-[#fefefc] rounded-xl px-10 font-bold shadow-md transition-all active:scale-95">
+                                <Button disabled={isSaving} className="bg-[#0d5844] hover:bg-[#0a4636] text-[#fefefc] rounded-full px-10 font-bold shadow-md transition-all active:scale-95">
                                     {isSaving ? "Saving..." : "Save Login Settings"}
                                 </Button>
                             </ConfirmDialog>
@@ -657,7 +657,7 @@ export function SettingsManager() {
                                 description="Are you sure you want to apply these CSS changes? Incorrect CSS might break the site layout."
                                 onConfirm={() => saveSettings()}
                             >
-                                <Button disabled={isSaving} className="bg-[#0d5844] hover:bg-[#0a4636] text-[#fefefc] rounded-xl px-10 font-bold shadow-md transition-all active:scale-95">
+                                <Button disabled={isSaving} className="bg-[#0d5844] hover:bg-[#0a4636] text-[#fefefc] rounded-full px-10 font-bold shadow-md transition-all active:scale-95">
                                     {isSaving ? "Saving..." : "Save CSS Overrides"}
                                 </Button>
                             </ConfirmDialog>
@@ -728,7 +728,7 @@ export function SettingsManager() {
                                 description="Are you sure you want to update the disclaimer configuration?"
                                 onConfirm={() => saveSettings()}
                             >
-                                <Button disabled={isSaving} className="bg-[#0d5844] hover:bg-[#0a4636] text-[#fefefc] rounded-xl px-10 font-bold shadow-md transition-all active:scale-95">
+                                <Button disabled={isSaving} className="bg-[#0d5844] hover:bg-[#0a4636] text-[#fefefc] rounded-full px-10 font-bold shadow-md transition-all active:scale-95">
                                     {isSaving ? "Saving..." : "Save Disclaimer Settings"}
                                 </Button>
                             </ConfirmDialog>

@@ -1382,7 +1382,7 @@ export default function OrganizationPageEditor() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="w-6 h-6 rounded"
+                  className="w-6 h-6 rounded-full"
                   onClick={() => setIsPreviewFullscreen(!isPreviewFullscreen)}
                 >
                   <ChevronRight className={cn("w-3.5 h-3.5 transition-transform", isPreviewFullscreen ? "rotate-180" : "")} />

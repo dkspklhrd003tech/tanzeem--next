@@ -424,7 +424,7 @@ function LoginForm() {
                     <button type="button" onClick={() => setMode("login")} className="h-12 px-4 rounded-xl font-bold text-sm text-gray-600 bg-gray-100 hover:bg-gray-200 transition-all flex items-center justify-center">
                       <ArrowLeft className="w-4 h-4" />
                     </button>
-                    <button type="submit" disabled={isLoading || !email} className="flex-1 h-12 rounded-xl font-bold text-sm text-white transition-all bg-primary hover:bg-primary/90 active:scale-[0.98] disabled:opacity-60 flex items-center justify-center shadow-lg shadow-primary/30">
+                    <button type="submit" disabled={isLoading || !email} className="flex-1 h-12 rounded-full font-bold text-sm text-white transition-all bg-primary hover:bg-primary/90 active:scale-[0.98] disabled:opacity-60 flex items-center justify-center shadow-lg shadow-primary/30">
                       {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Send Recovery Code"}
                     </button>
                   </div>
@@ -453,7 +453,7 @@ function LoginForm() {
                     <button type="button" onClick={() => setMode("forgot")} className="h-12 px-4 rounded-xl font-bold text-sm text-gray-600 bg-gray-100 hover:bg-gray-200 transition-all flex items-center justify-center">
                       <ArrowLeft className="w-4 h-4" />
                     </button>
-                    <button type="submit" disabled={isLoading || otp.length !== 6} className="flex-1 h-12 rounded-xl font-bold text-sm text-white transition-all bg-primary hover:bg-primary/90 active:scale-[0.98] disabled:opacity-60 flex items-center justify-center shadow-lg shadow-primary/30">
+                    <button type="submit" disabled={isLoading || otp.length !== 6} className="flex-1 h-12 rounded-full font-bold text-sm text-white transition-all bg-primary hover:bg-primary/90 active:scale-[0.98] disabled:opacity-60 flex items-center justify-center shadow-lg shadow-primary/30">
                       {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Verify Code"}
                     </button>
                   </div>
@@ -495,7 +495,7 @@ function LoginForm() {
                     </div>
                   </div>
 
-                  <button type="submit" disabled={isLoading || !newPassword || !confirmPassword} className="w-full h-12 rounded-xl font-bold text-sm text-white transition-all bg-primary hover:bg-primary/90 active:scale-[0.98] disabled:opacity-60 flex items-center justify-center shadow-lg shadow-primary/30">
+                  <button type="submit" disabled={isLoading || !newPassword || !confirmPassword} className="w-full h-12 rounded-full font-bold text-sm text-white transition-all bg-primary hover:bg-primary/90 active:scale-[0.98] disabled:opacity-60 flex items-center justify-center shadow-lg shadow-primary/30">
                     {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save New Password"}
                   </button>
                 </motion.form>

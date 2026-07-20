@@ -71,7 +71,7 @@ export function TextBlock({
             "mt-8 flex",
             align === "center" ? "justify-center" : align === "right" ? "justify-end" : "justify-start"
           )}>
-            <Button asChild size="lg" className="rounded-lg px-4 py-1 text-base font-semibold">
+            <Button asChild size="lg" className="rounded-full px-4 py-1 text-base font-semibold">
               <Link href={buttonUrl.startsWith("http") ? buttonUrl : buttonUrl} target={buttonNewTab || buttonUrl.startsWith("http") ? "_blank" : undefined} rel={buttonNewTab || buttonUrl.startsWith("http") ? "noopener noreferrer" : undefined}>
                 {buttonLabel}
               </Link>

@@ -118,7 +118,7 @@ export default async function SearchPage({ searchParams }: Props) {
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-foreground-muted z-10" />
               <LiveSearchInput defaultValue={searchTerm} />
             </div>
-            <Button className="h-12 px-6 bg-primary text-white font-semibold rounded-xl">
+            <Button className="h-12 px-6 bg-primary text-white font-semibold rounded-full">
               Search
             </Button>
           </div>

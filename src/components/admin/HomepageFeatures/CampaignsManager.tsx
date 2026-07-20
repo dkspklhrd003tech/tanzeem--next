@@ -499,7 +499,7 @@ export function CampaignsManager() {
                                 <button
                                     type="button"
                                     onClick={closeModal}
-                                    className="px-6 py-2.5 text-sm font-semibold text-foreground bg-background border border-border rounded-xl hover:bg-muted transition-all active:scale-95"
+                                    className="px-6 py-2.5 text-sm font-semibold text-foreground bg-background border border-border rounded-full hover:bg-muted transition-all active:scale-95"
                                     disabled={isLoading || isUploading}
                                 >
                                     Cancel
@@ -512,7 +512,7 @@ export function CampaignsManager() {
                                     <button
                                         type="button"
                                         disabled={isLoading || isUploading}
-                                        className="px-8 py-2.5 text-sm font-bold text-primary-foreground bg-primary rounded-xl transition-all active:scale-95 shadow-sm hover:shadow-md min-w-[140px]"
+                                        className="px-8 py-2.5 text-sm font-bold text-primary-foreground bg-primary rounded-full transition-all active:scale-95 shadow-sm hover:shadow-md min-w-[140px]"
                                     >
                                         {isLoading ? (
                                             <div className="w-5 h-5 border-2 border-white/30 border-t-[#fefefc] rounded-full animate-spin"></div>

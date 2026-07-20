@@ -515,7 +515,7 @@ export function FooterManager() {
                     >
                       <Button
                         disabled={savingSettings}
-                        className="bg-primary text-white rounded-xl w-full"
+                        className="bg-primary text-white rounded-full w-full"
                       >
                         {savingSettings ? (
                           <>
@@ -699,7 +699,7 @@ export function FooterManager() {
                                 onConfirm={() => handleDeleteColumn(column)}
                               >
                                 <button
-                                  className="p-1 rounded text-muted-foreground hover:text-destructive hover:bg-destructive/80 transition-colors"
+                                  className="p-1 rounded-full text-muted-foreground hover:text-destructive hover:bg-destructive/80 transition-colors"
                                   title="Delete column"
                                 >
                                   <XCircle className="h-3.5 w-3.5" />
@@ -765,7 +765,7 @@ export function FooterManager() {
                                         description={`Are you sure you want to remove the link "${link.label}"?`}
                                         onConfirm={() => handleDeleteLink(link.id)}
                                       >
-                                        <button className="p-1 rounded text-muted-foreground hover:text-destructive hover:bg-destructive/80">
+                                        <button className="p-1 rounded-full text-muted-foreground hover:text-destructive hover:bg-destructive/80">
                                           <XCircle className="h-3 w-3" />
                                         </button>
                                       </ConfirmDialog>

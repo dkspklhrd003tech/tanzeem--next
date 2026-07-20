@@ -181,7 +181,7 @@ function SortableMenuRow({
             onConfirm={() => onDelete(item.id)}
           >
             <button
-              className="p-1 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
+              className="p-1 rounded-full hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
               title="Delete"
             >
               <XCircle className="h-3.5 w-3.5" />
@@ -779,7 +779,7 @@ export function HeaderManager() {
         >
           <Button
             disabled={savingSettings}
-            className="bg-primary text-white rounded-full px-8"
+            className="border-primary/20 bg-primary text-white rounded-full px-8"
           >
             <Save className="h-4 w-4 mr-2" />
             {savingSettings ? "Saving…" : "Save Header"}

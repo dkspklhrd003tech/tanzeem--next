@@ -364,7 +364,7 @@ export function LeaderProfiles() {
                             </div>
 
                             <div className="px-6 py-4 border-t border-border bg-muted/10 flex justify-end gap-3 sticky bottom-0">
-                                <button type="button" onClick={closeModal} className="px-6 py-2.5 text-sm font-semibold text-foreground bg-background border border-border rounded-xl hover:bg-muted transition-all active:scale-95">
+                                <button type="button" onClick={closeModal} className="px-6 py-2.5 text-sm font-semibold text-foreground bg-background border border-border rounded-full hover:bg-muted transition-all active:scale-95">
                                     Cancel
                                 </button>
                                 <ConfirmDialog
@@ -372,7 +372,7 @@ export function LeaderProfiles() {
                                     description={`Are you sure you want to ${editingMember ? "update" : "create"} this leadership profile?`}
                                     onConfirm={() => { document.getElementById("profileForm")?.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true })); }}
                                 >
-                                    <button type="button" disabled={isLoading || isUploading} className="px-8 py-2.5 text-sm font-bold text-primary-foreground bg-primary rounded-xl transition-all active:scale-95 shadow-sm hover:shadow-md min-w-[140px]">
+                                    <button type="button" disabled={isLoading || isUploading} className="px-8 py-2.5 text-sm font-bold text-primary-foreground bg-primary rounded-full transition-all active:scale-95 shadow-sm hover:shadow-md min-w-[140px]">
                                         {isLoading ? <div className="mx-auto w-5 h-5 border-2 border-white/30 border-t-[#fefefc] rounded-full animate-spin"></div> : "Save Global Profile"}
                                     </button>
                                 </ConfirmDialog>

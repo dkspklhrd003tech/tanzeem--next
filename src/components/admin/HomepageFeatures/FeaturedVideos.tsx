@@ -540,7 +540,7 @@ export function FeaturedVideos() {
                                                 <button
                                                     type="button"
                                                     onClick={extractYTThumbnail}
-                                                    className="w-auto self-start px-3 py-1.5 border border-border rounded shadow-sm bg-background hover:bg-muted font-medium transition-colors text-primary"
+                                                    className="w-auto self-start px-3 py-1.5 border border-border rounded-full shadow-sm bg-background hover:bg-muted font-medium transition-colors text-primary"
                                                 >
                                                     Auto-fetch YouTube Thumbnail
                                                 </button>
@@ -556,7 +556,7 @@ export function FeaturedVideos() {
                                     type="button"
                                     onClick={closeModal}
                                     disabled={isSaving}
-                                    className="px-6 py-2.5 text-sm font-semibold text-foreground bg-background border border-border rounded-xl hover:bg-muted transition-all active:scale-95 disabled:opacity-50"
+                                    className="px-6 py-2.5 text-sm font-semibold text-foreground bg-background border border-border rounded-full hover:bg-muted transition-all active:scale-95 disabled:opacity-50"
                                 >
                                     Cancel
                                 </button>
@@ -572,7 +572,7 @@ export function FeaturedVideos() {
                                     <button
                                         type="button"
                                         disabled={isSaving}
-                                        className="flex items-center justify-center gap-2 px-8 py-2.5 text-sm font-bold text-primary-foreground bg-primary rounded-xl transition-all active:scale-95 shadow-sm hover:shadow-md min-w-[140px] disabled:opacity-70 disabled:cursor-not-allowed"
+                                        className="flex items-center justify-center gap-2 px-8 py-2.5 text-sm font-bold text-primary-foreground bg-primary rounded-full transition-all active:scale-95 shadow-sm hover:shadow-md min-w-[140px] disabled:opacity-70 disabled:cursor-not-allowed"
                                     >
                                         {isSaving ? (
                                             <>
