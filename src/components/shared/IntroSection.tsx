@@ -3,6 +3,7 @@
 import { cn, resolveMediaUrl } from "@/lib/utils";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { usePathname } from "next/navigation";
 
 interface IntroSectionProps {
   heading: string;
@@ -33,7 +34,63 @@ export function IntroSection({
   buttonNewTab = false,
   imageWidth = "",
 }: IntroSectionProps) {
+  const pathname = usePathname();
+  const isLeaderPage = pathname === "/the-founder" || pathname === "/the-ameer";
   const isHorizontal = alignment === "left" || alignment === "right";
+
+  if (isLeaderPage) {
+    return (
+      <section className="py-8 md:py-10 overflow-hidden relative bg-slate-50/50">
+        <div className="container mx-auto px-4">
+          {/* Centered Heading & Subheading */}
+          <div className="text-center mb-8 pb-6 border-b border-slate-100">
+            <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight mb-2">
+              {heading}
+            </h2>
+            {subheading && (
+              <h3 className="text-center text-primary font-bold uppercase tracking-wider text-sm md:text-base">
+                {subheading}
+              </h3>
+            )}
+          </div>
+          
+          {/* Floated Image + Body Content */}
+          <div className="prose prose-lg prose-emerald max-w-none 
+                    prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-slate-800 
+                    prose-h2:text-2xl prose-h2:pl-3 prose-h2:mt-10 prose-h2:mb-4
+                    prose-h3:text-xl prose-h3:font-semibold prose-h3:mt-8 prose-h3:mb-3
+                    prose-p:text-slate-600 prose-p:leading-relaxed prose-p:mb-6
+                    prose-strong:text-slate-800 prose-strong:font-bold
+                    prose-li:text-slate-600 prose-li:mb-2
+                    prose-ul:list-disc prose-ul:pl-6 prose-ul:mb-6
+                    prose-ol:list-decimal prose-ol:pl-6 prose-ol:mb-6
+                    prose-blockquote:italic prose-blockquote:pl-6 prose-blockquote:text-foreground prose-blockquote:bg-slate-50 prose-blockquote:py-4 prose-blockquote:pr-4 prose-blockquote:rounded-r-2xl
+                    [&>*]:[unicode-bidi:plaintext] [&>*]:text-start">
+            {image && (
+              <div className="w-full max-w-xs mx-auto md:ml-0 md:mr-8 md:float-left md:w-[320px] md:mb-4 mb-6">
+                <img
+                  src={resolveMediaUrl(image)}
+                  alt={imageAlt || heading}
+                  className="w-full h-auto object-contain"
+                />
+              </div>
+            )}
+            <div dangerouslySetInnerHTML={{ __html: body }} />
+          </div>
+
+          {showButton && buttonLabel && buttonUrl && (
+            <div className="flex mt-8 justify-center">
+              <Button asChild size="lg" className="rounded-full px-4 py-1 text-base font-semibold">
+                <Link href={buttonUrl.startsWith("http") ? buttonUrl : buttonUrl} target={buttonNewTab || buttonUrl.startsWith("http") ? "_blank" : undefined} rel={buttonNewTab || buttonUrl.startsWith("http") ? "noopener noreferrer" : undefined}>
+                  {buttonLabel}
+                </Link>
+              </Button>
+            </div>
+          )}
+        </div>
+      </section>
+    );
+  }
 
   const textContent = (
     <div className={cn("flex flex-col gap-4", isHorizontal ? "text-left" : "text-center mx-auto max-w-4xl")}>
