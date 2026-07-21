@@ -40,7 +40,7 @@ export function IntroSection({
 
   if (isLeaderPage) {
     return (
-      <section className="py-8 md:py-10 overflow-hidden relative bg-slate-50/50">
+      <section className="py-6 md:py-8 overflow-hidden relative bg-white">
         <div className="container mx-auto px-4">
           {/* Centered Heading & Subheading */}
           <div className="text-center pb-6">
