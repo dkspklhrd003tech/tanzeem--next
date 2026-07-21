@@ -5,13 +5,14 @@ import { CallingCardGrid } from "@/components/shared/CallingCardGrid";
 
 interface CallingSectionProps {
   heading?: string;
+  icon?: string;
   fetchUrl?: string;
   limit?: number;
   buttonLabel?: string;
   buttonUrl?: string;
 }
 
-export async function BooksCallingSection({ heading, fetchUrl, limit = 6, buttonLabel, buttonUrl }: CallingSectionProps) {
+export async function BooksCallingSection({ heading, icon, fetchUrl, limit = 6, buttonLabel, buttonUrl }: CallingSectionProps) {
   let slug = "";
   if (fetchUrl) {
     const parts = fetchUrl.split("/").filter(Boolean);
@@ -53,6 +54,7 @@ export async function BooksCallingSection({ heading, fetchUrl, limit = 6, button
   return (
     <CallingCardGrid
       heading={heading}
+      icon={icon}
       items={items}
       viewAllUrl={buttonUrl}
       viewAllLabel={buttonLabel}

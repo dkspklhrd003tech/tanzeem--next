@@ -1446,6 +1446,11 @@ function SectionConfigForm({ type, config: rawConfig, onUpdate }: { type: string
             <Input value={config.heading ?? ""} onChange={(e) => handleChange("heading", e.target.value)} placeholder="e.g. Latest Audios" />
           </div>
           <div className="space-y-2">
+            <Label>Icon Name (lucide-react)</Label>
+            <Input value={config.icon ?? ""} onChange={(e) => handleChange("icon", e.target.value)} placeholder="e.g. Headphones, Video, Book" />
+            <p className="text-[10px] text-muted-foreground">Type a valid lucide-react icon name (e.g. Headphones, PlayCircle, BookOpen). Leave empty for none.</p>
+          </div>
+          <div className="space-y-2">
             <Label>Data Source URL</Label>
             <Input value={config.fetchUrl ?? ""} onChange={(e) => handleChange("fetchUrl", e.target.value)} placeholder="e.g. /audio/category/dars-e-quran or /audios-by-speaker/dr-israr-ahmad" />
             <p className="text-[10px] text-muted-foreground">Enter the category or speaker URL. The system will fetch the newest items from it.</p>

@@ -16,8 +16,8 @@ import {
   homeCampaigns,
   locations,
   media,
-  formSubmissions,
   settings,
+  sermonCategories,
 } from "@/db/schema";
 import { sql, desc, eq, and, isNotNull } from "drizzle-orm";
 
@@ -116,12 +116,24 @@ export async function GET(request: NextRequest) {
       .groupBy(audio.categoryId, audioCategories.name)
       .orderBy(sql`count(*) desc`);
 
-    const audioByCategory = audioByCategoryRaw.map((r) => ({
-      category: r.categoryName ?? "Uncategorized",
-      count: Number(r.count),
-      plays: Number(r.plays),
-      downloads: Number(r.downloads),
-    }));
+    const audioByCategoryMap = new Map<string, any>();
+    for (const r of audioByCategoryRaw) {
+      const name = r.categoryName || "Uncategorized";
+      if (audioByCategoryMap.has(name)) {
+        const existing = audioByCategoryMap.get(name);
+        existing.count += Number(r.count);
+        existing.plays += Number(r.plays);
+        existing.downloads += Number(r.downloads);
+      } else {
+        audioByCategoryMap.set(name, {
+          category: name,
+          count: Number(r.count),
+          plays: Number(r.plays),
+          downloads: Number(r.downloads),
+        });
+      }
+    }
+    const audioByCategory = Array.from(audioByCategoryMap.values()).sort((a, b) => b.count - a.count);
 
     // ── Book sub-categories ──────────────────────────────────────────────────
     const booksByCategoryRaw = await db
@@ -136,11 +148,82 @@ export async function GET(request: NextRequest) {
       .groupBy(books.categoryId, bookCategories.name)
       .orderBy(sql`count(*) desc`);
 
-    const booksByCategory = booksByCategoryRaw.map((r) => ({
-      category: r.categoryName ?? "Uncategorized",
-      count: Number(r.count),
-      downloads: Number(r.downloads),
-    }));
+    const booksByCategoryMap = new Map<string, any>();
+    for (const r of booksByCategoryRaw) {
+      const name = r.categoryName || "Uncategorized";
+      if (booksByCategoryMap.has(name)) {
+        const existing = booksByCategoryMap.get(name);
+        existing.count += Number(r.count);
+        existing.downloads += Number(r.downloads);
+      } else {
+        booksByCategoryMap.set(name, {
+          category: name,
+          count: Number(r.count),
+          downloads: Number(r.downloads),
+        });
+      }
+    }
+    const booksByCategory = Array.from(booksByCategoryMap.values()).sort((a, b) => b.count - a.count);
+
+    // ── Video sub-categories ─────────────────────────────────────────────────
+    const videosByCategoryRaw = await db
+      .select({
+        categoryId: videos.categoryId,
+        categoryName: videoCategories.name,
+        count: sql<number>`count(*)`,
+        views: sql<number>`coalesce(sum(${videos.viewCount}), 0)`,
+      })
+      .from(videos)
+      .leftJoin(videoCategories, eq(videos.categoryId, videoCategories.id))
+      .groupBy(videos.categoryId, videoCategories.name)
+      .orderBy(sql`count(*) desc`);
+
+    const videosByCategoryMap = new Map<string, any>();
+    for (const r of videosByCategoryRaw) {
+      const name = r.categoryName || "Uncategorized";
+      if (videosByCategoryMap.has(name)) {
+        const existing = videosByCategoryMap.get(name);
+        existing.count += Number(r.count);
+        existing.views += Number(r.views);
+      } else {
+        videosByCategoryMap.set(name, {
+          category: name,
+          count: Number(r.count),
+          views: Number(r.views),
+        });
+      }
+    }
+    const videosByCategory = Array.from(videosByCategoryMap.values()).sort((a, b) => b.count - a.count);
+
+    // ── Sermon sub-categories ─────────────────────────────────────────────────
+    const sermonsByCategoryRaw = await db
+      .select({
+        categoryId: sermons.categoryId,
+        categoryName: sermonCategories.name,
+        count: sql<number>`count(*)`,
+        plays: sql<number>`coalesce(sum(${sermons.playCount}), 0)`,
+      })
+      .from(sermons)
+      .leftJoin(sermonCategories, eq(sermons.categoryId, sermonCategories.id))
+      .groupBy(sermons.categoryId, sermonCategories.name)
+      .orderBy(sql`count(*) desc`);
+
+    const sermonsByCategoryMap = new Map<string, any>();
+    for (const r of sermonsByCategoryRaw) {
+      const name = r.categoryName || "Uncategorized";
+      if (sermonsByCategoryMap.has(name)) {
+        const existing = sermonsByCategoryMap.get(name);
+        existing.count += Number(r.count);
+        existing.plays += Number(r.plays);
+      } else {
+        sermonsByCategoryMap.set(name, {
+          category: name,
+          count: Number(r.count),
+          plays: Number(r.plays),
+        });
+      }
+    }
+    const sermonsByCategory = Array.from(sermonsByCategoryMap.values()).sort((a, b) => b.count - a.count);
 
     // ── Magazine sub-categories (by year) ────────────────────────────────────
     const magazinesByYearRaw = await db
@@ -153,11 +236,22 @@ export async function GET(request: NextRequest) {
       .groupBy(sql`year(${magazines.createdAt})`)
       .orderBy(sql`year(${magazines.createdAt}) desc`);
 
-    const magazinesByYear = magazinesByYearRaw.map((r) => ({
-      year: r.year ?? "Unknown",
-      count: Number(r.count),
-      downloads: Number(r.downloads),
-    }));
+    const magazinesByYearMap = new Map<string, any>();
+    for (const r of magazinesByYearRaw) {
+      const year = r.year ? String(r.year) : "Unknown";
+      if (magazinesByYearMap.has(year)) {
+        const existing = magazinesByYearMap.get(year);
+        existing.count += Number(r.count);
+        existing.downloads += Number(r.downloads);
+      } else {
+        magazinesByYearMap.set(year, {
+          year: year,
+          count: Number(r.count),
+          downloads: Number(r.downloads),
+        });
+      }
+    }
+    const magazinesByYear = Array.from(magazinesByYearMap.values()).sort((a, b) => b.count - a.count);
 
     // ── Media breakdown by MIME type group ───────────────────────────────────
     const mediaByTypeRaw = await db
@@ -251,6 +345,8 @@ export async function GET(request: NextRequest) {
       // sub-category breakdowns
       audioByCategory,
       booksByCategory,
+      videosByCategory,
+      sermonsByCategory,
       magazinesByYear,
       mediaByType,
       recentPages,

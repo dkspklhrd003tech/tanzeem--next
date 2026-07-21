@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { ArrowRight, AudioLines, PlayCircle, BookOpen } from "lucide-react";
+import * as LucideIcons from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export type CallingItemType = "audio" | "video" | "book";
@@ -13,19 +14,23 @@ export interface CallingItem {
 
 interface CallingCardGridProps {
   heading?: string;
+  icon?: string;
   items: CallingItem[];
   viewAllUrl?: string;
   viewAllLabel?: string;
 }
 
-export function CallingCardGrid({ heading, items, viewAllUrl, viewAllLabel }: CallingCardGridProps) {
+export function CallingCardGrid({ heading, icon, items, viewAllUrl, viewAllLabel }: CallingCardGridProps) {
+  const IconComponent = icon && (LucideIcons as any)[icon] ? (LucideIcons as any)[icon] : null;
+
   return (
     <div className="container mx-auto py-8">
       {/* Header */}
       {(heading || viewAllUrl) && (
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
           {heading && (
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground">
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground flex items-center gap-2">
+              {IconComponent && <IconComponent className="w-6 h-6 md:w-8 md:h-8 text-primary shrink-0" />}
               {heading}
             </h2>
           )}

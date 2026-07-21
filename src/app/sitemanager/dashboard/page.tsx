@@ -233,6 +233,8 @@ export default function DashboardPage() {
   const activity: any[] = activityData?.activity ?? [];
   const audioByCategory: AudioCategory[] = statsData?.audioByCategory ?? [];
   const booksByCategory: BookCategory[] = statsData?.booksByCategory ?? [];
+  const videosByCategory: any[] = statsData?.videosByCategory ?? [];
+  const sermonsByCategory: any[] = statsData?.sermonsByCategory ?? [];
   const magazinesByYear: MagazineYear[] = statsData?.magazinesByYear ?? [];
   const mediaByType: MediaType[] = statsData?.mediaByType ?? [];
 
@@ -376,9 +378,12 @@ export default function DashboardPage() {
                 { label: "Views", value: stats?.videoViews ?? 0, icon: EyeIcon },
                 { label: "—", value: "—", icon: Activity },
               ]}
-              rows={[]}
-              rowLabel="category"
-              rowKeys={[{ key: "count", label: "Items" }]}
+              rows={videosByCategory}
+              rowLabel="categories"
+              rowKeys={[
+                { key: "count", label: "Videos", isBar: true, barColor: "bg-red-500" },
+                { key: "views", label: "Views" },
+              ]}
             />
 
             {/* Books */}
@@ -427,9 +432,12 @@ export default function DashboardPage() {
                 { label: "Published", value: stats?.sermonsPublished ?? 0, icon: Globe2 },
                 { label: "Drafts", value: (stats?.sermons ?? 0) - (stats?.sermonsPublished ?? 0), icon: EyeOff },
               ]}
-              rows={[]}
-              rowLabel="category"
-              rowKeys={[{ key: "count", label: "Items" }]}
+              rows={sermonsByCategory}
+              rowLabel="categories"
+              rowKeys={[
+                { key: "count", label: "Sermons", isBar: true, barColor: "bg-teal-500" },
+                { key: "plays", label: "Plays" },
+              ]}
             />
 
 
