@@ -66,7 +66,7 @@ export function FormsHistory() {
                 <div key={sub.id} className="p-6 flex items-start justify-between hover:bg-slate-50 transition-colors">
                   <div>
                     <div className="flex items-center gap-2 mb-1">
-                      <h4 className="text-base font-bold text-slate-900 uppercase">
+                      <h4 className="text-base font-bold text-foreground uppercase">
                         {sub.name || "Anonymous"}
                       </h4>
                       <CheckCircle className="w-4 h-4 text-emerald-500" />

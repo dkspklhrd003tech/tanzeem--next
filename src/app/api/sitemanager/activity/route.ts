@@ -14,7 +14,7 @@ export async function GET(request: NextRequest) {
     }
 
     const url = new URL(request.url);
-    const limit = Math.min(parseInt(url.searchParams.get("limit") ?? "10"), 50);
+    const limit = Math.min(parseInt(url.searchParams.get("limit") ?? "10"), 1000);
 
     const logs = await db
       .select({

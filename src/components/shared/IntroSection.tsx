@@ -44,7 +44,7 @@ export function IntroSection({
         <div className="container mx-auto px-4">
           {/* Centered Heading & Subheading */}
           <div className="text-center pb-6">
-            <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight mb-2">
+            <h2 className="text-3xl md:text-4xl font-extrabold text-foreground tracking-tight mb-2">
               {heading}
             </h2>
             {subheading && (

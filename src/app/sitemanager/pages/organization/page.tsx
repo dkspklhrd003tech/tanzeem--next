@@ -1445,7 +1445,7 @@ export default function OrganizationPageEditor() {
                     </div>
                     <div>
                       <span className="text-[8px] font-bold text-primary tracking-wider uppercase">{localState.founder.designation}</span>
-                      <h4 className="text-xs font-bold text-slate-900 mt-0.5">{localState.founder.name}</h4>
+                      <h4 className="text-xs font-bold text-foreground mt-0.5">{localState.founder.name}</h4>
                       <p className="text-[10px] text-slate-600 mt-1 line-clamp-3 leading-relaxed">{localState.founder.bio}</p>
                     </div>
                   </div>
@@ -1463,7 +1463,7 @@ export default function OrganizationPageEditor() {
                     </div>
                     <div>
                       <span className="text-[8px] font-bold text-primary tracking-wider uppercase">{localState.ameer.designation}</span>
-                      <h4 className="text-xs font-bold text-slate-900 mt-0.5">{localState.ameer.name}</h4>
+                      <h4 className="text-xs font-bold text-foreground mt-0.5">{localState.ameer.name}</h4>
                       <p className="text-[10px] text-slate-600 mt-1 line-clamp-3 leading-relaxed">{localState.ameer.bio}</p>
                     </div>
                   </div>
@@ -1475,7 +1475,7 @@ export default function OrganizationPageEditor() {
                   <div className="grid grid-cols-2 gap-3">
                     {localState.ideology.cards.map((card, idx) => (
                       <div key={idx} className="bg-white border rounded-xl p-3 text-center space-y-1.5 shadow-sm">
-                        <span className="text-[10px] font-bold text-slate-900 block truncate">{card.title}</span>
+                        <span className="text-[10px] font-bold text-foreground block truncate">{card.title}</span>
                         {card.urduTitle && <span className="text-[10px] font-nastaleeq text-primary block">{card.urduTitle}</span>}
                         <p className="text-[9px] text-slate-500 line-clamp-3 leading-tight">{card.description}</p>
                       </div>

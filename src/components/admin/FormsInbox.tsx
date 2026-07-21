@@ -181,7 +181,7 @@ export function FormsInbox() {
                   )}
                   <div className="flex items-start justify-between mb-2">
                     <div className="flex items-center gap-2">
-                      <h4 className="text-base font-bold text-slate-900">
+                      <h4 className="text-base font-bold text-foreground">
                         {sub.email || sub.name || "Anonymous"}
                       </h4>
                       {!sub.isRead && <span className="w-2.5 h-2.5 animate-pulse rounded-full bg-primary" />}

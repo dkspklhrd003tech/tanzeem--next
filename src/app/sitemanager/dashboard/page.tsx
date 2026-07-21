@@ -169,7 +169,7 @@ function KpiCard({
         <div className="grid grid-cols-3 gap-px bg-border">
           {metrics.map((m, i) => (
             <div key={`${m.label}-${i}`} className="bg-card px-3 py-2.5 text-center">
-              <p className="text-primary text-lg font-bolder text-foreground tabular-nums">{typeof m.value === "number" ? fmt(m.value) : m.value}</p>
+              <p className="text-primary text-lg font-bold text-foreground">{typeof m.value === "number" ? fmt(m.value) : m.value}</p>
               <p className="text-[11px] text-foreground flex items-center justify-center gap-0.5 mt-0.5">
                 <m.icon className="h-2.5 w-2.5" />{m.label}
               </p>
@@ -466,8 +466,8 @@ export default function DashboardPage() {
                         <p className="text-sm text-foreground font-medium capitalize">{log.action.replace(/_/g, " ")} {log.entityType}</p>
                         {log.details && <p className="text-xs text-muted-foreground truncate">{log.details}</p>}
                         <div className="flex items-center gap-2 mt-0.5">
-                          <span className="text-[11px] text-muted-foreground/70 flex items-center gap-1"><Clock className="h-2.5 w-2.5" />{timeAgo(log.createdAt)}</span>
-                          {log.userName && <span className="text-[11px] text-muted-foreground/70">by {log.userName}</span>}
+                          <span className="text-[12px] text-foreground/80 flex items-center gap-1"><Clock className="h-2.5 w-2.5 text-[12px] text-foreground/80" />{timeAgo(log.createdAt)}</span>
+                          {log.userName && <span className="text-[12px] text-primary font-semibold">by {log.userName}</span>}
                         </div>
                       </div>
                     </li>

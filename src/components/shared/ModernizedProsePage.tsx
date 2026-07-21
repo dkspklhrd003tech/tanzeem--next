@@ -161,7 +161,7 @@ export function ModernizedProsePage({
             {/* Leader Template Centered Title & Dates */}
             {/* {template === "leader" && (
               <div className="text-center mb-6 border-b border-slate-100 ">
-                <h2 className="text-3xl md:text-4xl font-extrabold text-slate-900  tracking-tight mb-2">
+                <h2 className="text-3xl md:text-4xl font-extrabold text-foreground  tracking-tight mb-2">
                   {title}
                 </h2>
                 {excerpt && (

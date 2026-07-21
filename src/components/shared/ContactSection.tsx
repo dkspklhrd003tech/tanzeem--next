@@ -205,7 +205,7 @@ export function ContactSection({
                 <div className="w-12 h-12 rounded-xl bg-white shadow-sm border border-slate-200 flex items-center justify-center">
                   <Globe className="w-5 h-5 text-[#0d5844]" />
                 </div>
-                <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">Regional Branches</h2>
+                <h2 className="text-3xl font-extrabold text-foreground tracking-tight">Regional Branches</h2>
               </div>
 
               <div className="flex flex-wrap gap-3 mb-4">
@@ -254,7 +254,7 @@ export function ContactSection({
                         {branch.city && (
                           <div className="space-y-1">
                             <dt className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5"><Building2 className="w-3.5 h-3.5" /> City</dt>
-                            <dd className="font-semibold text-slate-900">{branch.city}</dd>
+                            <dd className="font-semibold text-foreground">{branch.city}</dd>
                           </div>
                         )}
                         {branch.address && (
@@ -271,7 +271,7 @@ export function ContactSection({
                           <div className="space-y-1">
                             <dt className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5"><Phone className="w-3.5 h-3.5" /> Phone</dt>
                             <dd>
-                              <a href={`tel:${getCleanNumber(branch.phone)}`} target="_blank" rel="noopener noreferrer" className="font-semibold text-slate-900 hover:text-[#0d5844] transition-colors">
+                              <a href={`tel:${getCleanNumber(branch.phone)}`} target="_blank" rel="noopener noreferrer" className="font-semibold text-foreground hover:text-[#0d5844] transition-colors">
                                 {branch.phone}
                               </a>
                             </dd>
@@ -281,7 +281,7 @@ export function ContactSection({
                           <div className="space-y-1">
                             <dt className="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5"><Mail className="w-3.5 h-3.5" /> Email</dt>
                             <dd>
-                              <a href={`mailto:${branch.email}`} target="_blank" rel="noopener noreferrer" className="font-semibold text-slate-900 hover:text-[#0d5844] transition-colors">
+                              <a href={`mailto:${branch.email}`} target="_blank" rel="noopener noreferrer" className="font-semibold text-foreground hover:text-[#0d5844] transition-colors">
                                 {branch.email}
                               </a>
                             </dd>
@@ -313,13 +313,13 @@ export function ContactSection({
                               {detail.naibAmeer && (
                                 <div className="space-y-1">
                                   <span className="text-[14px] font-bold text-primary uppercase tracking-widest flex items-center gap-1.5"><User className="w-3.5 h-3.5" /> {detail.leaderTitle || 'Ameer'}</span>
-                                  <span className="block font-bold text-slate-900">{detail.naibAmeer}</span>
+                                  <span className="block font-bold text-foreground">{detail.naibAmeer}</span>
                                 </div>
                               )}
                               {detail.phone && (
                                 <div className="space-y-1">
                                   <span className="text-[14px] font-bold text-primary uppercase tracking-widest flex items-center gap-1.5"><Phone className="w-3.5 h-3.5" /> Phone</span>
-                                  <span className="block font-bold text-slate-900">
+                                  <span className="block font-bold text-foreground">
                                     {detail.phoneUrl ? (
                                       <a href={detail.phoneUrl} target={detail.phoneUrlNewTab !== false ? "_blank" : "_self"} className="hover:text-[#0d5844] transition-colors">{detail.phone}</a>
                                     ) : (
@@ -331,7 +331,7 @@ export function ContactSection({
                               {detail.mobile && (
                                 <div className="space-y-1">
                                   <span className="text-[14px] font-bold text-primary uppercase tracking-widest flex items-center gap-1.5"><MessagesSquare className="w-3.5 h-3.5" /> Whatsapp</span>
-                                  <span className="block font-bold text-slate-900">
+                                  <span className="block font-bold text-foreground">
                                     {detail.mobileUrl ? (
                                       <a href={detail.mobileUrl} target={detail.mobileUrlNewTab !== false ? "_blank" : "_self"} className="hover:text-[#0d5844] transition-colors">{detail.mobile}</a>
                                     ) : (
@@ -343,7 +343,7 @@ export function ContactSection({
                               {detail.email && (
                                 <div className="space-y-1">
                                   <span className="text-[14px] font-bold text-primary uppercase tracking-widest flex items-center gap-1.5"><Mail className="w-3.5 h-3.5" /> Email</span>
-                                  <span className="block font-bold text-slate-900">
+                                  <span className="block font-bold text-foreground">
                                     <a href={detail.emailUrl || `mailto:${detail.email}`} target={detail.emailUrlNewTab !== false ? "_blank" : "_self"} className="hover:text-[#0d5844] transition-colors">{detail.email}</a>
                                   </span>
                                 </div>

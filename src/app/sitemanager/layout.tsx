@@ -653,7 +653,7 @@ export default function SiteManagerLayout({
           "min-h-screen sitemanager-admin-layout relative overflow-hidden",
           isDark
             ? "dark bg-slate-950 text-slate-100"
-            : "admin-light bg-slate-100 text-slate-900"
+            : "admin-light bg-slate-100 text-foreground"
         )}
       >
         {/* Ambient decorative glowing spots — subdued in light mode */}
