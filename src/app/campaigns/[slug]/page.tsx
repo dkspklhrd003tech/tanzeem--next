@@ -9,6 +9,7 @@ import { ImageSlider } from "@/components/shared/ImageSlider";
 import { Button } from "@/components/ui/button";
 import { PlayCircle, Download } from "lucide-react";
 import { PdfViewerHeader } from "@/components/shared/PdfViewerHeader";
+import { resolveMediaUrl } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -87,15 +88,7 @@ export default async function CampaignDetailsPage({ params }: { params: Promise<
                                     const pdfTitle = typeof block.value === 'string' ? null : block.value?.title;
                                     if (!pdfUrl) return null;
 
-                                    // Resolve absolute URL
-                                    let resolvedPdfUrl = pdfUrl;
-                                    if (resolvedPdfUrl.startsWith("public_html/")) resolvedPdfUrl = "/" + resolvedPdfUrl;
-                                    if (resolvedPdfUrl.startsWith("/public_html/uploads")) resolvedPdfUrl = resolvedPdfUrl.replace("/public_html/uploads", "/uploads");
-                                    
-                                    const mediaBase = process.env.NEXT_PUBLIC_MEDIA_URL || 'https://tanzeem.dks.com.pk';
-                                    const absolutePdfUrl = resolvedPdfUrl.startsWith('http') 
-                                        ? resolvedPdfUrl 
-                                        : `${mediaBase.replace(/\/$/, '')}${resolvedPdfUrl.startsWith('/') ? '' : '/'}${resolvedPdfUrl}`;
+                                    const absolutePdfUrl = resolveMediaUrl(pdfUrl);
 
                                     return (
                                         <div key={idx} className="space-y-4">

@@ -1,138 +1,179 @@
-# 🚀 Welcome to Code Scaffold
+# Tanzeem-e-Islami Official Web Platform
 
-A modern, production-ready web application scaffold powered by cutting-edge technologies, designed to accelerate your development.
+The official, production-ready Next.js web application for **Tanzeem-e-Islami (Tanzeem.org)**. This platform features a high-performance frontend for public visitors and a robust, custom-built CMS (Content Management System) for managing organizations, media, and digital resources.
 
 ## ✨ Technology Stack
 
-This scaffold provides a robust foundation built with:
+This application is built with a modern, cutting-edge technology stack focused on performance, security, and developer experience:
 
 ### 🎯 Core Framework
-- **⚡ Next.js 16** - The React framework for production with App Router
-- **📘 TypeScript 5** - Type-safe JavaScript for better developer experience
-- **🎨 Tailwind CSS 4** - Utility-first CSS framework for rapid UI development
-
-### 🧩 UI Components & Styling
-- **🧩 shadcn/ui** - High-quality, accessible components built on Radix UI
-- **🎯 Lucide React** - Beautiful & consistent icon library
-- **🌈 Framer Motion** - Production-ready motion library for React
-- **🎨 Next Themes** - Perfect dark mode in 2 lines of code
-
-### 📋 Forms & Validation
-- **🎣 React Hook Form** - Performant forms with easy validation
-- **✅ Zod** - TypeScript-first schema validation
-
-### 🔄 State Management & Data Fetching
-- **🐻 Zustand** - Simple, scalable state management
-- **🔄 TanStack Query** - Powerful data synchronization for React
-- **🌐 Fetch** - Promise-based HTTP request
+- **⚡ Next.js 16** - The React framework for production, fully utilizing the App Router.
+- **⚛️ React 19** - The latest React APIs and server components.
+- **📘 TypeScript 5** - Type-safe JavaScript.
+- **🎨 Tailwind CSS 4** - Utility-first CSS framework for rapid UI development.
 
 ### 🗄️ Database & Backend
-- **🗄️ Prisma** - Next-generation TypeScript ORM
-- **🔐 NextAuth.js** - Complete open-source authentication solution
+- **🐬 MySQL** - Primary relational database.
+- **💧 Drizzle ORM** - High-performance, type-safe TypeScript ORM.
+- **🔐 NextAuth.js** - Complete, secure authentication solution for the Admin CMS.
+- **☁️ External FTP Media** - Custom chunked streaming to host large media assets (videos, PDFs, audio) externally.
 
-### 🎨 Advanced UI Features
-- **📊 TanStack Table** - Headless UI for building tables and datagrids
-- **🖱️ DND Kit** - Modern drag and drop toolkit for React
-- **📊 Recharts** - Redefined chart library built with React and D3
-- **🖼️ Sharp** - High performance image processing
+### 🧩 UI Components & Styling
+- **🧩 shadcn/ui** - High-quality, accessible UI components.
+- **🎯 Lucide React** - Beautiful & consistent icon library.
+- **🌈 Framer Motion & GSAP** - Production-ready motion libraries for interactive micro-animations.
+- **📝 TipTap** - Advanced rich-text editor integrated into the CMS.
 
-### 🌍 Internationalization & Utilities
-- **🌍 Next Intl** - Internationalization library for Next.js
-- **📅 Date-fns** - Modern JavaScript date utility library
-- **🪝 ReactUse** - Collection of essential React hooks for modern development
-
-## 🎯 Why This Scaffold?
-
-- **🏎️ Fast Development** - Pre-configured tooling and best practices
-- **🎨 Beautiful UI** - Complete shadcn/ui component library with advanced interactions
-- **🔒 Type Safety** - Full TypeScript configuration with Zod validation
-- **📱 Responsive** - Mobile-first design principles with smooth animations
-- **🗄️ Database Ready** - Prisma ORM configured for rapid backend development
-- **🔐 Auth Included** - NextAuth.js for secure authentication flows
-- **📊 Data Visualization** - Charts, tables, and drag-and-drop functionality
-- **🌍 i18n Ready** - Multi-language support with Next Intl
-- **🚀 Production Ready** - Optimized build and deployment settings
-- **🤖 AI-Friendly** - Structured codebase perfect for AI assistance
-
-## 🚀 Quick Start
-
-```bash
-# Install dependencies
-bun install
-
-# Start development server
-bun run dev
-
-# Build for production
-bun run build
-
-# Start production server
-bun start
-```
-
-Open [http://localhost:3000](http://localhost:3000) to see your application running.
-
-- **💻 Code Generation** - Generate components, pages, and features instantly
-- **🎨 UI Development** - Create beautiful interfaces with AI assistance  
-- **🔧 Bug Fixing** - Identify and resolve issues with intelligent suggestions
-- **📝 Documentation** - Auto-generate comprehensive documentation
-- **🚀 Optimization** - Performance improvements and best practices
-
-Ready to build something amazing? Start chatting with Z.ai at [chat.z.ai](https://chat.z.ai) and experience the future of AI-powered development!
-
-## 📁 Project Structure
-
-```
-src/
-├── app/                 # Next.js App Router pages
-├── components/          # Reusable React components
-│   └── ui/             # shadcn/ui components
-├── hooks/              # Custom React hooks
-└── lib/                # Utility functions and configurations
-```
-
-## 🎨 Available Features & Components
-
-This scaffold includes a comprehensive set of modern web development tools:
-
-### 🧩 UI Components (shadcn/ui)
-- **Layout**: Card, Separator, Aspect Ratio, Resizable Panels
-- **Forms**: Input, Textarea, Select, Checkbox, Radio Group, Switch
-- **Feedback**: Alert, Toast (Sonner), Progress, Skeleton
-- **Navigation**: Breadcrumb, Menubar, Navigation Menu, Pagination
-- **Overlay**: Dialog, Sheet, Popover, Tooltip, Hover Card
-- **Data Display**: Badge, Avatar, Calendar
-
-### 📊 Advanced Data Features
-- **Tables**: Powerful data tables with sorting, filtering, pagination (TanStack Table)
-- **Charts**: Beautiful visualizations with Recharts
-- **Forms**: Type-safe forms with React Hook Form + Zod validation
-
-### 🎨 Interactive Features
-- **Animations**: Smooth micro-interactions with Framer Motion
-- **Drag & Drop**: Modern drag-and-drop functionality with DND Kit
-- **Theme Switching**: Built-in dark/light mode support
-
-### 🔐 Backend Integration
-- **Authentication**: Ready-to-use auth flows with NextAuth.js
-- **Database**: Type-safe database operations with Prisma
-- **API Client**: HTTP requests with Fetch + TanStack Query
-- **State Management**: Simple and scalable with Zustand
-
-### 🌍 Production Features
-- **Internationalization**: Multi-language support with Next Intl
-- **Image Optimization**: Automatic image processing with Sharp
-- **Type Safety**: End-to-end TypeScript with Zod validation
-- **Essential Hooks**: 100+ useful React hooks with ReactUse for common patterns
-
-## 🤝 Get Started with Z.ai
-
-1. **Clone this scaffold** to jumpstart your project
-2. **Visit [chat.z.ai](https://chat.z.ai)** to access your AI coding assistant
-3. **Start building** with intelligent code generation and assistance
-4. **Deploy with confidence** using the production-ready setup
+### 📋 Forms & Security
+- **🎣 React Hook Form + Zod** - Performant forms with end-to-end schema validation.
+- **🛡️ Google reCAPTCHA v3** - Advanced bot protection for public forms (Login, Contact, Joining).
 
 ---
 
-Built with ❤️ for the developer community. Supercharged by [Z.ai](https://chat.z.ai) 🚀
-# tanzeem--next
+## 📦 Key Dependencies & Libraries
+
+If you are reconstructing this environment or need to know the explicit commands used to install the core libraries within this project, here they are categorized by their purpose:
+
+### Core Framework & State
+```bash
+npm install next react react-dom zustand swr @tanstack/react-query
+```
+
+### Database & ORM
+```bash
+npm install drizzle-orm mysql2
+npm install -D drizzle-kit
+```
+
+### Authentication & Security
+```bash
+npm install next-auth bcryptjs react-google-recaptcha-v3
+npm install -D @types/bcryptjs
+```
+
+### UI, Styling & Icons
+```bash
+npm install lucide-react framer-motion gsap next-themes tailwind-merge clsx class-variance-authority
+```
+
+### Forms & Validation
+```bash
+npm install react-hook-form @hookform/resolvers zod
+```
+
+### Media, Uploads & Rich Text
+```bash
+npm install basic-ftp fluent-ffmpeg @tiptap/react @tiptap/starter-kit
+```
+
+---
+
+## 🎯 Core Features
+
+- **Custom Built CMS (`/sitemanager`)**: Fully-fledged administrative dashboard to manage Homepage content, Services, Campaigns, Magazines, Press Releases, Videos, Audios, Books, and dynamic Pages.
+- **Dynamic Page Builder**: Create highly customizable pages using drag-and-drop dynamic blocks (Text, Images, PDF Viewers, Video Grids).
+- **Advanced Media Library**: Upload massive files seamlessly. Bypasses standard serverless payload limits by utilizing chunked FTP streaming directly to the media server.
+- **Native PDF & Media Viewers**: Standardized native browser rendering for PDFs and optimized audio/video players globally.
+- **SEO Optimized**: Dynamic metadata generation, JSON-LD schemas, and fast server-side rendering for optimal search engine indexing.
+
+---
+
+## 🚀 Quick Start
+
+Follow these instructions to run the project in your local development environment.
+
+### 1. Prerequisites
+- **Node.js** (v18.17+ or newer recommended)
+- **MySQL** database (Local or Cloud)
+- **Git**
+
+### 2. Installation
+Clone the repository and install dependencies using **npm**:
+
+```bash
+# Clone the repository
+git clone https://github.com/your-org/tanzeem-next.git
+cd tanzeem-next
+
+# Install dependencies
+npm install
+```
+
+### 3. Environment Configuration
+Create a `.env` file in the root of the project. Use the provided `.env.example` (or `.env.local`) as a reference. Ensure you have the following essential keys configured:
+
+```env
+# Database
+DATABASE_URL="mysql://user:password@localhost:3306/tanzeem_db"
+
+# NextAuth
+NEXTAUTH_URL="http://localhost:3000"
+NEXTAUTH_SECRET="your_secure_random_string"
+
+# ReCAPTCHA v3
+NEXT_PUBLIC_RECAPTCHA_SITE_KEY="your_recaptcha_site_key"
+RECAPTCHA_SECRET_KEY="your_recaptcha_secret_key"
+
+# External FTP Media Server
+FTP_HOST="ftp.example.com"
+FTP_USER="your_ftp_user"
+FTP_PASSWORD="your_ftp_password"
+NEXT_PUBLIC_MEDIA_URL="https://media.tanzeem.org"
+```
+
+### 4. Database Setup
+Push the Drizzle schema to your connected MySQL database to generate the tables, and optionally seed the initial admin account.
+
+```bash
+# Push schema to local DB
+npm run db:push:local
+
+# Seed initial admin and settings (Optional)
+npm run seed:admin
+npm run seed:settings
+```
+
+### 5. Start Development Server
+Run the local development server:
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) to view the public site. 
+Navigate to [http://localhost:3000/sitemanager/login](http://localhost:3000/sitemanager/login) to access the administrative dashboard.
+
+---
+
+## 📁 Project Architecture
+
+```
+src/
+├── app/                 # Next.js App Router (Public Pages, API Routes, /sitemanager)
+├── components/          # Reusable React components
+│   ├── admin/           # CMS administrative components and complex layout editors
+│   ├── home/            # Public Homepage specific sections
+│   ├── shared/          # Global layout components (Headers, Footers, Media Grids)
+│   └── ui/              # shadcn/ui base elements
+├── db/                  # Drizzle ORM schemas and DB connection setup
+├── lib/                 # Utility functions, SEO builders, API validation schemas
+└── hooks/               # Custom React hooks (e.g. chunked FTP uploaders)
+```
+
+## 🛠️ Build & Deployment
+
+To build the application for production:
+
+```bash
+# Generate the optimized production build
+npm run build
+
+# Start the production server
+npm start
+```
+
+For environments like **Vercel**, ensure all environment variables are securely added to the project settings, and that the MySQL database is publicly accessible (or VPC peered) to the deployment edge functions.
+
+---
+
+Built with ❤️ for Tanzeem-e-Islami.
