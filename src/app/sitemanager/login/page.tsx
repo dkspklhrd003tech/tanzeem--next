@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Eye, EyeOff, Lock, Mail, AlertCircle, Loader2, ArrowLeft, KeyRound, CheckCircle2 } from "lucide-react";
 import { cn, resolveMediaUrl } from "@/lib/utils";
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Stars, Float } from "@react-three/drei";
 import * as THREE from "three";
@@ -100,6 +101,8 @@ function LoginForm() {
   const toastTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [showRememberModal, setShowRememberModal] = useState<{ show: boolean, targetState: boolean }>({ show: false, targetState: false });
 
+  const { executeRecaptcha } = useGoogleReCaptcha();
+
   const showToast = (message: string, type: "success" | "error" | "info" = "info") => {
     setToastMsg({ message, type });
     if (toastTimeoutRef.current) clearTimeout(toastTimeoutRef.current);
@@ -179,21 +182,29 @@ function LoginForm() {
 
   const executeLogin = async () => {
     setError(null);
+
+    if (!executeRecaptcha) {
+      setError("ReCAPTCHA is not ready. Please try again.");
+      return;
+    }
+
     setIsLoading(true);
 
     try {
+      const recaptchaToken = await executeRecaptcha("admin_login");
+
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, recaptchaToken }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        if (res.status === 401) setError("Invalid email or password. Please try again.");
-        else if (res.status === 403) setError("Your account has been deactivated. Contact a super admin.");
-        else setError(data.error ?? "Something went wrong. Please try again.");
+        if (data.error) setError(data.error);
+        else if (res.status === 401) setError("Invalid email or password. Please try again.");
+        else setError("Something went wrong. Please try again.");
         return;
       }
 
