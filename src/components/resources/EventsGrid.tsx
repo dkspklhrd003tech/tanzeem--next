@@ -72,30 +72,28 @@ export function EventsGrid({ initialItems }: EventsGridProps) {
   return (
     <div className="w-full">
       {/* Search & Filters Bar */}
-      <div className="bg-card border border-border rounded-xl p-4 mb-6 shadow-[#0d5844]/30 shadow-md">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          {/* Search */}
-          <div className="relative flex-1 max-w-5xl">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4.5 w-4.5 text-[#0d5844]" />
-            <Input
-              placeholder="Search events..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-11 h-12 bg-background border-border/80 focus-visible:ring-primary/20 rounded-xl"
-            />
-          </div>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        {/* Search */}
+        <div className="relative flex-1 max-w-7xl">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4.5 w-4.5 text-[#0d5844]" />
+          <Input
+            placeholder="Search events..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-11 h-12 bg-background border-border/80 focus-visible:ring-primary/20 rounded-xl"
+          />
+        </div>
 
-          {/* Sort By */}
-          <div className="flex items-center gap-2">
-            <select
-              value={sortBy}
-              onChange={(e: any) => setSortBy(e.target.value)}
-              className="h-12 bg-background border border-border rounded-xl px-4 text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-primary/30 min-w-[120px]"
-            >
-              <option value="newest">Newest First</option>
-              <option value="oldest">Oldest First</option>
-            </select>
-          </div>
+        {/* Sort By */}
+        <div className="flex items-center gap-2">
+          <select
+            value={sortBy}
+            onChange={(e: any) => setSortBy(e.target.value)}
+            className="h-12 bg-background border border-border rounded-xl px-4 text-xs font-semibold focus:outline-none focus:ring-1 focus:ring-primary/30 min-w-[120px]"
+          >
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+          </select>
         </div>
       </div>
 
