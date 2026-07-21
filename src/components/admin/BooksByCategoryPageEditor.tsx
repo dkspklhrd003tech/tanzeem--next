@@ -3,7 +3,8 @@
 import { useState, useEffect, useRef } from "react";
 import {
   Plus, Pencil, XCircle, Search, GripVertical, FileText,
-  Settings2, Check, UploadCloud, Loader2, ArrowLeft, Image as ImageIcon, XIcon
+  Settings2, Check, UploadCloud, RefreshCw, ArrowLeft, Image as ImageIcon, XIcon,
+  Eye, EyeOff
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -118,7 +119,7 @@ function SortableCategoryCard({ id, item, onEdit, onDelete, onClick, bookCount }
   );
 }
 
-function SortableBookCard({ id, item, onEdit, onDelete }: any) {
+function SortableBookCard({ id, item, onEdit, onDelete, onTogglePublish }: any) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
   const style = { transform: CSS.Transform.toString(transform), transition, zIndex: isDragging ? 50 : undefined };
 
@@ -149,6 +150,9 @@ function SortableBookCard({ id, item, onEdit, onDelete }: any) {
           <div className="flex items-center gap-1">
             <Button variant="ghost" size="icon" className="h-7 w-7 text-green-500 hover:bg-green-500/10" onClick={() => onEdit(item)}>
               <Pencil className="h-3.5 w-3.5" />
+            </Button>
+            <Button variant="ghost" size="icon" className={cn("h-7 w-7", item.isPublished ? "text-green-500 hover:bg-green-500/10" : "text-red-500 hover:bg-red-500/10")} onClick={() => onTogglePublish(item)} title={item.isPublished ? "Hide from frontend" : "Show on frontend"}>
+              {item.isPublished ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
             </Button>
             <Button variant="ghost" size="icon" className="h-7 w-7 text-red-500 hover:bg-red-500/10" onClick={() => onDelete(item)}>
               <XCircle className="h-3.5 w-3.5" />
@@ -359,6 +363,24 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
     }
   };
 
+  const handleBookTogglePublish = async (item: BookItem) => {
+    try {
+      const res = await fetch(`/api/admin/books/${item.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...item, isPublished: !item.isPublished }),
+      });
+      if (res.ok) {
+        toast({ title: "Updated", description: `Book is now ${!item.isPublished ? 'Published' : 'Hidden'}.` });
+        fetchBooks();
+      } else {
+        throw new Error();
+      }
+    } catch (e) {
+      toast({ variant: "destructive", title: "Error", description: "Could not update visibility." });
+    }
+  };
+
   const handleBookDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over || active.id === over.id) return;
@@ -439,7 +461,7 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
   const handleBulkPdfUpload = async (files: File[]) => {
     const MAX_FILE_SIZE = 100 * 1024 * 1024;
     const validFiles = files.filter(f => f.size <= MAX_FILE_SIZE);
-    
+
     if (validFiles.length < files.length) {
       toast({ variant: "destructive", title: "Some files skipped", description: "Files over 100MB were skipped." });
     }
@@ -456,7 +478,7 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
 
         const baseName = file.name.replace(/\.[^/.]+$/, "");
         const cleanedTitle = baseName.split(/[-_]+/).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
-        
+
         const payload = {
           title: cleanedTitle,
           slug: slugify(cleanedTitle) + "-" + Date.now().toString().slice(-4),
@@ -573,7 +595,7 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
           {!activeCategory ? (
             // CATEGORIES GRID
             isLoading ? (
-              <div className="flex items-center justify-center py-20 text-muted-foreground"><Loader2 className="w-6 h-6 animate-spin text-primary mr-2" /> Loading Books...</div>
+              <div className="flex items-center justify-center py-20 text-muted-foreground"><RefreshCw className="w-6 h-6 animate-spin text-primary mr-2" /> Loading Books...</div>
             ) : filteredCategories.length === 0 ? (
               <div className="bg-card rounded-xl border p-12 text-center text-muted-foreground">No Books Found.</div>
             ) : (
@@ -609,7 +631,7 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
                 <input ref={fileInputRef} type="file" accept=".pdf" multiple className="hidden" onChange={handleFileChange} />
                 {isUploading ? (
                   <div className="flex flex-col items-center gap-3">
-                    <Loader2 className="h-10 w-10 text-primary animate-spin" />
+                    <RefreshCw className="h-10 w-10 text-primary animate-spin" />
                     <p className="font-semibold text-foreground text-center line-clamp-1 px-4">{uploadStatus || "Uploading PDF document..."}</p>
                     <p className="text-xs text-muted-foreground">Please do not close this page.</p>
                   </div>
@@ -632,7 +654,8 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
                     {activeBooks.map(book => (
                       <SortableBookCard key={book.id} id={book.id} item={book}
                         onEdit={(item: any) => { setEditingBookId(item.id); setBookFormData({ title: item.title, slug: item.slug, description: item.description || "", coverImage: item.coverImage || "", fileUrl: item.fileUrl || "", isPublished: item.isPublished }); setBookFormErrors({}); setIsBookModalOpen(true); }}
-                        onDelete={(item: BookItem) => setDeletingBook(item)} />
+                        onDelete={(item: BookItem) => setDeletingBook(item)}
+                        onTogglePublish={handleBookTogglePublish} />
                     ))}
                     {activeBooks.length === 0 && <div className="col-span-full py-10 text-center text-muted-foreground border border-dashed rounded-xl">No books found in this category.</div>}
                   </div>
@@ -649,7 +672,7 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
               <CardContent className="space-y-4">
                 <div className="space-y-2"><Label>Title</Label><Input value={pageForm.title} onChange={e => setPageForm({ ...pageForm, title: e.target.value })} /></div>
                 <div className="space-y-2"><Label>Slug</Label><Input value={pageForm.slug} onChange={e => setPageForm({ ...pageForm, slug: e.target.value })} /></div>
-                <Button type="submit" disabled={isSavingPage}>{isSavingPage ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : "Save Settings"}</Button>
+                <Button type="submit" disabled={isSavingPage}>{isSavingPage ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : "Save Settings"}</Button>
               </CardContent>
             </Card>
           </form>

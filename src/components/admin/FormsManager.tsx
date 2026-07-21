@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Edit2, Mail, X, ClipboardList, Loader2, Trash2 } from "lucide-react";
+import { Plus, Edit2, Mail, X, ClipboardList, RefreshCw, Trash2 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -91,7 +91,7 @@ export function FormsManager() {
                 className="w-[180px] bg-white rounded-xl hidden md:flex"
               />
               <Button onClick={handleCreate} disabled={!newFormName.trim() || isCreating} className="bg-primary hover:bg-primary/90 text-white shadow-md rounded-full px-6 py-5 font-bold tracking-wider text-xs">
-                {isCreating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Plus className="w-4 h-4 mr-2" />}
+                {isCreating ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <Plus className="w-4 h-4 mr-2" />}
                 CREATE NEW FORM
               </Button>
             </div>
@@ -102,7 +102,7 @@ export function FormsManager() {
       {/* Forms Grid */}
       {isLoading ? (
         <div className="flex items-center justify-center py-20">
-          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          <RefreshCw className="w-8 h-8 animate-spin text-primary" />
         </div>
       ) : forms.length === 0 ? (
         <div className="text-center py-20 text-foreground-muted bg-card rounded-2xl border border-border shadow-sm">

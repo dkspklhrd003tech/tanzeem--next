@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Send, CheckCircle, Loader2, Inbox } from "lucide-react";
+import { Send, CheckCircle, RefreshCw, Inbox } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { format } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
@@ -51,7 +51,7 @@ export function FormsHistory() {
         <CardContent className="p-0">
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-20 text-slate-400">
-              <Loader2 className="w-8 h-8 animate-spin mb-4 text-primary" />
+              <RefreshCw className="w-8 h-8 animate-spin mb-4 text-primary" />
               <p>Loading history...</p>
             </div>
           ) : history.length === 0 ? (

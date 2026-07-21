@@ -430,7 +430,7 @@ export function AdminPages({ section }: AdminPagesProps) {
             placeholder={`Search ${isAudioBooks ? "audio books" : "press releases"}...`}
             value={pageSearch}
             onChange={(e) => setPageSearch(e.target.value)}
-            className="pl-10 h-12 bg-background border-border/80 focus-visible:ring-primary/20 rounded-xl"
+            className="pl-10 h-12 bg-background border-border/80 focus-visible:ring-primary/20 rounded-xl mb-6 mb-6 mb-6 mb-6 mb-6 mb-6 mb-6 mb-6 mb-6"
           />
         </div>
 

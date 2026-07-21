@@ -12,7 +12,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { Share2, Facebook, Twitter, Linkedin, Mail, Send, Pin, Loader2, ChevronDown, ChevronUp, GripVertical } from "lucide-react";
+import { Share2, Facebook, Twitter, Linkedin, Mail, Send, Pin, RefreshCw, ChevronDown, ChevronUp, GripVertical } from "lucide-react";
 import { mutate } from "swr";
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy, useSortable } from '@dnd-kit/sortable';
@@ -177,7 +177,7 @@ export function ShareToolsManager() {
     }
   };
 
-  if (isLoading) return <div className="p-8 flex justify-center"><Loader2 className="w-6 h-6 animate-spin text-primary" /></div>;
+  if (isLoading) return <div className="p-8 flex justify-center"><RefreshCw className="w-6 h-6 animate-spin text-primary" /></div>;
 
   const updateSetting = (key: string, value: any) => setSettings((s: any) => ({ ...s, [key]: value }));
 
@@ -194,7 +194,7 @@ export function ShareToolsManager() {
             <p className="text-sm text-muted-foreground mt-1">Configure the global floating share sidebar for your website.</p>
           </div>
           <Button onClick={handleSave} disabled={isSaving} className="bg-primary text-white hover:bg-primary/95">
-            {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : "Save Configuration"}
+            {isSaving ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : "Save Configuration"}
           </Button>
         </div>
 

@@ -81,7 +81,7 @@ export function AudioBooksGrid({ initialItems }: AudioBooksGridProps) {
             placeholder="Search Audio Books..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-11 h-12 bg-background border-border/80 focus-visible:ring-primary/20 rounded-xl"
+            className="pl-11 h-12 bg-background border-border/80 focus-visible:ring-primary/20 rounded-xl mb-6 mb-6"
           />
         </div>
 

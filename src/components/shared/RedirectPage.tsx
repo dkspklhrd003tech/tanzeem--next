@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { PageBanner } from "@/components/layout/PageBanner";
 import { Button } from "@/components/ui/button";
-import { ExternalLink, Loader2 } from "lucide-react";
+import { ExternalLink, RefreshCw } from "lucide-react";
 import { useSettings } from "@/hooks/use-settings";
 
 interface RedirectPageProps {
@@ -62,7 +62,7 @@ export function RedirectPage({ title, url }: RedirectPageProps) {
               </div>
             ) : (
               <div className="flex items-center gap-3 text-emerald-600  font-medium text-sm">
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <RefreshCw className="h-4 w-4 animate-spin" />
                 Opening in a new tab...
               </div>
             )}

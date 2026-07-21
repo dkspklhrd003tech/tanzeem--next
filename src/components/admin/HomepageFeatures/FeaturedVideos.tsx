@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Edit2, XCircle, X, Link as LinkIcon, Video, GripVertical, Loader2 } from "lucide-react";
+import { Plus, Edit2, XCircle, X, Link as LinkIcon, Video, GripVertical, RefreshCw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { ImageUploader } from "../ImageUploader";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -128,7 +128,7 @@ function SortableVideoRow({
                         title="Delete"
                     >
                         {isDeleting ? (
-                            <Loader2 className="w-4 h-4 animate-spin text-red-400" />
+                            <RefreshCw className="w-4 h-4 animate-spin text-red-400" />
                         ) : (
                             <XCircle className="w-4 h-4" />
                         )}
@@ -576,7 +576,7 @@ export function FeaturedVideos() {
                                     >
                                         {isSaving ? (
                                             <>
-                                                <Loader2 className="w-4 h-4 animate-spin" />
+                                                <RefreshCw className="w-4 h-4 animate-spin" />
                                                 Saving…
                                             </>
                                         ) : (

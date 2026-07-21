@@ -5,16 +5,16 @@ import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Loader2, KeyRound, Eye, EyeOff } from "lucide-react";
+import { RefreshCw, KeyRound, Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export function ChangePasswordManager() {
   const { toast } = useToast();
   const router = useRouter();
-  
+
   const [isSaving, setIsSaving] = useState(false);
   const [showPassword, setShowPassword] = useState({ current: false, new: false, confirm: false });
-  
+
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -32,7 +32,7 @@ export function ChangePasswordManager() {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (newPassword !== confirmPassword) {
       return toast({
         variant: "destructive",
@@ -50,7 +50,7 @@ export function ChangePasswordManager() {
     }
 
     setIsSaving(true);
-    
+
     try {
       const res = await fetch("/api/auth/change-password", {
         method: "PUT",
@@ -73,13 +73,13 @@ export function ChangePasswordManager() {
       setCurrentPassword("");
       setNewPassword("");
       setConfirmPassword("");
-      
+
       // Log out user for security reasons after password change
       setTimeout(() => {
         fetch("/api/auth/logout", { method: "POST" })
           .then(() => router.push("/sitemanager/login"));
       }, 2000);
-      
+
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -108,7 +108,7 @@ export function ChangePasswordManager() {
 
       <form onSubmit={handleSave} className="space-y-6 bg-card border border-border rounded-xl p-6 shadow-sm">
         <div className="space-y-4">
-          
+
           {/* Current Password */}
           <div>
             <label className="block text-sm font-semibold mb-1.5">Current Password</label>
@@ -122,9 +122,9 @@ export function ChangePasswordManager() {
                 placeholder="••••••••"
                 className="pl-9 pr-10"
               />
-              <button 
-                type="button" 
-                onClick={() => setShowPassword(p => ({ ...p, current: !p.current }))} 
+              <button
+                type="button"
+                onClick={() => setShowPassword(p => ({ ...p, current: !p.current }))}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
               >
                 {showPassword.current ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -147,15 +147,15 @@ export function ChangePasswordManager() {
                 placeholder="••••••••"
                 className="pl-9 pr-10"
               />
-              <button 
-                type="button" 
-                onClick={() => setShowPassword(p => ({ ...p, new: !p.new }))} 
+              <button
+                type="button"
+                onClick={() => setShowPassword(p => ({ ...p, new: !p.new }))}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
               >
                 {showPassword.new ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
             </div>
-            
+
             {/* Password Strength Indicator */}
             <div className="mt-2">
               <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
@@ -186,9 +186,9 @@ export function ChangePasswordManager() {
                 placeholder="••••••••"
                 className="pl-9 pr-10"
               />
-              <button 
-                type="button" 
-                onClick={() => setShowPassword(p => ({ ...p, confirm: !p.confirm }))} 
+              <button
+                type="button"
+                onClick={() => setShowPassword(p => ({ ...p, confirm: !p.confirm }))}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
               >
                 {showPassword.confirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -199,7 +199,7 @@ export function ChangePasswordManager() {
 
         <div className="pt-4 border-t border-border flex justify-end">
           <Button type="submit" disabled={isSaving || !currentPassword || !newPassword || !confirmPassword} className="bg-primary text-white hover:bg-primary/90 min-w-[150px]">
-            {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
+            {isSaving ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : null}
             {isSaving ? "Updating..." : "Update Password"}
           </Button>
         </div>

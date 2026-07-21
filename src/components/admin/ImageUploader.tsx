@@ -7,7 +7,7 @@ import {
   X,
   Save,
   Image as ImageIcon,
-  Loader2,
+  RefreshCw,
   Crop as CropIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -271,7 +271,7 @@ export function ImageUploader({
           </>
         ) : isUploading ? (
           <>
-            <Loader2 className="h-7 w-7 text-primary animate-spin mb-2" />
+            <RefreshCw className="h-7 w-7 text-primary animate-spin mb-2" />
             <p className="text-xs font-medium">Uploading Image…</p>
           </>
         ) : (
@@ -383,7 +383,7 @@ export function ImageUploader({
               >
                 {isUploading ? (
                   <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
                     Processing...
                   </>
                 ) : (

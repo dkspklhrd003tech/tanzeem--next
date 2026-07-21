@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, UploadCloud, Star, X } from "lucide-react";
+import { RefreshCw, UploadCloud, Star, X } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CustomFieldDef } from "./CustomFieldBuilder";
 import { toast } from "sonner";
@@ -82,7 +82,7 @@ export function CustomFieldRenderer({ entityType, values, onChange }: CustomFiel
   };
 
   if (isLoading) {
-    return <div className="py-4 flex justify-center"><Loader2 className="w-5 h-5 animate-spin text-muted-foreground" /></div>;
+    return <div className="py-4 flex justify-center"><RefreshCw className="w-5 h-5 animate-spin text-muted-foreground" /></div>;
   }
 
   if (fields.length === 0) return null;
@@ -345,7 +345,7 @@ export function CustomFieldRenderer({ entityType, values, onChange }: CustomFiel
                   <Input value={value} onChange={e => onChange(field.fieldKey, e.target.value)} placeholder={field.placeholder || "URL or upload…"} className="flex-1" />
                   <Button type="button" variant="outline" className="relative shrink-0">
                     {isUploading === field.fieldKey ? (
-                      <Loader2 className="w-4 h-4 animate-spin" />
+                      <RefreshCw className="w-4 h-4 animate-spin" />
                     ) : (
                       <><UploadCloud className="w-4 h-4 mr-2" />Upload</>
                     )}

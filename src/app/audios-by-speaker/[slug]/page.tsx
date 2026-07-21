@@ -44,7 +44,7 @@ export default async function SpeakerAudiosPage({ params }: { params: Promise<{ 
         .select()
         .from(audio)
         .where(eq(audio.speakerId, speaker.id))
-        .orderBy(desc(audio.createdAt));
+        .orderBy(asc(audio.order), desc(audio.createdAt));
     }
   } catch (error) {
     console.warn("DB error in SpeakerAudiosPage:", error);

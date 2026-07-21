@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import {
-  Save, Loader2, Plus, XCircle, ArrowLeft, ArrowRight,
+  Save, RefreshCw, Plus, XCircle, ArrowLeft, ArrowRight,
   ArrowUp, ArrowDown, Edit, LayoutTemplate, ExternalLink,
   Info, Globe, Mail, Phone, MapPin, RefreshCw, Check
 } from "lucide-react";
@@ -519,7 +519,7 @@ export function FooterManager() {
                       >
                         {savingSettings ? (
                           <>
-                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                            <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
                             Saving…
                           </>
                         ) : (

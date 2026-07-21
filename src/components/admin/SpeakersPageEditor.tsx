@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Pencil, XCircle, Settings2, Loader2, User, ArrowLeft, Video, Music, Bot, UploadCloud } from "lucide-react";
+import { Plus, Pencil, XCircle, Settings2, RefreshCw, User, ArrowLeft, Video, Music, Bot, UploadCloud } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -233,7 +233,7 @@ export default function SpeakersPageEditor({ pageId, initialPageData, mediaConte
               </Button>
             </div>
             {isLoading ? (
-              <div className="flex justify-center py-10"><Loader2 className="w-6 h-6 animate-spin text-primary" /></div>
+              <div className="flex justify-center py-10"><RefreshCw className="w-6 h-6 animate-spin text-primary" /></div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
                 {speakersList.map(speaker => (
@@ -279,7 +279,7 @@ export default function SpeakersPageEditor({ pageId, initialPageData, mediaConte
                 <CardContent className="space-y-4">
                   <div className="space-y-2"><Label>Title</Label><Input value={pageForm.title} onChange={e => setPageForm({ ...pageForm, title: e.target.value })} /></div>
                   <div className="space-y-2"><Label>Slug</Label><Input value={pageForm.slug} onChange={e => setPageForm({ ...pageForm, slug: e.target.value })} /></div>
-                  <Button type="submit" disabled={isSavingPage}>{isSavingPage ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : "Save Settings"}</Button>
+                  <Button type="submit" disabled={isSavingPage}>{isSavingPage ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : "Save Settings"}</Button>
                 </CardContent>
               </Card>
             </form>
@@ -298,7 +298,7 @@ export default function SpeakersPageEditor({ pageId, initialPageData, mediaConte
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                   {activeAudios.map(audio => (
-                    <div key={audio.id} className="bg-card rounded-xl border p-4 flex flex-col justify-between">
+                    <div key={audio.id} className="bg-card hover:bg-primary-light hover:border-primary/80 rounded-lg border p-4 flex flex-col justify-between">
                       <div>
                         <h3 className="font-bold mb-1">{audio.title}</h3>
                         <p className="text-xs text-muted-foreground break-all">{audio.audioUrl || "No URL"}</p>
@@ -324,7 +324,7 @@ export default function SpeakersPageEditor({ pageId, initialPageData, mediaConte
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                   {activeVideos.map(video => (
-                    <div key={video.id} className="bg-card rounded-xl border p-4 flex flex-col justify-between">
+                    <div key={video.id} className="bg-card hover:bg-primary-light hover:border-primary/80 rounded-lg border p-4 flex flex-col justify-between">
                       <div>
                         <h3 className="font-bold mb-1">{video.title}</h3>
                         <p className="text-xs text-muted-foreground break-all">{video.videoUrl || video.embedUrl || "No URL"}</p>

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Edit2, XCircle, X, Image as ImageIcon, Link as LinkIcon, GripVertical, UploadCloud, Loader2 } from "lucide-react";
+import { Plus, Edit2, XCircle, X, Image as ImageIcon, Link as LinkIcon, GripVertical, UploadCloud, RefreshCw } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { ImageUploader } from "./ImageUploader";
@@ -419,7 +419,7 @@ export function HomeSlidersManagement() {
                                 disabled={isUploading}
                                 className="flex items-center gap-2 bg-secondary text-secondary-foreground px-5 py-2.5 rounded-xl font-semibold shadow-sm hover:shadow-md transition-all active:scale-95 border border-border"
                             >
-                                {isUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <UploadCloud className="w-4 h-4" />}
+                                {isUploading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <UploadCloud className="w-4 h-4" />}
                                 Bulk Upload
                             </button>
                             <button
@@ -496,7 +496,7 @@ export function HomeSlidersManagement() {
                     </div>
                     <div className="flex justify-end pt-4">
                         <Button onClick={handleSaveFixedBanner} disabled={isSavingFixed} className="bg-primary hover:bg-primary/90 text-white font-semibold">
-                            {isSavingFixed ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
+                            {isSavingFixed ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : null}
                             Save Fixed Banner
                         </Button>
                     </div>

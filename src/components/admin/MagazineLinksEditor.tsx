@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Plus, XCircle, Edit2, GripVertical, Save, ArrowLeft, ExternalLink, RefreshCw } from "lucide-react";
+import { Plus, XCircle, Edit2, GripVertical, Save, ArrowLeft, ExternalLink, RefreshCw, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -71,15 +71,14 @@ function SortableLinkItem({ link, onEdit, onDelete, onToggleActive, onToggleNew 
             className="data-[state=checked]:bg-emerald-500"
           />
         </div>
-        <div className="flex items-center gap-2">
-          <Label className="text-xs cursor-pointer">{link.isActive ? "Active" : "Hidden"}</Label>
-          <Switch checked={link.isActive} onCheckedChange={(c) => onToggleActive(link.id, c)} />
-        </div>
         <div className="flex items-center gap-1 bg-muted/50 p-1 rounded-lg">
-          <Button variant="ghost" size="icon" className="h-8 w-8 text-white bg-primary hover:bg-primary" onClick={() => onEdit(link)}>
+          <Button variant="ghost" size="icon" className={cn("h-8 w-8", link.isActive ? "text-green-500 hover:bg-green-500/10 hover:text-green-600" : "text-red-500 hover:bg-red-500/10 hover:text-red-600")} onClick={() => onToggleActive(link.id, !link.isActive)} title={link.isActive ? "Hide from frontend" : "Show on frontend"}>
+            {link.isActive ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
+          </Button>
+          <Button variant="ghost" size="icon" className="h-8 w-8 text-primary hover:bg-primary hover:text-white" onClick={() => onEdit(link)}>
             <Edit2 className="h-4 w-4" />
           </Button>
-          <Button variant="ghost" size="icon" className="h-8 w-8 text-white bg-destructive hover:bg-destructive" onClick={() => onDelete(link.id)}>
+          <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive hover:bg-destructive hover:text-white" onClick={() => onDelete(link.id)}>
             <XCircle className="h-4 w-4" />
           </Button>
         </div>

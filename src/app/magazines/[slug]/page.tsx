@@ -4,7 +4,7 @@ import { inArray } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft, Download, AlertCircle, Loader2 } from "lucide-react";
+import { ArrowLeft, Download, AlertCircle, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ClientShareButton } from "@/components/shared/ClientShareButton";
 import { PdfViewerHeader } from "@/components/shared/PdfViewerHeader";

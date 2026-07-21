@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Loader2, Save } from "lucide-react";
+import { ArrowLeft, RefreshCw, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -108,7 +108,7 @@ export default function AudioFormPage({ id, speakerIdParam = "", categoryIdParam
   };
 
   if (isLoading) {
-    return <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>;
+    return <div className="flex justify-center py-20"><RefreshCw className="w-8 h-8 animate-spin text-primary" /></div>;
   }
 
   return (
@@ -121,7 +121,7 @@ export default function AudioFormPage({ id, speakerIdParam = "", categoryIdParam
         <div className="ml-auto flex gap-2">
           <Button variant="outline" onClick={() => router.back()} className="bg-destructive text-white hover:bg-destructive/80">Cancel</Button>
           <Button onClick={handleSave} disabled={isSaving} className="bg-primary text-white hover:bg-primary/80">
-            {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+            {isSaving ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
             {isNew ? "Create" : "Save Changes"}
           </Button>
         </div>

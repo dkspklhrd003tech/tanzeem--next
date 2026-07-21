@@ -3,7 +3,7 @@
 import { useState, useEffect, Suspense, useRef } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Eye, EyeOff, Lock, Mail, AlertCircle, Loader2, ArrowLeft, KeyRound, CheckCircle2 } from "lucide-react";
+import { Eye, EyeOff, Lock, Mail, AlertCircle, RefreshCw, ArrowLeft, KeyRound, CheckCircle2 } from "lucide-react";
 import { cn, resolveMediaUrl } from "@/lib/utils";
 import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import { Canvas, useFrame } from "@react-three/fiber";
@@ -157,7 +157,7 @@ function LoginForm() {
         }
       }
     };
-    
+
     document.addEventListener("click", handleClickOutside);
     return () => document.removeEventListener("click", handleClickOutside);
   }, [emptyFields, error]);
@@ -408,7 +408,7 @@ function LoginForm() {
                     type="submit" disabled={isLoading}
                     className="w-full h-12 mt-2 rounded-xl font-bold text-sm text-white transition-all bg-primary hover:bg-primary/90 focus:ring-2 focus:ring-primary/40 flex items-center justify-center gap-2 shadow-lg shadow-primary/30"
                   >
-                    {isLoading ? <><Loader2 className="h-4 w-4 animate-spin" /> Authenticating...</> : "Sign In Securely"}
+                    {isLoading ? <><RefreshCw className="h-4 w-4 animate-spin" /> Authenticating...</> : "Sign In Securely"}
                   </motion.button>
                 </motion.form>
               )}
@@ -436,7 +436,7 @@ function LoginForm() {
                       <ArrowLeft className="w-4 h-4" />
                     </button>
                     <button type="submit" disabled={isLoading || !email} className="flex-1 h-12 rounded-full font-bold text-sm text-white transition-all bg-primary hover:bg-primary/90 active:scale-[0.98] disabled:opacity-60 flex items-center justify-center shadow-lg shadow-primary/30">
-                      {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Send Recovery Code"}
+                      {isLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : "Send Recovery Code"}
                     </button>
                   </div>
                 </motion.form>
@@ -465,7 +465,7 @@ function LoginForm() {
                       <ArrowLeft className="w-4 h-4" />
                     </button>
                     <button type="submit" disabled={isLoading || otp.length !== 6} className="flex-1 h-12 rounded-full font-bold text-sm text-white transition-all bg-primary hover:bg-primary/90 active:scale-[0.98] disabled:opacity-60 flex items-center justify-center shadow-lg shadow-primary/30">
-                      {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Verify Code"}
+                      {isLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : "Verify Code"}
                     </button>
                   </div>
                 </motion.form>
@@ -507,7 +507,7 @@ function LoginForm() {
                   </div>
 
                   <button type="submit" disabled={isLoading || !newPassword || !confirmPassword} className="w-full h-12 rounded-full font-bold text-sm text-white transition-all bg-primary hover:bg-primary/90 active:scale-[0.98] disabled:opacity-60 flex items-center justify-center shadow-lg shadow-primary/30">
-                    {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Save New Password"}
+                    {isLoading ? <RefreshCw className="h-4 w-4 animate-spin" /> : "Save New Password"}
                   </button>
                 </motion.form>
               )}

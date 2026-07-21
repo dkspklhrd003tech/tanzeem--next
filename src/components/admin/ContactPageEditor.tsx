@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Plus, XCircle, Edit2, Loader2, Save, ArrowLeft, RefreshCw, MapPin, Phone, Mail, Building2, MessageSquare } from "lucide-react";
+import { Plus, XCircle, Edit2, RefreshCw, Save, ArrowLeft, MapPin, Phone, Mail, Building2, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -505,7 +505,7 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
               <CardTitle className="text-sm font-bold uppercase tracking-widest text-slate-700">Forms Management</CardTitle>
             </div>
             <Button onClick={saveSettings} disabled={isSavingSettings} className="bg-primary hover:bg-primary/90 text-white rounded-full px-6 font-semibold">
-              {isSavingSettings ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+              {isSavingSettings ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
               Save Form
             </Button>
           </CardHeader>
@@ -559,27 +559,27 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
             <div className="grid grid-cols-2 gap-4">
               <div className="col-span-2 sm:col-span-1">
                 <Label>Branch Name (English) <span className="text-destructive">*</span></Label>
-                <Input 
-                  value={(editingLocation?.name || "").split(" / ")[0] || ""} 
+                <Input
+                  value={(editingLocation?.name || "").split(" / ")[0] || ""}
                   onChange={(e) => {
                     const parts = (editingLocation?.name || "").split(" / ");
                     const urdu = parts.length > 1 ? parts.slice(1).join(" / ") : "";
                     setEditingLocation({ ...editingLocation, name: `${e.target.value}${urdu ? " / " + urdu : ""}` })
-                  }} 
-                  placeholder="e.g. Markaz" 
+                  }}
+                  placeholder="e.g. Markaz"
                 />
               </div>
               <div className="col-span-2 sm:col-span-1">
                 <Label>Branch Name (Urdu) <span className="text-destructive">*</span></Label>
-                <Input 
+                <Input
                   dir="rtl"
                   style={{ fontFamily: "'Jameel Noori Nastaleeq', serif", fontSize: "20px" }}
-                  value={(editingLocation?.name || "").split(" / ").slice(1).join(" / ") || ""} 
+                  value={(editingLocation?.name || "").split(" / ").slice(1).join(" / ") || ""}
                   onChange={(e) => {
                     const en = (editingLocation?.name || "").split(" / ")[0] || "";
                     setEditingLocation({ ...editingLocation, name: `${en}${e.target.value ? " / " + e.target.value : ""}` })
-                  }} 
-                  placeholder="مرکز" 
+                  }}
+                  placeholder="مرکز"
                 />
               </div>
               <div className="col-span-2 sm:col-span-1">

@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import {
   Plus, Pencil, XCircle, Search, FileText, Sparkles,
-  Settings2, Check, AlertCircle, UploadCloud, Loader2, ArrowLeft,
+  Settings2, Check, AlertCircle, UploadCloud, RefreshCw, ArrowLeft,
   GripVertical, Calendar, ExternalLink, Send
 } from "lucide-react";
 import { PageActionBar } from "@/components/admin/PageActionBar";
@@ -475,7 +475,7 @@ function SortableCampaignBlock({ block, index, onUpdate, onUpdateTitle, onRemove
               disabled={isBulkUploading}
               onClick={() => bulkUploadRef.current?.click()}
             >
-              {isBulkUploading ? <Loader2 className="h-3 w-3 mr-1 animate-spin" /> : <UploadCloud className="h-3 w-3 mr-1" />}
+              {isBulkUploading ? <RefreshCw className="h-3 w-3 mr-1 animate-spin" /> : <UploadCloud className="h-3 w-3 mr-1" />}
               Bulk Upload
             </Button>
           </div>
@@ -991,7 +991,7 @@ export default function CampaignsPageEditor({ pageId, initialPageData }: Campaig
     <div className="space-y-6 max-w-7xl">
       <div className="flex justify-end items-center gap-3">
         <Button onClick={() => document.getElementById("hidden-submit-page-btn")?.click()} disabled={isSavingPage} className="bg-primary text-white hover:bg-primary/95 shadow-sm">
-          {isSavingPage ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Send className="w-4 h-4 mr-2" />}
+          {isSavingPage ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <Send className="w-4 h-4 mr-2" />}
           Update Section
         </Button>
         <Button onClick={handleOpenAddModal} className="bg-primary text-white hover:bg-primary/95 shadow-sm">
@@ -1020,7 +1020,7 @@ export default function CampaignsPageEditor({ pageId, initialPageData }: Campaig
           {/* Sortable grid container */}
           {isLoadingItems ? (
             <div className="flex items-center justify-center py-20 text-muted-foreground gap-2">
-              <Loader2 className="w-6 h-6 animate-spin text-primary" />
+              <RefreshCw className="w-6 h-6 animate-spin text-primary" />
               <span>Loading Campaigns...</span>
             </div>
           ) : filteredItems.length === 0 ? (

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { Save, ImageIcon, Loader2 } from "lucide-react";
+import { Save, ImageIcon, RefreshCw } from "lucide-react";
 import { RichTextEditor } from "../RichTextEditor";
 import { ImageUploader } from "../ImageUploader";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";

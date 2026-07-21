@@ -10,7 +10,7 @@ import {
   Layout,
   Users,
   Save,
-  Loader2,
+  RefreshCw,
   GripVertical,
   Edit2,
   X
@@ -192,7 +192,7 @@ export function SocialMediaManager() {
   if (isLoading) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
-        <Loader2 className="w-10 h-10 animate-spin text-primary" />
+        <RefreshCw className="w-10 h-10 animate-spin text-primary" />
         <p className="text-muted-foreground animate-pulse">Synchronizing social ecosytem...</p>
       </div>
     );
@@ -271,7 +271,7 @@ export function SocialMediaManager() {
                   onConfirm={handleSavePlatform}
                 >
                   <Button disabled={isSaving}>
-                    {isSaving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                    {isSaving && <RefreshCw className="w-4 h-4 mr-2 animate-spin" />}
                     Save Platform
                   </Button>
                 </ConfirmDialog>
@@ -424,7 +424,7 @@ export function SocialMediaManager() {
                         onConfirm={handleSaveAccount}
                       >
                         <Button disabled={isSaving}>
-                          {isSaving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                          {isSaving && <RefreshCw className="w-4 h-4 mr-2 animate-spin" />}
                           Save Account
                         </Button>
                       </ConfirmDialog>

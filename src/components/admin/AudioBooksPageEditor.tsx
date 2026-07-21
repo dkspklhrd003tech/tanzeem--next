@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import {
   Plus, Pencil, XCircle, Calendar, GripVertical, FileText,
-  Settings2, Loader2, UploadCloud, Sparkles
+  Settings2, RefreshCw, UploadCloud, Sparkles, Eye, EyeOff
 } from "lucide-react";
 import { PageActionBar } from "@/components/admin/PageActionBar";
 import { Badge } from "@/components/ui/badge";
@@ -103,9 +103,10 @@ interface SortableItemProps {
   item: AudioBookItem;
   onEdit: (item: AudioBookItem) => void;
   onDelete: (item: AudioBookItem) => void;
+  onTogglePublish: (item: AudioBookItem) => void;
 }
 
-function SortableCard({ id, item, onEdit, onDelete }: SortableItemProps) {
+function SortableCard({ id, item, onEdit, onDelete, onTogglePublish }: SortableItemProps) {
   const {
     attributes,
     listeners,
@@ -157,6 +158,15 @@ function SortableCard({ id, item, onEdit, onDelete }: SortableItemProps) {
               title="Edit Details"
             >
               <Pencil className="h-3.5 w-3.5" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className={cn("h-7 w-7", item.isPublished ? "text-green-500 hover:bg-green-500/10" : "text-red-500 hover:bg-red-500/10")}
+              onClick={() => onTogglePublish(item)}
+              title={item.isPublished ? "Hide from frontend" : "Show on frontend"}
+            >
+              {item.isPublished ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
             </Button>
             <Button
               variant="ghost"
@@ -567,6 +577,24 @@ export default function AudioBooksPageEditor({ pageId, initialPageData }: AudioB
     }
   };
 
+  const handleTogglePublish = async (item: AudioBookItem) => {
+    try {
+      const res = await fetch(`/api/admin/audio-books/${item.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...item, isPublished: !item.isPublished }),
+      });
+      if (res.ok) {
+        toast({ title: "Updated", description: `Audio book is now ${!item.isPublished ? 'Published' : 'Hidden'}.` });
+        fetchItems();
+      } else {
+        throw new Error();
+      }
+    } catch (e) {
+      toast({ variant: "destructive", title: "Error", description: "Could not update visibility." });
+    }
+  };
+
   // DnD Reorder handler
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
@@ -694,7 +722,7 @@ export default function AudioBooksPageEditor({ pageId, initialPageData }: AudioB
 
             {isUploading ? (
               <div className="flex flex-col items-center gap-3">
-                <Loader2 className="h-10 w-10 text-primary animate-spin" />
+                <RefreshCw className="h-10 w-10 text-primary animate-spin" />
                 <p className="font-semibold text-foreground">Uploading MP3...</p>
                 <p className="text-xs text-muted-foreground">This will only take a moment.</p>
               </div>
@@ -716,7 +744,7 @@ export default function AudioBooksPageEditor({ pageId, initialPageData }: AudioB
           {/* Sortable grid container */}
           {isLoadingItems ? (
             <div className="flex items-center justify-center py-20 text-muted-foreground gap-2">
-              <Loader2 className="w-6 h-6 animate-spin text-primary" />
+              <RefreshCw className="w-6 h-6 animate-spin text-primary" />
               <span>Loading audio books...</span>
             </div>
           ) : filteredItems.length === 0 ? (
@@ -741,6 +769,7 @@ export default function AudioBooksPageEditor({ pageId, initialPageData }: AudioB
                       item={item}
                       onEdit={handleOpenEditModal}
                       onDelete={setDeletingItem}
+                      onTogglePublish={handleTogglePublish}
                     />
                   ))}
                 </div>

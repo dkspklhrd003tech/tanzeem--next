@@ -9,7 +9,7 @@ import {
   Settings2,
   FileText,
   Check,
-  Loader2,
+  RefreshCw,
   Globe,
   ExternalLink,
   Sparkles,
@@ -894,7 +894,7 @@ export default function SocialMediaPageEditor({ pageId, initialPageData }: Socia
                 <CardContent className="p-2 space-y-1">
                   {isLoadingPlatforms ? (
                     <div className="flex items-center justify-center p-6 text-muted-foreground">
-                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                      <RefreshCw className="w-4 h-4 animate-spin mr-2" />
                       <span className="text-xs">Loading...</span>
                     </div>
                   ) : platforms.length === 0 ? (
@@ -946,7 +946,7 @@ export default function SocialMediaPageEditor({ pageId, initialPageData }: Socia
                 <CardContent className="p-6">
                   {isLoadingAccounts ? (
                     <div className="flex items-center justify-center py-20 text-muted-foreground gap-2">
-                      <Loader2 className="w-6 h-6 animate-spin text-primary" />
+                      <RefreshCw className="w-6 h-6 animate-spin text-primary" />
                       <span>Loading Social Media...</span>
                     </div>
                   ) : activeAccounts.length === 0 ? (
@@ -1002,7 +1002,7 @@ export default function SocialMediaPageEditor({ pageId, initialPageData }: Socia
             <CardContent className="p-6">
               {isLoadingPlatforms ? (
                 <div className="flex items-center justify-center py-12 text-muted-foreground gap-2">
-                  <Loader2 className="w-5 h-5 animate-spin text-primary" />
+                  <RefreshCw className="w-5 h-5 animate-spin text-primary" />
                   <span>Loading platform tabs...</span>
                 </div>
               ) : platforms.length === 0 ? (
@@ -1235,7 +1235,7 @@ export default function SocialMediaPageEditor({ pageId, initialPageData }: Socia
                       >
                         {isUploading ? (
                           <>
-                            <Loader2 className="w-3.5 h-3.5 animate-spin mr-1.5" />
+                            <RefreshCw className="w-3.5 h-3.5 animate-spin mr-1.5" />
                             Uploading...
                           </>
                         ) : (

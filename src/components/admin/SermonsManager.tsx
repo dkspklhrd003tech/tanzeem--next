@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import {
   Plus, Pencil, XCircle, GripVertical, FileText,
-  Loader2, ArrowLeft, Mic, Calendar, Upload, XIcon
+  RefreshCw, ArrowLeft, Mic, Calendar, Upload, XIcon
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -502,7 +502,7 @@ export function SermonsManager() {
         {!activeCategory ? (
           // CATEGORIES GRID
           isLoading ? (
-            <div className="flex items-center justify-center py-20 text-muted-foreground"><Loader2 className="w-6 h-6 animate-spin text-primary mr-2" /> Loading Categories...</div>
+            <div className="flex items-center justify-center py-20 text-muted-foreground"><RefreshCw className="w-6 h-6 animate-spin text-primary mr-2" /> Loading Categories...</div>
           ) : filteredCategories.length === 0 ? (
             <div className="bg-card rounded-xl border p-12 text-center text-muted-foreground">No Categories Found.</div>
           ) : (
@@ -538,7 +538,7 @@ export function SermonsManager() {
               <input ref={fileInputRef} type="file" accept="audio/*,video/*" className="hidden" onChange={handleFileChange} />
               {isUploading ? (
                 <div className="flex flex-col items-center gap-3">
-                  <Loader2 className="h-10 w-10 text-primary animate-spin" />
+                  <RefreshCw className="h-10 w-10 text-primary animate-spin" />
                   <p className="font-semibold text-foreground">Uploading Audio...</p>
                   <p className="text-xs text-muted-foreground">This will only take a moment.</p>
                 </div>

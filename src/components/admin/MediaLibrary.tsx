@@ -12,7 +12,7 @@ import {
   XCircle,
   Copy,
   ExternalLink,
-  Loader2,
+  RefreshCw,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -228,7 +228,7 @@ export function MediaLibrary() {
             className="bg-primary text-white"
           >
             {isUploading ? (
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
             ) : (
               <Upload className="h-4 w-4 mr-2" />
             )}
@@ -282,7 +282,7 @@ export function MediaLibrary() {
 
       {isLoading ? (
         <div className="flex justify-center p-12">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <RefreshCw className="h-8 w-8 animate-spin text-primary" />
         </div>
       ) : filteredMedia.length === 0 ? (
         <div className="text-center py-8 border-2 border-dashed border-border rounded-xl">

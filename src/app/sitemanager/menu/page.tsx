@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import {
   Save, RotateCcw, Plus, Search, Eye, EyeOff, X,
-  FileText, Link as LinkIcon, Loader2, Check,
+  FileText, Link as LinkIcon, RefreshCw, Check,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -223,7 +223,7 @@ export default function MenuBuilderPage() {
           <Button size="sm" onClick={handleSave} disabled={saving}
             className="bg-primary hover:bg-primary/90 text-primary-foreground min-w-[110px]">
             {saving ? (
-              <><Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />Saving…</>
+              <><RefreshCw className="h-3.5 w-3.5 mr-1.5 animate-spin" />Saving…</>
             ) : saved ? (
               <><Check className="h-3.5 w-3.5 mr-1.5" />Saved!</>
             ) : (

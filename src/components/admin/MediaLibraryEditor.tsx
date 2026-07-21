@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Settings2, PlaySquare, Save, Loader2, ArrowLeft } from "lucide-react";
+import { Settings2, PlaySquare, Save, RefreshCw, ArrowLeft } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -26,7 +26,8 @@ export default function MediaLibraryEditor({ pageId, initialPageData, mediaType 
         body: JSON.stringify({
           title: pageForm.title, slug: pageForm.slug, excerpt: pageForm.excerpt,
           content: pageForm.content, isPublished: pageForm.isPublished,
-          metaTitle: pageForm.metaTitle, metaDescription: pageForm.metaDescription,         }),
+          metaTitle: pageForm.metaTitle, metaDescription: pageForm.metaDescription,
+        }),
       });
       toast({ title: "Saved", description: "Page settings updated." });
     } catch (error) { toast({ variant: "destructive", title: "Error", description: "Failed to save settings." }); }
@@ -82,7 +83,7 @@ export default function MediaLibraryEditor({ pageId, initialPageData, mediaType 
                 </div>
 
                 <Button type="submit" disabled={isSavingPage} className="w-full mt-4">
-                  {isSavingPage ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : "Save Settings"}
+                  {isSavingPage ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : "Save Settings"}
                 </Button>
               </CardContent>
             </Card>

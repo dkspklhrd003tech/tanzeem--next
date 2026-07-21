@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Loader2, User, Mail, Image as ImageIcon } from "lucide-react";
+import { RefreshCw, User, Mail, Image as ImageIcon } from "lucide-react";
 import { resolveMediaUrl } from "@/lib/utils";
 import { ImageUploader } from "@/components/admin/ImageUploader";
 
@@ -69,7 +69,7 @@ export function ProfileManager() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        <RefreshCw className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -129,7 +129,7 @@ export function ProfileManager() {
 
         <div className="pt-4 border-t border-border flex justify-end">
           <Button type="submit" disabled={isSaving} className="bg-primary text-white hover:text-muted hover:bg-primary/90 min-w-[120px]">
-            {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
+            {isSaving ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : null}
             {isSaving ? "Saving..." : "Save Profile"}
           </Button>
         </div>

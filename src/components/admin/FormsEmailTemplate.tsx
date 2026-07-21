@@ -1,5 +1,5 @@
 import { useState, useEffect, forwardRef, useImperativeHandle } from "react";
-import { Mail, Save, Loader2, Code, MonitorPlay, RefreshCw } from "lucide-react";
+import { Mail, Save, RefreshCw, Code, MonitorPlay, RefreshCw } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -116,7 +116,7 @@ export const FormsEmailTemplate = forwardRef((props, ref) => {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-12">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        <RefreshCw className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }

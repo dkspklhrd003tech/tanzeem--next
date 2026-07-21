@@ -49,7 +49,7 @@ export default async function VideosBySpeakersPage() {
   return (
     <main className=" bg-muted/20 py-10">
       <div className="container mx-auto">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6 max-w-7xl mx-auto">
           {display.map((sp) => {
             let href = sp.slug;
             if (!href?.startsWith("videos-by-speakers")) {
@@ -77,7 +77,7 @@ export default async function VideosBySpeakersPage() {
                     </div>
                   )}
                 </div>
-                <div className="p-4 flex flex-col items-center justify-center bg-card">
+                <div className="p-4 flex flex-col items-center justify-center bg-card hover:bg-primary-light">
                   <h2 className="text-[16px] font-medium text-foreground hover:text-primary text-center line-clamp-1 mb-2">
                     {sp.name}
                   </h2>

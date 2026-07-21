@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, GripVertical, X, Loader2, ChevronDown, ChevronUp } from "lucide-react";
+import { Plus, GripVertical, X, RefreshCw, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -417,7 +417,7 @@ export function CustomFieldBuilder({ entityType }: CustomFieldBuilderProps) {
   };
 
   if (isLoading) {
-    return <div className="p-8 flex justify-center"><Loader2 className="w-6 h-6 animate-spin text-muted-foreground" /></div>;
+    return <div className="p-8 flex justify-center"><RefreshCw className="w-6 h-6 animate-spin text-muted-foreground" /></div>;
   }
 
   return (
@@ -430,7 +430,7 @@ export function CustomFieldBuilder({ entityType }: CustomFieldBuilderProps) {
           </p>
         </div>
         <Button onClick={handleSave} disabled={isSaving} size="sm" className="bg-primary text-white">
-          {isSaving && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+          {isSaving && <RefreshCw className="w-4 h-4 mr-2 animate-spin" />}
           Save Schema
         </Button>
       </div>

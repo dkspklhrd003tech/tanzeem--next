@@ -79,7 +79,7 @@ export function CampaignsGrid({ initialItems }: CampaignsGridProps) {
             placeholder="Search campaigns..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-11 h-12 bg-background border-border/80 focus-visible:ring-primary/20 rounded-xl"
+            className="pl-11 h-12 bg-background border-border/80 focus-visible:ring-primary/20 rounded-xl mb-6"
           />
         </div>
 

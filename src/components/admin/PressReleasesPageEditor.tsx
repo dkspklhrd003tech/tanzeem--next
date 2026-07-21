@@ -3,8 +3,8 @@
 import { useState, useEffect, useRef } from "react";
 import {
   Plus, Pencil, XCircle, Search, FileText, Sparkles,
-  Settings2, Check, AlertCircle, UploadCloud, Loader2, ArrowLeft,
-  GripVertical, Calendar
+  Settings2, Check, AlertCircle, UploadCloud, RefreshCw, ArrowLeft,
+  GripVertical, Calendar, Eye, EyeOff
 } from "lucide-react";
 import { PageActionBar } from "@/components/admin/PageActionBar";
 import { Badge } from "@/components/ui/badge";
@@ -98,9 +98,10 @@ interface SortableItemProps {
   item: PressReleaseItem;
   onEdit: (item: PressReleaseItem) => void;
   onDelete: (item: PressReleaseItem) => void;
+  onTogglePublish: (item: PressReleaseItem) => void;
 }
 
-function SortableCard({ id, item, onEdit, onDelete }: SortableItemProps) {
+function SortableCard({ id, item, onEdit, onDelete, onTogglePublish }: SortableItemProps) {
   const {
     attributes,
     listeners,
@@ -152,6 +153,15 @@ function SortableCard({ id, item, onEdit, onDelete }: SortableItemProps) {
               title="Edit Details"
             >
               <Pencil className="h-3.5 w-3.5" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className={cn("h-7 w-7", item.isPublished ? "text-green-500 hover:bg-green-500/10" : "text-red-500 hover:bg-red-500/10")}
+              onClick={() => onTogglePublish(item)}
+              title={item.isPublished ? "Hide from frontend" : "Show on frontend"}
+            >
+              {item.isPublished ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
             </Button>
             <Button
               variant="ghost"
@@ -558,6 +568,24 @@ export default function PressReleasesPageEditor({ pageId, initialPageData }: Pre
     }
   };
 
+  const handleTogglePublish = async (item: PressReleaseItem) => {
+    try {
+      const res = await fetch(`/api/admin/press-releases/${item.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...item, isPublished: !item.isPublished }),
+      });
+      if (res.ok) {
+        toast({ title: "Updated", description: `Press release is now ${!item.isPublished ? 'Published' : 'Hidden'}.` });
+        fetchItems();
+      } else {
+        throw new Error();
+      }
+    } catch (e) {
+      toast({ variant: "destructive", title: "Error", description: "Could not update visibility." });
+    }
+  };
+
   // DnD Reorder handler
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
@@ -685,7 +713,7 @@ export default function PressReleasesPageEditor({ pageId, initialPageData }: Pre
 
             {isUploading ? (
               <div className="flex flex-col items-center gap-3">
-                <Loader2 className="h-10 w-10 text-primary animate-spin" />
+                <RefreshCw className="h-10 w-10 text-primary animate-spin" />
                 <p className="font-semibold text-foreground">Uploading PDF document...</p>
                 <p className="text-xs text-muted-foreground">This will only take a moment.</p>
               </div>
@@ -707,7 +735,7 @@ export default function PressReleasesPageEditor({ pageId, initialPageData }: Pre
           {/* Sortable grid container */}
           {isLoadingItems ? (
             <div className="flex items-center justify-center py-20 text-muted-foreground gap-2">
-              <Loader2 className="w-6 h-6 animate-spin text-primary" />
+              <RefreshCw className="w-6 h-6 animate-spin text-primary" />
               <span>Loading press releases...</span>
             </div>
           ) : filteredItems.length === 0 ? (
@@ -732,6 +760,7 @@ export default function PressReleasesPageEditor({ pageId, initialPageData }: Pre
                       item={item}
                       onEdit={handleOpenEditModal}
                       onDelete={setDeletingItem}
+                      onTogglePublish={handleTogglePublish}
                     />
                   ))}
                 </div>

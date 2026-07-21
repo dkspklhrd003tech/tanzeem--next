@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Loader2, RefreshCw, CheckCircle, XCircle } from "lucide-react";
+import { RefreshCw, RefreshCw, CheckCircle, XCircle } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -66,7 +66,7 @@ export function FormsEmailLogs() {
               {isLoading ? (
                 <TableRow>
                   <TableCell colSpan={5} className="py-12 text-center text-slate-400">
-                    <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2" />
+                    <RefreshCw className="w-6 h-6 animate-spin mx-auto mb-2" />
                     Loading logs...
                   </TableCell>
                 </TableRow>

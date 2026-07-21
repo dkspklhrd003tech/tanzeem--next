@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Pencil, XCircle, Settings2, Loader2, User, ArrowLeft, Music, UploadCloud, Bot, PlayCircle, Share2, Download } from "lucide-react";
+import { Plus, Pencil, XCircle, Settings2, RefreshCw, User, ArrowLeft, Music, UploadCloud, Bot, PlayCircle, Share2, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -67,6 +67,7 @@ interface AudioItem {
   playCount?: number;
   shareCount?: number;
   downloadCount?: number;
+  order?: number;
 }
 
 function SortableSpeakerCard({ speaker, audioCount, onClick, onEdit, onDelete }: { speaker: SpeakerItem, audioCount: number, onClick: () => void, onEdit: (s: SpeakerItem) => void, onDelete: (s: SpeakerItem) => void }) {
@@ -109,6 +110,40 @@ function SortableSpeakerCard({ speaker, audioCount, onClick, onEdit, onDelete }:
   );
 }
 
+function SortableAudioCard({ audio, onEdit, onDelete }: { audio: AudioItem, onEdit: (a: AudioItem) => void, onDelete: (a: AudioItem) => void }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: audio.id });
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    zIndex: isDragging ? 10 : 1,
+    opacity: isDragging ? 0.8 : 1,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style} className="relative bg-card hover:bg-primary-light hover:border-primary/80 rounded-lg border p-4 flex flex-col justify-between group hover:border-primary/50 transition-colors shadow-sm">
+      <div {...attributes} {...listeners} className="absolute top-2 right-2 z-20 p-1.5 bg-background/80 backdrop-blur rounded-md border shadow-sm cursor-grab active:cursor-grabbing hover:bg-background transition-colors text-muted-foreground">
+        <GripVertical className="w-4 h-4" />
+      </div>
+      <div className="pr-8">
+        <div className="flex items-center gap-2 mb-1">
+          <h3 className="font-bold line-clamp-2 group-hover:text-primary transition-colors">{audio.title}</h3>
+          {audio.isNew && <span className="text-[10px] uppercase font-bold tracking-wider bg-green-500 text-white px-2 py-0.5 rounded-full shrink-0">New</span>}
+        </div>
+        <p className="text-xs text-muted-foreground break-all line-clamp-1">{audio.audioUrl || "No URL"}</p>
+        <div className="flex gap-4 mt-2 text-[11px] text-muted-foreground/80 font-medium">
+          <span className="flex items-center gap-1.5" title="Plays / Views"><PlayCircle className="w-3.5 h-3.5" /> {audio.playCount || audio.viewCount || 0}</span>
+          <span className="flex items-center gap-1.5" title="Shares"><Share2 className="w-3.5 h-3.5" /> {audio.shareCount || 0}</span>
+          <span className="flex items-center gap-1.5" title="Downloads"><Download className="w-3.5 h-3.5" /> {audio.downloadCount || 0}</span>
+        </div>
+      </div>
+      <div className="flex gap-2 justify-end mt-4 relative z-30" onPointerDown={e => e.stopPropagation()}>
+        <Button variant="ghost" size="sm" onClick={() => onEdit(audio)}><Pencil className="w-4 h-4" /></Button>
+        <Button variant="ghost" size="sm" onClick={() => onDelete(audio)} className="text-red-500"><XCircle className="w-4 h-4" /></Button>
+      </div>
+    </div>
+  );
+}
+
 export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { pageId: string, initialPageData: PageRecord }) {
   const router = useRouter();
   const { toast } = useToast();
@@ -129,6 +164,27 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
   useEffect(() => {
     fetchData();
   }, []);
+
+  useEffect(() => {
+    // Restore active speaker from URL if available
+    const params = new URLSearchParams(window.location.search);
+    const speakerId = params.get("activeSpeaker");
+    if (speakerId && speakersList.length > 0 && !activeSpeaker) {
+      const speaker = speakersList.find(s => s.id === speakerId);
+      if (speaker) setActiveSpeaker(speaker);
+    }
+  }, [speakersList, activeSpeaker]);
+
+  const handleSetActiveSpeaker = (speaker: SpeakerItem | null) => {
+    setActiveSpeaker(speaker);
+    const url = new URL(window.location.href);
+    if (speaker) {
+      url.searchParams.set("activeSpeaker", speaker.id);
+    } else {
+      url.searchParams.delete("activeSpeaker");
+    }
+    window.history.pushState({}, "", url.toString());
+  };
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -191,17 +247,47 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
     toast({ title: "Order saved", description: "The new sorting order has been saved automatically." });
   };
 
+  const handleAudioDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id || !activeSpeaker) return;
+
+    setAudiosList((items) => {
+      const speakerAudios = items.filter(a => a.speakerId === activeSpeaker.id).sort((a, b) => (a.order || 0) - (b.order || 0));
+      const oldIndex = speakerAudios.findIndex(a => a.id === active.id);
+      const newIndex = speakerAudios.findIndex(a => a.id === over.id);
+
+      const reorderedSpeakerAudios = arrayMove(speakerAudios, oldIndex, newIndex).map((a, idx) => ({ ...a, order: idx }));
+
+      const newArray = items.map(a => {
+        if (a.speakerId !== activeSpeaker.id) return a;
+        const matched = reorderedSpeakerAudios.find(sa => sa.id === a.id);
+        return matched || a;
+      });
+
+      fetch("/api/admin/audio", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          orders: reorderedSpeakerAudios.map(i => ({ id: i.id, orderIndex: i.order }))
+        }),
+      }).catch(console.error);
+
+      return newArray;
+    });
+    toast({ title: "Audio Order saved", description: "The new audio sorting order has been saved." });
+  };
+
   const handleSpeakerDelete = async (item: SpeakerItem) => {
     try {
       await fetch(`/api/admin/speakers/${item.id}`, { method: "DELETE" });
       fetchData();
       toast({ title: "Speaker deleted" });
-      if (activeSpeaker?.id === item.id) setActiveSpeaker(null);
+      if (activeSpeaker?.id === item.id) handleSetActiveSpeaker(null);
     } catch (e) { toast({ variant: "destructive", title: "Failed to delete" }); }
     finally { setDeletingSpeaker(null); }
   };
 
-  const activeAudios = audiosList.filter(a => a.speakerId === activeSpeaker?.id).sort((a: any, b: any) => new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime());
+  const activeAudios = audiosList.filter(a => a.speakerId === activeSpeaker?.id).sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
 
   return (
     <div className="space-y-6 max-w-7xl">
@@ -209,7 +295,7 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
         <div>
           <div className="flex items-center gap-3">
             {activeSpeaker ? (
-              <Button variant="outline" size="icon" onClick={() => setActiveSpeaker(null)} className="h-8 w-8">
+              <Button variant="outline" size="icon" onClick={() => handleSetActiveSpeaker(null)} className="h-8 w-8">
                 <ArrowLeft className="h-4 w-4" />
               </Button>
             ) : (
@@ -266,7 +352,7 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
               </Button>
             </div>
             {isLoading ? (
-              <div className="flex justify-center py-10"><Loader2 className="w-6 h-6 animate-spin text-primary" /></div>
+              <div className="flex justify-center py-10"><RefreshCw className="w-6 h-6 animate-spin text-primary" /></div>
             ) : (
               <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                 <SortableContext items={speakersList.map(s => s.id)} strategy={rectSortingStrategy}>
@@ -276,7 +362,7 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
                         key={speaker.id}
                         speaker={speaker}
                         audioCount={audiosList.filter(a => a.speakerId === speaker.id).length}
-                        onClick={() => setActiveSpeaker(speaker)}
+                        onClick={() => handleSetActiveSpeaker(speaker)}
                         onEdit={(s) => router.push(`/sitemanager/media/speaker/${s.id}`)}
                         onDelete={(s) => setDeletingSpeaker(s)}
                       />
@@ -302,7 +388,7 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
                     onConfirm={handlePageSave}
                   >
                     <Button type="button" disabled={isSavingPage}>
-                      {isSavingPage ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : "Save Settings"}
+                      {isSavingPage ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : "Save Settings"}
                     </Button>
                   </ConfirmDialog>
                 </CardContent>
@@ -320,29 +406,21 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
                   <Plus className="w-4 h-4 mr-1" /> Add Audio
                 </Button>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                {activeAudios.map(audio => (
-                  <div key={audio.id} className="bg-card rounded-xl border p-4 flex flex-col justify-between">
-                    <div>
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-bold">{audio.title}</h3>
-                        {audio.isNew && <span className="text-[10px] uppercase font-bold tracking-wider bg-green-500 text-white px-2 py-0.5 rounded-full">New</span>}
-                      </div>
-                      <p className="text-xs text-muted-foreground break-all truncate">{audio.audioUrl || "No URL"}</p>
-                      <div className="flex gap-4 mt-2 text-[11px] text-muted-foreground/80 font-medium">
-                        <span className="flex items-center gap-1.5" title="Plays / Views"><PlayCircle className="w-3.5 h-3.5" /> {audio.playCount || audio.viewCount || 0}</span>
-                        <span className="flex items-center gap-1.5" title="Shares"><Share2 className="w-3.5 h-3.5" /> {audio.shareCount || 0}</span>
-                        <span className="flex items-center gap-1.5" title="Downloads"><Download className="w-3.5 h-3.5" /> {audio.downloadCount || 0}</span>
-                      </div>
-                    </div>
-                    <div className="flex gap-2 justify-end mt-4">
-                      <Button variant="ghost" size="sm" onClick={() => router.push(`/sitemanager/media/audio/${audio.id}`)}><Pencil className="w-4 h-4" /></Button>
-                      <Button variant="ghost" size="sm" onClick={() => { setDeletingAudio(audio); }} className="text-red-500"><XCircle className="w-4 h-4" /></Button>
-                    </div>
+              <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleAudioDragEnd}>
+                <SortableContext items={activeAudios.map(a => a.id)} strategy={rectSortingStrategy}>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    {activeAudios.map(audio => (
+                      <SortableAudioCard
+                        key={audio.id}
+                        audio={audio}
+                        onEdit={(a) => router.push(`/sitemanager/media/audio/${a.id}`)}
+                        onDelete={(a) => { setDeletingAudio(a); }}
+                      />
+                    ))}
+                    {activeAudios.length === 0 && <p className="text-muted-foreground col-span-full">No audios found for this speaker.</p>}
                   </div>
-                ))}
-                {activeAudios.length === 0 && <p className="text-muted-foreground col-span-full">No audios found for this speaker.</p>}
-              </div>
+                </SortableContext>
+              </DndContext>
             </TabsContent>
 
             <TabsContent value="seo" className="space-y-6">

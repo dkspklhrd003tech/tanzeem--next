@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { FileText, Upload, XCircle, Loader2 } from "lucide-react";
+import { FileText, Upload, XCircle, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
@@ -82,7 +82,7 @@ export function PdfUploader({ value = "", onChange, className }: PdfUploaderProp
                             disabled={isUploading}
                             className="text-xs text-foreground hover:text-white hover:bg-primary/10 rounded-lg h-7 px-2"
                         >
-                            {isUploading ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : "Replace"}
+                            {isUploading ? <RefreshCw className="h-3.5 w-3.5 animate-spin" /> : "Replace"}
                         </Button>
                         {/* Remove button */}
                         <Button
@@ -121,7 +121,7 @@ export function PdfUploader({ value = "", onChange, className }: PdfUploaderProp
                 >
                     {isUploading ? (
                         <>
-                            <Loader2 className="h-7 w-7 text-primary animate-spin mb-2" />
+                            <RefreshCw className="h-7 w-7 text-primary animate-spin mb-2" />
                             <p className="text-xs font-medium">Uploading PDF…</p>
                         </>
                     ) : (

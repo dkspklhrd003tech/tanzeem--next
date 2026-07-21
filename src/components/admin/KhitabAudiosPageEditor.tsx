@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import {
   Plus, Pencil, XCircle, GripVertical, FileText, Settings2,
-  Loader2, ArrowLeft, Mic, Calendar, Upload, XIcon
+  RefreshCw, ArrowLeft, Mic, Calendar, Upload, XIcon
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -520,7 +520,7 @@ export default function KhitabAudiosPageEditor({ pageId, initialPageData }: { pa
           {!activeCategory ? (
             // CATEGORIES GRID
             isLoading ? (
-              <div className="flex items-center justify-center py-20 text-muted-foreground"><Loader2 className="w-6 h-6 animate-spin text-primary mr-2" /> Loading Categories...</div>
+              <div className="flex items-center justify-center py-20 text-muted-foreground"><RefreshCw className="w-6 h-6 animate-spin text-primary mr-2" /> Loading Categories...</div>
             ) : filteredCategories.length === 0 ? (
               <div className="bg-card rounded-xl border p-12 text-center text-muted-foreground">No Categories Found.</div>
             ) : (
@@ -556,7 +556,7 @@ export default function KhitabAudiosPageEditor({ pageId, initialPageData }: { pa
                 <input ref={fileInputRef} type="file" accept="audio/*" className="hidden" onChange={handleFileChange} />
                 {isUploading ? (
                   <div className="flex flex-col items-center gap-3">
-                    <Loader2 className="h-10 w-10 text-primary animate-spin" />
+                    <RefreshCw className="h-10 w-10 text-primary animate-spin" />
                     <p className="font-semibold text-foreground">Uploading Audio...</p>
                     <p className="text-xs text-muted-foreground">This will only take a moment.</p>
                   </div>
@@ -612,7 +612,7 @@ export default function KhitabAudiosPageEditor({ pageId, initialPageData }: { pa
                 <div className="space-y-2"><Label>Slug</Label><Input value={pageForm.slug} onChange={e => setPageForm({ ...pageForm, slug: e.target.value })} /></div>
                 <div className="space-y-2"><Label>Meta Title</Label><Input value={pageForm.metaTitle || ""} onChange={e => setPageForm({ ...pageForm, metaTitle: e.target.value })} /></div>
                 <div className="space-y-2"><Label>Meta Description</Label><Textarea value={pageForm.metaDescription || ""} onChange={e => setPageForm({ ...pageForm, metaDescription: e.target.value })} /></div>
-                <Button type="submit" disabled={isSavingPage}>{isSavingPage ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : "Save Settings"}</Button>
+                <Button type="submit" disabled={isSavingPage}>{isSavingPage ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : "Save Settings"}</Button>
               </CardContent>
             </Card>
           </form>

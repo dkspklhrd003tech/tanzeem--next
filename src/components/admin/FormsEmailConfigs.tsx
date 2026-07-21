@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, forwardRef, useImperativeHandle } from "react";
-import { Loader2, Server, Mail, Eye, EyeOff, Info, CheckCircle } from "lucide-react";
+import { RefreshCw, Server, Mail, Eye, EyeOff, Info, CheckCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
@@ -148,7 +148,7 @@ export const FormsEmailConfigs = forwardRef((props, ref) => {
     <div className="w-full">
       {isLoading ? (
         <div className="flex justify-center py-20">
-          <Loader2 className="w-8 h-8 animate-spin text-primary" />
+          <RefreshCw className="w-8 h-8 animate-spin text-primary" />
         </div>
       ) : (
         <div className="space-y-6">

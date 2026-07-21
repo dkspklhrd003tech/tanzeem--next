@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Save, Image as ImageIcon, Loader2 } from "lucide-react";
+import { Save, Image as ImageIcon, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -91,7 +91,7 @@ export function GlobalBannerManager() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        <RefreshCw className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -109,7 +109,7 @@ export function GlobalBannerManager() {
           onConfirm={handleSave}
         >
           <Button disabled={isSaving} className="bg-[#0d5844] hover:bg-[#0a4636] rounded-full px-8">
-            {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+            {isSaving ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
             Save Configuration
           </Button>
         </ConfirmDialog>
@@ -124,9 +124,9 @@ export function GlobalBannerManager() {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label>Banner Background Image</Label>
-              <ImageUploader 
-                value={settings.banner_bg_image} 
-                onChange={(url) => setSettings({ ...settings, banner_bg_image: url })} 
+              <ImageUploader
+                value={settings.banner_bg_image}
+                onChange={(url) => setSettings({ ...settings, banner_bg_image: url })}
                 aspectRatio={21 / 9}
               />
             </div>
@@ -135,26 +135,26 @@ export function GlobalBannerManager() {
               <div className="space-y-2">
                 <Label>Overlay Color</Label>
                 <div className="flex gap-2">
-                  <Input 
-                    type="color" 
-                    value={settings.banner_overlay_color} 
+                  <Input
+                    type="color"
+                    value={settings.banner_overlay_color}
                     onChange={(e) => setSettings({ ...settings, banner_overlay_color: e.target.value })}
                     className="w-12 p-1 h-10"
                   />
-                  <Input 
-                    value={settings.banner_overlay_color} 
+                  <Input
+                    value={settings.banner_overlay_color}
                     onChange={(e) => setSettings({ ...settings, banner_overlay_color: e.target.value })}
                   />
                 </div>
               </div>
               <div className="space-y-2">
                 <Label>Overlay Opacity (0-1)</Label>
-                <Input 
-                  type="number" 
-                  step="0.1" 
-                  min="0" 
-                  max="1" 
-                  value={settings.banner_overlay_opacity} 
+                <Input
+                  type="number"
+                  step="0.1"
+                  min="0"
+                  max="1"
+                  value={settings.banner_overlay_opacity}
                   onChange={(e) => setSettings({ ...settings, banner_overlay_opacity: e.target.value })}
                 />
               </div>
@@ -171,17 +171,17 @@ export function GlobalBannerManager() {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label>Text Color</Label>
-                <Input 
-                  type="color" 
-                  value={settings.banner_text_color} 
+                <Input
+                  type="color"
+                  value={settings.banner_text_color}
                   onChange={(e) => setSettings({ ...settings, banner_text_color: e.target.value })}
                   className="w-full p-1 h-10"
                 />
               </div>
               <div className="space-y-2">
                 <Label>Banner Height</Label>
-                <Input 
-                  value={settings.banner_height} 
+                <Input
+                  value={settings.banner_height}
                   onChange={(e) => setSettings({ ...settings, banner_height: e.target.value })}
                   placeholder="350px or 40vh"
                 />
@@ -190,8 +190,8 @@ export function GlobalBannerManager() {
 
             <div className="space-y-2">
               <Label>Breadcrumb Separator</Label>
-              <Input 
-                value={settings.banner_breadcrumb_separator} 
+              <Input
+                value={settings.banner_breadcrumb_separator}
                 onChange={(e) => setSettings({ ...settings, banner_breadcrumb_separator: e.target.value })}
                 maxLength={3}
               />
@@ -202,8 +202,8 @@ export function GlobalBannerManager() {
                 <Label>Show Breadcrumbs</Label>
                 <p className="text-xs text-foreground-muted">Enable or disable breadcrumb trail globally.</p>
               </div>
-              <Switch 
-                checked={settings.banner_show_breadcrumbs} 
+              <Switch
+                checked={settings.banner_show_breadcrumbs}
                 onCheckedChange={(checked) => setSettings({ ...settings, banner_show_breadcrumbs: checked })}
               />
             </div>
@@ -217,17 +217,17 @@ export function GlobalBannerManager() {
           <CardTitle>Live Preview</CardTitle>
         </CardHeader>
         <CardContent>
-          <div 
+          <div
             className="relative w-full rounded-xl overflow-hidden flex items-center justify-center text-center p-12"
-            style={{ 
-              height: settings.banner_height, 
+            style={{
+              height: settings.banner_height,
               backgroundColor: settings.banner_overlay_color,
               backgroundImage: settings.banner_bg_image ? `url(${resolveMediaUrl(settings.banner_bg_image)})` : 'none',
               backgroundSize: 'cover',
               backgroundPosition: 'center'
             }}
           >
-            <div 
+            <div
               className="absolute inset-0"
               style={{ backgroundColor: settings.banner_overlay_color, opacity: parseFloat(settings.banner_overlay_opacity) }}
             />

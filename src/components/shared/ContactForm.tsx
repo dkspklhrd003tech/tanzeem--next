@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Send, Loader2 } from "lucide-react";
+import { Send, RefreshCw } from "lucide-react";
 import { CheckCheckIcon } from "@animateicons/react/lucide";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -218,7 +218,7 @@ export function ContactForm({ settings = {} }: { settings?: Record<string, strin
       >
         {isSubmitting ? (
           <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            <RefreshCw className="mr-2 h-4 w-4 animate-spin" />
             Sending...
           </>
         ) : (

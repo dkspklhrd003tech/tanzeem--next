@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import {
-  Save, Loader2, FileText, Image as ImageIcon,
+  Save, RefreshCw, FileText, Image as ImageIcon,
   Globe2, EyeOff, ExternalLink, RefreshCw,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -160,7 +160,7 @@ export function PolicyPageEditor() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        <RefreshCw className="w-8 h-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -241,7 +241,7 @@ export function PolicyPageEditor() {
               className="bg-[#0d5844] hover:bg-[#0a4636] rounded-full px-8"
             >
               {isSaving
-                ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Saving…</>
+                ? <><RefreshCw className="w-4 h-4 mr-2 animate-spin" />Saving…</>
                 : <><Save className="w-4 h-4 mr-2" />Save Changes</>
               }
             </Button>

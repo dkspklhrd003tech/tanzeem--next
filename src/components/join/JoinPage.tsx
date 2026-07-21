@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Users, CheckCircle, Loader2, Send, User } from "lucide-react";
+import { Users, CheckCircle, RefreshCw, Send, User } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -243,7 +243,7 @@ export function JoinPage() {
             disabled={submitting || !form.tier}
             className="w-full md:w-auto border-primary/20 bg-primary text-white rounded-full px-10 py-3 font-semibold"
           >
-            {submitting ? <><Loader2 className="h-4 w-4 animate-spin mr-2" />Submitting…</> : <><Send className="h-4 w-4 mr-2" />Submit Application</>}
+            {submitting ? <><RefreshCw className="h-4 w-4 animate-spin mr-2" />Submitting…</> : <><Send className="h-4 w-4 mr-2" />Submit Application</>}
           </Button>
         </motion.form>
       </div>

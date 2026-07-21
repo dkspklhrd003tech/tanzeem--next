@@ -3,8 +3,8 @@
 import { useState, useEffect, useRef } from "react";
 import {
   Plus, Pencil, XCircle, Search, GripVertical, FileText,
-  Settings2, UploadCloud, Loader2, ArrowLeft, Image as ImageIcon,
-  Video, User, PlayCircle, Eye, Check
+  Settings2, UploadCloud, RefreshCw, ArrowLeft, Image as ImageIcon,
+  Video, User, PlayCircle, Eye, EyeOff, Check
 } from "lucide-react";
 import { PageActionBar } from "@/components/admin/PageActionBar";
 import { Badge } from "@/components/ui/badge";
@@ -45,6 +45,7 @@ interface CategoryItem {
   slug: string;
   description?: string;
   order: number;
+  isActive?: boolean;
 }
 
 interface SpeakerItem {
@@ -70,7 +71,7 @@ interface AudioItem {
   order: number;
 }
 
-function SortableCategoryCard({ id, item, onEdit, onDelete, onClick, videoCount }: any) {
+function SortableCategoryCard({ id, item, onEdit, onDelete, onTogglePublish, onClick, videoCount }: any) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
   const style = { transform: CSS.Transform.toString(transform), transition, zIndex: isDragging ? 50 : undefined };
 
@@ -94,6 +95,9 @@ function SortableCategoryCard({ id, item, onEdit, onDelete, onClick, videoCount 
             <Button variant="ghost" size="icon" className="h-7 w-7 text-green-500 hover:text-green-600 hover:bg-green-500/10" onClick={() => onEdit(item)}>
               <Pencil className="h-3.5 w-3.5" />
             </Button>
+            <Button variant="ghost" size="icon" className={cn("h-7 w-7", item.isActive !== false ? "text-green-500 hover:bg-green-500/10" : "text-red-500 hover:bg-red-500/10")} onClick={(e) => onTogglePublish(e, item)} title={item.isActive !== false ? "Hide from frontend" : "Show on frontend"}>
+              {item.isActive !== false ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
+            </Button>
             <Button variant="ghost" size="icon" className="h-7 w-7 text-red-500 hover:text-red-600 hover:bg-red-500/10" onClick={() => onDelete(item)}>
               <XCircle className="h-3.5 w-3.5" />
             </Button>
@@ -106,7 +110,7 @@ function SortableCategoryCard({ id, item, onEdit, onDelete, onClick, videoCount 
   );
 }
 
-function SortableAudioCard({ id, item, speakerName, onEdit, onDelete }: any) {
+function SortableAudioCard({ id, item, speakerName, onEdit, onDelete, onTogglePublish }: any) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
   const style = { transform: CSS.Transform.toString(transform), transition, zIndex: isDragging ? 50 : undefined };
 
@@ -137,6 +141,9 @@ function SortableAudioCard({ id, item, speakerName, onEdit, onDelete }: any) {
           <div className="flex items-center gap-1">
             <Button variant="ghost" size="icon" className="h-7 w-7 text-green-500 hover:bg-green-500/10" onClick={() => onEdit(item)}>
               <Pencil className="h-3.5 w-3.5" />
+            </Button>
+            <Button variant="ghost" size="icon" className={cn("h-7 w-7", item.isPublished ? "text-green-500 hover:bg-green-500/10" : "text-red-500 hover:bg-red-500/10")} onClick={() => onTogglePublish(item)} title={item.isPublished ? "Hide from frontend" : "Show on frontend"}>
+              {item.isPublished ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
             </Button>
             <Button variant="ghost" size="icon" className="h-7 w-7 text-red-500 hover:bg-red-500/10" onClick={() => onDelete(item)}>
               <XCircle className="h-3.5 w-3.5" />
@@ -233,6 +240,43 @@ export default function AudiosPageEditor({ pageId, initialPageData }: { pageId: 
     }
   };
 
+  const handleAudioTogglePublish = async (item: AudioItem) => {
+    try {
+      const res = await fetch(`/api/admin/audio/${item.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...item, isPublished: !item.isPublished }),
+      });
+      if (res.ok) {
+        toast({ title: "Updated", description: `Audio is now ${!item.isPublished ? 'Published' : 'Hidden'}.` });
+        fetchData();
+      } else {
+        throw new Error();
+      }
+    } catch (e) {
+      toast({ variant: "destructive", title: "Error", description: "Could not update visibility." });
+    }
+  };
+
+  const handleCatTogglePublish = async (e: React.MouseEvent, item: CategoryItem) => {
+    e.stopPropagation();
+    try {
+      const res = await fetch(`/api/admin/audio-categories/${item.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...item, isActive: item.isActive === false ? true : false }),
+      });
+      if (res.ok) {
+        toast({ title: "Updated", description: `Category is now ${item.isActive === false ? 'Visible' : 'Hidden'}.` });
+        fetchData();
+      } else {
+        throw new Error();
+      }
+    } catch (err) {
+      toast({ variant: "destructive", title: "Error", description: "Could not update visibility." });
+    }
+  };
+
 
 
   const handleVideoDelete = async (item: AudioItem) => {
@@ -318,7 +362,7 @@ export default function AudiosPageEditor({ pageId, initialPageData }: { pageId: 
         <TabsContent value="list" className="space-y-6">
           {!activeCategory ? (
             isLoading ? (
-              <div className="flex items-center justify-center py-20 text-muted-foreground"><Loader2 className="w-6 h-6 animate-spin text-primary mr-2" /> Loading Audios...</div>
+              <div className="flex items-center justify-center py-20 text-muted-foreground"><RefreshCw className="w-6 h-6 animate-spin text-primary mr-2" /> Loading Audios...</div>
             ) : filteredCategories.length === 0 ? (
               <div className="bg-card rounded-xl border p-12 text-center text-muted-foreground">No Audios Found.</div>
             ) : (
@@ -327,7 +371,8 @@ export default function AudiosPageEditor({ pageId, initialPageData }: { pageId: 
                   <SortableCategoryCard key={cat.id} id={cat.id} item={cat} onClick={setActiveCategory}
                     videoCount={audioList.filter(b => b.categoryId === cat.id).length}
                     onEdit={(item: any) => router.push(`/sitemanager/media/category/${item.id}?type=audio-categories`)}
-                    onDelete={(item: CategoryItem) => setDeletingCat(item)} />
+                    onDelete={(item: CategoryItem) => setDeletingCat(item)}
+                    onTogglePublish={handleCatTogglePublish} />
                 ))}
               </div>
             )
@@ -340,7 +385,8 @@ export default function AudiosPageEditor({ pageId, initialPageData }: { pageId: 
                       <SortableAudioCard key={vid.id} id={vid.id} item={vid}
                         speakerName={speakersList.find(s => s.id === vid.speakerId)?.name}
                         onEdit={(item: any) => router.push(`/sitemanager/media/audio/${item.id}`)}
-                        onDelete={(item: AudioItem) => setDeletingVideo(item)} />
+                        onDelete={(item: AudioItem) => setDeletingVideo(item)}
+                        onTogglePublish={handleAudioTogglePublish} />
                     ))}
                     {activeVideos.length === 0 && <div className="col-span-full py-10 text-center text-muted-foreground border border-dashed rounded-xl">No videos found in this category.</div>}
                   </div>
@@ -359,7 +405,7 @@ export default function AudiosPageEditor({ pageId, initialPageData }: { pageId: 
               <CardContent className="space-y-4">
                 <div className="space-y-2"><Label>Title</Label><Input value={pageForm.title} onChange={e => setPageForm({ ...pageForm, title: e.target.value })} /></div>
                 <div className="space-y-2"><Label>Slug</Label><Input value={pageForm.slug} onChange={e => setPageForm({ ...pageForm, slug: e.target.value })} /></div>
-                <Button type="submit" disabled={isSavingPage}>{isSavingPage ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : "Save Settings"}</Button>
+                <Button type="submit" disabled={isSavingPage}>{isSavingPage ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : "Save Settings"}</Button>
               </CardContent>
             </Card>
           </form>

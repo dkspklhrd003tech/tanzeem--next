@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import {
   Plus, Pencil, XCircle, Search, FileText, Sparkles,
-  Settings2, Check, AlertCircle, UploadCloud, Loader2, ArrowLeft,
+  Settings2, Check, AlertCircle, UploadCloud, RefreshCw, ArrowLeft,
   GripVertical, Calendar
 } from "lucide-react";
 import { PageActionBar } from "@/components/admin/PageActionBar";
@@ -684,7 +684,7 @@ export default function EventsPageEditor({ pageId, initialPageData }: EventsPage
 
             {isUploading ? (
               <div className="flex flex-col items-center gap-3">
-                <Loader2 className="h-10 w-10 text-primary animate-spin" />
+                <RefreshCw className="h-10 w-10 text-primary animate-spin" />
                 <p className="font-semibold text-foreground">Uploading image document...</p>
                 <p className="text-xs text-muted-foreground">This will only take a moment.</p>
               </div>
@@ -706,7 +706,7 @@ export default function EventsPageEditor({ pageId, initialPageData }: EventsPage
           {/* Sortable grid container */}
           {isLoadingItems ? (
             <div className="flex items-center justify-center py-20 text-muted-foreground gap-2">
-              <Loader2 className="w-6 h-6 animate-spin text-primary" />
+              <RefreshCw className="w-6 h-6 animate-spin text-primary" />
               <span>Loading events...</span>
             </div>
           ) : filteredItems.length === 0 ? (

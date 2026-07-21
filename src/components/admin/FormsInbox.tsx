@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Mail, CheckCircle2, Loader2, Inbox, Trash2, AlertTriangle, X } from "lucide-react";
+import { Mail, CheckCircle2, RefreshCw, Inbox, Trash2, AlertTriangle, X } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -157,7 +157,7 @@ export function FormsInbox() {
         <CardContent className="p-0">
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-20 text-slate-400">
-              <Loader2 className="w-8 h-8 animate-spin mb-4 text-primary" />
+              <RefreshCw className="w-8 h-8 animate-spin mb-4 text-primary" />
               <p>Loading submissions...</p>
             </div>
           ) : filteredSubmissions.length === 0 ? (

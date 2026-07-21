@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Loader2, Save } from "lucide-react";
+import { ArrowLeft, RefreshCw, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -84,7 +84,7 @@ export default function CategoryFormPage({ id, type = "audio-categories" }: { id
   };
 
   if (isLoading) {
-    return <div className="flex justify-center py-20"><Loader2 className="w-8 h-8 animate-spin text-primary" /></div>;
+    return <div className="flex justify-center py-20"><RefreshCw className="w-8 h-8 animate-spin text-primary" /></div>;
   }
 
   return (
@@ -102,7 +102,7 @@ export default function CategoryFormPage({ id, type = "audio-categories" }: { id
             onConfirm={handleSave}
           >
             <Button disabled={isSaving} className="bg-primary text-white hover:bg-primary/80">
-              {isSaving ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+              {isSaving ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
               {isNew ? "Create" : "Save Changes"}
             </Button>
           </ConfirmDialog>

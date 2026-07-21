@@ -4,7 +4,7 @@ import { useState, useMemo, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Search, Download, Printer, Share2, FileText, X,
-  ChevronRight, Check, AlertCircle, Loader2
+  ChevronRight, Check, AlertCircle, RefreshCw
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -117,7 +117,7 @@ export function BooksCategoryGrid({ categoryName, initialItems }: BooksCategoryG
             placeholder={`Search in ${categoryName}...`}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-11 h-12 bg-background border-border/80 focus-visible:ring-primary/20 rounded-xl"
+            className="pl-11 h-12 bg-background border-border/80 focus-visible:ring-primary/20 rounded-xl mb-6"
           />
         </div>
       </div>

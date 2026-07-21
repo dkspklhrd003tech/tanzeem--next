@@ -11,7 +11,7 @@ import {
   FileText,
   Upload,
   XCircle,
-  Loader2,
+  RefreshCw,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -309,7 +309,7 @@ export function ContentEditor({
                       onChange={(e) => setFormData({ ...formData, metaTitle: e.target.value })}
                     />
                   </div>
-                  </div>
+                </div>
                 <div>
                   <Label htmlFor="metaDescription" className="text-xs font-medium mb-1 block">Meta Description</Label>
                   <Textarea
@@ -472,7 +472,7 @@ function AudioUploader({ value = "", onChange }: AudioUploaderProps) {
         >
           {isUploading ? (
             <>
-              <Loader2 className="h-7 w-7 text-primary animate-spin mb-2" />
+              <RefreshCw className="h-7 w-7 text-primary animate-spin mb-2" />
               <p className="text-xs font-medium">Uploading Audio...</p>
             </>
           ) : (

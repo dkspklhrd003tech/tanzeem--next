@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Pencil, XCircle, Settings2, Loader2, User, ArrowLeft, Video, UploadCloud, Bot, PlayCircle, Share2, Download } from "lucide-react";
+import { Plus, Pencil, XCircle, Settings2, RefreshCw, User, ArrowLeft, Video, UploadCloud, Bot, PlayCircle, Share2, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -125,7 +125,7 @@ function SortableVideoCard({ video, onEdit, onDelete }: { video: VideoItem, onEd
   };
 
   return (
-    <div ref={setNodeRef} style={style} className="relative bg-card rounded-xl border p-4 flex flex-col justify-between group hover:border-primary/50 transition-colors shadow-sm">
+    <div ref={setNodeRef} style={style} className="relative bg-card hover:bg-primary-light hover:border-primary/80 rounded-lg border p-4 flex flex-col justify-between group hover:border-primary/50 transition-colors shadow-sm">
       <div {...attributes} {...listeners} className="absolute top-2 right-2 z-20 p-1.5 bg-background/80 backdrop-blur rounded-md border shadow-sm cursor-grab active:cursor-grabbing hover:bg-background transition-colors text-muted-foreground">
         <GripVertical className="w-4 h-4" />
       </div>
@@ -178,6 +178,27 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
     fetchData();
   }, []);
 
+  useEffect(() => {
+    // Restore active speaker from URL if available
+    const params = new URLSearchParams(window.location.search);
+    const speakerId = params.get("activeSpeaker");
+    if (speakerId && speakersList.length > 0 && !activeSpeaker) {
+      const speaker = speakersList.find(s => s.id === speakerId);
+      if (speaker) setActiveSpeaker(speaker);
+    }
+  }, [speakersList, activeSpeaker]);
+
+  const handleSetActiveSpeaker = (speaker: SpeakerItem | null) => {
+    setActiveSpeaker(speaker);
+    const url = new URL(window.location.href);
+    if (speaker) {
+      url.searchParams.set("activeSpeaker", speaker.id);
+    } else {
+      url.searchParams.delete("activeSpeaker");
+    }
+    window.history.pushState({}, "", url.toString());
+  };
+
   const fetchData = async () => {
     setIsLoading(true);
     try {
@@ -227,7 +248,7 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
       await fetch(`/api/admin/speakers/${item.id}`, { method: "DELETE" });
       fetchData();
       toast({ title: "Speaker deleted" });
-      if (activeSpeaker?.id === item.id) setActiveSpeaker(null);
+      if (activeSpeaker?.id === item.id) handleSetActiveSpeaker(null);
     } catch (e) { toast({ variant: "destructive", title: "Failed to delete" }); }
     finally { setDeletingSpeaker(null); }
   };
@@ -335,7 +356,7 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
         <div>
           <div className="flex items-center gap-3">
             {activeSpeaker ? (
-              <Button variant="outline" size="icon" onClick={() => setActiveSpeaker(null)} className="h-8 w-8">
+              <Button variant="outline" size="icon" onClick={() => handleSetActiveSpeaker(null)} className="h-8 w-8">
                 <ArrowLeft className="h-4 w-4" />
               </Button>
             ) : (
@@ -392,7 +413,7 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
               </Button>
             </div>
             {isLoading ? (
-              <div className="flex justify-center py-10"><Loader2 className="w-6 h-6 animate-spin text-primary" /></div>
+              <div className="flex justify-center py-10"><RefreshCw className="w-6 h-6 animate-spin text-primary" /></div>
             ) : (
               <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                 <SortableContext items={speakersList.map(s => s.id)} strategy={rectSortingStrategy}>
@@ -402,7 +423,7 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
                         key={speaker.id}
                         speaker={speaker}
                         videoCount={videosList.filter(v => v.speakerId === speaker.id).length}
-                        onClick={() => setActiveSpeaker(speaker)}
+                        onClick={() => handleSetActiveSpeaker(speaker)}
                         onEdit={(s) => {
                           setEditingSpeakerId(s.id);
                           setSpeakerFormData({ name: s.name, slug: s.slug, bio: s.bio || "", avatar: s.avatar || "", type: "video", order: s.order || 0, customFields: s.customFields || {} });
@@ -426,7 +447,7 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
                 <CardContent className="space-y-4">
                   <div className="space-y-2"><Label>Title</Label><Input value={pageForm.title} onChange={e => setPageForm({ ...pageForm, title: e.target.value })} /></div>
                   <div className="space-y-2"><Label>Slug</Label><Input value={pageForm.slug} onChange={e => setPageForm({ ...pageForm, slug: e.target.value })} /></div>
-                  <Button type="submit" disabled={isSavingPage}>{isSavingPage ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : "Save Settings"}</Button>
+                  <Button type="submit" disabled={isSavingPage}>{isSavingPage ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : "Save Settings"}</Button>
                 </CardContent>
               </Card>
             </form>
@@ -536,7 +557,7 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
                   />
                   <div className="relative">
                     <Button type="button" variant="secondary" className="whitespace-nowrap" disabled={isUploading}>
-                      {isUploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <UploadCloud className="w-4 h-4 mr-2" />}
+                      {isUploading ? <RefreshCw className="w-4 h-4 animate-spin" /> : <UploadCloud className="w-4 h-4 mr-2" />}
                       Upload Video
                     </Button>
                     <input type="file" accept="video/mp4,video/webm" className="absolute inset-0 opacity-0 cursor-pointer" onChange={e => handleFileUpload(e, (url) => setVideoFormData(prev => ({ ...prev, videoUrl: url })))} disabled={isUploading} />

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import { Plus, XCircle, Edit, Video, Headphones, Image as ImageIcon, X, UploadCloud, Loader2, PlayCircle, Share2, Download } from "lucide-react";
+import { Plus, XCircle, Edit, Video, Headphones, Image as ImageIcon, X, UploadCloud, RefreshCw, PlayCircle, Share2, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -393,10 +393,10 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
       const res = await fetch(`/api/${mediaType}-categories`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-          name: title, 
-          code, 
-          imageUrl, 
+        body: JSON.stringify({
+          name: title,
+          code,
+          imageUrl,
           parentId: null,
           slug: slug || undefined,
           customFields: JSON.stringify({ openInNewTab: openInNewTab || false })
@@ -707,7 +707,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
 
       {isLoading ? (
         <div className="p-12 text-center text-muted-foreground flex justify-center">
-          <Loader2 className="w-6 h-6 animate-spin mr-2" /> Loading data...
+          <RefreshCw className="w-6 h-6 animate-spin mr-2" /> Loading data...
         </div>
       ) : categories.length === 0 ? (
         <div className="p-12 border-2 border-dashed rounded-xl text-center text-muted-foreground">
@@ -945,8 +945,8 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                   title: "Create Main Category",
                   desc: "Are you sure you want to create this new main category?",
                   action: () => addMainCategory(
-                    formData.get("title") as string, 
-                    formData.get("code") as string, 
+                    formData.get("title") as string,
+                    formData.get("code") as string,
                     newMainCatImage,
                     formData.get("slug") as string,
                     formData.get("openInNewTab") === "on"
@@ -1290,7 +1290,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
               {editingMedia && (
                 <Button type="button" disabled={isSavingItem} onClick={() => saveMediaItem(editingMedia.subId, editingMedia.item)} className="bg-primary text-white hover:bg-primary/80">
                   {isSavingItem ? (
-                    <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Saving...</>
+                    <><RefreshCw className="w-4 h-4 mr-2 animate-spin" /> Saving...</>
                   ) : (
                     editingMedia.item.id === "new" ? "Save New Item" : "Update Item"
                   )}

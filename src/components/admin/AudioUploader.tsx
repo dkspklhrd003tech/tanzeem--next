@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import { Upload, Loader2, Music, ExternalLink } from "lucide-react";
+import { Upload, RefreshCw, Music, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { cn, resolveMediaUrl } from "@/lib/utils";
@@ -190,7 +190,7 @@ export function AudioUploader({
         {/* ── Uploading state ── */}
         {isUploading && (
           <div className="p-8 flex flex-col items-center justify-center gap-3">
-            <Loader2 className="h-9 w-9 text-primary animate-spin" />
+            <RefreshCw className="h-9 w-9 text-primary animate-spin" />
             <p className="text-sm font-bold text-foreground">Uploading Audio…</p>
             <div className="w-full max-w-xs bg-muted rounded-full h-2 overflow-hidden">
               <div
