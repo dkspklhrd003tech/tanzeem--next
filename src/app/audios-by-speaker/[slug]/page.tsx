@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { db } from "@/db";
 import { speakers, audio } from "@/db/schema";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, asc } from "drizzle-orm";
 import { buildMetadata, breadcrumbJsonLd } from "@/lib/seo";
 import { AudioListClient } from "@/components/shared/AudioListClient";
 
