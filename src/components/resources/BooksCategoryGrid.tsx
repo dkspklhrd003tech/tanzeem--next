@@ -111,13 +111,13 @@ export function BooksCategoryGrid({ categoryName, initialItems }: BooksCategoryG
   return (
     <div className="w-full">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="relative flex-1 max-w-7xl">
+        <div className="relative flex-1 max-w-7xl mb-6">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4.5 w-4.5 text-[#0d5844]" />
           <Input
             placeholder={`Search in ${categoryName}...`}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-11 h-12 bg-background border-border/80 focus-visible:ring-primary/20 rounded-xl mb-6"
+            className="pl-11 h-12 bg-background border-border/80 focus-visible:ring-primary/20 rounded-xl"
           />
         </div>
       </div>

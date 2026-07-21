@@ -80,7 +80,7 @@ export function PressReleasesGrid({ initialItems }: PressReleasesGridProps) {
             placeholder="Search Press Releases..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-11 h-12 bg-background border-border/80 focus-visible:ring-primary/20 rounded-xl mb-6"
+            className="pl-11 h-12 bg-background border-border/80 focus-visible:ring-primary/20 rounded-xl"
           />
         </div>
 
