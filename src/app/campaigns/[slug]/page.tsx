@@ -8,6 +8,7 @@ import { CTABanner } from "@/components/shared/CTABanner";
 import { ImageSlider } from "@/components/shared/ImageSlider";
 import { Button } from "@/components/ui/button";
 import { PlayCircle, Download } from "lucide-react";
+import { PdfViewerHeader } from "@/components/shared/PdfViewerHeader";
 
 export const dynamic = "force-dynamic";
 
@@ -36,6 +37,14 @@ export default async function CampaignDetailsPage({ params }: { params: Promise<
         try { customFields = JSON.parse(customFields); } catch (e) { customFields = {}; }
     }
     const blocks = customFields?.blocks || [];
+
+    const formattedDate = campaign.createdAt
+        ? new Date(campaign.createdAt).toLocaleDateString("en-PK", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+        })
+        : undefined;
 
     return (
         <main className=" bg-background">
@@ -92,13 +101,13 @@ export default async function CampaignDetailsPage({ params }: { params: Promise<
 
                                     return (
                                         <div key={idx} className="space-y-4">
-                                            {/* Section heading */}
-                                            {block.title && (
-                                                <h2 className="text-3xl text-center mx-auto font-bold text-foreground">{block.title}</h2>
-                                            )}
-                                            {pdfTitle && (
-                                                <p className="text-center text-base text-muted-foreground font-medium">{pdfTitle}</p>
-                                            )}
+                                            <PdfViewerHeader
+                                                title={pdfTitle || block.title || campaign.title}
+                                                dateText={formattedDate}
+                                                pdfUrl={absolutePdfUrl}
+                                                downloadFilename={slug}
+                                                downloadButtonText="Download PDF"
+                                            />
 
                                             {/* Inline PDF Viewer */}
                                             <div className="w-full rounded-xl overflow-hidden border border-border shadow-lg bg-black/5">
@@ -109,16 +118,6 @@ export default async function CampaignDetailsPage({ params }: { params: Promise<
                                                     title={pdfTitle || block.title || "PDF Document"}
                                                     allowFullScreen
                                                 />
-                                            </div>
-
-                                            {/* Download fallback */}
-                                            <div className="flex justify-center">
-                                                <Button asChild variant="outline" className="gap-2 rounded-full px-6 border-primary text-primary hover:bg-primary hover:text-white transition-colors">
-                                                    <a href={absolutePdfUrl} target="_blank" rel="noopener noreferrer" download>
-                                                        <Download className="h-4 w-4" />
-                                                        Download PDF
-                                                    </a>
-                                                </Button>
                                             </div>
                                         </div>
                                     );

@@ -7,6 +7,7 @@ import Link from "next/link";
 import { ArrowLeft, Download, AlertCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ClientShareButton } from "@/components/shared/ClientShareButton";
+import { PdfViewerHeader } from "@/components/shared/PdfViewerHeader";
 
 interface PageProps {
     params: Promise<{ slug: string }>;
@@ -82,21 +83,24 @@ export default async function MagazineDetailsPage({ params }: PageProps) {
     return (
         <main className=" bg-zinc-50/50">
             <div className="container mx-auto py-10 flex flex-col items-center mt-4">
-                <div className="w-full max-w-5xl mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    <h1 className="text-2xl md:text-3xl font-bold text-foreground">
-                        {targetLink.title}
-                    </h1>
-                    <div className="flex items-center gap-2">
-                        <ClientShareButton variant="icon" />
-                        {targetLink.url.endsWith(".pdf") && (
-                            <Button asChild variant="outline" size="sm" className="bg-primary text-white hover:bg-primary/80 border-primary border h-8 font-medium shadow-sm">
-                                <a href={targetLink.url} download={`${targetLink.title.replace(/[^a-zA-Z0-9]/g, "-")}.pdf`}>
-                                    <Download className="w-4 h-4 mr-2" />
-                                    Download PDF
-                                </a>
-                            </Button>
-                        )}
-                    </div>
+                <div className="w-full max-w-5xl mb-6">
+                    {targetLink.url?.endsWith(".pdf") ? (
+                        <PdfViewerHeader
+                            title={targetLink.title}
+                            pdfUrl={targetLink.url}
+                            downloadFilename={targetLink.title.replace(/[^a-zA-Z0-9]/g, "-")}
+                            downloadButtonText="Download PDF"
+                        />
+                    ) : (
+                        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                            <h1 className="text-2xl md:text-3xl font-bold text-foreground">
+                                {targetLink.title}
+                            </h1>
+                            <div className="flex items-center gap-2">
+                                <ClientShareButton variant="icon" />
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 {targetLink.url ? (

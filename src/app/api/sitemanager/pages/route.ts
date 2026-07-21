@@ -196,7 +196,7 @@ export async function POST(request: NextRequest) {
       } else {
         revalidatePath(`/organization/${slug.replace(/^[^/]+\//, "")}`);
       }
-      revalidatePath("/[...slug]");
+      revalidatePath("/[...slug]", "page");
       revalidatePath("/");
     } catch (revalErr) {
       console.error("Cache revalidation failed during page creation:", revalErr);

@@ -8,6 +8,7 @@ import Link from "next/link";
 import { ArrowLeft, Printer, Download, Share2, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ClientShareButton } from "@/components/shared/ClientShareButton";
+import { PdfViewerHeader } from "@/components/shared/PdfViewerHeader";
 
 interface PageProps {
     params: Promise<{ slug: string }>;
@@ -72,30 +73,15 @@ export default async function PressReleaseDetailsPage({ params }: PageProps) {
 
             <div className="container mx-auto py-8 px-4 flex flex-col items-center">
                 <div className="w-full max-w-5xl z-40 mb-4">
-                    <div className="flex flex-wrap items-center justify-between gap-4">
-                        <div className="flex flex-col gap-2 max-w-[70%]">
-                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-semibold tracking-widest uppercase bg-[#E8F0EC] text-[#0A5C36] w-fit">
-                                <Calendar className="w-3.5 h-3.5" />
-                                {formattedDate}
-                            </span>
-                            <div className="flex items-start gap-3">
-                                <h1 className="text-lg md:text-xl font-semibold text-foreground line-clamp-2">
-                                    {selectedItem.title}
-                                </h1>
-                                <ClientShareButton variant="icon" className="-mt-1" />
-                            </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            {selectedItem.pdfUrl && (
-                                <Button asChild size="sm" className="h-8 bg-primary text-white">
-                                    <a href={selectedItem.pdfUrl} download={`${selectedItem.slug || 'press-release'}.pdf`}>
-                                        <Download className="w-4 h-4 mr-2" />
-                                        Download Press Release
-                                    </a>
-                                </Button>
-                            )}
-                        </div>
-                    </div>
+                    {selectedItem.pdfUrl && (
+                        <PdfViewerHeader
+                            title={selectedItem.title}
+                            dateText={formattedDate}
+                            pdfUrl={selectedItem.pdfUrl}
+                            downloadFilename={selectedItem.slug || 'press-release'}
+                            downloadButtonText="Download Press Release"
+                        />
+                    )}
                 </div>
                 {selectedItem.pdfUrl ? (
                     <div className="w-full max-w-5xl h-[85vh] rounded-xl overflow-hidden border border-border shadow-xl bg-white">

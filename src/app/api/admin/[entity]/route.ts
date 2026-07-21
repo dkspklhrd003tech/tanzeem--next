@@ -56,11 +56,11 @@ function revalidateEntityPaths(entity: string) {
         } else if (entity === "campaigns") {
             revalidatePath("/");
             revalidatePath("/campaigns");
-            revalidatePath("/campaigns/[slug]");
+            revalidatePath("/campaigns/[slug]", "page");
         } else if (entity === "services") {
             revalidatePath("/");
             revalidatePath("/services");
-            revalidatePath("/services/[slug]");
+            revalidatePath("/services/[slug]", "page");
         } else if (entity === "book-categories" || entity === "books") {
             revalidatePath("/books-by-category");
             revalidatePath("/books");
