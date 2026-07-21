@@ -46,7 +46,8 @@ export function PageBanner({ settings, titleOverride, breadcrumbsOverride, bgIma
       "audio/", "videos/", "books/", "audio-books/",
       "magazines/", "campaigns/", "services/", "press-releases/",
       "events/", "books-by-category/", "videos-by-category/",
-      "videos-by-speakers/", "audios-by-speaker/", "resources/khitab-e-jumah/"
+      "videos-by-speakers/", "audios-by-speaker/", "resources/khitab-e-jumah/",
+      "search"
     ];
     if (skipPrefixes.some(prefix => slug.startsWith(prefix))) return;
 

@@ -7,7 +7,7 @@ import { motion } from "framer-motion";
 import {
   ArrowLeft, Save, Send, Eye, XCircle, Copy,
   ChevronDown, ChevronUp, Clock, AlertCircle, Check,
-  LayoutTemplate, FileText, SlidersHorizontal, Search
+  LayoutTemplate, FileText, SlidersHorizontal, Search, Wand2
 } from "lucide-react";
 import { PageActionBar } from "@/components/admin/PageActionBar";
 import { PageSectionBuilder } from "@/components/admin/PageSectionBuilder";
@@ -347,6 +347,30 @@ export function PageForm({ mode, initialData, parentPages = [] }: PageFormProps)
 
   const previewUrl = form.slug ? `/${form.slug}` : null;
 
+  const handleGenerateMetaTitle = () => {
+    let newTitle = form.title ? `${form.title} | Tanzeem-e-Islami` : "Tanzeem-e-Islami";
+    if (newTitle.length > 60) newTitle = form.title || "";
+    set("metaTitle", newTitle);
+    toast({ title: "Generated", description: "Meta title generated." });
+  };
+
+  const handleGenerateMetaDescription = () => {
+    let plainContent = (form.content || "").replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+    if (!plainContent && form.excerpt) plainContent = form.excerpt;
+    
+    let newDesc = plainContent;
+    if (newDesc.length > 155) {
+      newDesc = newDesc.substring(0, 152).trim() + "...";
+    }
+    
+    if (!newDesc && form.title) {
+      newDesc = `Learn more about ${form.title} at Tanzeem-e-Islami. Comprehensive resources, guides, and information.`;
+    }
+    
+    set("metaDescription", newDesc);
+    toast({ title: "Generated", description: "Meta description generated." });
+  };
+
   return (
     <div className="space-y-6 max-w-7xl">
       {/* ── Header ── */}
@@ -599,7 +623,10 @@ export function PageForm({ mode, initialData, parentPages = [] }: PageFormProps)
             <CardContent className="p-5 space-y-4">
               <div>
                 <div className="flex items-center justify-between mb-1.5">
-                  <Label htmlFor="metaTitle" className="text-xs font-semibold uppercase tracking-wide">Meta Title</Label>
+                  <div className="flex items-center gap-2">
+                    <Label htmlFor="metaTitle" className="text-xs font-semibold uppercase tracking-wide">Meta Title</Label>
+                    <Button variant="ghost" size="sm" type="button" onClick={handleGenerateMetaTitle} className="h-5 px-2 text-[10px] text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"><Wand2 className="w-3 h-3 mr-1"/> Generate</Button>
+                  </div>
                   {charCount(form.metaTitle, 60)}
                 </div>
                 <Input
@@ -615,7 +642,10 @@ export function PageForm({ mode, initialData, parentPages = [] }: PageFormProps)
               </div>
               <div>
                 <div className="flex items-center justify-between mb-1.5">
-                  <Label htmlFor="metaDescription" className="text-xs font-semibold uppercase tracking-wide">Meta Description</Label>
+                  <div className="flex items-center gap-2">
+                    <Label htmlFor="metaDescription" className="text-xs font-semibold uppercase tracking-wide">Meta Description</Label>
+                    <Button variant="ghost" size="sm" type="button" onClick={handleGenerateMetaDescription} className="h-5 px-2 text-[10px] text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"><Wand2 className="w-3 h-3 mr-1"/> Generate</Button>
+                  </div>
                   {charCount(form.metaDescription, 155)}
                 </div>
                 <Textarea

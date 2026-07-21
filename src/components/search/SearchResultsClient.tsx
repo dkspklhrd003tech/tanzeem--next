@@ -170,7 +170,7 @@ export function SearchResultsClient({ results, searchTerm }: Props) {
               <div className="mt-auto flex justify-start pt-2">
                 <Link
                   href={item.link}
-                  className="text-sm font-semibold text-primary px-3 py-2 border border-[#0d5844] rounded-full flex items-center gap-1 group"
+                  className="text-sm font-semibold text-white bg-primary px-3 py-2 rounded-full flex items-center gap-1 group"
                 >
                   Visit {getTypeName(item.type)}
                 </Link>
