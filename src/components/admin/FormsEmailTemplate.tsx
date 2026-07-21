@@ -1,5 +1,5 @@
 import { useState, useEffect, forwardRef, useImperativeHandle } from "react";
-import { Mail, Save, RefreshCw, Code, MonitorPlay, RefreshCw } from "lucide-react";
+import { Mail, Save, RefreshCw, Code, MonitorPlay } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";

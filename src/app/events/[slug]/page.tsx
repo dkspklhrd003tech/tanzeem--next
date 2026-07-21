@@ -118,7 +118,7 @@ export default async function EventDetailPage({ params }: Props) {
 
           {/* Registration */}
           {event.registrationRequired && event.registrationUrl && (
-            <div className="bg-primary/5 border border-primary/20 rounded-xl mb-6 p-6 text-center">
+            <div className="bg-primary/5 border border-primary/20 rounded-xl p-6 text-center">
               <h3 className="font-semibold text-foreground mb-2">Registration Required</h3>
               <Button asChild>
                 <a href={event.registrationUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2">
