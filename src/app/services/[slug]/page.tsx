@@ -79,8 +79,15 @@ export default async function ServiceDetailsPage({ params }: { params: Promise<{
                                     if (!pdfUrl) return null;
 
                                     // Resolve absolute URL for Google Docs Viewer
-                                    const mediaBase = process.env.NEXT_PUBLIC_MEDIA_URL || '';
-                                    const absolutePdfUrl = pdfUrl.startsWith('http') ? pdfUrl : `${mediaBase}${pdfUrl}`;
+                                    let resolvedPdfUrl = pdfUrl;
+                                    if (resolvedPdfUrl.startsWith("public_html/")) resolvedPdfUrl = "/" + resolvedPdfUrl;
+                                    if (resolvedPdfUrl.startsWith("/public_html/uploads")) resolvedPdfUrl = resolvedPdfUrl.replace("/public_html/uploads", "/uploads");
+                                    
+                                    const mediaBase = process.env.NEXT_PUBLIC_MEDIA_URL || 'https://tanzeem.dks.com.pk';
+                                    const absolutePdfUrl = resolvedPdfUrl.startsWith('http') 
+                                        ? resolvedPdfUrl 
+                                        : `${mediaBase.replace(/\/$/, '')}${resolvedPdfUrl.startsWith('/') ? '' : '/'}${resolvedPdfUrl}`;
+                                        
                                     const googleViewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(absolutePdfUrl)}&embedded=true`;
 
                                     return (

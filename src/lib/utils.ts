@@ -12,6 +12,10 @@ export function resolveMediaUrl(url: string | null | undefined): string {
 
   let path = url.startsWith("/") ? url : `/${url}`;
 
+  if (path.startsWith("/public_html/uploads")) {
+    path = path.replace("/public_html/uploads", "/uploads");
+  }
+
   // If the URL is already an absolute FTP media path, strip the domain and public_html
   // so that it forces the relative rewrite path instead.
   if (url.startsWith("http")) {
