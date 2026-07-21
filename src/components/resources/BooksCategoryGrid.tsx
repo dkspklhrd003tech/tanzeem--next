@@ -131,7 +131,8 @@ export function BooksCategoryGrid({ categoryName, initialItems }: BooksCategoryG
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
           {filteredItems.map((item, idx) => (
             <Link
-              href={`/books/${item.slug}`}
+              href={item.slug.startsWith('http') || item.slug.startsWith('/') ? item.slug : `/books/${item.slug}`}
+              target={item.slug.startsWith('http') ? '_blank' : undefined}
               key={item.id}
               className="group relative bg-card border bg-slate-50 rounded-xl overflow-hidden cursor-pointer hover:-translate-y-1.5 transition-all duration-300 shadow-sm flex flex-col"
             >

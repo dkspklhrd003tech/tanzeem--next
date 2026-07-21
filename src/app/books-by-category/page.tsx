@@ -51,11 +51,13 @@ export default async function BooksByCategoryPage() {
       <div className="container mx-auto py-8 md:py-10">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {display.map((cat) => {
-            const href = `/books-by-category/${cat.slug}`;
+            const isExternal = cat.slug.startsWith('http') || cat.slug.startsWith('/');
+            const href = isExternal ? cat.slug : `/books-by-category/${cat.slug}`;
             return (
               <Link
                 key={cat.id}
                 href={href}
+                target={cat.slug.startsWith('http') ? '_blank' : undefined}
                 className="group flex flex-col items-center text-center transition-all duration-300 hover:-translate-y-1"
               >
                 <div className="w-full aspect-[4/3] rounded-xl overflow-hidden shadow-md group-hover:shadow-xl border border-border transition-all bg-card mb-4">
