@@ -1,13 +1,13 @@
-export async function verifyRecaptcha(token: string, action: string): Promise<boolean> {
+export async function verifyRecaptcha(token: string, action: string): Promise<{ success: boolean; error?: string }> {
   const secretKey = process.env.RECAPTCHA_SECRET_KEY;
 
   if (!secretKey) {
     console.warn("RECAPTCHA_SECRET_KEY is not set. Bypassing recaptcha verification.");
-    return true; // Bypass if not configured, or you could return false to enforce it
+    return { success: true };
   }
 
   if (!token) {
-    return false;
+    return { success: false, error: "Missing token" };
   }
 
   try {
@@ -15,14 +15,18 @@ export async function verifyRecaptcha(token: string, action: string): Promise<bo
     const response = await fetch(url, { method: "POST" });
     const data = await response.json();
 
-    if (data.success && data.score >= 0.5 && data.action === action) {
-      return true;
+    if (data.success) {
+      if (data.score < 0.5) {
+        return { success: false, error: `Score too low: ${data.score}` };
+      }
+      if (data.action !== action) {
+        return { success: false, error: `Action mismatch. Expected ${action}, got ${data.action}` };
+      }
+      return { success: true };
     } else {
-      console.error("Recaptcha verification failed:", data);
-      return false;
+      return { success: false, error: `Google API rejected: ${JSON.stringify(data["error-codes"] || data)}` };
     }
-  } catch (error) {
-    console.error("Error verifying recaptcha:", error);
-    return false;
+  } catch (error: any) {
+    return { success: false, error: `Network error: ${error.message}` };
   }
 }

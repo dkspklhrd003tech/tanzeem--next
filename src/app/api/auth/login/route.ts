@@ -24,11 +24,10 @@ export async function POST(request: NextRequest) {
 
     const { email, password, recaptchaToken } = validationResult.data;
 
-    // Verify reCAPTCHA
     if (recaptchaToken) {
-      const isValidRecaptcha = await verifyRecaptcha(recaptchaToken, "admin_login");
-      if (!isValidRecaptcha) {
-        return ApiError("ReCAPTCHA verification failed. Please try again.", 403);
+      const recaptchaResult = await verifyRecaptcha(recaptchaToken, "admin_login");
+      if (!recaptchaResult.success) {
+        return ApiError(`ReCAPTCHA failed: ${recaptchaResult.error}`, 403);
       }
     } else {
       // If token is missing entirely, we can enforce it if the env is set

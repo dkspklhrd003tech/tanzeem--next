@@ -63,9 +63,9 @@ export async function POST(request: NextRequest) {
 
     // Verify reCAPTCHA
     if (data.recaptchaToken) {
-      const isValidRecaptcha = await verifyRecaptcha(data.recaptchaToken, data.formType === "join" ? "join_form" : "contact_form");
-      if (!isValidRecaptcha) {
-        return ApiError("ReCAPTCHA verification failed. Please try again.", 403);
+      const recaptchaResult = await verifyRecaptcha(data.recaptchaToken, data.formType === "join" ? "join_form" : "contact_form");
+      if (!recaptchaResult.success) {
+        return ApiError(`ReCAPTCHA failed: ${recaptchaResult.error}`, 403);
       }
     } else {
       if (process.env.RECAPTCHA_SECRET_KEY) {
