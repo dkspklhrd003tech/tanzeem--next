@@ -25,7 +25,6 @@ export interface Service {
   imageUrl?: string | null;
   isPublished: boolean;
   createdAt?: Date | string | null;
-  createdAt?: Date | string | null;
   orderIndex?: number | null;
 }
 
