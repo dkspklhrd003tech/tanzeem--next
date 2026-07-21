@@ -198,7 +198,7 @@ export function AudioUploader({
                 style={{ width: `${uploadProgress}%` }}
               />
             </div>
-            <p className="text-xs text-muted-foreground">{uploadProgress}% complete</p>
+            <p className="text-xs text-muted-foreground">{uploadProgress}% Completed</p>
           </div>
         )}
 
