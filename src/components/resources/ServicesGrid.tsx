@@ -71,7 +71,7 @@ export function ServicesGrid({ initialItems }: ServicesGridProps) {
   return (
     <div className="w-full">
       {/* Search & Filters Bar */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         {/* Search */}
         <div className="relative flex-1 max-w-7xl mx-auto border border-primary/80 rounded-lg">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4.5 w-4.5 text-[#0d5844]" />
