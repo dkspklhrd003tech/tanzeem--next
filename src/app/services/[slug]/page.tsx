@@ -87,7 +87,7 @@ export default async function ServiceDetailsPage({ params }: { params: Promise<{
                                     const pdfTitle = typeof block.value === 'string' ? null : block.value?.title;
                                     if (!pdfUrl) return null;
 
-                                    // Resolve absolute URL for Google Docs Viewer
+                                    // Resolve absolute URL
                                     let resolvedPdfUrl = pdfUrl;
                                     if (resolvedPdfUrl.startsWith("public_html/")) resolvedPdfUrl = "/" + resolvedPdfUrl;
                                     if (resolvedPdfUrl.startsWith("/public_html/uploads")) resolvedPdfUrl = resolvedPdfUrl.replace("/public_html/uploads", "/uploads");
@@ -96,8 +96,6 @@ export default async function ServiceDetailsPage({ params }: { params: Promise<{
                                     const absolutePdfUrl = resolvedPdfUrl.startsWith('http') 
                                         ? resolvedPdfUrl 
                                         : `${mediaBase.replace(/\/$/, '')}${resolvedPdfUrl.startsWith('/') ? '' : '/'}${resolvedPdfUrl}`;
-                                        
-                                    const googleViewerUrl = `https://docs.google.com/viewer?url=${encodeURIComponent(absolutePdfUrl)}&embedded=true`;
 
                                     return (
                                         <div key={idx} className="space-y-4">
@@ -112,7 +110,7 @@ export default async function ServiceDetailsPage({ params }: { params: Promise<{
                                             {/* Inline PDF Viewer */}
                                             <div className="w-full rounded-xl overflow-hidden border border-border shadow-lg bg-black/5">
                                                 <iframe
-                                                    src={googleViewerUrl}
+                                                    src={`${absolutePdfUrl}#toolbar=1`}
                                                     className="w-full border-0"
                                                     style={{ height: "82vh", minHeight: "520px" }}
                                                     title={pdfTitle || block.title || "PDF Document"}

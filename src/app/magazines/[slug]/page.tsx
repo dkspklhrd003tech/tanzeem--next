@@ -106,7 +106,7 @@ export default async function MagazineDetailsPage({ params }: PageProps) {
                 {targetLink.url ? (
                     <div className="w-full max-w-5xl h-[85vh] rounded-xl overflow-hidden border border-border shadow-xl bg-white relative">
                         <iframe
-                            src={targetLink.url}
+                            src={targetLink.url?.endsWith(".pdf") ? `${targetLink.url}#toolbar=1` : targetLink.url}
                             className="w-full h-full border-none"
                             title={targetLink.title}
                             allow="autoplay; fullscreen"
