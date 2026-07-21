@@ -58,7 +58,7 @@ export function BooksCategoryGrid({ categoryName, initialItems }: BooksCategoryG
   const handleShare = async (item: Book) => {
     if (typeof window === "undefined" || typeof navigator === "undefined") return;
     const shareUrl = `${window.location.href}?book=${item.id}`;
-    
+
     try {
       if (navigator.clipboard) {
         await navigator.clipboard.writeText(shareUrl);
@@ -139,7 +139,7 @@ export function BooksCategoryGrid({ categoryName, initialItems }: BooksCategoryG
             >
               <div className="w-full aspect-[10/16] bg-muted relative border-b border-border">
                 {item.coverImage ? (
-                  <img src={item.coverImage} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                  <img src={item.coverImage} alt={item.title} className="w-full h-full object-cover transition-transform duration-500" />
                 ) : (
                   <div className="absolute inset-0 flex items-center justify-center text-muted-foreground/50 bg-slate-200">
                     <FileText className="w-12 h-12" />
@@ -147,7 +147,7 @@ export function BooksCategoryGrid({ categoryName, initialItems }: BooksCategoryG
                 )}
               </div>
               <div className="p-4 flex flex-col flex-1">
-                <h3 className="font-bold text-foreground text-sm leading-snug group-hover:text-primary transition-colors duration-200 text-center mb-2 line-clamp-3">
+                <h3 className="font-bold text-foreground text-sm leading-snug group-hover:text-primary hover:bg-primary-light hover:border-primary/70 hover:shadow-md hover:shadow-primary/10 transition-colors duration-200 text-center mb-2 line-clamp-2">
                   {item.title}
                 </h3>
               </div>

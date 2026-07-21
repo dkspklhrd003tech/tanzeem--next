@@ -125,7 +125,7 @@ export default async function BookDetailPage({ params }: Props) {
 
           {book.fileUrl && (
             <div className="mt-4">
-              <div className="w-full h-[85vh] rounded-xl overflow-hidden border border-border shadow-xl bg-white relative">
+              <div className="max-w-4xl mx-auto h-[85vh] rounded-xl overflow-hidden border border-border shadow-xl bg-white relative">
                 <iframe
                   src={`${book.fileUrl}#toolbar=1`}
                   className="w-full h-full border-none"
@@ -154,7 +154,7 @@ export default async function BookDetailPage({ params }: Props) {
                       </div>
                     )}
                   </div>
-                  <p className="text-[11px] font-medium text-foreground group-hover:text-primary line-clamp-2 text-center transition-colors leading-snug">
+                  <p className="text-[12px] font-semibold text-foreground group-hover:text-primary line-clamp-2 text-center transition-colors leading-snug">
                     {r.title}
                   </p>
                 </Link>
