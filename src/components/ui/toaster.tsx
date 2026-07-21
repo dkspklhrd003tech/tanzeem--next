@@ -20,36 +20,38 @@ export function Toaster() {
       return 'border-red-500/20 bg-red-950/60 text-red-200 backdrop-blur-md shadow-[0_8px_32px_rgba(239,68,68,0.15)]';
     }
 
-    const t = ((title ? String(title) : "") + (description ? " " + String(description) : ""));
+    const t = ((title ? String(title) : "") + (description ? " " + String(description) : "")).toLowerCase();
     if (
-      t.includes("Success") ||
-      t.includes("Successfully") ||
-      t.includes("Saved") ||
-      t.includes("Created") ||
-      t.includes("Updated") ||
-      t.includes("Uploaded") ||
-      t.includes("Complete") ||
-      t.includes("Dispatched") ||
-      t.includes("Transmit") ||
-      t.includes("Published") ||
-      t.includes("Active")
+      t.includes("success") ||
+      t.includes("successfully") ||
+      t.includes("saved") ||
+      t.includes("created") ||
+      t.includes("updated") ||
+      t.includes("uploaded") ||
+      t.includes("complete") ||
+      t.includes("dispatched") ||
+      t.includes("transmit") ||
+      t.includes("published") ||
+      t.includes("generated") ||
+      t.includes("generate") ||
+      t.includes("active")
     ) {
       return "border-emerald-500/20 bg-emerald-950/60 text-emerald-200 backdrop-blur-md shadow-[0_8px_32px_rgba(16,185,129,0.15)]";
     }
     if (
-      t.includes("Error") ||
-      t.includes("Invalid") ||
-      t.includes("Failed") ||
-      t.includes("Delete") ||
-      t.includes("Remove")
+      t.includes("error") ||
+      t.includes("invalid") ||
+      t.includes("failed") ||
+      t.includes("delete") ||
+      t.includes("remove")
     ) {
       return "border-red-500/20 bg-red-600 text-red-100 backdrop-blur-md shadow-[0_8px_32px_rgba(239,68,68,0.15)]";
     }
     if (
-      t.includes("Warning") ||
-      t.includes("Caution") ||
-      t.includes("Attention") ||
-      t.includes("Awaiting")
+      t.includes("warning") ||
+      t.includes("caution") ||
+      t.includes("attention") ||
+      t.includes("awaiting")
     ) {
       return "border-amber-500/20 bg-amber-950/60 text-amber-200 backdrop-blur-md shadow-[0_8px_32px_rgba(245,158,11,0.15)]";
     }
@@ -63,36 +65,38 @@ export function Toaster() {
       return <AlertTriangle className="h-5 w-5 text-red-400 shrink-0 mt-0.5 filter drop-shadow-[0_0_8px_rgba(239,68,68,0.3)]" />;
     }
 
-    const t = ((title ? String(title) : "") + (description ? " " + String(description) : ""));
+    const t = ((title ? String(title) : "") + (description ? " " + String(description) : "")).toLowerCase();
     if (
-      t.includes("Success") ||
-      t.includes("Successfully") ||
-      t.includes("Saved") ||
-      t.includes("Created") ||
-      t.includes("Updated") ||
-      t.includes("Uploaded") ||
-      t.includes("Complete") ||
-      t.includes("Dispatched") ||
-      t.includes("Transmit") ||
-      t.includes("Published") ||
-      t.includes("Active")
+      t.includes("success") ||
+      t.includes("successfully") ||
+      t.includes("saved") ||
+      t.includes("created") ||
+      t.includes("updated") ||
+      t.includes("uploaded") ||
+      t.includes("complete") ||
+      t.includes("dispatched") ||
+      t.includes("transmit") ||
+      t.includes("published") ||
+      t.includes("generated") ||
+      t.includes("generate") ||
+      t.includes("active")
     ) {
       return <CheckCircle2 className="h-5 w-5 text-emerald-400 shrink-0 mt-0.5 filter drop-shadow-[0_0_8px_rgba(16,185,129,0.3)]" />;
     }
     if (
-      t.includes("Error") ||
-      t.includes("Invalid") ||
-      t.includes("Failed") ||
-      t.includes("Delete") ||
-      t.includes("Remove")
+      t.includes("error") ||
+      t.includes("invalid") ||
+      t.includes("failed") ||
+      t.includes("delete") ||
+      t.includes("remove")
     ) {
       return <AlertTriangle className="h-5 w-5 text-red-400 shrink-0 mt-0.5 filter drop-shadow-[0_0_8px_rgba(239,68,68,0.3)]" />;
     }
     if (
-      t.includes("Warning") ||
-      t.includes("Caution") ||
-      t.includes("Attention") ||
-      t.includes("Awaiting")
+      t.includes("warning") ||
+      t.includes("caution") ||
+      t.includes("attention") ||
+      t.includes("awaiting")
     ) {
       return <AlertCircle className="h-5 w-5 text-amber-400 shrink-0 mt-0.5 filter drop-shadow-[0_0_8px_rgba(245,158,11,0.3)]" />;
     }
@@ -126,9 +130,9 @@ export function Toaster() {
           >
             {toastIcon}
             <div className="grid gap-1 flex-1">
-              {title && <ToastTitle className="text-sm font-bold tracking-tight">{title}</ToastTitle>}
+              {title && <ToastTitle className="text-sm font-bold tracking-tight capitalize">{title}</ToastTitle>}
               {description && (
-                <ToastDescription className="text-xs font-semibold opacity-85 leading-normal">{description}</ToastDescription>
+                <ToastDescription className="text-xs font-semibold opacity-85 leading-normal capitalize">{description}</ToastDescription>
               )}
             </div>
             {action}
