@@ -322,7 +322,7 @@ export default function AudiosPageEditor({ pageId, initialPageData }: { pageId: 
             ) : filteredCategories.length === 0 ? (
               <div className="bg-card rounded-xl border p-12 text-center text-muted-foreground">No Audios Found.</div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
                 {filteredCategories.map(cat => (
                   <SortableCategoryCard key={cat.id} id={cat.id} item={cat} onClick={setActiveCategory}
                     videoCount={audioList.filter(b => b.categoryId === cat.id).length}

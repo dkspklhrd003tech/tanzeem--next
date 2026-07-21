@@ -439,7 +439,7 @@ export default function VideosPageEditor({ pageId, initialPageData }: { pageId: 
             ) : filteredCategories.length === 0 ? (
               <div className="bg-card rounded-xl border p-12 text-center text-muted-foreground">No Videos Found.</div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
                 {filteredCategories.map(cat => (
                   <SortableCategoryCard key={cat.id} id={cat.id} item={cat} onClick={setActiveCategory}
                     videoCount={videosList.filter(b => b.categoryId === cat.id).length}
@@ -474,7 +474,7 @@ export default function VideosPageEditor({ pageId, initialPageData }: { pageId: 
               <Plus className="w-4 h-4 mr-1" /> Add Speaker
             </Button>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
             {speakersList.map(speaker => (
               <div key={speaker.id} className="group flex flex-col bg-card rounded-xl border border-border overflow-hidden hover:border-primary/50 transition-colors">
                 <div className="aspect-square bg-muted relative border-b border-border">

@@ -235,7 +235,7 @@ export default function SpeakersPageEditor({ pageId, initialPageData, mediaConte
             {isLoading ? (
               <div className="flex justify-center py-10"><Loader2 className="w-6 h-6 animate-spin text-primary" /></div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
                 {speakersList.map(speaker => (
                   <div key={speaker.id} onClick={() => setActiveSpeaker(speaker)} className="cursor-pointer group flex flex-col bg-card rounded-xl border border-border overflow-hidden hover:border-primary/50 transition-colors">
                     <div className="aspect-square bg-muted relative border-b border-border">
