@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 
 export function AdminLogin() {
   const router = useRouter();
@@ -16,19 +17,28 @@ export function AdminLogin() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const { executeRecaptcha } = useGoogleReCaptcha();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    if (!executeRecaptcha) {
+      setError("ReCAPTCHA is not ready. Please try again.");
+      return;
+    }
+
     setIsLoading(true);
 
     try {
+      const recaptchaToken = await executeRecaptcha("admin_login");
+
       const response = await fetch("/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, recaptchaToken }),
       });
 
       const data = await response.json();

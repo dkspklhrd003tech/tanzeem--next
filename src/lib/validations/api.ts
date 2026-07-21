@@ -3,6 +3,7 @@ import { z } from "zod";
 export const loginSchema = z.object({
   email: z.string().email("Invalid email format").max(255),
   password: z.string().min(8, "Password must be at least 8 characters").max(100),
+  recaptchaToken: z.string().optional(),
 });
 
 export const contactFormSchema = z.object({
@@ -13,4 +14,5 @@ export const contactFormSchema = z.object({
   subject: z.string().min(3, "Subject is too short").max(200),
   message: z.string().min(2, "Message is too short").max(2000),
   department: z.string().optional().nullable(),
+  recaptchaToken: z.string().optional(),
 });

@@ -7,6 +7,7 @@ import { contactFormSchema } from "@/lib/validations/api";
 import { ApiError, ApiSuccess } from "@/lib/api-response";
 import { sendEmail } from "@/lib/email";
 import { inArray } from "drizzle-orm";
+import { verifyRecaptcha } from "@/lib/recaptcha";
 
 export const dynamic = "force-dynamic";
 
@@ -59,6 +60,19 @@ export async function POST(request: NextRequest) {
     }
 
     const data = validationResult.data;
+
+    // Verify reCAPTCHA
+    if (data.recaptchaToken) {
+      const isValidRecaptcha = await verifyRecaptcha(data.recaptchaToken, data.formType === "join" ? "join_form" : "contact_form");
+      if (!isValidRecaptcha) {
+        return ApiError("ReCAPTCHA verification failed. Please try again.", 403);
+      }
+    } else {
+      if (process.env.RECAPTCHA_SECRET_KEY) {
+        return ApiError("ReCAPTCHA verification is required.", 403);
+      }
+    }
+
     const submissionId = crypto.randomUUID();
 
     await db.insert(formSubmissions).values({

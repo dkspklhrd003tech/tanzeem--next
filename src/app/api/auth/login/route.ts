@@ -6,6 +6,7 @@ import { eq } from "drizzle-orm";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { loginSchema } from "@/lib/validations/api";
 import { ApiError, ApiSuccess } from "@/lib/api-response";
+import { verifyRecaptcha } from "@/lib/recaptcha";
 
 export async function POST(request: NextRequest) {
   try {
@@ -21,7 +22,20 @@ export async function POST(request: NextRequest) {
       return ApiError("Invalid email or password format", 400);
     }
 
-    const { email, password } = validationResult.data;
+    const { email, password, recaptchaToken } = validationResult.data;
+
+    // Verify reCAPTCHA
+    if (recaptchaToken) {
+      const isValidRecaptcha = await verifyRecaptcha(recaptchaToken, "admin_login");
+      if (!isValidRecaptcha) {
+        return ApiError("ReCAPTCHA verification failed. Please try again.", 403);
+      }
+    } else {
+      // If token is missing entirely, we can enforce it if the env is set
+      if (process.env.RECAPTCHA_SECRET_KEY) {
+        return ApiError("ReCAPTCHA verification is required.", 403);
+      }
+    }
 
     // Find user
     const [user] = await db.select().from(users).where(eq(users.email, email)).limit(1);

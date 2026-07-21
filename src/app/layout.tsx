@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { MainLayout } from "@/components/layout";
 import Script from "next/script";
 import { organisationJsonLd, SITE_URL, SITE_NAME } from "@/lib/seo";
+import { RecaptchaProvider } from "@/components/providers/RecaptchaProvider";
 
 
 // ── Heading font: Plus Jakarta Sans (matched from tanzeem.org extraction) ──
@@ -117,7 +118,9 @@ export default async function RootLayout({
       <body
         className={`${plusJakartaSans.variable} ${kumbhSans.variable} antialiased bg-background text-foreground font-body`}
       >
-        <MainLayout>{children}</MainLayout>
+        <RecaptchaProvider>
+          <MainLayout>{children}</MainLayout>
+        </RecaptchaProvider>
 
         <Toaster />
       </body>

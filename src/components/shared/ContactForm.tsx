@@ -9,11 +9,13 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 
 export function ContactForm({ settings = {} }: { settings?: Record<string, string> }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const { toast } = useToast();
+  const { executeRecaptcha } = useGoogleReCaptcha();
 
   const [attemptedSubmit, setAttemptedSubmit] = useState(false);
 
@@ -45,9 +47,20 @@ export function ContactForm({ settings = {} }: { settings?: Record<string, strin
       return;
     }
 
+    if (!executeRecaptcha) {
+      toast({
+        title: "Error",
+        description: "ReCAPTCHA is not ready. Please try again.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
+      const recaptchaToken = await executeRecaptcha("contact_form");
+
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -58,6 +71,7 @@ export function ContactForm({ settings = {} }: { settings?: Record<string, strin
           phone: phone.trim() || undefined,
           subject: subject.trim(),
           message: message.trim(),
+          recaptchaToken
         }),
       });
 

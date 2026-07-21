@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 
 // ── Membership tiers ──────────────────────────────────────────────────────────
 const TIERS = [
@@ -66,6 +67,7 @@ const EMPTY: FormState = {
 
 export function JoinPage() {
   const { toast } = useToast();
+  const { executeRecaptcha } = useGoogleReCaptcha();
   const [form, setForm] = useState<FormState>(EMPTY);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -79,8 +81,15 @@ export function JoinPage() {
       toast({ variant: "destructive", title: "Please select a membership type." });
       return;
     }
+    if (!executeRecaptcha) {
+      toast({ variant: "destructive", title: "ReCAPTCHA is not ready. Please try again." });
+      return;
+    }
+
     setSubmitting(true);
     try {
+      const recaptchaToken = await executeRecaptcha("join_form");
+
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -91,6 +100,7 @@ export function JoinPage() {
           phone: form.phone,
           subject: `Join Request — ${form.tier.toUpperCase()} — ${form.city}`,
           message: `Occupation: ${form.occupation}\nMembership Type: ${form.tier}\n\n${form.message}`,
+          recaptchaToken
         }),
       });
       if (!res.ok) throw new Error("Submission failed");
