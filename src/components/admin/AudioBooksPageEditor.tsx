@@ -951,27 +951,6 @@ export default function AudioBooksPageEditor({ pageId, initialPageData }: AudioB
                   />
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="publishedAt">Published Date <span className="text-destructive">*</span></Label>
-                    <Input
-                      id="publishedAt"
-                      type="date"
-                      required
-                      value={formData.publishedAt}
-                      onChange={(e) => setFormData(prev => ({ ...prev, publishedAt: e.target.value }))}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between p-3 border border-border rounded-xl bg-muted/10 mt-6 h-[42px]">
-                    <span className="text-sm font-medium">Published Visibility</span>
-                    <Switch
-                      checked={formData.isPublished}
-                      onCheckedChange={(checked) => setFormData(prev => ({ ...prev, isPublished: checked }))}
-                    />
-                  </div>
-                </div>
-
                 <div className="space-y-2">
                   <Label htmlFor="excerpt">Excerpt Summary</Label>
                   <Textarea

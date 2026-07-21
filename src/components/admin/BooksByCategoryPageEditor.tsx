@@ -190,6 +190,7 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
   const [bookFormErrors, setBookFormErrors] = useState<Record<string, string>>({});
 
   const [isUploading, setIsUploading] = useState(false);
+  const [uploadStatus, setUploadStatus] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
 
   const [dragActive, setDragActive] = useState(false);
@@ -406,18 +407,79 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      await handlePdfUploadDirectly(e.dataTransfer.files[0]);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      const files = Array.from(e.dataTransfer.files).filter(f => f.type === "application/pdf");
+      if (files.length === 0) {
+        toast({ variant: "destructive", title: "Invalid file type", description: "Only PDF files are supported." });
+        return;
+      }
+      if (files.length === 1) {
+        await handlePdfUploadDirectly(files[0]);
+      } else {
+        await handleBulkPdfUpload(files);
+      }
     }
   };
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      await handlePdfUploadDirectly(e.target.files[0]);
+    if (e.target.files && e.target.files.length > 0) {
+      const files = Array.from(e.target.files).filter(f => f.type === "application/pdf");
+      if (files.length === 1) {
+        await handlePdfUploadDirectly(files[0]);
+      } else if (files.length > 1) {
+        await handleBulkPdfUpload(files);
+      }
     }
+    // reset input so the same file can be selected again
+    if (e.target) e.target.value = '';
   };
 
   const { uploadFile: chunkedUpload } = useChunkedUpload();
+
+  const handleBulkPdfUpload = async (files: File[]) => {
+    const MAX_FILE_SIZE = 100 * 1024 * 1024;
+    const validFiles = files.filter(f => f.size <= MAX_FILE_SIZE);
+    
+    if (validFiles.length < files.length) {
+      toast({ variant: "destructive", title: "Some files skipped", description: "Files over 100MB were skipped." });
+    }
+    if (validFiles.length === 0) return;
+
+    setIsUploading(true);
+    let successCount = 0;
+
+    for (let i = 0; i < validFiles.length; i++) {
+      const file = validFiles[i];
+      setUploadStatus(`Uploading ${i + 1} of ${validFiles.length}: ${file.name}`);
+      try {
+        const data = await chunkedUpload(file, {});
+
+        const baseName = file.name.replace(/\.[^/.]+$/, "");
+        const cleanedTitle = baseName.split(/[-_]+/).map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
+        
+        const payload = {
+          title: cleanedTitle,
+          slug: slugify(cleanedTitle) + "-" + Date.now().toString().slice(-4),
+          description: "",
+          coverImage: "",
+          fileUrl: data.url,
+          isPublished: true,
+          categoryId: activeCategory?.id,
+          order: books.filter(b => b.categoryId === activeCategory?.id).length + successCount,
+        };
+
+        const res = await fetch("/api/admin/books", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+        if (res.ok) successCount++;
+      } catch (err) {
+        console.error("Failed to upload/save", file.name, err);
+      }
+    }
+
+    setUploadStatus("");
+    setIsUploading(false);
+    toast({ title: "Bulk Upload Complete", description: `Successfully uploaded and saved ${successCount} out of ${validFiles.length} books.` });
+    fetchBooks();
+  };
 
   const handlePdfUploadDirectly = async (file: File) => {
     if (file.type !== "application/pdf") {
@@ -430,6 +492,7 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
       return;
     }
     setIsUploading(true);
+    setUploadStatus("");
     try {
       const data = await chunkedUpload(file, {
         onProgress: (pct) => console.log(`[BooksByCategory] Upload progress: ${pct}%`),
@@ -543,21 +606,21 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
                   isUploading && "pointer-events-none opacity-60"
                 )}
               >
-                <input ref={fileInputRef} type="file" accept=".pdf" className="hidden" onChange={handleFileChange} />
+                <input ref={fileInputRef} type="file" accept=".pdf" multiple className="hidden" onChange={handleFileChange} />
                 {isUploading ? (
                   <div className="flex flex-col items-center gap-3">
                     <Loader2 className="h-10 w-10 text-primary animate-spin" />
-                    <p className="font-semibold text-foreground">Uploading PDF document...</p>
-                    <p className="text-xs text-muted-foreground">This will only take a moment.</p>
+                    <p className="font-semibold text-foreground text-center line-clamp-1 px-4">{uploadStatus || "Uploading PDF document..."}</p>
+                    <p className="text-xs text-muted-foreground">Please do not close this page.</p>
                   </div>
                 ) : (
                   <div className="flex flex-col items-center gap-3">
                     <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary mb-1">
                       <UploadCloud className="h-6 w-6" />
                     </div>
-                    <p className="font-bold text-foreground text-lg">Drag & Drop a PDF Book here</p>
+                    <p className="font-bold text-foreground text-lg">Drag & Drop PDF Books here</p>
                     <p className="text-sm text-muted-foreground max-w-sm">
-                      Or click anywhere to choose a file from your computer. Titles will auto-generate.
+                      Or click anywhere to choose files from your computer. You can upload multiple PDFs at once. Titles will auto-generate.
                     </p>
                   </div>
                 )}
