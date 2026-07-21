@@ -110,48 +110,7 @@ function SortableSpeakerCard({ speaker, audioCount, onClick, onEdit, onDelete }:
   );
 }
 
-function InlineStatEditor({ icon, value, onChange, title }: { icon: React.ReactNode, value: number, onChange: (val: number) => void, title: string }) {
-  const [editing, setEditing] = useState(false);
-  const [val, setVal] = useState(value);
-
-  useEffect(() => { setVal(value); }, [value]);
-
-  const handleBlur = () => {
-    setEditing(false);
-    if (val !== value) {
-      onChange(val);
-    }
-  };
-
-  return (
-    <span 
-      className="flex items-center gap-1.5 cursor-pointer hover:text-primary transition-colors border border-transparent hover:border-border rounded px-1 -ml-1" 
-      title={title} 
-      onClick={(e) => { e.preventDefault(); e.stopPropagation(); setEditing(true); }}
-    >
-      {icon}
-      {editing ? (
-        <input 
-          type="number" 
-          value={val} 
-          onChange={(e) => setVal(parseInt(e.target.value) || 0)} 
-          onBlur={handleBlur}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') e.currentTarget.blur();
-            if (e.key === 'Escape') { setVal(value); setEditing(false); }
-          }}
-          autoFocus
-          className="w-14 h-5 text-[11px] bg-background border border-primary/50 focus:border-primary focus:ring-1 focus:ring-primary rounded px-1 outline-none text-foreground"
-          onClick={(e) => e.stopPropagation()}
-        />
-      ) : (
-        <span>{value}</span>
-      )}
-    </span>
-  );
-}
-
-function SortableAudioCard({ audio, onEdit, onDelete, onUpdateStat }: { audio: AudioItem, onEdit: (a: AudioItem) => void, onDelete: (a: AudioItem) => void, onUpdateStat: (a: AudioItem, updates: any) => void }) {
+function SortableAudioCard({ audio, onEdit, onDelete }: { audio: AudioItem, onEdit: (a: AudioItem) => void, onDelete: (a: AudioItem) => void }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: audio.id });
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -172,24 +131,9 @@ function SortableAudioCard({ audio, onEdit, onDelete, onUpdateStat }: { audio: A
         </div>
         <p className="text-xs text-muted-foreground break-all line-clamp-1">{audio.audioUrl || "No URL"}</p>
         <div className="flex gap-4 mt-2 text-[11px] text-muted-foreground/80 font-medium">
-          <InlineStatEditor 
-            icon={<PlayCircle className="w-3.5 h-3.5" />} 
-            value={audio.playCount || audio.viewCount || 0} 
-            title="Plays / Views"
-            onChange={(val) => onUpdateStat(audio, { playCount: val })} 
-          />
-          <InlineStatEditor 
-            icon={<Share2 className="w-3.5 h-3.5" />} 
-            value={audio.shareCount || 0} 
-            title="Shares"
-            onChange={(val) => onUpdateStat(audio, { shareCount: val })} 
-          />
-          <InlineStatEditor 
-            icon={<Download className="w-3.5 h-3.5" />} 
-            value={audio.downloadCount || 0} 
-            title="Downloads"
-            onChange={(val) => onUpdateStat(audio, { downloadCount: val })} 
-          />
+          <span className="flex items-center gap-1.5" title="Plays / Views"><PlayCircle className="w-3.5 h-3.5" /> {audio.playCount || audio.viewCount || 0}</span>
+          <span className="flex items-center gap-1.5" title="Shares"><Share2 className="w-3.5 h-3.5" /> {audio.shareCount || 0}</span>
+          <span className="flex items-center gap-1.5" title="Downloads"><Download className="w-3.5 h-3.5" /> {audio.downloadCount || 0}</span>
         </div>
       </div>
       <div className="flex gap-2 justify-end mt-4 relative z-30" onPointerDown={e => e.stopPropagation()}>
@@ -333,20 +277,6 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
     toast({ title: "Audio Order saved", description: "The new audio sorting order has been saved." });
   };
 
-  const handleUpdateAudioStat = async (audio: AudioItem, updates: any) => {
-    try {
-      setAudiosList(prev => prev.map(a => a.id === audio.id ? { ...a, ...updates } : a));
-      await fetch(`/api/admin/audio/${audio.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updates)
-      });
-      toast({ title: "Updated", description: "Counter updated successfully." });
-    } catch (e) {
-      toast({ variant: "destructive", title: "Error", description: "Failed to update counter." });
-    }
-  };
-
   const handleSpeakerDelete = async (item: SpeakerItem) => {
     try {
       await fetch(`/api/admin/speakers/${item.id}`, { method: "DELETE" });
@@ -485,7 +415,6 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
                         audio={audio}
                         onEdit={(a) => router.push(`/sitemanager/media/audio/${a.id}`)}
                         onDelete={(a) => { setDeletingAudio(a); }}
-                        onUpdateStat={handleUpdateAudioStat}
                       />
                     ))}
                     {activeAudios.length === 0 && <p className="text-muted-foreground col-span-full">No audios found for this speaker.</p>}

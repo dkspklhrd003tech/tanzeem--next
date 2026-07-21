@@ -115,48 +115,7 @@ function SortableSpeakerCard({ speaker, videoCount, onClick, onEdit, onDelete }:
   );
 }
 
-function InlineStatEditor({ icon, value, onChange, title }: { icon: React.ReactNode, value: number, onChange: (val: number) => void, title: string }) {
-  const [editing, setEditing] = useState(false);
-  const [val, setVal] = useState(value);
-
-  useEffect(() => { setVal(value); }, [value]);
-
-  const handleBlur = () => {
-    setEditing(false);
-    if (val !== value) {
-      onChange(val);
-    }
-  };
-
-  return (
-    <span 
-      className="flex items-center gap-1.5 cursor-pointer hover:text-primary transition-colors border border-transparent hover:border-border rounded px-1 -ml-1" 
-      title={title} 
-      onClick={(e) => { e.preventDefault(); e.stopPropagation(); setEditing(true); }}
-    >
-      {icon}
-      {editing ? (
-        <input 
-          type="number" 
-          value={val} 
-          onChange={(e) => setVal(parseInt(e.target.value) || 0)} 
-          onBlur={handleBlur}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') e.currentTarget.blur();
-            if (e.key === 'Escape') { setVal(value); setEditing(false); }
-          }}
-          autoFocus
-          className="w-14 h-5 text-[11px] bg-background border border-primary/50 focus:border-primary focus:ring-1 focus:ring-primary rounded px-1 outline-none text-foreground"
-          onClick={(e) => e.stopPropagation()}
-        />
-      ) : (
-        <span>{value}</span>
-      )}
-    </span>
-  );
-}
-
-function SortableVideoCard({ video, onEdit, onDelete, onUpdateStat }: { video: VideoItem, onEdit: (v: VideoItem) => void, onDelete: (v: VideoItem) => void, onUpdateStat: (v: VideoItem, updates: any) => void }) {
+function SortableVideoCard({ video, onEdit, onDelete }: { video: VideoItem, onEdit: (v: VideoItem) => void, onDelete: (v: VideoItem) => void }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: video.id });
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -177,24 +136,9 @@ function SortableVideoCard({ video, onEdit, onDelete, onUpdateStat }: { video: V
         </div>
         <p className="text-xs text-muted-foreground break-all line-clamp-1">{video.videoUrl || video.embedUrl || "No URL"}</p>
         <div className="flex gap-4 mt-2 text-[11px] text-muted-foreground/80 font-medium">
-          <InlineStatEditor 
-            icon={<PlayCircle className="w-3.5 h-3.5" />} 
-            value={video.playCount || video.viewCount || 0} 
-            title="Plays / Views"
-            onChange={(val) => onUpdateStat(video, { playCount: val })} 
-          />
-          <InlineStatEditor 
-            icon={<Share2 className="w-3.5 h-3.5" />} 
-            value={video.shareCount || 0} 
-            title="Shares"
-            onChange={(val) => onUpdateStat(video, { shareCount: val })} 
-          />
-          <InlineStatEditor 
-            icon={<Download className="w-3.5 h-3.5" />} 
-            value={video.downloadCount || 0} 
-            title="Downloads"
-            onChange={(val) => onUpdateStat(video, { downloadCount: val })} 
-          />
+          <span className="flex items-center gap-1.5" title="Plays / Views"><PlayCircle className="w-3.5 h-3.5" /> {video.playCount || video.viewCount || 0}</span>
+          <span className="flex items-center gap-1.5" title="Shares"><Share2 className="w-3.5 h-3.5" /> {video.shareCount || 0}</span>
+          <span className="flex items-center gap-1.5" title="Downloads"><Download className="w-3.5 h-3.5" /> {video.downloadCount || 0}</span>
         </div>
       </div>
       <div className="flex gap-2 justify-end mt-4 relative z-30" onPointerDown={e => e.stopPropagation()}>
@@ -389,20 +333,6 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
     toast({ title: "Video Order saved", description: "The new video sorting order has been saved." });
   };
 
-  const handleUpdateVideoStat = async (video: VideoItem, updates: any) => {
-    try {
-      setVideosList(prev => prev.map(v => v.id === video.id ? { ...v, ...updates } : v));
-      await fetch(`/api/admin/videos/${video.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updates)
-      });
-      toast({ title: "Updated", description: "Counter updated successfully." });
-    } catch (e) {
-      toast({ variant: "destructive", title: "Error", description: "Failed to update counter." });
-    }
-  };
-
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, setter: (url: string) => void) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -544,7 +474,6 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
                         video={video}
                         onEdit={(v) => { setEditingVideoId(v.id); setVideoFormData({ title: v.title, slug: v.slug, videoUrl: v.videoUrl || "", embedUrl: v.embedUrl || "", thumbnailUrl: v.thumbnailUrl || "", isPublished: v.isPublished, isNew: v.isNew || false, customFields: v.customFields || {} }); setIsVideoModalOpen(true); }}
                         onDelete={(v) => { setDeletingVideo(v); }}
-                        onUpdateStat={handleUpdateVideoStat}
                       />
                     ))}
                     {activeVideos.length === 0 && <p className="text-muted-foreground col-span-full">No videos found for this speaker.</p>}
