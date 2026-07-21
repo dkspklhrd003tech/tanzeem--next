@@ -49,7 +49,7 @@ export default async function BooksByCategoryPage() {
   return (
     <main className=" bg-background">
       <div className="container mx-auto py-6 md:py-8">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-6xl">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {display.map((cat) => {
             const href = `/books-by-category/${cat.slug}`;
             return (
