@@ -114,14 +114,14 @@ export default async function CategoryAudiosPage({ params }: { params: Promise<{
                       key={item.id}
                       className="flex flex-col md:flex-row md:items-center justify-between gap-4 px-4 py-3 rounded-xl border border-primary/30 hover:border-border/30 bg-muted/50 hover:bg-primary-light/80 transition-colors cursor-pointer group shadow-sm hover:shadow-md h-full"
                     >
-                      <div className="flex-1">
+                      <div className="flex-1 min-w-0">
                         <div className="flex flex-col items-start gap-1 mb-1">
                           {/* Date Pill */}
                           <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-primary/10 text-primary text-[10px] sm:text-xs font-bold mb-1 w-fit">
                             <Calendar className="w-3.5 h-3.5" />
                             <span>{formattedDate}</span>
                           </div>
-                          <h3 className="font-bold text-md flex items-center gap-2 group-hover:text-primary transition-colors uppercase leading-snug line-clamp-2">
+                          <h3 className="font-bold text-md group-hover:text-primary transition-colors uppercase leading-snug line-clamp-2">
                             {item.title}
                           </h3>
                         </div>
