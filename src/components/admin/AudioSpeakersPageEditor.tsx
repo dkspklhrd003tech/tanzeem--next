@@ -97,7 +97,8 @@ function SortableSpeakerCard({ speaker, audioCount, onClick, onEdit, onDelete }:
       <div className="p-4">
         <div className="flex justify-between items-start mb-2">
           <div>
-            <h3 className="font-bold text-base line-clamp-1 group-hover:text-primary pl-1">{speaker.name}<p className="text-xs ml-2 px-3 py-1 text-primary text-center rounded-full border border-primary bg-primary-light mt-0.5">{audioCount} {audioCount === 1 ? 'Audio' : 'Audios'}</p></h3>
+            <h3 className="font-bold text-base line-clamp-1 group-hover:text-primary pl-1">{speaker.name}</h3>
+            <span className="inline-block text-xs px-2 py-0.5 text-primary rounded-full border border-primary/40 bg-primary/10 mt-1 font-medium">{audioCount} {audioCount === 1 ? 'Audio' : 'Audios'}</span>
           </div>
           <div className="flex gap-1" onClick={e => e.stopPropagation()}>
             <Button variant="ghost" size="icon" className="h-6 w-6 text-emerald-500" onClick={() => onEdit(speaker)}><Pencil className="w-3 h-3" /></Button>
