@@ -60,6 +60,9 @@ function revalidateEntityPaths(entity: string) {
             revalidatePath("/services/[slug]", "page");
         } else if (entity === "book-categories" || entity === "books") {
             revalidatePath("/books-by-category");
+        } else if (entity === "speakers") {
+            revalidatePath("/audios-by-speaker");
+            revalidatePath("/videos-by-speakers");
         }
         revalidatePath("/", "layout");
         revalidatePath("/", "page");

@@ -64,10 +64,11 @@ function revalidateEntityPaths(entity: string) {
         } else if (entity === "book-categories" || entity === "books") {
             revalidatePath("/books-by-category");
             revalidatePath("/books");
-        } else if (entity === "videos" || entity === "video-categories" || entity === "speakers") {
+        } else if (entity === "videos" || entity === "video-categories" || entity === "speakers" || entity === "audio") {
             revalidatePath("/videos");
             revalidatePath("/videos-by-category");
             revalidatePath("/videos-by-speakers");
+            revalidatePath("/audios-by-speaker");
         }
         revalidatePath("/", "layout");
         revalidatePath("/", "page");
