@@ -100,11 +100,11 @@ function SortableSpeakerCard({ speaker, audioCount, onClick, onEdit, onDelete }:
             <p className="text-xs text-primary text-center rounded-full border border-primary bg-primary-light mt-0.5">{audioCount} {audioCount === 1 ? 'Audio' : 'Audios'}</p>
           </div>
           <div className="flex gap-1" onClick={e => e.stopPropagation()}>
-            <Button variant="ghost" size="icon" className="h-6 w-6 text-green-500" onClick={() => onEdit(speaker)}><Pencil className="w-3 h-3" /></Button>
-            <Button variant="ghost" size="icon" className="h-6 w-6 text-red-500" onClick={() => onDelete(speaker)}><XCircle className="w-3 h-3" /></Button>
+            <Button variant="ghost" size="icon" className="h-6 w-6 text-emerald-500" onClick={() => onEdit(speaker)}><Pencil className="w-3 h-3" /></Button>
+            <Button variant="ghost" size="icon" className="h-6 w-6 text-red-600" onClick={() => onDelete(speaker)}><XCircle className="w-3 h-3" /></Button>
           </div>
         </div>
-        <p className="text-xs font-nastaleeq text-muted-foreground line-clamp-2" dir="rtl">{speaker.bio}</p>
+        <p className="text-lg font-nastaleeq text-foreground" dir="rtl">{speaker.bio}</p>
       </div>
     </div>
   );

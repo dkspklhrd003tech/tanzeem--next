@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Pencil, XCircle, Settings2, RefreshCw, User, ArrowLeft, Video, Music, Bot, UploadCloud } from "lucide-react";
+import { Plus, Pencil, XCircle, Settings2, RefreshCw, User, ArrowLeft, Video, Music, Bot, UploadCloud, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -28,6 +28,7 @@ interface SpeakerItem {
   slug: string;
   bio?: string;
   avatar?: string;
+  isActive?: boolean;
 }
 
 interface AudioItem {
@@ -127,6 +128,25 @@ export default function SpeakersPageEditor({ pageId, initialPageData, mediaConte
       setIsSpeakerModalOpen(false);
       fetchData();
     } catch (e: any) { toast({ variant: "destructive", title: "Error", description: e.message }); }
+  };
+
+  const handleSpeakerToggleActive = async (item: SpeakerItem) => {
+    try {
+      const newStatus = item.isActive === false ? true : false;
+      const res = await fetch(`/api/admin/speakers/${item.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isActive: newStatus }),
+      });
+      if (!res.ok) throw new Error("Failed to update status");
+      toast({
+        title: newStatus ? "Speaker Enabled" : "Speaker Hidden",
+        description: `${item.name} is now ${newStatus ? "visible on frontend" : "hidden from frontend"}.`,
+      });
+      fetchData();
+    } catch (e) {
+      toast({ variant: "destructive", title: "Failed to update status" });
+    }
   };
 
   const handleSpeakerDelete = async (item: SpeakerItem) => {
@@ -260,6 +280,15 @@ export default function SpeakersPageEditor({ pageId, initialPageData, mediaConte
                           </p>
                         </div>
                         <div className="flex gap-1" onClick={e => e.stopPropagation()}>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className={`h-6 w-6 ${speaker.isActive !== false ? "text-blue-500 hover:text-blue-600" : "text-gray-400 hover:text-gray-600"}`}
+                            title={speaker.isActive !== false ? "Visible on Frontend (Click to hide)" : "Hidden on Frontend (Click to show)"}
+                            onClick={() => handleSpeakerToggleActive(speaker)}
+                          >
+                            {speaker.isActive !== false ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+                          </Button>
                           <Button variant="ghost" size="icon" className="h-6 w-6 text-green-500" onClick={() => { setEditingSpeakerId(speaker.id); setSpeakerFormData({ name: speaker.name, slug: speaker.slug, bio: speaker.bio || "", avatar: speaker.avatar || "" }); setIsSpeakerModalOpen(true); }}><Pencil className="w-3 h-3" /></Button>
                           <Button variant="ghost" size="icon" className="h-6 w-6 text-red-500" onClick={() => setDeletingSpeaker(speaker)}><XCircle className="w-3 h-3" /></Button>
                         </div>

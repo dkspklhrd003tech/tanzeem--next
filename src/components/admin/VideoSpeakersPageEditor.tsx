@@ -109,7 +109,7 @@ function SortableSpeakerCard({ speaker, videoCount, onClick, onEdit, onDelete }:
             <Button variant="ghost" size="icon" className="h-6 w-6 text-red-500" onClick={() => onDelete(speaker)}><XCircle className="w-3 h-3" /></Button>
           </div>
         </div>
-        <p className="text-xs font-nastaleeq text-muted-foreground line-clamp-2" dir="rtl">{speaker.bio}</p>
+        <p className="text-lg font-nastaleeq text-foreground" dir="rtl">{speaker.bio}</p>
       </div>
     </div>
   );

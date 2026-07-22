@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { db } from "@/db";
 import { speakers, audio } from "@/db/schema";
-import { eq, asc, count } from "drizzle-orm";
+import { eq, and, asc, count } from "drizzle-orm";
 import { buildMetadata } from "@/lib/seo";
 
 export const revalidate = 3600; // 1 hour ISR
@@ -27,7 +27,7 @@ export default async function AudiosBySpeakersPage() {
         imageUrl: speakers.avatar,
       })
       .from(speakers)
-      .where(eq(speakers.type, "audio"))
+      .where(and(eq(speakers.type, "audio"), eq(speakers.isActive, true)))
       .orderBy(asc(speakers.order), asc(speakers.name));
 
     if (speakerRows.length === 0) {
@@ -40,6 +40,7 @@ export default async function AudiosBySpeakersPage() {
           imageUrl: speakers.avatar,
         })
         .from(speakers)
+        .where(eq(speakers.isActive, true))
         .orderBy(asc(speakers.order), asc(speakers.name));
     }
 
