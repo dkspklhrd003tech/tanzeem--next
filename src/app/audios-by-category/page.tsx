@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { AudioLines } from "lucide-react";
+import { Headphones } from "lucide-react";
 import { db } from "@/db";
 import { audioCategories, audio } from "@/db/schema";
 import { count, eq, asc, desc, isNull } from "drizzle-orm";
@@ -69,7 +69,7 @@ export default async function AudiosByCategoryPage() {
               <Link
                 key={cat.id}
                 href={href}
-                className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-xl border border-primary/50 hover:border-border/50 bg-muted/50 hover:bg-primary-light/80 transition-colors cursor-pointer group shadow-sm hover:shadow-md h-full"
+                className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-xl border border-primary/30 hover:border-border/30 bg-muted/50 hover:bg-primary-light/80 transition-colors cursor-pointer group shadow-sm hover:shadow-md h-full"
               >
                 <div className="flex-1">
                   <h3 className="font-bold text-md flex items-center gap-2 group-hover:text-primary transition-colors leading-snug line-clamp-2">
@@ -85,7 +85,7 @@ export default async function AudiosByCategoryPage() {
 
                 <div className="shrink-0 flex flex-col items-center justify-center gap-1 mt-2 md:mt-0">
                   <button className="h-10 w-10 flex items-center justify-center rounded-full bg-primary text-white group-hover:bg-primary/10 group-hover:text-primary transition-all scale-95 group-hover:scale-100 shadow-sm shrink-0">
-                    <AudioLines className="w-7 h-7" />
+                    <Headphones className="w-7 h-7" />
                   </button>
                   <span className="text-[11px] text-foreground font-medium transition-opacity hidden md:block">
                     {cat.count} Audios

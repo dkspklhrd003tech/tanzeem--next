@@ -163,7 +163,7 @@ export function NestedCategoryGrid({ heading, style = "capsule", categories = []
                         asChild
                         className="shrink-0 w-full sm:w-auto rounded-full bg-primary hover:bg-primary/90 text-primary-foreground"
                       >
-                        <Link href={style === "image_card" ? `/videos/${item.id}` : `/audio/${item.id}`}>
+                        <Link href={style === "image_card" ? `/videos/${item.id}` : `/audio/${item.slug}`}>
                           <Play className="w-4 h-4 mr-2" /> Play Now
                         </Link>
                       </Button>

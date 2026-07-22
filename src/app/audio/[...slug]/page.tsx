@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { Metadata } from "next";
 import { db } from "@/lib/db";
 import { audio, customFieldDefinitions, audioCategories, speakers } from "@/db/schema";
-import { eq, and, ne, desc, asc } from "drizzle-orm";
+import { eq, and, ne, desc, asc, or } from "drizzle-orm";
 import { AudioPlayerPage } from "@/components/resources/AudioPlayerPage";
 import { buildMetadata, audioJsonLd, breadcrumbJsonLd } from "@/lib/seo";
 
@@ -22,7 +22,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     .from(audio)
     .leftJoin(audioCategories, eq(audio.categoryId, audioCategories.id))
     .leftJoin(speakers, eq(audio.speakerId, speakers.id))
-    .where(and(eq(audio.slug, slug), eq(audio.isPublished, true)))
+    .where(
+      and(
+        or(eq(audio.slug, slug), eq(audio.id, slug)),
+        eq(audio.isPublished, true)
+      )
+    )
     .limit(1);
 
   if (!result) return { title: "Audio Not Found" };
@@ -49,7 +54,12 @@ export default async function AudioDetailPage({ params }: Props) {
     .from(audio)
     .leftJoin(audioCategories, eq(audio.categoryId, audioCategories.id))
     .leftJoin(speakers, eq(audio.speakerId, speakers.id))
-    .where(and(eq(audio.slug, slug), eq(audio.isPublished, true)))
+    .where(
+      and(
+        or(eq(audio.slug, slug), eq(audio.id, slug)),
+        eq(audio.isPublished, true)
+      )
+    )
     .limit(1);
 
   if (!result) notFound();

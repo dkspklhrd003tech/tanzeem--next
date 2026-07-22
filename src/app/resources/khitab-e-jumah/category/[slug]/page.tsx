@@ -85,7 +85,7 @@ export default async function KhitabEJumahCategoryPage({ params }: Props) {
                             return (
                                 <Link key={item.id}
                                     href={`/resources/khitab-e-jumah/${cleanSlug}`}
-                                    className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-xl border border-primary/50 hover:border-border/50 bg-muted/50 hover:bg-primary-light/80 transition-colors cursor-pointer group shadow-sm hover:shadow-md h-full">
+                                    className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-xl border border-primary/30 hover:border-border/30 bg-muted/50 hover:bg-primary-light/80 transition-colors cursor-pointer group shadow-sm hover:shadow-md h-full">
                                     <div className="flex-1">
                                         <div className="flex flex-col items-start gap-1 mb-1">
                                             {/* Date Pill */}
