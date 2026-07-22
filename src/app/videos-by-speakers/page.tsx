@@ -30,6 +30,19 @@ export default async function VideosBySpeakersPage() {
       .where(eq(speakers.type, "video"))
       .orderBy(asc(speakers.order), asc(speakers.name));
 
+    if (speakerRows.length === 0) {
+      speakerRows = await db
+        .select({
+          id: speakers.id,
+          name: speakers.name,
+          slug: speakers.slug,
+          bio: speakers.bio,
+          imageUrl: speakers.avatar,
+        })
+        .from(speakers)
+        .orderBy(asc(speakers.order), asc(speakers.name));
+    }
+
     const countRows = await db
       .select({ speakerId: videos.speakerId, total: count() })
       .from(videos)

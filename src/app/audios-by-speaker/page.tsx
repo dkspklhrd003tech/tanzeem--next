@@ -30,6 +30,19 @@ export default async function AudiosBySpeakersPage() {
       .where(eq(speakers.type, "audio"))
       .orderBy(asc(speakers.order), asc(speakers.name));
 
+    if (speakerRows.length === 0) {
+      speakerRows = await db
+        .select({
+          id: speakers.id,
+          name: speakers.name,
+          slug: speakers.slug,
+          bio: speakers.bio,
+          imageUrl: speakers.avatar,
+        })
+        .from(speakers)
+        .orderBy(asc(speakers.order), asc(speakers.name));
+    }
+
     const countRows = await db
       .select({ speakerId: audio.speakerId, total: count() })
       .from(audio)

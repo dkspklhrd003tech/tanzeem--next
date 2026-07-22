@@ -119,7 +119,9 @@ export default function SpeakersPageEditor({ pageId, initialPageData, mediaConte
     try {
       const url = editingSpeakerId ? `/api/admin/speakers/${editingSpeakerId}` : "/api/admin/speakers";
       const method = editingSpeakerId ? "PUT" : "POST";
-      const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(speakerFormData) });
+      const speakerType = mediaContext === "video" ? "video" : "audio";
+      const payload = { ...speakerFormData, type: speakerType };
+      const res = await fetch(url, { method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
       if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || "Failed");
       toast({ title: "Success", description: "Speaker saved" });
       setIsSpeakerModalOpen(false);
