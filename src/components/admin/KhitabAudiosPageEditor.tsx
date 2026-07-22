@@ -557,7 +557,7 @@ export default function KhitabAudiosPageEditor({ pageId, initialPageData }: { pa
                 {isUploading ? (
                   <div className="flex flex-col items-center gap-3">
                     <RefreshCw className="h-10 w-10 text-primary animate-spin" />
-                    <p className="font-semibold text-foreground">Uploading Audio...</p>
+                    <p className="text-sm font-bold animate-pulse text-primary">Uploading Audio...</p>
                     <p className="text-xs text-muted-foreground">This will only take a moment.</p>
                   </div>
                 ) : (

@@ -473,7 +473,7 @@ function AudioUploader({ value = "", onChange }: AudioUploaderProps) {
           {isUploading ? (
             <>
               <RefreshCw className="h-7 w-7 text-primary animate-spin mb-2" />
-              <p className="text-xs font-medium">Uploading Audio...</p>
+              <p className="text-sm font-bold animate-pulse text-primary">Uploading Audio...</p>
             </>
           ) : (
             <>

@@ -191,7 +191,7 @@ export function AudioUploader({
         {isUploading && (
           <div className="p-8 flex flex-col items-center justify-center gap-3">
             <RefreshCw className="h-9 w-9 text-primary animate-spin" />
-            <p className="text-sm font-bold text-foreground">Uploading Audio…</p>
+            <p className="text-sm font-bold animate-pulse text-primary">Uploading Audio…</p>
             <div className="w-full max-w-xs bg-muted rounded-full h-2 overflow-hidden">
               <div
                 className="h-full bg-primary rounded-full transition-all duration-300"
