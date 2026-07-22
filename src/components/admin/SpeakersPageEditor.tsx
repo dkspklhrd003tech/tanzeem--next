@@ -255,12 +255,11 @@ export default function SpeakersPageEditor({ pageId, initialPageData, mediaConte
                     <div className="p-4">
                       <div className="flex justify-between items-start mb-2">
                         <div>
-                          <h3 className="font-bold text-base line-clamp-1 group-hover:text-primary pl-1">{speaker.name}</h3>
-                          <p className="text-xs text-primary text-center rounded-full border border-primary bg-primary-light mt-0.5">
+                          <h3 className="font-bold text-base line-clamp-1 group-hover:text-primary pl-1">{speaker.name} <p className="text-xs ml-2 px-3 py-1 text-primary text-center rounded-full border border-primary bg-primary-light mt-0.5">
                             {(mediaContext === "audio" || mediaContext === "both") && `${audiosList.filter(a => a.speakerId === speaker.id).length} Audios`}
                             {mediaContext === "both" && " • "}
                             {(mediaContext === "video" || mediaContext === "both") && `${videosList.filter(v => v.speakerId === speaker.id).length} Videos`}
-                          </p>
+                          </p></h3>
                         </div>
                         <div className="flex gap-1" onClick={e => e.stopPropagation()}>
                           <Button variant="ghost" size="icon" className="h-6 w-6 text-green-500" onClick={() => { setEditingSpeakerId(speaker.id); setSpeakerFormData({ name: speaker.name, slug: speaker.slug, bio: speaker.bio || "", avatar: speaker.avatar || "" }); setIsSpeakerModalOpen(true); }}><Pencil className="w-3 h-3" /></Button>
