@@ -92,8 +92,7 @@ export default async function AudioDetailPage({ params }: Props) {
             : item.categoryId ? [eq(audio.categoryId, item.categoryId)] : [])
       )
     )
-    .orderBy(asc(audio.title))
-    .limit(6);
+    .orderBy(asc(audio.title));
 
   const related = relatedQuery.map((row) => ({
     ...row.audio,

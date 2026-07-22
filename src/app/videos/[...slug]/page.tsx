@@ -91,8 +91,7 @@ export default async function VideoDetailRoute({ params }: Props) {
             : item.categoryId ? [eq(videos.categoryId, item.categoryId)] : [])
       )
     )
-    .orderBy(desc(videos.createdAt))
-    .limit(6);
+    .orderBy(desc(videos.createdAt));
 
   const related = relatedQuery.map((row) => ({
     ...row.videos,

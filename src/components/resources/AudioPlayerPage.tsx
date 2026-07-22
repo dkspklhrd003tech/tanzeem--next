@@ -232,7 +232,7 @@ export function AudioPlayerPage({ item, related, customFieldSchema = [] }: Audio
           {related.length > 0 && (
             <div className="bg-primary-light border border-primary/80 rounded-lg p-5">
               <h2 className="text-xs font-semibold uppercase tracking-wide text-primary mb-4">Related Lectures</h2>
-              <div className="space-y-3">
+              <div className="space-y-3 max-h-[380px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-primary/20">
                 {related.map((r) => (
                   <Link
                     key={r.id}

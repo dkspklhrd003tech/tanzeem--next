@@ -261,7 +261,7 @@ export function VideoDetailPage({ item, related, customFieldSchema = [] }: { ite
           {related.length > 0 && (
             <div className="bg-primary-light border border-primary/80 rounded-lg p-5">
               <h2 className="text-xs font-semibold uppercase tracking-wide text-primary mb-4">Related Videos</h2>
-              <div className="space-y-3">
+              <div className="space-y-3 max-h-[380px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-primary/20">
                 {related.map((r) => (
                   <Link key={r.id} href={`/videos/${r.slug}`} className="flex gap-3 group">
                     <div className="w-16 h-12 rounded-lg overflow-hidden bg-muted shrink-0">
