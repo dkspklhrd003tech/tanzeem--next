@@ -183,15 +183,13 @@ function LoginForm() {
   const executeLogin = async () => {
     setError(null);
 
-    if (!executeRecaptcha) {
-      setError("ReCAPTCHA is not ready. Please try again.");
-      return;
-    }
-
     setIsLoading(true);
 
     try {
-      const recaptchaToken = await executeRecaptcha("admin_login");
+      let recaptchaToken: string | undefined = undefined;
+      if (executeRecaptcha) {
+        recaptchaToken = await executeRecaptcha("admin_login");
+      }
 
       const res = await fetch("/api/auth/login", {
         method: "POST",
