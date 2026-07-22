@@ -69,7 +69,7 @@ export default async function AudiosByCategoryPage() {
               <Link
                 key={cat.id}
                 href={href}
-                className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-xl border border-primary/30 hover:border-border/30 bg-muted/50 hover:bg-primary-light/80 transition-colors cursor-pointer group shadow-sm hover:shadow-md h-full"
+                className="flex flex-col md:flex-row md:items-center justify-between gap-4 px-4 py-3 rounded-xl border border-primary/30 hover:border-border/30 bg-muted/50 hover:bg-primary-light/80 transition-colors cursor-pointer group shadow-sm hover:shadow-md h-full"
               >
                 <div className="flex-1">
                   <h3 className="font-bold text-md flex items-center gap-2 group-hover:text-primary transition-colors leading-snug line-clamp-2">

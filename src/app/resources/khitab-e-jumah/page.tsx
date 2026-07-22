@@ -46,7 +46,7 @@ export default async function KhitabEJumahCategoriesPage() {
                             const sermonCount = allSermons.filter(s => s.categoryId === cat.id).length;
 
                             return (
-                                <Link href={`/resources/khitab-e-jumah/category/${cleanSlug}`} key={cat.id} className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-xl border border-primary/30 hover:border-border/30 bg-muted/50 hover:bg-primary-light/80 transition-colors cursor-pointer group shadow-sm hover:shadow-md h-full">
+                                <Link href={`/resources/khitab-e-jumah/category/${cleanSlug}`} key={cat.id} className="flex flex-col md:flex-row md:items-center justify-between gap-4 px-4 py-3 rounded-xl border border-primary/30 hover:border-border/30 bg-muted/50 hover:bg-primary-light/80 transition-colors cursor-pointer group shadow-sm hover:shadow-md h-full">
                                     <div className="flex-1">
                                         <div className="flex flex-col items-start gap-1 mb-1">
                                             <h3 className="font-bold text-md flex items-center gap-2 group-hover:text-primary transition-colors uppercase leading-snug line-clamp-3">
