@@ -350,6 +350,7 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
           <TabsContent value="speakers" className="space-y-6">
             <div className="flex justify-between items-center">
               <h2 className="text-xl font-bold">Audio Speakers</h2>
+              <p className="text-xs text-primary text-center rounded-full border border-primary bg-primary-light mt-0.5">{audiosList.length} {audiosList.length === 1 ? 'Audio' : 'Audios'}</p>
               <Button size="sm" onClick={() => router.push("/sitemanager/media/speaker/new")}>
                 <Plus className="w-4 h-4 mr-1" /> Add Speaker
               </Button>
