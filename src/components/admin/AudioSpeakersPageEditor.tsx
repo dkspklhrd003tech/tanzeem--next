@@ -71,7 +71,7 @@ interface AudioItem {
   order?: number;
 }
 
-function SortableSpeakerCard({ speaker, audioCount, onClick, onEdit, onDelete, onToggleActive }: { speaker: SpeakerItem, audioCount: number, onClick: () => void, onEdit: (s: SpeakerItem) => void, onDelete: (s: SpeakerItem) => void, onToggleActive: (s: SpeakerItem) => void }) {
+function SortableSpeakerCard({ speaker, audioCount, onClick, onEdit, onDelete }: { speaker: SpeakerItem, audioCount: number, onClick: () => void, onEdit: (s: SpeakerItem) => void, onDelete: (s: SpeakerItem) => void }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: speaker.id });
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -101,15 +101,6 @@ function SortableSpeakerCard({ speaker, audioCount, onClick, onEdit, onDelete, o
             <p className="text-xs text-primary text-center rounded-full border border-primary bg-primary-light mt-0.5">{audioCount} {audioCount === 1 ? 'Audio' : 'Audios'}</p>
           </div>
           <div className="flex gap-1" onClick={e => e.stopPropagation()}>
-            <Button
-              variant="ghost"
-              size="icon"
-              className={`h-6 w-6 ${speaker.isActive !== false ? "text-blue-500 hover:text-blue-600" : "text-gray-400 hover:text-gray-600"}`}
-              title={speaker.isActive !== false ? "Visible on Frontend (Click to hide)" : "Hidden on Frontend (Click to show)"}
-              onClick={() => onToggleActive(speaker)}
-            >
-              {speaker.isActive !== false ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
-            </Button>
             <Button variant="ghost" size="icon" className="h-6 w-6 text-emerald-500" onClick={() => onEdit(speaker)}><Pencil className="w-3 h-3" /></Button>
             <Button variant="ghost" size="icon" className="h-6 w-6 text-red-600" onClick={() => onDelete(speaker)}><XCircle className="w-3 h-3" /></Button>
           </div>
@@ -287,24 +278,7 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
     toast({ title: "Audio Order saved", description: "The new audio sorting order has been saved." });
   };
 
-  const handleSpeakerToggleActive = async (item: SpeakerItem) => {
-    try {
-      const newStatus = item.isActive === false ? true : false;
-      const res = await fetch(`/api/admin/speakers/${item.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ isActive: newStatus }),
-      });
-      if (!res.ok) throw new Error("Failed to update status");
-      toast({
-        title: newStatus ? "Speaker Enabled" : "Speaker Hidden",
-        description: `${item.name} is now ${newStatus ? "visible on frontend" : "hidden from frontend"}.`,
-      });
-      fetchData();
-    } catch (e) {
-      toast({ variant: "destructive", title: "Failed to update status" });
-    }
-  };
+
 
   const handleSpeakerDelete = async (item: SpeakerItem) => {
     try {
@@ -394,7 +368,6 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
                         onClick={() => handleSetActiveSpeaker(speaker)}
                         onEdit={(s) => router.push(`/sitemanager/media/speaker/${s.id}`)}
                         onDelete={(s) => setDeletingSpeaker(s)}
-                        onToggleActive={handleSpeakerToggleActive}
                       />
                     ))}
                   </div>

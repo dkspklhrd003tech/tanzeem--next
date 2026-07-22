@@ -27,7 +27,7 @@ export default async function AudiosBySpeakersPage() {
         imageUrl: speakers.avatar,
       })
       .from(speakers)
-      .where(and(eq(speakers.type, "audio"), eq(speakers.isActive, true)))
+      .where(eq(speakers.type, "audio"))
       .orderBy(asc(speakers.order), asc(speakers.name));
 
     if (speakerRows.length === 0) {
@@ -40,7 +40,6 @@ export default async function AudiosBySpeakersPage() {
           imageUrl: speakers.avatar,
         })
         .from(speakers)
-        .where(eq(speakers.isActive, true))
         .orderBy(asc(speakers.order), asc(speakers.name));
     }
 
