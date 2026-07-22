@@ -27,7 +27,7 @@ export function VideoListClient({ vids }: { vids: any[] }) {
             <div>
               <div className="flex items-center gap-2 mb-1">
                 {v.episodeNumber && <span className="text-xs font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded">Ep {v.episodeNumber}</span>}
-                <h3 className="font-semibold text-lg flex items-center gap-2 group-hover:text-primary transition-colors">
+                <h3 className="font-semibold text-lg flex items-center gap-2 group-hover:text-primary transition-colors line-clamp-2">
                   {v.title}
                   {v.isNew && <span className="text-[10px] uppercase font-bold tracking-wider bg-green-500 text-white px-2 py-0.5 rounded-full">New</span>}
                 </h3>
