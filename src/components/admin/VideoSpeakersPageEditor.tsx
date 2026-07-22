@@ -408,7 +408,6 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
           <TabsContent value="speakers" className="space-y-6">
             <div className="flex justify-between items-center">
               <h2 className="text-xl font-bold">Video Speakers</h2>
-              <p className="text-xs text-primary text-center rounded-full border border-primary bg-primary-light mt-0.5">{videosList.length} {videosList.length === 1 ? 'Video' : 'Videos'}</p>
               <Button size="sm" onClick={() => { setEditingSpeakerId(null); setSpeakerFormData({ name: "", slug: "", bio: "", avatar: "", type: "video", order: 0, customFields: {} }); setIsSpeakerModalOpen(true); }}>
                 <Plus className="w-4 h-4 mr-1" /> Add Speaker
               </Button>
