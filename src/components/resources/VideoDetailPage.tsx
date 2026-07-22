@@ -269,7 +269,7 @@ export function VideoDetailPage({ item, related, customFieldSchema = [] }: { ite
                         <img src={r.thumbnailUrl} alt={r.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <Video className="h-5 w-5 text-muted-foreground/40" />
+                          <Video className="h-5 w-5 text-primary" />
                         </div>
                       )}
                     </div>

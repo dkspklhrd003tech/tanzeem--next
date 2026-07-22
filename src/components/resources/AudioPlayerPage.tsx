@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { Download, Share2, Clock, Play, ArrowLeft, FileText } from "lucide-react";
+import { Download, Share2, Clock, AudioLines, ArrowLeft, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn, resolveMediaUrl } from "@/lib/utils";
@@ -100,7 +100,7 @@ export function AudioPlayerPage({ item, related, customFieldSchema = [] }: Audio
           </div>
 
           {/* Meta & Actions */}
-          <div className="flex flex-wrap items-center justify-between gap-4 bg-card border border-primary-light rounded-lg p-5">
+          <div className="flex flex-wrap items-center justify-between gap-4 bg-primary-light border border-primary rounded-lg p-5">
             <div className="flex flex-wrap items-center gap-4 text-sm font-medium text-foreground-muted">
               {item.category && (
                 <Badge variant="secondary" className="bg-primary/10 text-primary hover:bg-primary/20 border-0">
@@ -115,7 +115,7 @@ export function AudioPlayerPage({ item, related, customFieldSchema = [] }: Audio
               )}
               <div className="flex items-center gap-4 border-l border-border/50">
                 <div className="flex text-foreground items-center gap-1.5" title="Play">
-                  <Play className="w-4 h-4" />
+                  <AudioLines className="w-4 h-4" />
                 </div>
               </div>
               {item.fileSize ? (
@@ -244,7 +244,7 @@ export function AudioPlayerPage({ item, related, customFieldSchema = [] }: Audio
                         <img src={r.thumbnailUrl} alt={r.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <Play className="h-5 w-5 text-muted-foreground/40" />
+                          <AudioLines className="h-5 w-5 text-primary" />
                         </div>
                       )}
                     </div>
