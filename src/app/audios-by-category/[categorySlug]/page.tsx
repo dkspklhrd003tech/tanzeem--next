@@ -33,7 +33,8 @@ export default async function CategoryAudiosPage({ params }: { params: Promise<{
   if (subCatIds.length > 0) {
     allAudios = await db
       .select({
-        id: audio.slug,
+        id: audio.id,
+        slug: audio.slug,
         title: audio.title,
         description: audio.description,
         audioUrl: audio.audioUrl,
@@ -63,7 +64,8 @@ export default async function CategoryAudiosPage({ params }: { params: Promise<{
   // Fetch direct audios in this category
   directAudios = await db
     .select({
-      id: audio.slug,
+      id: audio.id,
+      slug: audio.slug,
       title: audio.title,
       description: audio.description,
       audioUrl: audio.audioUrl,
@@ -96,7 +98,7 @@ export default async function CategoryAudiosPage({ params }: { params: Promise<{
           <div className="space-y-12">
             {/* Direct Audios */}
             {directAudios.length > 0 && (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {directAudios.map((item) => {
                   const formattedDate = item.createdAt
                     ? new Date(item.createdAt).toLocaleDateString("en-PK", {
@@ -108,7 +110,7 @@ export default async function CategoryAudiosPage({ params }: { params: Promise<{
 
                   return (
                     <Link
-                      href={`/audio/${item.slug}`}
+                      href={`/audio/${item.slug || item.id}`}
                       key={item.id}
                       className="flex flex-col md:flex-row md:items-center justify-between gap-4 px-4 py-3 rounded-xl border border-primary/30 hover:border-border/30 bg-muted/50 hover:bg-primary-light/80 transition-colors cursor-pointer group shadow-sm hover:shadow-md h-full"
                     >

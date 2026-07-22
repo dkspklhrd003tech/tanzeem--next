@@ -650,7 +650,7 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
 
               <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleBookDragEnd}>
                 <SortableContext items={activeBooks.map(b => b.id)} strategy={rectSortingStrategy}>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     {activeBooks.map(book => (
                       <SortableBookCard key={book.id} id={book.id} item={book}
                         onEdit={(item: any) => { setEditingBookId(item.id); setBookFormData({ title: item.title, slug: item.slug, description: item.description || "", coverImage: item.coverImage || "", fileUrl: item.fileUrl || "", isPublished: item.isPublished }); setBookFormErrors({}); setIsBookModalOpen(true); }}
