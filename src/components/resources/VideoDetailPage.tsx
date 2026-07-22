@@ -249,7 +249,7 @@ export function VideoDetailPage({ item, related, customFieldSchema = [] }: { ite
                 )}
                 <div>
                   <p className="font-semibold text-foreground text-sm">{item.speaker.name}</p>
-                  {item.speaker.bio && <p className="text-xs text-foreground-muted mt-0.5 line-clamp-2">{item.speaker.bio}</p>}
+                  {item.speaker.bio && <p className="text-md text-primary font-nastaleeq mt-0.5 line-clamp-1">{item.speaker.bio}</p>}
                 </div>
               </div>
               <Link href={`/videos-by-speakers/${item.speaker.slug}`} className="mt-3 block text-xs text-primary hover:underline">
@@ -269,7 +269,7 @@ export function VideoDetailPage({ item, related, customFieldSchema = [] }: { ite
                         <img src={r.thumbnailUrl} alt={r.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <Video className="h-5 w-5 text-primary" />
+                          <Video className="h-7 w-7 text-primary" />
                         </div>
                       )}
                     </div>

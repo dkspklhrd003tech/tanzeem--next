@@ -114,8 +114,8 @@ export function AudioPlayerPage({ item, related, customFieldSchema = [] }: Audio
                 </div>
               )}
               <div className="flex items-center gap-4 border-l border-border/50">
-                <div className="flex text-foreground items-center gap-1.5" title="Play">
-                  <AudioLines className="w-4 h-4" />
+                <div className="flex text-primary items-center gap-1.5" title="Play">
+                  <AudioLines className="w-5 h-5" />
                 </div>
               </div>
               {item.fileSize ? (
@@ -215,7 +215,7 @@ export function AudioPlayerPage({ item, related, customFieldSchema = [] }: Audio
                 <div>
                   <p className="font-semibold text-foreground text-sm">{item.speaker.name}</p>
                   {item.speaker.bio && (
-                    <p className="text-xs text-foreground-muted mt-0.5 line-clamp-2">{item.speaker.bio}</p>
+                    <p className="text-md text-primary font-nastaleeq mt-0.5 line-clamp-1">{item.speaker.bio}</p>
                   )}
                 </div>
               </div>
@@ -244,7 +244,7 @@ export function AudioPlayerPage({ item, related, customFieldSchema = [] }: Audio
                         <img src={r.thumbnailUrl} alt={r.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <AudioLines className="h-5 w-5 text-primary" />
+                          <AudioLines className="h-7 w-7 text-primary" />
                         </div>
                       )}
                     </div>
