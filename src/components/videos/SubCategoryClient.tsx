@@ -44,8 +44,8 @@ export function SubCategoryClient({ subCategories, directVideos = [] }: { subCat
             <Link key={video.id}
               href={`/videos/${video.id}`}
               className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-lg border border-border/50 hover:border-primary/50 bg-card hover:bg-muted/50 transition-colors cursor-pointer group shadow-sm hover:shadow-md h-full">
-              <div>
-                <h3 className="font-semibold text-lg flex items-center gap-2 group-hover:text-primary transition-colors line-clamp-2">
+              <div className="flex-1 min-w-0">
+                <h3 className="font-semibold text-lg group-hover:text-primary transition-colors line-clamp-2">
                   {video.title}
                 </h3>
                 {video.description && <p className="text-sm text-muted-foreground line-clamp-2 mt-1">{video.description}</p>}
@@ -97,8 +97,8 @@ export function SubCategoryClient({ subCategories, directVideos = [] }: { subCat
                   <div className="absolute inset-0 bg-black/10 transition-opacity duration-300 opacity-0 group-hover:opacity-100" />
                 </Link>
 
-                <Link href={`/videos-by-category/${sub.slug}`} target={sub.customFields?.openInNewTab ? "_blank" : undefined} className="text-center w-full px-2 hover:opacity-80 transition-opacity">
-                  <h3 className="text-lg md:text-xl font-semibold transition-colors duration-300 text-foreground group-hover:text-primary text-center mx-auto">
+                <Link href={`/videos-by-category/${sub.slug}`} target={sub.customFields?.openInNewTab ? "_blank" : undefined} className="text-center w-full px-2 min-w-0 hover:opacity-80 transition-opacity">
+                  <h3 className="text-lg md:text-xl font-semibold transition-colors duration-300 text-foreground group-hover:text-primary text-center mx-auto line-clamp-2">
                     {sub.name}
                   </h3>
                   {sub.customFields?.urduName && (

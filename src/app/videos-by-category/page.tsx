@@ -80,8 +80,8 @@ export default async function VideosByCategoryPage() {
                 </div>
 
                 {/* Text Content Below */}
-                <div className="text-center w-full px-2">
-                  <h3 className="text-lg md:text-xl font-semibold text-foreground group-hover:text-primary transition-colors duration-300">
+                <div className="text-center w-full px-2 min-w-0">
+                  <h3 className="text-lg md:text-xl font-semibold text-foreground group-hover:text-primary transition-colors duration-300 line-clamp-2">
                     {cat.name}
                   </h3>
                   {cat.customFields?.urduName && (
