@@ -119,7 +119,7 @@ export default async function CategoryAudiosPage({ params }: { params: Promise<{
                             <Calendar className="w-3.5 h-3.5" />
                             <span>{formattedDate}</span>
                           </div>
-                          <h3 className="font-bold text-md flex items-center gap-2 group-hover:text-primary transition-colors uppercase leading-snug line-clamp-3">
+                          <h3 className="font-bold text-md flex items-center gap-2 group-hover:text-primary transition-colors uppercase leading-snug line-clamp-2">
                             {item.title}
                           </h3>
                         </div>
