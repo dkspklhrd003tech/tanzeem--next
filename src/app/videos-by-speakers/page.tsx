@@ -90,16 +90,16 @@ export default async function VideosBySpeakersPage() {
                     </div>
                   )}
                 </div>
-                <div className="p-4 flex flex-col items-center justify-center bg-card hover:bg-primary-light">
-                  <h2 className="text-[16px] font-medium text-foreground hover:text-primary text-center line-clamp-1 mb-2">
+                <div className="p-4 flex flex-col items-center justify-center gap-3 bg-card hover:bg-primary-light">
+                  <h2 className="text-[16px] font-medium text-foreground hover:text-primary text-center line-clamp-1">
                     {sp.name}
                   </h2>
                   {sp.bio && (
-                    <p className="text-xl text-foreground hover:text-primary text-center line-clamp-1 my-2 font-nastaleeq" dir="rtl">
+                    <p className="text-xl text-foreground hover:text-primary text-center line-clamp-1 font-nastaleeq" dir="rtl">
                       {sp.bio}
                     </p>
                   )}
-                  <span className="text-sm font-normal text-primary bg-primary/10 px-3 py-1 rounded-full">
+                  <span className="text-sm font-medium text-primary bg-primary/10 px-3 py-1 rounded-full">
                     {sp.count} Videos
                   </span>
                 </div>
