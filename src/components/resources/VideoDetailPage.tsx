@@ -249,7 +249,7 @@ export function VideoDetailPage({ item, related, customFieldSchema = [] }: { ite
                 )}
                 <div>
                   <p className="font-semibold text-foreground text-sm">{item.speaker.name}</p>
-                  {item.speaker.bio && <p className="text-md text-primary font-nastaleeq mt-0.5 line-clamp-1">{item.speaker.bio}</p>}
+                  {item.speaker.bio && <p className="text-md text-foreground font-nastaleeq mt-0.5 line-clamp-1">{item.speaker.bio}</p>}
                 </div>
               </div>
               <Link href={`/videos-by-speakers/${item.speaker.slug}`} className="mt-3 block text-xs text-primary hover:underline">

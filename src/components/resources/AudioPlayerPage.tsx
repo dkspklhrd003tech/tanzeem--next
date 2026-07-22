@@ -215,7 +215,7 @@ export function AudioPlayerPage({ item, related, customFieldSchema = [] }: Audio
                 <div>
                   <p className="font-semibold text-foreground text-sm">{item.speaker.name}</p>
                   {item.speaker.bio && (
-                    <p className="text-md text-primary font-nastaleeq mt-0.5 line-clamp-1">{item.speaker.bio}</p>
+                    <p className="text-md text-foreground font-nastaleeq mt-0.5 line-clamp-1">{item.speaker.bio}</p>
                   )}
                 </div>
               </div>
