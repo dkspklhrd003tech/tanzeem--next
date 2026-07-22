@@ -120,9 +120,9 @@ export default function AudioFormPage({ id, speakerIdParam = "", categoryIdParam
         <h1 className="text-2xl font-bold">{isNew ? "Add Audio" : "Edit Audio"}</h1>
         <div className="ml-auto flex gap-2">
           <Button variant="outline" onClick={() => router.back()} className="bg-destructive text-white hover:bg-destructive/80">Cancel</Button>
-          <Button onClick={handleSave} disabled={isSaving} className="bg-primary text-white hover:bg-primary/80">
+          <Button onClick={handleSave} disabled={isSaving} className="bg-primary text-white hover:bg-primary/80 hover:text-white">
             {isSaving ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-            {isNew ? "Create" : "Save Changes"}
+            {isNew ? "Create Audio" : "Save Changes"}
           </Button>
         </div>
       </div>
