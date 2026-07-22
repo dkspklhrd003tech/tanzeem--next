@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Pencil, XCircle, Settings2, RefreshCw, User, ArrowLeft, Video, UploadCloud, Bot, PlayCircle, Share2, Download } from "lucide-react";
+import { Plus, Pencil, XCircle, Settings2, RefreshCw, User, ArrowLeft, Video, UploadCloud, Bot, PlayCircle, Share2, Download, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
@@ -54,6 +55,7 @@ interface SpeakerItem {
   avatar?: string;
   type?: string;
   order?: number;
+  isActive?: boolean;
   customFields?: any;
 }
 
@@ -75,7 +77,7 @@ interface VideoItem {
   order?: number;
 }
 
-function SortableSpeakerCard({ speaker, videoCount, onClick, onEdit, onDelete }: { speaker: SpeakerItem, videoCount: number, onClick: () => void, onEdit: (s: SpeakerItem) => void, onDelete: (s: SpeakerItem) => void }) {
+function SortableSpeakerCard({ speaker, videoCount, onClick, onEdit, onDelete, onTogglePublish }: { speaker: SpeakerItem, videoCount: number, onClick: () => void, onEdit: (s: SpeakerItem) => void, onDelete: (s: SpeakerItem) => void, onTogglePublish: (e: React.MouseEvent, s: SpeakerItem) => void }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: speaker.id });
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -104,8 +106,11 @@ function SortableSpeakerCard({ speaker, videoCount, onClick, onEdit, onDelete }:
             <h3 className="font-bold text-base line-clamp-1 group-hover:text-primary pl-1">{speaker.name}</h3>
             <span className="inline-block text-xs px-2 py-0.5 text-primary rounded-full border border-primary/40 bg-primary/10 mt-1 font-medium">{videoCount} {videoCount === 1 ? 'Video' : 'Videos'}</span>
           </div>
-          <div className="flex gap-1" onClick={e => e.stopPropagation()}>
+          <div className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
             <Button variant="ghost" size="icon" className="h-6 w-6 text-green-500" onClick={() => onEdit(speaker)}><Pencil className="w-3 h-3" /></Button>
+            <Button variant="ghost" size="icon" className={cn("h-6 w-6", speaker.isActive !== false ? "text-blue-500 hover:text-blue-600 hover:bg-blue-500/10" : "text-red-500 hover:text-red-600 hover:bg-red-500/10")} onClick={(e) => onTogglePublish(e, speaker)} title={speaker.isActive !== false ? "Hide from frontend" : "Show on frontend"}>
+              {speaker.isActive !== false ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
+            </Button>
             <Button variant="ghost" size="icon" className="h-6 w-6 text-red-500" onClick={() => onDelete(speaker)}><XCircle className="w-3 h-3" /></Button>
           </div>
         </div>
@@ -303,6 +308,27 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
     toast({ title: "Order saved", description: "The new sorting order has been saved automatically." });
   };
 
+  const handleToggleSpeakerPublish = async (e: React.MouseEvent, item: SpeakerItem) => {
+    e.stopPropagation();
+    const updatedStatus = item.isActive === false ? true : false;
+    setSpeakersList(prev => prev.map(s => s.id === item.id ? { ...s, isActive: updatedStatus } : s));
+    try {
+      const res = await fetch(`/api/admin/speakers/${item.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...item, isActive: updatedStatus }),
+      });
+      if (!res.ok) throw new Error("Failed to update status");
+      toast({
+        title: updatedStatus ? "Speaker Published" : "Speaker Hidden",
+        description: `${item.name} is now ${updatedStatus ? "visible on" : "hidden from"} frontend.`,
+      });
+    } catch (err: any) {
+      setSpeakersList(prev => prev.map(s => s.id === item.id ? { ...s, isActive: item.isActive } : s));
+      toast({ variant: "destructive", title: "Error", description: err.message });
+    }
+  };
+
   const handleVideoDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
     if (!over || active.id === over.id || !activeSpeaker) return;
@@ -430,6 +456,7 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
                           setIsSpeakerModalOpen(true);
                         }}
                         onDelete={(s) => setDeletingSpeaker(s)}
+                        onTogglePublish={handleToggleSpeakerPublish}
                       />
                     ))}
                   </div>

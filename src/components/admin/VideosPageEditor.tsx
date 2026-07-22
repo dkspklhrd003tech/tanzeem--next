@@ -83,31 +83,40 @@ function SortableCategoryCard({ id, item, onEdit, onDelete, onTogglePublish, onC
       ref={setNodeRef}
       style={style}
       className={cn(
-        "group relative flex flex-col bg-card rounded-xl border border-border overflow-hidden transition-all duration-200 cursor-pointer",
-        isDragging ? "shadow-2xl border-primary scale-[1.02]" : "hover:shadow-md hover:border-primary/50"
+        "group relative flex flex-col bg-card rounded-xl border border-border overflow-hidden transition-all duration-200 cursor-pointer p-4 select-none",
+        isDragging ? "shadow-2xl border-primary scale-[1.02] opacity-90" : "hover:shadow-md hover:border-primary/50"
       )}
       onClick={() => onClick(item)}
     >
-      <div className="p-4 flex-1 flex flex-col">
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-2">
-            <Badge variant="outline" className="text-[10px] uppercase">Category</Badge>
-            <Badge variant="secondary" className="text-[10px] uppercase">{videoCount} Videos</Badge>
+      <div className="flex items-start justify-between gap-2 mb-3">
+        <div className="flex items-center gap-1.5 flex-wrap min-w-0">
+          <div
+            {...attributes}
+            {...listeners}
+            onClick={(e) => e.stopPropagation()}
+            className="p-1 rounded text-muted-foreground/60 hover:text-foreground hover:bg-muted cursor-grab active:cursor-grabbing transition-colors shrink-0"
+            title="Drag to reorder category"
+          >
+            <GripVertical className="w-4 h-4" />
           </div>
-          <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
-            <Button variant="ghost" size="icon" className="h-7 w-7 text-green-500 hover:text-green-600 hover:bg-green-500/10" onClick={() => onEdit(item)}>
-              <Pencil className="h-3.5 w-3.5" />
-            </Button>
-            <Button variant="ghost" size="icon" className={cn("h-7 w-7", item.isActive !== false ? "text-green-500 hover:bg-green-500/10" : "text-red-500 hover:bg-red-500/10")} onClick={(e) => onTogglePublish(e, item)} title={item.isActive !== false ? "Hide from frontend" : "Show on frontend"}>
-              {item.isActive !== false ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
-            </Button>
-            <Button variant="ghost" size="icon" className="h-7 w-7 text-red-500 hover:text-red-600 hover:bg-red-500/10" onClick={() => onDelete(item)}>
-              <XCircle className="h-3.5 w-3.5" />
-            </Button>
-          </div>
+          <Badge variant="outline" className="text-[10px] uppercase font-semibold shrink-0">Category</Badge>
+          <Badge variant="secondary" className="text-[10px] uppercase font-semibold shrink-0">{videoCount} {videoCount === 1 ? 'Video' : 'Videos'}</Badge>
         </div>
-        <h3 className="font-bold text-base text-foreground leading-snug line-clamp-1">{item.name}</h3>
-        <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{item.description}</p>
+        <div className="flex items-center gap-0.5 shrink-0" onClick={(e) => e.stopPropagation()}>
+          <Button variant="ghost" size="icon" className="h-7 w-7 text-primary hover:text-green-600 hover:bg-green-500/10" onClick={() => onEdit(item)} title="Edit Category">
+            <Pencil className="h-3.5 w-3.5" />
+          </Button>
+          <Button variant="ghost" size="icon" className={cn("h-7 w-7", item.isActive !== false ? "text-blue-500 hover:text-blue-600 hover:bg-blue-500/10" : "text-red-500 hover:text-red-600 hover:bg-red-500/10")} onClick={(e) => onTogglePublish(e, item)} title={item.isActive !== false ? "Hide from frontend" : "Show on frontend"}>
+            {item.isActive !== false ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
+          </Button>
+          <Button variant="ghost" size="icon" className="h-7 w-7 text-red-500 hover:text-red-600 hover:bg-red-500/10" onClick={() => onDelete(item)} title="Delete Category">
+            <XCircle className="h-3.5 w-3.5" />
+          </Button>
+        </div>
+      </div>
+      <div>
+        <h3 className="font-bold text-base text-foreground leading-snug line-clamp-1 group-hover:text-primary transition-colors">{item.name}</h3>
+        {item.description && <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{item.description}</p>}
       </div>
     </div>
   );
@@ -416,7 +425,26 @@ export default function VideosPageEditor({ pageId, initialPageData }: { pageId: 
     });
   };
 
-  const filteredCategories = categories.filter(c => c.name.toLowerCase().includes(searchQuery.toLowerCase()));
+  const handleCategoryDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const oldIndex = categories.findIndex(i => i.id === active.id);
+    const newIndex = categories.findIndex(i => i.id === over.id);
+    const reordered = arrayMove(categories, oldIndex, newIndex).map((item, idx) => ({ ...item, order: idx }));
+    setCategories(reordered);
+    try {
+      await fetch("/api/admin/video-categories", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orders: reordered.map(i => ({ id: i.id, orderIndex: i.order })) }),
+      });
+      toast({ title: "Category Order saved", description: "The new category order has been saved." });
+    } catch (e) {
+      toast({ variant: "destructive", title: "Error", description: "Failed to save category order." });
+    }
+  };
+
+  const filteredCategories = categories.filter(c => c.name.toLowerCase().includes(searchQuery.toLowerCase())).sort((a, b) => (a.order || 0) - (b.order || 0));
   const activeVideos = videosList
     .filter(b => b.categoryId === activeCategory?.id)
     .filter(b => b.title.toLowerCase().includes(searchQuery.toLowerCase()))
@@ -429,7 +457,7 @@ export default function VideosPageEditor({ pageId, initialPageData }: { pageId: 
         title={activeCategory ? `${activeCategory.name} Videos` : pageForm.title}
         authorName={initialPageData.authorName}
         updatedAt={initialPageData.updatedAt}
-        previewUrl="/videos"
+        previewUrl="/videos-by-category"
         seoUrl={`/sitemanager/pages/${pageId}/edit/seo`}
         isPublished={pageForm.isPublished}
         saving={isSavingPage}
@@ -449,12 +477,12 @@ export default function VideosPageEditor({ pageId, initialPageData }: { pageId: 
           </Button>
         ) : (
           <Button onClick={() => { setEditingVideoId(null); setVideoFormData({ title: "", slug: "", description: "", videoUrl: "", embedUrl: "", thumbnailUrl: "", speakerId: "", isPublished: true }); setVideoFormErrors({}); setIsVideoModalOpen(true); }} className="ml-2 bg-primary text-white hover:bg-primary/95">
-            <Plus className="w-4 h-4 mr-2" /> Add Video
+            <Plus className="w-4 h-4 mr-2" /> Add Video Card
           </Button>
         )}
       </PageActionBar>
 
-      {/* Hidden form trigger for page save */}
+      {/* Hidden button for triggering page save since the action bar is outside the form */}
       <form onSubmit={handlePageSave} className="hidden">
         <button id="hidden-submit-page-btn" type="submit"></button>
       </form>
@@ -483,15 +511,19 @@ export default function VideosPageEditor({ pageId, initialPageData }: { pageId: 
             ) : filteredCategories.length === 0 ? (
               <div className="bg-card rounded-xl border p-12 text-center text-muted-foreground">No Videos Found.</div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
-                {filteredCategories.map(cat => (
-                  <SortableCategoryCard key={cat.id} id={cat.id} item={cat} onClick={setActiveCategory}
-                    videoCount={videosList.filter(b => b.categoryId === cat.id).length}
-                    onEdit={(item: any) => { setEditingCatId(item.id); setCatFormData({ name: item.name, slug: item.slug, description: item.description || "" }); setCatFormErrors({}); setIsCatModalOpen(true); }}
-                    onDelete={(item: CategoryItem) => setDeletingCat(item)}
-                    onTogglePublish={handleCatTogglePublish} />
-                ))}
-              </div>
+              <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleCategoryDragEnd}>
+                <SortableContext items={filteredCategories.map(c => c.id)} strategy={rectSortingStrategy}>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
+                    {filteredCategories.map(cat => (
+                      <SortableCategoryCard key={cat.id} id={cat.id} item={cat} onClick={setActiveCategory}
+                        videoCount={videosList.filter(b => b.categoryId === cat.id).length}
+                        onEdit={(item: any) => { setEditingCatId(item.id); setCatFormData({ name: item.name, slug: item.slug, description: item.description || "" }); setCatFormErrors({}); setIsCatModalOpen(true); }}
+                        onDelete={(item: CategoryItem) => setDeletingCat(item)}
+                        onTogglePublish={handleCatTogglePublish} />
+                    ))}
+                  </div>
+                </SortableContext>
+              </DndContext>
             )
           ) : (
             <div className="space-y-6">

@@ -71,7 +71,7 @@ interface AudioItem {
   order: number;
 }
 
-function SortableCategoryCard({ id, item, onEdit, onDelete, onTogglePublish, onClick, videoCount }: any) {
+function SortableCategoryCard({ id, item, onEdit, onDelete, onTogglePublish, onClick, audioCount }: any) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
   const style = { transform: CSS.Transform.toString(transform), transition, zIndex: isDragging ? 50 : undefined };
 
@@ -80,31 +80,40 @@ function SortableCategoryCard({ id, item, onEdit, onDelete, onTogglePublish, onC
       ref={setNodeRef}
       style={style}
       className={cn(
-        "group relative flex flex-col bg-card rounded-xl border border-border overflow-hidden transition-all duration-200 cursor-pointer",
-        isDragging ? "shadow-2xl border-primary scale-[1.02]" : "hover:shadow-md hover:border-primary/50"
+        "group relative flex flex-col bg-card rounded-xl border border-border overflow-hidden transition-all duration-200 cursor-pointer p-4 select-none",
+        isDragging ? "shadow-2xl border-primary scale-[1.02] opacity-90" : "hover:shadow-md hover:border-primary/50"
       )}
       onClick={() => onClick(item)}
     >
-      <div className="p-4 flex-1 flex flex-col">
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-2">
-            <Badge variant="outline" className="text-[10px] uppercase">Category</Badge>
-            <Badge variant="secondary" className="text-[10px] uppercase">{videoCount} Videos</Badge>
+      <div className="flex items-start justify-between gap-2 mb-3">
+        <div className="flex items-center gap-1.5 flex-wrap min-w-0">
+          <div
+            {...attributes}
+            {...listeners}
+            onClick={(e) => e.stopPropagation()}
+            className="p-1 rounded text-muted-foreground/60 hover:text-foreground hover:bg-muted cursor-grab active:cursor-grabbing transition-colors shrink-0"
+            title="Drag to reorder category"
+          >
+            <GripVertical className="w-4 h-4" />
           </div>
-          <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
-            <Button variant="ghost" size="icon" className="h-7 w-7 text-green-500 hover:text-green-600 hover:bg-green-500/10" onClick={() => onEdit(item)}>
-              <Pencil className="h-3.5 w-3.5" />
-            </Button>
-            <Button variant="ghost" size="icon" className={cn("h-7 w-7", item.isActive !== false ? "text-green-500 hover:bg-green-500/10" : "text-red-500 hover:bg-red-500/10")} onClick={(e) => onTogglePublish(e, item)} title={item.isActive !== false ? "Hide from frontend" : "Show on frontend"}>
-              {item.isActive !== false ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
-            </Button>
-            <Button variant="ghost" size="icon" className="h-7 w-7 text-red-500 hover:text-red-600 hover:bg-red-500/10" onClick={() => onDelete(item)}>
-              <XCircle className="h-3.5 w-3.5" />
-            </Button>
-          </div>
+          <Badge variant="outline" className="text-[10px] uppercase font-semibold shrink-0">Category</Badge>
+          <Badge variant="secondary" className="text-[10px] uppercase font-semibold shrink-0">{audioCount} {audioCount === 1 ? 'Audio' : 'Audios'}</Badge>
         </div>
-        <h3 className="font-bold text-base text-foreground leading-snug line-clamp-1">{item.name}</h3>
-        <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{item.description}</p>
+        <div className="flex items-center gap-0.5 shrink-0" onClick={(e) => e.stopPropagation()}>
+          <Button variant="ghost" size="icon" className="h-7 w-7 text-primary hover:text-green-600 hover:bg-green-500/10" onClick={() => onEdit(item)} title="Edit Category">
+            <Pencil className="h-3.5 w-3.5" />
+          </Button>
+          <Button variant="ghost" size="icon" className={cn("h-7 w-7", item.isActive !== false ? "text-blue-500 hover:text-blue-600 hover:bg-blue-500/10" : "text-red-500 hover:text-red-600 hover:bg-red-500/10")} onClick={(e) => onTogglePublish(e, item)} title={item.isActive !== false ? "Hide from frontend" : "Show on frontend"}>
+            {item.isActive !== false ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
+          </Button>
+          <Button variant="ghost" size="icon" className="h-7 w-7 text-red-500 hover:text-red-600 hover:bg-red-500/10" onClick={() => onDelete(item)} title="Delete Category">
+            <XCircle className="h-3.5 w-3.5" />
+          </Button>
+        </div>
+      </div>
+      <div>
+        <h3 className="font-bold text-base text-foreground leading-snug line-clamp-1 group-hover:text-primary transition-colors">{item.name}</h3>
+        {item.description && <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{item.description}</p>}
       </div>
     </div>
   );
@@ -119,42 +128,49 @@ function SortableAudioCard({ id, item, speakerName, onEdit, onDelete, onTogglePu
       ref={setNodeRef}
       style={style}
       className={cn(
-        "group relative flex bg-card rounded-xl border border-border overflow-hidden transition-all duration-200",
+        "group relative flex bg-card rounded-xl border border-border overflow-hidden transition-all duration-200 min-h-[96px]",
         isDragging ? "shadow-2xl border-primary scale-[1.02]" : "hover:shadow-md hover:border-border/80"
       )}
     >
-      <div className="w-32 bg-muted relative border-r border-border shrink-0">
+      <div className="w-24 bg-muted relative border-r border-border shrink-0 flex items-center justify-center">
         {item.thumbnailUrl ? (
           <img src={item.thumbnailUrl} alt={item.title} className="w-full h-full object-cover" />
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center text-muted-foreground/50">
-            <Video className="w-7 h-7" />
+          <div className="flex items-center justify-center text-muted-foreground/50">
+            <Video className="w-6 h-6" />
           </div>
         )}
+        <div
+          {...attributes}
+          {...listeners}
+          className="absolute top-1.5 left-1.5 p-1 bg-background/80 backdrop-blur rounded border shadow-sm cursor-grab active:cursor-grabbing hover:bg-background transition-colors text-muted-foreground"
+          title="Drag to reorder audio"
+        >
+          <GripVertical className="w-3.5 h-3.5" />
+        </div>
       </div>
 
-      <div className="p-4 flex-1 flex flex-col justify-center">
-        <div className="flex items-center justify-between mb-1">
-          <Badge variant={item.isPublished ? "default" : "secondary"} className="text-[10px] py-0 px-2">
-            {item.isPublished ? "Published" : "Draft"}
-          </Badge>
-          <div className="flex items-center gap-1">
-            <Button variant="ghost" size="icon" className="h-7 w-7 text-green-500 hover:bg-green-500/10" onClick={() => onEdit(item)}>
-              <Pencil className="h-3.5 w-3.5" />
-            </Button>
-            <Button variant="ghost" size="icon" className={cn("h-7 w-7", item.isPublished ? "text-green-500 hover:bg-green-500/10" : "text-red-500 hover:bg-red-500/10")} onClick={() => onTogglePublish(item)} title={item.isPublished ? "Hide from frontend" : "Show on frontend"}>
-              {item.isPublished ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
-            </Button>
-            <Button variant="ghost" size="icon" className="h-7 w-7 text-red-500 hover:bg-red-500/10" onClick={() => onDelete(item)}>
-              <XCircle className="h-3.5 w-3.5" />
-            </Button>
-            <div {...attributes} {...listeners} className="cursor-grab active:cursor-grabbing p-1.5 hover:bg-muted rounded text-muted-foreground">
-              <GripVertical className="h-4 w-4" />
+      <div className="p-3 flex-1 flex flex-col justify-between min-w-0">
+        <div>
+          <div className="flex items-center justify-between gap-1 mb-1">
+            <Badge variant={item.isPublished ? "default" : "secondary"} className="text-[10px] py-0 px-1.5">
+              {item.isPublished ? "Published" : "Draft"}
+            </Badge>
+            <div className="flex items-center gap-0.5" onClick={(e) => e.stopPropagation()}>
+              <Button variant="ghost" size="icon" className="h-6 w-6 text-primary hover:text-green-600 hover:bg-green-500/10" onClick={() => onEdit(item)} title="Edit">
+                <Pencil className="h-3 w-3" />
+              </Button>
+              <Button variant="ghost" size="icon" className={cn("h-6 w-6", item.isPublished ? "text-blue-500 hover:text-blue-600 hover:bg-blue-500/10" : "text-red-500 hover:text-red-600 hover:bg-red-500/10")} onClick={() => onTogglePublish(item)} title={item.isPublished ? "Unpublish" : "Publish"}>
+                {item.isPublished ? <Eye className="h-3 w-3" /> : <EyeOff className="h-3 w-3" />}
+              </Button>
+              <Button variant="ghost" size="icon" className="h-6 w-6 text-red-500 hover:text-red-600 hover:bg-red-500/10" onClick={() => onDelete(item)} title="Delete">
+                <XCircle className="h-3 w-3" />
+              </Button>
             </div>
           </div>
+          <h4 className="font-semibold text-sm text-foreground line-clamp-1 leading-tight">{item.title}</h4>
+          {speakerName && <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{speakerName}</p>}
         </div>
-        <h3 className="font-bold text-sm text-foreground leading-snug line-clamp-2">{item.title}</h3>
-        {speakerName && <p className="text-xs text-muted-foreground mt-1 line-clamp-1">{speakerName}</p>}
       </div>
     </div>
   );
@@ -307,7 +323,26 @@ export default function AudiosPageEditor({ pageId, initialPageData }: { pageId: 
     });
   };
 
-  const filteredCategories = categories.filter(c => c.name.toLowerCase().includes(searchQuery.toLowerCase()));
+  const handleCategoryDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const oldIndex = categories.findIndex(i => i.id === active.id);
+    const newIndex = categories.findIndex(i => i.id === over.id);
+    const reordered = arrayMove(categories, oldIndex, newIndex).map((item, idx) => ({ ...item, order: idx }));
+    setCategories(reordered);
+    try {
+      await fetch("/api/admin/audio-categories", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orders: reordered.map(i => ({ id: i.id, orderIndex: i.order })) }),
+      });
+      toast({ title: "Category Order saved", description: "The new category order has been saved." });
+    } catch (e) {
+      toast({ variant: "destructive", title: "Error", description: "Failed to save category order." });
+    }
+  };
+
+  const filteredCategories = categories.filter(c => c.name.toLowerCase().includes(searchQuery.toLowerCase())).sort((a, b) => (a.order || 0) - (b.order || 0));
   const activeVideos = audioList.filter(b => b.categoryId === activeCategory?.id).filter(b => b.title.toLowerCase().includes(searchQuery.toLowerCase())).sort((a, b) => a.order - b.order);
 
   return (
@@ -366,15 +401,19 @@ export default function AudiosPageEditor({ pageId, initialPageData }: { pageId: 
             ) : filteredCategories.length === 0 ? (
               <div className="bg-card rounded-xl border p-12 text-center text-muted-foreground">No Audios Found.</div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
-                {filteredCategories.map(cat => (
-                  <SortableCategoryCard key={cat.id} id={cat.id} item={cat} onClick={setActiveCategory}
-                    videoCount={audioList.filter(b => b.categoryId === cat.id).length}
-                    onEdit={(item: any) => router.push(`/sitemanager/media/category/${item.id}?type=audio-categories`)}
-                    onDelete={(item: CategoryItem) => setDeletingCat(item)}
-                    onTogglePublish={handleCatTogglePublish} />
-                ))}
-              </div>
+              <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleCategoryDragEnd}>
+                <SortableContext items={filteredCategories.map(c => c.id)} strategy={rectSortingStrategy}>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
+                    {filteredCategories.map(cat => (
+                      <SortableCategoryCard key={cat.id} id={cat.id} item={cat} onClick={setActiveCategory}
+                        audioCount={audioList.filter(b => b.categoryId === cat.id).length}
+                        onEdit={(item: any) => router.push(`/sitemanager/media/category/${item.id}?type=audio-categories`)}
+                        onDelete={(item: CategoryItem) => setDeletingCat(item)}
+                        onTogglePublish={handleCatTogglePublish} />
+                    ))}
+                  </div>
+                </SortableContext>
+              </DndContext>
             )
           ) : (
             <div className="space-y-6">
