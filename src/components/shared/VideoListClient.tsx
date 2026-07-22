@@ -22,7 +22,7 @@ export function VideoListClient({ vids }: { vids: any[] }) {
             href={v.slug.startsWith('http') ? v.slug : `/videos/${v.slug}`}
             target={v.customFields?.openInNewTab ? "_blank" : undefined}
             rel={v.customFields?.openInNewTab ? "noopener noreferrer" : undefined}
-            className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-xl border border-border/50 hover:border-primary/50 bg-primary-light/80 hover:bg-muted/50 transition-colors cursor-pointer group shadow-sm hover:shadow-md h-full">
+            className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-lg border border-border/50 hover:border-primary/50 bg-primary-light/80 hover:bg-muted/50 transition-colors cursor-pointer group shadow-sm hover:shadow-md h-full">
 
             <div>
               <div className="flex items-center gap-2 mb-1">

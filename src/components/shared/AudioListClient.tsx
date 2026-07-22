@@ -21,9 +21,9 @@ export function AudioListClient({ audios }: { audios: any[] }) {
             href={a.slug.startsWith('http') ? a.slug : `/audio/${a.slug}`}
             target={a.customFields?.openInNewTab ? "_blank" : undefined}
             rel={a.customFields?.openInNewTab ? "noopener noreferrer" : undefined}
-            className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-xl border border-border/50 hover:border-primary/50 bg-primary-light/80 hover:bg-muted/50 transition-colors cursor-pointer group shadow-sm hover:shadow-md h-full">
+            className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-lg border border-border/50 hover:border-primary/50 bg-primary-light/80 hover:bg-muted/50 transition-colors cursor-pointer group shadow-sm hover:shadow-md h-full">
             <div>
-              <div className="flex items-center gap-2 mb-1">
+              <div className="flex items-center gap-2">
                 {a.code && <span className="text-xs font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded">{a.code}</span>}
                 <h3 className="font-semibold text-lg flex items-center gap-2 group-hover:text-primary transition-colors line-clamp-2">
                   {a.title}

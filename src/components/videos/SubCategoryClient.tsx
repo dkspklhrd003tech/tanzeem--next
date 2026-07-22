@@ -43,9 +43,9 @@ export function SubCategoryClient({ subCategories, directVideos = [] }: { subCat
           {directVideos.map((video) => (
             <Link key={video.id}
               href={`/videos/${video.id}`}
-              className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-xl border border-border/50 hover:border-primary/50 bg-card hover:bg-muted/50 transition-colors cursor-pointer group shadow-sm hover:shadow-md h-full">
+              className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-lg border border-border/50 hover:border-primary/50 bg-card hover:bg-muted/50 transition-colors cursor-pointer group shadow-sm hover:shadow-md h-full">
               <div>
-                <h3 className="font-semibold text-lg flex items-center gap-2 group-hover:text-primary transition-colors line-clamp-2 line-clamp-2">
+                <h3 className="font-semibold text-lg flex items-center gap-2 group-hover:text-primary transition-colors line-clamp-2">
                   {video.title}
                 </h3>
                 {video.description && <p className="text-sm text-muted-foreground line-clamp-2 mt-1">{video.description}</p>}
