@@ -343,7 +343,6 @@ export const speakers = mysqlTable("speakers", {
     seoData: json("seo_data"),
     customFields: json("custom_fields"),
     order: int("order").default(0).notNull(),
-    isActive: boolean("is_active").default(true).notNull(),
     ...timestamps,
 });
 
