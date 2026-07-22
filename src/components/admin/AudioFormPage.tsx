@@ -162,7 +162,7 @@ export default function AudioFormPage({ id, speakerIdParam = "", categoryIdParam
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6">
           <div className="space-y-2">
             <Label>Audio File (MP3) <span className="text-destructive">*</span></Label>
             <AudioUploader
