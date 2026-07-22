@@ -36,6 +36,6 @@ const poolConnection =
         }
   );
 
-if (process.env.NODE_ENV !== "production") globalForDb.pool = poolConnection;
+globalForDb.pool = poolConnection;
 
 export const db = drizzle({ client: poolConnection, schema, mode: "default" });
