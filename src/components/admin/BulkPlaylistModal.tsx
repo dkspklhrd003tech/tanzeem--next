@@ -3,7 +3,7 @@
 import { useState } from "react";
 import {
   X, RefreshCw, UploadCloud, CheckSquare, Square,
-  Video, PlayCircle, ExternalLink, Sparkles
+  Video, PlayCircle, ExternalLink, Sparkles, Type
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -30,6 +30,7 @@ interface BulkPlaylistModalProps {
 
 export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName }: BulkPlaylistModalProps) {
   const [playlistUrl, setPlaylistUrl] = useState("");
+  const [defaultTitlePrefix, setDefaultTitlePrefix] = useState("");
   const [isFetching, setIsFetching] = useState(false);
   const [fetchedVideos, setFetchedVideos] = useState<ParsedVideoItem[]>([]);
   const [isImporting, setIsImporting] = useState(false);
@@ -57,7 +58,14 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName }: Bul
       const data = await res.json();
 
       if (data.success && Array.isArray(data.videos) && data.videos.length > 0) {
-        setFetchedVideos(data.videos.map((v: ParsedVideoItem) => ({ ...v, selected: true })));
+        const mapped = data.videos.map((v: ParsedVideoItem, idx: number) => {
+          let title = v.title;
+          if (defaultTitlePrefix.trim()) {
+            title = `${defaultTitlePrefix.trim()} - ${String(idx + 1).padStart(2, "0")}`;
+          }
+          return { ...v, title, selected: true };
+        });
+        setFetchedVideos(mapped);
         toast({
           title: "Playlist Fetched!",
           description: `Successfully extracted ${data.videos.length} video(s).`,
@@ -78,6 +86,27 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName }: Bul
     } finally {
       setIsFetching(false);
     }
+  };
+
+  const applyDefaultTitleToAll = () => {
+    if (!defaultTitlePrefix.trim()) {
+      toast({
+        title: "Default Title Required",
+        description: "Please enter a default title prefix first.",
+        variant: "destructive",
+      });
+      return;
+    }
+    setFetchedVideos(
+      fetchedVideos.map((v, i) => ({
+        ...v,
+        title: `${defaultTitlePrefix.trim()} - ${String(i + 1).padStart(2, "0")}`,
+      }))
+    );
+    toast({
+      title: "Titles Updated",
+      description: `Applied default title to ${fetchedVideos.length} video(s).`,
+    });
   };
 
   const toggleSelectAll = (select: boolean) => {
@@ -116,6 +145,7 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName }: Bul
       });
       setFetchedVideos([]);
       setPlaylistUrl("");
+      setDefaultTitlePrefix("");
       onClose();
     } catch (err: any) {
       toast({
@@ -152,7 +182,7 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName }: Bul
         {/* Modal Body */}
         <div className="p-6 space-y-6 overflow-y-auto flex-1">
           {/* Input Section */}
-          <div className="space-y-3">
+          <div className="space-y-4">
             <div className="flex items-center justify-between">
               <Label className="font-semibold text-sm">Playlist URL or Multiple Video Links</Label>
               <div className="flex items-center gap-2">
@@ -166,26 +196,57 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName }: Bul
               placeholder={`Paste YouTube playlist link e.g.: https://www.youtube.com/playlist?list=PL...\nOr paste multiple video URLs separated by new lines:\nhttps://www.youtube.com/watch?v=...\nhttps://rumble.com/v...\nhttps://ok.ru/video/...`}
               value={playlistUrl}
               onChange={(e) => setPlaylistUrl(e.target.value)}
-              className="font-mono text-xs min-h-[100px] resize-y"
+              className="font-mono text-xs min-h-[90px] resize-y"
             />
-            <div className="flex justify-end">
-              <Button onClick={handleFetchPlaylist} disabled={isFetching || !playlistUrl.trim()}>
-                {isFetching ? (
-                  <>
-                    <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> Fetching Playlist Videos...
-                  </>
-                ) : (
-                  <>
-                    <Video className="w-4 h-4 mr-2" /> Fetch Playlist Videos
-                  </>
+
+            {/* Default Title Input */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end bg-muted/30 p-3 rounded-xl border border-border/60">
+              <div className="sm:col-span-2 space-y-1.5">
+                <Label className="text-xs font-semibold flex items-center gap-1.5 text-foreground">
+                  <Type className="w-3.5 h-3.5 text-primary" /> Default Video Title / Series Prefix (Optional)
+                </Label>
+                <Input
+                  placeholder="e.g. Zamana Gawah Hai 2023 (Leave blank to use original video titles)"
+                  value={defaultTitlePrefix}
+                  onChange={(e) => setDefaultTitlePrefix(e.target.value)}
+                  className="text-xs h-9 bg-background"
+                />
+              </div>
+              <div className="flex gap-2">
+                {fetchedVideos.length > 0 && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={applyDefaultTitleToAll}
+                    className="h-9 text-xs flex-1"
+                  >
+                    Apply Title to All
+                  </Button>
                 )}
-              </Button>
+                <Button
+                  type="button"
+                  onClick={handleFetchPlaylist}
+                  disabled={isFetching || !playlistUrl.trim()}
+                  className="h-9 text-xs flex-1"
+                >
+                  {isFetching ? (
+                    <>
+                      <RefreshCw className="w-3.5 h-3.5 mr-1.5 animate-spin" /> Fetching...
+                    </>
+                  ) : (
+                    <>
+                      <Video className="w-3.5 h-3.5 mr-1.5" /> Fetch Playlist
+                    </>
+                  )}
+                </Button>
+              </div>
             </div>
           </div>
 
           {/* Preview Section */}
           {fetchedVideos.length > 0 && (
-            <div className="space-y-4 pt-4 border-t border-border">
+            <div className="space-y-4 pt-2 border-t border-border">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-muted/40 p-3 rounded-xl">
                 <div>
                   <h4 className="font-semibold text-sm">

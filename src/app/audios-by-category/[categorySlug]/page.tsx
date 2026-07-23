@@ -4,6 +4,7 @@ import { audioCategories, audio } from "@/db/schema";
 import { eq, asc, and, inArray, desc } from "drizzle-orm";
 import Link from "next/link";
 import { Headphones, AudioLines, Calendar } from "lucide-react";
+import { resolveCategoryHref } from "@/lib/utils";
 
 export default async function CategoryAudiosPage({ params }: { params: Promise<{ categorySlug: string }> }) {
   const { categorySlug } = await params;
@@ -55,6 +56,7 @@ export default async function CategoryAudiosPage({ params }: { params: Promise<{
       name: sub.name,
       description: sub.description,
       imageUrl: sub.imageUrl,
+      customFields: sub.customFields as any,
       audios: allAudios.filter((a) => a.categoryId === sub.id),
     };
   });
@@ -145,10 +147,15 @@ export default async function CategoryAudiosPage({ params }: { params: Promise<{
             {subCategoriesWithAudios.length > 0 && (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                 {subCategoriesWithAudios.map((sub) => {
+                  const { href, isExternal, openInNewTab: isExtOpen } = resolveCategoryHref(sub.slug, "/audios-by-category");
+                  const target = (sub.customFields?.openInNewTab || isExtOpen) ? "_blank" : undefined;
+                  const rel = isExternal ? "noopener noreferrer" : undefined;
                   return (
                     <Link
                       key={sub.id}
-                      href={`/audios-by-category/${sub.slug}`}
+                      href={href}
+                      target={target}
+                      rel={rel}
                       className="flex flex-col md:flex-row md:items-center justify-between gap-4 px-4 py-3 rounded-xl border border-primary/30 hover:border-border/30 bg-muted/50 hover:bg-primary-light/80 transition-colors cursor-pointer group shadow-sm hover:shadow-md h-full"
                     >
                       <div className="flex-1 min-w-0">

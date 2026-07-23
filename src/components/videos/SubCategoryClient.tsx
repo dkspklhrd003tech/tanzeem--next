@@ -1,7 +1,7 @@
 "use client";
 
 import { Video, X } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn, resolveCategoryHref } from "@/lib/utils";
 import Link from "next/link";
 
 type VideoItem = {
@@ -92,14 +92,18 @@ export function SubCategoryClient({ subCategories, directVideos = [] }: { subCat
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {subCategories.map((sub) => {
             const playVideo = sub.videos.length > 0 ? sub.videos[0] : null;
+            const { href, isExternal, openInNewTab: isExtOpen } = resolveCategoryHref(sub.slug, "/videos-by-category");
+            const target = (sub.customFields?.openInNewTab || isExtOpen) ? "_blank" : undefined;
+            const rel = isExternal ? "noopener noreferrer" : undefined;
             return (
               <div
                 key={sub.id}
                 className="group flex flex-col items-center bg-transparent transition-all duration-300 text-left outline-none opacity-100"
               >
                 <Link
-                  href={`/videos-by-category/${sub.slug}`}
-                  target={sub.customFields?.openInNewTab ? "_blank" : undefined}
+                  href={href}
+                  target={target}
+                  rel={rel}
                   className="w-full aspect-[8/5] rounded-xl overflow-hidden bg-card border shadow-md group-hover:shadow-xl border-border group-hover:border-primary/40 transition-all duration-500 relative mb-4 block"
                 >
                   {sub.imageUrl ? (
@@ -116,7 +120,7 @@ export function SubCategoryClient({ subCategories, directVideos = [] }: { subCat
                   <div className="absolute inset-0 bg-black/10 transition-opacity duration-300 opacity-0 group-hover:opacity-100" />
                 </Link>
 
-                <Link href={`/videos-by-category/${sub.slug}`} target={sub.customFields?.openInNewTab ? "_blank" : undefined} className="text-center w-full px-2 min-w-0 hover:opacity-80 transition-opacity">
+                <Link href={href} target={target} rel={rel} className="text-center w-full px-2 min-w-0 hover:opacity-80 transition-opacity">
                   <h3 className="text-lg md:text-xl font-semibold transition-colors duration-300 text-foreground group-hover:text-primary text-center mx-auto line-clamp-2">
                     {sub.name}
                   </h3>

@@ -1,6 +1,23 @@
 import { NextResponse } from "next/server";
 import { parseVideoInput } from "@/lib/video-parser";
 
+// Helper to fetch actual YouTube title via oEmbed if HTML regex missing
+async function fetchYtOembedTitle(videoId: string): Promise<string | null> {
+  try {
+    const res = await fetch(
+      `https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`,
+      { headers: { "User-Agent": "Mozilla/5.0" } }
+    );
+    if (res.ok) {
+      const data = await res.json();
+      return data.title || null;
+    }
+  } catch (err) {
+    // ignore
+  }
+  return null;
+}
+
 export async function POST(req: Request) {
   try {
     const { playlistUrl } = await req.json();
@@ -28,18 +45,22 @@ export async function POST(req: Request) {
           headers: {
             "User-Agent":
               "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+            "Accept-Language": "en-US,en;q=0.9,ur;q=0.8",
           },
         });
         const html = await res.text();
 
-        // Extract video IDs and titles from ytInitialData
-        const initialDataMatch = html.match(/var ytInitialData = ({.*?});<\/script>/s) || html.match(/window\["ytInitialData"\] = ({.*?});/s);
+        // Extract video items from ytInitialData
+        const initialDataMatch =
+          html.match(/var ytInitialData = ({.*?});<\/script>/s) ||
+          html.match(/window\["ytInitialData"\] = ({.*?});/s);
 
         if (initialDataMatch && initialDataMatch[1]) {
           try {
             const data = JSON.parse(initialDataMatch[1]);
             const tabs = data?.contents?.twoColumnBrowseResultsRenderer?.tabs || [];
             let playlistContents: any[] = [];
+
             for (const tab of tabs) {
               const contents = tab?.tabRenderer?.content?.sectionListRenderer?.contents;
               if (contents) {
@@ -57,9 +78,13 @@ export async function POST(req: Request) {
               const renderer = item.playlistVideoRenderer;
               if (renderer && renderer.videoId) {
                 const vId = renderer.videoId;
-                const rawTitle = renderer.title?.runs?.[0]?.text || renderer.title?.simpleText || `Video ${vId}`;
+                let rawTitle =
+                  renderer.title?.runs?.[0]?.text ||
+                  renderer.title?.simpleText ||
+                  renderer.title?.accessibility?.accessibilityData?.label?.split(" by ")[0];
+
                 parsedVideos.push({
-                  title: rawTitle,
+                  title: rawTitle || "",
                   videoUrl: `https://www.youtube.com/watch?v=${vId}`,
                   embedUrl: `https://www.youtube.com/embed/${vId}?rel=0`,
                   thumbnailUrl: `https://img.youtube.com/vi/${vId}/hqdefault.jpg`,
@@ -71,22 +96,70 @@ export async function POST(req: Request) {
           }
         }
 
-        // Fallback regex scan for watch?v= if ytInitialData parse was empty
+        // Fallback regex scan for videoId + title pairs in HTML
         if (parsedVideos.length === 0) {
-          const videoIdMatches = Array.from(html.matchAll(/\"videoId\":\"([a-zA-Z0-9_-]{11})\"/g));
+          const videoTitleMatches = Array.from(
+            html.matchAll(
+              /"playlistVideoRenderer":\{"videoId":"([a-zA-Z0-9_-]{11})"[^}]*?"title":\{"runs":\[\{"text":"([^"]+)"\}/g
+            )
+          );
           const seen = new Set<string>();
 
-          for (const m of videoIdMatches) {
+          for (const m of videoTitleMatches) {
             const vId = m[1];
+            const title = m[2];
             if (!seen.has(vId)) {
               seen.add(vId);
               parsedVideos.push({
-                title: `YouTube Video (${vId})`,
+                title: title || `YouTube Video (${vId})`,
                 videoUrl: `https://www.youtube.com/watch?v=${vId}`,
                 embedUrl: `https://www.youtube.com/embed/${vId}?rel=0`,
                 thumbnailUrl: `https://img.youtube.com/vi/${vId}/hqdefault.jpg`,
               });
             }
+          }
+
+          // Secondary regex scan if videoTitleMatches was empty
+          if (parsedVideos.length === 0) {
+            const videoIdMatches = Array.from(html.matchAll(/\"videoId\":\"([a-zA-Z0-9_-]{11})\"/g));
+            for (const m of videoIdMatches) {
+              const vId = m[1];
+              if (!seen.has(vId)) {
+                seen.add(vId);
+                parsedVideos.push({
+                  title: "",
+                  videoUrl: `https://www.youtube.com/watch?v=${vId}`,
+                  embedUrl: `https://www.youtube.com/embed/${vId}?rel=0`,
+                  thumbnailUrl: `https://img.youtube.com/vi/${vId}/hqdefault.jpg`,
+                });
+              }
+            }
+          }
+        }
+
+        // Fill missing titles using parallel oEmbed calls (batch size 10)
+        const missingTitleIndexes = parsedVideos
+          .map((v, i) => (v.title.trim() === "" || v.title.startsWith("YouTube Video (") ? i : -1))
+          .filter((i) => i !== -1);
+
+        if (missingTitleIndexes.length > 0) {
+          const batchSize = 10;
+          for (let i = 0; i < missingTitleIndexes.length; i += batchSize) {
+            const batchIdxs = missingTitleIndexes.slice(i, i + batchSize);
+            await Promise.all(
+              batchIdxs.map(async (idx) => {
+                const item = parsedVideos[idx];
+                const vId = item.videoUrl.match(/v=([a-zA-Z0-9_-]{11})/)?.[1];
+                if (vId) {
+                  const fetchedTitle = await fetchYtOembedTitle(vId);
+                  if (fetchedTitle) {
+                    parsedVideos[idx].title = fetchedTitle;
+                  } else {
+                    parsedVideos[idx].title = `Video ${idx + 1}`;
+                  }
+                }
+              })
+            );
           }
         }
       } catch (ytErr) {
@@ -138,15 +211,13 @@ export async function POST(req: Request) {
         const line = lines[i];
         const parsed = parseVideoInput(line);
         if (parsed.videoUrl || parsed.embedSrc) {
-          let title = `Video ${i + 1}`;
-          // Generate nice fallback title if single YouTube link
+          let title = "";
           const ytSingle = line.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i);
           if (ytSingle && ytSingle[1]) {
-            title = `YouTube Video ${ytSingle[1]}`;
-          } else if (line.includes("ok.ru")) {
-            title = `OK.ru Video ${i + 1}`;
-          } else if (line.includes("rumble")) {
-            title = `Rumble Video ${i + 1}`;
+            const fetchedTitle = await fetchYtOembedTitle(ytSingle[1]);
+            title = fetchedTitle || `Video ${i + 1}`;
+          } else {
+            title = `Video ${i + 1}`;
           }
 
           parsedVideos.push({

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { db } from "@/db";
 import { videoCategories, videos } from "@/db/schema";
 import { count, eq, asc, desc, isNull } from "drizzle-orm";
+import { resolveCategoryHref } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -55,11 +56,15 @@ export default async function VideosByCategoryPage() {
       <div className="container mx-auto py-8 md:py-12">
         <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
           {display.map((cat) => {
-            const href = cat.slug ? `/videos-by-category/${cat.slug}` : "#";
+            const { href, isExternal, openInNewTab: isExtOpen } = resolveCategoryHref(cat.slug, "/videos-by-category");
+            const target = (cat.customFields?.openInNewTab || isExtOpen) ? "_blank" : undefined;
+            const rel = isExternal ? "noopener noreferrer" : undefined;
             return (
               <Link
                 key={cat.id}
                 href={href}
+                target={target}
+                rel={rel}
                 className="group flex flex-col items-center bg-transparent transition-all duration-300"
               >
                 {/* 16:9 Thumbnail Image */}

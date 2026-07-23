@@ -40,3 +40,27 @@ export function resolveMediaUrl(url: string | null | undefined): string {
   // to the external FTP domain transparently.
   return path;
 }
+
+export function resolveCategoryHref(
+  slug?: string | null,
+  defaultPrefix: string = "/videos-by-category"
+): { href: string; isExternal: boolean; openInNewTab: boolean } {
+  if (!slug || slug.trim() === "" || slug.trim() === "#") {
+    return { href: "#", isExternal: false, openInNewTab: false };
+  }
+  const s = slug.trim();
+  if (
+    s.startsWith("http://") ||
+    s.startsWith("https://") ||
+    s.startsWith("//") ||
+    s.startsWith("mailto:") ||
+    s.startsWith("tel:")
+  ) {
+    return { href: s, isExternal: true, openInNewTab: true };
+  }
+  if (s.startsWith("/")) {
+    return { href: s, isExternal: false, openInNewTab: false };
+  }
+  return { href: `${defaultPrefix}/${s}`, isExternal: false, openInNewTab: false };
+}
+

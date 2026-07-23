@@ -97,7 +97,7 @@ function SortableCategoryCard({ cat, onClick, onEdit, onTogglePublish, onDelete 
       <div {...attributes} {...listeners} className="absolute top-2 left-2 z-20 p-1.5 bg-background/80 backdrop-blur rounded-md border shadow-sm cursor-grab active:cursor-grabbing hover:bg-background transition-colors text-muted-foreground">
         <GripVertical className="w-4 h-4" />
       </div>
-      <div className="aspect-[8/5] bg-muted relative overflow-hidden">
+      <div className="aspect-[16/9] bg-muted relative overflow-hidden">
         {cat.image ? (
           <img src={resolveMediaUrl(cat.image)} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt={cat.title} />
         ) : (
@@ -107,10 +107,10 @@ function SortableCategoryCard({ cat, onClick, onEdit, onTogglePublish, onDelete 
           <span className="text-white font-medium bg-black/50 px-4 py-2 rounded-full text-sm">View Sub-categories</span>
         </div>
       </div>
-      <div className="p-4 flex items-start justify-between">
-        <div>
-          <h5 className="font-bold text-foreground text-lg">{cat.code ? `${cat.code} | ` : ""}{cat.title}</h5>
-          <div className="flex items-center gap-2 mt-2">
+      <div className="p-4 flex items-start justify-between gap-2">
+        <div className="flex-1 min-w-0 pr-1">
+          <h5 className="font-bold text-foreground text-lg truncate" title={cat.title}>{cat.code ? `${cat.code} | ` : ""}{cat.title}</h5>
+          <div className="flex items-center gap-2 mt-2 flex-wrap">
             <Badge variant="secondary" className="text-[10px] uppercase font-semibold">
               {cat.subCategories?.filter(s => !s.id.endsWith("_direct")).length || 0} Sub-categories
             </Badge>
@@ -121,7 +121,7 @@ function SortableCategoryCard({ cat, onClick, onEdit, onTogglePublish, onDelete 
             )}
           </div>
         </div>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 shrink-0">
           <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-foreground hover:text-white z-10" onClick={(e) => { e.stopPropagation(); onEdit(cat); }} title="Edit Details">
             <Edit className="w-4 h-4" />
           </Button>
@@ -165,11 +165,11 @@ function SortableSubCatCard({ sub, mediaType, onClick, onEdit, onTogglePublish, 
           </div>
         </div>
       )}
-      <div className="p-4 flex items-start justify-between flex-1 mt-4">
-        <div>
-          <h5 className="w-70 font-bold text-foreground truncate pr-2">{sub.code ? `${sub.code} | ` : ""}{sub.title}</h5>
+      <div className="p-4 flex items-center justify-between gap-2 flex-1">
+        <div className="flex-1 min-w-0 pr-1">
+          <h5 className="font-bold text-foreground truncate" title={sub.title}>{sub.code ? `${sub.code} | ` : ""}{sub.title}</h5>
         </div>
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 shrink-0">
           <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-primary hover:text-primary z-10" onClick={(e) => { e.stopPropagation(); onEdit(); }} title="Edit Details">
             <Edit className="w-4 h-4" />
           </Button>
@@ -222,13 +222,13 @@ function SortableDirectVideoCard({ item, mediaType, onClick, onTogglePublish }: 
           </div>
         </div>
       )}
-      <div className="p-4 flex items-start justify-between flex-1 mt-4">
-        <div>
-          <h5 className="w-70 font-bold text-foreground truncate pr-2">{item.code ? `${item.code} | ` : ""}{item.title}</h5>
-          <p className="text-xs text-primary mt-1 font-medium">Direct Video</p>
+      <div className="p-4 flex items-center justify-between gap-2 flex-1">
+        <div className="flex-1 min-w-0 pr-1">
+          <h5 className="font-bold text-foreground truncate" title={item.title}>{item.code ? `${item.code} | ` : ""}{item.title}</h5>
+          <p className="text-xs text-primary mt-0.5 font-medium">Direct Video</p>
         </div>
         {onTogglePublish && (
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 shrink-0">
             <Button
               type="button"
               variant="ghost"
@@ -263,19 +263,17 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
     if (!activeCategory || !bulkTargetSubId) return;
 
     let successCount = 0;
-    const isDirect = bulkTargetSubId.endsWith("_direct");
-    const targetSubCatId = isDirect ? null : bulkTargetSubId;
+    const targetCategoryId = bulkTargetSubId.replace("_direct", "");
 
     for (let i = 0; i < videos.length; i++) {
       const v = videos[i];
       const videoData = {
-        title: v.title,
-        slug: `${slugifyText(v.title)}-${Date.now().toString().slice(-5)}-${i}`,
+        title: v.title || `Video ${i + 1}`,
+        slug: `${slugifyText(v.title || "video")}-${Date.now().toString().slice(-5)}-${i}`,
         videoUrl: v.videoUrl,
-        embedUrl: v.embedUrl || "",
+        embedUrl: formatEmbedUrl(v.embedUrl || v.videoUrl),
         thumbnailUrl: v.thumbnailUrl || "",
-        categoryId: activeCategory.id,
-        subCategoryId: targetSubCatId,
+        categoryId: targetCategoryId,
         isPublished: true,
         order: i,
       };
