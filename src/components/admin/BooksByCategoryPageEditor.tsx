@@ -148,10 +148,10 @@ function SortableBookCard({ id, item, onEdit, onDelete, onTogglePublish }: any) 
             {item.isPublished ? "Published" : "Draft"}
           </Badge>
           <div className="flex items-center gap-1">
-            <Button variant="ghost" size="icon" className="h-7 w-7 text-green-500 hover:bg-primary/10" onClick={() => onEdit(item)}>
+            <Button variant="ghost" size="icon" className="h-7 w-7 text-blue-600 hover:bg-blue/20" onClick={() => onEdit(item)}>
               <Pencil className="h-3.5 w-3.5" />
             </Button>
-            <Button variant="ghost" size="icon" className={cn("h-7 w-7", item.isPublished ? "text-green-500 hover:bg-primary/10" : "text-red-500 hover:bg-red-500/10")} onClick={() => onTogglePublish(item)} title={item.isPublished ? "Hide from frontend" : "Show on frontend"}>
+            <Button variant="ghost" size="icon" className={cn("h-7 w-7", item.isPublished ? "text-blue-600 hover:bg-blue/20" : "text-red-500 hover:bg-red-500/10")} onClick={() => onTogglePublish(item)} title={item.isPublished ? "Hide from frontend" : "Show on frontend"}>
               {item.isPublished ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
             </Button>
             <Button variant="ghost" size="icon" className="h-7 w-7 text-red-500 hover:bg-red-500/10" onClick={() => onDelete(item)}>
