@@ -18,6 +18,67 @@ async function fetchYtOembedTitle(videoId: string): Promise<string | null> {
   return null;
 }
 
+// Helper to fetch OK.ru video details (title + thumbnail) via oEmbed or meta tag parsing
+async function getOkRuVideoDetails(okId: string): Promise<{ title: string | null; thumbnailUrl: string | null }> {
+  try {
+    const oembedUrl = `https://ok.ru/dk?cmd=oembed&url=https://ok.ru/video/${okId}&format=json`;
+    const res = await fetch(oembedUrl, {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Accept": "application/json",
+      },
+    });
+    if (res.ok) {
+      const data = await res.json();
+      const title = data.title ? data.title.trim() : null;
+      const thumbnailUrl = data.thumbnail_url || data.author_url || null;
+      if (title || thumbnailUrl) {
+        return { title, thumbnailUrl };
+      }
+    }
+  } catch (err) {
+    console.warn("OK.ru oEmbed fetch failed:", err);
+  }
+
+  try {
+    const res = await fetch(`https://ok.ru/video/${okId}`, {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Accept-Language": "en-US,en;q=0.9",
+      },
+    });
+    if (res.ok) {
+      const html = await res.text();
+      const ogImage =
+        html.match(/<meta\s+property=["']og:image["']\s+content=["'](.*?)["']/i)?.[1] ||
+        html.match(/<meta\s+name=["']twitter:image["']\s+content=["'](.*?)["']/i)?.[1] ||
+        html.match(/<link\s+rel=["']image_src["']\s+href=["'](.*?)["']/i)?.[1];
+
+      const ogTitle =
+        html.match(/<meta\s+property=["']og:title["']\s+content=["'](.*?)["']/i)?.[1] ||
+        html.match(/<title>(.*?)<\/title>/i)?.[1];
+
+      const cleanTitle = ogTitle
+        ? ogTitle
+            .replace(/&quot;/g, '"')
+            .replace(/&amp;/g, "&")
+            .replace(/&#39;/g, "'")
+            .replace(/\s*::\s*Одноклассники.*/i, "")
+            .trim()
+        : null;
+
+      return {
+        title: cleanTitle || null,
+        thumbnailUrl: ogImage ? ogImage.replace(/&amp;/g, "&") : null,
+      };
+    }
+  } catch (err) {
+    console.warn("OK.ru HTML fetch failed:", err);
+  }
+
+  return { title: null, thumbnailUrl: null };
+}
+
 export async function POST(req: Request) {
   try {
     const { playlistUrl } = await req.json();
@@ -212,10 +273,19 @@ export async function POST(req: Request) {
         const parsed = parseVideoInput(line);
         if (parsed.videoUrl || parsed.embedSrc) {
           let title = "";
+          let thumbnailUrl = parsed.thumbnailUrl || "";
+
           const ytSingle = line.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i);
+          const okSingle = line.match(/ok\.ru\/(?:videoembed|video)\/(\d+)/i);
+
           if (ytSingle && ytSingle[1]) {
             const fetchedTitle = await fetchYtOembedTitle(ytSingle[1]);
             title = fetchedTitle || `Video ${i + 1}`;
+          } else if (okSingle && okSingle[1]) {
+            const okData = await getOkRuVideoDetails(okSingle[1]);
+            if (okData.title) title = okData.title;
+            if (okData.thumbnailUrl) thumbnailUrl = okData.thumbnailUrl;
+            if (!title) title = `Video ${i + 1}`;
           } else {
             title = `Video ${i + 1}`;
           }
@@ -224,7 +294,7 @@ export async function POST(req: Request) {
             title,
             videoUrl: parsed.videoUrl || line,
             embedUrl: parsed.embedSrc || parsed.videoUrl || line,
-            thumbnailUrl: parsed.thumbnailUrl || "",
+            thumbnailUrl,
           });
         }
       }

@@ -241,10 +241,10 @@ function SortableDirectVideoCard({ item, mediaType, isSelected, onToggleSelect, 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id });
   const style = { transform: CSS.Transform.toString(transform), transition, zIndex: isDragging ? 10 : 1, opacity: isDragging ? 0.8 : 1 };
 
-  const isYt = item.embedUrl?.includes("youtube") || item.mediaUrl?.includes("youtube");
-  let thumb = "";
-  if (isYt) {
-    const ytMatch = (item.embedUrl || item.mediaUrl).match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i);
+  let thumb = item.thumbnailUrl || item.image || item.customFields?.thumbnailUrl || "";
+  if (!thumb) {
+    const url = item.embedUrl || item.mediaUrl || "";
+    const ytMatch = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i);
     if (ytMatch && ytMatch[1]) thumb = `https://img.youtube.com/vi/${ytMatch[1]}/hqdefault.jpg`;
   }
 
