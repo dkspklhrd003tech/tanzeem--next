@@ -307,18 +307,18 @@ export default function DashboardPage() {
       {/* ── Top stat cards ─────────────────────────────────────────── */}
       <motion.div variants={item}>
         {statsLoading ? <StatsSkeleton /> : (
-          <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-6 lg:grid-cols-6 gap-3">
             {TOP_CARDS.map((card) => {
               if (card.key === "disclaimerViews" && !stats?.disclaimerEnabled) return null;
               return (
                 <Link key={card.key} href={card.href} className="group block">
-                  <Card className="hover:shadow-md transition-all duration-200 hover:border-primary/30 cursor-pointer">
+                  <Card className="hover:shadow-md transition-all duration-200 hover:border-primary/30 hover:bg-primary-light/80 cursor-pointer">
                     <CardContent className="p-4">
                       <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center mb-2.5", card.color)}>
                         <card.icon className="h-4 w-4" />
                       </div>
-                      <p className="text-xl font-bold text-foreground tabular-nums leading-tight">{stats?.[card.key] ?? 0}</p>
-                      <p className="text-[11px] text-muted-foreground mt-0.5 group-hover:text-primary transition-colors leading-tight">{card.label}</p>
+                      <p className="text-2xl font-bold text-primary tabular-nums leading-tight">{stats?.[card.key] ?? 0}</p>
+                      <p className="text-md text-muted-foreground mt-0.5 group-hover:text-primary transition-colors leading-tight">{card.label}</p>
                     </CardContent>
                   </Card>
                 </Link>
