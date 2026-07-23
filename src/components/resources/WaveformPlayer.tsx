@@ -211,7 +211,7 @@ export function WaveformPlayer({
         {/* Meta */}
         <div className="flex flex-col items-end gap-2 shrink-0">
           {formattedDate && (
-            <span className="text-foreground/80 text-xs">{formattedDate}</span>
+            <span className="text-white text-xs">{formattedDate}</span>
           )}
           {categoryName && (
             <span className="px-3 py-1 bg-[#282828] text-gray-300 text-xs font-semibold rounded-full border border-gray-700">
@@ -266,7 +266,7 @@ export function WaveformPlayer({
           </div>
 
           {/* Time + mute row */}
-          <div className="flex items-center justify-between text-xs text-foreground/80 font-mono">
+          <div className="flex items-center justify-between text-xs text-white font-mono">
             <span>{formatTime(currentTime)}</span>
             <div className="flex items-center gap-3">
               <button

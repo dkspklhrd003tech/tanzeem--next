@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { resolveMediaUrl } from "@/lib/utils";
 
 export async function GET(
     request: NextRequest,
@@ -10,10 +9,15 @@ export async function GET(
         const decodedPath = path.map(segment => decodeURIComponent(segment));
         const joinedPath = decodedPath.join('/');
         
-        // Redirect to the Media CDN URL
-        const mediaUrl = resolveMediaUrl(`/covers/${joinedPath}`);
+        const mediaHost = (process.env.NEXT_PUBLIC_MEDIA_URL || "https://tanzeemmedia.dks.com.pk").replace(/\/+$/, "");
         
-        return NextResponse.redirect(mediaUrl, 301);
+        const targetUrl = mediaHost.endsWith("/public_html")
+            ? `${mediaHost}/uploads/covers/${joinedPath}`
+            : mediaHost.endsWith("/uploads")
+            ? `${mediaHost}/covers/${joinedPath}`
+            : `${mediaHost}/public_html/uploads/covers/${joinedPath}`;
+
+        return NextResponse.redirect(targetUrl, 307);
     } catch (error) {
         console.error("Error serving uploaded file redirect:", error);
         return new NextResponse("Internal server error", { status: 500 });
