@@ -39,7 +39,7 @@ export function SubCategoryClient({ subCategories, directVideos = [] }: { subCat
     <div className="space-y-12">
       {/* Direct Videos Grid (Only show when inside a sub-category) */}
       {directVideos.length > 0 && subCategories.length === 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {directVideos.map((video) => (
             <Link key={video.id}
               href={`/videos/${video.id}`}

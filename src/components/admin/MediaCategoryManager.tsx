@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import { Plus, XCircle, Edit, Video, Headphones, Image as ImageIcon, X, UploadCloud, RefreshCw, PlayCircle, Share2, Download } from "lucide-react";
+import { Plus, XCircle, Edit, Video, Headphones, Image as ImageIcon, X, UploadCloud, RefreshCw, PlayCircle, Share2, Download, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -71,6 +71,7 @@ interface MainCategory {
   code?: string;
   image?: string;
   order?: number;
+  isPublished?: boolean;
   customFields?: any;
   subCategories: SubCategory[];
 }
@@ -79,7 +80,7 @@ interface MediaCategoryManagerProps {
   mediaType: "audio" | "video";
 }
 
-function SortableCategoryCard({ cat, onClick, onEdit, onDelete }: { cat: MainCategory, onClick: () => void, onEdit: (c: MainCategory) => void, onDelete: (c: MainCategory) => void }) {
+function SortableCategoryCard({ cat, onClick, onEdit, onTogglePublish, onDelete }: { cat: MainCategory, onClick: () => void, onEdit: (c: MainCategory) => void, onTogglePublish: (c: MainCategory) => void, onDelete: (c: MainCategory) => void }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: cat.id });
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -118,10 +119,20 @@ function SortableCategoryCard({ cat, onClick, onEdit, onDelete }: { cat: MainCat
           </div>
         </div>
         <div className="flex items-center gap-1">
-          <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-foreground hover:text-white z-10" onClick={(e) => { e.stopPropagation(); onEdit(cat); }}>
+          <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-foreground hover:text-white z-10" onClick={(e) => { e.stopPropagation(); onEdit(cat); }} title="Edit Details">
             <Edit className="w-4 h-4" />
           </Button>
-          <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive z-10" onClick={(e) => { e.stopPropagation(); onDelete(cat); }}>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className={cn("h-7 w-7 z-10", cat.isPublished !== false ? "text-blue-600 hover:text-blue-600 hover:bg-blue-600/20" : "text-red-600 hover:bg-red-500/10")}
+            onClick={(e) => { e.stopPropagation(); onTogglePublish(cat); }}
+            title={cat.isPublished !== false ? "Hide from frontend" : "Show on frontend"}
+          >
+            {cat.isPublished !== false ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
+          </Button>
+          <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive z-10" onClick={(e) => { e.stopPropagation(); onDelete(cat); }} title="Delete Category">
             <XCircle className="w-4 h-4" />
           </Button>
         </div>
@@ -341,6 +352,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
         code: mainCat.code || "",
         image: mainCat.imageUrl || "",
         order: mainCat.order || 0,
+        isPublished: mainCat.isActive !== false,
         customFields: mainCat.customFields || {},
         subCategories: (mainCat.subCategories?.map((subCat: any) => ({
           id: subCat.id,
@@ -372,6 +384,23 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
       toast.error("Failed to load categories");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const togglePublishMainCategory = async (cat: MainCategory) => {
+    const nextPublishedState = !(cat.isPublished !== false);
+    setCategories(categories.map(c => c.id === cat.id ? { ...c, isPublished: nextPublishedState } : c));
+    try {
+      const res = await fetch(`/api/${mediaType}-categories/${cat.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isActive: nextPublishedState })
+      });
+      if (!res.ok) throw new Error("Failed to toggle status");
+      toast.success(`Category ${nextPublishedState ? "published" : "hidden"} successfully`);
+    } catch (err) {
+      setCategories(categories.map(c => c.id === cat.id ? { ...c, isPublished: cat.isPublished } : c));
+      toast.error("Failed to toggle category visibility");
     }
   };
 
@@ -724,6 +753,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                     cat={cat}
                     onClick={() => setActiveTab(cat.id)}
                     onEdit={(c) => setEditingMainCat(c)}
+                    onTogglePublish={(c) => togglePublishMainCategory(c)}
                     onDelete={(c) => {
                       setPendingAction({
                         title: "Delete Main Category",
