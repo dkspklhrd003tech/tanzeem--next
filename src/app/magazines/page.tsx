@@ -198,7 +198,7 @@ export default async function MagazinesPage() {
                               target={mag.url && !mag.slug ? "_blank" : undefined}
                               className="text-xs font-semibold text-primary hover:underline inline-flex items-center gap-1"
                             >
-                              Read / View <ChevronRight className="h-3 w-3" />
+                              Explore {config.title} <ChevronRight className="h-3 w-3" />
                             </Link>
 
                             {(mag.fileUrl || mag.url) && (
