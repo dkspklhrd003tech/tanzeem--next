@@ -43,6 +43,8 @@ interface MediaItem {
   title: string;
   mediaUrl: string;
   embedUrl?: string;
+  thumbnailUrl?: string;
+  image?: string;
   description?: string;
   code?: string;
   slug?: string;
@@ -634,6 +636,8 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
             title: item.title,
             mediaUrl: mediaType === "audio" ? item.audioUrl : item.videoUrl,
             embedUrl: item.embedUrl || "",
+            thumbnailUrl: item.thumbnailUrl || item.imageUrl || item.image || "",
+            image: item.thumbnailUrl || item.imageUrl || item.image || "",
             description: item.description || "",
             code: item.code || item.episodeNumber || "",
             slug: item.slug || "",
@@ -957,6 +961,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
         categoryId: subId.replace("_direct", ""),
         isPublished: true,
         slug: item.slug || (item.title.toLowerCase().replace(/[^a-z0-9]+/g, "-") + "-" + Date.now()),
+        thumbnailUrl: item.thumbnailUrl || item.image || "",
         ...(mediaType === "audio"
           ? { audioUrl: item.mediaUrl || "", code: item.code, customFields: item.customFields }
           : { videoUrl: item.mediaUrl || "", embedUrl: formatEmbedUrl(item.embedUrl || ""), episodeNumber: item.code, customFields: item.customFields })
