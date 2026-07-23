@@ -72,6 +72,32 @@ const DEFAULTS: HeaderSettings = {
   telegram_url: "",
 };
 
+// ── Depth-based level styles (Dark, Medium, Medium-Light) ──────────────────────
+function getDepthLevelStyles(depth: number) {
+  if (depth === 0) {
+    // Level 0 (Top Level) - Darker / Prominent level
+    return {
+      container: "bg-slate-100/90 dark:bg-slate-800/90 border-slate-300 dark:border-slate-700 border-l-4 border-l-primary shadow-xs hover:bg-slate-200/80 dark:hover:bg-slate-700/80",
+      label: "font-semibold text-foreground text-sm",
+      subBadge: "border-primary/40 text-primary bg-primary/10",
+    };
+  }
+  if (depth === 1) {
+    // Level 1 (Sub level) - Medium level
+    return {
+      container: "bg-slate-50/90 dark:bg-slate-900/70 border-slate-200 dark:border-slate-800 border-l-4 border-l-sky-500 hover:bg-slate-100/80 dark:hover:bg-slate-800/60",
+      label: "font-medium text-foreground/90 text-sm",
+      subBadge: "border-sky-500/40 text-sky-700 dark:text-sky-400 bg-sky-500/10",
+    };
+  }
+  // Level 2+ (Sub-sub level) - Medium light level
+  return {
+    container: "bg-white dark:bg-slate-950/60 border-slate-200/80 dark:border-slate-800/80 border-l-4 border-l-amber-500/80 hover:bg-slate-50/70 dark:hover:bg-slate-900/50",
+    label: "font-normal text-muted-foreground text-sm",
+    subBadge: "border-amber-500/40 text-amber-700 dark:text-amber-400 bg-amber-500/10",
+  };
+}
+
 // ── Sortable menu row ─────────────────────────────────────────────────────────
 function SortableMenuRow({
   item,
@@ -110,6 +136,7 @@ function SortableMenuRow({
   };
 
   const hasChildren = (item.children?.length ?? 0) > 0;
+  const levelStyles = getDepthLevelStyles(depth);
 
   return (
     <>
@@ -117,8 +144,8 @@ function SortableMenuRow({
         ref={setNodeRef}
         style={{ ...style, marginLeft: depth > 0 ? `${depth * 1.5}rem` : undefined }}
         className={cn(
-          "flex items-center gap-2 px-3 py-2 rounded-lg border border-border bg-card hover:bg-muted/40 transition-colors group",
-          depth > 0 && "border-l-2 border-l-primary/20"
+          "flex items-center gap-2 px-3 py-2 rounded-lg border transition-colors group",
+          levelStyles.container
         )}
       >
         {/* Drag handle */}
@@ -135,7 +162,7 @@ function SortableMenuRow({
         {depth > 0 && <ChevronRight className="h-3 w-3 text-muted-foreground shrink-0" />}
 
         {/* Label */}
-        <span className="flex-1 text-sm font-medium text-foreground truncate">
+        <span className={cn("flex-1 truncate", levelStyles.label)}>
           {item.label}
         </span>
 
@@ -153,7 +180,7 @@ function SortableMenuRow({
             <ExternalLink className="h-3 w-3 text-muted-foreground" />
           )}
           {hasChildren && (
-            <Badge variant="outline" className="text-[9px] px-1.5 py-0 h-4 border-primary/30 text-primary">
+            <Badge variant="outline" className={cn("text-[9px] px-1.5 py-0 h-4 font-medium", levelStyles.subBadge)}>
               {item.children!.length} sub
             </Badge>
           )}

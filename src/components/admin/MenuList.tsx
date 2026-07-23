@@ -210,10 +210,15 @@ export function MenuList() {
         return items.map((item) => {
             const hasChildren = item.children && item.children.length > 0;
             const isExpanded = expandedItems.has(item.id);
+            const levelBg = depth === 0 
+              ? "bg-slate-100/80 dark:bg-slate-800/80 font-semibold" 
+              : depth === 1 
+              ? "bg-slate-50/70 dark:bg-slate-900/60" 
+              : "bg-white dark:bg-slate-950/40";
 
             return (
                 <React.Fragment key={item.id}>
-                    <TableRow className="hover:bg-muted/50">
+                    <TableRow className={cn("hover:bg-muted/60 transition-colors", levelBg)}>
                         <TableCell>
                             <div
                                 className="flex items-center"
