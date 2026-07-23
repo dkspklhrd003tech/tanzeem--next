@@ -9,16 +9,16 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     const { id } = await params;
     const body = await req.json();
     
-    await db.update(videoCategories).set({
-      name: body.name,
-      slug: body.slug,
-      imageUrl: body.imageUrl,
-      description: body.description,
-      order: body.order,
-      isActive: body.isActive,
-      customFields: body.customFields,
-      updatedAt: new Date()
-    }).where(eq(videoCategories.id, id));
+    const updateFields: any = { updatedAt: new Date() };
+    if (body.name !== undefined) updateFields.name = body.name;
+    if (body.slug !== undefined) updateFields.slug = body.slug;
+    if (body.imageUrl !== undefined) updateFields.imageUrl = body.imageUrl;
+    if (body.description !== undefined) updateFields.description = body.description;
+    if (body.order !== undefined) updateFields.order = body.order;
+    if (body.isActive !== undefined) updateFields.isActive = body.isActive;
+    if (body.customFields !== undefined) updateFields.customFields = body.customFields;
+    
+    await db.update(videoCategories).set(updateFields).where(eq(videoCategories.id, id));
     
     revalidatePath("/", "layout");
     return NextResponse.json({ success: true });

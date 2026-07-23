@@ -81,6 +81,7 @@ export async function PUT(
             isFeatured: data.isFeatured ?? current.isFeatured,
             metaTitle: data.metaTitle ?? current.metaTitle,
             metaDescription: data.metaDescription ?? current.metaDescription,
+            order: data.order ?? current.order,
             updatedAt: new Date(),
         }).where(eq(videos.id, id));
 

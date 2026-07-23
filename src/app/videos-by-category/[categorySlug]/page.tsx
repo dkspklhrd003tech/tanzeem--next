@@ -23,7 +23,7 @@ export default async function CategoryVideosPage({ params }: { params: Promise<{
     .select()
     .from(videoCategories)
     .where(and(eq(videoCategories.parentId, mainCat.id), eq(videoCategories.isActive, true)))
-    .orderBy(asc(videoCategories.order), asc(videoCategories.name));
+    .orderBy(asc(videoCategories.order), asc(videoCategories.createdAt));
 
   // 3. Fetch all Videos for these sub-categories
   const subCatIds = subCats.map((s) => s.id);
@@ -40,10 +40,11 @@ export default async function CategoryVideosPage({ params }: { params: Promise<{
         thumbnailUrl: videos.thumbnailUrl,
         duration: videos.duration,
         categoryId: videos.categoryId,
+        order: videos.order,
       })
       .from(videos)
       .where(and(inArray(videos.categoryId, subCatIds), eq(videos.isPublished, true)))
-      .orderBy(asc(videos.order), asc(videos.title));
+      .orderBy(asc(videos.order), asc(videos.createdAt));
   }
 
   // Build the hierarchical structure
@@ -71,10 +72,11 @@ export default async function CategoryVideosPage({ params }: { params: Promise<{
       embedUrl: videos.embedUrl,
       thumbnailUrl: videos.thumbnailUrl,
       duration: videos.duration,
+      order: videos.order,
     })
     .from(videos)
     .where(and(eq(videos.categoryId, mainCat.id), eq(videos.isPublished, true)))
-    .orderBy(asc(videos.order), asc(videos.title));
+    .orderBy(asc(videos.order), asc(videos.createdAt));
 
   return (
     <main className=" bg-background">

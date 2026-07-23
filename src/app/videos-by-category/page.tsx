@@ -21,9 +21,10 @@ export default async function VideosByCategoryPage() {
         description: videoCategories.description,
         imageUrl: videoCategories.imageUrl,
         customFields: videoCategories.customFields,
+        order: videoCategories.order,
       })
       .from(videoCategories)
-      .orderBy(asc(videoCategories.order), asc(videoCategories.name));
+      .orderBy(asc(videoCategories.order), asc(videoCategories.createdAt));
 
     cats = allCats.filter(c => !c.parentId);
 

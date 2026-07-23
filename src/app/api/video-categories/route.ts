@@ -10,7 +10,7 @@ import { videos } from "@/db/schema";
 export async function GET(req: NextRequest) {
   try {
     const rawCategories = await db.select().from(videoCategories).orderBy(asc(videoCategories.order), desc(videoCategories.createdAt));
-    const allVideos = await db.select().from(videos);
+    const allVideos = await db.select().from(videos).orderBy(asc(videos.order), desc(videos.createdAt));
     
     const categories = rawCategories
       .filter(cat => !cat.parentId)
@@ -20,7 +20,8 @@ export async function GET(req: NextRequest) {
           .map(subCat => ({
             ...subCat,
             videos: allVideos.filter(v => v.categoryId === subCat.id)
-          }));
+          }))
+          .sort((a, b) => (a.order || 0) - (b.order || 0));
 
         const directMedia = allVideos.filter(v => v.categoryId === mainCat.id);
         if (directMedia.length > 0) {
