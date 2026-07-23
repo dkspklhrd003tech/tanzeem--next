@@ -108,6 +108,11 @@ export default async function ResourceSubPage({ params, searchParams }: Props) {
 
   // Handle redirects
   if (path === "social-media") redirect("/social-media");
+  if (path === "magazines") redirect("/magazines");
+  if (path === "magazines/meesaq") redirect("/meesaq");
+  if (path === "magazines/hikmat-e-quran") redirect("/hikmat-e-quran");
+  if (path === "magazines/nida-e-khilafat") redirect("/nida-e-khilafat");
+  if (path === "magazines/perspective") redirect("/perspective");
 
   // If known listing page — render existing grid/list
   if (title) {

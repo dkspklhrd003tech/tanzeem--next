@@ -30,9 +30,9 @@ export function PdfViewerHeader({
                         </span>
                     )}
                     <div className="flex items-start gap-3">
-                        <h1 className="text-lg md:text-xl font-semibold text-foreground line-clamp-2">
+                        <span className="text-lg md:text-xl font-semibold text-foreground line-clamp-2">
                             {title}
-                        </h1>
+                        </span>
                         <ClientShareButton variant="icon" className="-mt-1" />
                     </div>
                 </div>

@@ -34,14 +34,9 @@ export function MagazineClientView({ links }: { links: MagazineLink[] }) {
             <div className="absolute inset-0 bg-primary-light opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
             <div className="relative z-10 w-full">
-
-              <h3 className="text-xl font-bold text-foreground mb-2 leading-tight group-hover:text-primary transition-colors duration-300 line-clamp-2">
+              <h3 className="text-xl font-bold text-foreground leading-tight group-hover:text-primary transition-colors duration-300 line-clamp-2">
                 {link.title}
               </h3>
-
-              <div className="flex items-center gap-2 mt-6 uppercase tracking-wider">
-                <span className="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-semibold">{link.title}</span>
-              </div>
             </div>
           </Link>
         ))}
