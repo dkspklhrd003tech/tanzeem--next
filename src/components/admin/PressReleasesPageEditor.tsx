@@ -137,8 +137,8 @@ function SortableCard({ id, item, onEdit, onDelete, onTogglePublish }: SortableI
             className={cn(
               "text-[10px] px-2.5 py-0.5 font-semibold uppercase tracking-wider rounded-md",
               isPdf
-                ? "bg-primary/10 text-green-600  border-green-500/20"
-                : "bg-emerald-500/10 text-emerald-600  border-emerald-500/20"
+                ? "bg-primary/10 text-primary  border-primary/20"
+                : "bg-primary/10 text-primary  border-primary/20"
             )}
           >
             {isPdf ? "Press Release (PDF)" : "Press Release"}
@@ -148,7 +148,7 @@ function SortableCard({ id, item, onEdit, onDelete, onTogglePublish }: SortableI
             <Button
               variant="ghost"
               size="icon"
-              className="h-7 w-7 text-green-500 hover:text-green-600 hover:bg-primary/10"
+              className="h-7 w-7 text-primary hover:text-primary hover:bg-primary/10"
               onClick={() => onEdit(item)}
               title="Edit Details"
             >
@@ -157,7 +157,7 @@ function SortableCard({ id, item, onEdit, onDelete, onTogglePublish }: SortableI
             <Button
               variant="ghost"
               size="icon"
-              className={cn("h-7 w-7", item.isPublished ? "text-blue-600 hover:text-blue-600 hover:bg-blue-600/70" : "text-red-500 hover:bg-red-500/10")}
+              className={cn("h-7 w-7", item.isPublished ? "text-blue-600 hover:text-blue-600 hover:bg-blue-600/70" : "text-red-600 hover:bg-red-500/10")}
               onClick={() => onTogglePublish(item)}
               title={item.isPublished ? "Hide from frontend" : "Show on frontend"}
             >
