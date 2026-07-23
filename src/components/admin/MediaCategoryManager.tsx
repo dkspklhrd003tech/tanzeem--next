@@ -46,6 +46,7 @@ interface MediaItem {
   code?: string;
   slug?: string;
   tags?: string;
+  isPublished?: boolean;
   customFields?: any;
   viewCount?: number;
   playCount?: number;
@@ -60,6 +61,7 @@ interface SubCategory {
   code?: string;
   slug?: string;
   order?: number;
+  isPublished?: boolean;
   customFields?: any;
   mediaItems: MediaItem[];
 }
@@ -141,7 +143,7 @@ function SortableCategoryCard({ cat, onClick, onEdit, onTogglePublish, onDelete 
   );
 }
 
-function SortableSubCatCard({ sub, mediaType, onClick, onEdit, onDelete }: { sub: any, mediaType: string, onClick: () => void, onEdit: () => void, onDelete: () => void }) {
+function SortableSubCatCard({ sub, mediaType, onClick, onEdit, onTogglePublish, onDelete }: { sub: any, mediaType: string, onClick: () => void, onEdit: () => void, onTogglePublish?: (sub: any) => void, onDelete: () => void }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: sub.id });
   const style = { transform: CSS.Transform.toString(transform), transition, zIndex: isDragging ? 10 : 1, opacity: isDragging ? 0.8 : 1 };
 
@@ -151,7 +153,7 @@ function SortableSubCatCard({ sub, mediaType, onClick, onEdit, onDelete }: { sub
         <GripVertical className="w-4 h-4" />
       </div>
       {mediaType === "video" && (
-        <div className="aspect-video bg-muted relative overflow-hidden">
+        <div className="aspect-[8/5] bg-muted relative overflow-hidden">
           {sub.image ? (
             <img src={resolveMediaUrl(sub.image)} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt={sub.title} />
           ) : (
@@ -167,10 +169,22 @@ function SortableSubCatCard({ sub, mediaType, onClick, onEdit, onDelete }: { sub
           <h5 className="w-70 font-bold text-foreground truncate pr-2">{sub.code ? `${sub.code} | ` : ""}{sub.title}</h5>
         </div>
         <div className="flex items-center gap-1">
-          <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-primary hover:text-primary z-10" onClick={(e) => { e.stopPropagation(); onEdit(); }}>
+          <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-primary hover:text-primary z-10" onClick={(e) => { e.stopPropagation(); onEdit(); }} title="Edit Details">
             <Edit className="w-4 h-4" />
           </Button>
-          <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-destructive shrink-0 bg-destructive/10 hover:bg-destructive hover:text-white z-10" onClick={(e) => { e.stopPropagation(); onDelete(); }}>
+          {onTogglePublish && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className={cn("h-7 w-7 z-10", sub.isPublished !== false ? "text-blue-600 hover:text-blue-600 hover:bg-blue-600/20" : "text-red-600 hover:bg-red-500/10")}
+              onClick={(e) => { e.stopPropagation(); onTogglePublish(sub); }}
+              title={sub.isPublished !== false ? "Hide from frontend" : "Show on frontend"}
+            >
+              {sub.isPublished !== false ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
+            </Button>
+          )}
+          <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-destructive shrink-0 bg-destructive/10 hover:bg-destructive hover:text-white z-10" onClick={(e) => { e.stopPropagation(); onDelete(); }} title="Delete Sub-category">
             <XCircle className="w-4 h-4" />
           </Button>
         </div>
@@ -179,7 +193,7 @@ function SortableSubCatCard({ sub, mediaType, onClick, onEdit, onDelete }: { sub
   );
 }
 
-function SortableDirectVideoCard({ item, mediaType, onClick }: { item: any, mediaType: string, onClick: () => void }) {
+function SortableDirectVideoCard({ item, mediaType, onClick, onTogglePublish }: { item: any, mediaType: string, onClick: () => void, onTogglePublish?: (item: any) => void }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id });
   const style = { transform: CSS.Transform.toString(transform), transition, zIndex: isDragging ? 10 : 1, opacity: isDragging ? 0.8 : 1 };
 
@@ -212,6 +226,20 @@ function SortableDirectVideoCard({ item, mediaType, onClick }: { item: any, medi
           <h5 className="w-70 font-bold text-foreground truncate pr-2">{item.code ? `${item.code} | ` : ""}{item.title}</h5>
           <p className="text-xs text-primary mt-1 font-medium">Direct Video</p>
         </div>
+        {onTogglePublish && (
+          <div className="flex items-center gap-1">
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className={cn("h-7 w-7 z-10", item.isPublished !== false ? "text-blue-600 hover:text-blue-600 hover:bg-blue-600/20" : "text-red-600 hover:bg-red-500/10")}
+              onClick={(e) => { e.stopPropagation(); onTogglePublish(item); }}
+              title={item.isPublished !== false ? "Hide from frontend" : "Show on frontend"}
+            >
+              {item.isPublished !== false ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -361,6 +389,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
           code: subCat.code || "",
           slug: subCat.slug || "",
           order: subCat.order || 0,
+          isPublished: subCat.isActive !== false,
           customFields: subCat.customFields || {},
           mediaItems: (mediaType === "audio" ? subCat.audioFiles : subCat.videos)?.map((item: any) => ({
             id: item.id,
@@ -371,6 +400,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
             code: item.code || item.episodeNumber || "",
             slug: item.slug || "",
             tags: item.tags || "",
+            isPublished: (item.isPublished !== undefined ? item.isPublished : item.isActive) !== false,
             customFields: item.customFields || {},
             viewCount: item.viewCount || 0,
             playCount: item.playCount || 0,
@@ -384,6 +414,71 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
       toast.error("Failed to load categories");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const togglePublishSubCategory = async (mainId: string, sub: SubCategory) => {
+    const nextPublishedState = !(sub.isPublished !== false);
+    setCategories(categories.map(c =>
+      c.id === mainId ? {
+        ...c,
+        subCategories: c.subCategories.map(s => s.id === sub.id ? { ...s, isPublished: nextPublishedState } : s)
+      } : c
+    ));
+    try {
+      const res = await fetch(`/api/${mediaType}-categories/${sub.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isActive: nextPublishedState })
+      });
+      if (!res.ok) throw new Error("Failed to toggle status");
+      toast.success(`Sub-category ${nextPublishedState ? "published" : "hidden"} successfully`);
+    } catch (err) {
+      setCategories(categories.map(c =>
+        c.id === mainId ? {
+          ...c,
+          subCategories: c.subCategories.map(s => s.id === sub.id ? { ...s, isPublished: sub.isPublished } : s)
+        } : c
+      ));
+      toast.error("Failed to toggle sub-category visibility");
+    }
+  };
+
+  const togglePublishMediaItem = async (mainId: string, subId: string, item: MediaItem) => {
+    const nextPublishedState = !(item.isPublished !== false);
+    setCategories(categories.map(c =>
+      c.id === mainId ? {
+        ...c,
+        subCategories: c.subCategories.map(s =>
+          s.id === subId ? {
+            ...s,
+            mediaItems: s.mediaItems.map(m => m.id === item.id ? { ...m, isPublished: nextPublishedState } : m)
+          } : s
+        )
+      } : c
+    ));
+    try {
+      const endpoint = mediaType === "audio" ? `/api/audio/${item.id}` : `/api/videos/${item.id}`;
+      const res = await fetch(endpoint, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isPublished: nextPublishedState, isActive: nextPublishedState })
+      });
+      if (!res.ok) throw new Error("Failed to toggle status");
+      toast.success(`Item ${nextPublishedState ? "published" : "hidden"} successfully`);
+    } catch (err) {
+      setCategories(categories.map(c =>
+        c.id === mainId ? {
+          ...c,
+          subCategories: c.subCategories.map(s =>
+            s.id === subId ? {
+              ...s,
+              mediaItems: s.mediaItems.map(m => m.id === item.id ? { ...m, isPublished: item.isPublished } : m)
+            } : s
+          )
+        } : c
+      ));
+      toast.error("Failed to toggle item visibility");
     }
   };
 
@@ -812,6 +907,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                           onClick={() => {
                             setEditingMedia({ item: item, subId: sub.id });
                           }}
+                          onTogglePublish={(m) => togglePublishMediaItem(activeCategory.id, sub.id, m)}
                         />
                       ))}
                     </div>
@@ -895,6 +991,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                                   subId: sub.id
                                 });
                               }}
+                              onTogglePublish={(s) => togglePublishSubCategory(activeCategory.id, s)}
                               onDelete={() => {
                                 setPendingAction({
                                   title: "Delete Sub-category",
@@ -924,6 +1021,10 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                               onClick={() => {
                                 const directSub = activeCategory.subCategories.find(s => s.id.endsWith('_direct'))!;
                                 setEditingMedia({ item: item, subId: directSub.id });
+                              }}
+                              onTogglePublish={(m) => {
+                                const directSub = activeCategory.subCategories.find(s => s.id.endsWith('_direct'))!;
+                                togglePublishMediaItem(activeCategory.id, directSub.id, m);
                               }}
                             />
                           ))}
