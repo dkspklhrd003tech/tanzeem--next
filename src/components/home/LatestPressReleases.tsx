@@ -69,21 +69,21 @@ export function LatestPressReleases({ items }: Props) {
       <div className="container max-w-7xl mx-auto relative z-10">
         <div ref={headerRef} className="flex flex-col md:flex-row items-center md:items-end justify-between mb-8 gap-6 text-center md:text-left">
           <div>
-            <h2 id="press-heading" className="spotlight_heading">News & Updates</h2>
+            <h2 id="press-heading" className="spotlight_heading">Latest Press Releases</h2>
             <p className="text-foreground font-medium tracking-normal uppercase text-sm">
-              Latest Press Releases
+              News & Updates
             </p>
           </div>
           <Link
             href="/press-releases"
             className={cn(
               "group inline-flex items-center gap-3 border border-primary/50 bg-primary text-white backdrop-blur-md",
-              "px-8 py-3.5 rounded-full text-sm font-bold tracking-wide uppercase shadow-lg",
+              "px-6 py-3.5 rounded-full text-sm font-bold tracking-wide uppercase shadow-lg",
               "hover:bg-primary hover:border-primary transition-all duration-500 hover:shadow-[0_0_30px_rgba(16,185,129,0.3)]",
               "focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
             )}
           >
-            View all <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
+            View Press Releases <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
           </Link>
         </div>
         <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
