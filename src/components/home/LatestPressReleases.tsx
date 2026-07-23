@@ -112,7 +112,7 @@ export function LatestPressReleases({ items }: Props) {
                     : "\u2014"}
                 </span>
               </div>
-              <h3 className="font-semibold text-foreground text-md leading-snug group-hover:text-primary transition-colors duration-200">{item.title}</h3>
+              <h3 className="font-semibold text-foreground text-md leading-snug group-hover:text-primary transition-colors  duration-200">{item.title}</h3>
               {item.excerpt && (
                 <p className="mt-4 text-sm text-foreground-muted line-clamp-3 leading-relaxed relative z-10">{item.excerpt}</p>
               )}
