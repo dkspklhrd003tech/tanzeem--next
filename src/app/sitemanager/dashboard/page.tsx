@@ -20,7 +20,14 @@ import { cn } from "@/lib/utils";
 import { useAdminAuth } from "@/hooks/use-admin-auth";
 
 // ─── Fetcher ──────────────────────────────────────────────────────────────────
-const fetcher = (url: string) => fetch(url).then((r) => r.json());
+const fetcher = async (url: string) => {
+  const res = await fetch(url);
+  if (!res.ok) {
+    const errObj = await res.json().catch(() => ({}));
+    throw new Error(errObj.error || `HTTP ${res.status}`);
+  }
+  return res.json();
+};
 
 // ─── Animation variants ───────────────────────────────────────────────────────
 const container = { hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.06 } } };
@@ -220,12 +227,12 @@ export default function DashboardPage() {
   const { data: statsData, isLoading: statsLoading, mutate: refreshStats } = useSWR(
     "/api/sitemanager/dashboard/stats",
     fetcher,
-    { revalidateOnFocus: true, refreshInterval: 30000 }
+    { revalidateOnFocus: true, refreshInterval: 10000, revalidateOnReconnect: true, dedupingInterval: 2000 }
   );
-  const { data: activityData, isLoading: activityLoading } = useSWR(
+  const { data: activityData, isLoading: activityLoading, mutate: refreshActivity } = useSWR(
     "/api/sitemanager/activity?limit=10",
     fetcher,
-    { revalidateOnFocus: true, refreshInterval: 30000 }
+    { revalidateOnFocus: true, refreshInterval: 10000, revalidateOnReconnect: true, dedupingInterval: 2000 }
   );
 
   const stats: StatsData | null = statsData?.stats ?? null;
@@ -343,7 +350,7 @@ export default function DashboardPage() {
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Content KPIs</h2>
           <span className="text-[11px] text-muted-foreground/60 flex items-center gap-1">
-            <Activity className="h-3 w-3" /> Auto-refreshes every 30s
+            <Activity className="h-3 w-3" /> Auto-refreshes every 10s
           </span>
         </div>
 

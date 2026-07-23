@@ -133,7 +133,7 @@ export async function GET(request: NextRequest) {
         downloads: sql<number>`coalesce(sum(${audio.downloadCount}), 0)`,
       })
       .from(audio)
-      .leftJoin(audioCategories, eq(audio.categoryId, audioCategories.id))
+      .leftJoin(audioCategories, sql`${audio.categoryId} = ${audioCategories.id} COLLATE utf8mb4_unicode_ci`)
       .groupBy(audio.categoryId, audioCategories.name)
       .orderBy(sql`count(*) desc`);
 
@@ -165,7 +165,7 @@ export async function GET(request: NextRequest) {
         downloads: sql<number>`coalesce(sum(${books.downloadCount}), 0)`,
       })
       .from(books)
-      .leftJoin(bookCategories, eq(books.categoryId, bookCategories.id))
+      .leftJoin(bookCategories, sql`${books.categoryId} = ${bookCategories.id} COLLATE utf8mb4_unicode_ci`)
       .groupBy(books.categoryId, bookCategories.name)
       .orderBy(sql`count(*) desc`);
 
@@ -195,7 +195,7 @@ export async function GET(request: NextRequest) {
         views: sql<number>`coalesce(sum(${videos.viewCount}), 0)`,
       })
       .from(videos)
-      .leftJoin(videoCategories, eq(videos.categoryId, videoCategories.id))
+      .leftJoin(videoCategories, sql`${videos.categoryId} = ${videoCategories.id} COLLATE utf8mb4_unicode_ci`)
       .groupBy(videos.categoryId, videoCategories.name)
       .orderBy(sql`count(*) desc`);
 
@@ -225,7 +225,7 @@ export async function GET(request: NextRequest) {
         plays: sql<number>`coalesce(sum(${sermons.playCount}), 0)`,
       })
       .from(sermons)
-      .leftJoin(sermonCategories, eq(sermons.categoryId, sermonCategories.id))
+      .leftJoin(sermonCategories, sql`${sermons.categoryId} = ${sermonCategories.id} COLLATE utf8mb4_unicode_ci`)
       .groupBy(sermons.categoryId, sermonCategories.name)
       .orderBy(sql`count(*) desc`);
 
