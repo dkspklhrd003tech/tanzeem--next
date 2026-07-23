@@ -92,7 +92,7 @@ export function MissionAndCampaigns({ campaigns, settings }: MissionProps) {
                         </p>
                     </div>
 
-                    <div ref={gridRef} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                    <div ref={gridRef} className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                         {campaigns.length > 0 ? campaigns.slice(0, 8).map((camp, i) => {
                             const card = (
                                 <div className="flex flex-col h-full bg-card/60 backdrop-blur-md rounded-[1.5rem] border border-border/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] group-hover:shadow-primary/10 group-hover:border-primary/40 group-hover:bg-primary-light group-hover:-translate-y-3 transition-all duration-700 overflow-hidden relative group/inner">
