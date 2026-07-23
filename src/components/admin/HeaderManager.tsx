@@ -72,29 +72,29 @@ const DEFAULTS: HeaderSettings = {
   telegram_url: "",
 };
 
-// ── Depth-based level styles (Dark, Medium, Medium-Light) ──────────────────────
+// ── Depth-based level styles (Level 0: bg-white, Level 1: bg-primary/30, Level 2: bg-blue-200) ──────
 function getDepthLevelStyles(depth: number) {
   if (depth === 0) {
-    // Level 0 (Top Level) - Darker / Prominent level
+    // Level 0 (Top Level) -> bg-white
     return {
-      container: "bg-slate-100/90 dark:bg-slate-800/90 border-slate-300 dark:border-slate-700 border-l-4 border-l-primary shadow-xs hover:bg-slate-200/80 dark:hover:bg-slate-700/80",
-      label: "font-semibold text-foreground text-sm",
-      subBadge: "border-primary/40 text-primary bg-primary/10",
+      container: "bg-white border-slate-300 border-l-4 border-l-primary shadow-xs hover:bg-slate-50 text-slate-900 font-bold",
+      label: "font-bold text-slate-900 text-sm md:text-base",
+      subBadge: "border-primary/50 text-primary-dark font-bold bg-primary/10",
     };
   }
   if (depth === 1) {
-    // Level 1 (Sub level) - Medium level
+    // Level 1 (Sub level) -> bg-primary/30
     return {
-      container: "bg-slate-50/90 dark:bg-slate-900/70 border-slate-200 dark:border-slate-800 border-l-4 border-l-sky-500 hover:bg-slate-100/80 dark:hover:bg-slate-800/60",
-      label: "font-medium text-foreground/90 text-sm",
-      subBadge: "border-sky-500/40 text-sky-700 dark:text-sky-400 bg-sky-500/10",
+      container: "bg-primary/30 border-primary/50 border-l-4 border-l-emerald-600 shadow-xs hover:bg-primary/40 text-slate-900 font-semibold",
+      label: "font-semibold text-slate-900 text-sm",
+      subBadge: "border-emerald-700/40 text-emerald-950 font-bold bg-white/70",
     };
   }
-  // Level 2+ (Sub-sub level) - Medium light level
+  // Level 2+ (Sub-sub level) -> bg-blue-200
   return {
-    container: "bg-white dark:bg-slate-950/60 border-slate-200/80 dark:border-slate-800/80 border-l-4 border-l-amber-500/80 hover:bg-slate-50/70 dark:hover:bg-slate-900/50",
-    label: "font-normal text-muted-foreground text-sm",
-    subBadge: "border-amber-500/40 text-amber-700 dark:text-amber-400 bg-amber-500/10",
+    container: "bg-blue-200 border-blue-300 border-l-4 border-l-blue-600 shadow-xs hover:bg-blue-300/80 text-slate-900 font-semibold",
+    label: "font-semibold text-slate-900 text-sm",
+    subBadge: "border-blue-600/40 text-blue-950 font-bold bg-white/80",
   };
 }
 
@@ -167,20 +167,20 @@ function SortableMenuRow({
         </span>
 
         {/* URL */}
-        <span className="hidden sm:block text-xs text-muted-foreground font-mono truncate max-w-[120px]">
+        <span className="hidden sm:block text-xs text-slate-700 font-semibold font-mono truncate max-w-[140px]">
           {item.url || "—"}
         </span>
 
         {/* Badges */}
         <div className="flex items-center gap-1 shrink-0">
           {!item.isVisible && (
-            <Badge variant="outline" className="text-[9px] px-1.5 py-0 h-4">Hidden</Badge>
+            <Badge variant="outline" className="text-[9px] px-1.5 py-0 h-4 bg-red-100 text-red-700 border-red-300">Hidden</Badge>
           )}
           {item.isOpenInNew && (
-            <ExternalLink className="h-3 w-3 text-muted-foreground" />
+            <ExternalLink className="h-3 w-3 text-slate-600" />
           )}
           {hasChildren && (
-            <Badge variant="outline" className={cn("text-[9px] px-1.5 py-0 h-4 font-medium", levelStyles.subBadge)}>
+            <Badge variant="outline" className={cn("text-[10px] px-2 py-0.5 h-5 font-bold shadow-xs", levelStyles.subBadge)}>
               {item.children!.length} sub
             </Badge>
           )}

@@ -129,14 +129,6 @@ export default async function MagazinesPage() {
     <main className="bg-background min-h-screen">
       <div className="container max-w-7xl mx-auto py-10 px-4 sm:px-6">
 
-        {/* Header */}
-        <div className="mb-10">
-          <h1 className="text-3xl sm:text-4xl font-bold text-foreground mb-2">Magazines</h1>
-          <p className="text-foreground-muted text-sm sm:text-base max-w-3xl">
-            Books and literature of Tanzeem-e-Islami &amp; Anjuman Khuddam ul Quran
-          </p>
-        </div>
-
         {!hasAnyItems ? (
           <div className="text-center py-20 bg-card rounded-2xl border border-border">
             <Newspaper className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />

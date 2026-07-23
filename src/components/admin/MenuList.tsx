@@ -211,10 +211,10 @@ export function MenuList() {
             const hasChildren = item.children && item.children.length > 0;
             const isExpanded = expandedItems.has(item.id);
             const levelBg = depth === 0 
-              ? "bg-slate-100/80 dark:bg-slate-800/80 font-semibold" 
+              ? "bg-white text-slate-900 font-bold border-l-4 border-l-primary" 
               : depth === 1 
-              ? "bg-slate-50/70 dark:bg-slate-900/60" 
-              : "bg-white dark:bg-slate-950/40";
+              ? "bg-primary/30 text-slate-900 font-semibold border-l-4 border-l-emerald-600" 
+              : "bg-blue-200 text-slate-900 font-semibold border-l-4 border-l-blue-600";
 
             return (
                 <React.Fragment key={item.id}>
