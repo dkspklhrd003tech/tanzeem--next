@@ -72,7 +72,7 @@ function SortableLinkItem({ link, onEdit, onDelete, onToggleActive, onToggleNew 
           />
         </div>
         <div className="flex items-center gap-1 bg-muted/50 p-1 rounded-lg">
-          <Button variant="ghost" size="icon" className={cn("h-8 w-8", link.isActive ? "text-green-500 hover:bg-green-500/10 hover:text-green-600" : "text-red-500 hover:bg-red-500/10 hover:text-red-600")} onClick={() => onToggleActive(link.id, !link.isActive)} title={link.isActive ? "Hide from frontend" : "Show on frontend"}>
+          <Button variant="ghost" size="icon" className={cn("h-8 w-8", link.isActive ? "text-green-500 hover:bg-primary/10 hover:text-green-600" : "text-red-500 hover:bg-red-500/10 hover:text-red-600")} onClick={() => onToggleActive(link.id, !link.isActive)} title={link.isActive ? "Hide from frontend" : "Show on frontend"}>
             {link.isActive ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}
           </Button>
           <Button variant="ghost" size="icon" className="h-8 w-8 text-primary hover:bg-primary hover:text-white" onClick={() => onEdit(link)}>

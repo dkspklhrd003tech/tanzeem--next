@@ -27,7 +27,7 @@ export function AudioListClient({ audios }: { audios: any[] }) {
                 {a.code && <span className="text-xs font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded">{a.code}</span>}
                 <h3 className="font-semibold text-lg flex items-center gap-2 group-hover:text-primary transition-colors line-clamp-2">
                   {a.title}
-                  {a.isNew && <span className="text-[10px] uppercase font-bold tracking-wider bg-green-500 text-white px-2 py-0.5 rounded-full">New</span>}
+                  {a.isNew && <span className="text-[10px] uppercase font-bold tracking-wider bg-primary text-white px-2 py-0.5 rounded-full">New</span>}
                 </h3>
               </div>
               {a.description && <p className="text-sm text-muted-foreground line-clamp-2">{a.description}</p>}

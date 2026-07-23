@@ -144,7 +144,7 @@ export function EventsGrid({ initialItems }: EventsGridProps) {
                       </div>
 
                       {/* Title */}
-                      <h3 className="font-bold text-foreground text-lg leading-snug group-hover:text-primary transition-colors duration-200 line-clamp-2">
+                      <h3 className="font-semibold text-foreground text-md leading-snug group-hover:text-primary transition-colors duration-200">
                         {item.title}
                       </h3>
 

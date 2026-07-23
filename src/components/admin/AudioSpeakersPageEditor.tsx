@@ -132,7 +132,7 @@ function SortableAudioCard({ audio, onEdit, onDelete }: { audio: AudioItem, onEd
       <div className="pr-8">
         <div className="flex items-center gap-2 mb-1">
           <h3 className="font-bold line-clamp-2 group-hover:text-primary transition-colors">{audio.title}</h3>
-          {audio.isNew && <span className="text-[10px] uppercase font-bold tracking-wider bg-green-500 text-white px-2 py-0.5 rounded-full shrink-0">New</span>}
+          {audio.isNew && <span className="text-[10px] uppercase font-bold tracking-wider bg-primary text-white px-2 py-0.5 rounded-full shrink-0">New</span>}
         </div>
         <p className="text-xs text-muted-foreground break-all line-clamp-1">{audio.audioUrl || "No URL"}</p>
         <div className="flex gap-4 mt-2 text-[11px] text-muted-foreground/80 font-medium">
@@ -253,214 +253,214 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
   };
 
   const handleToggleSpeakerPublish = async (e: React.MouseEvent, item: SpeakerItem) => {
-      e.stopPropagation();
-      const updatedStatus = item.isActive === false ? true : false;
-      setSpeakersList(prev => prev.map(s => s.id === item.id ? { ...s, isActive: updatedStatus } : s));
-      try {
-        const res = await fetch(`/api/admin/speakers/${item.id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ...item, isActive: updatedStatus }),
-        });
-        if (!res.ok) throw new Error("Failed to update status");
-        toast({
-          title: updatedStatus ? "Speaker Published" : "Speaker Hidden",
-          description: `${item.name} is now ${updatedStatus ? "visible on" : "hidden from"} frontend.`,
-        });
-      } catch (err: any) {
-        setSpeakersList(prev => prev.map(s => s.id === item.id ? { ...s, isActive: item.isActive } : s));
-        toast({ variant: "destructive", title: "Error", description: err.message });
-      }
-    };
-
-    const handleAudioDragEnd = async (event: DragEndEvent) => {
-      const { active, over } = event;
-      if (!over || active.id === over.id || !activeSpeaker) return;
-
-      setAudiosList((items) => {
-        const speakerAudios = items.filter(a => a.speakerId === activeSpeaker.id).sort((a, b) => (a.order || 0) - (b.order || 0));
-        const oldIndex = speakerAudios.findIndex(a => a.id === active.id);
-        const newIndex = speakerAudios.findIndex(a => a.id === over.id);
-
-        const reorderedSpeakerAudios = arrayMove(speakerAudios, oldIndex, newIndex).map((a, idx) => ({ ...a, order: idx }));
-
-        const newArray = items.map(a => {
-          if (a.speakerId !== activeSpeaker.id) return a;
-          const matched = reorderedSpeakerAudios.find(sa => sa.id === a.id);
-          return matched || a;
-        });
-
-        fetch("/api/admin/audio", {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            orders: reorderedSpeakerAudios.map(i => ({ id: i.id, orderIndex: i.order }))
-          }),
-        }).catch(console.error);
-
-        return newArray;
+    e.stopPropagation();
+    const updatedStatus = item.isActive === false ? true : false;
+    setSpeakersList(prev => prev.map(s => s.id === item.id ? { ...s, isActive: updatedStatus } : s));
+    try {
+      const res = await fetch(`/api/admin/speakers/${item.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...item, isActive: updatedStatus }),
       });
-      toast({ title: "Audio Order saved", description: "The new audio sorting order has been saved." });
-    };
+      if (!res.ok) throw new Error("Failed to update status");
+      toast({
+        title: updatedStatus ? "Speaker Published" : "Speaker Hidden",
+        description: `${item.name} is now ${updatedStatus ? "visible on" : "hidden from"} frontend.`,
+      });
+    } catch (err: any) {
+      setSpeakersList(prev => prev.map(s => s.id === item.id ? { ...s, isActive: item.isActive } : s));
+      toast({ variant: "destructive", title: "Error", description: err.message });
+    }
+  };
+
+  const handleAudioDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id || !activeSpeaker) return;
+
+    setAudiosList((items) => {
+      const speakerAudios = items.filter(a => a.speakerId === activeSpeaker.id).sort((a, b) => (a.order || 0) - (b.order || 0));
+      const oldIndex = speakerAudios.findIndex(a => a.id === active.id);
+      const newIndex = speakerAudios.findIndex(a => a.id === over.id);
+
+      const reorderedSpeakerAudios = arrayMove(speakerAudios, oldIndex, newIndex).map((a, idx) => ({ ...a, order: idx }));
+
+      const newArray = items.map(a => {
+        if (a.speakerId !== activeSpeaker.id) return a;
+        const matched = reorderedSpeakerAudios.find(sa => sa.id === a.id);
+        return matched || a;
+      });
+
+      fetch("/api/admin/audio", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          orders: reorderedSpeakerAudios.map(i => ({ id: i.id, orderIndex: i.order }))
+        }),
+      }).catch(console.error);
+
+      return newArray;
+    });
+    toast({ title: "Audio Order saved", description: "The new audio sorting order has been saved." });
+  };
 
 
 
-    const handleSpeakerDelete = async (item: SpeakerItem) => {
-      try {
-        await fetch(`/api/admin/speakers/${item.id}`, { method: "DELETE" });
-        fetchData();
-        toast({ title: "Speaker deleted" });
-        if (activeSpeaker?.id === item.id) handleSetActiveSpeaker(null);
-      } catch (e) { toast({ variant: "destructive", title: "Failed to delete" }); }
-      finally { setDeletingSpeaker(null); }
-    };
+  const handleSpeakerDelete = async (item: SpeakerItem) => {
+    try {
+      await fetch(`/api/admin/speakers/${item.id}`, { method: "DELETE" });
+      fetchData();
+      toast({ title: "Speaker deleted" });
+      if (activeSpeaker?.id === item.id) handleSetActiveSpeaker(null);
+    } catch (e) { toast({ variant: "destructive", title: "Failed to delete" }); }
+    finally { setDeletingSpeaker(null); }
+  };
 
-    const activeAudios = audiosList.filter(a => a.speakerId === activeSpeaker?.id).sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
+  const activeAudios = audiosList.filter(a => a.speakerId === activeSpeaker?.id).sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
 
-    return (
-      <div className="space-y-6 max-w-7xl">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div>
-            <div className="flex items-center gap-3">
-              {activeSpeaker ? (
-                <Button variant="outline" size="icon" onClick={() => handleSetActiveSpeaker(null)} className="h-8 w-8">
-                  <ArrowLeft className="h-4 w-4" />
-                </Button>
-              ) : (
-                <Button variant="outline" size="icon" asChild className="h-8 w-8">
-                  <Link href="/sitemanager/pages">
-                    <ArrowLeft className="h-4 w-4" />
-                  </Link>
-                </Button>
-              )}
-              <h1 className="text-3xl font-bold text-foreground tracking-tight">
-                {activeSpeaker ? `${activeSpeaker.name} Audios` : pageForm.title}
-              </h1>
-            </div>
-            <p className="text-muted-foreground mt-1">
-              {activeSpeaker ? "Manage audios for this speaker." : "Manage speakers and their page settings."}
-            </p>
-          </div>
-        </div>
-
-        <Tabs
-          key={activeSpeaker ? `speaker-${activeSpeaker.id}` : "speakers-list"}
-          defaultValue={activeSpeaker ? "audios" : "speakers"}
-          variant="pill"
-          className="space-y-6"
-        >
-          <TabsList>
-            {!activeSpeaker ? (
-              <>
-                <TabsTrigger value="speakers" className="flex-1">
-                  <User className="w-4 h-4 mr-2" /> Speakers
-                </TabsTrigger>
-                <TabsTrigger value="settings" className="flex-1">
-                  <Settings2 className="w-4 h-4 mr-2" /> Page Setup
-                </TabsTrigger>
-              </>
+  return (
+    <div className="space-y-6 max-w-7xl">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+          <div className="flex items-center gap-3">
+            {activeSpeaker ? (
+              <Button variant="outline" size="icon" onClick={() => handleSetActiveSpeaker(null)} className="h-8 w-8">
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
             ) : (
-              <>
-                <TabsTrigger value="audios" className="flex-1">
-                  <Music className="w-4 h-4 mr-2" /> Audios
-                </TabsTrigger>
-                <TabsTrigger value="seo" className="flex-1">
-                  <Bot className="w-4 h-4 mr-2" /> SEO Section
-                </TabsTrigger>
-              </>
+              <Button variant="outline" size="icon" asChild className="h-8 w-8">
+                <Link href="/sitemanager/pages">
+                  <ArrowLeft className="h-4 w-4" />
+                </Link>
+              </Button>
             )}
-          </TabsList>
+            <h1 className="text-3xl font-bold text-foreground tracking-tight">
+              {activeSpeaker ? `${activeSpeaker.name} Audios` : pageForm.title}
+            </h1>
+          </div>
+          <p className="text-muted-foreground mt-1">
+            {activeSpeaker ? "Manage audios for this speaker." : "Manage speakers and their page settings."}
+          </p>
+        </div>
+      </div>
 
-          {!activeSpeaker && (
-            <TabsContent value="speakers" className="space-y-6">
-              <div className="flex justify-between items-center">
-                <h2 className="text-xl font-bold">Audio Speakers</h2>
-                <Button size="sm" onClick={() => router.push("/sitemanager/media/speaker/new")}>
-                  <Plus className="w-4 h-4 mr-1" /> Add Speaker
-                </Button>
-              </div>
-              {isLoading ? (
-                <div className="flex justify-center py-10"><RefreshCw className="w-6 h-6 animate-spin text-primary" /></div>
-              ) : (
-                <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-                  <SortableContext items={speakersList.map(s => s.id)} strategy={rectSortingStrategy}>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
-                      {speakersList.map(speaker => (
-                        <SortableSpeakerCard
-                          key={speaker.id}
-                          speaker={speaker}
-                          audioCount={audiosList.filter(a => a.speakerId === speaker.id).length}
-                          onClick={() => handleSetActiveSpeaker(speaker)}
-                          onEdit={(s) => router.push(`/sitemanager/media/speaker/${s.id}`)}
-                          onDelete={(s) => setDeletingSpeaker(s)}
-                          onTogglePublish={handleToggleSpeakerPublish}
-                        />
-                      ))}
-                    </div>
-                  </SortableContext>
-                </DndContext>
-              )}
-            </TabsContent>
-          )}
-
-          {!activeSpeaker && (
-            <TabsContent value="settings">
-              <form className="space-y-6 max-w-2xl">
-                <Card>
-                  <CardHeader><CardTitle>Page SEO</CardTitle></CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="space-y-2"><Label>Title</Label><Input value={pageForm.title} onChange={e => setPageForm({ ...pageForm, title: e.target.value })} /></div>
-                    <div className="space-y-2"><Label>Slug</Label><Input value={pageForm.slug} onChange={e => setPageForm({ ...pageForm, slug: e.target.value })} /></div>
-                    <ConfirmDialog
-                      title="Save Settings"
-                      description="Are you sure you want to save these page settings?"
-                      onConfirm={handlePageSave}
-                    >
-                      <Button type="button" disabled={isSavingPage}>
-                        {isSavingPage ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : "Save Settings"}
-                      </Button>
-                    </ConfirmDialog>
-                  </CardContent>
-                </Card>
-              </form>
-            </TabsContent>
-          )}
-
-          {activeSpeaker && (
+      <Tabs
+        key={activeSpeaker ? `speaker-${activeSpeaker.id}` : "speakers-list"}
+        defaultValue={activeSpeaker ? "audios" : "speakers"}
+        variant="pill"
+        className="space-y-6"
+      >
+        <TabsList>
+          {!activeSpeaker ? (
             <>
-              <TabsContent value="audios" className="space-y-6">
-                <div className="flex justify-between items-center">
-                  <h2 className="text-xl font-bold">Speaker Audios</h2>
-                  <Button size="sm" onClick={() => router.push(`/sitemanager/media/audio/new?speaker=${activeSpeaker.id}`)}>
-                    <Plus className="w-4 h-4 mr-1" /> Add Audio
-                  </Button>
-                </div>
-                <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleAudioDragEnd}>
-                  <SortableContext items={activeAudios.map(a => a.id)} strategy={rectSortingStrategy}>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                      {activeAudios.map(audio => (
-                        <SortableAudioCard
-                          key={audio.id}
-                          audio={audio}
-                          onEdit={(a) => router.push(`/sitemanager/media/audio/${a.id}`)}
-                          onDelete={(a) => { setDeletingAudio(a); }}
-                        />
-                      ))}
-                      {activeAudios.length === 0 && <p className="text-muted-foreground col-span-full">No audios found for this speaker.</p>}
-                    </div>
-                  </SortableContext>
-                </DndContext>
-              </TabsContent>
-
-              <TabsContent value="seo" className="space-y-6">
-                <PageSeoManager endpoint={`/api/admin/speakers/${activeSpeaker.id}`} backHref="#" />
-              </TabsContent>
+              <TabsTrigger value="speakers" className="flex-1">
+                <User className="w-4 h-4 mr-2" /> Speakers
+              </TabsTrigger>
+              <TabsTrigger value="settings" className="flex-1">
+                <Settings2 className="w-4 h-4 mr-2" /> Page Setup
+              </TabsTrigger>
+            </>
+          ) : (
+            <>
+              <TabsTrigger value="audios" className="flex-1">
+                <Music className="w-4 h-4 mr-2" /> Audios
+              </TabsTrigger>
+              <TabsTrigger value="seo" className="flex-1">
+                <Bot className="w-4 h-4 mr-2" /> SEO Section
+              </TabsTrigger>
             </>
           )}
-        </Tabs>
+        </TabsList>
 
-        <ConfirmDialog open={!!deletingSpeaker} title="Delete Speaker" description="Are you sure you want to delete this speaker?" onConfirm={async () => { if (deletingSpeaker) await handleSpeakerDelete(deletingSpeaker) }} onOpenChange={(open) => !open && setDeletingSpeaker(null)} />
-        <ConfirmDialog open={!!deletingAudio} title="Delete Audio" description="Are you sure you want to delete this audio?" onConfirm={async () => { if (deletingAudio) { await fetch(`/api/admin/audio/${deletingAudio.id}`, { method: 'DELETE' }); fetchData(); setDeletingAudio(null); } }} onOpenChange={(open) => !open && setDeletingAudio(null)} />
-      </div>
-    );
+        {!activeSpeaker && (
+          <TabsContent value="speakers" className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h2 className="text-xl font-bold">Audio Speakers</h2>
+              <Button size="sm" onClick={() => router.push("/sitemanager/media/speaker/new")}>
+                <Plus className="w-4 h-4 mr-1" /> Add Speaker
+              </Button>
+            </div>
+            {isLoading ? (
+              <div className="flex justify-center py-10"><RefreshCw className="w-6 h-6 animate-spin text-primary" /></div>
+            ) : (
+              <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                <SortableContext items={speakersList.map(s => s.id)} strategy={rectSortingStrategy}>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                    {speakersList.map(speaker => (
+                      <SortableSpeakerCard
+                        key={speaker.id}
+                        speaker={speaker}
+                        audioCount={audiosList.filter(a => a.speakerId === speaker.id).length}
+                        onClick={() => handleSetActiveSpeaker(speaker)}
+                        onEdit={(s) => router.push(`/sitemanager/media/speaker/${s.id}`)}
+                        onDelete={(s) => setDeletingSpeaker(s)}
+                        onTogglePublish={handleToggleSpeakerPublish}
+                      />
+                    ))}
+                  </div>
+                </SortableContext>
+              </DndContext>
+            )}
+          </TabsContent>
+        )}
+
+        {!activeSpeaker && (
+          <TabsContent value="settings">
+            <form className="space-y-6 max-w-2xl">
+              <Card>
+                <CardHeader><CardTitle>Page SEO</CardTitle></CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2"><Label>Title</Label><Input value={pageForm.title} onChange={e => setPageForm({ ...pageForm, title: e.target.value })} /></div>
+                  <div className="space-y-2"><Label>Slug</Label><Input value={pageForm.slug} onChange={e => setPageForm({ ...pageForm, slug: e.target.value })} /></div>
+                  <ConfirmDialog
+                    title="Save Settings"
+                    description="Are you sure you want to save these page settings?"
+                    onConfirm={handlePageSave}
+                  >
+                    <Button type="button" disabled={isSavingPage}>
+                      {isSavingPage ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : "Save Settings"}
+                    </Button>
+                  </ConfirmDialog>
+                </CardContent>
+              </Card>
+            </form>
+          </TabsContent>
+        )}
+
+        {activeSpeaker && (
+          <>
+            <TabsContent value="audios" className="space-y-6">
+              <div className="flex justify-between items-center">
+                <h2 className="text-xl font-bold">Speaker Audios</h2>
+                <Button size="sm" onClick={() => router.push(`/sitemanager/media/audio/new?speaker=${activeSpeaker.id}`)}>
+                  <Plus className="w-4 h-4 mr-1" /> Add Audio
+                </Button>
+              </div>
+              <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleAudioDragEnd}>
+                <SortableContext items={activeAudios.map(a => a.id)} strategy={rectSortingStrategy}>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                    {activeAudios.map(audio => (
+                      <SortableAudioCard
+                        key={audio.id}
+                        audio={audio}
+                        onEdit={(a) => router.push(`/sitemanager/media/audio/${a.id}`)}
+                        onDelete={(a) => { setDeletingAudio(a); }}
+                      />
+                    ))}
+                    {activeAudios.length === 0 && <p className="text-muted-foreground col-span-full">No audios found for this speaker.</p>}
+                  </div>
+                </SortableContext>
+              </DndContext>
+            </TabsContent>
+
+            <TabsContent value="seo" className="space-y-6">
+              <PageSeoManager endpoint={`/api/admin/speakers/${activeSpeaker.id}`} backHref="#" />
+            </TabsContent>
+          </>
+        )}
+      </Tabs>
+
+      <ConfirmDialog open={!!deletingSpeaker} title="Delete Speaker" description="Are you sure you want to delete this speaker?" onConfirm={async () => { if (deletingSpeaker) await handleSpeakerDelete(deletingSpeaker) }} onOpenChange={(open) => !open && setDeletingSpeaker(null)} />
+      <ConfirmDialog open={!!deletingAudio} title="Delete Audio" description="Are you sure you want to delete this audio?" onConfirm={async () => { if (deletingAudio) { await fetch(`/api/admin/audio/${deletingAudio.id}`, { method: 'DELETE' }); fetchData(); setDeletingAudio(null); } }} onOpenChange={(open) => !open && setDeletingAudio(null)} />
+    </div>
+  );
 }

@@ -235,7 +235,7 @@ export function MenuList() {
                         <TableCell className="text-foreground-muted">{item.url}</TableCell>
                         <TableCell>{item.order}</TableCell>
                         <TableCell>
-                            <div className={cn("w-2 h-2 rounded-full", item.isVisible ? "bg-green-500" : "bg-red-500")} />
+                            <div className={cn("w-2 h-2 rounded-full", item.isVisible ? "bg-primary" : "bg-red-500")} />
                         </TableCell>
                         <TableCell className="text-right">
                             <div className="flex items-center justify-end gap-2">

@@ -517,7 +517,7 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
                 <TabsTrigger value="inbox" className="relative">
                   Inbox
                   {unreadCount > 0 && (
-                    <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-green-500 shadow-sm animate-pulse" />
+                    <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-primary shadow-sm animate-pulse" />
                   )}
                 </TabsTrigger>
                 <TabsTrigger value="history">Sent History</TabsTrigger>

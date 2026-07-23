@@ -344,7 +344,7 @@ export function ContentEditor({
                   onCheckedChange={(c) => setFormData({ ...formData, isFeatured: c })}
                 />
               </div>
-              <Badge variant={formData.isPublished ? "default" : "secondary"} className={cn(formData.isPublished && "bg-green-500 text-white")}>
+              <Badge variant={formData.isPublished ? "default" : "secondary"} className={cn(formData.isPublished && "bg-primary text-white")}>
                 {formData.isPublished ? "Published" : "Draft"}
               </Badge>
             </CardContent>

@@ -146,7 +146,7 @@ function SortableCard({ id, item, onEdit, onDelete }: SortableItemProps) {
         isDragging ? "shadow-2xl border-primary scale-[1.02]" : "hover:shadow-md hover:border-border/80"
       )}
     >
-      <div className={cn("h-1.5 w-full", isimage ? "bg-green-500" : "bg-emerald-500")} />
+      <div className={cn("h-1.5 w-full", isimage ? "bg-primary" : "bg-emerald-500")} />
 
       <div className="p-5 flex-1 flex flex-col">
         <div className="flex items-center justify-between gap-2 mb-3">
@@ -155,7 +155,7 @@ function SortableCard({ id, item, onEdit, onDelete }: SortableItemProps) {
             className={cn(
               "text-[10px] px-2.5 py-0.5 font-semibold uppercase tracking-wider rounded-md",
               isimage
-                ? "bg-green-500/10 text-green-600  border-green-500/20"
+                ? "bg-primary/10 text-green-600  border-green-500/20"
                 : "bg-emerald-500/10 text-emerald-600  border-emerald-500/20"
             )}
           >
@@ -175,7 +175,7 @@ function SortableCard({ id, item, onEdit, onDelete }: SortableItemProps) {
             <Button
               variant="ghost"
               size="icon"
-              className="h-7 w-7 text-green-500 hover:text-green-600 hover:bg-green-500/10"
+              className="h-7 w-7 text-green-500 hover:text-green-600 hover:bg-primary/10"
               onClick={() => onEdit(item)}
               title="Edit Details"
             >

@@ -103,7 +103,7 @@ function SortableCategoryCard({ id, item, onEdit, onDelete, onTogglePublish, onC
           <Badge variant="secondary" className="text-[10px] uppercase font-semibold shrink-0">{videoCount} {videoCount === 1 ? 'Video' : 'Videos'}</Badge>
         </div>
         <div className="flex items-center gap-0.5 shrink-0" onClick={(e) => e.stopPropagation()}>
-          <Button variant="ghost" size="icon" className="h-7 w-7 text-primary hover:text-green-600 hover:bg-green-500/10" onClick={() => onEdit(item)} title="Edit Category">
+          <Button variant="ghost" size="icon" className="h-7 w-7 text-primary hover:text-green-600 hover:bg-primary/10" onClick={() => onEdit(item)} title="Edit Category">
             <Pencil className="h-3.5 w-3.5" />
           </Button>
           <Button variant="ghost" size="icon" className={cn("h-7 w-7", item.isActive !== false ? "text-blue-500 hover:text-blue-600 hover:bg-blue-500/10" : "text-red-500 hover:text-red-600 hover:bg-red-500/10")} onClick={(e) => onTogglePublish(e, item)} title={item.isActive !== false ? "Hide from frontend" : "Show on frontend"}>
@@ -151,10 +151,10 @@ function SortableVideoCard({ id, item, speakerName, onEdit, onDelete, onTogglePu
             {item.isPublished ? "Published" : "Draft"}
           </Badge>
           <div className="flex items-center gap-1">
-            <Button variant="ghost" size="icon" className="h-7 w-7 text-green-500 hover:bg-green-500/10" onClick={() => onEdit(item)}>
+            <Button variant="ghost" size="icon" className="h-7 w-7 text-green-500 hover:bg-primary/10" onClick={() => onEdit(item)}>
               <Pencil className="h-3.5 w-3.5" />
             </Button>
-            <Button variant="ghost" size="icon" className={cn("h-7 w-7", item.isPublished ? "text-green-500 hover:bg-green-500/10" : "text-red-500 hover:bg-red-500/10")} onClick={() => onTogglePublish(item)} title={item.isPublished ? "Hide from frontend" : "Show on frontend"}>
+            <Button variant="ghost" size="icon" className={cn("h-7 w-7", item.isPublished ? "text-green-500 hover:bg-primary/10" : "text-red-500 hover:bg-red-500/10")} onClick={() => onTogglePublish(item)} title={item.isPublished ? "Hide from frontend" : "Show on frontend"}>
               {item.isPublished ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
             </Button>
             <Button variant="ghost" size="icon" className="h-7 w-7 text-red-500 hover:bg-red-500/10" onClick={() => onDelete(item)}>

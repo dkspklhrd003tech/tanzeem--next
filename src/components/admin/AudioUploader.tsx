@@ -124,7 +124,7 @@ export function AudioUploader({
           <div className="p-5 flex flex-col gap-3">
             {/* File info row */}
             <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-lg bg-green-500/10 flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
                 <Music className="h-5 w-5 text-green-600" />
               </div>
               <div className="flex-1 min-w-0">

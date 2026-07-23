@@ -182,7 +182,7 @@ export function Footer() {
                 target="_blank"
                 rel={EXTERNAL_LINK_REL}
                 aria-label="WhatsApp — opens in new tab"
-                className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-green-500 hover:text-primary-foreground transition-colors focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
+                className="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-white hover:bg-primary hover:text-primary-foreground transition-colors focus-visible:outline-2 focus-visible:outline-ring focus-visible:outline-offset-2"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.95 }}
               >

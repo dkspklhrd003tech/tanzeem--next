@@ -23,13 +23,13 @@ function timeAgo(date: string | Date) {
 }
 
 function getEntityColor(type: string) {
-  const map: Record<string, string> = { 
-    page: "bg-blue-500", 
-    audio: "bg-purple-500", 
-    video: "bg-red-500", 
-    book: "bg-amber-500", 
-    magazine: "bg-orange-500", 
-    user: "bg-green-500", 
+  const map: Record<string, string> = {
+    page: "bg-blue-500",
+    audio: "bg-purple-500",
+    video: "bg-red-500",
+    book: "bg-amber-500",
+    magazine: "bg-orange-500",
+    user: "bg-primary",
     media: "bg-violet-500",
     auth: "bg-emerald-500"
   };
@@ -48,13 +48,13 @@ export default function ActivityLogsPage() {
 
   const filteredLogs = useMemo(() => {
     return logs.filter(log => {
-      const matchSearch = search.toLowerCase() === "" || 
-        log.details?.toLowerCase().includes(search.toLowerCase()) || 
+      const matchSearch = search.toLowerCase() === "" ||
+        log.details?.toLowerCase().includes(search.toLowerCase()) ||
         log.userName?.toLowerCase().includes(search.toLowerCase()) ||
         log.action?.toLowerCase().includes(search.toLowerCase());
-        
+
       const matchEntity = entityFilter === "all" || log.entityType?.toLowerCase() === entityFilter.toLowerCase();
-      
+
       return matchSearch && matchEntity;
     });
   }, [logs, search, entityFilter]);
@@ -163,7 +163,7 @@ export default function ActivityLogsPage() {
                     {/* Action & Entity */}
                     <div className="w-56 min-w-0">
                       <p className="text-sm font-bold text-foreground capitalize flex items-center gap-1.5">
-                        {log.action.replace(/_/g, " ")} 
+                        {log.action.replace(/_/g, " ")}
                         {log.entityType && <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground font-mono lowercase">{log.entityType}</span>}
                       </p>
                       {log.entityId && (

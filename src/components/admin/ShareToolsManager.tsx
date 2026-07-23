@@ -391,7 +391,7 @@ export function ShareToolsManager() {
             <div className="bg-[#1a2b3c] px-4 py-2 flex items-center gap-2 border-b border-[#2a3b4c]">
               <div className="w-3 h-3 rounded-full bg-red-500"></div>
               <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-              <div className="w-3 h-3 rounded-full bg-green-500"></div>
+              <div className="w-3 h-3 rounded-full bg-primary"></div>
               <div className="ml-4 text-xs font-mono text-muted-foreground">Live Preview</div>
             </div>
             <CardContent className="p-0 h-[600px] relative">

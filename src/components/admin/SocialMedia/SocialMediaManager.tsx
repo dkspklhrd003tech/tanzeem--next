@@ -452,7 +452,7 @@ export function SocialMediaManager() {
                               className="w-14 h-14 rounded-full object-cover border-2 border-primary/10 group-hover:scale-110 transition-transform"
                             />
                             {account.isActive && (
-                              <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-card" />
+                              <div className="absolute -top-1 -right-1 w-4 h-4 bg-primary rounded-full border-2 border-card" />
                             )}
                           </div>
                           <div className="flex-1 min-w-0">

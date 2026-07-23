@@ -60,7 +60,7 @@ function timeAgo(date: string | Date) {
   return `${Math.floor(h / 24)}d ago`;
 }
 function getEntityColor(type: string) {
-  const map: Record<string, string> = { page: "bg-blue-500", audio: "bg-purple-500", video: "bg-red-500", book: "bg-amber-500", magazine: "bg-orange-500", user: "bg-green-500", media: "bg-violet-500" };
+  const map: Record<string, string> = { page: "bg-blue-500", audio: "bg-purple-500", video: "bg-red-500", book: "bg-amber-500", magazine: "bg-orange-500", user: "bg-primary", media: "bg-violet-500" };
   return map[type?.toLowerCase()] ?? "bg-primary";
 }
 

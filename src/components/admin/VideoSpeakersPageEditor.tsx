@@ -137,7 +137,7 @@ function SortableVideoCard({ video, onEdit, onDelete }: { video: VideoItem, onEd
       <div className="pr-8">
         <div className="flex items-center gap-2 mb-1">
           <h3 className="font-bold line-clamp-2 group-hover:text-primary transition-colors">{video.title}</h3>
-          {video.isNew && <span className="text-[10px] uppercase font-bold tracking-wider bg-green-500 text-white px-2 py-0.5 rounded-full shrink-0">New</span>}
+          {video.isNew && <span className="text-[10px] uppercase font-bold tracking-wider bg-primary text-white px-2 py-0.5 rounded-full shrink-0">New</span>}
         </div>
         <p className="text-xs text-muted-foreground break-all line-clamp-1">{video.videoUrl || video.embedUrl || "No URL"}</p>
         <div className="flex gap-4 mt-2 text-[11px] text-muted-foreground/80 font-medium">

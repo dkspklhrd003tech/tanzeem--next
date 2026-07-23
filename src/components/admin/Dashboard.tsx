@@ -87,7 +87,7 @@ export function Dashboard() {
       title: "Active Campaigns",
       value: data?.stats?.campaigns || 0,
       icon: Calendar,
-      color: "bg-green-500",
+      color: "bg-primary",
     },
     {
       title: "Quranic Circles",
@@ -196,7 +196,7 @@ export function Dashboard() {
                         activity.type === "video" && "bg-red-500",
                         activity.type === "book" && "bg-amber-500",
                         activity.type === "page" && "bg-blue-500",
-                        activity.type === "event" && "bg-green-500",
+                        activity.type === "event" && "bg-primary",
                         !["audio", "video", "book", "page", "event"].includes(activity.type) && "bg-primary"
                       )} />
                       <div className="flex-1 min-w-0">
