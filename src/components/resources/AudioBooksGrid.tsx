@@ -127,13 +127,13 @@ export function AudioBooksGrid({ initialItems }: AudioBooksGridProps) {
                 >
                   {/* Visual Top Bar / Image */}
                   {item.featuredImage ? (
-                    <div className="relative aspect-[3/4] w-full overflow-hidden bg-muted shrink-0">
+                    <div className="relative aspect-[16/25] w-full overflow-hidden bg-muted shrink-0">
                       <img
                         src={item.featuredImage}
                         alt={item.title}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
-                      <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                      <div className="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                         <AudioLines className="h-12 w-12 text-white" />
                       </div>
                     </div>

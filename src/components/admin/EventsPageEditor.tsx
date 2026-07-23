@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import {
   Plus, Pencil, XCircle, Search, FileText, Sparkles,
   Settings2, Check, AlertCircle, UploadCloud, RefreshCw, ArrowLeft,
-  GripVertical, Calendar
+  GripVertical, Calendar, X
 } from "lucide-react";
 import { PageActionBar } from "@/components/admin/PageActionBar";
 import { Badge } from "@/components/ui/badge";
@@ -865,7 +865,7 @@ export default function EventsPageEditor({ pageId, initialPageData }: EventsPage
                 <FileText className="h-5 w-5 text-primary" />
                 {editingItem ? "Edit event Details" : "New event Details"}
               </h2>
-              <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsModalOpen(false)}>×</Button>
+              <Button type="button" variant="destructive" size="icon" className="rounded-full w-7 h-7 flex items-center justify-center p-0 bg-destructive text-white" onClick={() => setIsModalOpen(false)}><X className="w-4 h-4 text-white" /></Button>
             </div>
 
             <div className="overflow-y-auto p-6 flex-1">
@@ -979,7 +979,7 @@ export default function EventsPageEditor({ pageId, initialPageData }: EventsPage
               <Button variant="outline" type="button" onClick={() => setIsModalOpen(false)}>
                 Cancel
               </Button>
-              <Button type="submit" form="press-release-form" className="bg-primary text-white hover:bg-primary/95">
+              <Button type="submit" form="press-release-form" className="bg-primary text-white hover:bg-primary/95 hover:text-white">
                 {editingItem ? "Save Changes" : "Create Release"}
               </Button>
             </div>

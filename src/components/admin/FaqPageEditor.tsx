@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import {
   HelpCircle, Settings2, Plus, ArrowUp, ArrowDown,
-  XCircle, GripVertical, Check, ArrowLeft, Search, Eye, Pencil
+  XCircle, GripVertical, Check, ArrowLeft, Search, Eye, Pencil, X
 } from "lucide-react";
 import { PageActionBar } from "@/components/admin/PageActionBar";
 import { Badge } from "@/components/ui/badge";
@@ -646,7 +646,7 @@ export default function FaqPageEditor({ pageId, initialPageData }: FaqPageEditor
               <h2 className="text-xl font-bold">
                 {editingFaq ? "Edit FAQ Item" : "Add FAQ Item"}
               </h2>
-              <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsFaqModalOpen(false)}>×</Button>
+              <Button type="button" variant="destructive" size="icon" className="rounded-full w-7 h-7 flex items-center justify-center p-0 bg-destructive text-white" onClick={() => setIsFaqModalOpen(false)}><X className="w-4 h-4 text-white" /></Button>
             </div>
 
             <div className="overflow-y-auto p-6 flex-1">

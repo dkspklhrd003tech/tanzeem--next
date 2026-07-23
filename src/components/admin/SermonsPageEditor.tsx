@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import {
   Plus, Pencil, XCircle, GripVertical, FileText, Settings2,
-  UploadCloud, RefreshCw, ArrowLeft, Mic, Calendar
+  UploadCloud, RefreshCw, ArrowLeft, Mic, Calendar, X
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -608,7 +608,7 @@ export default function SermonsPageEditor({ pageId, initialPageData }: { pageId:
                 <FileText className="h-5 w-5 text-primary" />
                 {editingCatId ? "Edit Category" : "Add Category"}
               </h2>
-              <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsCatModalOpen(false)}>×</Button>
+              <Button type="button" variant="destructive" size="icon" className="rounded-full w-7 h-7 flex items-center justify-center p-0 bg-destructive text-white" onClick={() => setIsCatModalOpen(false)}><X className="w-4 h-4 text-white" /></Button>
             </div>
             <div className="overflow-y-auto p-6 flex-1 space-y-4">
               <div className="space-y-2"><Label>Name (e.g. Khitab-e-Jum'ah 2026)</Label><Input value={catFormData.name} onChange={e => setCatFormData({ ...catFormData, name: e.target.value, slug: editingCatId ? catFormData.slug : slugify(e.target.value) })} /></div>
@@ -623,7 +623,7 @@ export default function SermonsPageEditor({ pageId, initialPageData }: { pageId:
                 description={`Are you sure you want to ${editingCatId ? "update" : "create"} this category?`}
                 onConfirm={handleCatSave}
               >
-                <Button disabled={isUploading} className="bg-primary text-white hover:bg-primary/95">
+                <Button disabled={isUploading} className="bg-primary text-white hover:bg-primary/95 hover:text-white">
                   {editingCatId ? "Update Category" : "Save Category"}
                 </Button>
               </ConfirmDialog>
@@ -641,7 +641,7 @@ export default function SermonsPageEditor({ pageId, initialPageData }: { pageId:
                 <Mic className="h-5 w-5 text-primary" />
                 {editingSermonId ? "Edit Video" : "Add Video"}
               </h2>
-              <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsSermonModalOpen(false)}>×</Button>
+              <Button type="button" variant="destructive" size="icon" className="rounded-full w-7 h-7 flex items-center justify-center p-0 bg-destructive text-white" onClick={() => setIsSermonModalOpen(false)}><X className="w-4 h-4 text-white" /></Button>
             </div>
             <div className="overflow-y-auto p-6 flex-1 space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -675,7 +675,7 @@ export default function SermonsPageEditor({ pageId, initialPageData }: { pageId:
                 description={`Are you sure you want to ${editingSermonId ? "update" : "add"} this video?`}
                 onConfirm={handleSermonSave}
               >
-                <Button disabled={isUploading} className="bg-primary text-white hover:bg-primary/95">
+                <Button disabled={isUploading} className="bg-primary text-white hover:bg-primary/95 hover:text-white">
                   {editingSermonId ? "Update Video" : "Save Video"}
                 </Button>
               </ConfirmDialog>

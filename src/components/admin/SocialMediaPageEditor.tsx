@@ -18,6 +18,7 @@ import {
   Palette,
   ArrowLeft,
   Eye,
+  X,
 } from "lucide-react";
 import { PageActionBar } from "@/components/admin/PageActionBar";
 import { Badge } from "@/components/ui/badge";
@@ -937,7 +938,7 @@ export default function SocialMediaPageEditor({ pageId, initialPageData }: Socia
                   <Button
                     disabled={!activePlatformId}
                     onClick={handleOpenAddAccount}
-                    className="bg-primary text-white hover:bg-primary/95"
+                    className="bg-primary text-white hover:bg-primary/95 hover:text-white"
                   >
                     <Plus className="w-4 h-4 mr-2" /> Add Social Card
                   </Button>
@@ -995,7 +996,7 @@ export default function SocialMediaPageEditor({ pageId, initialPageData }: Socia
                   Manage the tabs shown at the top of the social media page. Reorder them below.
                 </CardDescription>
               </div>
-              <Button onClick={handleOpenAddPlatform} className="bg-primary text-white hover:bg-primary/95">
+              <Button onClick={handleOpenAddPlatform} className="bg-primary text-white hover:bg-primary/95 hover:text-white">
                 <Plus className="w-4 h-4 mr-2" /> Add Platform Tab
               </Button>
             </CardHeader>
@@ -1166,7 +1167,7 @@ export default function SocialMediaPageEditor({ pageId, initialPageData }: Socia
               <h2 className="text-lg font-bold flex items-center gap-2">
                 {editingAccount ? "Edit Social Account" : "Add New Social Account"}
               </h2>
-              <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsAccountModalOpen(false)}>×</Button>
+              <Button type="button" variant="destructive" size="icon" className="rounded-full w-7 h-7 flex items-center justify-center p-0 bg-destructive text-white" onClick={() => setIsAccountModalOpen(false)}><X className="w-4 h-4 text-white" /></Button>
             </div>
 
             <div className="overflow-y-auto p-5 flex-1">
@@ -1303,7 +1304,7 @@ export default function SocialMediaPageEditor({ pageId, initialPageData }: Socia
               <h2 className="text-lg font-bold flex items-center gap-2">
                 {editingPlatform ? "Edit Platform Tab" : "Add Platform Tab"}
               </h2>
-              <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsPlatformModalOpen(false)}>×</Button>
+              <Button type="button" variant="destructive" size="icon" className="rounded-full w-7 h-7 flex items-center justify-center p-0 bg-destructive text-white" onClick={() => setIsPlatformModalOpen(false)}><X className="w-4 h-4 text-white" /></Button>
             </div>
 
             <div className="p-5">

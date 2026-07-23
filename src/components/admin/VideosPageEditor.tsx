@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import {
   Plus, Pencil, XCircle, Search, GripVertical, FileText,
   Settings2, UploadCloud, RefreshCw, ArrowLeft, Image as ImageIcon,
-  Video, User, PlayCircle, Eye, EyeOff, Check
+  Video, User, PlayCircle, Eye, EyeOff, Check, X
 } from "lucide-react";
 import { PageActionBar } from "@/components/admin/PageActionBar";
 import { Badge } from "@/components/ui/badge";
@@ -602,7 +602,7 @@ export default function VideosPageEditor({ pageId, initialPageData }: { pageId: 
                 <Video className="h-5 w-5 text-primary" />
                 {editingCatId ? "Edit Category" : "Add Category"}
               </h2>
-              <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsCatModalOpen(false)}>×</Button>
+              <Button type="button" variant="destructive" size="icon" className="rounded-full w-7 h-7 flex items-center justify-center p-0 bg-destructive text-white" onClick={() => setIsCatModalOpen(false)}><X className="w-4 h-4 text-white" /></Button>
             </div>
             <div className="p-6 flex-1 space-y-4">
               <div className="space-y-2">
@@ -619,7 +619,7 @@ export default function VideosPageEditor({ pageId, initialPageData }: { pageId: 
             </div>
             <div className="p-6 border-t border-border bg-muted/20 flex justify-end gap-3">
               <Button variant="outline" onClick={() => setIsCatModalOpen(false)}>Cancel</Button>
-              <Button onClick={handleCatSave} className="bg-primary text-white hover:bg-primary/95">
+              <Button onClick={handleCatSave} className="bg-primary text-white hover:bg-primary/95 hover:text-white">
                 {editingCatId ? "Update Category" : "Save Category"}
               </Button>
             </div>
@@ -636,7 +636,7 @@ export default function VideosPageEditor({ pageId, initialPageData }: { pageId: 
                 <User className="h-5 w-5 text-primary" />
                 {editingSpeakerId ? "Edit Speaker" : "Add Speaker"}
               </h2>
-              <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsSpeakerModalOpen(false)}>×</Button>
+              <Button type="button" variant="destructive" size="icon" className="rounded-full w-7 h-7 flex items-center justify-center p-0 bg-destructive text-white" onClick={() => setIsSpeakerModalOpen(false)}><X className="w-4 h-4 text-white" /></Button>
             </div>
             <div className="overflow-y-auto p-6 flex-1 space-y-4">
               <div className="space-y-2">
@@ -678,7 +678,7 @@ export default function VideosPageEditor({ pageId, initialPageData }: { pageId: 
                 <Video className="h-5 w-5 text-primary" />
                 {editingVideoId ? "Edit Video" : "Add Video"}
               </h2>
-              <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsVideoModalOpen(false)}>×</Button>
+              <Button type="button" variant="destructive" size="icon" className="rounded-full w-7 h-7 flex items-center justify-center p-0 bg-destructive text-white" onClick={() => setIsVideoModalOpen(false)}><X className="w-4 h-4 text-white" /></Button>
             </div>
             <div className="overflow-y-auto p-6 flex-1 space-y-4">
               <div className="grid grid-cols-2 gap-4">

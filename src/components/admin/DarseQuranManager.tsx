@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Pencil, XCircle, MapPin, Search } from "lucide-react";
+import { Plus, Pencil, XCircle, MapPin, Search, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -250,7 +250,7 @@ export function DarseQuranManager() {
                     <div className="bg-card w-full max-w-2xl border border-border rounded-xl shadow-lg relative overflow-hidden flex flex-col max-h-[90vh]">
                         <div className="p-6 border-b border-border flex justify-between items-center bg-muted/30">
                             <h2 className="text-xl font-bold">{editingEvent ? "Edit Event" : "Create New Event"}</h2>
-                            <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsModalOpen(false)}>×</Button>
+                            <Button type="button" variant="destructive" size="icon" className="rounded-full w-7 h-7 flex items-center justify-center p-0 bg-destructive text-white" onClick={() => setIsModalOpen(false)}><X className="w-4 h-4 text-white" /></Button>
                         </div>
 
                         <div className="overflow-y-auto p-6 flex-1">
@@ -312,7 +312,9 @@ export function DarseQuranManager() {
                              <ConfirmDialog
                                 title="Save Program"
                                 description="Are you sure you want to save this Dars-e-Quran program?"
-                                onConfirm={() => document.getElementById("darse-quran-form")?.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }))}
+                                onConfirm={() => {
+                                    document.getElementById("darse-quran-form")?.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
+                                }}
                              >
                                 <Button type="button">Save Program</Button>
                              </ConfirmDialog>
@@ -325,7 +327,11 @@ export function DarseQuranManager() {
                 onOpenChange={(open) => !open && setDeletingEventId(null)}
                 title="Delete Event"
                 description={`Are you sure you want to delete the Dars-e-Quran event in ${deletingEventId?.city}?`}
-                onConfirm={() => deletingEventId && handleDelete(deletingEventId.id, deletingEventId.city)}
+                onConfirm={() => {
+                    if (deletingEventId) {
+                        return handleDelete(deletingEventId.id, deletingEventId.city);
+                    }
+                }}
             />
         </div>
     );

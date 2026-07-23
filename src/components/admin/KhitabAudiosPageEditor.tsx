@@ -653,7 +653,7 @@ export default function KhitabAudiosPageEditor({ pageId, initialPageData }: { pa
                 description={`Are you sure you want to ${editingCatId ? "update" : "create"} this category?`}
                 onConfirm={handleCatSave}
               >
-                <Button disabled={isUploading} className="bg-primary text-white hover:bg-primary/95">
+                <Button disabled={isUploading} className="bg-primary text-white hover:bg-primary/95 hover:text-white">
                   {editingCatId ? "Update Category" : "Save Category"}
                 </Button>
               </ConfirmDialog>
@@ -712,7 +712,7 @@ export default function KhitabAudiosPageEditor({ pageId, initialPageData }: { pa
                 description={`Are you sure you want to ${editingKhitabAudioId ? "update" : "add"} this audio?`}
                 onConfirm={handleKhitabAudioSave}
               >
-                <Button disabled={isUploading} className="bg-primary text-white hover:bg-primary/95">
+                <Button disabled={isUploading} className="bg-primary text-white hover:bg-primary/95 hover:text-white">
                   {editingKhitabAudioId ? "Update Audio" : "Save Audio"}
                 </Button>
               </ConfirmDialog>

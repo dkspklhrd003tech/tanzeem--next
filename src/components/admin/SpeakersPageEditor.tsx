@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Pencil, XCircle, Settings2, RefreshCw, User, ArrowLeft, Video, Music, Bot, UploadCloud, Eye, EyeOff } from "lucide-react";
+import { Plus, Pencil, XCircle, Settings2, RefreshCw, User, ArrowLeft, Video, Music, Bot, UploadCloud, Eye, EyeOff, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -359,7 +359,7 @@ export default function SpeakersPageEditor({ pageId, initialPageData, mediaConte
             <div className="bg-card w-full max-w-md border border-border rounded-xl shadow-xl relative overflow-hidden flex flex-col max-h-[90vh]">
               <div className="p-6 border-b border-border flex justify-between items-center bg-muted/20">
                 <h2 className="text-xl font-bold">{editingSpeakerId ? "Edit Speaker" : "Add Speaker"}</h2>
-                <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsSpeakerModalOpen(false)}>×</Button>
+                <Button type="button" variant="destructive" size="icon" className="rounded-full w-7 h-7 flex items-center justify-center p-0 bg-destructive text-white" onClick={() => setIsSpeakerModalOpen(false)}><X className="w-4 h-4 text-white" /></Button>
               </div>
               <div className="overflow-y-auto p-6 flex-1 space-y-4">
                 <div className="space-y-2"><Label>Name</Label><Input value={speakerFormData.name} onChange={e => setSpeakerFormData({ ...speakerFormData, name: e.target.value, slug: editingSpeakerId ? speakerFormData.slug : slugify(e.target.value) })} /></div>
@@ -386,7 +386,7 @@ export default function SpeakersPageEditor({ pageId, initialPageData, mediaConte
             <div className="bg-card w-full max-w-md border border-border rounded-xl shadow-xl relative overflow-hidden flex flex-col max-h-[90vh]">
               <div className="p-6 border-b border-border flex justify-between items-center bg-muted/20">
                 <h2 className="text-xl font-bold">{editingAudioId ? "Edit Audio Speakers" : "Add Audio"}</h2>
-                <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsAudioModalOpen(false)}>×</Button>
+                <Button type="button" variant="destructive" size="icon" className="rounded-full w-7 h-7 flex items-center justify-center p-0 bg-destructive text-white" onClick={() => setIsAudioModalOpen(false)}><X className="w-4 h-4 text-white" /></Button>
               </div>
               <div className="overflow-y-auto p-6 flex-1 space-y-4">
                 <div className="space-y-2"><Label>Title</Label><Input value={audioFormData.title} onChange={e => setAudioFormData({ ...audioFormData, title: e.target.value, slug: editingAudioId ? audioFormData.slug : slugify(e.target.value) })} /></div>
@@ -415,7 +415,7 @@ export default function SpeakersPageEditor({ pageId, initialPageData, mediaConte
             <div className="bg-card w-full max-w-md border border-border rounded-xl shadow-xl relative overflow-hidden flex flex-col max-h-[90vh]">
               <div className="p-6 border-b border-border flex justify-between items-center bg-muted/20">
                 <h2 className="text-xl font-bold">{editingVideoId ? "Edit Video" : "Add Video"}</h2>
-                <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsVideoModalOpen(false)}>×</Button>
+                <Button type="button" variant="destructive" size="icon" className="rounded-full w-7 h-7 flex items-center justify-center p-0 bg-destructive text-white" onClick={() => setIsVideoModalOpen(false)}><X className="w-4 h-4 text-white" /></Button>
               </div>
               <div className="overflow-y-auto p-6 flex-1 space-y-4">
                 <div className="space-y-2"><Label>Title</Label><Input value={videoFormData.title} onChange={e => setVideoFormData({ ...videoFormData, title: e.target.value, slug: editingVideoId ? videoFormData.slug : slugify(e.target.value) })} /></div>

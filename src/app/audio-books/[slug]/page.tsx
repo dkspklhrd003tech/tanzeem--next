@@ -87,7 +87,7 @@ export default async function AudioBookDetailsPage({ params }: PageProps) {
 
 
                     {/* Left: Image */}
-                    <div className="w-full md:w-1/3 bg-muted relative aspect-[3/4] md:aspect-auto">
+                    <div className="w-full md:w-1/3 bg-muted relative aspect-[16/25] md:aspect-auto">
                         {selectedItem.featuredImage ? (
                             <img
                                 src={selectedItem.featuredImage}

@@ -193,7 +193,7 @@ export function ShareToolsManager() {
             </h2>
             <p className="text-sm text-muted-foreground mt-1">Configure the global floating share sidebar for your website.</p>
           </div>
-          <Button onClick={handleSave} disabled={isSaving} className="bg-primary text-white hover:bg-primary/95">
+          <Button onClick={handleSave} disabled={isSaving} className="bg-primary text-white hover:bg-primary/95 hover:text-white">
             {isSaving ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : "Save Configuration"}
           </Button>
         </div>

@@ -618,7 +618,7 @@ export function SermonsManager() {
                 description={`Are you sure you want to ${editingCatId ? "update" : "create"} this category?`}
                 onConfirm={handleCatSave}
               >
-                <Button disabled={isUploading} className="bg-primary text-white hover:bg-primary/95">
+                <Button disabled={isUploading} className="bg-primary text-white hover:bg-primary/95 hover:text-white">
                   {editingCatId ? "Update Category" : "Save Category"}
                 </Button>
               </ConfirmDialog>

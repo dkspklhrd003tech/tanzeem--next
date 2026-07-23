@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Pencil, XCircle, MapPin, Search } from "lucide-react";
+import { Plus, Pencil, XCircle, MapPin, Search, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -241,7 +241,7 @@ export function KhitabatJummahManager() {
                     <div className="bg-card w-full max-w-2xl border border-border rounded-xl shadow-lg relative overflow-hidden flex flex-col max-h-[90vh]">
                         <div className="p-6 border-b border-border flex justify-between items-center bg-muted/30">
                             <h2 className="text-xl font-bold">{editingAddress ? "Edit Venue Address" : "Create New Venue Address"}</h2>
-                            <Button type="button" variant="destructive" size="icon" className="rounded-full w-8 h-8 flex items-center justify-center p-0" onClick={() => setIsModalOpen(false)}>×</Button>
+                            <Button type="button" variant="destructive" size="icon" className="rounded-full w-7 h-7 flex items-center justify-center p-0 bg-destructive text-white" onClick={() => setIsModalOpen(false)}><X className="w-4 h-4 text-white" /></Button>
                         </div>
 
                         <div className="overflow-y-auto p-6 flex-1">
@@ -289,7 +289,9 @@ export function KhitabatJummahManager() {
                              <ConfirmDialog
                                 title="Save Address"
                                 description="Are you sure you want to save this Friday sermon address?"
-                                onConfirm={() => document.getElementById("khitabat-address-form")?.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }))}
+                                onConfirm={() => {
+                                    document.getElementById("khitabat-address-form")?.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
+                                }}
                              >
                                 <Button type="button">Save Address</Button>
                              </ConfirmDialog>
@@ -302,7 +304,11 @@ export function KhitabatJummahManager() {
                 onOpenChange={(open) => !open && setDeletingAddressId(null)}
                 title="Delete Venue Address"
                 description={`Are you sure you want to delete the Friday sermon venue "${deletingAddressId?.masjid}"?`}
-                onConfirm={() => deletingAddressId && handleDelete(deletingAddressId.id, deletingAddressId.masjid)}
+                onConfirm={() => {
+                    if (deletingAddressId) {
+                        return handleDelete(deletingAddressId.id, deletingAddressId.masjid);
+                    }
+                }}
             />
         </div>
     );
