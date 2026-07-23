@@ -348,13 +348,13 @@ function LoginForm() {
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-1.5">Email Address</label>
                     <div className="relative">
-                      <Mail className={cn("absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 transition-colors", (emptyFields.email || error) ? "text-red-500" : "text-gray-400")} />
+                      <Mail className={cn("absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 transition-colors", (emptyFields.email || error) ? "text-red-500" : "text-foreground/80")} />
                       <input
                         type="email" required value={email} onChange={(e) => { setEmail(e.target.value); setEmptyFields(prev => ({ ...prev, email: false })); }}
                         placeholder="admin@tanzeem.org"
                         className={cn(
                           "w-full h-11 pl-8 pr-2 rounded-xl border text-sm transition-all",
-                          "bg-gray-50 text-gray-900 placeholder:text-gray-400",
+                          "bg-gray-50 text-gray-900 placeholder:text-foreground/80",
                           (emptyFields.email || error) ? "border-red-500 focus:border-red-500 focus:ring-red-200" : "border-gray-200 focus:border-primary focus:ring-primary/20"
                         )}
                       />
@@ -369,17 +369,17 @@ function LoginForm() {
                       </button>
                     </div>
                     <div className="relative">
-                      <Lock className={cn("absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 transition-colors", (emptyFields.password || error) ? "text-red-500" : "text-gray-400")} />
+                      <Lock className={cn("absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 transition-colors", (emptyFields.password || error) ? "text-red-500" : "text-foreground/80")} />
                       <input
                         type={showPassword ? "text" : "password"} required value={password} onChange={(e) => { setPassword(e.target.value); setEmptyFields(prev => ({ ...prev, password: false })); }}
                         placeholder="••••••••"
                         className={cn(
                           "w-full h-11 pl-8 pr-2 rounded-xl border text-sm transition-all",
-                          "bg-gray-50 text-gray-900 placeholder:text-gray-400",
+                          "bg-gray-50 text-gray-900 placeholder:text-foreground/80",
                           (emptyFields.password || error) ? "border-red-500 focus:border-red-500 focus:ring-red-200" : "border-gray-200 focus:border-primary focus:ring-primary/20"
                         )}
                       />
-                      <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
+                      <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground/80 hover:text-gray-600 transition-colors">
                         {showPassword ? <EyeOff className="h-5 w-5 text-primary" /> : <Eye className="h-5 w-5 text-primary" />}
                       </button>
                     </div>
@@ -421,11 +421,11 @@ function LoginForm() {
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-1.5">Registered Email</label>
                     <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/80" />
                       <input
                         type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
                         placeholder="admin@tanzeem.org"
-                        className="w-full h-11 pl-4 pr-4 rounded-xl border text-sm transition-all bg-gray-50 text-gray-900 placeholder:text-gray-400 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20"
+                        className="w-full h-11 pl-4 pr-4 rounded-xl border text-sm transition-all bg-gray-50 text-gray-900 placeholder:text-foreground/80 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20"
                       />
                     </div>
                   </div>
@@ -450,7 +450,7 @@ function LoginForm() {
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-1.5">6-Digit OTP Code</label>
                     <div className="relative">
-                      <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                      <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/80" />
                       <input
                         type="text" required maxLength={6} value={otp} onChange={(e) => setOtp(e.target.value.replace(/[^0-9]/g, ''))}
                         placeholder="123456"
@@ -479,13 +479,13 @@ function LoginForm() {
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-1.5">New Password</label>
                     <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/80" />
                       <input
                         type={showPassword ? "text" : "password"} required value={newPassword} onChange={(e) => setNewPassword(e.target.value)}
                         placeholder="••••••••"
-                        className="w-full h-11 pl-4 pr-4 rounded-xl border text-sm transition-all bg-gray-50 text-gray-900 placeholder:text-gray-400 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20"
+                        className="w-full h-11 pl-4 pr-4 rounded-xl border text-sm transition-all bg-gray-50 text-gray-900 placeholder:text-foreground/80 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20"
                       />
-                      <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
+                      <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground/80 hover:text-gray-600 transition-colors">
                         {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                       </button>
                     </div>
@@ -495,11 +495,11 @@ function LoginForm() {
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-1.5">Confirm Password</label>
                     <div className="relative">
-                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                      <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/80" />
                       <input
                         type={showPassword ? "text" : "password"} required value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)}
                         placeholder="••••••••"
-                        className="w-full h-11 pl-10 pr-10 rounded-xl border text-sm transition-all bg-gray-50 text-gray-900 placeholder:text-gray-400 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20"
+                        className="w-full h-11 pl-10 pr-10 rounded-xl border text-sm transition-all bg-gray-50 text-gray-900 placeholder:text-foreground/80 border-gray-200 focus:border-primary focus:ring-2 focus:ring-primary/20"
                       />
                     </div>
                   </div>

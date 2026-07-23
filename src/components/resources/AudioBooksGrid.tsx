@@ -160,7 +160,7 @@ export function AudioBooksGrid({ initialItems }: AudioBooksGridProps) {
 
                       {/* Title + speaker */}
                       <div className="flex flex-col min-w-0">
-                        <span className="text-gray-400 text-xs font-medium truncate mb-0.5">
+                        <span className="text-foreground/80 text-xs font-medium truncate mb-0.5">
                           {item.authorName || "Unknown Speaker"}
                         </span>
                         <h3 className="font-bold text-foreground text-md leading-snug group-hover:text-primary transition-colors duration-200 line-clamp-2">
