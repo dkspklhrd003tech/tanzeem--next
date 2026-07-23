@@ -157,7 +157,7 @@ function SortableCard({ id, item, onEdit, onDelete, onTogglePublish }: SortableI
             <Button
               variant="ghost"
               size="icon"
-              className={cn("h-7 w-7", item.isPublished ? "text-blue-600 hover:bg-blue/20" : "text-red-500 hover:bg-red-500/10")}
+              className={cn("h-7 w-7", item.isPublished ? "text-blue-600 hover:text-blue-600 hover:bg-blue-600/70" : "text-red-500 hover:bg-red-500/10")}
               onClick={() => onTogglePublish(item)}
               title={item.isPublished ? "Hide from frontend" : "Show on frontend"}
             >
