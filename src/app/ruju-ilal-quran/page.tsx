@@ -27,7 +27,7 @@ export default async function RujuIlalQuranPage() {
   if (page) {
     return (
       <main className=" bg-background">
-        <div className="container mx-auto py-6 md:py-8">
+        <div className="container mx-auto px-4 sm:px-6 py-6 md:py-8">
           <div className="prose prose-lg  max-w-4xl mx-auto"
             dangerouslySetInnerHTML={{ __html: getCleanContent(page.content) }}
           />

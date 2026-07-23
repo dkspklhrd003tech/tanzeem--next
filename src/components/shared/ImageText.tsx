@@ -34,7 +34,7 @@ export function ImageText({
 
   return (
     <section className="py-14 bg-background">
-      <div className="container max-w-7xl mx-auto">
+      <div className="container max-w-7xl mx-auto px-4 sm:px-6">
         <div
           className={cn(
             "flex flex-col gap-10 items-center",

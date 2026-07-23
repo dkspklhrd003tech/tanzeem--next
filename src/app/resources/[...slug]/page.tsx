@@ -127,7 +127,7 @@ export default async function ResourceSubPage({ params, searchParams }: Props) {
       ]);
 
     return (
-      <div className="container mx-auto py-6 md:py-8">
+      <div className="container mx-auto px-4 sm:px-6 py-6 md:py-8">
         <div className="max-w-4xl mb-8">
           <Link href="/resources" className="text-sm text-primary hover:underline">
             ← Resources
@@ -219,7 +219,7 @@ export default async function ResourceSubPage({ params, searchParams }: Props) {
 
       const seriesTitle = TITLES[`magazines/${seriesSlug}`] || seriesSlug;
       return (
-        <div className="container mx-auto py-6 md:py-8">
+        <div className="container mx-auto px-4 sm:px-6 py-6 md:py-8">
           <Link href={`/resources/magazines/${seriesSlug}`} className="text-sm text-primary hover:underline">
             ← {seriesTitle}
           </Link>
@@ -283,7 +283,7 @@ export default async function ResourceSubPage({ params, searchParams }: Props) {
   if (parentPath.startsWith("magazines/")) {
     const m = entity as typeof MagazinesTable.$inferSelect;
     return (
-      <div className="container mx-auto py-6 md:py-8">
+      <div className="container mx-auto px-4 sm:px-6 py-6 md:py-8">
         <Link href={`/resources/${parentPath}`} className="text-sm text-primary hover:underline">
           ← {TITLES[parentPath] || "Magazines"}
         </Link>
@@ -295,7 +295,7 @@ export default async function ResourceSubPage({ params, searchParams }: Props) {
   if (parentPath === "press-releases") {
     const pr = entity as any;
     return (
-      <div className="container mx-auto py-6 md:py-8">
+      <div className="container mx-auto px-4 sm:px-6 py-6 md:py-8">
         <Link href="/resources/press-releases" className="text-sm text-primary hover:underline">
           ← Press Releases
         </Link>

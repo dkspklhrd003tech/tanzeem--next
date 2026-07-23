@@ -42,7 +42,7 @@ export function SermonDetail({ sermon }: SermonDetailProps) {
     const embedUrl = isYouTube && videoUrl ? getYouTubeEmbedUrl(videoUrl) : null;
 
     return (
-        <article className="container mx-auto py-14 md:py-8 max-w-4xl">
+        <article className="container mx-auto px-4 sm:px-6 py-14 md:py-8 max-w-4xl">
             {/* Header */}
             <header>
                 {sermonDate && (

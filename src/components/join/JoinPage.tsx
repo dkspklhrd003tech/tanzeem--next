@@ -139,7 +139,7 @@ export function JoinPage() {
       {/* Hero */}
       <section className="bg-primary py-14 text-center relative overflow-hidden">
         <div className="absolute inset-0 opacity-[0.04]" style={{ backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)", backgroundSize: "28px 28px" }} aria-hidden="true" />
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="container relative z-10 max-w-3xl mx-auto">
+        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="container relative z-10 max-w-3xl mx-auto px-4 sm:px-6">
           <Users className="h-12 w-12 text-primary-foreground/70 mx-auto mb-4" />
           <h1 className="text-3xl md:text-4xl font-bold text-white mb-3">Join Tanzeem-e-Islami</h1>
           <p className="text-white/70 text-base md:text-lg leading-relaxed">
@@ -149,7 +149,7 @@ export function JoinPage() {
         </motion.div>
       </section>
 
-      <div className="container max-w-4xl mx-auto py-12">
+      <div className="container max-w-4xl mx-auto px-4 sm:px-6 py-12">
 
         {/* Tier selection */}
         <div className="mb-10">

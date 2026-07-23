@@ -36,7 +36,7 @@ export function TextBlock({
         viewport={{ once: true }}
         transition={{ duration: 0.5 }}
         className={cn(
-          "container max-w-4xl mx-auto",
+          "container max-w-4xl mx-auto px-4 sm:px-6",
           align === "center" && "text-center",
           align === "right" && "text-right"
         )}

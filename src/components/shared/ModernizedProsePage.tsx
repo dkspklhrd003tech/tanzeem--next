@@ -134,7 +134,7 @@ export function ModernizedProsePage({
       )}
 
       {/* ── Main Layout Body ── */}
-      <div className="container mx-auto">
+      <div className="container mx-auto px-4 sm:px-6 py-6 md:py-8">
         <div className="grid grid-cols-1 gap-6 md:gap-8 items-start">
 
           {/* Left / Main Column — Article Text */}

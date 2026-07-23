@@ -24,7 +24,7 @@ export default async function SocialMediaPage() {
 
   return (
     <main className=" bg-background py-12 md:py-8">
-      <div className="container mx-auto">
+      <div className="container mx-auto px-4 sm:px-6">
         <SocialHub initialPlatforms={platforms} initialAccounts={accounts} layout={layout} />
       </div>
     </main>

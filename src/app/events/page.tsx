@@ -26,7 +26,7 @@ export default async function EventsPage() {
 
     return (
         <main className=" bg-background">
-            <div className="container mx-auto py-6 md:py-8">
+            <div className="container mx-auto px-4 sm:px-6 py-6 md:py-8">
                 <div className="max-w-7xl mx-auto">
                     <EventsGrid initialItems={items as any} />
                 </div>

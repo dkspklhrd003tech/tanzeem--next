@@ -49,7 +49,7 @@ export default async function ServiceDetailsPage({ params }: { params: Promise<{
 
     return (
         <main className=" bg-background">
-            <div className="max-w-5xl mx-auto py-8 md:py-12">
+            <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 md:py-12">
                 <div className="space-y-12">
                     {/* Dynamic Blocks */}
                     <div className="space-y-10 pt-6">

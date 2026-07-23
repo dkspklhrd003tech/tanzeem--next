@@ -75,7 +75,7 @@ export function AudioPlayerPage({ item, related, customFieldSchema = [] }: Audio
   };
 
   return (
-    <div className="container max-w-7xl mx-auto py-10">
+    <div className="container max-w-7xl mx-auto px-4 sm:px-6 py-10">
 
       {/* Back */}
       <Link href="/audios-by-speaker" className="inline-flex items-center gap-2 text-sm text-foreground-muted hover:text-primary mb-6 transition-colors">

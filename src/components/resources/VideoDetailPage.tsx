@@ -125,7 +125,7 @@ export function VideoDetailPage({ item, related, customFieldSchema = [] }: { ite
   }
 
   return (
-    <div className="container max-w-7xl mx-auto py-10">
+    <div className="container max-w-7xl mx-auto px-4 sm:px-6 py-10">
       <Link href="/videos-by-speakers" className="inline-flex items-center gap-2 text-sm text-foreground-muted hover:text-primary mb-6 transition-colors">
         <ArrowLeft className="h-4 w-4" />
         Back to Video Library

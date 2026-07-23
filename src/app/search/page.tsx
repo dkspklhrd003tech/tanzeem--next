@@ -100,7 +100,7 @@ export default async function SearchPage({ searchParams }: Props) {
 
   return (
     <main className="min-h-screen bg-background py-6 md:py-8">
-      <div className="container mx-auto max-w-4xl">
+      <div className="container mx-auto px-4 sm:px-6 max-w-4xl">
         {/* Search header */}
         {/* <div className="mb-6 text-center">
           <h1 className="text-2xl md:text-5xl font-bold text-primary mb-4">

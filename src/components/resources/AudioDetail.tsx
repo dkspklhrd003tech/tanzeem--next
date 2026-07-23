@@ -34,7 +34,7 @@ function formatDuration(seconds?: number | null): string {
 
 export function AudioDetail({ audio, backHref, backLabel }: AudioDetailProps) {
   return (
-    <div className="container mx-auto py-6 md:py-8">
+    <div className="container mx-auto px-4 sm:px-6 py-6 md:py-8">
       <Link href={backHref} className="inline-flex items-center gap-1 text-sm text-primary hover:underline mb-6">
         <ArrowLeft className="h-4 w-4" /> {backLabel}
       </Link>
