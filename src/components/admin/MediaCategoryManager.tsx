@@ -94,7 +94,7 @@ function SortableCategoryCard({ cat, onClick, onEdit, onTogglePublish, onDelete 
       <div {...attributes} {...listeners} className="absolute top-2 left-2 z-20 p-1.5 bg-background/80 backdrop-blur rounded-md border shadow-sm cursor-grab active:cursor-grabbing hover:bg-background transition-colors text-muted-foreground">
         <GripVertical className="w-4 h-4" />
       </div>
-      <div className="aspect-video bg-muted relative overflow-hidden">
+      <div className="aspect-[8/5] bg-muted relative overflow-hidden">
         {cat.image ? (
           <img src={resolveMediaUrl(cat.image)} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt={cat.title} />
         ) : (

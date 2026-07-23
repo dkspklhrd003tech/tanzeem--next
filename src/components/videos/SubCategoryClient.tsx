@@ -100,7 +100,7 @@ export function SubCategoryClient({ subCategories, directVideos = [] }: { subCat
                 <Link
                   href={`/videos-by-category/${sub.slug}`}
                   target={sub.customFields?.openInNewTab ? "_blank" : undefined}
-                  className="w-full aspect-video rounded-xl overflow-hidden bg-card border shadow-md group-hover:shadow-xl border-border group-hover:border-primary/40 transition-all duration-500 relative mb-4 block"
+                  className="w-full aspect-[8/5] rounded-xl overflow-hidden bg-card border shadow-md group-hover:shadow-xl border-border group-hover:border-primary/40 transition-all duration-500 relative mb-4 block"
                 >
                   {sub.imageUrl ? (
                     <img
