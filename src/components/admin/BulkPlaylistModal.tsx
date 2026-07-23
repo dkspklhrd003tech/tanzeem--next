@@ -174,8 +174,8 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName }: Bul
               Import multiple videos at once into {targetName || "this section"} from YouTube, Rumble, OK.ru, or custom link lists.
             </p>
           </div>
-          <Button variant="ghost" size="icon" className="rounded-full" onClick={onClose}>
-            <X className="w-5 h-5" />
+          <Button variant="ghost" size="icon" className="bg-red-600 text-white rounded-full hover:bg-red-700 hover:text-white" onClick={onClose}>
+            <X className="w-7 h-7" />
           </Button>
         </div>
 
@@ -322,7 +322,7 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName }: Bul
 
         {/* Modal Footer */}
         <div className="p-4 border-t border-border flex items-center justify-between bg-muted/20">
-          <Button variant="ghost" onClick={onClose} disabled={isImporting}>
+          <Button className="px-3 py-2 border border-red-600 text-red-600 bg-white hover:bg-red-600 hover:text-white" variant="ghost" onClick={onClose} disabled={isImporting}>
             Cancel
           </Button>
           <Button

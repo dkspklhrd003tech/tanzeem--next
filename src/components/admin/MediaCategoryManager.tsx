@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import { Plus, XCircle, Edit, Video, Headphones, Image as ImageIcon, X, UploadCloud, RefreshCw, PlayCircle, Share2, Download, Eye, EyeOff, Sparkles } from "lucide-react";
+import { Plus, XCircle, Edit, Video, Headphones, Image as ImageIcon, X, UploadCloud, RefreshCw, PlayCircle, Share2, Download, Eye, EyeOff, Sparkles, Trash2 } from "lucide-react";
 import { BulkPlaylistModal, ParsedVideoItem } from "./BulkPlaylistModal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -83,7 +83,7 @@ interface MediaCategoryManagerProps {
   mediaType: "audio" | "video";
 }
 
-function SortableCategoryCard({ cat, onClick, onEdit, onTogglePublish, onDelete }: { cat: MainCategory, onClick: () => void, onEdit: (c: MainCategory) => void, onTogglePublish: (c: MainCategory) => void, onDelete: (c: MainCategory) => void }) {
+function SortableCategoryCard({ cat, isSelected, onToggleSelect, onClick, onEdit, onTogglePublish, onDelete }: { cat: MainCategory, isSelected?: boolean, onToggleSelect?: (selected: boolean) => void, onClick: () => void, onEdit: (c: MainCategory) => void, onTogglePublish: (c: MainCategory) => void, onDelete: (c: MainCategory) => void }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: cat.id });
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -93,10 +93,29 @@ function SortableCategoryCard({ cat, onClick, onEdit, onTogglePublish, onDelete 
   };
 
   return (
-    <div ref={setNodeRef} style={style} className="group relative flex flex-col bg-card border border-border rounded-xl overflow-hidden hover:border-primary/50 transition-all cursor-pointer shadow-sm hover:shadow-md" onClick={onClick}>
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={cn(
+        "group relative flex flex-col bg-card border rounded-xl overflow-hidden transition-all cursor-pointer shadow-sm hover:shadow-md",
+        isSelected ? "border-primary ring-2 ring-primary/30 bg-primary/5" : "border-border hover:border-primary/50"
+      )}
+      onClick={onClick}
+    >
       <div {...attributes} {...listeners} className="absolute top-2 left-2 z-20 p-1.5 bg-background/80 backdrop-blur rounded-md border shadow-sm cursor-grab active:cursor-grabbing hover:bg-background transition-colors text-muted-foreground">
         <GripVertical className="w-4 h-4" />
       </div>
+      {onToggleSelect && (
+        <div className="absolute top-2 right-2 z-20" onClick={(e) => e.stopPropagation()}>
+          <input
+            type="checkbox"
+            checked={!!isSelected}
+            onChange={(e) => onToggleSelect(e.target.checked)}
+            className="w-5 h-5 accent-primary cursor-pointer rounded shadow-sm"
+            title="Select category"
+          />
+        </div>
+      )}
       <div className="aspect-[16/9] bg-muted relative overflow-hidden">
         {cat.image ? (
           <img src={resolveMediaUrl(cat.image)} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt={cat.title} />
@@ -144,15 +163,34 @@ function SortableCategoryCard({ cat, onClick, onEdit, onTogglePublish, onDelete 
   );
 }
 
-function SortableSubCatCard({ sub, mediaType, onClick, onEdit, onTogglePublish, onDelete }: { sub: any, mediaType: string, onClick: () => void, onEdit: () => void, onTogglePublish?: (sub: any) => void, onDelete: () => void }) {
+function SortableSubCatCard({ sub, mediaType, isSelected, onToggleSelect, onClick, onEdit, onTogglePublish, onDelete }: { sub: any, mediaType: string, isSelected?: boolean, onToggleSelect?: (selected: boolean) => void, onClick: () => void, onEdit: () => void, onTogglePublish?: (sub: any) => void, onDelete: () => void }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: sub.id });
   const style = { transform: CSS.Transform.toString(transform), transition, zIndex: isDragging ? 10 : 1, opacity: isDragging ? 0.8 : 1 };
 
   return (
-    <div ref={setNodeRef} style={style} className="relative group border border-border/80 rounded-xl overflow-hidden bg-card hover:border-primary/50 transition-all shadow-sm cursor-pointer hover:shadow-md flex flex-col" onClick={onClick}>
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={cn(
+        "relative group border rounded-xl overflow-hidden bg-card transition-all shadow-sm cursor-pointer hover:shadow-md flex flex-col",
+        isSelected ? "border-primary ring-2 ring-primary/30 bg-primary/5" : "border-border/80 hover:border-primary/50"
+      )}
+      onClick={onClick}
+    >
       <div {...attributes} {...listeners} className="absolute top-2 left-2 z-20 p-1.5 bg-background/80 backdrop-blur rounded-md border shadow-sm cursor-grab active:cursor-grabbing hover:bg-background transition-colors text-muted-foreground">
         <GripVertical className="w-4 h-4" />
       </div>
+      {onToggleSelect && (
+        <div className="absolute top-2 right-2 z-20" onClick={(e) => e.stopPropagation()}>
+          <input
+            type="checkbox"
+            checked={!!isSelected}
+            onChange={(e) => onToggleSelect(e.target.checked)}
+            className="w-5 h-5 accent-primary cursor-pointer rounded shadow-sm"
+            title="Select sub-category"
+          />
+        </div>
+      )}
       {mediaType === "video" && (
         <div className="aspect-[8/5] bg-muted relative overflow-hidden">
           {sub.image ? (
@@ -194,7 +232,7 @@ function SortableSubCatCard({ sub, mediaType, onClick, onEdit, onTogglePublish, 
   );
 }
 
-function SortableDirectVideoCard({ item, mediaType, onClick, onTogglePublish }: { item: any, mediaType: string, onClick: () => void, onTogglePublish?: (item: any) => void }) {
+function SortableDirectVideoCard({ item, mediaType, isSelected, onToggleSelect, onClick, onTogglePublish }: { item: any, mediaType: string, isSelected?: boolean, onToggleSelect?: (selected: boolean) => void, onClick: () => void, onTogglePublish?: (item: any) => void }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id });
   const style = { transform: CSS.Transform.toString(transform), transition, zIndex: isDragging ? 10 : 1, opacity: isDragging ? 0.8 : 1 };
 
@@ -206,10 +244,29 @@ function SortableDirectVideoCard({ item, mediaType, onClick, onTogglePublish }: 
   }
 
   return (
-    <div ref={setNodeRef} style={style} className="relative group border border-border/80 rounded-xl overflow-hidden bg-card hover:border-primary/50 transition-all shadow-sm cursor-pointer hover:shadow-md flex flex-col" onClick={onClick}>
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={cn(
+        "relative group border rounded-xl overflow-hidden bg-card transition-all shadow-sm cursor-pointer hover:shadow-md flex flex-col",
+        isSelected ? "border-primary ring-2 ring-primary/30 bg-primary/5" : "border-border/80 hover:border-primary/50"
+      )}
+      onClick={onClick}
+    >
       <div {...attributes} {...listeners} className="absolute top-2 left-2 z-20 p-1.5 bg-background/80 backdrop-blur rounded-md border shadow-sm cursor-grab active:cursor-grabbing hover:bg-background transition-colors text-muted-foreground">
         <GripVertical className="w-4 h-4" />
       </div>
+      {onToggleSelect && (
+        <div className="absolute top-2 right-2 z-20" onClick={(e) => e.stopPropagation()}>
+          <input
+            type="checkbox"
+            checked={!!isSelected}
+            onChange={(e) => onToggleSelect(e.target.checked)}
+            className="w-5 h-5 accent-primary cursor-pointer rounded shadow-sm"
+            title="Select video"
+          />
+        </div>
+      )}
       {mediaType === "video" && (
         <div className="aspect-video bg-muted relative overflow-hidden">
           {thumb ? (
@@ -254,6 +311,130 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
   const [pendingAction, setPendingAction] = useState<{ title: string, desc: string, action: () => Promise<void> | void } | null>(null);
   const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
   const [bulkTargetSubId, setBulkTargetSubId] = useState<string>("");
+
+  // Bulk Selection States
+  const [selectedMainCatIds, setSelectedMainCatIds] = useState<string[]>([]);
+  const [selectedSubCatIds, setSelectedSubCatIds] = useState<string[]>([]);
+  const [selectedDirectMediaIds, setSelectedDirectMediaIds] = useState<string[]>([]);
+  const [selectedMediaIds, setSelectedMediaIds] = useState<string[]>([]);
+
+  const toggleSelectMainCat = (id: string) => {
+    setSelectedMainCatIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+  };
+  const toggleSelectSubCat = (id: string) => {
+    setSelectedSubCatIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+  };
+  const toggleSelectDirectMedia = (id: string) => {
+    setSelectedDirectMediaIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+  };
+  const toggleSelectMedia = (id: string) => {
+    setSelectedMediaIds(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
+  };
+
+  const bulkDeleteMainCategories = async () => {
+    if (selectedMainCatIds.length === 0) return;
+    const count = selectedMainCatIds.length;
+    setPendingAction({
+      title: "Delete Selected Categories",
+      desc: `Are you sure you want to delete ${count} selected category/categories and all their contents?`,
+      action: async () => {
+        try {
+          await Promise.all(
+            selectedMainCatIds.map(id => fetch(`/api/${mediaType}-categories/${id}`, { method: "DELETE" }))
+          );
+          setCategories(prev => prev.filter(c => !selectedMainCatIds.includes(c.id)));
+          setSelectedMainCatIds([]);
+          toast.success(`Successfully deleted ${count} category/categories`);
+        } catch (err) {
+          toast.error("Failed to delete selected categories");
+        }
+      }
+    });
+  };
+
+  const bulkDeleteSubCategories = async () => {
+    if (!activeCategory || selectedSubCatIds.length === 0) return;
+    const count = selectedSubCatIds.length;
+    setPendingAction({
+      title: "Delete Selected Sub-categories",
+      desc: `Are you sure you want to delete ${count} selected sub-category/categories?`,
+      action: async () => {
+        try {
+          await Promise.all(
+            selectedSubCatIds.map(id => fetch(`/api/${mediaType}-categories/${id}`, { method: "DELETE" }))
+          );
+          setCategories(prev => prev.map(c => c.id === activeCategory.id ? {
+            ...c,
+            subCategories: c.subCategories.filter(s => !selectedSubCatIds.includes(s.id))
+          } : c));
+          setSelectedSubCatIds([]);
+          toast.success(`Successfully deleted ${count} sub-category/categories`);
+        } catch (err) {
+          toast.error("Failed to delete selected sub-categories");
+        }
+      }
+    });
+  };
+
+  const bulkDeleteDirectMediaItems = async () => {
+    if (!activeCategory || selectedDirectMediaIds.length === 0) return;
+    const directSub = activeCategory.subCategories.find(s => s.id.endsWith('_direct'));
+    if (!directSub) return;
+    const count = selectedDirectMediaIds.length;
+    const endpointBase = mediaType === 'audio' ? '/api/audio' : '/api/videos';
+
+    setPendingAction({
+      title: "Delete Selected Direct Videos",
+      desc: `Are you sure you want to delete ${count} selected direct video(s)?`,
+      action: async () => {
+        try {
+          await Promise.all(
+            selectedDirectMediaIds.map(id => fetch(`${endpointBase}/${id}`, { method: "DELETE" }))
+          );
+          setCategories(prev => prev.map(c => c.id === activeCategory.id ? {
+            ...c,
+            subCategories: c.subCategories.map(s => s.id === directSub.id ? {
+              ...s,
+              mediaItems: s.mediaItems.filter(m => !selectedDirectMediaIds.includes(m.id))
+            } : s)
+          } : c));
+          setSelectedDirectMediaIds([]);
+          toast.success(`Successfully deleted ${count} video(s)`);
+        } catch (err) {
+          toast.error("Failed to delete selected videos");
+        }
+      }
+    });
+  };
+
+  const bulkDeleteMediaItems = async () => {
+    if (!activeCategory || !activeSubTab || selectedMediaIds.length === 0) return;
+    const count = selectedMediaIds.length;
+    const endpointBase = mediaType === 'audio' ? '/api/audio' : '/api/videos';
+
+    setPendingAction({
+      title: "Delete Selected Videos",
+      desc: `Are you sure you want to delete ${count} selected video(s)?`,
+      action: async () => {
+        try {
+          await Promise.all(
+            selectedMediaIds.map(id => fetch(`${endpointBase}/${id}`, { method: "DELETE" }))
+          );
+          setCategories(prev => prev.map(c => c.id === activeCategory.id ? {
+            ...c,
+            subCategories: c.subCategories.map(s => s.id === activeSubTab ? {
+              ...s,
+              mediaItems: s.mediaItems.filter(m => !selectedMediaIds.includes(m.id))
+            } : s)
+          } : c));
+          setSelectedMediaIds([]);
+          toast.success(`Successfully deleted ${count} video(s)`);
+        } catch (err) {
+          toast.error("Failed to delete selected videos");
+        }
+      }
+    });
+  };
 
   function slugifyText(text: string) {
     return text.toLowerCase().trim().replace(/[^\w\s-]/g, "").replace(/[\s_]+/g, "-").replace(/^-+|-+$/g, "");
@@ -866,9 +1047,34 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
           <h4 className="font-bold text-foreground">Manage {mediaType === "audio" ? "Audios" : "Videos"}</h4>
           <p className="text-xs text-muted-foreground mt-1">Organize content in Tabs (Main Categories), Cards (Sub-categories), and Items.</p>
         </div>
-        <Button type="button" onClick={() => setIsAddingMainCat(true)} className="bg-primary text-white">
-          <Plus className="w-4 h-4 mr-2" /> Add Main Category
-        </Button>
+        <div className="flex items-center gap-2">
+          {!activeTab && categories.length > 0 && (
+            <>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  if (selectedMainCatIds.length === categories.length) {
+                    setSelectedMainCatIds([]);
+                  } else {
+                    setSelectedMainCatIds(categories.map(c => c.id));
+                  }
+                }}
+              >
+                {selectedMainCatIds.length === categories.length ? "Deselect All" : "Select All"}
+              </Button>
+              {selectedMainCatIds.length > 0 && (
+                <Button type="button" size="sm" variant="destructive" onClick={bulkDeleteMainCategories}>
+                  <Trash2 className="w-4 h-4 mr-1" /> Delete ({selectedMainCatIds.length})
+                </Button>
+              )}
+            </>
+          )}
+          <Button type="button" onClick={() => setIsAddingMainCat(true)} className="bg-primary text-white">
+            <Plus className="w-4 h-4 mr-2" /> Add Main Category
+          </Button>
+        </div>
       </div>
 
       {isLoading ? (
@@ -888,6 +1094,8 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                   <SortableCategoryCard
                     key={`mainCat-${cat.id}-${i}`}
                     cat={cat}
+                    isSelected={selectedMainCatIds.includes(cat.id)}
+                    onToggleSelect={() => toggleSelectMainCat(cat.id)}
                     onClick={() => setActiveTab(cat.id)}
                     onEdit={(c) => setEditingMainCat(c)}
                     onTogglePublish={(c) => togglePublishMainCategory(c)}
@@ -919,6 +1127,36 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
             <div className="flex justify-between items-center">
               <h5 className="font-semibold text-lg">Media Items</h5>
               <div className="flex items-center gap-2">
+                {(() => {
+                  const sub = activeCategory.subCategories.find(s => s.id === activeSubTab);
+                  if (sub && sub.mediaItems.length > 0) {
+                    return (
+                      <>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            const itemIds = sub.mediaItems.map(m => m.id);
+                            if (selectedMediaIds.length === itemIds.length) {
+                              setSelectedMediaIds([]);
+                            } else {
+                              setSelectedMediaIds(itemIds);
+                            }
+                          }}
+                        >
+                          {selectedMediaIds.length === sub.mediaItems.length ? "Deselect All" : "Select All"}
+                        </Button>
+                        {selectedMediaIds.length > 0 && (
+                          <Button type="button" size="sm" variant="destructive" onClick={bulkDeleteMediaItems}>
+                            <Trash2 className="w-4 h-4 mr-1" /> Delete ({selectedMediaIds.length})
+                          </Button>
+                        )}
+                      </>
+                    );
+                  }
+                  return null;
+                })()}
                 {mediaType === "video" && (
                   <Button size="sm" variant="outline" onClick={() => {
                     setBulkTargetSubId(activeSubTab);
@@ -956,6 +1194,8 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                           key={item.id}
                           item={item}
                           mediaType={mediaType}
+                          isSelected={selectedMediaIds.includes(item.id)}
+                          onToggleSelect={() => toggleSelectMedia(item.id)}
                           onClick={() => {
                             setEditingMedia({ item: item, subId: sub.id });
                           }}
@@ -1043,7 +1283,32 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
               <div className="space-y-8">
                 {activeCategory.subCategories.filter(s => !s.id.endsWith('_direct')).length > 0 && (
                   <div>
-                    <h5 className="font-semibold text-sm text-muted-foreground mb-3 uppercase tracking-wider">Sub-categories</h5>
+                    <div className="flex justify-between items-center mb-3">
+                      <h5 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">Sub-categories</h5>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="ghost"
+                          className="h-8 text-xs"
+                          onClick={() => {
+                            const subIds = activeCategory.subCategories.filter(s => !s.id.endsWith('_direct')).map(s => s.id);
+                            if (selectedSubCatIds.length === subIds.length) {
+                              setSelectedSubCatIds([]);
+                            } else {
+                              setSelectedSubCatIds(subIds);
+                            }
+                          }}
+                        >
+                          {selectedSubCatIds.length === activeCategory.subCategories.filter(s => !s.id.endsWith('_direct')).length ? "Deselect All" : "Select All"}
+                        </Button>
+                        {selectedSubCatIds.length > 0 && (
+                          <Button type="button" size="sm" variant="destructive" className="h-8 text-xs" onClick={bulkDeleteSubCategories}>
+                            <Trash2 className="w-3.5 h-3.5 mr-1" /> Delete ({selectedSubCatIds.length})
+                          </Button>
+                        )}
+                      </div>
+                    </div>
                     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleSubCatDragEnd}>
                       <SortableContext items={activeCategory.subCategories.filter(s => !s.id.endsWith('_direct')).map(s => s.id)} strategy={rectSortingStrategy}>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -1052,6 +1317,8 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                               key={sub.id}
                               sub={sub}
                               mediaType={mediaType}
+                              isSelected={selectedSubCatIds.includes(sub.id)}
+                              onToggleSelect={() => toggleSelectSubCat(sub.id)}
                               onClick={() => {
                                 setActiveSubTab(sub.id);
                               }}
@@ -1080,7 +1347,32 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
 
                 {activeCategory.subCategories.find(s => s.id.endsWith('_direct'))?.mediaItems.length ? (
                   <div>
-                    <h5 className="font-semibold text-sm text-muted-foreground mb-3 uppercase tracking-wider">Direct Videos</h5>
+                    <div className="flex justify-between items-center mb-3">
+                      <h5 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">Direct Videos</h5>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="ghost"
+                          className="h-8 text-xs"
+                          onClick={() => {
+                            const directItems = activeCategory.subCategories.find(s => s.id.endsWith('_direct'))!.mediaItems.map(m => m.id);
+                            if (selectedDirectMediaIds.length === directItems.length) {
+                              setSelectedDirectMediaIds([]);
+                            } else {
+                              setSelectedDirectMediaIds(directItems);
+                            }
+                          }}
+                        >
+                          {selectedDirectMediaIds.length === activeCategory.subCategories.find(s => s.id.endsWith('_direct'))!.mediaItems.length ? "Deselect All" : "Select All"}
+                        </Button>
+                        {selectedDirectMediaIds.length > 0 && (
+                          <Button type="button" size="sm" variant="destructive" className="h-8 text-xs" onClick={bulkDeleteDirectMediaItems}>
+                            <Trash2 className="w-3.5 h-3.5 mr-1" /> Delete ({selectedDirectMediaIds.length})
+                          </Button>
+                        )}
+                      </div>
+                    </div>
                     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleMediaItemDragEnd(e, activeCategory.subCategories.find(s => s.id.endsWith('_direct'))!.id)}>
                       <SortableContext items={activeCategory.subCategories.find(s => s.id.endsWith('_direct'))!.mediaItems.map(m => m.id)} strategy={rectSortingStrategy}>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -1089,6 +1381,8 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                               key={item.id}
                               item={item}
                               mediaType={mediaType}
+                              isSelected={selectedDirectMediaIds.includes(item.id)}
+                              onToggleSelect={() => toggleSelectDirectMedia(item.id)}
                               onClick={() => {
                                 const directSub = activeCategory.subCategories.find(s => s.id.endsWith('_direct'))!;
                                 setEditingMedia({ item: item, subId: directSub.id });
