@@ -224,28 +224,6 @@ export default async function MagazinesPage() {
             })}
           </div>
         )}
-
-        {/* Navigation cards for 4 magazine categories */}
-        <nav className="mt-16 pt-8 border-t border-border/40 grid grid-cols-2 sm:grid-cols-4 gap-4">
-          {[
-            { href: "/meesaq", label: "Meesaq", desc: "Monthly magazine" },
-            { href: "/hikmat-e-quran", label: "Hikmat-e-Quran", desc: "Quranic studies" },
-            { href: "/nida-e-khilafat", label: "Nida-e-Khilafat", desc: "Policy & Khilafah" },
-            { href: "/perspective", label: "Perspective", desc: "English quarterly" },
-          ].map((s) => (
-            <Link
-              key={s.href}
-              href={s.href}
-              className="bg-card border border-border rounded-xl p-4 hover:border-primary/40 hover:shadow-md transition-all group"
-            >
-              <p className="font-semibold text-foreground text-sm group-hover:text-primary transition-colors flex items-center justify-between">
-                <span>{s.label}</span>
-                <ChevronRight className="h-4 w-4 text-primary opacity-0 group-hover:opacity-100 transition-opacity" />
-              </p>
-              <p className="text-xs text-foreground-muted mt-0.5">{s.desc}</p>
-            </Link>
-          ))}
-        </nav>
       </div>
     </main>
   );
