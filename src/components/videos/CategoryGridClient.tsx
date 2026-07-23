@@ -35,17 +35,17 @@ export function CategoryGridClient({ categories }: { categories: CategoryGridIte
             variant="outline"
             size="sm"
             onClick={() => setSortOrder(sortOrder === "uploaded" ? "inverse" : "uploaded")}
-            className="h-8 text-xs gap-1.5 border-border shadow-none font-medium hover:text-primary transition-all"
-            title={sortOrder === "uploaded" ? "Currently: Uploaded Order (Click to inverse)" : "Currently: Inverse Order (Click for uploaded order)"}
+            className="h-8 text-xs gap-1.5 hover:border-primary shadow-none font-medium hover:text-primary hover:bg-primary-light text-white transition-all"
+            title={sortOrder === "uploaded" ? "Currently: Newest (Click to Oldest)" : "Currently: Oldest (Click for Newest)"}
           >
             {sortOrder === "uploaded" ? (
               <>
-                <ArrowUp className="w-3.5 h-3.5 text-primary shrink-0" />
-                <span>Uploaded Order</span>
+                <ArrowUp className="w-3.5 h-3.5 text-primary hover:text-white shrink-0 " />
+                <span>Newest</span>
               </>
             ) : (
               <>
-                <ArrowDown className="w-3.5 h-3.5 text-primary shrink-0" />
+                <ArrowDown className="w-3.5 h-3.5 text-primary hover:text-white shrink-0 " />
                 <span>Inverse Order</span>
               </>
             )}

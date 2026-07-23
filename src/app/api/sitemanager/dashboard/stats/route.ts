@@ -18,6 +18,9 @@ import {
   media,
   settings,
   sermonCategories,
+  khitabAudios,
+  audioBooks,
+  formSubmissions,
 } from "@/db/schema";
 import { sql, desc, eq, and, isNotNull } from "drizzle-orm";
 
@@ -51,7 +54,13 @@ export async function GET(request: NextRequest) {
       videoViewTotal,
       bookDownloadTotal,
       magazineDownloadTotal,
-      globalStatsRes,
+      // Net totals across ALL media
+      audioPlaysRes, audioDownloadsRes, audioSharesRes,
+      videoPlaysRes, videoDownloadsRes, videoSharesRes,
+      khitabPlaysRes, khitabDownloadsRes, khitabSharesRes,
+      audioBookPlaysRes, audioBookDownloadsRes, audioBookSharesRes,
+      sermonPlaysRes, sermonDownloadsRes, sermonSharesRes,
+      bookDownloadsRes, magazineDownloadsRes
     ] = await Promise.all([
       db.select({ count: sql<number>`count(*)` }).from(pages),
       db.select({ count: sql<number>`count(*)` }).from(audio),
@@ -65,42 +74,54 @@ export async function GET(request: NextRequest) {
       db.select({ count: sql<number>`count(*)` }).from(homeCampaigns),
       db.select({ count: sql<number>`count(*)` }).from(locations),
       db.select({ count: sql<number>`count(*)` }).from(media),
-      db
-        .select({ count: sql<number>`count(*)` })
-        .from(formSubmissions)
-        .where(eq(formSubmissions.isRead, false)),
-      db.select({ total: sql<number>`coalesce(sum(play_count), 0)` }).from(audio),
-      db.select({ total: sql<number>`coalesce(sum(download_count), 0)` }).from(audio),
-      db.select({ total: sql<number>`coalesce(sum(view_count), 0)` }).from(videos),
-      db.select({ total: sql<number>`coalesce(sum(download_count), 0)` }).from(books),
-      db.select({ total: sql<number>`coalesce(sum(download_count), 0)` }).from(magazines),
-      db.execute(sql`
-        SELECT 
-          (SELECT COALESCE(SUM(play_count), 0) FROM audio) +
-          (SELECT COALESCE(SUM(play_count), 0) FROM videos) +
-          (SELECT COALESCE(SUM(play_count), 0) FROM books) +
-          (SELECT COALESCE(SUM(play_count), 0) FROM magazines) +
-          (SELECT COALESCE(SUM(play_count), 0) FROM sermons) +
-          (SELECT COALESCE(SUM(play_count), 0) FROM khitab_audios) +
-          (SELECT COALESCE(SUM(play_count), 0) FROM audio_books) AS total_plays,
-          
-          (SELECT COALESCE(SUM(download_count), 0) FROM audio) +
-          (SELECT COALESCE(SUM(download_count), 0) FROM videos) +
-          (SELECT COALESCE(SUM(download_count), 0) FROM books) +
-          (SELECT COALESCE(SUM(download_count), 0) FROM magazines) +
-          (SELECT COALESCE(SUM(download_count), 0) FROM sermons) +
-          (SELECT COALESCE(SUM(download_count), 0) FROM khitab_audios) +
-          (SELECT COALESCE(SUM(download_count), 0) FROM audio_books) AS total_downloads,
-          
-          (SELECT COALESCE(SUM(share_count), 0) FROM audio) +
-          (SELECT COALESCE(SUM(share_count), 0) FROM videos) +
-          (SELECT COALESCE(SUM(share_count), 0) FROM books) +
-          (SELECT COALESCE(SUM(share_count), 0) FROM magazines) +
-          (SELECT COALESCE(SUM(share_count), 0) FROM sermons) +
-          (SELECT COALESCE(SUM(share_count), 0) FROM khitab_audios) +
-          (SELECT COALESCE(SUM(share_count), 0) FROM audio_books) AS total_shares
-      `)
+      db.select({ count: sql<number>`count(*)` }).from(formSubmissions).where(eq(formSubmissions.isRead, false)),
+      db.select({ total: sql<number>`coalesce(sum(${audio.playCount}), 0)` }).from(audio),
+      db.select({ total: sql<number>`coalesce(sum(${audio.downloadCount}), 0)` }).from(audio),
+      db.select({ total: sql<number>`coalesce(sum(${videos.viewCount}), 0)` }).from(videos),
+      db.select({ total: sql<number>`coalesce(sum(${books.downloadCount}), 0)` }).from(books),
+      db.select({ total: sql<number>`coalesce(sum(${magazines.downloadCount}), 0)` }).from(magazines),
+      // Net totals
+      db.select({ total: sql<number>`coalesce(sum(${audio.playCount}), 0)` }).from(audio),
+      db.select({ total: sql<number>`coalesce(sum(${audio.downloadCount}), 0)` }).from(audio),
+      db.select({ total: sql<number>`coalesce(sum(${audio.shareCount}), 0)` }).from(audio),
+      db.select({ total: sql<number>`coalesce(sum(${videos.playCount}), 0)` }).from(videos),
+      db.select({ total: sql<number>`coalesce(sum(${videos.downloadCount}), 0)` }).from(videos),
+      db.select({ total: sql<number>`coalesce(sum(${videos.shareCount}), 0)` }).from(videos),
+      db.select({ total: sql<number>`coalesce(sum(${khitabAudios.playCount}), 0)` }).from(khitabAudios),
+      db.select({ total: sql<number>`coalesce(sum(${khitabAudios.downloadCount}), 0)` }).from(khitabAudios),
+      db.select({ total: sql<number>`coalesce(sum(${khitabAudios.shareCount}), 0)` }).from(khitabAudios),
+      db.select({ total: sql<number>`coalesce(sum(${audioBooks.playCount}), 0)` }).from(audioBooks),
+      db.select({ total: sql<number>`coalesce(sum(${audioBooks.downloadCount}), 0)` }).from(audioBooks),
+      db.select({ total: sql<number>`coalesce(sum(${audioBooks.shareCount}), 0)` }).from(audioBooks),
+      db.select({ total: sql<number>`coalesce(sum(${sermons.playCount}), 0)` }).from(sermons),
+      db.select({ total: sql<number>`coalesce(sum(${sermons.downloadCount}), 0)` }).from(sermons),
+      db.select({ total: sql<number>`coalesce(sum(${sermons.shareCount}), 0)` }).from(sermons),
+      db.select({ total: sql<number>`coalesce(sum(${books.downloadCount}), 0)` }).from(books),
+      db.select({ total: sql<number>`coalesce(sum(${magazines.downloadCount}), 0)` }).from(magazines),
     ]);
+
+    const globalPlays =
+      Number(audioPlaysRes[0]?.total ?? 0) +
+      Number(videoPlaysRes[0]?.total ?? 0) +
+      Number(khitabPlaysRes[0]?.total ?? 0) +
+      Number(audioBookPlaysRes[0]?.total ?? 0) +
+      Number(sermonPlaysRes[0]?.total ?? 0);
+
+    const globalDownloads =
+      Number(audioDownloadsRes[0]?.total ?? 0) +
+      Number(videoDownloadsRes[0]?.total ?? 0) +
+      Number(khitabDownloadsRes[0]?.total ?? 0) +
+      Number(audioBookDownloadsRes[0]?.total ?? 0) +
+      Number(sermonDownloadsRes[0]?.total ?? 0) +
+      Number(bookDownloadsRes[0]?.total ?? 0) +
+      Number(magazineDownloadsRes[0]?.total ?? 0);
+
+    const globalShares =
+      Number(audioSharesRes[0]?.total ?? 0) +
+      Number(videoSharesRes[0]?.total ?? 0) +
+      Number(khitabSharesRes[0]?.total ?? 0) +
+      Number(audioBookSharesRes[0]?.total ?? 0) +
+      Number(sermonSharesRes[0]?.total ?? 0);
 
     // ── Audio sub-categories ─────────────────────────────────────────────────
     const audioByCategoryRaw = await db
@@ -338,9 +359,9 @@ export async function GET(request: NextRequest) {
         magazineDownloads: Number(magazineDownloadTotal[0]?.total ?? 0),
         disclaimerViews,
         disclaimerEnabled,
-        globalPlays: Number((globalStatsRes as any)?.[0]?.[0]?.total_plays ?? 0),
-        globalDownloads: Number((globalStatsRes as any)?.[0]?.[0]?.total_downloads ?? 0),
-        globalShares: Number((globalStatsRes as any)?.[0]?.[0]?.total_shares ?? 0),
+        globalPlays,
+        globalDownloads,
+        globalShares,
       },
       // sub-category breakdowns
       audioByCategory,

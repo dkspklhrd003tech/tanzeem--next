@@ -287,7 +287,17 @@ function SortableDirectVideoCard({ item, mediaType, isSelected, onToggleSelect, 
       <div className="p-4 flex items-center justify-between gap-2 flex-1">
         <div className="flex-1 min-w-0 pr-1">
           <h5 className="font-bold text-foreground truncate" title={item.title}>{item.code ? `${item.code} | ` : ""}{item.title}</h5>
-          <p className="text-xs text-primary mt-0.5 font-medium">Direct Video</p>
+          <div className="flex items-center gap-2 mt-1.5 flex-wrap text-[11px] font-semibold">
+            <span className="flex items-center gap-1 text-blue-600 bg-blue-50 dark:bg-blue-950/40 px-1.5 py-0.5 rounded border border-blue-200 dark:border-blue-800/50" title="Plays">
+              <PlayCircle className="w-3 h-3" /> {item.playCount || 0}
+            </span>
+            <span className="flex items-center gap-1 text-emerald-600 bg-emerald-50 dark:bg-emerald-950/40 px-1.5 py-0.5 rounded border border-emerald-200 dark:border-emerald-800/50" title="Downloads">
+              <Download className="w-3 h-3" /> {item.downloadCount || 0}
+            </span>
+            <span className="flex items-center gap-1 text-purple-600 bg-purple-50 dark:bg-purple-950/40 px-1.5 py-0.5 rounded border border-purple-200 dark:border-purple-800/50" title="Shares">
+              <Share2 className="w-3 h-3" /> {item.shareCount || 0}
+            </span>
+          </div>
         </div>
         {onTogglePublish && (
           <div className="flex items-center gap-1 shrink-0">

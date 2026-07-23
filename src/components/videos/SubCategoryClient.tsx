@@ -52,7 +52,7 @@ export function SubCategoryClient({ subCategories, directVideos = [] }: { subCat
   }
 
   return (
-    <div className="space-y-12">
+    <div className="space-y-6">
       {/* Top Header / Sort Controls */}
       {(subCategories.length > 0 || directVideos.length > 0) && (
         <div className="flex items-center justify-between pb-3 border-b border-border/40">
@@ -66,17 +66,17 @@ export function SubCategoryClient({ subCategories, directVideos = [] }: { subCat
               variant="outline"
               size="sm"
               onClick={() => setSortOrder(sortOrder === "uploaded" ? "inverse" : "uploaded")}
-              className="h-8 text-xs gap-1.5 border-border shadow-none font-medium hover:text-primary transition-all"
-              title={sortOrder === "uploaded" ? "Currently: Uploaded Order (Click to inverse)" : "Currently: Inverse Order (Click for uploaded order)"}
+              className="h-8 text-xs gap-1.5 hover:border-primary shadow-none font-medium hover:text-primary hover:bg-primary-light text-white transition-all"
+              title={sortOrder === "uploaded" ? "Currently: Newest (Click to Oldest)" : "Currently: Oldest (Click for Newest)"}
             >
               {sortOrder === "uploaded" ? (
                 <>
-                  <ArrowUp className="w-3.5 h-3.5 text-primary shrink-0" />
-                  <span>Uploaded Order</span>
+                  <ArrowUp className="w-3.5 h-3.5 text-primary hover:text-white shrink-0 " />
+                  <span>Newest</span>
                 </>
               ) : (
                 <>
-                  <ArrowDown className="w-3.5 h-3.5 text-primary shrink-0" />
+                  <ArrowDown className="w-3.5 h-3.5 text-primary hover:text-white shrink-0 " />
                   <span>Inverse Order</span>
                 </>
               )}
