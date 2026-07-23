@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useRef } from "react";
-import { Plus, XCircle, Edit, Video, Headphones, Image as ImageIcon, X, UploadCloud, RefreshCw, PlayCircle, Share2, Download, Eye, EyeOff } from "lucide-react";
+import { Plus, XCircle, Edit, Video, Headphones, Image as ImageIcon, X, UploadCloud, RefreshCw, PlayCircle, Share2, Download, Eye, EyeOff, Sparkles } from "lucide-react";
+import { BulkPlaylistModal, ParsedVideoItem } from "./BulkPlaylistModal";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -251,6 +252,49 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
   const [activeTab, setActiveTab] = useState<string>("");
   const [activeSubTab, setActiveSubTab] = useState<string>("");
   const [pendingAction, setPendingAction] = useState<{ title: string, desc: string, action: () => Promise<void> | void } | null>(null);
+  const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
+  const [bulkTargetSubId, setBulkTargetSubId] = useState<string>("");
+
+  function slugifyText(text: string) {
+    return text.toLowerCase().trim().replace(/[^\w\s-]/g, "").replace(/[\s_]+/g, "-").replace(/^-+|-+$/g, "");
+  }
+
+  const handleBulkImport = async (videos: ParsedVideoItem[]) => {
+    if (!activeCategory || !bulkTargetSubId) return;
+
+    let successCount = 0;
+    const isDirect = bulkTargetSubId.endsWith("_direct");
+    const targetSubCatId = isDirect ? null : bulkTargetSubId;
+
+    for (let i = 0; i < videos.length; i++) {
+      const v = videos[i];
+      const videoData = {
+        title: v.title,
+        slug: `${slugifyText(v.title)}-${Date.now().toString().slice(-5)}-${i}`,
+        videoUrl: v.videoUrl,
+        embedUrl: v.embedUrl || "",
+        thumbnailUrl: v.thumbnailUrl || "",
+        categoryId: activeCategory.id,
+        subCategoryId: targetSubCatId,
+        isPublished: true,
+        order: i,
+      };
+
+      try {
+        const res = await fetch("/api/videos", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(videoData),
+        });
+        if (res.ok) successCount++;
+      } catch (e) {
+        console.error("Failed to import video:", v.title, e);
+      }
+    }
+
+    toast.success(`Successfully imported ${successCount} video(s)!`);
+    await fetchData();
+  };
 
   const { uploadFile: chunkedUpload } = useChunkedUpload();
 
@@ -876,17 +920,27 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
           <div className="space-y-4">
             <div className="flex justify-between items-center">
               <h5 className="font-semibold text-lg">Media Items</h5>
-              <Button size="sm" variant="default" onClick={() => {
-                const sub = activeCategory.subCategories.find(s => s.id === activeSubTab);
-                if (sub) {
-                  setEditingMedia({
-                    item: { id: "new", title: "", slug: "", mediaUrl: "", embedUrl: "", description: "", customFields: {} },
-                    subId: sub.id
-                  });
-                }
-              }}>
-                <Plus className="w-4 h-4 mr-1" /> Add New Video
-              </Button>
+              <div className="flex items-center gap-2">
+                {mediaType === "video" && (
+                  <Button size="sm" variant="outline" onClick={() => {
+                    setBulkTargetSubId(activeSubTab);
+                    setIsBulkModalOpen(true);
+                  }}>
+                    <Sparkles className="w-4 h-4 mr-1 text-primary" /> Bulk Add Videos
+                  </Button>
+                )}
+                <Button size="sm" variant="default" onClick={() => {
+                  const sub = activeCategory.subCategories.find(s => s.id === activeSubTab);
+                  if (sub) {
+                    setEditingMedia({
+                      item: { id: "new", title: "", slug: "", mediaUrl: "", embedUrl: "", description: "", customFields: {} },
+                      subId: sub.id
+                    });
+                  }
+                }}>
+                  <Plus className="w-4 h-4 mr-1" /> Add New Video
+                </Button>
+              </div>
             </div>
             {(() => {
               const sub = activeCategory.subCategories.find(s => s.id === activeSubTab);
@@ -933,6 +987,25 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
             <div className="flex justify-between items-center">
               <h5 className="font-semibold text-lg">{activeCategory.title} Content</h5>
               <div className="flex items-center gap-2">
+                {mediaType === "video" && (
+                  <Button size="sm" variant="outline" onClick={() => {
+                    let genSub = activeCategory.subCategories.find(s => s.id === activeCategory.id + "_direct");
+                    if (!genSub) {
+                      genSub = {
+                        id: activeCategory.id + "_direct",
+                        title: "(General)",
+                        image: "",
+                        code: "",
+                        mediaItems: []
+                      };
+                      setCategories(categories.map(c => c.id === activeCategory.id ? { ...c, subCategories: [genSub!, ...c.subCategories] } : c));
+                    }
+                    setBulkTargetSubId(genSub.id);
+                    setIsBulkModalOpen(true);
+                  }}>
+                    <Sparkles className="w-4 h-4 mr-1 text-primary" /> Bulk Add Videos
+                  </Button>
+                )}
                 <Button size="sm" variant="secondary" onClick={() => {
                   let genSub = activeCategory.subCategories.find(s => s.id === activeCategory.id + "_direct");
                   if (!genSub) {
@@ -1444,6 +1517,13 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
           await pendingAction.action();
           setPendingAction(null);
         }}
+      />
+
+      <BulkPlaylistModal
+        isOpen={isBulkModalOpen}
+        onClose={() => setIsBulkModalOpen(false)}
+        onImport={handleBulkImport}
+        targetName={activeCategory?.title}
       />
     </div >
   );

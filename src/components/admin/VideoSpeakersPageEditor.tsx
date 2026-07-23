@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Pencil, XCircle, Settings2, RefreshCw, User, ArrowLeft, Video, UploadCloud, Bot, PlayCircle, Share2, Download, Eye, EyeOff, X } from "lucide-react";
+import { Plus, Pencil, XCircle, Settings2, RefreshCw, User, ArrowLeft, Video, UploadCloud, Bot, PlayCircle, Share2, Download, Eye, EyeOff, X, Sparkles } from "lucide-react";
+import { BulkPlaylistModal, ParsedVideoItem } from "./BulkPlaylistModal";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useToast } from "@/hooks/use-toast";
@@ -176,6 +177,44 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
   const [videoFormData, setVideoFormData] = useState({ title: "", slug: "", videoUrl: "", embedUrl: "", thumbnailUrl: "", isPublished: true, isNew: false, customFields: {} as Record<string, any> });
   const [editingVideoId, setEditingVideoId] = useState<string | null>(null);
   const [deletingVideo, setDeletingVideo] = useState<VideoItem | null>(null);
+  const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
+
+  const handleBulkImportVideos = async (videos: ParsedVideoItem[]) => {
+    if (!activeSpeaker) return;
+
+    let successCount = 0;
+    for (let i = 0; i < videos.length; i++) {
+      const v = videos[i];
+      const videoData = {
+        title: v.title,
+        slug: `${slugify(v.title)}-${Date.now().toString().slice(-5)}-${i}`,
+        videoUrl: v.videoUrl,
+        embedUrl: v.embedUrl || "",
+        thumbnailUrl: v.thumbnailUrl || "",
+        speakerId: activeSpeaker.id,
+        isPublished: true,
+        isNew: false,
+        order: i,
+      };
+
+      try {
+        const res = await fetch("/api/videos", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(videoData),
+        });
+        if (res.ok) successCount++;
+      } catch (e) {
+        console.error("Failed to import video for speaker:", v.title, e);
+      }
+    }
+
+    toast({
+      title: "Bulk Import Complete",
+      description: `Successfully imported ${successCount} video(s) for ${activeSpeaker.name}.`,
+    });
+    fetchData();
+  };
 
   const [isUploading, setIsUploading] = useState(false);
 
@@ -487,6 +526,9 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                 <h2 className="text-xl font-bold">Speaker Videos</h2>
                 <div className="flex flex-wrap gap-2">
+                  <Button size="sm" variant="outline" onClick={() => setIsBulkModalOpen(true)}>
+                    <Sparkles className="w-4 h-4 mr-1 text-primary" /> Bulk Add Videos
+                  </Button>
                   <Button size="sm" onClick={() => { setEditingVideoId(null); setVideoFormData({ title: "", slug: "", videoUrl: "", embedUrl: "", thumbnailUrl: "", isPublished: true, isNew: false, customFields: {} }); setIsVideoModalOpen(true); }}>
                     <Plus className="w-4 h-4 mr-1" /> Add Video
                   </Button>
@@ -645,6 +687,12 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
       )}
       <ConfirmDialog open={!!deletingSpeaker} title="Delete Speaker" description="Are you sure you want to delete this speaker?" onConfirm={async () => { if (deletingSpeaker) await handleSpeakerDelete(deletingSpeaker) }} onOpenChange={(open) => !open && setDeletingSpeaker(null)} />
       <ConfirmDialog open={!!deletingVideo} title="Delete Video" description="Are you sure you want to delete this video?" onConfirm={async () => { if (deletingVideo) { await fetch(`/api/admin/videos/${deletingVideo.id}`, { method: 'DELETE' }); fetchData(); setDeletingVideo(null); } }} onOpenChange={(open) => !open && setDeletingVideo(null)} />
+      <BulkPlaylistModal
+        isOpen={isBulkModalOpen}
+        onClose={() => setIsBulkModalOpen(false)}
+        onImport={handleBulkImportVideos}
+        targetName={activeSpeaker?.name}
+      />
     </div>
   );
 }
