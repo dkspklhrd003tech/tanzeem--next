@@ -206,6 +206,11 @@ function SortableSubCatCard({ sub, mediaType, isSelected, onToggleSelect, onClic
       <div className="p-4 flex items-center justify-between gap-2 flex-1">
         <div className="flex-1 min-w-0 pr-1">
           <h5 className="font-bold text-foreground truncate" title={sub.title}>{sub.code ? `${sub.code} | ` : ""}{sub.title}</h5>
+          <div className="mt-1">
+            <Badge variant="secondary" className="text-[10px] uppercase font-semibold">
+              {sub.mediaItems?.length || 0} {mediaType === "audio" ? "Audios" : "Videos"}
+            </Badge>
+          </div>
         </div>
         <div className="flex items-center gap-1 shrink-0">
           <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-primary hover:text-primary z-10" onClick={(e) => { e.stopPropagation(); onEdit(); }} title="Edit Details">

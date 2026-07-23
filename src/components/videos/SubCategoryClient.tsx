@@ -1,7 +1,9 @@
 "use client";
 
-import { Video, X } from "lucide-react";
+import { useState } from "react";
+import { Video, ArrowUp, ArrowDown } from "lucide-react";
 import { cn, resolveCategoryHref } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 type VideoItem = {
@@ -35,6 +37,10 @@ function resolveVideoThumb(thumbnailUrl: string | null, videoUrl: string, embedU
 }
 
 export function SubCategoryClient({ subCategories, directVideos = [] }: { subCategories: SubCategory[], directVideos?: VideoItem[] }) {
+  const [sortOrder, setSortOrder] = useState<"uploaded" | "inverse">("uploaded");
+
+  const displayedSubCategories = sortOrder === "inverse" ? [...subCategories].reverse() : subCategories;
+  const displayedDirectVideos = sortOrder === "inverse" ? [...directVideos].reverse() : directVideos;
 
   function formatDuration(secs: number | null) {
     if (!secs) return null;
@@ -47,10 +53,42 @@ export function SubCategoryClient({ subCategories, directVideos = [] }: { subCat
 
   return (
     <div className="space-y-12">
+      {/* Top Header / Sort Controls */}
+      {(subCategories.length > 0 || directVideos.length > 0) && (
+        <div className="flex items-center justify-between pb-3 border-b border-border/40">
+          <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+            {subCategories.length > 0 ? `Sub-categories (${subCategories.length})` : `Videos (${directVideos.length})`}
+          </span>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground font-medium hidden sm:inline">Sort Order:</span>
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={() => setSortOrder(sortOrder === "uploaded" ? "inverse" : "uploaded")}
+              className="h-8 text-xs gap-1.5 border-border shadow-none font-medium hover:text-primary transition-all"
+              title={sortOrder === "uploaded" ? "Currently: Uploaded Order (Click to inverse)" : "Currently: Inverse Order (Click for uploaded order)"}
+            >
+              {sortOrder === "uploaded" ? (
+                <>
+                  <ArrowUp className="w-3.5 h-3.5 text-primary shrink-0" />
+                  <span>Uploaded Order</span>
+                </>
+              ) : (
+                <>
+                  <ArrowDown className="w-3.5 h-3.5 text-primary shrink-0" />
+                  <span>Inverse Order</span>
+                </>
+              )}
+            </Button>
+          </div>
+        </div>
+      )}
+
       {/* Direct Videos Grid (Only show when inside a sub-category) */}
-      {directVideos.length > 0 && subCategories.length === 0 && (
+      {displayedDirectVideos.length > 0 && subCategories.length === 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {directVideos.map((video) => {
+          {displayedDirectVideos.map((video) => {
             const thumb = resolveVideoThumb(video.thumbnailUrl, video.videoUrl, video.embedUrl);
             return (
               <Link
@@ -88,9 +126,9 @@ export function SubCategoryClient({ subCategories, directVideos = [] }: { subCat
       )}
 
       {/* Grid of Sub Category Cards */}
-      {subCategories.length > 0 && (
+      {displayedSubCategories.length > 0 && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {subCategories.map((sub) => {
+          {displayedSubCategories.map((sub) => {
             const playVideo = sub.videos.length > 0 ? sub.videos[0] : null;
             const { href, isExternal, openInNewTab: isExtOpen } = resolveCategoryHref(sub.slug, "/videos-by-category");
             const target = (sub.customFields?.openInNewTab || isExtOpen) ? "_blank" : undefined;
