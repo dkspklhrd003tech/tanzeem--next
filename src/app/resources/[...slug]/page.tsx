@@ -178,6 +178,7 @@ export default async function ResourceSubPage({ params, searchParams }: Props) {
             {await renderMagazineSeries("meesaq", "Meesaq")}
             {await renderMagazineSeries("hikmat", "Hikmat-e-Quran")}
             {await renderMagazineSeries("nida", "Nida-e-Khilafat")}
+            {await renderMagazineSeries("perspective", "Perspective")}
           </div>
         )}
         {path === "magazines/meesaq" && <MagazineGrid items={(await getMagazinesBySeries("meesaq")).map(mapMagazine)} />}
@@ -191,6 +192,7 @@ export default async function ResourceSubPage({ params, searchParams }: Props) {
               title: p.title,
               excerpt: p.excerpt,
               content: p.content,
+              slug: p.slug,
               publishedAt: p.publishedAt,
             }))}
           />

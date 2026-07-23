@@ -97,11 +97,11 @@ export async function getPublishedBooks(limit = 100) {
   }));
 }
 
-export async function getMagazinesBySeries(seriesSlug: string) {
+export async function getMagazinesBySeries(seriesSlug: string, limit = 1000) {
   const rows = await db.query.magazines.findMany({
     where: and(eq(magazines.isPublished, true), like(magazines.slug, `%${seriesSlug}%`)),
     orderBy: [desc(magazines.publishDate), desc(magazines.createdAt)],
-    limit: 50,
+    limit,
   });
   return rows;
 }
