@@ -24,6 +24,16 @@ type SubCategory = {
   videos: VideoItem[];
 };
 
+function resolveVideoThumb(thumbnailUrl: string | null, videoUrl: string, embedUrl: string | null): string | null {
+  if (thumbnailUrl) return thumbnailUrl;
+  const url = videoUrl || embedUrl || "";
+  const ytMatch = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i);
+  if (ytMatch && ytMatch[1]) {
+    return `https://img.youtube.com/vi/${ytMatch[1]}/hqdefault.jpg`;
+  }
+  return null;
+}
+
 export function SubCategoryClient({ subCategories, directVideos = [] }: { subCategories: SubCategory[], directVideos?: VideoItem[] }) {
 
   function formatDuration(secs: number | null) {
@@ -39,32 +49,41 @@ export function SubCategoryClient({ subCategories, directVideos = [] }: { subCat
     <div className="space-y-12">
       {/* Direct Videos Grid (Only show when inside a sub-category) */}
       {directVideos.length > 0 && subCategories.length === 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {directVideos.map((video) => (
-            <Link key={video.id}
-              href={`/videos/${video.id}`}
-              className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-lg border border-border/50 hover:border-primary/50 bg-card hover:bg-muted/50 transition-colors cursor-pointer group shadow-sm hover:shadow-md h-full">
-              <div className="flex-1 min-w-0">
-                <h3 className="font-semibold text-lg group-hover:text-primary transition-colors line-clamp-2">
-                  {video.title}
-                </h3>
-                {video.description && <p className="text-sm text-muted-foreground line-clamp-2 mt-1">{video.description}</p>}
-
-                {video.duration && (
-                  <span className="inline-block mt-3 bg-muted text-muted-foreground text-[10px] px-2 py-0.5 rounded-full font-mono font-medium">
-                    {formatDuration(video.duration)}
-                  </span>
-                )}
-              </div>
-
-              <div className="shrink-0 flex flex-col items-center justify-center gap-1">
-                <button className="h-10 w-10 flex items-center justify-center rounded-full bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-all scale-95 group-hover:scale-100 shadow-sm">
-                  <Video className="w-7 h-7" />
-                </button>
-                <span className="text-[11px] text-foreground font-medium transition-opacity">Watch Now</span>
-              </div>
-            </Link>
-          ))}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {directVideos.map((video) => {
+            const thumb = resolveVideoThumb(video.thumbnailUrl, video.videoUrl, video.embedUrl);
+            return (
+              <Link
+                key={video.id}
+                href={`/videos/${video.id}`}
+                className="group flex flex-col bg-card border border-border/80 hover:border-primary/50 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
+              >
+                <div className="aspect-video w-full relative overflow-hidden bg-muted">
+                  {thumb ? (
+                    <img
+                      src={thumb}
+                      alt={video.title}
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-muted text-muted-foreground">
+                      <Video className="w-10 h-10 opacity-30" />
+                    </div>
+                  )}
+                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/35 flex items-center justify-center transition-colors">
+                    <div className="w-10 h-10 rounded-full bg-white/90 group-hover:bg-primary group-hover:text-white text-primary flex items-center justify-center shadow-md transition-all scale-95 group-hover:scale-105">
+                      <Video className="w-5 h-5" />
+                    </div>
+                  </div>
+                </div>
+                <div className="p-4 text-center flex-1 flex flex-col justify-center">
+                  <h3 className="font-semibold text-sm md:text-base text-foreground group-hover:text-primary transition-colors line-clamp-2 leading-snug">
+                    {video.title}
+                  </h3>
+                </div>
+              </Link>
+            );
+          })}
         </div>
       )}
 

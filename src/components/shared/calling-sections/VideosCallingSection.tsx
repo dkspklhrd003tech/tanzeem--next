@@ -55,7 +55,8 @@ export async function VideosCallingSection({ heading, icon, fetchUrl, limit = 6,
   const items = results.map(row => ({
     title: row.video.title,
     type: "video" as const,
-    link: `/video/${row.video.slug}`
+    link: `/videos/${row.video.slug || row.video.id}`,
+    thumbnailUrl: row.video.thumbnailUrl || row.video.videoUrl || row.video.embedUrl
   }));
 
   return (

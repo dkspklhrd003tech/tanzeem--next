@@ -4,6 +4,16 @@ import { Play } from "lucide-react";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
+function getThumb(video: any): string | null {
+  if (video.thumbnailUrl) return video.thumbnailUrl;
+  const url = video.videoUrl || video.embedUrl || "";
+  const ytMatch = url.match(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/i);
+  if (ytMatch && ytMatch[1]) {
+    return `https://img.youtube.com/vi/${ytMatch[1]}/hqdefault.jpg`;
+  }
+  return null;
+}
+
 export function VideoListClient({ vids }: { vids: any[] }) {
 
   if (vids.length === 0) {
@@ -16,33 +26,43 @@ export function VideoListClient({ vids }: { vids: any[] }) {
 
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        {vids.map((v: any) => (
-          <Link key={v.id}
-            href={v.slug.startsWith('http') ? v.slug : `/videos/${v.slug}`}
-            target={v.customFields?.openInNewTab ? "_blank" : undefined}
-            rel={v.customFields?.openInNewTab ? "noopener noreferrer" : undefined}
-            className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-lg border border-border/50 hover:border-primary/50 bg-primary-light/80 hover:bg-muted/50 transition-colors cursor-pointer group shadow-sm hover:shadow-md h-full">
-
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                {v.episodeNumber && <span className="text-xs font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded">Ep {v.episodeNumber}</span>}
-                <h3 className="font-semibold text-lg flex items-center gap-2 group-hover:text-primary transition-colors line-clamp-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {vids.map((v: any) => {
+          const thumb = getThumb(v);
+          return (
+            <Link
+              key={v.id}
+              href={v.slug?.startsWith('http') ? v.slug : `/videos/${v.slug || v.id}`}
+              target={v.customFields?.openInNewTab ? "_blank" : undefined}
+              rel={v.customFields?.openInNewTab ? "noopener noreferrer" : undefined}
+              className="group flex flex-col bg-card border border-border/80 hover:border-primary/50 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
+            >
+              <div className="aspect-video w-full relative overflow-hidden bg-muted">
+                {thumb ? (
+                  <img
+                    src={thumb}
+                    alt={v.title}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-muted text-muted-foreground">
+                    <Play className="w-10 h-10 opacity-30" />
+                  </div>
+                )}
+                <div className="absolute inset-0 bg-black/20 group-hover:bg-black/35 flex items-center justify-center transition-colors">
+                  <div className="w-10 h-10 rounded-full bg-white/90 group-hover:bg-primary group-hover:text-white text-primary flex items-center justify-center shadow-md transition-all scale-95 group-hover:scale-105">
+                    <Play className="w-5 h-5 ml-0.5" />
+                  </div>
+                </div>
+              </div>
+              <div className="p-4 text-center flex-1 flex flex-col justify-center">
+                <h3 className="font-semibold text-sm md:text-base text-foreground group-hover:text-primary transition-colors line-clamp-2 leading-snug">
                   {v.title}
-                  {v.isNew && <span className="text-[10px] uppercase font-bold tracking-wider bg-primary text-white px-2 py-0.5 rounded-full">New</span>}
                 </h3>
               </div>
-              {v.description && <p className="text-sm text-muted-foreground line-clamp-2">{v.description}</p>}
-            </div>
-
-            <div className="shrink-0 flex flex-col items-center justify-center gap-1 mt-2 md:mt-0">
-              <button className="h-10 w-10 flex items-center justify-center rounded-full bg-primary/10 text-primary group-hover:bg-primary group-hover:text-white transition-all scale-95 group-hover:scale-100 shadow-sm">
-                <Play className="w-5 h-5 ml-0.5" />
-              </button>
-              <span className="text-[11px] text-foreground font-medium transition-opacity">Watch Now</span>
-            </div>
-          </Link>
-        ))}
+            </Link>
+          );
+        })}
       </div>
     </>
   );
