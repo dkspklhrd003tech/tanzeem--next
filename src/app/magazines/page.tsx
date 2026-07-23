@@ -192,7 +192,7 @@ export default async function MagazinesPage() {
                           </div>
 
                           {/* Action Link / Download */}
-                          <div className="mt-4 pt-3 border-t border-border/40 flex items-center justify-between gap-2">
+                          <div className="flex items-center justify-between gap-2">
                             <Link
                               href={detailHref}
                               target={mag.url && !mag.slug ? "_blank" : undefined}
