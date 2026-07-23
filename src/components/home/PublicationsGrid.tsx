@@ -115,7 +115,7 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
                                 <div className="relative mb-6">
 
                                     <div className={cn(
-                                        "relative w-[180px] md:w-[260px] h-[auto] rounded-[1.5rem] overflow-hidden border border-border/50 bg-card shadow-[0_8px_30px_rgb(0,0,0,0.04)]",
+                                        "relative w-[180px] md:w-[260px] aspect-[3/4] rounded-[1.5rem] overflow-hidden border border-border/50 bg-card shadow-[0_8px_30px_rgb(0,0,0,0.04)]",
                                         "group-hover:shadow-[0_20px_40px_rgba(16,185,129,0.15)] group-hover:-translate-y-3 transition-all duration-700",
                                         "ring-1 ring-white/10 group-hover:ring-primary/30 group-hover:rotate-1"
                                     )}>
@@ -192,7 +192,7 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
                                     <div className="absolute -inset-6 bg-primary/10 rounded-[3rem] opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-2xl" aria-hidden="true" />
 
                                     <div className={cn(
-                                        "relative w-[180px] md:w-[260px] h-[auto] rounded-[1.5rem] overflow-hidden border border-border/50 bg-card shadow-[0_8px_30px_rgb(0,0,0,0.04)]",
+                                        "relative w-[180px] md:w-[260px] aspect-[3/4] rounded-[1.5rem] overflow-hidden border border-border/50 bg-card shadow-[0_8px_30px_rgb(0,0,0,0.04)]",
                                         "group-hover:shadow-[0_20px_40px_rgba(16,185,129,0.15)] group-hover:-translate-y-3 transition-all duration-700",
                                         "ring-1 ring-white/10 group-hover:ring-primary/30 group-hover:-rotate-1"
                                     )}>
