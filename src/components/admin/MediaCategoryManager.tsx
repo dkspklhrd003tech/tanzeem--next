@@ -326,9 +326,21 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<string>("");
   const [activeSubTab, setActiveSubTab] = useState<string>("");
-  const [pendingAction, setPendingAction] = useState<{ title: string, desc: string, action: () => Promise<void> | void } | null>(null);
   const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
   const [bulkTargetSubId, setBulkTargetSubId] = useState<string>("");
+
+  // Pending Action State for ConfirmDialog
+  const [pendingAction, setPendingAction] = useState<{
+    title: string;
+    desc: string;
+    action: () => Promise<void>;
+  } | null>(null);
+
+  // Bulk Sub-Category Modal State
+  const [isBulkSubCatModalOpen, setIsBulkSubCatModalOpen] = useState(false);
+  const [bulkSubCatInput, setBulkSubCatInput] = useState("");
+  const [bulkSubCatPrefix, setBulkSubCatPrefix] = useState("");
+  const [isCreatingSubCats, setIsCreatingSubCats] = useState(false);
 
   // Bulk Selection States
   const [selectedMainCatIds, setSelectedMainCatIds] = useState<string[]>([]);
@@ -861,6 +873,81 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
     }
   };
 
+  const handleBulkAddSubCategories = async (mainId: string) => {
+    if (!bulkSubCatInput.trim()) {
+      toast.error("Please enter at least one sub-category name or line.");
+      return;
+    }
+
+    const lines = bulkSubCatInput
+      .split("\n")
+      .map(l => l.trim())
+      .filter(Boolean);
+
+    if (lines.length === 0) {
+      toast.error("No valid sub-category names found.");
+      return;
+    }
+
+    setIsCreatingSubCats(true);
+    let successCount = 0;
+    const createdSubs: SubCategory[] = [];
+
+    const existingSubCount = activeCategory?.subCategories.filter(s => !s.id.endsWith('_direct')).length || 0;
+
+    for (let i = 0; i < lines.length; i++) {
+      const rawName = lines[i];
+      let name = rawName;
+      if (bulkSubCatPrefix.trim()) {
+        name = `${bulkSubCatPrefix.trim()} - ${rawName}`;
+      }
+
+      const slug = slugifyText(name) + "-" + Date.now().toString().slice(-4) + "-" + i;
+
+      try {
+        const res = await fetch(`/api/${mediaType}-categories`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name,
+            slug,
+            parentId: mainId,
+            order: existingSubCount + i,
+          })
+        });
+
+        if (res.ok) {
+          const data = await res.json();
+          createdSubs.push({
+            id: data.id,
+            title: name,
+            slug: data.slug || slug,
+            image: "",
+            code: "",
+            order: existingSubCount + i,
+            customFields: {},
+            mediaItems: [],
+          });
+          successCount++;
+        }
+      } catch (err) {
+        console.error("Failed to create sub-category:", name, err);
+      }
+    }
+
+    if (createdSubs.length > 0) {
+      setCategories(categories.map(c =>
+        c.id === mainId ? { ...c, subCategories: [...c.subCategories, ...createdSubs] } : c
+      ));
+    }
+
+    setIsCreatingSubCats(false);
+    setIsBulkSubCatModalOpen(false);
+    setBulkSubCatInput("");
+    setBulkSubCatPrefix("");
+    toast.success(`Successfully created ${successCount} sub-category/categories!`);
+  };
+
   const saveSubCategory = async (mainId: string, updatedSub: SubCategory) => {
     try {
       await fetch(`/api/${mediaType}-categories/${updatedSub.id}`, {
@@ -1290,13 +1377,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                   {mediaType === "audio" ? <Headphones className="w-4 h-4 mr-1" /> : <Video className="w-4 h-4 mr-1" />}
                   {mediaType === "audio" ? "Add Direct Audio" : "Add Direct Video"}
                 </Button>
-                <Button size="sm" variant="default" onClick={() => {
-                  setPendingAction({
-                    title: "Add Sub-category",
-                    desc: "Create a new sub-category (card) inside this tab?",
-                    action: () => addSubCategory(activeCategory.id)
-                  });
-                }}>
+                <Button size="sm" variant="default" onClick={() => setIsBulkSubCatModalOpen(true)}>
                   <Plus className="w-4 h-4 mr-1" /> Add Sub-Category
                 </Button>
               </div>
@@ -1846,7 +1927,74 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
         onClose={() => setIsBulkModalOpen(false)}
         onImport={handleBulkImport}
         targetName={activeCategory?.title}
+        mediaType={mediaType}
       />
-    </div >
+
+      {/* Bulk Sub-Categories Modal */}
+      {isBulkSubCatModalOpen && activeCategory && (
+        <Dialog open={isBulkSubCatModalOpen} onOpenChange={(open) => !open && setIsBulkSubCatModalOpen(false)}>
+          <DialogContent className="max-w-lg">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2 text-xl font-bold">
+                <Plus className="w-5 h-5 text-primary" />
+                Add Sub-Categories (Single or Bulk)
+              </DialogTitle>
+              <DialogDescription>
+                Add one or multiple sub-categories to <strong>{activeCategory.title}</strong> at once. Type or paste one sub-category per line.
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="space-y-4 py-2">
+              <div className="space-y-2">
+                <Label>Title / Series Prefix (Optional)</Label>
+                <Input
+                  placeholder="e.g. Dars-e-Quran or Series (Optional)"
+                  value={bulkSubCatPrefix}
+                  onChange={(e) => setBulkSubCatPrefix(e.target.value)}
+                  className="text-xs"
+                />
+                <p className="text-[11px] text-muted-foreground">If provided, this prefix will be prepended (e.g. &quot;Prefix - SubCategory Name&quot;).</p>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Sub-Category Name(s) <span className="text-destructive">*</span></Label>
+                <Textarea
+                  placeholder={`Surah Al-Fatihah\nSurah Al-Baqarah\nSurah Ali 'Imran\nSurah An-Nisa`}
+                  value={bulkSubCatInput}
+                  onChange={(e) => setBulkSubCatInput(e.target.value)}
+                  className="font-mono text-xs min-h-[140px]"
+                />
+                <div className="flex justify-between text-[11px] text-muted-foreground">
+                  <span>Enter 1 sub-category or paste hundreds (one per line).</span>
+                  <span className="font-semibold text-primary">
+                    {bulkSubCatInput.split("\n").filter(l => l.trim()).length} Item(s)
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsBulkSubCatModalOpen(false)} disabled={isCreatingSubCats}>
+                Cancel
+              </Button>
+              <Button
+                type="button"
+                disabled={isCreatingSubCats || !bulkSubCatInput.trim()}
+                onClick={() => handleBulkAddSubCategories(activeCategory.id)}
+                className="bg-primary text-white hover:bg-primary/90"
+              >
+                {isCreatingSubCats ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> Creating Sub-Categories...
+                  </>
+                ) : (
+                  `Create ${bulkSubCatInput.split("\n").filter(l => l.trim()).length || 1} Sub-Category/Categories`
+                )}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      )}
+    </div>
   );
 }

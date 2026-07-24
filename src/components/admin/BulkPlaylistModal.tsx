@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import {
   X, RefreshCw, UploadCloud, CheckSquare, Square,
-  Video, PlayCircle, ExternalLink, Sparkles, Type
+  Video, Headphones, PlayCircle, ExternalLink, Sparkles, Type
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -26,9 +26,10 @@ interface BulkPlaylistModalProps {
   onClose: () => void;
   onImport: (videos: ParsedVideoItem[]) => Promise<void>;
   targetName?: string;
+  mediaType?: "audio" | "video";
 }
 
-export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName }: BulkPlaylistModalProps) {
+export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, mediaType = "video" }: BulkPlaylistModalProps) {
   const [playlistUrl, setPlaylistUrl] = useState("");
   const [defaultTitlePrefix, setDefaultTitlePrefix] = useState("");
   const [isFetching, setIsFetching] = useState(false);
@@ -187,10 +188,12 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName }: Bul
           <div>
             <h3 className="text-xl font-bold text-foreground flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-primary" />
-              Playlist (Bulk) Video Importer
+              {mediaType === "audio" ? "Bulk Audio Importer" : "Playlist (Bulk) Video Importer"}
             </h3>
             <p className="text-xs text-muted-foreground mt-1">
-              Import multiple videos at once into {targetName || "this section"} from YouTube, Rumble, OK.ru, or custom link lists.
+              {mediaType === "audio"
+                ? `Import multiple audio files at once into ${targetName || "this section"} from URLs or playlist links.`
+                : `Import multiple videos at once into ${targetName || "this section"} from YouTube, Rumble, OK.ru, or custom link lists.`}
             </p>
           </div>
           <Button variant="ghost" size="icon" className="bg-red-600 text-white rounded-full hover:bg-red-700 hover:text-white" onClick={handleClose}>
@@ -203,16 +206,24 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName }: Bul
           {/* Input Section */}
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <Label className="font-semibold text-sm">Playlist URL or Multiple Video Links</Label>
+              <Label className="font-semibold text-sm">
+                {mediaType === "audio" ? "Audio URLs or Playlist Link" : "Playlist URL or Multiple Video Links"}
+              </Label>
               <div className="flex items-center gap-2">
-                <Badge variant="outline" className="text-[10px] text-red-600 border-red-200 bg-red-50">YouTube Playlist</Badge>
-                <Badge variant="outline" className="text-[10px] text-green-600 border-green-200 bg-green-50">Rumble</Badge>
-                <Badge variant="outline" className="text-[10px] text-orange-600 border-orange-200 bg-orange-50">OK.ru</Badge>
+                <Badge variant="outline" className="text-[10px] text-red-600 border-red-200 bg-red-50">
+                  {mediaType === "audio" ? "Audio Links (.mp3)" : "YouTube Playlist"}
+                </Badge>
+                {mediaType === "video" && <Badge variant="outline" className="text-[10px] text-green-600 border-green-200 bg-green-50">Rumble</Badge>}
+                {mediaType === "video" && <Badge variant="outline" className="text-[10px] text-orange-600 border-orange-200 bg-orange-50">OK.ru</Badge>}
                 <Badge variant="outline" className="text-[10px] text-blue-600 border-blue-200 bg-blue-50">Multi-Links</Badge>
               </div>
             </div>
             <Textarea
-              placeholder={`Paste YouTube playlist link e.g.: https://www.youtube.com/playlist?list=PL...\nOr paste multiple video URLs separated by new lines:\nhttps://www.youtube.com/watch?v=...\nhttps://rumble.com/v...\nhttps://ok.ru/video/...`}
+              placeholder={
+                mediaType === "audio"
+                  ? `Paste audio URLs separated by new lines e.g.:\nhttps://example.com/audio1.mp3\nhttps://example.com/audio2.mp3`
+                  : `Paste YouTube playlist link e.g.: https://www.youtube.com/playlist?list=PL...\nOr paste multiple video URLs separated by new lines:\nhttps://www.youtube.com/watch?v=...\nhttps://rumble.com/v...\nhttps://ok.ru/video/...`
+              }
               value={playlistUrl}
               onChange={(e) => setPlaylistUrl(e.target.value)}
               className="font-mono text-xs min-h-[90px] resize-y"
@@ -222,10 +233,14 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName }: Bul
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end bg-muted/30 p-3 rounded-xl border border-border/60">
               <div className="sm:col-span-2 space-y-1.5">
                 <Label className="text-xs font-semibold flex items-center gap-1.5 text-foreground">
-                  <Type className="w-3.5 h-3.5 text-primary" /> Default Video Title / Series Prefix (Optional)
+                  <Type className="w-3.5 h-3.5 text-primary" /> {mediaType === "audio" ? "Default Audio Title / Series Prefix (Optional)" : "Default Video Title / Series Prefix (Optional)"}
                 </Label>
                 <Input
-                  placeholder="e.g. Zamana Gawah Hai 2023 (Leave blank to use original video titles)"
+                  placeholder={
+                    mediaType === "audio"
+                      ? "e.g. Dars-e-Quran 2024 (Leave blank to use filename/original title)"
+                      : "e.g. Zamana Gawah Hai 2023 (Leave blank to use original video titles)"
+                  }
                   value={defaultTitlePrefix}
                   onChange={(e) => setDefaultTitlePrefix(e.target.value)}
                   className="text-xs h-9 bg-background"
@@ -255,7 +270,8 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName }: Bul
                     </>
                   ) : (
                     <>
-                      <Video className="w-3.5 h-3.5 mr-1.5" /> Fetch Playlist
+                      {mediaType === "audio" ? <Headphones className="w-3.5 h-3.5 mr-1.5" /> : <Video className="w-3.5 h-3.5 mr-1.5" />}
+                      {mediaType === "audio" ? "Process Audios" : "Fetch Playlist"}
                     </>
                   )}
                 </Button>
@@ -269,7 +285,7 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName }: Bul
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-muted/40 p-3 rounded-xl">
                 <div>
                   <h4 className="font-semibold text-sm">
-                    Extracted Videos ({fetchedVideos.length})
+                    {mediaType === "audio" ? `Processed Audios (${fetchedVideos.length})` : `Extracted Videos (${fetchedVideos.length})`}
                   </h4>
                   <p className="text-xs text-muted-foreground">
                     {selectedCount} of {fetchedVideos.length} selected for import
@@ -303,12 +319,12 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName }: Bul
                       className="mt-1.5 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer shrink-0"
                     />
 
-                    <div className="w-24 aspect-video rounded-lg overflow-hidden bg-muted relative shrink-0 border border-border">
+                    <div className="w-24 aspect-video rounded-lg overflow-hidden bg-muted relative shrink-0 border border-border flex items-center justify-center">
                       {video.thumbnailUrl ? (
                         <img src={video.thumbnailUrl} className="w-full h-full object-cover" alt={video.title} />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                          <PlayCircle className="w-6 h-6 opacity-30" />
+                          {mediaType === "audio" ? <Headphones className="w-6 h-6 opacity-40 text-primary" /> : <PlayCircle className="w-6 h-6 opacity-30" />}
                         </div>
                       )}
                     </div>
@@ -318,7 +334,7 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName }: Bul
                         value={video.title}
                         onChange={(e) => handleTitleChange(idx, e.target.value)}
                         className="text-xs font-semibold h-8"
-                        placeholder="Video Title"
+                        placeholder={mediaType === "audio" ? "Audio Title" : "Video Title"}
                       />
                       <div className="flex items-center gap-2">
                         <a
@@ -351,11 +367,11 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName }: Bul
           >
             {isImporting ? (
               <>
-                <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> Importing Videos...
+                <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> {mediaType === "audio" ? "Importing Audios..." : "Importing Videos..."}
               </>
             ) : (
               <>
-                <UploadCloud className="w-4 h-4 mr-2" /> Import {selectedCount} Selected Video(s)
+                <UploadCloud className="w-4 h-4 mr-2" /> Import {selectedCount} Selected {mediaType === "audio" ? "Audio(s)" : "Video(s)"}
               </>
             )}
           </Button>
