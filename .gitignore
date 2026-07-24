@@ -18,6 +18,8 @@ node_modules/
 /test-results/
 *.test.ts?(x)
 *.spec.ts?(x)
+.scream
+.scream/
 
 # =======================================================
 # ⚡ NEXT.JS + TURBOPACK
