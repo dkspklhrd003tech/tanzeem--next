@@ -309,7 +309,9 @@ export function MenuList() {
                 onOpenChange={(open) => !open && setDeletingMenuId(null)}
                 title="Delete Menu Item"
                 description="Are you sure you want to remove this navigation link? Sub-items will also be affected if they depend on this parent."
-                onConfirm={() => deletingMenuId && handleDelete(deletingMenuId)}
+                onConfirm={() => {
+                    if (deletingMenuId) handleDelete(deletingMenuId);
+                }}
             />
         </motion.div>
     );
