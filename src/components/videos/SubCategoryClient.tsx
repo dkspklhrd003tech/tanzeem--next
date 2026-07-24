@@ -37,10 +37,10 @@ function resolveVideoThumb(thumbnailUrl: string | null, videoUrl: string, embedU
 }
 
 export function SubCategoryClient({ subCategories, directVideos = [] }: { subCategories: SubCategory[], directVideos?: VideoItem[] }) {
-  const [sortOrder, setSortOrder] = useState<"uploaded" | "inverse">("uploaded");
+  const [sortOrder, setSortOrder] = useState<"uploaded" | "oldest">("uploaded");
 
-  const displayedSubCategories = sortOrder === "inverse" ? [...subCategories].reverse() : subCategories;
-  const displayedDirectVideos = sortOrder === "inverse" ? [...directVideos].reverse() : directVideos;
+  const displayedSubCategories = sortOrder === "oldest" ? [...subCategories].reverse() : subCategories;
+  const displayedDirectVideos = sortOrder === "oldest" ? [...directVideos].reverse() : directVideos;
 
   function formatDuration(secs: number | null) {
     if (!secs) return null;
@@ -65,8 +65,8 @@ export function SubCategoryClient({ subCategories, directVideos = [] }: { subCat
               type="button"
               variant="outline"
               size="sm"
-              onClick={() => setSortOrder(sortOrder === "uploaded" ? "inverse" : "uploaded")}
-              className="h-8 text-xs gap-1.5 hover:border-primary shadow-none font-medium hover:text-primary hover:bg-primary-light text-white transition-all"
+              onClick={() => setSortOrder(sortOrder === "uploaded" ? "oldest" : "uploaded")}
+              className="h-8 text-xs gap-1.5 bg-primary text-white hover:border-primary shadow-none font-medium hover:text-primary hover:bg-primary-light text-white transition-all"
               title={sortOrder === "uploaded" ? "Currently: Newest (Click to Oldest)" : "Currently: Oldest (Click for Newest)"}
             >
               {sortOrder === "uploaded" ? (
@@ -77,7 +77,7 @@ export function SubCategoryClient({ subCategories, directVideos = [] }: { subCat
               ) : (
                 <>
                   <ArrowDown className="w-3.5 h-3.5 text-primary hover:text-white shrink-0 " />
-                  <span>Inverse Order</span>
+                  <span>Oldest</span>
                 </>
               )}
             </Button>

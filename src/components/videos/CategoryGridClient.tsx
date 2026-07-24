@@ -17,9 +17,9 @@ export interface CategoryGridItem {
 }
 
 export function CategoryGridClient({ categories }: { categories: CategoryGridItem[] }) {
-  const [sortOrder, setSortOrder] = useState<"uploaded" | "inverse">("uploaded");
+  const [sortOrder, setSortOrder] = useState<"uploaded" | "oldest">("uploaded");
 
-  const displayedCategories = sortOrder === "inverse" ? [...categories].reverse() : categories;
+  const displayedCategories = sortOrder === "oldest" ? [...categories].reverse() : categories;
 
   return (
     <div className="space-y-6">
@@ -34,8 +34,8 @@ export function CategoryGridClient({ categories }: { categories: CategoryGridIte
             type="button"
             variant="outline"
             size="sm"
-            onClick={() => setSortOrder(sortOrder === "uploaded" ? "inverse" : "uploaded")}
-            className="h-8 text-xs gap-1.5 hover:border-primary shadow-none font-medium hover:text-primary hover:bg-primary-light text-white transition-all"
+            onClick={() => setSortOrder(sortOrder === "uploaded" ? "oldest" : "uploaded")}
+            className="h-8 text-xs gap-1.5 bg-primary text-white hover:border-primary shadow-none font-medium hover:text-primary hover:bg-primary-light text-white transition-all"
             title={sortOrder === "uploaded" ? "Currently: Newest (Click to Oldest)" : "Currently: Oldest (Click for Newest)"}
           >
             {sortOrder === "uploaded" ? (
@@ -46,7 +46,7 @@ export function CategoryGridClient({ categories }: { categories: CategoryGridIte
             ) : (
               <>
                 <ArrowDown className="w-3.5 h-3.5 text-primary hover:text-white shrink-0 " />
-                <span>Inverse Order</span>
+                <span>Oldest</span>
               </>
             )}
           </Button>

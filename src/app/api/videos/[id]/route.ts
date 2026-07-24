@@ -3,7 +3,7 @@ import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { videos, videoCategories, speakers, activityLogs } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth";
-import { eq, leftJoin } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 
 // GET - Single video by ID (uses explicit joins to avoid Drizzle mode:"default" lateral alias bug)
 export async function GET(
@@ -28,7 +28,7 @@ export async function GET(
         const row = rows[0];
         const video = {
             ...row.videos,
-            category: row.videoCategories ?? null,
+            category: row.video_categories ?? null,
             speaker: row.speakers ?? null,
         };
 

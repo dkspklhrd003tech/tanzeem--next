@@ -17,7 +17,7 @@ const nextConfig: NextConfig = {
     // Devices widths for responsive images
     deviceSizes: [640, 750, 828, 1080, 1200, 1920],
     imageSizes: [16, 32, 64, 96, 128, 256, 384],
-    minimumCacheTTL: 60 * 60 * 24 * 7, // 7 days
+    minimumCacheTTL: 31536000, // 1 year (365 days)
     remotePatterns: [
       // Tanzeem media FTP/CDN host (uploaded audio/video/image assets)
       { protocol: "https", hostname: "tanzeemmedia.dks.com.pk" },
@@ -51,10 +51,17 @@ const nextConfig: NextConfig = {
         ],
       },
       {
-        // Media files — 7-day cache
+        // Static assets — 1 year immutable cache
+        source: "/_next/static/:path*",
+        headers: [
+          { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
+        ],
+      },
+      {
+        // Media files — 1 year cache
         source: "/media/:path*",
         headers: [
-          { key: "Cache-Control", value: "public, max-age=604800, stale-while-revalidate=86400" },
+          { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
         ],
       },
       {
