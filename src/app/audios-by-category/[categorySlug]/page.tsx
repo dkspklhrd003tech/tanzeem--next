@@ -145,7 +145,7 @@ export default async function CategoryAudiosPage({ params }: { params: Promise<{
 
             {/* Sub Categories */}
             {subCategoriesWithAudios.length > 0 && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {subCategoriesWithAudios.map((sub) => {
                   const { href, isExternal, openInNewTab: isExtOpen } = resolveCategoryHref(sub.slug, "/audios-by-category");
                   const target = (sub.customFields?.openInNewTab || isExtOpen) ? "_blank" : undefined;

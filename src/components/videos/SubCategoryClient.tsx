@@ -127,7 +127,7 @@ export function SubCategoryClient({ subCategories, directVideos = [] }: { subCat
 
       {/* Grid of Sub Category Cards */}
       {displayedSubCategories.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {displayedSubCategories.map((sub) => {
             const playVideo = sub.videos.length > 0 ? sub.videos[0] : null;
             const { href, isExternal, openInNewTab: isExtOpen } = resolveCategoryHref(sub.slug, "/videos-by-category");
