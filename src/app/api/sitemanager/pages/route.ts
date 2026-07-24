@@ -132,7 +132,7 @@ export async function POST(request: NextRequest) {
     const pageId = crypto.randomUUID();
     const isPublished = Boolean(data.isPublished);
 
-    let originalPage = null;
+    let originalPage: any = null;
     if (data.duplicateFromId) {
       const results = await db.select().from(pages).where(eq(pages.id, data.duplicateFromId)).limit(1);
       originalPage = results[0] || null;
