@@ -41,11 +41,14 @@ function slugify(text: string) {
 
 interface CategoryItem {
   id: string;
+  parentId?: string | null;
   name: string;
   slug: string;
+  code?: string;
   description?: string;
   order: number;
   isActive?: boolean;
+  customFields?: any;
 }
 
 interface SpeakerItem {

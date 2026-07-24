@@ -118,7 +118,7 @@ export default function EditPagePage({ params }: { params: Promise<{ id: string 
   }
 
   if (page.id === "56f118be-bcad-42a0-a60a-37300adc8a39" || page.slug === "audios-by-category") {
-    return <AudiosPageEditor pageId={page.id} initialPageData={page} />;
+    return <MediaLibraryEditor pageId={page.id} initialPageData={page} mediaType="audio" />;
   }
 
   if (page.id === "e34f44a9-bd26-4433-a962-250991321181" || page.slug === "videos-by-category") {

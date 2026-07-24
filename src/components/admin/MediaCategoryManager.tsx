@@ -457,38 +457,45 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
     return text.toLowerCase().trim().replace(/[^\w\s-]/g, "").replace(/[\s_]+/g, "-").replace(/^-+|-+$/g, "");
   }
 
-  const handleBulkImport = async (videos: ParsedVideoItem[]) => {
+  const handleBulkImport = async (items: ParsedVideoItem[]) => {
     if (!activeCategory || !bulkTargetSubId) return;
 
     let successCount = 0;
     const targetCategoryId = bulkTargetSubId.replace("_direct", "");
+    const endpoint = mediaType === "audio" ? "/api/audio" : "/api/videos";
 
-    for (let i = 0; i < videos.length; i++) {
-      const v = videos[i];
-      const videoData = {
-        title: v.title || `Video ${i + 1}`,
-        slug: `${slugifyText(v.title || "video")}-${Date.now().toString().slice(-5)}-${i}`,
-        videoUrl: v.videoUrl,
-        embedUrl: formatEmbedUrl(v.embedUrl || v.videoUrl),
+    for (let i = 0; i < items.length; i++) {
+      const v = items[i];
+      const payload: any = {
+        title: v.title || `${mediaType === "audio" ? "Audio" : "Video"} ${i + 1}`,
+        slug: `${slugifyText(v.title || (mediaType === "audio" ? "audio" : "video"))}-${Date.now().toString().slice(-5)}-${i}`,
         thumbnailUrl: v.thumbnailUrl || "",
         categoryId: targetCategoryId,
         isPublished: true,
         order: i,
       };
 
+      if (mediaType === "audio") {
+        payload.audioUrl = v.videoUrl;
+        payload.embedUrl = v.embedUrl || v.videoUrl;
+      } else {
+        payload.videoUrl = v.videoUrl;
+        payload.embedUrl = formatEmbedUrl(v.embedUrl || v.videoUrl);
+      }
+
       try {
-        const res = await fetch("/api/videos", {
+        const res = await fetch(endpoint, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(videoData),
+          body: JSON.stringify(payload),
         });
         if (res.ok) successCount++;
       } catch (e) {
-        console.error("Failed to import video:", v.title, e);
+        console.error(`Failed to import ${mediaType}:`, v.title, e);
       }
     }
 
-    toast.success(`Successfully imported ${successCount} video(s)!`);
+    toast.success(`Successfully imported ${successCount} ${mediaType}(s)!`);
     await fetchData();
   };
 
