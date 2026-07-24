@@ -3,7 +3,7 @@ import { revalidatePath } from "next/cache";
 import { db } from "@/lib/db";
 import { audio, activityLogs } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth";
-import { eq, sql } from "drizzle-orm";
+import { eq, ne, and, sql } from "drizzle-orm";
 
 // GET - Get single audio
 export async function GET(
@@ -25,7 +25,7 @@ export async function GET(
     });
 
     if (!audioData) {
-    return NextResponse.json({ error: "Audio not found" }, { status: 404 });
+      return NextResponse.json({ error: "Audio not found" }, { status: 404 });
     }
 
     // Increment play count
@@ -53,7 +53,7 @@ export async function PUT(
 
     if (!user) {
       revalidatePath("/", "layout");
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { id } = await params;
@@ -65,18 +65,18 @@ export async function PUT(
 
     if (!existingAudio) {
       revalidatePath("/", "layout");
-    return NextResponse.json({ error: "Audio not found" }, { status: 404 });
+      return NextResponse.json({ error: "Audio not found" }, { status: 404 });
     }
 
-    // Check if new slug conflicts
+    // Check if new slug conflicts with another audio
     if (data.slug && data.slug !== existingAudio.slug) {
       const slugConflict = await db.query.audio.findFirst({
-        where: eq(audio.slug, data.slug),
+        where: and(eq(audio.slug, data.slug), ne(audio.id, id)),
       });
 
       if (slugConflict) {
         revalidatePath("/", "layout");
-    return NextResponse.json(
+        return NextResponse.json(
           { error: "An audio file with this slug already exists" },
           { status: 400 }
         );
@@ -84,21 +84,22 @@ export async function PUT(
     }
 
     await db.update(audio).set({
-      title: data.title,
-      slug: data.slug,
-      description: data.description,
-      audioUrl: data.audioUrl,
-      duration: data.duration,
-      fileSize: data.fileSize,
-      thumbnailUrl: data.thumbnailUrl,
-      categoryId: data.categoryId,
-      speakerId: data.speakerId,
-      isPublished: data.isPublished,
-      isFeatured: data.isFeatured,
-      metaTitle: data.metaTitle,
-      metaDescription: data.metaDescription,
-      publishedAt: data.isPublished && !existingAudio.isPublished
-        ? new Date()
+      title: data.title ?? existingAudio.title,
+      slug: data.slug ?? existingAudio.slug,
+      description: data.description ?? existingAudio.description,
+      audioUrl: data.audioUrl ?? existingAudio.audioUrl,
+      duration: data.duration ?? existingAudio.duration,
+      fileSize: data.fileSize ?? existingAudio.fileSize,
+      thumbnailUrl: data.thumbnailUrl ?? existingAudio.thumbnailUrl,
+      categoryId: data.categoryId ?? existingAudio.categoryId,
+      speakerId: data.speakerId ?? existingAudio.speakerId,
+      isPublished: data.isPublished ?? existingAudio.isPublished,
+      isFeatured: data.isFeatured ?? existingAudio.isFeatured,
+      metaTitle: data.metaTitle ?? existingAudio.metaTitle,
+      metaDescription: data.metaDescription ?? existingAudio.metaDescription,
+      order: data.order ?? existingAudio.order,
+      publishedAt: data.isPublished !== undefined
+        ? (data.isPublished && !existingAudio.isPublished ? new Date() : existingAudio.publishedAt)
         : existingAudio.publishedAt,
     }).where(eq(audio.id, id));
 
@@ -141,7 +142,7 @@ export async function DELETE(
 
     if (!user) {
       revalidatePath("/", "layout");
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const { id } = await params;
@@ -152,7 +153,7 @@ export async function DELETE(
 
     if (!existingAudio) {
       revalidatePath("/", "layout");
-    return NextResponse.json({ error: "Audio not found" }, { status: 404 });
+      return NextResponse.json({ error: "Audio not found" }, { status: 404 });
     }
 
     await db.delete(audio).where(eq(audio.id, id));
@@ -177,4 +178,3 @@ export async function DELETE(
     );
   }
 }
-
