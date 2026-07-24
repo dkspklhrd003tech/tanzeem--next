@@ -10,7 +10,7 @@ import { audio } from "@/db/schema";
 export async function GET(req: NextRequest) {
   try {
     const rawCategories = await db.select().from(audioCategories).orderBy(asc(audioCategories.order), desc(audioCategories.createdAt));
-    const allAudio = await db.select().from(audio);
+    const allAudio = await db.select().from(audio).orderBy(asc(audio.order), desc(audio.createdAt));
     
     const categories = rawCategories
       .filter(cat => !cat.parentId)
@@ -20,7 +20,8 @@ export async function GET(req: NextRequest) {
           .map(subCat => ({
             ...subCat,
             audioFiles: allAudio.filter(a => a.categoryId === subCat.id)
-          }));
+          }))
+          .sort((a, b) => (a.order || 0) - (b.order || 0));
 
         const directMedia = allAudio.filter(a => a.categoryId === mainCat.id);
         if (directMedia.length > 0) {
@@ -30,6 +31,7 @@ export async function GET(req: NextRequest) {
             name: "(General)",
             slug: mainCat.slug + "-general",
             code: "",
+            imageUrl: mainCat.imageUrl,
             description: "Directly attached media",
             order: 0,
             isActive: true,

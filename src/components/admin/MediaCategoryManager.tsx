@@ -240,7 +240,7 @@ function SortableSubCatCard({ sub, mediaType, isSelected, onToggleSelect, onClic
   );
 }
 
-function SortableDirectVideoCard({ item, mediaType, isSelected, onToggleSelect, onClick, onTogglePublish }: { item: any, mediaType: string, isSelected?: boolean, onToggleSelect?: (selected: boolean) => void, onClick: () => void, onTogglePublish?: (item: any) => void }) {
+function SortableDirectVideoCard({ item, mediaType, isSelected, onToggleSelect, onClick, onEdit, onTogglePublish, onDelete }: { item: any, mediaType: string, isSelected?: boolean, onToggleSelect?: (selected: boolean) => void, onClick: () => void, onEdit?: () => void, onTogglePublish?: (item: any) => void, onDelete?: () => void }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id });
   const style = { transform: CSS.Transform.toString(transform), transition, zIndex: isDragging ? 10 : 1, opacity: isDragging ? 0.8 : 1 };
 
@@ -271,7 +271,7 @@ function SortableDirectVideoCard({ item, mediaType, isSelected, onToggleSelect, 
             checked={!!isSelected}
             onChange={(e) => onToggleSelect(e.target.checked)}
             className="w-5 h-5 accent-primary cursor-pointer rounded shadow-sm"
-            title="Select video"
+            title="Select item"
           />
         </div>
       )}
@@ -302,8 +302,20 @@ function SortableDirectVideoCard({ item, mediaType, isSelected, onToggleSelect, 
             </span>
           </div>
         </div>
-        {onTogglePublish && (
-          <div className="flex items-center gap-1 shrink-0">
+        <div className="flex items-center gap-1 shrink-0">
+          {onEdit && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 text-primary hover:text-primary z-10"
+              onClick={(e) => { e.stopPropagation(); onEdit(); }}
+              title="Edit Title / Details"
+            >
+              <Edit className="w-4 h-4" />
+            </Button>
+          )}
+          {onTogglePublish && (
             <Button
               type="button"
               variant="ghost"
@@ -314,8 +326,20 @@ function SortableDirectVideoCard({ item, mediaType, isSelected, onToggleSelect, 
             >
               {item.isPublished !== false ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
             </Button>
-          </div>
-        )}
+          )}
+          {onDelete && (
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 text-destructive shrink-0 bg-destructive/10 hover:bg-destructive hover:text-white z-10"
+              onClick={(e) => { e.stopPropagation(); onDelete(); }}
+              title="Delete Item"
+            >
+              <XCircle className="w-4 h-4" />
+            </Button>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -1314,7 +1338,17 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                           onClick={() => {
                             setEditingMedia({ item: item, subId: sub.id });
                           }}
+                          onEdit={() => {
+                            setEditingMedia({ item: item, subId: sub.id });
+                          }}
                           onTogglePublish={(m) => togglePublishMediaItem(activeCategory.id, sub.id, m)}
+                          onDelete={() => {
+                            setPendingAction({
+                              title: `Delete ${mediaType === 'audio' ? 'Audio' : 'Video'}`,
+                              desc: `Are you sure you want to delete "${item.title}"?`,
+                              action: async () => await removeMediaItem(sub.id, item.id)
+                            });
+                          }}
                         />
                       ))}
                     </div>
@@ -1495,9 +1529,21 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                                 const directSub = activeCategory.subCategories.find(s => s.id.endsWith('_direct'))!;
                                 setEditingMedia({ item: item, subId: directSub.id });
                               }}
+                              onEdit={() => {
+                                const directSub = activeCategory.subCategories.find(s => s.id.endsWith('_direct'))!;
+                                setEditingMedia({ item: item, subId: directSub.id });
+                              }}
                               onTogglePublish={(m) => {
                                 const directSub = activeCategory.subCategories.find(s => s.id.endsWith('_direct'))!;
                                 togglePublishMediaItem(activeCategory.id, directSub.id, m);
+                              }}
+                              onDelete={() => {
+                                const directSub = activeCategory.subCategories.find(s => s.id.endsWith('_direct'))!;
+                                setPendingAction({
+                                  title: `Delete ${mediaType === 'audio' ? 'Audio' : 'Video'}`,
+                                  desc: `Are you sure you want to delete "${item.title}"?`,
+                                  action: async () => await removeMediaItem(directSub.id, item.id)
+                                });
                               }}
                             />
                           ))}

@@ -42,10 +42,11 @@ export default async function CategoryAudiosPage({ params }: { params: Promise<{
         thumbnailUrl: audio.thumbnailUrl,
         duration: audio.duration,
         categoryId: audio.categoryId,
+        order: audio.order,
       })
       .from(audio)
       .where(and(inArray(audio.categoryId, subCatIds), eq(audio.isPublished, true)))
-      .orderBy(desc(audio.publishedAt), asc(audio.title));
+      .orderBy(asc(audio.order), desc(audio.publishedAt), asc(audio.title));
   }
 
   // Build the hierarchical structure
@@ -74,10 +75,11 @@ export default async function CategoryAudiosPage({ params }: { params: Promise<{
       thumbnailUrl: audio.thumbnailUrl,
       duration: audio.duration,
       createdAt: audio.createdAt,
+      order: audio.order,
     })
     .from(audio)
     .where(and(eq(audio.categoryId, mainCat.id), eq(audio.isPublished, true)))
-    .orderBy(desc(audio.publishedAt), asc(audio.title));
+    .orderBy(asc(audio.order), desc(audio.publishedAt), asc(audio.title));
 
   function formatDuration(secs: number | null) {
     if (!secs) return null;
