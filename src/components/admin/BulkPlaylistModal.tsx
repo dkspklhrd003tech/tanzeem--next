@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   X, RefreshCw, UploadCloud, CheckSquare, Square,
   Video, Headphones, PlayCircle, ExternalLink, Sparkles, Type
@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { useChunkedUpload } from "@/hooks/useChunkedUpload";
 
 export interface ParsedVideoItem {
   title: string;
@@ -37,12 +38,23 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
   const [isImporting, setIsImporting] = useState(false);
   const { toast } = useToast();
 
+  // Audio Upload States
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { uploadFile } = useChunkedUpload();
+  const [dragActive, setDragActive] = useState(false);
+  const [isUploadingAudio, setIsUploadingAudio] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [currentFileName, setCurrentFileName] = useState("");
+
   const handleClose = () => {
     setPlaylistUrl("");
     setDefaultTitlePrefix("");
     setFetchedVideos([]);
     setIsFetching(false);
     setIsImporting(false);
+    setIsUploadingAudio(false);
+    setUploadProgress(0);
+    setCurrentFileName("");
     onClose();
   };
 
@@ -53,6 +65,9 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
       setFetchedVideos([]);
       setIsFetching(false);
       setIsImporting(false);
+      setIsUploadingAudio(false);
+      setUploadProgress(0);
+      setCurrentFileName("");
     }
   }, [isOpen]);
 
@@ -108,6 +123,92 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
     }
   };
 
+  const handleAudioFiles = async (files: FileList | File[]) => {
+    const audioFiles = Array.from(files).filter(
+      (f) => f.type.startsWith("audio/") || /\.(mp3|wav|ogg|aac|m4a)$/i.test(f.name)
+    );
+
+    if (audioFiles.length === 0) {
+      toast({
+        title: "Invalid file type",
+        description: "Please select valid audio files (.mp3, .wav, .ogg, .aac, .m4a).",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsUploadingAudio(true);
+    const newItems: ParsedVideoItem[] = [];
+
+    for (let i = 0; i < audioFiles.length; i++) {
+      const file = audioFiles[i];
+      setCurrentFileName(file.name);
+      setUploadProgress(0);
+
+      try {
+        const res = await uploadFile(file, {
+          onProgress: (pct) => setUploadProgress(pct),
+        });
+
+        // Clean filename for default title
+        const cleanTitle = file.name
+          .replace(/\.[^/.]+$/, "")
+          .replace(/[-_]+/g, " ")
+          .trim();
+
+        newItems.push({
+          title: cleanTitle || file.name,
+          videoUrl: res.url,
+          embedUrl: res.url,
+          thumbnailUrl: "",
+          selected: true,
+        });
+      } catch (err: any) {
+        toast({
+          title: "Upload Failed",
+          description: `Failed to upload ${file.name}: ${err.message || "Unknown error"}`,
+          variant: "destructive",
+        });
+      }
+    }
+
+    setIsUploadingAudio(false);
+    setUploadProgress(0);
+    setCurrentFileName("");
+
+    if (newItems.length > 0) {
+      setFetchedVideos((prev) => [...prev, ...newItems]);
+      toast({
+        title: "Audio Files Uploaded!",
+        description: `Successfully uploaded ${newItems.length} audio file(s). Ready for import.`,
+      });
+    }
+
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === "dragenter" || e.type === "dragover") setDragActive(true);
+    else if (e.type === "dragleave") setDragActive(false);
+  };
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      await handleAudioFiles(e.dataTransfer.files);
+    }
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      await handleAudioFiles(e.target.files);
+    }
+  };
+
   const applyDefaultTitleToAll = () => {
     if (!defaultTitlePrefix.trim()) {
       toast({
@@ -149,8 +250,8 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
     const selected = fetchedVideos.filter((v) => v.selected !== false);
     if (selected.length === 0) {
       toast({
-        title: "No Videos Selected",
-        description: "Please select at least one video to import.",
+        title: mediaType === "audio" ? "No Audios Selected" : "No Videos Selected",
+        description: `Please select at least one ${mediaType === "audio" ? "audio" : "video"} to import.`,
         variant: "destructive",
       });
       return;
@@ -161,7 +262,7 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
       await onImport(selected);
       toast({
         title: "Import Successful!",
-        description: `Successfully imported ${selected.length} video(s).`,
+        description: `Successfully imported ${selected.length} ${mediaType === "audio" ? "audio(s)" : "video(s)"}.`,
       });
       setFetchedVideos([]);
       setPlaylistUrl("");
@@ -170,7 +271,7 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
     } catch (err: any) {
       toast({
         title: "Import Failed",
-        description: err.message || "Failed to import videos.",
+        description: err.message || `Failed to import ${mediaType === "audio" ? "audios" : "videos"}.`,
         variant: "destructive",
       });
     } finally {
@@ -192,7 +293,7 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
             </h3>
             <p className="text-xs text-muted-foreground mt-1">
               {mediaType === "audio"
-                ? `Import multiple audio files at once into ${targetName || "this section"} from URLs or playlist links.`
+                ? `Upload multiple audio files at once into ${targetName || "this section"}.`
                 : `Import multiple videos at once into ${targetName || "this section"} from YouTube, Rumble, OK.ru, or custom link lists.`}
             </p>
           </div>
@@ -203,81 +304,130 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
 
         {/* Modal Body */}
         <div className="p-6 space-y-6 overflow-y-auto flex-1">
-          {/* Input Section */}
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <Label className="font-semibold text-sm">
-                {mediaType === "audio" ? "Audio URLs or Playlist Link" : "Playlist URL or Multiple Video Links"}
-              </Label>
-              <div className="flex items-center gap-2">
-                <Badge variant="outline" className="text-[10px] text-red-600 border-red-200 bg-red-50">
-                  {mediaType === "audio" ? "Audio Links (.mp3)" : "YouTube Playlist"}
-                </Badge>
-                {mediaType === "video" && <Badge variant="outline" className="text-[10px] text-green-600 border-green-200 bg-green-50">Rumble</Badge>}
-                {mediaType === "video" && <Badge variant="outline" className="text-[10px] text-orange-600 border-orange-200 bg-orange-50">OK.ru</Badge>}
-                <Badge variant="outline" className="text-[10px] text-blue-600 border-blue-200 bg-blue-50">Multi-Links</Badge>
-              </div>
-            </div>
-            <Textarea
-              placeholder={
-                mediaType === "audio"
-                  ? `Paste audio URLs separated by new lines e.g.:\nhttps://example.com/audio1.mp3\nhttps://example.com/audio2.mp3`
-                  : `Paste YouTube playlist link e.g.: https://www.youtube.com/playlist?list=PL...\nOr paste multiple video URLs separated by new lines:\nhttps://www.youtube.com/watch?v=...\nhttps://rumble.com/v...\nhttps://ok.ru/video/...`
-              }
-              value={playlistUrl}
-              onChange={(e) => setPlaylistUrl(e.target.value)}
-              className="font-mono text-xs min-h-[90px] resize-y"
-            />
-
-            {/* Default Title Input */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end bg-muted/30 p-3 rounded-xl border border-border/60">
-              <div className="sm:col-span-2 space-y-1.5">
-                <Label className="text-xs font-semibold flex items-center gap-1.5 text-foreground">
-                  <Type className="w-3.5 h-3.5 text-primary" /> {mediaType === "audio" ? "Default Audio Title / Series Prefix (Optional)" : "Default Video Title / Series Prefix (Optional)"}
-                </Label>
-                <Input
-                  placeholder={
-                    mediaType === "audio"
-                      ? "e.g. Dars-e-Quran 2024 (Leave blank to use filename/original title)"
-                      : "e.g. Zamana Gawah Hai 2023 (Leave blank to use original video titles)"
-                  }
-                  value={defaultTitlePrefix}
-                  onChange={(e) => setDefaultTitlePrefix(e.target.value)}
-                  className="text-xs h-9 bg-background"
+          {mediaType === "audio" ? (
+            /* Audio Drag & Drop Upload Section */
+            <div className="space-y-4">
+              <Label className="font-semibold text-sm text-foreground">Audio File</Label>
+              <div
+                onDragEnter={handleDrag}
+                onDragLeave={handleDrag}
+                onDragOver={handleDrag}
+                onDrop={handleDrop}
+                onClick={() => fileInputRef.current?.click()}
+                className={cn(
+                  "border-2 border-dashed rounded-2xl p-8 transition-all cursor-pointer flex flex-col items-center justify-center gap-3 text-center",
+                  dragActive
+                    ? "border-primary bg-primary/10 shadow-lg scale-[1.01]"
+                    : "border-emerald-600/40 dark:border-emerald-500/40 bg-emerald-50/30 dark:bg-emerald-950/20 hover:border-emerald-600 hover:bg-emerald-50/60"
+                )}
+              >
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  multiple
+                  accept="audio/*,.mp3,.wav,.ogg,.aac,.m4a"
+                  className="hidden"
+                  onChange={handleFileChange}
                 />
+                <div className="w-14 h-14 rounded-2xl bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 flex items-center justify-center shadow-inner">
+                  <UploadCloud className="w-7 h-7" />
+                </div>
+                <div>
+                  <p className="font-bold text-foreground text-base">
+                    Click or drag & drop to upload
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    MP3, WAV, OGG, AAC — large files supported
+                  </p>
+                </div>
               </div>
-              <div className="flex gap-2">
-                {fetchedVideos.length > 0 && (
+
+              {isUploadingAudio && (
+                <div className="space-y-2 bg-muted/40 p-4 rounded-xl border border-border">
+                  <div className="flex items-center justify-between text-xs font-semibold">
+                    <span className="flex items-center gap-2 truncate pr-2">
+                      <RefreshCw className="w-3.5 h-3.5 animate-spin text-primary shrink-0" />
+                      Uploading <span className="text-primary truncate">{currentFileName}</span>...
+                    </span>
+                    <span>{uploadProgress}%</span>
+                  </div>
+                  <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
+                    <div
+                      className="bg-primary h-full transition-all duration-300 rounded-full"
+                      style={{ width: `${uploadProgress}%` }}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            /* Video Playlist Link Section */
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <Label className="font-semibold text-sm">
+                  Playlist URL or Multiple Video Links
+                </Label>
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="text-[10px] text-red-600 border-red-200 bg-red-50">
+                    YouTube Playlist
+                  </Badge>
+                  <Badge variant="outline" className="text-[10px] text-green-600 border-green-200 bg-green-50">Rumble</Badge>
+                  <Badge variant="outline" className="text-[10px] text-orange-600 border-orange-200 bg-orange-50">OK.ru</Badge>
+                  <Badge variant="outline" className="text-[10px] text-blue-600 border-blue-200 bg-blue-50">Multi-Links</Badge>
+                </div>
+              </div>
+              <Textarea
+                placeholder={`Paste YouTube playlist link e.g.: https://www.youtube.com/playlist?list=PL...\nOr paste multiple video URLs separated by new lines:\nhttps://www.youtube.com/watch?v=...\nhttps://rumble.com/v...\nhttps://ok.ru/video/...`}
+                value={playlistUrl}
+                onChange={(e) => setPlaylistUrl(e.target.value)}
+                className="font-mono text-xs min-h-[90px] resize-y"
+              />
+
+              {/* Default Title Input */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end bg-muted/30 p-3 rounded-xl border border-border/60">
+                <div className="sm:col-span-2 space-y-1.5">
+                  <Label className="text-xs font-semibold flex items-center gap-1.5 text-foreground">
+                    <Type className="w-3.5 h-3.5 text-primary" /> Default Video Title / Series Prefix (Optional)
+                  </Label>
+                  <Input
+                    placeholder="e.g. Zamana Gawah Hai 2023 (Leave blank to use original video titles)"
+                    value={defaultTitlePrefix}
+                    onChange={(e) => setDefaultTitlePrefix(e.target.value)}
+                    className="text-xs h-9 bg-background"
+                  />
+                </div>
+                <div className="flex gap-2">
+                  {fetchedVideos.length > 0 && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={applyDefaultTitleToAll}
+                      className="h-9 text-xs flex-1"
+                    >
+                      Apply Title to All
+                    </Button>
+                  )}
                   <Button
                     type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={applyDefaultTitleToAll}
+                    onClick={handleFetchPlaylist}
+                    disabled={isFetching || !playlistUrl.trim()}
                     className="h-9 text-xs flex-1"
                   >
-                    Apply Title to All
+                    {isFetching ? (
+                      <>
+                        <RefreshCw className="w-3.5 h-3.5 mr-1.5 animate-spin" /> Fetching...
+                      </>
+                    ) : (
+                      <>
+                        <Video className="w-3.5 h-3.5 mr-1.5" /> Fetch Playlist
+                      </>
+                    )}
                   </Button>
-                )}
-                <Button
-                  type="button"
-                  onClick={handleFetchPlaylist}
-                  disabled={isFetching || !playlistUrl.trim()}
-                  className="h-9 text-xs flex-1"
-                >
-                  {isFetching ? (
-                    <>
-                      <RefreshCw className="w-3.5 h-3.5 mr-1.5 animate-spin" /> Fetching...
-                    </>
-                  ) : (
-                    <>
-                      {mediaType === "audio" ? <Headphones className="w-3.5 h-3.5 mr-1.5" /> : <Video className="w-3.5 h-3.5 mr-1.5" />}
-                      {mediaType === "audio" ? "Process Audios" : "Fetch Playlist"}
-                    </>
-                  )}
-                </Button>
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           {/* Preview Section */}
           {fetchedVideos.length > 0 && (
@@ -285,7 +435,7 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-muted/40 p-3 rounded-xl">
                 <div>
                   <h4 className="font-semibold text-sm">
-                    {mediaType === "audio" ? `Processed Audios (${fetchedVideos.length})` : `Extracted Videos (${fetchedVideos.length})`}
+                    {mediaType === "audio" ? `Uploaded Audios (${fetchedVideos.length})` : `Extracted Videos (${fetchedVideos.length})`}
                   </h4>
                   <p className="text-xs text-muted-foreground">
                     {selectedCount} of {fetchedVideos.length} selected for import
@@ -357,12 +507,12 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
 
         {/* Modal Footer */}
         <div className="p-4 border-t border-border flex items-center justify-between bg-muted/20">
-          <Button className="px-3 py-2 border border-red-600 text-red-600 bg-white hover:bg-red-600 hover:text-white" variant="ghost" onClick={handleClose} disabled={isImporting}>
+          <Button className="px-3 py-2 border border-red-600 text-red-600 bg-white hover:bg-red-600 hover:text-white" variant="ghost" onClick={handleClose} disabled={isImporting || isUploadingAudio}>
             Cancel
           </Button>
           <Button
             onClick={handleExecuteImport}
-            disabled={isImporting || selectedCount === 0}
+            disabled={isImporting || isUploadingAudio || selectedCount === 0}
             className="px-6"
           >
             {isImporting ? (
