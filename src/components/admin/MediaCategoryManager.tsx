@@ -86,7 +86,7 @@ interface MediaCategoryManagerProps {
   mediaType: "audio" | "video";
 }
 
-function SortableCategoryCard({ cat, isSelected, onToggleSelect, onClick, onEdit, onTogglePublish, onDelete }: { cat: MainCategory, isSelected?: boolean, onToggleSelect?: (selected: boolean) => void, onClick: () => void, onEdit: (c: MainCategory) => void, onTogglePublish: (c: MainCategory) => void, onDelete: (c: MainCategory) => void }) {
+function SortableCategoryCard({ cat, mediaType, isSelected, onToggleSelect, onClick, onEdit, onTogglePublish, onDelete }: { cat: MainCategory, mediaType: string, isSelected?: boolean, onToggleSelect?: (selected: boolean) => void, onClick: () => void, onEdit: (c: MainCategory) => void, onTogglePublish: (c: MainCategory) => void, onDelete: (c: MainCategory) => void }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: cat.id });
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -119,16 +119,18 @@ function SortableCategoryCard({ cat, isSelected, onToggleSelect, onClick, onEdit
           />
         </div>
       )}
-      <div className="aspect-[16/9] bg-muted relative overflow-hidden">
-        {cat.image ? (
-          <img src={resolveMediaUrl(cat.image)} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt={cat.title} />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center text-muted-foreground"><ImageIcon className="w-10 h-10 opacity-20" /></div>
-        )}
-        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-          <span className="text-white font-medium bg-black/50 px-4 py-2 rounded-full text-sm">View Sub-categories</span>
+      {mediaType === "video" && (
+        <div className="aspect-[16/9] bg-muted relative overflow-hidden">
+          {cat.image ? (
+            <img src={resolveMediaUrl(cat.image)} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt={cat.title} />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-muted-foreground"><ImageIcon className="w-10 h-10 opacity-20" /></div>
+          )}
+          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+            <span className="text-white font-medium bg-black/50 px-4 py-2 rounded-full text-sm">View Sub-categories</span>
+          </div>
         </div>
-      </div>
+      )}
       <div className="p-4 flex items-start justify-between gap-2">
         <div className="flex-1 min-w-0 pr-1">
           <h5 className="font-bold text-foreground text-lg truncate" title={cat.title}>{cat.code ? `${cat.code} | ` : ""}{cat.title}</h5>
@@ -138,7 +140,7 @@ function SortableCategoryCard({ cat, isSelected, onToggleSelect, onClick, onEdit
             </Badge>
             {cat.subCategories?.find(s => s.id.endsWith("_direct")) && (
               <Badge variant="outline" className="text-[10px] uppercase font-semibold text-primary border-primary/20">
-                {cat.subCategories.find(s => s.id.endsWith("_direct"))?.mediaItems?.length || 0} Direct Videos
+                {cat.subCategories.find(s => s.id.endsWith("_direct"))?.mediaItems?.length || 0} {mediaType === "audio" ? "Direct Audios" : "Direct Videos"}
               </Badge>
             )}
           </div>
@@ -1233,6 +1235,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                   <SortableCategoryCard
                     key={`mainCat-${cat.id}-${i}`}
                     cat={cat}
+                    mediaType={mediaType}
                     isSelected={selectedMainCatIds.includes(cat.id)}
                     onToggleSelect={() => toggleSelectMainCat(cat.id)}
                     onClick={() => setActiveTab(cat.id)}
