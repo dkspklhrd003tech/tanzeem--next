@@ -40,12 +40,12 @@ export function CategoryGridClient({ categories }: { categories: CategoryGridIte
           >
             {sortOrder === "uploaded" ? (
               <>
-                <ArrowUp className="w-3.5 h-3.5 text-primary hover:text-white shrink-0 " />
+                <ArrowUp className="w-3.5 h-3.5 text-white hover:text-primary shrink-0 " />
                 <span>Newest</span>
               </>
             ) : (
               <>
-                <ArrowDown className="w-3.5 h-3.5 text-primary hover:text-white shrink-0 " />
+                <ArrowDown className="w-3.5 h-3.5 text-white hover:text-primary shrink-0 " />
                 <span>Oldest</span>
               </>
             )}
