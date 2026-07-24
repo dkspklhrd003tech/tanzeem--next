@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Switch } from "@/components/ui/switch";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { ImageUploader } from "./ImageUploader";
+import { AudioUploader } from "./AudioUploader";
 import { toast } from "sonner";
 import { CustomFieldRenderer } from "./CustomFieldRenderer";
 import { CustomFieldBuilder } from "./CustomFieldBuilder";
@@ -1252,25 +1253,23 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
             <div className="flex justify-between items-center">
               <h5 className="font-semibold text-lg">{activeCategory.title} Content</h5>
               <div className="flex items-center gap-2">
-                {mediaType === "video" && (
-                  <Button size="sm" variant="outline" onClick={() => {
-                    let genSub = activeCategory.subCategories.find(s => s.id === activeCategory.id + "_direct");
-                    if (!genSub) {
-                      genSub = {
-                        id: activeCategory.id + "_direct",
-                        title: "(General)",
-                        image: "",
-                        code: "",
-                        mediaItems: []
-                      };
-                      setCategories(categories.map(c => c.id === activeCategory.id ? { ...c, subCategories: [genSub!, ...c.subCategories] } : c));
-                    }
-                    setBulkTargetSubId(genSub.id);
-                    setIsBulkModalOpen(true);
-                  }}>
-                    <Sparkles className="w-4 h-4 mr-1 text-primary" /> Bulk Add Videos
-                  </Button>
-                )}
+                <Button size="sm" variant="outline" onClick={() => {
+                  let genSub = activeCategory.subCategories.find(s => s.id === activeCategory.id + "_direct");
+                  if (!genSub) {
+                    genSub = {
+                      id: activeCategory.id + "_direct",
+                      title: "(General)",
+                      image: "",
+                      code: "",
+                      mediaItems: []
+                    };
+                    setCategories(categories.map(c => c.id === activeCategory.id ? { ...c, subCategories: [genSub!, ...c.subCategories] } : c));
+                  }
+                  setBulkTargetSubId(genSub.id);
+                  setIsBulkModalOpen(true);
+                }}>
+                  <Sparkles className="w-4 h-4 mr-1 text-primary" /> {mediaType === "audio" ? "Bulk Add Audios" : "Bulk Add Videos"}
+                </Button>
                 <Button size="sm" variant="secondary" onClick={() => {
                   let genSub = activeCategory.subCategories.find(s => s.id === activeCategory.id + "_direct");
                   if (!genSub) {
@@ -1288,7 +1287,8 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                     subId: genSub.id
                   });
                 }}>
-                  <Video className="w-4 h-4 mr-1" /> Add Direct Video
+                  {mediaType === "audio" ? <Headphones className="w-4 h-4 mr-1" /> : <Video className="w-4 h-4 mr-1" />}
+                  {mediaType === "audio" ? "Add Direct Audio" : "Add Direct Video"}
                 </Button>
                 <Button size="sm" variant="default" onClick={() => {
                   setPendingAction({
@@ -1375,7 +1375,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                 {activeCategory.subCategories.find(s => s.id.endsWith('_direct'))?.mediaItems.length ? (
                   <div>
                     <div className="flex justify-between items-center mb-3">
-                      <h5 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">Direct Videos</h5>
+                      <h5 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">{mediaType === "audio" ? "Direct Audios" : "Direct Videos"}</h5>
                       <div className="flex items-center gap-2">
                         <Button
                           type="button"
@@ -1687,17 +1687,22 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                       placeholder="e.g. episode-1"
                     />
                   </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label>{mediaType === "audio" ? "Audio File URL (.mp3)" : "Video File URL (.mp4, .webm)"}</Label>
-                  <div className="flex gap-2">
-                    <Input
+                </div>                {mediaType === "audio" ? (
+                  <div className="space-y-2">
+                    <Label>Audio File</Label>
+                    <AudioUploader
                       value={editingMedia.item.mediaUrl}
-                      onChange={(e) => {
-                        const newUrl = e.target.value;
-
-                        if (mediaType === "video") {
+                      onChange={(url) => setEditingMedia({ ...editingMedia, item: { ...editingMedia.item, mediaUrl: url } })}
+                    />
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <Label>Video File URL (.mp4, .webm)</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        value={editingMedia.item.mediaUrl}
+                        onChange={(e) => {
+                          const newUrl = e.target.value;
                           const parsed = parseVideoInput(newUrl);
                           setEditingMedia({ ...editingMedia, item: { ...editingMedia.item, mediaUrl: newUrl, embedUrl: parsed.embedSrc || editingMedia.item.embedUrl } });
 
@@ -1706,54 +1711,52 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                             setEditingSubCat({ ...editingSubCat, cat: { ...editingSubCat.cat, image: parsed.thumbnailUrl } });
                             toast.success("Thumbnail auto-fetched!");
                           }
-                        } else {
-                          setEditingMedia({ ...editingMedia, item: { ...editingMedia.item, mediaUrl: newUrl } });
-                        }
-                      }}
-                      placeholder="https://..."
-                      className="flex-1"
-                    />
-                    <Button type="button" variant="outline" className="w-24 overflow-hidden relative">
-                      <UploadCloud className="w-4 h-4 mr-2" />
-                      Upload
-                      <input
-                        type="file"
-                        accept={mediaType === "audio" ? "audio/*" : "video/*"}
-                        className="absolute inset-0 opacity-0 cursor-pointer"
-                        onChange={async (e) => {
-                          if (!e.target.files?.length) return;
-                          const file = e.target.files[0];
-
-                          // 100MB limit for files
-                          const MAX_FILE_SIZE = 100 * 1024 * 1024;
-                          if (file.size > MAX_FILE_SIZE) {
-                            toast.error("File is too large. Please select a file under 100MB.");
-                            e.target.value = '';
-                            return;
-                          }
-
-                          const fd = new FormData();
-                          fd.append("file", file);
-                          try {
-                            toast.loading("Uploading...");
-                            const data = await chunkedUpload(file, {
-                              onProgress: (pct) => console.log(`[MediaCategoryManager] Upload progress: ${pct}%`),
-                            });
-                            toast.dismiss();
-                            if (data.url) {
-                              setEditingMedia({ ...editingMedia, item: { ...editingMedia.item, mediaUrl: data.url } });
-                              toast.success("File URL applied");
-                            }
-                          } catch (err: any) {
-                            toast.dismiss();
-                            console.error("[MediaCategoryManager] Upload error:", err);
-                            toast.error("Upload failed: " + (err.message || "Unknown error"));
-                          }
                         }}
+                        placeholder="https://..."
+                        className="flex-1"
                       />
-                    </Button>
+                      <Button type="button" variant="outline" className="w-24 overflow-hidden relative">
+                        <UploadCloud className="w-4 h-4 mr-2" />
+                        Upload
+                        <input
+                          type="file"
+                          accept="video/*"
+                          className="absolute inset-0 opacity-0 cursor-pointer"
+                          onChange={async (e) => {
+                            if (!e.target.files?.length) return;
+                            const file = e.target.files[0];
+
+                            // 100MB limit for files
+                            const MAX_FILE_SIZE = 100 * 1024 * 1024;
+                            if (file.size > MAX_FILE_SIZE) {
+                              toast.error("File is too large. Please select a file under 100MB.");
+                              e.target.value = '';
+                              return;
+                            }
+
+                            const fd = new FormData();
+                            fd.append("file", file);
+                            try {
+                              toast.loading("Uploading...");
+                              const data = await chunkedUpload(file, {
+                                onProgress: (pct) => console.log(`[MediaCategoryManager] Upload progress: ${pct}%`),
+                              });
+                              toast.dismiss();
+                              if (data.url) {
+                                setEditingMedia({ ...editingMedia, item: { ...editingMedia.item, mediaUrl: data.url } });
+                                toast.success("File URL applied");
+                              }
+                            } catch (err: any) {
+                              toast.dismiss();
+                              console.error("[MediaCategoryManager] Upload error:", err);
+                              toast.error("Upload failed: " + (err.message || "Unknown error"));
+                            }
+                          }}
+                        />
+                      </Button>
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {mediaType === "video" && (
                   <div className="space-y-4">
