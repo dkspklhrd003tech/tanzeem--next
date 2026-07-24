@@ -577,7 +577,7 @@ export default function SermonsPageEditor({ pageId, initialPageData }: { pageId:
                     }}
                     onDelete={(item: SermonItem) => setDeletingSermon(item)} />
                 ))}
-                {activeSermons.length === 0 && <div className="col-span-full py-10 text-center text-muted-foreground border border-dashed rounded-xl">No videos found in this category.</div>}
+                {activeSermons.length === 0 && <div className="col-span-full py-10 text-center text-foreground border border-dashed rounded-xl">No Videos Found In This Category.</div>}
               </div>
             </div>
           )}

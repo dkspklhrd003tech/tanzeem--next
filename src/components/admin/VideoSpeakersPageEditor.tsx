@@ -545,7 +545,7 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
                         onDelete={(v) => { setDeletingVideo(v); }}
                       />
                     ))}
-                    {activeVideos.length === 0 && <p className="text-muted-foreground col-span-full">No videos found for this speaker.</p>}
+                    {activeVideos.length === 0 && <p className="text-foreground col-span-full">No Videos Found For This Speaker.</p>}
                   </div>
                 </SortableContext>
               </DndContext>

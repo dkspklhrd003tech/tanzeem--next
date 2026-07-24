@@ -537,7 +537,7 @@ export default function VideosPageEditor({ pageId, initialPageData }: { pageId: 
                         onDelete={(item: VideoItem) => setDeletingVideo(item)}
                         onTogglePublish={handleVideoTogglePublish} />
                     ))}
-                    {activeVideos.length === 0 && <div className="col-span-full py-10 text-center text-muted-foreground border border-dashed rounded-xl">No videos found in this category.</div>}
+                    {activeVideos.length === 0 && <div className="col-span-full py-10 text-center text-foreground border border-dashed rounded-xl">No Videos Found In This Category.</div>}
                   </div>
                 </SortableContext>
               </DndContext>

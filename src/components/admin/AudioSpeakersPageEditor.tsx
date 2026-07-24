@@ -446,7 +446,7 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
                         onDelete={(a) => { setDeletingAudio(a); }}
                       />
                     ))}
-                    {activeAudios.length === 0 && <p className="text-muted-foreground col-span-full">No audios found for this speaker.</p>}
+                    {activeAudios.length === 0 && <p className="text-foreground col-span-full">No Audios Found For This Speaker.</p>}
                   </div>
                 </SortableContext>
               </DndContext>

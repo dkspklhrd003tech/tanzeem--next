@@ -595,7 +595,7 @@ export default function KhitabAudiosPageEditor({ pageId, initialPageData }: { pa
                         }}
                         onDelete={(item: KhitabAudioItem) => setDeletingKhitabAudio(item)} />
                     ))}
-                    {activeKhitabAudios.length === 0 && <div className="col-span-full py-10 text-center text-muted-foreground border border-dashed rounded-xl">No audios found in this category.</div>}
+                    {activeKhitabAudios.length === 0 && <div className="col-span-full py-10 text-center text-foreground border border-dashed rounded-xl">No Audios Found In This Category.</div>}
                   </div>
                 </SortableContext>
               </DndContext>

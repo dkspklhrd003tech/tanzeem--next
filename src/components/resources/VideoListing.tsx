@@ -122,7 +122,7 @@ export function VideoListing({
       {items.length === 0 ? (
         <div className="text-center py-20">
           <Video className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
-          <p className="text-foreground-muted">No videos found. Try adjusting your filters.</p>
+          <p className="text-foreground">No videos found. Try adjusting your filters.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">

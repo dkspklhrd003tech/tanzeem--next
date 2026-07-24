@@ -286,7 +286,7 @@ export function MediaLibrary() {
         </div>
       ) : filteredMedia.length === 0 ? (
         <div className="text-center py-8 border-2 border-dashed border-border rounded-xl">
-          <p className="text-foreground-muted">No media files found.</p>
+          <p className="text-foreground">No media files found.</p>
         </div>
       ) : viewMode === "grid" ? (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">

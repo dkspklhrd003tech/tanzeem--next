@@ -357,7 +357,7 @@ export function PageSectionBuilder({ pageId, onSave }: PageSectionBuilderProps) 
 
       {sections.length === 0 && (
         <div className="text-center py-12 border-2 border-dashed border-border rounded-xl bg-muted/30">
-          <p className="text-foreground-muted">No sections added yet. Click "Add Section" to start building your page.</p>
+          <p className="text-foreground">No sections added yet. Click "Add Section" to start building your page.</p>
         </div>
       )}
     </div>

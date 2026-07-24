@@ -112,7 +112,7 @@ export function BooksListing({
       {items.length === 0 ? (
         <div className="text-center py-20">
           <BookOpen className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
-          <p className="text-foreground-muted">No books found. Try adjusting your filters.</p>
+          <p className="text-foreground">No books found. Try adjusting your filters.</p>
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-5">

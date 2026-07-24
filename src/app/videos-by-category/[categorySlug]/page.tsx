@@ -83,7 +83,7 @@ export default async function CategoryVideosPage({ params }: { params: Promise<{
       <div className="container mx-auto py-10 md:py-8">
         {subCategoriesWithVideos.length === 0 && directVideos.length === 0 ? (
           <div className="text-center py-20 border border-dashed rounded-xl">
-            <p className="text-foreground-muted">No content found in this category.</p>
+            <p className="text-foreground">No content found in this category.</p>
           </div>
         ) : (
           <SubCategoryClient subCategories={subCategoriesWithVideos} directVideos={directVideos} />

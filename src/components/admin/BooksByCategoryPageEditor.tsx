@@ -657,7 +657,7 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
                         onDelete={(item: BookItem) => setDeletingBook(item)}
                         onTogglePublish={handleBookTogglePublish} />
                     ))}
-                    {activeBooks.length === 0 && <div className="col-span-full py-10 text-center text-muted-foreground border border-dashed rounded-xl">No books found in this category.</div>}
+                    {activeBooks.length === 0 && <div className="col-span-full py-10 text-center text-foreground border border-dashed rounded-xl">No books found in this category.</div>}
                   </div>
                 </SortableContext>
               </DndContext>

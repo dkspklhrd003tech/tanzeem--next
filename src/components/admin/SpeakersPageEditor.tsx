@@ -314,7 +314,7 @@ export default function SpeakersPageEditor({ pageId, initialPageData, mediaConte
                       </div>
                     </div>
                   ))}
-                  {activeAudios.length === 0 && <p className="text-muted-foreground col-span-full">No audios found for this speaker.</p>}
+                  {activeAudios.length === 0 && <p className="text-foreground col-span-full">No Audios Found For This Speaker.</p>}
                 </div>
               </TabsContent>
             )}
@@ -340,7 +340,7 @@ export default function SpeakersPageEditor({ pageId, initialPageData, mediaConte
                       </div>
                     </div>
                   ))}
-                  {activeVideos.length === 0 && <p className="text-muted-foreground col-span-full">No videos found for this speaker.</p>}
+                  {activeVideos.length === 0 && <p className="text-foreground col-span-full">No Videos Found For This Speaker.</p>}
                 </div>
               </TabsContent>
             )}
