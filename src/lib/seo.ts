@@ -50,7 +50,8 @@ export function buildMetadata({
   noIndex = false,
   schemaType: _schemaType = "WebPage",
 }: MetadataInput): Metadata {
-  const url = `${SITE_URL}${path}`;
+  const cleanPath = path ? (path.startsWith("/") ? path : `/${path}`) : "";
+  const url = `${SITE_URL}${cleanPath}`;
   const image = resolveMediaUrl(ogImage ?? DEFAULT_OG_IMAGE);
   const cleanTitle = title.replace(new RegExp(`\\s*\\|?\\s*${SITE_NAME}\\s*$`, 'i'), '').trim();
   const fullTitle = cleanTitle ? `${cleanTitle} | ${SITE_NAME}` : SITE_NAME;

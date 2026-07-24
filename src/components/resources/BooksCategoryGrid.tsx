@@ -138,7 +138,7 @@ export function BooksCategoryGrid({ categoryName, initialItems }: BooksCategoryG
             >
               <div className="w-full aspect-[10/16] bg-muted relative border-b border-border">
                 {item.coverImage ? (
-                  <img src={item.coverImage} alt={item.title} className="w-full h-full object-cover transition-transform duration-500" />
+                  <img src={item.coverImage} alt={item.title} width="250" height="400" loading="lazy" className="w-full h-full object-cover transition-transform duration-500" />
                 ) : (
                   <div className="absolute inset-0 flex items-center justify-center text-muted-foreground/50 bg-slate-200">
                     <FileText className="w-12 h-12" />

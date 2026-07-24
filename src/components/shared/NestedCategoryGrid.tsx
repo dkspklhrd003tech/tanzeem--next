@@ -103,7 +103,7 @@ export function NestedCategoryGrid({ heading, style = "capsule", categories = []
                       >
                         <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors z-10" />
                         {sub.image ? (
-                          <img src={sub.image} alt={sub.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                          <img src={sub.image} alt={sub.title} width="400" height="225" loading="lazy" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                         ) : (
                           <div className="absolute inset-0 bg-primary/20 flex items-center justify-center">
                             <Video className="w-12 h-12 text-primary/40" />
@@ -163,7 +163,7 @@ export function NestedCategoryGrid({ heading, style = "capsule", categories = []
                         asChild
                         className="shrink-0 w-full sm:w-auto rounded-full bg-primary hover:bg-primary/90 text-primary-foreground"
                       >
-                        <Link href={style === "image_card" ? `/videos/${item.id}` : `/audio/${item.slug}`}>
+                        <Link href={style === "image_card" ? `/videos/${item.id}` : `/audio/${item.id}`}>
                           <Play className="w-4 h-4 mr-2" /> Play Now
                         </Link>
                       </Button>

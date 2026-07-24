@@ -45,7 +45,7 @@ export function BookGrid({ items }: Props) {
           >
             <div className="aspect-[3/4] bg-muted relative">
               {book.coverImage ? (
-                <img src={book.coverImage} alt={book.title} className="w-full h-full object-cover" />
+                <img src={book.coverImage} alt={book.title} width="300" height="400" loading="lazy" className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-primary">
                   <BookOpen className="h-12 w-12 opacity-40" />

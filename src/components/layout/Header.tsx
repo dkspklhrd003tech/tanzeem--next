@@ -228,9 +228,9 @@ export function Header() {
                     <span className="text-[#fefefc] font-bold text-lg md:text-xl">ت</span>
                   </div>
                   <div className="hidden sm:block">
-                    <h1 className="text-lg md:text-xl font-bold text-primary">
+                    <span className="block text-lg md:text-xl font-bold text-primary">
                       Tanzeem-e-Islami
-                    </h1>
+                    </span>
                     <p className="text-[10px] text-foreground-muted -mt-0.5" style={{ fontFamily: "'Scheherazade New', serif" }}>
                       تنظیمِ اسلامی
                     </p>

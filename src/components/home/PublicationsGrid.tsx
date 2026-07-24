@@ -120,7 +120,7 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
                                         "ring-1 ring-white/10 group-hover:ring-primary/30 group-hover:rotate-1"
                                     )}>
                                         {mag.coverImage ? (
-                                            <img src={mag.coverImage} alt={mag.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)]" onError={(e) => { e.currentTarget.style.display = "none"; }} />
+                                            <img src={mag.coverImage} alt={mag.title} width="260" height="346" loading="lazy" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)]" onError={(e) => { e.currentTarget.style.display = "none"; }} />
                                         ) : (
                                             <div className="w-full h-full flex flex-col items-center justify-center bg-muted/30" aria-hidden="true">
                                                 <Newspaper className="w-12 h-12 text-primary/20" />
@@ -197,7 +197,7 @@ export function PublicationsGrid({ booksData, magazinesData }: PublicationsProps
                                         "ring-1 ring-white/10 group-hover:ring-primary/30 group-hover:-rotate-1"
                                     )}>
                                         {book.coverImage ? (
-                                            <img src={book.coverImage} alt={book.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)]" onError={(e) => { e.currentTarget.style.display = "none"; }} />
+                                            <img src={book.coverImage} alt={book.title} width="260" height="346" loading="lazy" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000 ease-[cubic-bezier(0.25,1,0.5,1)]" onError={(e) => { e.currentTarget.style.display = "none"; }} />
                                         ) : (
                                             <div className="w-full h-full flex flex-col items-center justify-center bg-muted/30" aria-hidden="true">
                                                 <BookOpen className="w-12 h-12 text-primary/20" />

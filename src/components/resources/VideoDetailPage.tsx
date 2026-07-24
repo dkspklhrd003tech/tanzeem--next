@@ -241,7 +241,7 @@ export function VideoDetailPage({ item, related, customFieldSchema = [] }: { ite
               <h2 className="text-xs font-semibold uppercase tracking-wide text-primary mb-4">Speaker</h2>
               <div className="flex items-center gap-3">
                 {item.speaker.avatar ? (
-                  <img src={item.speaker.avatar} alt={item.speaker.name} className="w-12 h-12 rounded-full object-cover" />
+                  <img src={item.speaker.avatar} alt={item.speaker.name} width="48" height="48" loading="lazy" className="w-12 h-12 rounded-full object-cover" />
                 ) : (
                   <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-lg">
                     {item.speaker.name[0]}
@@ -266,7 +266,7 @@ export function VideoDetailPage({ item, related, customFieldSchema = [] }: { ite
                   <Link key={r.id} href={`/videos/${r.slug}`} className="flex gap-3 group">
                     <div className="w-16 h-12 rounded-lg overflow-hidden bg-muted shrink-0">
                       {r.thumbnailUrl ? (
-                        <img src={r.thumbnailUrl} alt={r.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                        <img src={r.thumbnailUrl} alt={r.title} width="64" height="48" loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
                           <Video className="h-7 w-7 text-primary" />

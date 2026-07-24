@@ -104,7 +104,7 @@ export function VideoListing({
               <Link key={sub.id} href={buildUrl({ category: sub.slug })} className={cn("relative group border rounded-xl overflow-hidden bg-card hover:border-primary/50 transition-colors shadow-sm", activeCategorySlug === sub.slug ? "ring-2 ring-primary border-primary" : "border-border/80")}>
                 <div className="aspect-video bg-muted relative">
                   {sub.imageUrl ? (
-                    <img src={sub.imageUrl} className="w-full h-full object-cover" alt="" />
+                    <img src={sub.imageUrl} width="400" height="225" loading="lazy" className="w-full h-full object-cover" alt={sub.name} />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-muted-foreground"><Video className="w-8 h-8 opacity-20" /></div>
                   )}
@@ -131,7 +131,7 @@ export function VideoListing({
               <Link href={`/videos/${item.slug}`} className="group block bg-card border border-border rounded-xl overflow-hidden hover:shadow-mid transition-all hover:-translate-y-1 cursor-pointer w-full">
                 <div className="relative aspect-video bg-muted overflow-hidden">
                   {item.thumbnailUrl ? (
-                    <img src={item.thumbnailUrl} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                    <img src={item.thumbnailUrl} alt={item.title} width="400" height="225" loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-primary/5">
                       <Video className="h-10 w-10 text-primary/30" />

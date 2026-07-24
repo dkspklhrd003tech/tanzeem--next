@@ -65,6 +65,7 @@ export async function generateMetadata(): Promise<Metadata> {
     authors: [{ name: siteName }],
     icons: { icon: favicon },
     metadataBase: new URL(SITE_URL),
+    alternates: { canonical: "./" },
     openGraph: {
       title: siteName,
       description: siteDesc,

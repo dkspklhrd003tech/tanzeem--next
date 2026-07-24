@@ -129,7 +129,7 @@ export function BooksListing({
                 <div className="relative w-full rounded-xl overflow-hidden border border-border bg-muted shadow-sm group-hover:shadow-mid transition-all duration-300 group-hover:-translate-y-1.5"
                   style={{ aspectRatio: "3/4" }}>
                   {book.coverImage ? (
-                    <img src={book.coverImage} alt={book.title} className="w-full h-full object-cover" />
+                    <img src={book.coverImage} alt={book.title} width="200" height="267" loading="lazy" className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-primary/5">
                       <BookOpen className="h-8 w-8 text-primary/30" />

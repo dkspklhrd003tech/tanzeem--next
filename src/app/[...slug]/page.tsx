@@ -233,7 +233,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     }
   }
 
-  if (!page || !page.isPublished) return { title: "Page Not Found" };
+  if (!page || !page.isPublished) return { title: "Page Not Found", robots: "noindex,nofollow" };
 
   return buildMetadata({
     title: page.metaTitle || page.title,

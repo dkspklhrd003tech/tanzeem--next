@@ -21,7 +21,7 @@ export function MagazineGrid({ items, seriesTitle }: { items: MagazineItem[]; se
           <article key={issue.id} className="border border-border rounded-md overflow-hidden bg-card">
             <div className="aspect-[3/4] bg-muted">
               {issue.coverImage ? (
-                <img src={issue.coverImage} alt={issue.title} className="w-full h-full object-cover" />
+                <img src={issue.coverImage} alt={issue.title} width="300" height="400" loading="lazy" className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-primary font-nastaleeq text-lg p-4 text-center">
                   {issue.title}
