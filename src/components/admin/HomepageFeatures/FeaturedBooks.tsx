@@ -342,7 +342,7 @@ export function FeaturedBooks() {
                                 <ConfirmDialog
                                     title={editingItem ? "Update Book" : "Create Book"}
                                     description={`Are you sure you want to ${editingItem ? "update" : "create"} this featured book?`}
-                                    onConfirm={() => document.getElementById("book-form")?.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }))}
+                                    onConfirm={async () => { document.getElementById("book-form")?.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true })); }}
                                 >
                                     <button type="button" disabled={isLoading || isUploading} className="px-8 py-2.5 bg-[#0d5844] text-[#fefefc] rounded-full font-semibold hover:bg-[#0a4636] transition-all shadow-md active:scale-95 disabled:opacity-50">Save Changes</button>
                                 </ConfirmDialog>
@@ -356,7 +356,7 @@ export function FeaturedBooks() {
                 onOpenChange={(open) => !open && setDeletingBook(null)}
                 title="Delete Book"
                 description={`Are you sure you want to permanently delete the book "${deletingBook?.title}"?`}
-                onConfirm={() => deletingBook && handleDelete(deletingBook.id, deletingBook.title)}
+                onConfirm={async () => { if (deletingBook) await handleDelete(deletingBook.id, deletingBook.title); }}
             />
         </div>
     );

@@ -27,7 +27,7 @@ export async function GET(request: Request) {
     });
 
     // Generate mock traffic data for the last 7 days
-    const trafficData = [];
+    const trafficData: Array<{ date: string; views: number; visitors: number }> = [];
     for (let i = 6; i >= 0; i--) {
       const d = new Date();
       d.setDate(d.getDate() - i);

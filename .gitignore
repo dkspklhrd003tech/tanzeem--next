@@ -18,8 +18,8 @@ node_modules/
 /test-results/
 *.test.ts?(x)
 *.spec.ts?(x)
-.scream
-.scream/
+download_csvs/*
+download/*
 
 # =======================================================
 # ⚡ NEXT.JS + TURBOPACK

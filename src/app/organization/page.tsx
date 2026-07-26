@@ -42,7 +42,7 @@ export default async function OrganizationPage() {
 
   // ── CMS page with content ────────────────────────────────────────
   if (page && page.content?.trim()) {
-    let parsedContent = null;
+    let parsedContent: any = null;
     try {
       if (page.content.startsWith("{")) {
         parsedContent = JSON.parse(page.content);

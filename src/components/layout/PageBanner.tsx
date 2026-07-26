@@ -142,7 +142,7 @@ export function PageBanner({ settings, titleOverride, breadcrumbsOverride, bgIma
 
       {/* Content */}
       <div className="container relative z-20 px-4">
-        <h1
+        <p
           className={cn(
             "text-3xl md:text-5xl lg:text-6xl font-bold py-3 drop-shadow-lg line-clamp-1",
             titleLoading && "animate-pulse"
@@ -150,7 +150,7 @@ export function PageBanner({ settings, titleOverride, breadcrumbsOverride, bgIma
           style={{ color: textColor }}
         >
           {displayTitle.length > 40 ? displayTitle.substring(0, 40) + "..." : displayTitle}
-        </h1>
+        </p>
 
         {subtitle && (
           <p className="text-white/80 text-base md:text-lg max-w-2xl mx-auto leading-relaxed mb-4 drop-shadow-md">

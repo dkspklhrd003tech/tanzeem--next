@@ -501,7 +501,7 @@ export function SocialMediaManager() {
         onOpenChange={(open) => !open && setDeletingPlatformId(null)}
         title="Delete Platform"
         description="Are you sure you want to delete this platform? This will NOT delete associated accounts but they will have no platform assigned."
-        onConfirm={() => deletingPlatformId && handleDeletePlatform(deletingPlatformId)}
+        onConfirm={async () => { if (deletingPlatformId) await handleDeletePlatform(deletingPlatformId); }}
       />
 
       <ConfirmDialog
@@ -509,7 +509,7 @@ export function SocialMediaManager() {
         onOpenChange={(open) => !open && setDeletingAccountId(null)}
         title="Delete Account"
         description="Are you sure you want to remove this social media account?"
-        onConfirm={() => deletingAccountId && handleDeleteAccount(deletingAccountId)}
+        onConfirm={async () => { if (deletingAccountId) await handleDeleteAccount(deletingAccountId); }}
       />
     </div>
   );

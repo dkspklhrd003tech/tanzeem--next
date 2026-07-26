@@ -405,7 +405,7 @@ export function MediaLibrary() {
                           )}
                         </div>
                         <div className="min-w-0">
-                          <p className="font-bold text-foreground truncate">
+                          <p className="font-bold text-md group-hover:text-primary transition-colors leading-snug text-left">
                             {item.originalName}
                           </p>
                           <p className="text-xs text-foreground-muted truncate">

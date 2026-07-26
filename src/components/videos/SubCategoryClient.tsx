@@ -8,6 +8,7 @@ import Link from "next/link";
 
 type VideoItem = {
   id: string;
+  slug?: string;
   title: string;
   description: string | null;
   videoUrl: string;
@@ -93,7 +94,7 @@ export function SubCategoryClient({ subCategories, directVideos = [] }: { subCat
             return (
               <Link
                 key={video.id}
-                href={`/videos/${video.id}`}
+                href={(video.slug || video.id).startsWith("http") ? (video.slug || video.id) : `/videos/${video.slug || video.id}`}
                 className="group flex flex-col bg-card border border-border/80 hover:border-primary/50 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300"
               >
                 <div className="aspect-video w-full relative overflow-hidden bg-muted">
@@ -101,6 +102,9 @@ export function SubCategoryClient({ subCategories, directVideos = [] }: { subCat
                     <img
                       src={thumb}
                       alt={video.title}
+                      width={400}
+                      height={225}
+                      loading="lazy"
                       className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                   ) : (

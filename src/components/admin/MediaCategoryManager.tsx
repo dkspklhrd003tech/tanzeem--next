@@ -210,7 +210,7 @@ function SortableSubCatCard({ sub, mediaType, isSelected, onToggleSelect, onClic
       )}
       <div className="p-4 flex items-center justify-between gap-2 flex-1">
         <div className="flex-1 min-w-0 pr-1">
-          <h5 className="font-bold text-foreground truncate" title={sub.title}>{sub.code ? `${sub.code} | ` : ""}{sub.title}</h5>
+          <h5 className="font-bold text-md group-hover:text-primary transition-colors leading-snug text-left" title={sub.title}>{sub.code ? `${sub.code} | ` : ""}{sub.title}</h5>
           <div className="mt-1">
             <Badge variant="secondary" className="text-[10px] uppercase font-semibold">
               {sub.mediaItems?.length || 0} {mediaType === "audio" ? "Audios" : "Videos"}
@@ -291,7 +291,7 @@ function SortableDirectVideoCard({ item, mediaType, isSelected, onToggleSelect, 
       )}
       <div className="p-4 flex items-center justify-between gap-2 flex-1">
         <div className="flex-1 min-w-0 pr-1">
-          <h5 className="font-bold text-foreground truncate" title={item.title}>{item.code ? `${item.code} | ` : ""}{item.title}</h5>
+          <h5 className="font-bold text-md group-hover:text-primary transition-colors leading-snug text-left" title={item.title}>{item.code ? `${item.code} | ` : ""}{item.title}</h5>
           <div className="flex items-center gap-2 mt-1.5 flex-wrap text-[11px] font-semibold">
             <span className="flex items-center gap-1 text-blue-600 bg-blue-50 dark:bg-blue-950/40 px-1.5 py-0.5 rounded border border-blue-200 dark:border-blue-800/50" title="Plays">
               <PlayCircle className="w-3 h-3" /> {item.playCount || 0}
@@ -1144,7 +1144,8 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
       }
 
       setEditingMedia(null);
-      toast.success("Saved media item");
+      toast.success(`Successfully ${isNew ? "created" : "updated"} ${mediaType === "audio" ? "audio" : "video"} item!`);
+      await fetchData();
     } catch (err: any) {
       console.error("Save media error:", err);
       toast.error(err.message || "Failed to save media item");
@@ -1798,14 +1799,17 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                     <Label>Title <span className="text-destructive">*</span></Label>
                     <Input
                       value={editingMedia.item.title}
-                      onChange={(e) => setEditingMedia({
-                        ...editingMedia,
-                        item: {
-                          ...editingMedia.item,
-                          title: e.target.value,
-                          slug: editingMedia.item.id === "new" ? e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, "-") : editingMedia.item.slug
-                        }
-                      })}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        setEditingMedia({
+                          ...editingMedia,
+                          item: {
+                            ...editingMedia.item,
+                            title: val,
+                            slug: slugifyText(val)
+                          }
+                        });
+                      }}
                       placeholder="e.g. Episode 1"
                     />
                   </div>

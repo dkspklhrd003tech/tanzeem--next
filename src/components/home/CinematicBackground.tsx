@@ -6,8 +6,8 @@ import { Points, PointMaterial } from "@react-three/drei";
 import * as random from "maath/random/dist/maath-random.esm";
 
 function Starfield(props: any) {
-  const ref = useRef<any>();
-  const sphere = random.inSphere(new Float32Array(5000 * 3), { radius: 1.5 });
+  const ref = useRef<any>(null);
+  const sphere = (random as any).inSphere(new Float32Array(5000 * 3), { radius: 1.5 });
 
   useFrame((state, delta) => {
     if (ref.current) {

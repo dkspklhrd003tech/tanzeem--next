@@ -52,7 +52,7 @@ const moderateLimiter = rateLimit({ interval: RATE_LIMITS.MODERATE.windowMs });
 const looseLimiter = rateLimit({ interval: RATE_LIMITS.LOOSE.windowMs });
 
 export async function checkRateLimit(req: NextRequest, type: 'STRICT' | 'MODERATE' | 'LOOSE', identifier?: string) {
-  const ip = req.headers.get('x-forwarded-for') || req.ip || '127.0.0.1';
+  const ip = req.headers.get('x-forwarded-for') || (req as any).ip || '127.0.0.1';
   const token = identifier ? `${ip}-${identifier}` : ip;
 
   try {

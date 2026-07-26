@@ -66,6 +66,7 @@ export async function generateMetadata(): Promise<Metadata> {
     icons: { icon: favicon },
     metadataBase: new URL(SITE_URL),
     alternates: { canonical: "./" },
+    robots: "index, follow",
     openGraph: {
       title: siteName,
       description: siteDesc,

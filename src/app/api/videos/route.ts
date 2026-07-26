@@ -3,18 +3,18 @@ import { revalidatePath } from "next/cache";
 import { db } from "@/db";
 import { videos, videoCategories, speakers, activityLogs } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth";
-import { eq, or, like, desc, count, and, asc, leftJoin } from "drizzle-orm";
+import { eq, or, like, desc, count, and, asc } from "drizzle-orm";
 
 // ─── shared helper ────────────────────────────────────────────────────────────
 // Builds a plain object from a joined row, matching the shape the frontend expects.
 function mapVideoRow(row: {
   videos: typeof videos.$inferSelect;
-  videoCategories: typeof videoCategories.$inferSelect | null;
+  video_categories: typeof videoCategories.$inferSelect | null;
   speakers: typeof speakers.$inferSelect | null;
 }) {
   return {
     ...row.videos,
-    category: row.videoCategories ?? null,
+    category: row.video_categories ?? null,
     speaker: row.speakers ?? null,
   };
 }

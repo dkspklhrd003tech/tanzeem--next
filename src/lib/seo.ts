@@ -13,10 +13,10 @@ import { resolveMediaUrl } from "@/lib/utils";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
-export const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://tanzeem.org";
+export const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://tanzeem.dks.com.pk";
 export const SITE_NAME = "Tanzeem-e-Islami";
-export const SITE_LOGO = SITE_URL ? `${SITE_URL}/tanzeem-logo.webp` : "";
-export const DEFAULT_OG_IMAGE = SITE_URL ? `${SITE_URL}/og-default.jpg` : "";
+export const SITE_LOGO = `${SITE_URL}/tanzeem-logo.webp`;
+export const DEFAULT_OG_IMAGE = `${SITE_URL}/og-default.jpg`;
 
 // ─── safeIsoDate ─────────────────────────────────────────────────────────────
 function safeIsoDate(dateVal?: Date | string | null): string | undefined {
@@ -56,15 +56,18 @@ export function buildMetadata({
   const cleanTitle = title.replace(new RegExp(`\\s*\\|?\\s*${SITE_NAME}\\s*$`, 'i'), '').trim();
   const fullTitle = cleanTitle ? `${cleanTitle} | ${SITE_NAME}` : SITE_NAME;
 
+  // Format meta description length to optimal 120-155 characters for SEO
+  const cleanDescription = description.length > 155 ? `${description.slice(0, 152)}...` : description;
+
   return {
     title: cleanTitle || undefined,
-    description,
+    description: cleanDescription,
     keywords: keywords.join(", ") || undefined,
-    alternates: { canonical: url },
-    robots: noIndex ? "noindex,nofollow" : "index,follow",
+    alternates: { canonical: cleanPath || "./" },
+    robots: noIndex ? "noindex, nofollow" : "index, follow",
     openGraph: {
       title: fullTitle,
-      description,
+      description: cleanDescription,
       url,
       siteName: SITE_NAME,
       type: "website",
@@ -74,7 +77,7 @@ export function buildMetadata({
     twitter: {
       card: "summary_large_image",
       title: fullTitle,
-      description,
+      description: cleanDescription,
       images: [image],
       site: "@tanzeemeislami",
     },
