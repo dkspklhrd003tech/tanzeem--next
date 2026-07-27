@@ -24,12 +24,14 @@ function PageEditorWrapper({ id, EditorComponent }: { id: string, EditorComponen
                 else setPage({
                     id, slug: id, title: id.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
                     content: "", excerpt: "", isPublished: true, metaTitle: id.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
-                    metaDescription: "",                 });
+                    metaDescription: "",
+                });
             })
             .catch(() => setPage({
                 id, slug: id, title: id.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
                 content: "", excerpt: "", isPublished: true, metaTitle: id.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
-                metaDescription: "",             }));
+                metaDescription: "",
+            }));
     }, [id]);
 
     if (!page) return <div className="p-10 flex justify-center"><PageSpinner /></div>;
@@ -42,7 +44,7 @@ export function HomepageManager() {
             <div>
                 <h1 className="text-3xl font-bold text-foreground flex items-center gap-3">
                     <Settings className="w-8 h-8 text-primary" />
-                    Homepage Setup
+                    HomePage Setup & SEO
                 </h1>
                 <p className="text-foreground-muted">Manage the Dynamic Content Layout of the Main Landing Page</p>
             </div>

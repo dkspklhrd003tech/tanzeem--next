@@ -50,13 +50,17 @@ const nextConfig: NextConfig = {
           { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
         ],
       },
-      {
-        // Static assets — 1 year immutable cache
-        source: "/_next/static/:path*",
-        headers: [
-          { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
-        ],
-      },
+      ...(process.env.NODE_ENV === "production"
+        ? [
+            {
+              // Static assets — 1 year immutable cache in production only
+              source: "/_next/static/:path*",
+              headers: [
+                { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
+              ],
+            },
+          ]
+        : []),
       {
         // Media files — 1 year cache
         source: "/media/:path*",

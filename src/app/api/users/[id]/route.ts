@@ -16,7 +16,7 @@ export async function PUT(
 
         const { id } = await params;
         const data = await req.json();
-        const { name, email, role, isActive, password } = data;
+        const { name, email, role, isActive, password, badgeBg, badgeText } = data;
 
         const existingUser = await db.select().from(users).where(eq(users.id, id)).limit(1);
         if (!existingUser.length) {
@@ -28,6 +28,18 @@ export async function PUT(
         if (email !== undefined) updateData.email = email;
         if (role !== undefined) updateData.role = role;
         if (isActive !== undefined) updateData.isActive = isActive;
+
+        if (badgeBg !== undefined || badgeText !== undefined) {
+            let existingAvatar: any = {};
+            if (existingUser[0].avatar && existingUser[0].avatar.startsWith("{")) {
+                try {
+                    existingAvatar = JSON.parse(existingUser[0].avatar);
+                } catch (e) {}
+            }
+            if (badgeBg !== undefined) existingAvatar.badgeBg = badgeBg;
+            if (badgeText !== undefined) existingAvatar.badgeText = badgeText;
+            updateData.avatar = JSON.stringify(existingAvatar);
+        }
 
         // Only update password if explicitly provided
         if (password) {

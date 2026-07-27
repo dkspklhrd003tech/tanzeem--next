@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { PageRecord } from "@/components/sitemanager/PageForm";
 import { MediaCategoryManager } from "./MediaCategoryManager";
+import PageSeoManager from "./PageSeoManager";
 
 export default function MediaLibraryEditor({ pageId, initialPageData, mediaType }: { pageId: string, initialPageData: PageRecord, mediaType: "audio" | "video" }) {
   const { toast } = useToast();
@@ -69,25 +70,7 @@ export default function MediaLibraryEditor({ pageId, initialPageData, mediaType 
         </TabsContent>
 
         <TabsContent value="settings">
-          <form onSubmit={handlePageSave} className="space-y-6 max-w-2xl">
-            <Card>
-              <CardHeader><CardTitle>Page Setup & SEO</CardTitle></CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2"><Label>Title</Label><Input value={pageForm.title} onChange={e => setPageForm({ ...pageForm, title: e.target.value })} /></div>
-                <div className="space-y-2"><Label>Slug</Label><Input value={pageForm.slug} onChange={e => setPageForm({ ...pageForm, slug: e.target.value })} /></div>
-
-                <div className="pt-4 space-y-4 border-t border-border mt-4">
-                  <h4 className="font-semibold text-sm">SEO Meta Data</h4>
-                  <div className="space-y-2"><Label>Meta Title</Label><Input value={pageForm.metaTitle || ""} onChange={e => setPageForm({ ...pageForm, metaTitle: e.target.value })} /></div>
-                  <div className="space-y-2"><Label>Meta Description</Label><Input value={pageForm.metaDescription || ""} onChange={e => setPageForm({ ...pageForm, metaDescription: e.target.value })} /></div>
-                </div>
-
-                <Button type="submit" disabled={isSavingPage} className="w-full mt-4">
-                  {isSavingPage ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : "Save Settings"}
-                </Button>
-              </CardContent>
-            </Card>
-          </form>
+          <PageSeoManager pageId={pageId} hideHeader={true} />
         </TabsContent>
       </Tabs>
     </div>

@@ -119,6 +119,7 @@ export default async function RootLayout({
       </head>
       <body
         className={`${plusJakartaSans.variable} ${kumbhSans.variable} antialiased bg-background text-foreground font-body`}
+        suppressHydrationWarning={true}
       >
         <RecaptchaProvider>
           <MainLayout>{children}</MainLayout>

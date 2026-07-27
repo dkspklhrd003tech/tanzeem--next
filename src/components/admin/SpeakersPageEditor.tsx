@@ -207,7 +207,7 @@ export default function SpeakersPageEditor({ pageId, initialPageData, mediaConte
                 <User className="w-4 h-4 mr-2" /> Speakers
               </TabsTrigger>
               <TabsTrigger value="settings" className="flex-1">
-                <Settings2 className="w-4 h-4 mr-2" /> Page Setup
+                <Settings2 className="w-4 h-4 mr-2" /> Page Setup & SEO
               </TabsTrigger>
             </>
           ) : (

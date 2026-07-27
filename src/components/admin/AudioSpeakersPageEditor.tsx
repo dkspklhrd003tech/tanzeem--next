@@ -102,7 +102,7 @@ function SortableSpeakerCard({ speaker, audioCount, onClick, onEdit, onDelete, o
             <span className="inline-block text-xs px-2 py-0.5 text-primary rounded-full border border-primary/40 bg-primary/10 mt-1 font-medium">{audioCount} {audioCount === 1 ? 'Audio' : 'Audios'}</span>
           </div>
           <div className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
-            <Button variant="ghost" size="icon" className="h-6 w-6 text-primary hover:text-primary hover:bg-primary/10" onClick={() => onEdit(speaker)}><Pencil className="w-3 h-3" /></Button>
+            <Button variant="ghost" size="icon" className="h-6 w-6 text-primary hover:text-white hover:bg-primary/10" onClick={() => onEdit(speaker)}><Pencil className="w-3 h-3" /></Button>
             <Button variant="ghost" size="icon" className={cn("h-6 w-6", speaker.isActive !== false ? "text-blue-500 hover:text-blue-600 hover:bg-blue-500/10" : "text-red-500 hover:text-red-600 hover:bg-red-500/10")} onClick={(e) => onTogglePublish(e, speaker)} title={speaker.isActive !== false ? "Hide from frontend" : "Show on frontend"}>
               {speaker.isActive !== false ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
             </Button>
@@ -356,7 +356,7 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
                 <User className="w-4 h-4 mr-2" /> Speakers
               </TabsTrigger>
               <TabsTrigger value="settings" className="flex-1">
-                <Settings2 className="w-4 h-4 mr-2" /> Page Setup
+                <Settings2 className="w-4 h-4 mr-2" /> Page Setup & SEO
               </TabsTrigger>
             </>
           ) : (
@@ -405,24 +405,7 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
 
         {!activeSpeaker && (
           <TabsContent value="settings">
-            <form className="space-y-6 max-w-2xl">
-              <Card>
-                <CardHeader><CardTitle>Page SEO</CardTitle></CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2"><Label>Title</Label><Input value={pageForm.title} onChange={e => setPageForm({ ...pageForm, title: e.target.value })} /></div>
-                  <div className="space-y-2"><Label>Slug</Label><Input value={pageForm.slug} onChange={e => setPageForm({ ...pageForm, slug: e.target.value })} /></div>
-                  <ConfirmDialog
-                    title="Save Settings"
-                    description="Are you sure you want to save these page settings?"
-                    onConfirm={handlePageSave}
-                  >
-                    <Button type="button" disabled={isSavingPage}>
-                      {isSavingPage ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : "Save Settings"}
-                    </Button>
-                  </ConfirmDialog>
-                </CardContent>
-              </Card>
-            </form>
+            <PageSeoManager pageId={pageId} hideHeader={true} />
           </TabsContent>
         )}
 

@@ -18,6 +18,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import PageSeoManager from "./PageSeoManager";
 
 import {
   DndContext, closestCenter, KeyboardSensor, PointerSensor,
@@ -587,7 +588,7 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
       <Tabs defaultValue="list" variant="default" className="space-y-6">
         <TabsList>
           <TabsTrigger value="list"><FileText className="w-4 h-4 mr-2" /> Content Library</TabsTrigger>
-          {!activeCategory && <TabsTrigger value="settings"><Settings2 className="w-4 h-4 mr-2" /> Page Setup</TabsTrigger>}
+          {!activeCategory && <TabsTrigger value="settings"><Settings2 className="w-4 h-4 mr-2" /> Page Setup & SEO</TabsTrigger>}
         </TabsList>
 
         <TabsContent value="list" className="space-y-6">
@@ -666,16 +667,7 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
         </TabsContent>
 
         <TabsContent value="settings">
-          <form onSubmit={handlePageSave} className="space-y-6 max-w-2xl">
-            <Card>
-              <CardHeader><CardTitle>Page SEO</CardTitle></CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2"><Label>Title</Label><Input value={pageForm.title} onChange={e => setPageForm({ ...pageForm, title: e.target.value })} /></div>
-                <div className="space-y-2"><Label>Slug</Label><Input value={pageForm.slug} onChange={e => setPageForm({ ...pageForm, slug: e.target.value })} /></div>
-                <Button type="submit" disabled={isSavingPage}>{isSavingPage ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : "Save Settings"}</Button>
-              </CardContent>
-            </Card>
-          </form>
+          <PageSeoManager pageId={pageId} hideHeader={true} />
         </TabsContent>
       </Tabs>
 

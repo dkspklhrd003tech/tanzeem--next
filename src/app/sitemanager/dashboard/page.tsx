@@ -80,6 +80,36 @@ const ENTITY_COLOR_MAP: Record<string, { bg: string; label: string }> = {
   settings: { bg: "bg-indigo-500", label: "Settings" },
 };
 
+const USER_PALETTES = [
+  "bg-emerald-600 text-white",
+  "bg-blue-600 text-white",
+  "bg-purple-600 text-white",
+  "bg-amber-600 text-white",
+  "bg-rose-600 text-white",
+  "bg-indigo-600 text-white",
+  "bg-teal-600 text-white",
+  "bg-cyan-600 text-white",
+  "bg-pink-600 text-white",
+  "bg-violet-600 text-white",
+];
+
+function getUserColor(log: any) {
+  if (log?.badgeBg && log?.badgeText) {
+    return {
+      style: { backgroundColor: log.badgeBg, color: log.badgeText },
+      className: "",
+    };
+  }
+  const name = log?.userName || "";
+  if (!name) return { className: "bg-slate-600 text-white" };
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) {
+    hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const index = Math.abs(hash) % USER_PALETTES.length;
+  return { className: USER_PALETTES[index] };
+}
+
 function getEntityColor(type: string) {
   const key = type?.toLowerCase() || "";
   return ENTITY_COLOR_MAP[key]?.bg ?? "bg-slate-400";
@@ -556,13 +586,13 @@ export default function DashboardPage() {
                   <CardTitle className="text-base flex items-center gap-2"><Activity className="h-4 w-4 text-primary" />Recent Activity</CardTitle>
                   <CardDescription className="text-xs mt-0.5">Last 10 admin actions — real-time feed</CardDescription>
                 </div>
-                <Link href="/sitemanager/activity" className="text-xs text-primary hover:underline flex items-center gap-0.5">
+                <Link href="/sitemanager/activity" className="text-sm px-3 py-2 font-semibold bg-primary text-white hover:bg-primary-light hover:text-primary hover:border hover:border-primary/70 rounded-full flex items-center gap-0.5">
                   View all <ArrowRight className="h-3 w-3" />
                 </Link>
               </div>
 
               {/* Color legend guide */}
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 pt-2 border-t border-border/40 text-[11px] text-muted-foreground">
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 pt-2 border-t border-border/40 text-[12px] text-foreground">
                 <span className="font-medium text-foreground/70">Legend:</span>
                 <span className="flex items-center gap-1" title="Pages"><span className="w-2 h-2 rounded-full bg-blue-500" />Pages</span>
                 <span className="flex items-center gap-1" title="Audios"><span className="w-2 h-2 rounded-full bg-purple-500" />Audios</span>
@@ -591,10 +621,20 @@ export default function DashboardPage() {
                             {getEntityLabel(log.entityType)}
                           </span>
                         </p>
-                        {log.details && <p className="text-xs text-muted-foreground truncate mt-0.5">{log.details}</p>}
+                        {log.details && <p className="text-xs text-foreground truncate mt-0.5">{log.details}</p>}
                         <div className="flex items-center gap-2 mt-1">
-                          <span className="text-[11px] text-muted-foreground flex items-center gap-1"><Clock className="h-3 w-3 text-muted-foreground/70" />{timeAgo(log.createdAt)}</span>
-                          {log.userName && <span className="text-[11px] text-primary font-semibold">by {log.userName}</span>}
+                          <span className="text-[11px] text-foreground capitalize flex items-center gap-1"><Clock className="h-3 w-3 text-foreground" />{timeAgo(log.createdAt)}</span>
+                          {log.userName && (
+                            <span className="text-[12px] text-muted-foreground font-medium flex items-center gap-1">
+                              By{" "}
+                              <span
+                                style={getUserColor(log).style}
+                                className={cn("px-1.5 py-0.5 rounded text-[11px] font-semibold shadow-xs", getUserColor(log).className)}
+                              >
+                                {log.userName}
+                              </span>
+                            </span>
+                          )}
                         </div>
                       </div>
                     </li>

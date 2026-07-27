@@ -50,6 +50,8 @@ interface MediaItem {
   code?: string;
   slug?: string;
   tags?: string;
+  metaTitle?: string;
+  metaDescription?: string;
   isPublished?: boolean;
   customFields?: any;
   viewCount?: number;
@@ -1940,6 +1942,28 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                   onChange={(key, val) => setEditingMedia({ ...editingMedia, item: { ...editingMedia.item, customFields: { ...(editingMedia.item.customFields || {}), [key]: val } } })}
                 />
                 <CustomFieldBuilder entityType={mediaType} />
+
+                {/* SEO Information */}
+                <div className="pt-4 border-t border-border space-y-4">
+                  <span className="text-sm font-bold text-foreground block">SEO Information</span>
+                  <div className="space-y-2">
+                    <Label className="text-xs">SEO Meta Title</Label>
+                    <Input
+                      value={editingMedia.item.metaTitle || ""}
+                      onChange={(e) => setEditingMedia({ ...editingMedia, item: { ...editingMedia.item, metaTitle: e.target.value } })}
+                      placeholder="Custom title for search engines..."
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-xs">SEO Meta Description</Label>
+                    <Textarea
+                      value={editingMedia.item.metaDescription || ""}
+                      onChange={(e) => setEditingMedia({ ...editingMedia, item: { ...editingMedia.item, metaDescription: e.target.value } })}
+                      placeholder="Short search-friendly summary..."
+                      rows={2}
+                    />
+                  </div>
+                </div>
 
               </div>
             </div>

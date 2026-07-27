@@ -89,8 +89,8 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
       if (field === "metaTitle") {
         newValue = `${page.title || "Page"} | Tanzeem-e-Islami`;
       } else if (field === "metaDescription") {
-        newValue = extractedText.length > 20 
-          ? extractedText.substring(0, 155).trim() + "..." 
+        newValue = extractedText.length > 20
+          ? extractedText.substring(0, 155).trim() + "..."
           : `Discover comprehensive insights on ${page.title || "Tanzeem-e-Islami"}. Learn more about our mission.`;
       } else if (field === "featuredImageAlt") {
         newValue = `Illustration representing ${page.title || "Tanzeem-e-Islami"}`;
@@ -108,13 +108,13 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
     setGenerating(prev => ({ ...prev, [`${field}.${nestedField}`]: true }));
     setTimeout(() => {
       let extractedText = "";
-      let faqs: {q: string, a: string}[] = [];
+      let faqs: { q: string, a: string }[] = [];
       if (page.sections && Array.isArray(page.sections)) {
         page.sections.forEach((sec: any) => {
           const c = sec.config || {};
           const textChunks = [c.heading, c.title, c.subheading, c.body, c.description, c.quoteText];
           extractedText += " " + textChunks.filter(Boolean).join(" ");
-          
+
           if (sec.type === "accordion" && c.items) {
             c.items.forEach((item: any) => {
               if (item.question && item.answer) {
@@ -131,8 +131,8 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
       let newValue: any = "";
       if (field === "geo") {
         if (nestedField === "summary") {
-          newValue = extractedText.length > 50 
-            ? `This page provides a detailed overview of ${page.title}. Key points include: ${extractedText.substring(0, 300)}...` 
+          newValue = extractedText.length > 50
+            ? `This page provides a detailed overview of ${page.title}. Key points include: ${extractedText.substring(0, 300)}...`
             : `An in-depth summary of ${page.title}.`;
         } else if (nestedField === "entities") {
           newValue = "Tanzeem-e-Islami, Quran, Sunnah, Islamic System, Khilafat";
@@ -197,7 +197,24 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
   return (
     <div className="space-y-6 max-w-[1400px] mx-auto pb-24">
       {/* Header (conditionally hidden if embedded) */}
-      {!hideHeader && (
+      {hideHeader ? (
+        <div className="sticky top-32 z-20 flex items-center justify-between p-4 bg-background/95 backdrop-blur border border-border rounded-xl mb-6 shadow-sm">
+          <div className="flex items-center gap-2">
+            <Bot className="h-5 w-5 text-emerald-500" />
+            <span className="font-semibold text-sm">SEO Center</span>
+            <span className="text-xs text-muted-foreground">({page.title || page.name})</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" type="button" onClick={() => window.open(`/${page.slug}`, '_blank')}>
+              <SearchCode className="w-4 h-4 mr-2" /> Live Preview
+            </Button>
+            <Button type="button" onClick={handleSave} disabled={saving} className="bg-primary text-white hover:bg-primary-light hover:text-primary" size="sm">
+              <Save className="w-4 h-4 mr-2" />
+              {saving ? "Saving..." : "Save All SEO"}
+            </Button>
+          </div>
+        </div>
+      ) : (
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-4 rounded-xl border border-border sticky top-4 z-10 shadow-sm">
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="icon" asChild>
@@ -219,7 +236,7 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
             <Button variant="outline" size="sm" onClick={() => router.push(`/${page.slug}`)}>
               <SearchCode className="w-4 h-4 mr-2" /> Live Preview
             </Button>
-            <Button onClick={handleSave} disabled={saving} className="bg-emerald-600 hover:bg-emerald-700 text-white">
+            <Button onClick={handleSave} disabled={saving} className="bg-primary text-white hover:bg-primary-light hover:text-primary">
               <Save className="w-4 h-4 mr-2" />
               {saving ? "Saving..." : "Save All SEO"}
             </Button>

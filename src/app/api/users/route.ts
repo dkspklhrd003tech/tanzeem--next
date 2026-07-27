@@ -18,11 +18,29 @@ export async function GET(req: NextRequest) {
             email: users.email,
             role: users.role,
             isActive: users.isActive,
+            avatar: users.avatar,
             lastLoginAt: users.lastLoginAt,
             createdAt: users.createdAt,
         }).from(users);
 
-        return NextResponse.json(allUsers);
+        const mappedUsers = allUsers.map(u => {
+            let badgeBg = null;
+            let badgeText = null;
+            if (u.avatar && u.avatar.startsWith("{")) {
+                try {
+                    const parsed = JSON.parse(u.avatar);
+                    badgeBg = parsed.badgeBg || null;
+                    badgeText = parsed.badgeText || null;
+                } catch (e) {}
+            }
+            return {
+                ...u,
+                badgeBg,
+                badgeText,
+            };
+        });
+
+        return NextResponse.json(mappedUsers);
     } catch (error) {
         console.error('Error fetching users:', error);
         return NextResponse.json({ error: 'Failed to fetch users' }, { status: 500 });
@@ -37,7 +55,7 @@ export async function POST(req: NextRequest) {
         }
 
         const data = await req.json();
-        const { name, email, password, role, isActive } = data;
+        const { name, email, password, role, isActive, badgeBg, badgeText } = data;
 
         if (!email || !password) {
             return NextResponse.json({ error: 'Email and password are required' }, { status: 400 });
@@ -52,6 +70,7 @@ export async function POST(req: NextRequest) {
 
         const id = uuidv4();
         const hashedPassword = await hashPassword(password);
+        const avatarData = JSON.stringify({ badgeBg, badgeText });
 
         const newUser = {
             id,
@@ -59,6 +78,7 @@ export async function POST(req: NextRequest) {
             email,
             password: hashedPassword,
             role: role || 'editor',
+            avatar: avatarData,
             isActive: isActive !== undefined ? isActive : true,
         };
 
@@ -71,7 +91,9 @@ export async function POST(req: NextRequest) {
                 name: newUser.name,
                 email: newUser.email,
                 role: newUser.role,
-                isActive: newUser.isActive
+                isActive: newUser.isActive,
+                badgeBg,
+                badgeText,
             }
         });
     } catch (error) {

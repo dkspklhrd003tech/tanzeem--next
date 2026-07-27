@@ -14,6 +14,8 @@ type User = {
     email: string;
     role: string;
     isActive: boolean;
+    badgeBg?: string | null;
+    badgeText?: string | null;
     lastLoginAt: string | null;
     createdAt: string;
 };
@@ -29,6 +31,8 @@ export function UserManagement() {
         password: "",
         role: "editor",
         isActive: true,
+        badgeBg: "#0f766e",
+        badgeText: "#ffffff",
     });
     const [showPassword, setShowPassword] = useState(false);
     const { toast } = useToast();
@@ -52,7 +56,7 @@ export function UserManagement() {
             const res = await fetch("/api/users");
             if (res.ok) {
                 const data = await res.json();
-                setUsers(data);
+                setUsers(Array.isArray(data) ? data : []);
             }
         } catch (error) {
             console.error("Failed to load users", error);
@@ -75,6 +79,8 @@ export function UserManagement() {
                 password: "", // Don't populate password
                 role: user.role,
                 isActive: user.isActive,
+                badgeBg: user.badgeBg || "#0f766e",
+                badgeText: user.badgeText || "#ffffff",
             });
         } else {
             setEditingUser(null);
@@ -84,6 +90,8 @@ export function UserManagement() {
                 password: "",
                 role: "editor",
                 isActive: true,
+                badgeBg: "#0f766e",
+                badgeText: "#ffffff",
             });
         }
         setShowPassword(false);
@@ -209,7 +217,20 @@ export function UserManagement() {
                                                     {user.name ? user.name.charAt(0).toUpperCase() : <UserIcon className="w-5 h-5" />}
                                                 </div>
                                                 <div>
-                                                    <div className="font-medium text-foreground">{user.name || "Unnamed User"}</div>
+                                                    <div className="font-medium text-foreground flex items-center gap-2">
+                                                        {user.name || "Unnamed User"}
+                                                        {user.name && (
+                                                            <span
+                                                                style={{
+                                                                    backgroundColor: user.badgeBg || "#0f766e",
+                                                                    color: user.badgeText || "#ffffff",
+                                                                }}
+                                                                className="px-1.5 py-0.5 rounded text-[10px] font-semibold shadow-xs"
+                                                            >
+                                                                Badge
+                                                            </span>
+                                                        )}
+                                                    </div>
                                                     <div className="text-sm text-foreground-muted">{user.email}</div>
                                                 </div>
                                             </div>
@@ -375,6 +396,61 @@ export function UserManagement() {
                                             <option value="true">Active (Allowed)</option>
                                             <option value="false">Disabled (Suspended)</option>
                                         </select>
+                                    </div>
+                                </div>
+
+                                <div className="space-y-2 pt-2 border-t border-border/50">
+                                    <div className="flex items-center justify-between">
+                                        <label className="text-sm font-medium text-foreground">User Badge Custom Colors</label>
+                                        <span className="text-xs text-muted-foreground flex items-center gap-1">
+                                            Preview:{" "}
+                                            <span
+                                                style={{ backgroundColor: formData.badgeBg, color: formData.badgeText }}
+                                                className="px-2 py-0.5 rounded text-xs font-semibold shadow-xs"
+                                            >
+                                                {formData.name || "User"}
+                                            </span>
+                                        </span>
+                                    </div>
+
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-1">
+                                            <label className="text-xs text-foreground-muted">Badge Background</label>
+                                            <div className="flex items-center gap-2">
+                                                <input
+                                                    type="color"
+                                                    value={formData.badgeBg}
+                                                    onChange={(e) => setFormData({ ...formData, badgeBg: e.target.value })}
+                                                    className="w-8 h-8 rounded border border-border cursor-pointer p-0.5 bg-background"
+                                                />
+                                                <input
+                                                    type="text"
+                                                    value={formData.badgeBg}
+                                                    onChange={(e) => setFormData({ ...formData, badgeBg: e.target.value })}
+                                                    className="w-full px-2 py-1 bg-background border border-border rounded text-xs font-mono uppercase"
+                                                    placeholder="#0F766E"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-1">
+                                            <label className="text-xs text-foreground-muted">Badge Text Color</label>
+                                            <div className="flex items-center gap-2">
+                                                <input
+                                                    type="color"
+                                                    value={formData.badgeText}
+                                                    onChange={(e) => setFormData({ ...formData, badgeText: e.target.value })}
+                                                    className="w-8 h-8 rounded border border-border cursor-pointer p-0.5 bg-background"
+                                                />
+                                                <input
+                                                    type="text"
+                                                    value={formData.badgeText}
+                                                    onChange={(e) => setFormData({ ...formData, badgeText: e.target.value })}
+                                                    className="w-full px-2 py-1 bg-background border border-border rounded text-xs font-mono uppercase"
+                                                    placeholder="#FFFFFF"
+                                                />
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 

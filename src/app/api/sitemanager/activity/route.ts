@@ -34,7 +34,24 @@ export async function GET(request: NextRequest) {
       .orderBy(desc(activityLogs.createdAt))
       .limit(limit);
 
-    return NextResponse.json({ activity: logs });
+    const formattedLogs = logs.map((log) => {
+      let badgeBg = null;
+      let badgeText = null;
+      if (log.userAvatar && log.userAvatar.startsWith("{")) {
+        try {
+          const parsed = JSON.parse(log.userAvatar);
+          badgeBg = parsed.badgeBg || null;
+          badgeText = parsed.badgeText || null;
+        } catch (e) {}
+      }
+      return {
+        ...log,
+        badgeBg,
+        badgeText,
+      };
+    });
+
+    return NextResponse.json({ activity: formattedLogs });
   } catch (error) {
     console.error("Activity log fetch error:", error);
     return NextResponse.json({ error: "Failed to fetch activity" }, { status: 500 });

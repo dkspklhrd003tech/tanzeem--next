@@ -512,7 +512,7 @@ export default function KhitabAudiosPageEditor({ pageId, initialPageData }: { pa
       <Tabs defaultValue="list" variant="default" className="space-y-6">
         <TabsList>
           <TabsTrigger value="list"><Mic className="w-4 h-4 mr-2" /> Audio Library</TabsTrigger>
-          {!activeCategory && <TabsTrigger value="settings"><Settings2 className="w-4 h-4 mr-2" /> Page Setup</TabsTrigger>}
+          {!activeCategory && <TabsTrigger value="settings"><Settings2 className="w-4 h-4 mr-2" /> Page Setup & SEO</TabsTrigger>}
         </TabsList>
 
         <TabsContent value="list" className="space-y-6">

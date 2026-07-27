@@ -6,6 +6,7 @@ import { ArrowLeft, RefreshCw, Save } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { useChunkedUpload } from "@/hooks/useChunkedUpload";
 import { CustomFieldBuilder } from "@/components/admin/CustomFieldBuilder";
@@ -40,6 +41,8 @@ export default function AudioFormPage({ id, speakerIdParam = "", categoryIdParam
     fileSize: 0,
     isPublished: true,
     isNewAudio: false,
+    metaTitle: "",
+    metaDescription: "",
     customFields: {} as Record<string, any>
   });
 
@@ -70,6 +73,8 @@ export default function AudioFormPage({ id, speakerIdParam = "", categoryIdParam
             categoryId: data.item.categoryId || categoryIdParam || "",
             isPublished: data.item.isPublished ?? true,
             isNewAudio: data.item.isNew ?? false,
+            metaTitle: data.item.metaTitle || "",
+            metaDescription: data.item.metaDescription || "",
             customFields: data.item.customFields || {}
           });
         }
@@ -215,6 +220,36 @@ export default function AudioFormPage({ id, speakerIdParam = "", categoryIdParam
             onChange={(key, val) => setFormData(prev => ({ ...prev, customFields: { ...prev.customFields, [key]: val } }))}
           />
           <CustomFieldBuilder entityType="audio" />
+        </div>
+
+        <div className="pt-6 border-t border-border space-y-6">
+          <div>
+            <h3 className="text-lg font-bold mb-2">SEO & Search Optimization</h3>
+            <p className="text-sm text-muted-foreground mb-4">
+              Configure custom search metadata and indexing options for this audio.
+            </p>
+          </div>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label>Meta Title</Label>
+              <Input
+                placeholder={`${formData.title || 'Audio Title'} | Tanzeem-e-Islami`}
+                value={formData.metaTitle || ""}
+                onChange={e => setFormData({ ...formData, metaTitle: e.target.value })}
+              />
+              <p className="text-xs text-muted-foreground text-right">{formData.metaTitle?.length || 0}/60 characters optimally.</p>
+            </div>
+            <div className="space-y-2">
+              <Label>Meta Description</Label>
+              <Textarea
+                rows={3}
+                placeholder="Brief search-friendly summary of this audio lecture..."
+                value={formData.metaDescription || ""}
+                onChange={e => setFormData({ ...formData, metaDescription: e.target.value })}
+              />
+              <p className="text-xs text-muted-foreground text-right">{formData.metaDescription?.length || 0}/160 characters optimally.</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>

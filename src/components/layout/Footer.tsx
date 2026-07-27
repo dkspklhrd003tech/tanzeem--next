@@ -9,7 +9,7 @@ import {
   MapPin,
   AudioLines,
   BookOpen,
-  PlayCircle,
+  Video,
   Layers,
   ChevronRight,
 } from "lucide-react";
@@ -213,7 +213,7 @@ function FooterColumn({ column }: { column: MenuNode }) {
           let Icon = ChevronRight;
           if (lowerLabel.includes("audio")) Icon = AudioLines;
           else if (lowerLabel.includes("book") || lowerLabel.includes("article")) Icon = BookOpen;
-          else if (lowerLabel.includes("video")) Icon = PlayCircle;
+          else if (lowerLabel.includes("video")) Icon = Video;
           else if (lowerLabel.includes("about")) Icon = Layers;
 
           const resolved = resolveMenuLink(link.url, link.isOpenInNew);

@@ -87,6 +87,10 @@ function SortableLinkItem({ link, onEdit, onDelete, onToggleActive, onToggleNew 
   );
 }
 
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Settings2, FileText } from "lucide-react";
+import PageSeoManager from "./PageSeoManager";
+
 export default function MagazineLinksEditor({ pageId, title }: { pageId: string, title: string }) {
   const [links, setLinks] = useState<MagazineLink[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -224,6 +228,14 @@ export default function MagazineLinksEditor({ pageId, title }: { pageId: string,
         </div>
       </div>
 
+      <Tabs defaultValue="links" className="space-y-6">
+        <TabsList>
+          <TabsTrigger value="links"><FileText className="w-4 h-4 mr-2" /> Content Library</TabsTrigger>
+          <TabsTrigger value="settings"><Settings2 className="w-4 h-4 mr-2" /> Page Setup & SEO</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="links" className="space-y-6">
+
       <Card>
         <CardHeader>
           <CardTitle className="text-lg flex items-center gap-2">
@@ -317,6 +329,12 @@ export default function MagazineLinksEditor({ pageId, title }: { pageId: string,
           )}
         </CardContent>
       </Card>
+        </TabsContent>
+
+        <TabsContent value="settings">
+          <PageSeoManager pageId={pageId} hideHeader={true} />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

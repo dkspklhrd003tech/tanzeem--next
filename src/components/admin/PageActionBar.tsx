@@ -46,7 +46,7 @@ export function PageActionBar({
   const [showDelete, setShowDelete] = useState(false);
 
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
+    <div className="sticky top-16 z-30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 p-3.5 rounded-xl border border-border shadow-sm">
       <div className="flex items-center gap-3">
         <Button variant="ghost" size="icon" asChild>
           <Link href="/sitemanager/pages">

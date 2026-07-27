@@ -454,7 +454,7 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
                 <User className="w-4 h-4 mr-2" /> Speakers
               </TabsTrigger>
               <TabsTrigger value="settings" className="flex-1">
-                <Settings2 className="w-4 h-4 mr-2" /> Page Setup
+                <Settings2 className="w-4 h-4 mr-2" /> Page Setup & SEO
               </TabsTrigger>
             </>
           ) : (
@@ -507,16 +507,7 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
 
         {!activeSpeaker && (
           <TabsContent value="settings">
-            <form onSubmit={handlePageSave} className="space-y-6 max-w-2xl">
-              <Card>
-                <CardHeader><CardTitle>Page SEO</CardTitle></CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2"><Label>Title</Label><Input value={pageForm.title} onChange={e => setPageForm({ ...pageForm, title: e.target.value })} /></div>
-                  <div className="space-y-2"><Label>Slug</Label><Input value={pageForm.slug} onChange={e => setPageForm({ ...pageForm, slug: e.target.value })} /></div>
-                  <Button type="submit" disabled={isSavingPage}>{isSavingPage ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : "Save Settings"}</Button>
-                </CardContent>
-              </Card>
-            </form>
+            <PageSeoManager pageId={pageId} hideHeader={true} />
           </TabsContent>
         )}
 
@@ -677,6 +668,28 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
                 onChange={(key, val) => setVideoFormData(prev => ({ ...prev, customFields: { ...prev.customFields, [key]: val } }))}
               />
               <CustomFieldBuilder entityType="video" />
+
+              {/* SEO Information */}
+              <div className="pt-4 border-t border-border space-y-4">
+                <span className="text-sm font-bold text-foreground block">SEO Information</span>
+                <div className="space-y-2">
+                  <Label className="text-xs">SEO Meta Title</Label>
+                  <Input
+                    value={videoFormData.customFields?.metaTitle || ""}
+                    onChange={(e) => setVideoFormData({ ...videoFormData, customFields: { ...videoFormData.customFields, metaTitle: e.target.value } })}
+                    placeholder="Custom title for search engines..."
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-xs">SEO Meta Description</Label>
+                  <Textarea
+                    value={videoFormData.customFields?.metaDescription || ""}
+                    onChange={(e) => setVideoFormData({ ...videoFormData, customFields: { ...videoFormData.customFields, metaDescription: e.target.value } })}
+                    placeholder="Short search-friendly summary..."
+                    rows={2}
+                  />
+                </div>
+              </div>
             </div>
             <div className="p-6 border-t border-border bg-muted/20 flex justify-end gap-3">
               <Button variant="outline" onClick={() => setIsVideoModalOpen(false)} className="bg-destructive text-white hover:bg-destructive/80">Cancel</Button>
