@@ -340,12 +340,12 @@ export default function DashboardPage() {
                 {user?.name?.split(" ")[0] ?? "Admin"}
               </span>
             </h1>
-            <div className="flex flex-wrap items-center gap-2 mt-1 text-xs text-muted-foreground font-medium">
+            <div className="flex flex-wrap items-center gap-2 mt-1 text-xs text-foreground font-medium">
               <span>{displayDate?.greg || new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" })}</span>
               {displayDate?.hijri && (
                 <>
-                  <span className="text-muted-foreground/40">•</span>
-                  <span className="text-primary font-semibold font-urdu text-sm" dir="rtl">
+                  <span className="text-[#000000]">•</span>
+                  <span className="text-primary font-semibold font-urdu text-lg" dir="rtl">
                     {displayDate.hijri}
                   </span>
                 </>
