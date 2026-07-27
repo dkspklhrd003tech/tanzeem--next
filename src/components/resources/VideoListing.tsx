@@ -137,8 +137,10 @@ export function VideoListing({
                       <Video className="h-10 w-10 text-primary/30" />
                     </div>
                   )}
-                  <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                    <PlayCircle className="h-12 w-12 text-white" />
+                  <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all duration-300">
+                    <div className="w-12 h-12 rounded-full bg-white/90 group-hover:bg-primary group-hover:text-white text-primary flex items-center justify-center shadow-lg transition-all transform scale-90 group-hover:scale-100">
+                      <Video className="w-6 h-6" />
+                    </div>
                   </div>
                   {item.duration && (
                     <span className="absolute bottom-2 right-2 bg-black/70 text-white text-[10px] px-1.5 py-0.5 rounded font-mono">

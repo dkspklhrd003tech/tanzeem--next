@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { ArrowRight, AudioLines, PlayCircle, BookOpen } from "lucide-react";
+import { ArrowRight, AudioLines, Video, BookOpen } from "lucide-react";
 import * as LucideIcons from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -78,12 +78,12 @@ export function CallingCardGrid({ heading, icon, items, viewAllUrl, viewAllLabel
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-muted text-muted-foreground">
-                      <PlayCircle className="w-10 h-10 opacity-30" />
+                      <Video className="w-10 h-10 opacity-30" />
                     </div>
                   )}
-                  <div className="absolute inset-0 bg-black/20 group-hover:bg-black/35 flex items-center justify-center transition-colors">
-                    <div className="w-10 h-10 rounded-full bg-white/90 group-hover:bg-primary group-hover:text-white text-primary flex items-center justify-center shadow-md transition-all scale-95 group-hover:scale-105">
-                      <PlayCircle className="w-5 h-5 ml-0.5" />
+                  <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all duration-300">
+                    <div className="w-12 h-12 rounded-full bg-white/90 group-hover:bg-primary group-hover:text-white text-primary flex items-center justify-center shadow-lg transition-all transform scale-90 group-hover:scale-100">
+                      <Video className="w-6 h-6" />
                     </div>
                   </div>
                 </div>

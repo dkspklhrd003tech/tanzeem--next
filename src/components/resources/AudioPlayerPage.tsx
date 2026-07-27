@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { Download, Share2, Clock, AudioLines, ArrowLeft, FileText } from "lucide-react";
+import { Download, Share2, Clock, Play, ArrowLeft, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { cn, resolveMediaUrl } from "@/lib/utils";
@@ -115,7 +115,7 @@ export function AudioPlayerPage({ item, related, customFieldSchema = [] }: Audio
               )}
               <div className="flex items-center gap-4 border-l border-border/50">
                 <div className="flex text-primary items-center gap-1.5" title="Play">
-                  <AudioLines className="w-5 h-5" />
+                  <Play className="w-5 h-5" />
                 </div>
               </div>
               {item.fileSize ? (
@@ -239,12 +239,12 @@ export function AudioPlayerPage({ item, related, customFieldSchema = [] }: Audio
                     href={`/audio/${r.slug}`}
                     className="flex gap-3 group"
                   >
-                    <div className="w-16 h-12 rounded-lg overflow-hidden bg-muted shrink-0">
+                    <div className="w-22 h-12 rounded-md overflow-hidden bg-muted shrink-0">
                       {r.thumbnailUrl ? (
                         <img src={r.thumbnailUrl} alt={r.title} width="64" height="48" loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
-                          <AudioLines className="h-7 w-7 text-primary" />
+                          <Play className="h-7 w-7 text-primary" />
                         </div>
                       )}
                     </div>
@@ -253,7 +253,7 @@ export function AudioPlayerPage({ item, related, customFieldSchema = [] }: Audio
                         {r.title}
                       </p>
                       {r.speaker && (
-                        <p className="text-[10px] text-foreground-muted mt-0.5">{r.speaker.name}</p>
+                        <p className="text-[10px] text-primary mt-0.5">{r.speaker.name}</p>
                       )}
                     </div>
                   </Link>

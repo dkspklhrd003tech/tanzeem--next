@@ -93,8 +93,7 @@ export function Hero({ slidesData = [] }: { slidesData?: any[] }) {
                   src={displaySlides[current].imageUrl}
                   alt={displaySlides[current].title || ""}
                   loading={current === 0 ? "eager" : "lazy"}
-                  // @ts-ignore
-                  fetchpriority={current === 0 ? "high" : "auto"}
+                  fetchPriority={current === 0 ? "high" : "auto"}
                   className="w-full h-full object-cover cursor-pointer"
                   onError={(e) => {
                     const target = e.currentTarget;
@@ -115,8 +114,7 @@ export function Hero({ slidesData = [] }: { slidesData?: any[] }) {
                   src={displaySlides[current].imageUrl}
                   alt={displaySlides[current].title || ""}
                   loading={current === 0 ? "eager" : "lazy"}
-                  // @ts-ignore
-                  fetchpriority={current === 0 ? "high" : "auto"}
+                  fetchPriority={current === 0 ? "high" : "auto"}
                   className="w-full h-full object-cover"
                   onError={(e) => {
                     const target = e.currentTarget;

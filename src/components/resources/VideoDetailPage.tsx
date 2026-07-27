@@ -149,7 +149,7 @@ export function VideoDetailPage({ item, related, customFieldSchema = [] }: { ite
               <div className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm bg-muted/50 text-foreground-muted font-medium border border-border">
                 <PlayCircle className="h-4 w-4" /> Played
               </div>
-              <ClientShareButton variant="default" className="w-auto px-4 py-2 text-sm bg-primary text-white rounded-full" entityType="video" entityId={item.id} shareCount={item.shareCount} />
+              <ClientShareButton variant="default" className="w-auto px-4 py-2 text-sm bg-primary text-white !hover:text-white rounded-full" entityType="video" entityId={item.id} shareCount={item.shareCount} />
               {(!embedSrc && item.videoUrl) ? (
                 <TrackedDownloadLink
                   href={item.videoUrl}
@@ -264,9 +264,9 @@ export function VideoDetailPage({ item, related, customFieldSchema = [] }: { ite
               <div className="space-y-3 max-h-[380px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-primary/20">
                 {related.map((r) => (
                   <Link key={r.id} href={`/videos/${r.slug}`} className="flex gap-3 group">
-                    <div className="w-16 h-12 rounded-lg overflow-hidden bg-muted shrink-0">
+                    <div className="w-22 h-12 rounded-md overflow-hidden bg-muted shrink-0">
                       {r.thumbnailUrl ? (
-                        <img src={r.thumbnailUrl} alt={r.title} width="64" height="48" loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                        <img src={r.thumbnailUrl} alt={r.title} width="64" height="48" loading="lazy" className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
                       ) : (
                         <div className="w-full h-full flex items-center justify-center">
                           <Video className="h-7 w-7 text-primary" />
@@ -275,7 +275,7 @@ export function VideoDetailPage({ item, related, customFieldSchema = [] }: { ite
                     </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-xs font-medium text-foreground group-hover:text-primary line-clamp-2 leading-snug transition-colors">{r.title}</p>
-                      {r.speaker && <p className="text-[10px] text-foreground-muted mt-0.5">{r.speaker.name}</p>}
+                      {r.speaker && <p className="text-[10px] text-primary mt-0.5">{r.speaker.name}</p>}
                     </div>
                   </Link>
                 ))}

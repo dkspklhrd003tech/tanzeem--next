@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
-import { Play, ExternalLink } from "lucide-react";
+import { Video, ExternalLink } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
@@ -55,9 +55,9 @@ export function VideoGrid({ items }: Props) {
                 alt={item.title}
                 className="w-full h-full object-cover"
               />
-              <div className="absolute inset-0 bg-black/30 group-hover:bg-black/45 flex items-center justify-center transition-colors">
-                <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center">
-                  <Play className="h-5 w-5 text-primary fill-primary ml-0.5" />
+              <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-all duration-300">
+                <div className="w-12 h-12 rounded-full bg-white/90 group-hover:bg-primary group-hover:text-white text-primary flex items-center justify-center shadow-lg transition-all transform scale-90 group-hover:scale-100">
+                  <Video className="w-6 h-6" />
                 </div>
               </div>
             </div>
