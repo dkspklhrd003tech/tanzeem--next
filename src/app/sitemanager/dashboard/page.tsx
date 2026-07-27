@@ -404,10 +404,10 @@ function SeoCenterDashboardWidget() {
         {/* Top 4 July-2026 KPI Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
           {/* 1. Cinematic Circled Rating Gauge */}
-          <div className="bg-background/80 backdrop-blur-md border border-border/60 rounded-2xl p-5 flex flex-col items-center justify-center relative shadow-inner">
+          <div className="bg-background backdrop-blur-md border border-border/60 rounded-2xl p-5 flex flex-col items-center justify-center relative shadow-inner">
             <div className="relative w-32 h-32 flex items-center justify-center">
               <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                <circle cx="50" cy="50" r="42" stroke="currentColor" strokeWidth="8" className="text-muted/30" fill="transparent" />
+                <circle cx="50" cy="50" r="42" stroke="currentColor" strokeWidth="8" className="text-primary-light" fill="transparent" />
                 <circle
                   cx="50"
                   cy="50"
@@ -425,14 +425,14 @@ function SeoCenterDashboardWidget() {
                 />
               </svg>
               <div className="absolute flex flex-col items-center justify-center">
-                <span className="text-2xl font-black tabular-nums tracking-tighter text-foreground">{overallScore}%</span>
+                <span className="text-2xl font-black tabular-nums tracking-tighter text-primary">{overallScore}%</span>
                 <span className="text-[9px] uppercase font-bold text-muted-foreground tracking-wider">Health Rating</span>
               </div>
             </div>
             <p className="text-xs font-semibold text-center mt-2 text-foreground">
               {overallScore >= 80 ? "Optimal Search Readiness" : "Action Required"}
             </p>
-            <p className="text-[11px] text-muted-foreground text-center">
+            <p className="text-[12px] text-primary/80 text-center">
               {healthyPages} of {totalPages} Pages 100% Passed
             </p>
           </div>
