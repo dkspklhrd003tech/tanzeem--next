@@ -541,53 +541,53 @@ function SeoCenterDashboardWidget() {
         </div>
 
 
-        {/* Real-Time Issue Sources List */ }
-  {
-    issueSources.length > 0 && (
-      <div className="space-y-3 pt-2">
-        <div className="flex items-center justify-between">
-          <h4 className="text-sm font-bold text-foreground flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-rose-600 animate-pulse" />
-            Pages Requiring SEO Attention ({issueSources.length})
-          </h4>
-          <span className="text-xs text-muted-foreground">Exact source locations listed below</span>
-        </div>
-
-        <div className="divide-y divide-border/40 border border-border/60 rounded-2xl bg-background/50 overflow-hidden max-h-72 overflow-y-auto">
-          {issueSources.map((item) => (
-            <div key={item.pageId} className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-rose-500/5 transition-colors">
-              <div className="min-w-0 space-y-1">
-                <div className="flex items-center gap-2">
-                  <span className="font-bold text-sm text-foreground truncate">{item.title}</span>
-                  <Badge variant="outline" className="text-[10px] font-mono bg-muted/50">
-                    /{item.slug}
-                  </Badge>
-                  <Badge variant="destructive" className="text-[10px] px-2 py-0">
-                    {item.score}% Score
-                  </Badge>
-                </div>
-                <ul className="text-xs text-rose-600 dark:text-rose-400 space-y-0.5 list-disc list-inside">
-                  {item.issues.slice(0, 2).map((iss, i) => (
-                    <li key={i} className="truncate">{iss}</li>
-                  ))}
-                  {item.issues.length > 2 && (
-                    <li className="font-semibold text-muted-foreground list-none pl-4">
-                      + {item.issues.length - 2} more action item(s)
-                    </li>
-                  )}
-                </ul>
+        {/* Real-Time Issue Sources List */}
+        {
+          issueSources.length > 0 && (
+            <div className="space-y-3 pt-2">
+              <div className="flex items-center justify-between">
+                <h4 className="text-sm font-bold text-foreground flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-rose-600 animate-pulse" />
+                  Pages Requiring SEO Attention ({issueSources.length})
+                </h4>
+                <span className="text-xs text-muted-foreground">Exact source locations listed below</span>
               </div>
 
-              <Button size="sm" variant="secondary" asChild className="bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 border border-emerald-500/30 text-xs shrink-0 rounded-full font-bold">
-                <Link href={`/sitemanager/pages/${item.pageId}/edit`}>
-                  Open SEO Center <ArrowRight className="w-3.5 h-3.5 ml-1" />
-                </Link>
-              </Button>
+              <div className="divide-y divide-border/40 border border-border/60 rounded-2xl bg-background/50 overflow-hidden max-h-72 overflow-y-auto">
+                {issueSources.map((item) => (
+                  <div key={item.pageId} className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-rose-500/5 transition-colors">
+                    <div className="min-w-0 space-y-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-sm text-foreground truncate">{item.title}</span>
+                        <Badge variant="outline" className="text-[10px] font-mono bg-muted/50">
+                          /{item.slug}
+                        </Badge>
+                        <Badge variant="destructive" className="text-[10px] px-2 py-0">
+                          {item.score}% Score
+                        </Badge>
+                      </div>
+                      <ul className="text-xs text-rose-600 dark:text-rose-400 space-y-0.5 list-disc list-inside">
+                        {item.issues.slice(0, 2).map((iss, i) => (
+                          <li key={i} className="truncate">{iss}</li>
+                        ))}
+                        {item.issues.length > 2 && (
+                          <li className="font-semibold text-muted-foreground list-none pl-4">
+                            + {item.issues.length - 2} more action item(s)
+                          </li>
+                        )}
+                      </ul>
+                    </div>
+
+                    <Button size="sm" variant="secondary" asChild className="bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 border border-emerald-500/30 text-xs shrink-0 rounded-full font-bold">
+                      <Link href={`/sitemanager/pages/${item.pageId}/edit`}>
+                        Open SEO Center <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                      </Link>
+                    </Button>
+                  </div>
+                ))}
+              </div>
             </div>
-          ))}
-        </div>
-      </div>
-    )}
+          )}
       </CardContent>
     </Card>
   );
@@ -758,11 +758,6 @@ export default function DashboardPage() {
         </div>
       </motion.div>
 
-      {/* ── SEO Center Live Audit Dashboard Widget ───────────────────── */}
-      <motion.div variants={item}>
-        <SeoCenterDashboardWidget />
-      </motion.div>
-
       {/* ── Top stat cards ─────────────────────────────────────────── */}
       <motion.div variants={item}>
         {statsLoading ? <StatsSkeleton /> : (
@@ -785,6 +780,11 @@ export default function DashboardPage() {
             })}
           </div>
         )}
+      </motion.div>
+
+      {/* ── SEO Center Live Audit Dashboard Widget ───────────────────── */}
+      <motion.div variants={item}>
+        <SeoCenterDashboardWidget />
       </motion.div>
 
       {/* ── Quick Actions ──────────────────────────────────────────── */}
