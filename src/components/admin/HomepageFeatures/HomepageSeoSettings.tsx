@@ -97,7 +97,7 @@ export function HomepageSeoSettings() {
         <div className="space-y-8">
             <div className="flex justify-between items-center pb-4 border-b border-border mb-8">
                 <div>
-                    <h2 className="text-3xl font-bold text-foreground tracking-tight">Basic SEO Info</h2>
+                    {/* <h2 className="text-3xl font-bold text-foreground tracking-tight">Basic SEO Info</h2> */}
                     <p className="text-sm text-foreground-muted mt-1">Manage the Meta Title and Description for the Landing Page.</p>
                 </div>
                 <ConfirmDialog

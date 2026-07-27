@@ -14,9 +14,11 @@ export async function GET(request: NextRequest) {
     }
 
     const url = new URL(request.url);
-    const limit = Math.min(parseInt(url.searchParams.get("limit") ?? "10"), 1000);
+    const limitParam = url.searchParams.get("limit");
+    const isUnlimited = limitParam === "unlimited" || limitParam === "0" || limitParam === "all";
+    const limit = isUnlimited ? null : Math.max(1, parseInt(limitParam ?? "10") || 10);
 
-    const logs = await db
+    let query = db
       .select({
         id: activityLogs.id,
         action: activityLogs.action,
@@ -31,8 +33,9 @@ export async function GET(request: NextRequest) {
       })
       .from(activityLogs)
       .leftJoin(users, eq(activityLogs.userId, users.id))
-      .orderBy(desc(activityLogs.createdAt))
-      .limit(limit);
+      .orderBy(desc(activityLogs.createdAt));
+
+    const logs = isUnlimited || limit === null ? await query : await query.limit(limit);
 
     const formattedLogs = logs.map((log) => {
       let badgeBg = null;

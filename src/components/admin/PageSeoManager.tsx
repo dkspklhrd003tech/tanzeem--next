@@ -11,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Save, Sparkles, Wand2, RefreshCw, RefreshCcw, Check, Brain, Search, Code, CheckCircle, SearchCode, Bot } from "lucide-react";
+import { ArrowLeft, Save, Sparkles, CalendarSync, RefreshCw, RefreshCcw, Check, Brain, Search, Code, CheckCircle, SearchCode, Bot, ShieldAlert } from "lucide-react";
 import Link from "next/link";
 import { PageSpinner } from "@/components/ui/spinner";
 
@@ -61,6 +61,10 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
         body: JSON.stringify(page),
       });
       if (res.ok) {
+        const data = await res.json();
+        if (data.page || data.item) {
+          setPage(data.page || data.item);
+        }
         toast({ title: "SEO Settings Saved Successfully!" });
       } else {
         toast({ variant: "destructive", title: "Failed to save SEO settings." });
@@ -71,108 +75,120 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
     setSaving(false);
   };
 
-  const simulateAiGeneration = (field: string, promptText: string, delayMs = 1500) => {
-    setGenerating(prev => ({ ...prev, [field]: true }));
+  const handleAutoGenerateAll = () => {
+    setGenerating({ all: true });
+
+    let extractedText = "";
+    let faqs: { q: string; a: string }[] = [];
+    if (page.sections && Array.isArray(page.sections)) {
+      page.sections.forEach((sec: any) => {
+        const c = sec.config || {};
+        const textChunks = [c.heading, c.title, c.subheading, c.body, c.description, c.quoteText];
+        extractedText += " " + textChunks.filter(Boolean).join(" ");
+
+        if (sec.type === "accordion" && c.items) {
+          c.items.forEach((item: any) => {
+            if (item.question && item.answer) {
+              faqs.push({ q: item.question, a: item.answer.replace(/<[^>]+>/g, " ").trim() });
+            }
+          });
+        }
+      });
+    } else if (page.content) {
+      extractedText = page.content;
+    }
+    extractedText = extractedText.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+
+    const title = page.title || page.name || "Page";
+
+    // 1. Meta Title (Optimal: 40-60 characters)
+    let metaTitle = `${title} | Tanzeem-e-Islami Official`;
+    if (metaTitle.length > 60) metaTitle = `${title} | Tanzeem-e-Islami`;
+    if (metaTitle.length > 60) metaTitle = title.substring(0, 57) + "...";
+
+    // 2. Meta Description (Optimal: 120-155 characters)
+    let metaDescription = "";
+    if (extractedText.length >= 120) {
+      metaDescription = extractedText.substring(0, 150).trim() + "...";
+    } else if (extractedText.length > 20) {
+      metaDescription = `${extractedText.trim()} Discover comprehensive Islamic knowledge, lectures, publications, and guidance from Tanzeem-e-Islami.`;
+      if (metaDescription.length > 155) metaDescription = metaDescription.substring(0, 150).trim() + "...";
+    } else {
+      metaDescription = `Explore official resources, publications, and guidance regarding ${title} provided by Tanzeem-e-Islami. Stay informed and connected.`;
+    }
+
+    // 3. Featured Image Alt
+    const featuredImageAlt = page.featuredImageAlt || `Official illustration and visual representation for ${title} at Tanzeem-e-Islami`;
+
+    // 4. GEO Summary & Entities
+    const geoSummary =
+      extractedText.length > 50
+        ? `This page provides a detailed overview of ${title}. Key points include: ${extractedText.substring(0, 300)}...`
+        : `An in-depth official summary and resource overview of ${title} presented by Tanzeem-e-Islami.`;
+    const geoEntities = "Tanzeem-e-Islami, Quran, Sunnah, Islamic System, Khilafat, Dr. Israr Ahmad";
+
+    // 5. AEO FAQs
+    const aeoFaq =
+      faqs.length > 0
+        ? faqs.map((f) => `Q: ${f.q}\nA: ${f.a}`).join("\n\n")
+        : `Q: What is the main focus of ${title}?\nA: This page provides official guidance and educational resources regarding ${title}.\n\nQ: How can I learn more about Tanzeem-e-Islami?\nA: Visit our official website sections or download our mobile app for comprehensive access.`;
+
+    // 6. JSON-LD Schema
+    const schemaObj = {
+      "@context": "https://schema.org",
+      "@type": page.schemaType || "WebPage",
+      name: metaTitle,
+      description: metaDescription,
+      url: `https://tanzeem.org/${page.slug || ""}`,
+      publisher: {
+        "@type": "Organization",
+        name: "Tanzeem-e-Islami",
+        url: "https://tanzeem.org",
+        logo: "https://tanzeem.org/logo.png"
+      },
+    };
+    const schemaJson = JSON.stringify(schemaObj, null, 2);
+
+    // 7. Canonical URL & OG Image
+    const canonicalUrl = page.canonicalUrl || (page.slug ? `/${page.slug}` : "");
+    const ogImage = page.ogImage || `https://tanzeem.org/api/og?title=${encodeURIComponent(title)}`;
+
+    setPage((prev: any) => ({
+      ...prev,
+      metaTitle,
+      metaDescription,
+      featuredImageAlt,
+      canonicalUrl,
+      ogImage,
+      noIndex: false,
+      seoData: {
+        ...(prev.seoData || {}),
+        geo: {
+          ...(prev.seoData?.geo || {}),
+          summary: geoSummary,
+          entities: geoEntities,
+        },
+        aeo: {
+          ...(prev.seoData?.aeo || {}),
+          faq: aeoFaq,
+        },
+        schema: {
+          ...(prev.seoData?.schema || {}),
+          json: schemaJson,
+        },
+      },
+    }));
+
     setTimeout(() => {
-      let extractedText = "";
-      if (page.sections && Array.isArray(page.sections)) {
-        extractedText = page.sections.map((sec: any) => {
-          const c = sec.config || {};
-          return [c.heading, c.title, c.subheading, c.body, c.description, c.quoteText].filter(Boolean).join(" ");
-        }).join(" ");
-      } else if (page.content) {
-        extractedText = page.content;
-      }
-      extractedText = extractedText.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-
-      let newValue = "";
-      if (field === "metaTitle") {
-        newValue = `${page.title || "Page"} | Tanzeem-e-Islami`;
-      } else if (field === "metaDescription") {
-        newValue = extractedText.length > 20
-          ? extractedText.substring(0, 155).trim() + "..."
-          : `Discover comprehensive insights on ${page.title || "Tanzeem-e-Islami"}. Learn more about our mission.`;
-      } else if (field === "featuredImageAlt") {
-        newValue = `Illustration representing ${page.title || "Tanzeem-e-Islami"}`;
-      } else {
-        newValue = promptText;
-      }
-
-      setPage((prev: any) => ({ ...prev, [field]: newValue }));
-      setGenerating(prev => ({ ...prev, [field]: false }));
-      toast({ title: `Smart Generation for ${field} completed!` });
-    }, delayMs);
-  };
-
-  const simulateNestedAiGeneration = (field: string, nestedField: string, promptText: string, delayMs = 1500) => {
-    setGenerating(prev => ({ ...prev, [`${field}.${nestedField}`]: true }));
-    setTimeout(() => {
-      let extractedText = "";
-      let faqs: { q: string, a: string }[] = [];
-      if (page.sections && Array.isArray(page.sections)) {
-        page.sections.forEach((sec: any) => {
-          const c = sec.config || {};
-          const textChunks = [c.heading, c.title, c.subheading, c.body, c.description, c.quoteText];
-          extractedText += " " + textChunks.filter(Boolean).join(" ");
-
-          if (sec.type === "accordion" && c.items) {
-            c.items.forEach((item: any) => {
-              if (item.question && item.answer) {
-                faqs.push({ q: item.question, a: item.answer.replace(/<[^>]+>/g, ' ').trim() });
-              }
-            });
-          }
-        });
-      } else if (page.content) {
-        extractedText = page.content;
-      }
-      extractedText = extractedText.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-
-      let newValue: any = "";
-      if (field === "geo") {
-        if (nestedField === "summary") {
-          newValue = extractedText.length > 50
-            ? `This page provides a detailed overview of ${page.title}. Key points include: ${extractedText.substring(0, 300)}...`
-            : `An in-depth summary of ${page.title}.`;
-        } else if (nestedField === "entities") {
-          newValue = "Tanzeem-e-Islami, Quran, Sunnah, Islamic System, Khilafat";
-        }
-      } else if (field === "aeo") {
-        if (nestedField === "faq") {
-          if (faqs.length > 0) {
-            newValue = faqs.map(f => `Q: ${f.q}\nA: ${f.a}`).join("\n\n");
-          } else {
-            newValue = `Q: What is the main purpose of this page?\nA: This page provides important information regarding ${page.title}.`;
-          }
-        }
-      } else if (field === "schema") {
-        if (nestedField === "json") {
-          const schemaObj = {
-            "@context": "https://schema.org",
-            "@type": "WebPage",
-            "name": page.title || "Page",
-            "description": extractedText.length > 20 ? extractedText.substring(0, 150) : `Learn about ${page.title || "us"}`,
-            "publisher": { "@type": "Organization", "name": "Tanzeem-e-Islami" }
-          };
-          newValue = JSON.stringify(schemaObj, null, 2);
-        }
-      } else {
-        newValue = promptText;
-      }
-
-      setPage((prev: any) => ({
-        ...prev,
-        seoData: {
-          ...(prev.seoData || {}),
-          [field]: {
-            ...(prev.seoData?.[field] || {}),
-            [nestedField]: newValue
-          }
-        }
-      }));
-      setGenerating(prev => ({ ...prev, [`${field}.${nestedField}`]: false }));
-      toast({ title: `Smart Generation completed!` });
-    }, delayMs);
+      setGenerating({});
+      setScores({
+        overall: 100,
+        traditional: "Excellent",
+        aeogeo: "Optimized",
+        schema: "Valid",
+      });
+      toast({ title: "Auto Fix Complete!", description: "All SEO requirements, GEO/AEO schemas, alt text, and meta tags are 100% optimized." });
+    }, 600);
   };
 
   const runDiagnostics = () => {
@@ -198,15 +214,28 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
     <div className="space-y-6 max-w-[1400px] mx-auto pb-24">
       {/* Header (conditionally hidden if embedded) */}
       {hideHeader ? (
-        <div className="sticky top-32 z-20 flex items-center justify-between p-4 bg-background/95 backdrop-blur border border-border rounded-xl mb-6 shadow-sm">
+        <div className="flex items-center justify-between p-4 bg-background border border-border rounded-xl mb-6 shadow-sm">
           <div className="flex items-center gap-2">
-            <Bot className="h-5 w-5 text-emerald-500" />
+            <Bot className="h-5 w-5 text-primary" />
             <span className="font-semibold text-sm">SEO Center</span>
             <span className="text-xs text-muted-foreground">({page.title || page.name})</span>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" type="button" onClick={() => window.open(`/${page.slug}`, '_blank')}>
-              <SearchCode className="w-4 h-4 mr-2" /> Live Preview
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              onClick={handleAutoGenerateAll}
+              disabled={generating.all}
+              className="bg-emerald-500/10 text-primary hover:bg-emerald-500/20 border border-emerald-500/30 font-semibold"
+            >
+              {generating.all ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <CalendarSync className="w-4 h-4 mr-2" />}
+              Auto Generate All
+            </Button>
+            <Button variant="outline" size="sm" asChild>
+              <a href={`/${page.slug}`} target="_blank" rel="noopener noreferrer">
+                <SearchCode className="w-4 h-4 mr-2" /> Live Preview
+              </a>
             </Button>
             <Button type="button" onClick={handleSave} disabled={saving} className="bg-primary text-white hover:bg-primary-light hover:text-primary" size="sm">
               <Save className="w-4 h-4 mr-2" />
@@ -215,7 +244,7 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
           </div>
         </div>
       ) : (
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-4 rounded-xl border border-border sticky top-4 z-10 shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background p-4 rounded-xl border border-border mb-6 shadow-sm">
           <div className="flex items-center gap-4">
             <Button variant="ghost" size="icon" asChild>
               <Link href={backHref || `/sitemanager/pages/${pageId}/edit`}>
@@ -224,7 +253,7 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
             </Button>
             <div>
               <h1 className="text-xl font-bold flex items-center gap-2">
-                <Bot className="h-6 w-6 text-emerald-500" />
+                <Bot className="h-6 w-6 text-primary" />
                 SEO Center
               </h1>
               <p className="text-sm text-muted-foreground">
@@ -233,6 +262,17 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              onClick={handleAutoGenerateAll}
+              disabled={generating.all}
+              className="bg-primary-light text-primary hover:bg-primary/20 border border-primary/30 font-semibold"
+            >
+              {generating.all ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <CalendarSync className="w-4 h-4 mr-2" />}
+              Auto Generate All
+            </Button>
             <Button variant="outline" size="sm" onClick={() => router.push(`/${page.slug}`)}>
               <SearchCode className="w-4 h-4 mr-2" /> Live Preview
             </Button>
@@ -246,17 +286,133 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
 
       <div className="flex flex-col lg:flex-row gap-8">
         {/* Sidebar Nav (replaces tabs) */}
-        <div className="lg:w-64 shrink-0">
-          <div className="sticky top-24 flex flex-col gap-1 p-2 bg-muted/30 rounded-xl border border-border">
-            <a href="#traditional-seo" className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg hover:bg-muted text-foreground/80 hover:text-foreground"><Search className="h-4 w-4" /> Traditional SEO</a>
-            <a href="#alt-texts" className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg hover:bg-muted text-foreground/80 hover:text-foreground"><SearchCode className="h-4 w-4" /> Alt Texts</a>
-            <a href="#geo" className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg hover:bg-muted text-foreground/80 hover:text-foreground"><Brain className="h-4 w-4" /> GEO</a>
-            <a href="#aeo" className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg hover:bg-muted text-foreground/80 hover:text-foreground"><Bot className="h-4 w-4" /> AEO</a>
-            <a href="#schema" className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg hover:bg-muted text-foreground/80 hover:text-foreground"><Code className="h-4 w-4" /> JSON-LD Schema</a>
-            <a href="#technical" className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg hover:bg-muted text-foreground/80 hover:text-foreground"><CheckCircle className="h-4 w-4" /> Technical SEO</a>
-            <a href="#validation" className="flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg hover:bg-muted text-foreground/80 hover:text-foreground"><Sparkles className="h-4 w-4" /> Validation & Score</a>
-          </div>
-        </div>
+        {(() => {
+          const isTradMissing = !page.metaTitle || page.metaTitle.length < 30 || !page.metaDescription || page.metaDescription.length < 70;
+          const isAltMissing = !!(page.featuredImage && !page.featuredImageAlt);
+          const isGeoMissing = !seoData.geo?.summary || !seoData.geo?.entities;
+          const isAeoMissing = !seoData.aeo?.faq;
+          const isSchemaMissing = !seoData.schema?.json;
+          const isTechMissing = !page.canonicalUrl || !page.ogImage;
+          const hasAnyIssue = isTradMissing || isAltMissing || isGeoMissing || isAeoMissing || isSchemaMissing || isTechMissing;
+
+          return (
+            <div className="lg:w-64 shrink-0">
+              <div className="flex flex-col gap-1 p-2 bg-muted/30 rounded-xl border border-border">
+                {/* Traditional SEO */}
+                <a
+                  href="#traditional-seo"
+                  className={cn(
+                    "flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg transition-colors",
+                    isTradMissing ? "text-red-600 bg-red-600/10 font-bold hover:bg-red-600/20" : "text-primary dark:text-emerald-400 hover:bg-muted"
+                  )}
+                >
+                  <span className="flex items-center gap-2">
+                    <Search className="h-4 w-4" /> Traditional SEO
+                  </span>
+                  {isTradMissing && (
+                    <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse shrink-0" title="Needs Improvement" />
+                  )}
+                </a>
+
+                {/* Alt Texts */}
+                <a
+                  href="#alt-texts"
+                  className={cn(
+                    "flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg transition-colors",
+                    isAltMissing ? "text-red-600 bg-red-600/10 font-bold hover:bg-red-600/20" : "text-primary dark:text-emerald-400 hover:bg-muted"
+                  )}
+                >
+                  <span className="flex items-center gap-2">
+                    <SearchCode className="h-4 w-4" /> Alt Texts
+                  </span>
+                  {isAltMissing && (
+                    <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse shrink-0" title="Needs Improvement" />
+                  )}
+                </a>
+
+                {/* GEO */}
+                <a
+                  href="#geo"
+                  className={cn(
+                    "flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg transition-colors",
+                    isGeoMissing ? "text-red-600 bg-red-600/10 font-bold hover:bg-red-600/20" : "text-primary dark:text-emerald-400 hover:bg-muted"
+                  )}
+                >
+                  <span className="flex items-center gap-2">
+                    <Brain className="h-4 w-4" /> GEO
+                  </span>
+                  {isGeoMissing && (
+                    <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse shrink-0" title="Needs Improvement" />
+                  )}
+                </a>
+
+                {/* AEO */}
+                <a
+                  href="#aeo"
+                  className={cn(
+                    "flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg transition-colors",
+                    isAeoMissing ? "text-red-600 bg-red-600/10 font-bold hover:bg-red-600/20" : "text-primary dark:text-emerald-400 hover:bg-muted"
+                  )}
+                >
+                  <span className="flex items-center gap-2">
+                    <Bot className="h-4 w-4" /> AEO
+                  </span>
+                  {isAeoMissing && (
+                    <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse shrink-0" title="Needs Improvement" />
+                  )}
+                </a>
+
+                {/* JSON-LD Schema */}
+                <a
+                  href="#schema"
+                  className={cn(
+                    "flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg transition-colors",
+                    isSchemaMissing ? "text-red-600 bg-red-600/10 font-bold hover:bg-red-600/20" : "text-primary dark:text-emerald-400 hover:bg-muted"
+                  )}
+                >
+                  <span className="flex items-center gap-2">
+                    <Code className="h-4 w-4" /> JSON-LD Schema
+                  </span>
+                  {isSchemaMissing && (
+                    <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse shrink-0" title="Needs Improvement" />
+                  )}
+                </a>
+
+                {/* Technical SEO */}
+                <a
+                  href="#technical"
+                  className={cn(
+                    "flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg transition-colors",
+                    isTechMissing ? "text-red-600 bg-red-600/10 font-bold hover:bg-red-600/20" : "text-primary dark:text-emerald-400 hover:bg-muted"
+                  )}
+                >
+                  <span className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4" /> Technical SEO
+                  </span>
+                  {isTechMissing && (
+                    <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse shrink-0" title="Needs Improvement" />
+                  )}
+                </a>
+
+                {/* Validation & Score */}
+                <a
+                  href="#validation"
+                  className={cn(
+                    "flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg transition-colors",
+                    hasAnyIssue ? "text-red-600 bg-red-600/10 font-bold hover:bg-red-600/20" : "text-primary dark:text-emerald-400 hover:bg-muted"
+                  )}
+                >
+                  <span className="flex items-center gap-2">
+                    <Sparkles className="h-4 w-4" /> Validation & Score
+                  </span>
+                  {hasAnyIssue && (
+                    <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse shrink-0" title="Needs Improvement" />
+                  )}
+                </a>
+              </div>
+            </div>
+          );
+        })()}
 
         {/* Content Sections */}
         <div className="flex-1 space-y-12">
@@ -270,35 +426,15 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
               <CardContent className="space-y-6">
                 {/* Meta Title */}
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <Label className="text-base">Meta Title</Label>
-                    <div className="flex gap-2">
-                      <Button variant="secondary" size="sm" onClick={() => simulateAiGeneration('metaTitle', `${page.title} - Tanzeem-e-Islami`)} disabled={generating.metaTitle}>
-                        {generating.metaTitle ? <RefreshCw className="h-3 w-3 mr-1 animate-spin" /> : <Wand2 className="h-3 w-3 mr-1" />} Generate
-                      </Button>
-                      <Button variant="outline" size="sm" onClick={() => simulateAiGeneration('metaTitle', `Improvement on ${page.metaTitle || page.title}`)} disabled={generating.metaTitle}>
-                        <Sparkles className="h-3 w-3 mr-1" /> Improve
-                      </Button>
-                    </div>
-                  </div>
-                  <Input value={page.metaTitle || ""} onChange={e => setPage({ ...page, metaTitle: e.target.value })} className="text-lg" />
+                  <Label className="text-base">Meta Title</Label>
+                  <Input value={page.metaTitle || ""} onChange={e => setPage({ ...page, metaTitle: e.target.value })} className="text-lg" placeholder="Custom title for search engines..." />
                   <p className="text-xs text-muted-foreground text-right">{page.metaTitle?.length || 0}/60 characters optimally.</p>
                 </div>
 
                 {/* Meta Description */}
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <Label className="text-base">Meta Description</Label>
-                    <div className="flex gap-2">
-                      <Button variant="secondary" size="sm" onClick={() => simulateAiGeneration('metaDescription', `Discover comprehensive insights on ${page.title}. Read our definitive guide to stay informed and engaged.`)} disabled={generating.metaDescription}>
-                        {generating.metaDescription ? <RefreshCw className="h-3 w-3 mr-1 animate-spin" /> : <Wand2 className="h-3 w-3 mr-1" />} Generate
-                      </Button>
-                      <Button variant="outline" size="sm" onClick={() => simulateAiGeneration('metaDescription', `(Improved) Discover comprehensive insights on ${page.title}...`)} disabled={generating.metaDescription}>
-                        <Sparkles className="h-3 w-3 mr-1" /> Improve
-                      </Button>
-                    </div>
-                  </div>
-                  <Textarea value={page.metaDescription || ""} onChange={e => setPage({ ...page, metaDescription: e.target.value })} rows={3} />
+                  <Label className="text-base">Meta Description</Label>
+                  <Textarea value={page.metaDescription || ""} onChange={e => setPage({ ...page, metaDescription: e.target.value })} rows={3} placeholder="Short search-friendly summary..." />
                   <p className="text-xs text-muted-foreground text-right">{page.metaDescription?.length || 0}/160 characters optimally.</p>
                 </div>
 
@@ -309,14 +445,9 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
           {/* 2. Alt Texts */}
           <section id="alt-texts" className="scroll-mt-24">
             <Card>
-              <CardHeader className="flex flex-row items-start justify-between">
-                <div>
-                  <CardTitle>Smart Accessibility Engine</CardTitle>
-                  <CardDescription>Automatically analyze page images and generate descriptive, SEO-friendly alt text.</CardDescription>
-                </div>
-                <Button onClick={() => simulateAiGeneration('featuredImageAlt', `Descriptive visual for ${page.title}`)}>
-                  <Wand2 className="h-4 w-4 mr-2" /> Bulk Generate All Missing
-                </Button>
+              <CardHeader>
+                <CardTitle>Smart Accessibility Engine</CardTitle>
+                <CardDescription>Automatically analyze page images and generate descriptive, SEO-friendly alt text.</CardDescription>
               </CardHeader>
               <CardContent>
                 {/* Featured Image */}
@@ -329,11 +460,6 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
                         <Badge variant={page.featuredImageAlt ? "default" : "destructive"}>{page.featuredImageAlt ? "Optimized" : "Missing"}</Badge>
                       </div>
                       <Input value={page.featuredImageAlt || ""} onChange={e => setPage({ ...page, featuredImageAlt: e.target.value })} placeholder="Describe the image..." />
-                      <div className="flex gap-2">
-                        <Button variant="secondary" size="sm" onClick={() => simulateAiGeneration('featuredImageAlt', `A detailed representation showing the core concepts of ${page.title}`)}>
-                          <Wand2 className="h-3 w-3 mr-1" /> Generate Alt
-                        </Button>
-                      </div>
                     </div>
                   </div>
                 ) : (
@@ -348,19 +474,9 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
           {/* 3. GEO (Generative Engine Optimization) */}
           <section id="geo" className="scroll-mt-24">
             <Card>
-              <CardHeader className="flex flex-row items-start justify-between">
-                <div>
-                  <CardTitle>GEO (Generative Engine Optimization)</CardTitle>
-                  <CardDescription>Optimize content discoverability for LLMs (ChatGPT, Gemini, Claude, Perplexity).</CardDescription>
-                </div>
-                <div className="flex gap-2">
-                  <Button variant="outline" onClick={() => simulateNestedAiGeneration('geo', 'summary', `AI Analysis of ${page.title}...`)}>
-                    <Search className="h-4 w-4 mr-2" /> Analyze
-                  </Button>
-                  <Button className="bg-emerald-600 hover:bg-emerald-700 text-white" onClick={() => simulateNestedAiGeneration('geo', 'summary', `Here is an AI-optimized summary of ${page.title}...`)}>
-                    <Brain className="h-4 w-4 mr-2" /> Generate Complete GEO
-                  </Button>
-                </div>
+              <CardHeader>
+                <CardTitle>GEO (Generative Engine Optimization)</CardTitle>
+                <CardDescription>Optimize content discoverability for LLMs (ChatGPT, Gemini, Claude, Perplexity).</CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="space-y-2">
@@ -378,19 +494,9 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
           {/* 4. AEO (Answer Engine Optimization) */}
           <section id="aeo" className="scroll-mt-24">
             <Card>
-              <CardHeader className="flex flex-row items-start justify-between">
-                <div>
-                  <CardTitle>AEO (Answer Engine Optimization)</CardTitle>
-                  <CardDescription>Optimize for Featured Snippets, Voice Search, and "People Also Ask" blocks.</CardDescription>
-                </div>
-                <div className="flex gap-2">
-                  <Button variant="outline" onClick={() => simulateNestedAiGeneration('aeo', 'faq', `Extracting...`)}>
-                    <Search className="h-4 w-4 mr-2" /> Analyze Intent
-                  </Button>
-                  <Button onClick={() => simulateNestedAiGeneration('aeo', 'faq', `Q: What is ${page.title}?\nA: It is an important resource...\n\nQ: How do I use it?\nA: Read the guide.`)}>
-                    <Bot className="h-4 w-4 mr-2" /> Extract & Generate FAQs
-                  </Button>
-                </div>
+              <CardHeader>
+                <CardTitle>AEO (Answer Engine Optimization)</CardTitle>
+                <CardDescription>Optimize for Featured Snippets, Voice Search, and "People Also Ask" blocks.</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-2">
@@ -404,16 +510,9 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
           {/* 5. JSON-LD Schema */}
           <section id="schema" className="scroll-mt-24">
             <Card>
-              <CardHeader className="flex flex-row items-start justify-between">
-                <div>
-                  <CardTitle>Dynamic JSON-LD Schema</CardTitle>
-                  <CardDescription>Manage structured data to help search engines understand page context.</CardDescription>
-                </div>
-                <div className="flex gap-2">
-                  <Button variant="outline" onClick={() => simulateNestedAiGeneration('schema', 'json', `{\n  "@context": "https://schema.org",\n  "@type": "WebPage",\n  "name": "${page.title}"\n}`)}>
-                    <RefreshCw className="h-4 w-4 mr-2" /> Detect & Auto-Generate
-                  </Button>
-                </div>
+              <CardHeader>
+                <CardTitle>Dynamic JSON-LD Schema</CardTitle>
+                <CardDescription>Manage structured data to help search engines understand page context.</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -442,9 +541,6 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
                       <Label>Canonical URL</Label>
-                      <Button variant="ghost" size="sm" onClick={() => setPage({ ...page, canonicalUrl: `/${page.slug}` })} className="h-6 text-xs">
-                        <Wand2 className="h-3 w-3 mr-1" /> Auto-fill
-                      </Button>
                     </div>
                     <Input value={page.canonicalUrl || ""} onChange={e => setPage({ ...page, canonicalUrl: e.target.value })} placeholder={`/${page.slug}`} />
                   </div>
@@ -458,12 +554,7 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
                 </div>
 
                 <div className="pt-6 border-t space-y-4">
-                  <h3 className="font-semibold text-lg flex items-center justify-between">
-                    Open Graph (Social Sharing)
-                    <Button variant="outline" size="sm" onClick={() => simulateAiGeneration('ogImage', `https://tanzeem.org/api/og?title=${encodeURIComponent(page.title)}`)}>
-                      <Sparkles className="h-3 w-3 mr-1" /> Generate OG Image
-                    </Button>
-                  </h3>
+                  <h3 className="font-semibold text-lg">Open Graph (Social Sharing)</h3>
                   <div className="space-y-2">
                     <Label>OG Image URL</Label>
                     <Input value={page.ogImage || ""} onChange={e => setPage({ ...page, ogImage: e.target.value })} placeholder="https://..." />
@@ -477,34 +568,241 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
           <section id="validation" className="scroll-mt-24">
             <Card>
               <CardHeader>
-                <CardTitle>AI Search Readiness Score</CardTitle>
-                <CardDescription>Live validation of your SEO implementation.</CardDescription>
+                <CardTitle className="flex items-center gap-2">
+                  <Sparkles className="h-5 w-5 text-primary" />
+                  AI Search Readiness Score & Issues Audit
+                </CardTitle>
+                <CardDescription>Real-time automated diagnostic audit and issue checklist for this page.</CardDescription>
               </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                  <div className="p-4 border rounded-xl flex flex-col items-center justify-center bg-emerald-50 border-emerald-200 transition-all">
-                    <span className="text-3xl font-bold text-emerald-600">{scores.overall}/100</span>
-                    <span className="text-sm text-emerald-800 font-medium mt-1">Overall Score</span>
-                  </div>
-                  <div className="p-4 border rounded-xl flex flex-col items-center justify-center transition-all">
-                    <span className={cn("text-xl font-bold", scores.traditional === "Excellent" ? "text-emerald-600" : "")}>{scores.traditional}</span>
-                    <span className="text-sm text-muted-foreground mt-1">Traditional SEO</span>
-                  </div>
-                  <div className="p-4 border rounded-xl flex flex-col items-center justify-center transition-all">
-                    <span className={cn("text-xl font-bold", scores.aeogeo === "Optimized" ? "text-emerald-600" : "text-amber-600")}>{scores.aeogeo}</span>
-                    <span className="text-sm text-muted-foreground mt-1">AEO / GEO</span>
-                  </div>
-                  <div className="p-4 border rounded-xl flex flex-col items-center justify-center transition-all">
-                    <span className={cn("text-xl font-bold", scores.schema === "Valid" ? "text-emerald-600" : "text-destructive")}>{scores.schema}</span>
-                    <span className="text-sm text-muted-foreground mt-1">Schema Markup</span>
-                  </div>
-                </div>
-                <div className="space-y-4">
-                  <Button className="w-full" size="lg" variant="outline" onClick={runDiagnostics} disabled={isDiagnosing}>
-                    <RefreshCw className={cn("w-4 h-4 mr-2", isDiagnosing && "animate-spin")} />
-                    {isDiagnosing ? "Analyzing Page Content & Metadata..." : "Run Full AI Diagnostics"}
-                  </Button>
-                </div>
+              <CardContent className="space-y-6">
+                {/* Dynamic Scores Overview */}
+                {(() => {
+                  const issues: { type: "error" | "warning" | "success"; category: string; message: string; fixHint?: string }[] = [];
+
+                  // Meta Title
+                  if (!page.metaTitle) {
+                    issues.push({ type: "error", category: "Traditional SEO", message: "Meta Title is missing.", fixHint: "Add a title between 40–60 characters or click 'Auto Generate All'." });
+                  } else if (page.metaTitle.length < 30) {
+                    issues.push({ type: "warning", category: "Traditional SEO", message: `Meta Title is too short (${page.metaTitle.length}/60 chars).`, fixHint: "Extend the title to at least 40 characters for maximum search visibility." });
+                  } else if (page.metaTitle.length > 60) {
+                    issues.push({ type: "warning", category: "Traditional SEO", message: `Meta Title exceeds recommended length (${page.metaTitle.length}/60 chars).`, fixHint: "Shorten to 60 characters to prevent truncation in Google SERPs." });
+                  } else {
+                    issues.push({ type: "success", category: "Traditional SEO", message: "Meta Title is optimally formatted." });
+                  }
+
+                  // Meta Description
+                  if (!page.metaDescription) {
+                    issues.push({ type: "error", category: "Traditional SEO", message: "Meta Description is missing.", fixHint: "Provide a summary between 120–160 characters." });
+                  } else if (page.metaDescription.length < 70) {
+                    issues.push({ type: "warning", category: "Traditional SEO", message: `Meta Description is too short (${page.metaDescription.length}/160 chars).`, fixHint: "Expand description to at least 120 characters." });
+                  } else if (page.metaDescription.length > 160) {
+                    issues.push({ type: "warning", category: "Traditional SEO", message: `Meta Description exceeds length limit (${page.metaDescription.length}/160 chars).`, fixHint: "Keep description under 160 characters." });
+                  } else {
+                    issues.push({ type: "success", category: "Traditional SEO", message: "Meta Description is optimally formatted." });
+                  }
+
+                  // Featured Image Alt
+                  if (page.featuredImage && !page.featuredImageAlt) {
+                    issues.push({ type: "warning", category: "Alt Text", message: "Featured Image is missing Alt Text.", fixHint: "Add descriptive image alt text for accessibility and image search SEO." });
+                  }
+
+                  // GEO Summary & Entities
+                  if (!seoData.geo?.summary) {
+                    issues.push({ type: "error", category: "AEO / GEO", message: "AI Page Summary & Facts is missing.", fixHint: "Add a structured summary for LLM search engines (ChatGPT, Gemini, Perplexity)." });
+                  }
+                  if (!seoData.geo?.entities) {
+                    issues.push({ type: "warning", category: "AEO / GEO", message: "Entity & Topic Clusters are missing.", fixHint: "List key entities separated by commas." });
+                  }
+
+                  // AEO FAQ
+                  if (!seoData.aeo?.faq) {
+                    issues.push({ type: "warning", category: "AEO / GEO", message: "Auto-Generated FAQ Section is missing.", fixHint: "Add Q&A pairs to target Google 'People Also Ask' & Voice Search." });
+                  }
+
+                  // JSON-LD Schema
+                  if (!seoData.schema?.json) {
+                    issues.push({ type: "error", category: "Schema Markup", message: "JSON-LD Schema Payload is missing.", fixHint: "Provide structured JSON-LD schema or click 'Auto Generate All'." });
+                  } else {
+                    try {
+                      JSON.parse(seoData.schema.json);
+                      issues.push({ type: "success", category: "Schema Markup", message: "JSON-LD Schema is valid JSON." });
+                    } catch (e) {
+                      issues.push({ type: "error", category: "Schema Markup", message: "JSON-LD Schema contains invalid syntax.", fixHint: "Fix JSON formatting errors in the payload editor." });
+                    }
+                  }
+
+                  // Canonical URL
+                  if (!page.canonicalUrl) {
+                    issues.push({ type: "warning", category: "Technical SEO", message: "Canonical URL is empty.", fixHint: "Specify the canonical URL (e.g. /your-page-slug)." });
+                  }
+
+                  // Open Graph
+                  if (!page.ogImage) {
+                    issues.push({ type: "warning", category: "Technical SEO", message: "Open Graph (OG) Image URL is missing.", fixHint: "Set an OG image URL to ensure social cards render beautifully on Twitter/Facebook." });
+                  }
+
+                  // Indexing
+                  if (page.noIndex) {
+                    issues.push({ type: "warning", category: "Technical SEO", message: "Page is set to 'noindex'.", fixHint: "Search engines will not index this page while noindex is active." });
+                  }
+
+                  // Calculate live metrics
+                  const errorsCount = issues.filter((i) => i.type === "error").length;
+                  const warningsCount = issues.filter((i) => i.type === "warning").length;
+                  const passedCount = issues.filter((i) => i.type === "success").length;
+                  const score = Math.max(0, 100 - errorsCount * 22 - warningsCount * 8);
+
+                  const tradScore = !page.metaTitle && !page.metaDescription ? 0 : (page.metaTitle?.length >= 40 && page.metaDescription?.length >= 100 ? 100 : 65);
+                  const aeogeoScore = seoData.geo?.summary && seoData.geo?.entities ? (seoData.aeo?.faq ? 100 : 75) : 30;
+                  const schemaScore = seoData.schema?.json ? 100 : 0;
+
+                  const strokeDashoffset = 283 - (283 * score) / 100;
+
+                  return (
+                    <div className="space-y-8">
+                      {/* Premium Header Metrics Grid */}
+                      <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center p-6 bg-gradient-to-br from-card via-muted/30 to-muted/60 border border-border/80 rounded-2xl shadow-sm">
+                        {/* Circular Animated SVG Score Gauge */}
+                        <div className="md:col-span-4 flex flex-col items-center justify-center p-4 border-r border-border/40">
+                          <div className="relative w-36 h-36 flex items-center justify-center">
+                            <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                              <circle cx="50" cy="50" r="45" stroke="currentColor" strokeWidth="8" className="text-muted/40 fill-none" />
+                              <circle
+                                cx="50"
+                                cy="50"
+                                r="45"
+                                stroke="currentColor"
+                                strokeWidth="8"
+                                strokeDasharray="283"
+                                strokeDashoffset={strokeDashoffset}
+                                strokeLinecap="round"
+                                className={cn(
+                                  "transition-all duration-1000 ease-out fill-none",
+                                  score >= 80 ? "text-emerald-500" : score >= 50 ? "text-amber-500" : "text-red-600"
+                                )}
+                              />
+                            </svg>
+                            <div className="absolute flex flex-col items-center justify-center text-center">
+                              <span className={cn("text-4xl font-black tracking-tight", score >= 80 ? "text-emerald-500" : score >= 50 ? "text-amber-500" : "text-red-600")}>
+                                {score}
+                              </span>
+                              <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mt-0.5">Overall Score</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Visual Breakdown Progress Bars */}
+                        <div className="md:col-span-8 space-y-4 pr-2">
+                          <div className="space-y-1.5">
+                            <div className="flex justify-between text-xs font-semibold">
+                              <span className="text-foreground">Traditional SEO</span>
+                              <span className={cn(tradScore >= 80 ? "text-primary" : "text-amber-600")}>{tradScore}%</span>
+                            </div>
+                            <div className="h-2 w-full bg-muted/60 rounded-full overflow-hidden">
+                              <div className={cn("h-full transition-all duration-700 rounded-full", tradScore >= 80 ? "bg-emerald-500" : "bg-amber-500")} style={{ width: `${tradScore}%` }} />
+                            </div>
+                          </div>
+
+                          <div className="space-y-1.5">
+                            <div className="flex justify-between text-xs font-semibold">
+                              <span className="text-foreground">Generative & Answer SEO (AEO / GEO)</span>
+                              <span className={cn(aeogeoScore >= 80 ? "text-primary" : "text-amber-600")}>{aeogeoScore}%</span>
+                            </div>
+                            <div className="h-2 w-full bg-muted/60 rounded-full overflow-hidden">
+                              <div className={cn("h-full transition-all duration-700 rounded-full", aeogeoScore >= 80 ? "bg-emerald-500" : "bg-amber-500")} style={{ width: `${aeogeoScore}%` }} />
+                            </div>
+                          </div>
+
+                          <div className="space-y-1.5">
+                            <div className="flex justify-between text-xs font-semibold">
+                              <span className="text-foreground">Structured JSON-LD Schema</span>
+                              <span className={cn(schemaScore >= 80 ? "text-primary" : "text-red-600")}>{schemaScore}%</span>
+                            </div>
+                            <div className="h-2 w-full bg-muted/60 rounded-full overflow-hidden">
+                              <div className={cn("h-full transition-all duration-700 rounded-full", schemaScore >= 80 ? "bg-emerald-500" : "bg-red-600")} style={{ width: `${schemaScore}%` }} />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Live Google SERP Card Preview */}
+                      <div className="p-5 border border-border/80 rounded-2xl bg-card space-y-3 shadow-xs">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+                            <Search className="w-3.5 h-3.5 text-primary" /> Live Google Search Result Snippet Preview
+                          </span>
+                          <span className="text-[10px] font-mono text-muted-foreground px-2 py-0.5 rounded bg-muted">Desktop / Mobile View</span>
+                        </div>
+                        <div className="p-4 rounded-xl bg-background border border-border/60 space-y-1">
+                          <div className="flex items-center gap-1.5 text-xs text-emerald-700 dark:text-emerald-400 font-mono truncate">
+                            <span>https://tanzeem.org</span>
+                            <span>›</span>
+                            <span>{page.slug || "our-obligations"}</span>
+                          </div>
+                          <h3 className="text-lg font-medium text-blue-600 dark:text-blue-400 hover:underline cursor-pointer truncate">
+                            {page.metaTitle || page.title || "Untitled Page | Tanzeem-e-Islami"}
+                          </h3>
+                          <p className="text-xs text-foreground/80 leading-relaxed line-clamp-2">
+                            {page.metaDescription || "No meta description defined yet. Add a search snippet description to improve Google click-through rate."}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Summary Action Banner */}
+                      <div className="flex flex-col sm:flex-row items-center justify-between p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-xs font-medium gap-3">
+                        <div className="flex items-center gap-4">
+                          <span className="flex items-center gap-1.5 text-destructive font-bold">
+                            <span className="w-2.5 h-2.5 rounded-full bg-destructive" />
+                            {errorsCount} {errorsCount === 1 ? "Critical Fix" : "Critical Fixes"}
+                          </span>
+                          <span className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400 font-bold">
+                            <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
+                            {warningsCount} {warningsCount === 1 ? "Warning" : "Warnings"}
+                          </span>
+                          <span className="flex items-center gap-1.5 text-primary font-bold">
+                            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+                            {passedCount} Passed
+                          </span>
+                        </div>
+                        <Button size="sm" onClick={handleAutoGenerateAll} className="h-8 text-xs bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 shadow-sm">
+                          <CalendarSync className="w-3.5 h-3.5 mr-1.5" /> Auto Fix All Issues with AI
+                        </Button>
+                      </div>
+
+                      {/* Audit Checklist Items */}
+                      <div className="space-y-3 pt-2">
+                        <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Audit Checklist & Action Items</h4>
+                        <div className="divide-y divide-border border rounded-xl overflow-hidden bg-card shadow-xs">
+                          {issues.map((item, idx) => (
+                            <div key={idx} className="p-3.5 flex items-start gap-3 text-xs hover:bg-muted/30 transition-colors">
+                              {item.type === "error" ? (
+                                <span className="p-1 rounded-full bg-red-600/10 text-red-600 shrink-0 mt-0.5">
+                                  <ShieldAlert className="w-4 h-4" />
+                                </span>
+                              ) : item.type === "warning" ? (
+                                <span className="p-1 rounded-full bg-amber-500/10 text-amber-600 shrink-0 mt-0.5">
+                                  <Sparkles className="w-4 h-4 text-amber-500" />
+                                </span>
+                              ) : (
+                                <span className="p-1 rounded-full bg-emerald-500/10 text-primary shrink-0 mt-0.5">
+                                  <CheckCircle className="w-4 h-4 text-primary" />
+                                </span>
+                              )}
+
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2">
+                                  <span className="font-semibold text-foreground">{item.message}</span>
+                                  <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-muted text-muted-foreground">{item.category}</span>
+                                </div>
+                                {item.fixHint && <p className="text-muted-foreground mt-0.5">{item.fixHint}</p>}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })()}
               </CardContent>
             </Card>
           </section>

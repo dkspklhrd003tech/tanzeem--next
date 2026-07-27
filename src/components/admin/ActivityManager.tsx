@@ -62,7 +62,7 @@ export function ActivityManager() {
       <Card className="border-border/60 shadow-sm">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-emerald-500" />
+            <TrendingUp className="h-5 w-5 text-primary" />
             Page Views Overview
           </CardTitle>
           <CardDescription>Website traffic over the last 7 days</CardDescription>
@@ -114,7 +114,7 @@ export function ActivityManager() {
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <div>
               <CardTitle className="text-lg flex items-center gap-2 text-white">
-                <Activity className="h-5 w-5 text-emerald-500" />
+                <Activity className="h-5 w-5 text-primary" />
                 Recent Activity
               </CardTitle>
               <CardDescription className="text-slate-400">Last 10 admin actions</CardDescription>
@@ -164,7 +164,7 @@ export function ActivityManager() {
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <div>
               <CardTitle className="text-lg flex items-center gap-2 text-white">
-                <FileText className="h-5 w-5 text-emerald-500" />
+                <FileText className="h-5 w-5 text-primary" />
                 Recent Pages
               </CardTitle>
               <CardDescription className="text-slate-400">Last 5 edited pages</CardDescription>

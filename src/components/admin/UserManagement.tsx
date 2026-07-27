@@ -402,7 +402,7 @@ export function UserManagement() {
                                 <div className="space-y-2 pt-2 border-t border-border/50">
                                     <div className="flex items-center justify-between">
                                         <label className="text-sm font-medium text-foreground">User Badge Custom Colors</label>
-                                        <span className="text-xs text-muted-foreground flex items-center gap-1">
+                                        <span className="text-xs text-foreground flex items-center gap-1">
                                             Preview:{" "}
                                             <span
                                                 style={{ backgroundColor: formData.badgeBg, color: formData.badgeText }}

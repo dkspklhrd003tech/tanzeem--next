@@ -347,29 +347,9 @@ export function PageForm({ mode, initialData, parentPages = [] }: PageFormProps)
 
   const previewUrl = form.slug ? `/${form.slug}` : null;
 
-  const handleGenerateMetaTitle = () => {
-    let newTitle = form.title ? `${form.title} | Tanzeem-e-Islami` : "Tanzeem-e-Islami";
-    if (newTitle.length > 60) newTitle = form.title || "";
-    set("metaTitle", newTitle);
-    toast({ title: "Generated", description: "Meta title generated." });
-  };
 
-  const handleGenerateMetaDescription = () => {
-    let plainContent = (form.content || "").replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
-    if (!plainContent && form.excerpt) plainContent = form.excerpt;
-    
-    let newDesc = plainContent;
-    if (newDesc.length > 155) {
-      newDesc = newDesc.substring(0, 152).trim() + "...";
-    }
-    
-    if (!newDesc && form.title) {
-      newDesc = `Learn more about ${form.title} at Tanzeem-e-Islami. Comprehensive resources, guides, and information.`;
-    }
-    
-    set("metaDescription", newDesc);
-    toast({ title: "Generated", description: "Meta description generated." });
-  };
+
+  const hasSeoIssues = !form.metaTitle || form.metaTitle.length < 40 || !form.metaDescription || form.metaDescription.length < 100;
 
   return (
     <div className="space-y-6 max-w-7xl">
@@ -382,6 +362,7 @@ export function PageForm({ mode, initialData, parentPages = [] }: PageFormProps)
         lastSaved={lastSaved}
         previewUrl={previewUrl}
         seoUrl={initialData ? `/sitemanager/pages/${initialData.id}/edit/seo` : null}
+        hasSeoIssues={hasSeoIssues}
         isPublished={form.isPublished}
         saving={saving}
         onDuplicate={mode === "edit" ? handleDuplicate : undefined}
@@ -615,53 +596,7 @@ export function PageForm({ mode, initialData, parentPages = [] }: PageFormProps)
             </CardContent>
           </Card>
 
-          {/* Basic SEO */}
-          <Card>
-            <CardHeader className="p-5 pb-0">
-              <CardTitle className="text-sm">Basic SEO</CardTitle>
-            </CardHeader>
-            <CardContent className="p-5 space-y-4">
-              <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <div className="flex items-center gap-2">
-                    <Label htmlFor="metaTitle" className="text-xs font-semibold uppercase tracking-wide">Meta Title</Label>
-                    <Button variant="ghost" size="sm" type="button" onClick={handleGenerateMetaTitle} className="h-5 px-2 text-[10px] text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"><Wand2 className="w-3 h-3 mr-1"/> Generate</Button>
-                  </div>
-                  {charCount(form.metaTitle, 60)}
-                </div>
-                <Input
-                  id="metaTitle"
-                  placeholder="Default is Page Title"
-                  maxLength={60}
-                  value={form.metaTitle}
-                  onChange={e => set("metaTitle", e.target.value)}
-                  className={cn("text-sm", errors.metaTitle && "border-destructive")}
-                />
-                <p className="text-[10px] text-muted-foreground mt-1">Aim for 50–60 characters. Put the most important keyword first.</p>
-                {errors.metaTitle && <p className="text-xs text-destructive mt-1">{errors.metaTitle}</p>}
-              </div>
-              <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <div className="flex items-center gap-2">
-                    <Label htmlFor="metaDescription" className="text-xs font-semibold uppercase tracking-wide">Meta Description</Label>
-                    <Button variant="ghost" size="sm" type="button" onClick={handleGenerateMetaDescription} className="h-5 px-2 text-[10px] text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50"><Wand2 className="w-3 h-3 mr-1"/> Generate</Button>
-                  </div>
-                  {charCount(form.metaDescription, 155)}
-                </div>
-                <Textarea
-                  id="metaDescription"
-                  placeholder="Brief summary for search engine results snippets"
-                  maxLength={155}
-                  value={form.metaDescription}
-                  rows={3}
-                  onChange={e => set("metaDescription", e.target.value)}
-                  className={cn("text-sm resize-none", errors.metaDescription && "border-destructive")}
-                />
-                <p className="text-[10px] text-muted-foreground mt-1">Aim for 120–155 characters to display correctly on desktop and mobile.</p>
-                {errors.metaDescription && <p className="text-xs text-destructive mt-1">{errors.metaDescription}</p>}
-              </div>
-            </CardContent>
-          </Card>
+          {/* Organization & Navigation */}
 
           {/* Auto-save indicator */}
           {mode === "edit" && (

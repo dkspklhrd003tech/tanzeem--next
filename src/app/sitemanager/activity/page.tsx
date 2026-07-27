@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/ui/empty-state";
-import { cn } from "@/lib/utils";
+import { cn, resolveMediaUrl } from "@/lib/utils";
 
 const fetcher = (url: string) => fetch(url).then(r => r.json());
 
@@ -44,7 +44,7 @@ export default function ActivityLogsPage() {
   const [search, setSearch] = useState("");
   const [entityFilter, setEntityFilter] = useState("all");
 
-  const { data, isLoading } = useSWR("/api/sitemanager/activity?limit=1000", fetcher, {
+  const { data, isLoading } = useSWR("/api/sitemanager/activity?limit=unlimited", fetcher, {
     revalidateOnFocus: true,
   });
 
@@ -126,25 +126,25 @@ export default function ActivityLogsPage() {
           <Activity className="h-3.5 w-3.5 text-primary" /> Dot Color Legend:
         </span>
         <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-blue-500/10 border border-blue-500/20 text-blue-600 font-medium">
-          <span className="w-2.5 h-2.5 rounded-full bg-blue-500" /> Blue = Pages
+          <span className="w-2.5 h-2.5 rounded-full bg-blue-500" /> Pages
         </span>
         <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-purple-500/10 border border-purple-500/20 text-purple-600 font-medium">
-          <span className="w-2.5 h-2.5 rounded-full bg-purple-500" /> Purple = Audios
+          <span className="w-2.5 h-2.5 rounded-full bg-purple-500" /> Audios
         </span>
         <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-red-500/10 border border-red-500/20 text-red-600 font-medium">
-          <span className="w-2.5 h-2.5 rounded-full bg-red-500" /> Red = Videos
+          <span className="w-2.5 h-2.5 rounded-full bg-red-500" /> Videos
         </span>
         <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-amber-500/10 border border-amber-500/20 text-amber-600 font-medium">
-          <span className="w-2.5 h-2.5 rounded-full bg-amber-500" /> Yellow = Books
+          <span className="w-2.5 h-2.5 rounded-full bg-amber-500" /> Books
         </span>
         <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-orange-500/10 border border-orange-500/20 text-orange-600 font-medium">
-          <span className="w-2.5 h-2.5 rounded-full bg-orange-500" /> Orange = Magazines
+          <span className="w-2.5 h-2.5 rounded-full bg-orange-500" /> Magazines
         </span>
         <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 font-medium">
-          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" /> Green = Users / Login
+          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" /> Users / Login
         </span>
         <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-teal-500/10 border border-teal-500/20 text-teal-600 font-medium">
-          <span className="w-2.5 h-2.5 rounded-full bg-teal-500" /> Teal = Menus
+          <span className="w-2.5 h-2.5 rounded-full bg-teal-500" /> Menus
         </span>
       </div>
 
@@ -177,7 +177,6 @@ export default function ActivityLogsPage() {
                 <span className="w-56">Action</span>
                 <span className="w-48">User</span>
                 <span className="flex-1">Details</span>
-                <span className="w-32">IP Address</span>
                 <span className="w-36 text-right pr-4">Time</span>
               </div>
 
@@ -194,9 +193,27 @@ export default function ActivityLogsPage() {
 
                     {/* Action & Entity */}
                     <div className="w-56 min-w-0">
-                      <p className="text-sm font-bold text-foreground capitalize flex items-center gap-1.5">
+                      <p className="text-sm font-bold text-foreground capitalize flex items-center gap-1.5 flex-wrap">
                         {log.action.replace(/_/g, " ")}
-                        {log.entityType && <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground font-mono lowercase">{log.entityType}</span>}
+                        {log.entityType && (
+                          <span
+                            className={cn(
+                              "text-[10px] px-2 py-0.5 rounded-full font-semibold border flex items-center gap-1.5 capitalize shadow-xs",
+                              log.entityType?.toLowerCase() === "page" && "bg-blue-500/10 border-blue-500/30 text-blue-600 dark:text-blue-400",
+                              log.entityType?.toLowerCase() === "audio" && "bg-purple-500/10 border-purple-500/30 text-purple-600 dark:text-purple-400",
+                              log.entityType?.toLowerCase() === "video" && "bg-red-500/10 border-red-500/30 text-red-600 dark:text-red-400",
+                              log.entityType?.toLowerCase() === "book" && "bg-amber-500/10 border-amber-500/30 text-amber-600 dark:text-amber-400",
+                              log.entityType?.toLowerCase() === "magazine" && "bg-orange-500/10 border-orange-500/30 text-orange-600 dark:text-orange-400",
+                              (log.entityType?.toLowerCase() === "user" || log.entityType?.toLowerCase() === "auth") && "bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400",
+                              (log.entityType?.toLowerCase() === "menu" || log.entityType?.toLowerCase() === "menu_item") && "bg-teal-500/10 border-teal-500/30 text-teal-600 dark:text-teal-400",
+                              log.entityType?.toLowerCase() === "media" && "bg-violet-500/10 border-violet-500/30 text-violet-600 dark:text-violet-400",
+                              (log.entityType?.toLowerCase() === "setting" || log.entityType?.toLowerCase() === "settings") && "bg-indigo-500/10 border-indigo-500/30 text-indigo-600 dark:text-indigo-400"
+                            )}
+                          >
+                            <span className={cn("w-1.5 h-1.5 rounded-full", getEntityColor(log.entityType))} />
+                            {log.entityType}
+                          </span>
+                        )}
                       </p>
                       {log.entityId && (
                         <p className="text-[10px] text-muted-foreground/70 font-mono mt-0.5">ID: {log.entityId}</p>
@@ -204,14 +221,22 @@ export default function ActivityLogsPage() {
                     </div>
 
                     {/* User */}
-                    <div className="w-48 flex items-center gap-2 min-w-0">
-                      <div className="w-7 h-7 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center shrink-0 overflow-hidden">
-                        {log.userAvatar ? (
-                          <img src={log.userAvatar} alt="avatar" className="w-full h-full object-cover" />
-                        ) : (
-                          <User className="h-3.5 w-3.5 text-primary" />
-                        )}
-                      </div>
+                    <div className="w-48 flex items-center gap-2.5 min-w-0">
+                      {log.userAvatar && !log.userAvatar.startsWith("{") && (log.userAvatar.startsWith("http") || log.userAvatar.startsWith("/")) ? (
+                        <div className="w-8 h-8 rounded-full border border-border flex items-center justify-center shrink-0 overflow-hidden shadow-xs">
+                          <img src={resolveMediaUrl(log.userAvatar)} alt={log.userName || "avatar"} className="w-full h-full object-cover" />
+                        </div>
+                      ) : (
+                        <div
+                          style={log.badgeBg && log.badgeText ? { backgroundColor: log.badgeBg, color: log.badgeText } : undefined}
+                          className={cn(
+                            "w-8 h-8 rounded-full flex items-center justify-center shrink-0 text-xs font-bold shadow-xs uppercase",
+                            (!log.badgeBg || !log.badgeText) && "bg-emerald-600 text-white"
+                          )}
+                        >
+                          {log.userName ? log.userName.charAt(0) : <User className="h-4 w-4" />}
+                        </div>
+                      )}
                       <div className="min-w-0">
                         <p className="text-xs font-semibold text-foreground truncate">{log.userName || "System"}</p>
                         <p className="text-[10px] text-muted-foreground truncate">{log.userEmail || "System Event"}</p>
@@ -223,17 +248,6 @@ export default function ActivityLogsPage() {
                       <p className="text-xs text-foreground/80 leading-relaxed font-medium break-words max-w-[400px]">
                         {log.details || "—"}
                       </p>
-                    </div>
-
-                    {/* IP Address */}
-                    <div className="w-32 min-w-0">
-                      {log.ipAddress ? (
-                        <span className="text-[11px] font-mono bg-muted/50 px-2 py-1 rounded text-muted-foreground">
-                          {log.ipAddress}
-                        </span>
-                      ) : (
-                        <span className="text-[11px] text-muted-foreground/50">—</span>
-                      )}
                     </div>
 
                     {/* Time */}

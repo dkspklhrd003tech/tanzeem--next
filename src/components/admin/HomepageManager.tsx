@@ -83,10 +83,10 @@ export function HomepageManager() {
                         <Share2 className="w-4 h-4 mr-1" />
                         Social Media
                     </TabsTrigger>
-                    <TabsTrigger value="seo">
+                    {/* <TabsTrigger value="seo">
                         <Search className="w-4 h-4 mr-1" />
                         Basic SEO
-                    </TabsTrigger>
+                    </TabsTrigger> */}
                 </TabsList>
 
                 <div className="bg-card rounded-xl border border-border p-6 shadow-sm min-h-[500px]">
