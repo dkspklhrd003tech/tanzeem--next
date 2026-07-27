@@ -66,9 +66,27 @@ function timeAgo(date: string | Date) {
   if (h < 24) return `${h}h ago`;
   return `${Math.floor(h / 24)}d ago`;
 }
+const ENTITY_COLOR_MAP: Record<string, { bg: string; label: string }> = {
+  page: { bg: "bg-blue-500", label: "Pages" },
+  audio: { bg: "bg-purple-500", label: "Audios" },
+  video: { bg: "bg-red-500", label: "Videos" },
+  book: { bg: "bg-amber-500", label: "Books" },
+  magazine: { bg: "bg-orange-500", label: "Magazines" },
+  user: { bg: "bg-emerald-500", label: "Users / Auth" },
+  menu: { bg: "bg-teal-500", label: "Menus" },
+  menu_item: { bg: "bg-teal-500", label: "Menus" },
+  media: { bg: "bg-violet-500", label: "Media" },
+  setting: { bg: "bg-indigo-500", label: "Settings" },
+  settings: { bg: "bg-indigo-500", label: "Settings" },
+};
+
 function getEntityColor(type: string) {
-  const map: Record<string, string> = { page: "bg-blue-500", audio: "bg-purple-500", video: "bg-red-500", book: "bg-amber-500", magazine: "bg-orange-500", user: "bg-primary", media: "bg-violet-500" };
-  return map[type?.toLowerCase()] ?? "bg-primary";
+  const key = type?.toLowerCase() || "";
+  return ENTITY_COLOR_MAP[key]?.bg ?? "bg-slate-400";
+}
+function getEntityLabel(type: string) {
+  const key = type?.toLowerCase() || "";
+  return ENTITY_COLOR_MAP[key]?.label ?? (type ? type : "System");
 }
 
 // ─── Skeleton loaders ─────────────────────────────────────────────────────────
@@ -186,7 +204,7 @@ function KpiCard({
 
         {/* Breakdown rows */}
         {expanded && rows.length > 0 && (
-          <div className="divide-y divide-border/60 max-h-[312px] overflow-y-auto">
+          <div className="divide-y divide-border/60 max-h-[416px] overflow-y-auto">
             {rows.map((row, i) => (
               <div key={i} className="px-4 py-2.5 flex items-center gap-3 hover:bg-muted/30 transition-colors">
                 <span className="text-xs text-foreground font-medium flex-1 truncate min-w-0">{row.category ?? row.year ?? row.type ?? "-"}</span>
@@ -462,27 +480,47 @@ export default function DashboardPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <CardTitle className="text-base flex items-center gap-2"><Activity className="h-4 w-4 text-primary" />Recent Activity</CardTitle>
-                  <CardDescription className="text-xs mt-0.5">Last 10 admin actions</CardDescription>
+                  <CardDescription className="text-xs mt-0.5">Last 10 admin actions — real-time feed</CardDescription>
                 </div>
                 <Link href="/sitemanager/activity" className="text-xs text-primary hover:underline flex items-center gap-0.5">
                   View all <ArrowRight className="h-3 w-3" />
                 </Link>
+              </div>
+
+              {/* Color legend guide */}
+              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 pt-2 border-t border-border/40 text-[11px] text-muted-foreground">
+                <span className="font-medium text-foreground/70">Legend:</span>
+                <span className="flex items-center gap-1" title="Pages"><span className="w-2 h-2 rounded-full bg-blue-500" />Pages</span>
+                <span className="flex items-center gap-1" title="Audios"><span className="w-2 h-2 rounded-full bg-purple-500" />Audios</span>
+                <span className="flex items-center gap-1" title="Videos"><span className="w-2 h-2 rounded-full bg-red-500" />Videos</span>
+                <span className="flex items-center gap-1" title="Books"><span className="w-2 h-2 rounded-full bg-amber-500" />Books</span>
+                <span className="flex items-center gap-1" title="Magazines"><span className="w-2 h-2 rounded-full bg-orange-500" />Magazines</span>
+                <span className="flex items-center gap-1" title="Users / Login"><span className="w-2 h-2 rounded-full bg-emerald-500" />Users</span>
+                <span className="flex items-center gap-1" title="Menus"><span className="w-2 h-2 rounded-full bg-teal-500" />Menus</span>
               </div>
             </CardHeader>
             <CardContent>
               {activityLoading ? <ActivitySkeleton /> : activity.length === 0 ? (
                 <EmptyState icon={Activity} title="No activity yet" description="Admin actions will appear here." className="py-8" />
               ) : (
-                <ul className="space-y-3">
+                <ul className="space-y-3 max-h-[380px] overflow-y-auto pr-1">
                   {activity.map((log: any) => (
-                    <li key={log.id} className="flex items-start gap-3">
-                      <span className={cn("w-2 h-2 rounded-full mt-2 shrink-0", getEntityColor(log.entityType))} />
+                    <li key={log.id} className="flex items-start gap-3 p-1.5 rounded-lg hover:bg-muted/40 transition-colors">
+                      <span
+                        className={cn("w-2.5 h-2.5 rounded-full mt-1.5 shrink-0 ring-2 ring-background shadow-sm", getEntityColor(log.entityType))}
+                        title={`Entity Type: ${getEntityLabel(log.entityType)}`}
+                      />
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm text-foreground font-medium capitalize">{log.action.replace(/_/g, " ")} {log.entityType}</p>
-                        {log.details && <p className="text-xs text-muted-foreground truncate">{log.details}</p>}
-                        <div className="flex items-center gap-2 mt-0.5">
-                          <span className="text-[12px] text-foreground/80 flex items-center gap-1"><Clock className="h-2.5 w-2.5 text-[12px] text-foreground/80" />{timeAgo(log.createdAt)}</span>
-                          {log.userName && <span className="text-[12px] text-primary font-semibold">by {log.userName}</span>}
+                        <p className="text-sm text-foreground font-medium capitalize flex items-center gap-2">
+                          <span>{log.action.replace(/_/g, " ")} {log.entityType}</span>
+                          <span className={cn("text-[10px] font-mono px-1.5 py-0.2 rounded text-white font-semibold", getEntityColor(log.entityType))}>
+                            {getEntityLabel(log.entityType)}
+                          </span>
+                        </p>
+                        {log.details && <p className="text-xs text-muted-foreground truncate mt-0.5">{log.details}</p>}
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-[11px] text-muted-foreground flex items-center gap-1"><Clock className="h-3 w-3 text-muted-foreground/70" />{timeAgo(log.createdAt)}</span>
+                          {log.userName && <span className="text-[11px] text-primary font-semibold">by {log.userName}</span>}
                         </div>
                       </div>
                     </li>

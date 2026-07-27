@@ -29,11 +29,15 @@ function getEntityColor(type: string) {
     video: "bg-red-500",
     book: "bg-amber-500",
     magazine: "bg-orange-500",
-    user: "bg-primary",
+    user: "bg-emerald-500",
+    auth: "bg-emerald-500",
+    menu: "bg-teal-500",
+    menu_item: "bg-teal-500",
     media: "bg-violet-500",
-    auth: "bg-emerald-500"
+    setting: "bg-indigo-500",
+    settings: "bg-indigo-500",
   };
-  return map[type?.toLowerCase()] ?? "bg-primary";
+  return map[type?.toLowerCase()] ?? "bg-slate-400";
 }
 
 export default function ActivityLogsPage() {
@@ -114,6 +118,34 @@ export default function ActivityLogsPage() {
             <SelectItem value="auth" className="focus:bg-primary focus:text-emerald-700 font-medium">Authentication</SelectItem>
           </SelectContent>
         </Select>
+      </div>
+
+      {/* ── Entity Color Dot Legend Explanation ──────────────────────── */}
+      <div className="relative z-10 p-3.5 bg-muted/60 border border-border/80 rounded-xl text-xs flex flex-wrap items-center gap-x-4 gap-y-2">
+        <span className="font-bold text-foreground flex items-center gap-1">
+          <Activity className="h-3.5 w-3.5 text-primary" /> Dot Color Legend:
+        </span>
+        <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-blue-500/10 border border-blue-500/20 text-blue-600 font-medium">
+          <span className="w-2.5 h-2.5 rounded-full bg-blue-500" /> Blue = Pages
+        </span>
+        <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-purple-500/10 border border-purple-500/20 text-purple-600 font-medium">
+          <span className="w-2.5 h-2.5 rounded-full bg-purple-500" /> Purple = Audios
+        </span>
+        <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-red-500/10 border border-red-500/20 text-red-600 font-medium">
+          <span className="w-2.5 h-2.5 rounded-full bg-red-500" /> Red = Videos
+        </span>
+        <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-amber-500/10 border border-amber-500/20 text-amber-600 font-medium">
+          <span className="w-2.5 h-2.5 rounded-full bg-amber-500" /> Yellow = Books
+        </span>
+        <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-orange-500/10 border border-orange-500/20 text-orange-600 font-medium">
+          <span className="w-2.5 h-2.5 rounded-full bg-orange-500" /> Orange = Magazines
+        </span>
+        <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 font-medium">
+          <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" /> Green = Users / Login
+        </span>
+        <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-teal-500/10 border border-teal-500/20 text-teal-600 font-medium">
+          <span className="w-2.5 h-2.5 rounded-full bg-teal-500" /> Teal = Menus
+        </span>
       </div>
 
       {/* Activity Logs Table Container */}
