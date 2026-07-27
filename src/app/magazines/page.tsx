@@ -201,7 +201,7 @@ export default async function MagazinesPage() {
                     </div>
                   </section>
                   {index < seriesKeys.length - 1 && (
-                    <hr className="my-6 border-t border-gray-300" />
+                    <hr className="my-6 border-t border-primary/50" />
                   )}
                 </React.Fragment>
               );
