@@ -57,7 +57,7 @@ export function SubCategoryClient({ subCategories, directVideos = [] }: { subCat
       {/* Top Header / Sort Controls */}
       {(subCategories.length > 0 || directVideos.length > 0) && (
         <div className="flex items-center justify-between pb-3 border-b border-border/40">
-          <span className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
+          <span className="text-sm font-semibold text-foreground uppercase tracking-wider">
             {subCategories.length > 0 ? `Sub-categories (${subCategories.length})` : `Videos (${directVideos.length})`}
           </span>
           <div className="flex items-center gap-2">
@@ -67,17 +67,17 @@ export function SubCategoryClient({ subCategories, directVideos = [] }: { subCat
               variant="outline"
               size="sm"
               onClick={() => setSortOrder(sortOrder === "uploaded" ? "oldest" : "uploaded")}
-              className="h-8 text-xs gap-1.5 bg-primary text-white hover:border-primary shadow-none font-medium hover:text-primary hover:bg-primary-light text-white transition-all"
+              className="h-8 text-xs gap-1.5 bg-primary/10 text-primary border-primary/30 hover:border-primary shadow-none font-medium hover:bg-primary hover:text-white transition-all group"
               title={sortOrder === "uploaded" ? "Currently: Newest (Click to Oldest)" : "Currently: Oldest (Click for Newest)"}
             >
               {sortOrder === "uploaded" ? (
                 <>
-                  <ArrowUp className="w-3.5 h-3.5 text-white hover:text-primary shrink-0 " />
+                  <ArrowUp className="w-3.5 h-3.5 shrink-0 transition-colors" />
                   <span>Newest</span>
                 </>
               ) : (
                 <>
-                  <ArrowDown className="w-3.5 h-3.5 text-white hover:text-primary shrink-0 " />
+                  <ArrowDown className="w-3.5 h-3.5 shrink-0 transition-colors" />
                   <span>Oldest</span>
                 </>
               )}

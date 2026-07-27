@@ -294,7 +294,7 @@ export function ContentEditor({
               onClick={() => setShowSeo(!showSeo)}
               className="w-full flex items-center justify-between p-4 text-left"
             >
-              <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">SEO Settings</h3>
+              <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider">SEO Settings</h3>
               {showSeo ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
             </button>
             {showSeo && (
