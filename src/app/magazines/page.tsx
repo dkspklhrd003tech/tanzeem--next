@@ -1,3 +1,4 @@
+import React from "react";
 import { Metadata } from "next";
 import Link from "next/link";
 import { db } from "@/db";
@@ -136,82 +137,73 @@ export default async function MagazinesPage() {
           </div>
         ) : (
           <div className="space-y-16">
-            {seriesKeys.map((seriesKey) => {
+            {seriesKeys.map((seriesKey, index) => {
               const issues = finalGrouped[seriesKey] || [];
               if (issues.length === 0) return null;
               const config = SERIES_CONFIG[seriesKey];
 
               return (
-                <section key={seriesKey} className="space-y-6">
-                  {/* Category Section Header */}
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-border/60 pb-3 gap-3">
-                    <div>
-                      <h2 className="text-2xl font-bold text-foreground tracking-tight">{config.title}</h2>
-                      {config.desc && <p className="text-xs text-foreground-muted mt-0.5">{config.desc}</p>}
+                <React.Fragment key={seriesKey}>
+                  <section className="space-y-6">
+                    {/* Category Section Header */}
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-border/60 pb-3 gap-3">
+                      <div>
+                        <h2 className="text-2xl font-bold text-foreground tracking-tight">{config.title}</h2>
+                        {config.desc && <p className="text-xs text-foreground-muted mt-0.5">{config.desc}</p>}
+                      </div>
+
+                      {/* Page Button */}
+                      <div className="flex items-center gap-2">
+                        <Button asChild size="sm" variant="outline" className="rounded-full gap-1 bg-primary text-white hover:text-primary hover:primary-light hover:border-primary/70 transition-all text-xs font-semibold">
+                          <Link href={`/${config.slug}`}>
+                            View {config.title} <ChevronRight className="h-3.5 w-3.5" />
+                          </Link>
+                        </Button>
+                      </div>
                     </div>
 
-                    {/* Section Action Button */}
-                    <div className="flex items-center gap-2">
-                      <Button asChild size="sm" variant="outline" className="rounded-full gap-1 border-primary/40 text-primary hover:bg-primary hover:text-white transition-all text-xs font-semibold">
-                        <Link href={`/${config.slug}`}>
-                          View {config.title} Page <ChevronRight className="h-3.5 w-3.5" />
-                        </Link>
-                      </Button>
-                    </div>
-                  </div>
+                    {/* Issues Grid */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+                      {issues.map((mag) => {
+                        const detailHref = mag.slug ? `/magazines/${mag.slug}` : mag.url || mag.fileUrl || "#";
 
-                  {/* Issues Grid */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-                    {issues.map((mag) => {
-                      const detailHref = mag.slug ? `/magazines/${mag.slug}` : mag.url || mag.fileUrl || "#";
+                        return (
+                          <div
+                            key={mag.id}
+                            className="group relative flex flex-col justify-between p-5 rounded-xl bg-card border border-border/50 shadow-sm hover:shadow-xl hover:border-primary/40 transition-all duration-300"
+                          >
+                            <div>
+                              {/* Title */}
+                              <h3 className="text-base font-bold text-foreground mb-2 leading-snug group-hover:text-primary transition-colors line-clamp-2">
+                                {mag.title}
+                              </h3>
+                            </div>
 
-                      return (
-                        <div
-                          key={mag.id}
-                          className="group relative flex flex-col justify-between p-5 rounded-xl bg-card border border-border/50 shadow-sm hover:shadow-xl hover:border-primary/40 transition-all duration-300"
-                        >
-                          <div>
-                            {/* Title */}
-                            <h3 className="text-base font-bold text-foreground mb-2 leading-snug group-hover:text-primary transition-colors line-clamp-2">
-                              {mag.title}
-                            </h3>
-
-                            {mag.issueNumber && (
-                              <p className="text-xs text-foreground-muted mb-3 font-medium">
-                                Issue {mag.issueNumber}
-                              </p>
-                            )}
-                          </div>
-
-                          {/* Action Link / Download */}
-                          <div className="flex items-center justify-between gap-2">
-                            <Link
-                              href={detailHref}
-                              target={mag.url && !mag.slug ? "_blank" : undefined}
-                              className="text-xs font-semibold text-primary hover:underline inline-flex items-center gap-1"
-                            >
-                              Explore {config.title} <ChevronRight className="h-3 w-3" />
-                            </Link>
-
+                            {/* PDF Download Action */}
                             {(mag.fileUrl || mag.url) && (
-                              <a
-                                href={mag.fileUrl || mag.url || ""}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                download
-                                className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary/80 hover:text-primary border border-primary/20 rounded-full px-2.5 py-0.5 hover:bg-primary/10 transition-colors"
-                                aria-label={`Download ${mag.title}`}
-                              >
-                                <Download className="h-3 w-3" />
-                                PDF
-                              </a>
+                              <div className="flex items-center justify-end">
+                                <a
+                                  href={mag.fileUrl || mag.url || ""}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  download
+                                  className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary/80 hover:text-primary border border-primary/20 rounded-full px-2.5 py-0.5 hover:bg-primary/10 transition-colors"
+                                  aria-label={`Download ${mag.title}`}
+                                >
+                                  <Download className="h-3 w-3" />
+                                  PDF
+                                </a>
+                              </div>
                             )}
                           </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </section>
+                        );
+                      })}
+                    </div>
+                  </section>
+                  {index < seriesKeys.length - 1 && (
+                    <hr className="my-6 border-t border-gray-300" />
+                  )}
+                </React.Fragment>
               );
             })}
           </div>

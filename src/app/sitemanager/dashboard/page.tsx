@@ -186,7 +186,7 @@ function KpiCard({
 
         {/* Breakdown rows */}
         {expanded && rows.length > 0 && (
-          <div className="divide-y divide-border/60">
+          <div className="divide-y divide-border/60 max-h-[312px] overflow-y-auto">
             {rows.map((row, i) => (
               <div key={i} className="px-4 py-2.5 flex items-center gap-3 hover:bg-muted/30 transition-colors">
                 <span className="text-xs text-foreground font-medium flex-1 truncate min-w-0">{row.category ?? row.year ?? row.type ?? "-"}</span>
@@ -266,8 +266,8 @@ export default function DashboardPage() {
             </h1>
             <p className="text-sm text-primary mt-0.5">{today}</p>
           </div>
-          <Button variant="ghost" size="sm" onClick={() => refreshStats()} className="self-start sm:self-auto text-muted-foreground">
-            <RefreshCw className="h-3.5 w-3.5 mr-1.5" />Refresh
+          <Button variant="ghost" size="sm" onClick={() => refreshStats()} className="self-start sm:self-auto text-white bg-primary rounded-full hover:text-primary hover:primary-light hover:border-primary/70">
+            <RefreshCw className="h-3.5 w-3.5 mr-1" />Refresh
           </Button>
         </div>
       </motion.div>
