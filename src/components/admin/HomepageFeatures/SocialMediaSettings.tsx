@@ -18,6 +18,7 @@ type SocialLink = {
 };
 
 export function SocialMediaSettings() {
+    const [isSeoOpen, setIsSeoOpen] = useState(false);
     const [links, setLinks] = useState<SocialLink[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
@@ -178,7 +179,7 @@ export function SocialMediaSettings() {
                         ) : (
                             <Save className="w-4 h-4" />
                         )}
-                        Save Connections
+                        Save Changes
                     </button>
                 </ConfirmDialog>
             </div>

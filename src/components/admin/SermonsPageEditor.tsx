@@ -123,10 +123,10 @@ function SortableSermonCard({ id, item, onEdit, onDelete }: any) {
         isDragging ? "shadow-2xl border-primary scale-[1.02]" : "hover:shadow-md hover:border-border/80"
       )}
     >
-      <div className="h-1.5 w-full bg-emerald-500" />
+      <div className="h-1.5 w-full bg-primary" />
       <div className="p-5 flex-1 flex flex-col">
         <div className="flex items-center justify-between gap-2 mb-3">
-          <Badge variant="outline" className="text-[10px] px-2.5 py-0.5 font-semibold uppercase tracking-wider rounded-md bg-emerald-500/10 text-emerald-600 border-emerald-500/20">
+          <Badge variant="outline" className="text-[10px] px-2.5 py-0.5 font-semibold uppercase tracking-wider rounded-md bg-primary-light text-primary border-primary">
             Video
           </Badge>
 

@@ -7,8 +7,8 @@ import { FeaturedMagazines } from "./HomepageFeatures/FeaturedMagazines";
 import { AboutMissionSettings } from "./HomepageFeatures/AboutMissionSettings";
 import { LeaderProfiles } from "./HomepageFeatures/LeaderProfiles";
 import { SocialMediaSettings } from "./HomepageFeatures/SocialMediaSettings";
-import { HomepageSeoSettings } from "./HomepageFeatures/HomepageSeoSettings";
-import { Settings, Image as ImageIcon, BookOpen, Layers, Target, Type, Users, Video, Share2, Search, Sparkles, Megaphone } from "lucide-react";
+import PageSeoManager from "./PageSeoManager";
+import { Settings, Image as ImageIcon, BookOpen, Layers, Target, Type, Users, Video, Share2, Search, Sparkles, Megaphone, Bot } from "lucide-react";
 import ServicesPageEditor from "./ServicesPageEditor";
 import CampaignsPageEditor from "./CampaignsPageEditor";
 import { useEffect, useState } from "react";
@@ -83,10 +83,10 @@ export function HomepageManager() {
                         <Share2 className="w-4 h-4 mr-1" />
                         Social Media
                     </TabsTrigger>
-                    {/* <TabsTrigger value="seo">
-                        <Search className="w-4 h-4 mr-1" />
-                        Basic SEO
-                    </TabsTrigger> */}
+                    <TabsTrigger value="seo">
+                        <Bot className="w-4 h-4 mr-1 text-emerald-500" />
+                        SEO Center
+                    </TabsTrigger>
                 </TabsList>
 
                 <div className="bg-card rounded-xl border border-border p-6 shadow-sm min-h-[500px]">
@@ -140,7 +140,7 @@ export function HomepageManager() {
 
                     <TabsContent value="seo" className="mt-0 outline-none">
                         <div className="max-w-7xl">
-                            <HomepageSeoSettings />
+                            <PageSeoManager pageId="home" hideHeader />
                         </div>
                     </TabsContent>
                 </div>

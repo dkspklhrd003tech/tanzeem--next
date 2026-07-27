@@ -9,7 +9,7 @@ import {
   Image, Mail, Database, TrendingUp, Plus, Upload, Menu,
   Clock, Globe, Globe2, EyeOff, Activity, ArrowRight, RefreshCw,
   ChevronDown, ChevronUp, Play, Download, Eye as EyeIcon,
-  HardDrive, Layers, Share2,
+  HardDrive, Layers, Share2, ShieldAlert,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -268,6 +268,331 @@ function KpiCard({
   );
 }
 
+// ─── SEO Center Dashboard Summary Widget ─────────────────────────
+function SeoCenterDashboardWidget() {
+  const { data: pagesRes, isLoading } = useSWR("/api/sitemanager/pages", fetcher, {
+    revalidateOnFocus: true,
+    refreshInterval: 15000,
+  });
+
+  const pageList: any[] = pagesRes?.pages || [];
+
+  let totalPages = pageList.length;
+  let healthyPages = 0;
+  let pagesWithErrors = 0;
+  let totalIssues = 0;
+  let traditionalPassed = 0;
+  let altTextsPassed = 0;
+  let aeoGeoPassed = 0;
+  let schemaPassed = 0;
+  let technicalPassed = 0;
+
+  const issueSources: Array<{
+    pageId: string;
+    title: string;
+    slug: string;
+    score: number;
+    issues: string[];
+    criticalCount: number;
+  }> = [];
+
+  pageList.forEach((p) => {
+    const issues: string[] = [];
+    const seoData = p.seoData || {};
+
+    // 1. Traditional SEO
+    let hasTradIssue = false;
+    if (!p.metaTitle || p.metaTitle.length < 30) { issues.push("Meta Title missing or too short (< 30 chars)"); hasTradIssue = true; }
+    if (!p.metaDescription || p.metaDescription.length < 70) { issues.push("Meta Description missing or too short (< 70 chars)"); hasTradIssue = true; }
+    if (!hasTradIssue) traditionalPassed++;
+
+    // 2. Alt Text & Images
+    if (p.featuredImage && !p.featuredImageAlt) {
+      issues.push("Featured Image Alt Text missing");
+    } else {
+      altTextsPassed++;
+    }
+
+    // 3. GEO & AEO (Generative & Answer Engine Readiness)
+    let hasGeoAeoIssue = false;
+    if (!seoData.geo?.summary || !seoData.geo?.entities) { issues.push("Generative Engine Optimization (GEO) summary unassigned"); hasGeoAeoIssue = true; }
+    if (!seoData.aeo?.faq) { issues.push("Answer Engine Optimization (AEO) FAQ section missing"); hasGeoAeoIssue = true; }
+    if (!hasGeoAeoIssue) aeoGeoPassed++;
+
+    // 4. Schema
+    if (!seoData.schema?.json) issues.push("Dynamic JSON-LD Schema payload unassigned");
+    else schemaPassed++;
+
+    // 5. Technical SEO & Open Graph
+    let hasTechIssue = false;
+    if (!p.canonicalUrl) { issues.push("Canonical URL unassigned"); hasTechIssue = true; }
+    if (!p.ogImage) { issues.push("Open Graph Share Card Image missing"); hasTechIssue = true; }
+    if (!hasTechIssue) technicalPassed++;
+
+    // Page Score calculation
+    const pageMaxScore = 8;
+    const passedCount = Math.max(0, pageMaxScore - issues.length);
+    const pageScore = Math.round((passedCount / pageMaxScore) * 100);
+
+    if (issues.length > 0) {
+      pagesWithErrors++;
+      totalIssues += issues.length;
+      issueSources.push({
+        pageId: p.id,
+        title: p.title || p.slug,
+        slug: p.slug,
+        score: pageScore,
+        issues,
+        criticalCount: issues.length,
+      });
+    } else {
+      healthyPages++;
+    }
+  });
+
+  // Calculate Site SEO Health Scores
+  const overallScore = totalPages > 0 ? Math.round((healthyPages / totalPages) * 100) : 100;
+  const traditionalPct = totalPages > 0 ? Math.round((traditionalPassed / totalPages) * 100) : 100;
+  const altTextsPct = totalPages > 0 ? Math.round((altTextsPassed / totalPages) * 100) : 100;
+  const aeoGeoPct = totalPages > 0 ? Math.round((aeoGeoPassed / totalPages) * 100) : 100;
+  const schemaPct = totalPages > 0 ? Math.round((schemaPassed / totalPages) * 100) : 100;
+  const technicalPct = totalPages > 0 ? Math.round((technicalPassed / totalPages) * 100) : 100;
+
+  if (isLoading) {
+    return (
+      <Card className="border border-border/80 shadow-lg p-6 bg-card rounded-2xl space-y-4">
+        <Skeleton className="h-6 w-48" />
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <Skeleton className="h-40 w-full rounded-xl" />
+          <Skeleton className="h-40 w-full rounded-xl" />
+          <Skeleton className="h-40 w-full rounded-xl" />
+          <Skeleton className="h-40 w-full rounded-xl" />
+        </div>
+      </Card>
+    );
+  }
+
+  return (
+    <Card className="overflow-hidden border border-emerald-500/20 shadow-xl bg-gradient-to-br from-card via-card to-emerald-950/5 rounded-2xl">
+      <CardHeader className="bg-muted/30 border-b border-border/50 pb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-emerald-500/15 text-emerald-600 flex items-center justify-center shadow-inner shrink-0">
+              <Activity className="h-5 w-5" />
+            </div>
+            <div>
+              <CardTitle className="text-lg font-black tracking-tight text-foreground flex items-center gap-2">
+                SEO Center — Global July-2026 Audit Dashboard
+                <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 border-emerald-500/30 text-[10px]">
+                  Next-Gen Intelligence
+                </Badge>
+              </CardTitle>
+              <CardDescription className="text-xs">
+                Real-time automated diagnostic health & AI search engine indexability across all {totalPages} pages
+              </CardDescription>
+            </div>
+          </div>
+          <Button variant="outline" size="sm" asChild className="text-xs text-primary border-primary/30 hover:bg-primary hover:text-white rounded-full">
+            <Link href="/sitemanager/pages">
+              Manage All Pages <ArrowRight className="w-3.5 h-3.5 ml-1" />
+            </Link>
+          </Button>
+        </div>
+      </CardHeader>
+
+      <CardContent className="p-6 space-y-8">
+        {/* Top 4 July-2026 KPI Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+          {/* 1. Cinematic Circled Rating Gauge */}
+          <div className="bg-background/80 backdrop-blur-md border border-border/60 rounded-2xl p-5 flex flex-col items-center justify-center relative shadow-inner">
+            <div className="relative w-32 h-32 flex items-center justify-center">
+              <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="42" stroke="currentColor" strokeWidth="8" className="text-muted/30" fill="transparent" />
+                <circle
+                  cx="50"
+                  cy="50"
+                  r="42"
+                  stroke="currentColor"
+                  strokeWidth="8"
+                  strokeDasharray={264}
+                  strokeDashoffset={264 - (264 * overallScore) / 100}
+                  strokeLinecap="round"
+                  className={cn(
+                    "transition-all duration-1000 ease-out",
+                    overallScore >= 80 ? "text-emerald-500" : overallScore >= 50 ? "text-amber-500" : "text-rose-500"
+                  )}
+                  fill="transparent"
+                />
+              </svg>
+              <div className="absolute flex flex-col items-center justify-center">
+                <span className="text-2xl font-black tabular-nums tracking-tighter text-foreground">{overallScore}%</span>
+                <span className="text-[9px] uppercase font-bold text-muted-foreground tracking-wider">Health Rating</span>
+              </div>
+            </div>
+            <p className="text-xs font-semibold text-center mt-2 text-foreground">
+              {overallScore >= 80 ? "Optimal Search Readiness" : "Action Required"}
+            </p>
+            <p className="text-[11px] text-muted-foreground text-center">
+              {healthyPages} of {totalPages} Pages 100% Passed
+            </p>
+          </div>
+
+          {/* 2. Category Performance Bars */}
+          <div className="bg-background/80 backdrop-blur-md border border-border/60 rounded-2xl p-5 space-y-3 shadow-inner flex flex-col justify-between">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+              <TrendingUp className="w-3.5 h-3.5 text-primary" /> Core Category Breakdown
+            </h4>
+
+            {/* Traditional SEO Bar */}
+            <div className="space-y-1">
+              <div className="flex justify-between text-[11px] font-semibold">
+                <span>Traditional Meta SEO</span>
+                <span className="tabular-nums text-primary">{traditionalPct}%</span>
+              </div>
+              <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+                <div className="h-full bg-blue-500 rounded-full transition-all duration-700" style={{ width: `${traditionalPct}%` }} />
+              </div>
+            </div>
+
+            {/* Alt Text Bar */}
+            <div className="space-y-1">
+              <div className="flex justify-between text-[11px] font-semibold">
+                <span>Image Accessibility (Alt Text)</span>
+                <span className="tabular-nums text-foreground">{altTextsPct}%</span>
+              </div>
+              <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+                <div className="h-full bg-cyan-500 rounded-full transition-all duration-700" style={{ width: `${altTextsPct}%` }} />
+              </div>
+            </div>
+
+            {/* Technical SEO Bar */}
+            <div className="space-y-1">
+              <div className="flex justify-between text-[11px] font-semibold">
+                <span>Technical & Social Sharing</span>
+                <span className="tabular-nums text-foreground">{technicalPct}%</span>
+              </div>
+              <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+                <div className="h-full bg-indigo-500 rounded-full transition-all duration-700" style={{ width: `${technicalPct}%` }} />
+              </div>
+            </div>
+          </div>
+
+          {/* 3. Next-Gen July-2026 AI Search Engine Readiness */}
+          <div className="bg-background/80 backdrop-blur-md border border-border/60 rounded-2xl p-5 space-y-3 shadow-inner flex flex-col justify-between">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+              <Globe className="w-3.5 h-3.5 text-purple-500" /> July-2026 AI Engine Readiness
+            </h4>
+
+            {/* GEO Bar */}
+            <div className="space-y-1">
+              <div className="flex justify-between text-[11px] font-semibold">
+                <span>Generative AI (ChatGPT/Perplexity)</span>
+                <span className="tabular-nums text-foreground">{aeoGeoPct}%</span>
+              </div>
+              <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+                <div className="h-full bg-purple-500 rounded-full transition-all duration-700" style={{ width: `${aeoGeoPct}%` }} />
+              </div>
+            </div>
+
+            {/* AEO Voice Search Bar */}
+            <div className="space-y-1">
+              <div className="flex justify-between text-[11px] font-semibold">
+                <span>Voice Search & Answer Engines (AEO)</span>
+                <span className="tabular-nums text-foreground">{aeoGeoPct}%</span>
+              </div>
+              <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+                <div className="h-full bg-pink-500 rounded-full transition-all duration-700" style={{ width: `${aeoGeoPct}%` }} />
+              </div>
+            </div>
+
+            {/* Schema Bar */}
+            <div className="space-y-1">
+              <div className="flex justify-between text-[11px] font-semibold">
+                <span>JSON-LD Knowledge Graph</span>
+                <span className="tabular-nums text-foreground">{schemaPct}%</span>
+              </div>
+              <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+                <div className="h-full bg-emerald-500 rounded-full transition-all duration-700" style={{ width: `${schemaPct}%` }} />
+              </div>
+            </div>
+          </div>
+
+          {/* 4. Actionable Diagnostics Summary */}
+          <div className="bg-background/80 backdrop-blur-md border border-border/60 rounded-2xl p-5 shadow-inner flex flex-col justify-between">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
+              <ShieldAlert className="w-3.5 h-3.5 text-rose-500" /> Diagnostics Summary
+            </h4>
+
+            <div className="grid grid-cols-2 gap-2 my-1">
+              <div className="p-2.5 bg-rose-500/10 border border-rose-500/20 rounded-xl text-center">
+                <span className="text-xl font-black text-rose-600 tabular-nums">{pagesWithErrors}</span>
+                <p className="text-[10px] font-semibold text-rose-700 dark:text-rose-400">Pages Needing Fixes</p>
+              </div>
+              <div className="p-2.5 bg-amber-500/10 border border-amber-500/20 rounded-xl text-center">
+                <span className="text-xl font-black text-amber-600 tabular-nums">{totalIssues}</span>
+                <p className="text-[10px] font-semibold text-amber-700 dark:text-amber-400">Total Action Items</p>
+              </div>
+            </div>
+
+            <p className="text-[10px] text-muted-foreground">
+              Automated multi-layer scanner detects missing titles, schemas, alt tags, and Open Graph card data.
+            </p>
+          </div>
+        </div>
+
+
+        {/* Real-Time Issue Sources List */ }
+  {
+    issueSources.length > 0 && (
+      <div className="space-y-3 pt-2">
+        <div className="flex items-center justify-between">
+          <h4 className="text-sm font-bold text-foreground flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-rose-600 animate-pulse" />
+            Pages Requiring SEO Attention ({issueSources.length})
+          </h4>
+          <span className="text-xs text-muted-foreground">Exact source locations listed below</span>
+        </div>
+
+        <div className="divide-y divide-border/40 border border-border/60 rounded-2xl bg-background/50 overflow-hidden max-h-72 overflow-y-auto">
+          {issueSources.map((item) => (
+            <div key={item.pageId} className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-rose-500/5 transition-colors">
+              <div className="min-w-0 space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="font-bold text-sm text-foreground truncate">{item.title}</span>
+                  <Badge variant="outline" className="text-[10px] font-mono bg-muted/50">
+                    /{item.slug}
+                  </Badge>
+                  <Badge variant="destructive" className="text-[10px] px-2 py-0">
+                    {item.score}% Score
+                  </Badge>
+                </div>
+                <ul className="text-xs text-rose-600 dark:text-rose-400 space-y-0.5 list-disc list-inside">
+                  {item.issues.slice(0, 2).map((iss, i) => (
+                    <li key={i} className="truncate">{iss}</li>
+                  ))}
+                  {item.issues.length > 2 && (
+                    <li className="font-semibold text-muted-foreground list-none pl-4">
+                      + {item.issues.length - 2} more action item(s)
+                    </li>
+                  )}
+                </ul>
+              </div>
+
+              <Button size="sm" variant="secondary" asChild className="bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 border border-emerald-500/30 text-xs shrink-0 rounded-full font-bold">
+                <Link href={`/sitemanager/pages/${item.pageId}/edit`}>
+                  Open SEO Center <ArrowRight className="w-3.5 h-3.5 ml-1" />
+                </Link>
+              </Button>
+            </div>
+          ))}
+        </div>
+      </div>
+    )}
+      </CardContent>
+    </Card>
+  );
+}
+
 // ─── Page Component ───────────────────────────────────────────────────────────
 export default function DashboardPage() {
   const { user } = useAdminAuth();
@@ -431,6 +756,11 @@ export default function DashboardPage() {
             </CardContent>
           </Card>
         </div>
+      </motion.div>
+
+      {/* ── SEO Center Live Audit Dashboard Widget ───────────────────── */}
+      <motion.div variants={item}>
+        <SeoCenterDashboardWidget />
       </motion.div>
 
       {/* ── Top stat cards ─────────────────────────────────────────── */}

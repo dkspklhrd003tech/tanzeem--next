@@ -989,11 +989,11 @@ export default function ServicesPageEditor({ pageId, initialPageData }: Services
   return (
     <div className="space-y-6 max-w-7xl">
       <div className="flex justify-end items-center gap-3">
-        <Button onClick={() => document.getElementById("hidden-submit-page-btn")?.click()} disabled={isSavingPage} className="bg-primary text-white hover:bg-primary/95 shadow-sm">
+        <Button onClick={() => document.getElementById("hidden-submit-page-btn")?.click()} disabled={isSavingPage} className="bg-primary text-white hover:text-white hover:bg-primary/95 shadow-sm">
           {isSavingPage ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <Send className="w-4 h-4 mr-2" />}
           Update Section
         </Button>
-        <Button onClick={handleOpenAddModal} className="bg-primary text-white hover:bg-primary/95 shadow-sm">
+        <Button onClick={handleOpenAddModal} className="bg-primary text-white hover:text-white hover:bg-primary/95 shadow-sm">
           <Plus className="w-4 h-4 mr-2" /> Add Release
         </Button>
       </div>

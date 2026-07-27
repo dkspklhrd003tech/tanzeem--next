@@ -15,13 +15,28 @@ import { resolveMediaUrl } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
-export const metadata = buildMetadata({
-  title: "Home",
-  description:
-    "Tanzeem-e-Islami is working to re-establish Khilafah following the methodology of Prophet Muhammad (SAWS). Access Islamic lectures, books, videos, and educational resources.",
-  keywords: ["Tanzeem-e-Islami", "Dr. Israr Ahmed", "Islamic Lectures", "Khilafah", "Quran", "Hadith", "Islamic Education"],
-  path: "/",
-});
+export async function generateMetadata() {
+  let title = "Tanzeem-e-Islami | Official Website";
+  let description = "Tanzeem-e-Islami is working to re-establish Khilafah following the methodology of Prophet Muhammad (SAWS). Access Islamic lectures, books, videos, and educational resources.";
+
+  try {
+    const allSettings = await db.select().from(settings);
+    const titleRow = allSettings.find((s) => s.key === "homepage_meta_title");
+    const descRow = allSettings.find((s) => s.key === "homepage_meta_description");
+
+    if (titleRow?.value) title = titleRow.value;
+    if (descRow?.value) description = descRow.value;
+  } catch (error) {
+    console.error("Failed to load dynamic homepage metadata:", error);
+  }
+
+  return buildMetadata({
+    title,
+    description,
+    keywords: ["Tanzeem-e-Islami", "Dr. Israr Ahmed", "Islamic Lectures", "Khilafah", "Quran", "Hadith", "Islamic Education"],
+    path: "/",
+  });
+}
 
 async function HomeContent() {
   let activeSliders: any[] = [];

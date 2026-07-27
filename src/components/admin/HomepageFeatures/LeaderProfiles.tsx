@@ -22,6 +22,7 @@ type TeamMember = {
 };
 
 export function LeaderProfiles() {
+    const [isSeoOpen, setIsSeoOpen] = useState(false);
     const [team, setTeam] = useState<TeamMember[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);

@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Edit2, XCircle, X, Image as ImageIcon, Link as LinkIcon, GripVertical, UploadCloud, RefreshCw } from "lucide-react";
+import { Plus, Edit2, XCircle, X, Image as ImageIcon, Link as LinkIcon, GripVertical, UploadCloud, RefreshCw, SlidersHorizontal } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { ImageUploader } from "./ImageUploader";
@@ -107,7 +107,7 @@ function SortableSliderRow({
             <td className="px-6 py-4">
                 <Badge
                     variant={slider.isActive ? "default" : "secondary"}
-                    className={slider.isActive ? "bg-emerald-500 hover:bg-emerald-600 text-white shadow-sm" : ""}
+                    className={slider.isActive ? "bg-primary text-white shadow-sm" : ""}
                 >
                     {slider.isActive ? "Visible" : "Hidden"}
                 </Badge>
@@ -135,6 +135,7 @@ function SortableSliderRow({
 }
 
 export function HomeSlidersManagement() {
+    const [isSeoOpen, setIsSeoOpen] = useState(false);
     const [sliders, setSliders] = useState<HomeSlider[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);

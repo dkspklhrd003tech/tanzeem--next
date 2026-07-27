@@ -57,7 +57,7 @@ export async function GET(request: NextRequest, { params }: Ctx) {
 
     const { id } = await params;
 
-    const [page] = await db.select({
+    let [page] = await db.select({
       id: pages.id,
       title: pages.title,
       slug: pages.slug,
@@ -89,6 +89,57 @@ export async function GET(request: NextRequest, { params }: Ctx) {
       .leftJoin(users, eq(pages.authorId, users.id))
       .where(or(eq(pages.id, id), eq(pages.slug, id)))
       .limit(1);
+
+    if (!page) {
+      // Auto-create default system page if id is a known system key
+      const isSystemPage = ["services", "campaigns", "home", "about", "contact"].includes(id.toLowerCase());
+      if (isSystemPage) {
+        const formattedTitle = id.split("-").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+        const newId = crypto.randomUUID();
+
+        await db.insert(pages).values({
+          id: newId,
+          title: formattedTitle,
+          slug: id.toLowerCase(),
+          content: `Content for ${formattedTitle} is managed via Site Manager.`,
+          isPublished: true,
+          metaTitle: `${formattedTitle} | Tanzeem-e-Islami`,
+          metaDescription: `Discover official ${formattedTitle.toLowerCase()} resources, publications, and updates from Tanzeem-e-Islami.`,
+          authorId: user.id,
+          publishedAt: new Date(),
+        });
+
+        const [created] = await db.select({
+          id: pages.id,
+          title: pages.title,
+          slug: pages.slug,
+          content: pages.content,
+          excerpt: pages.excerpt,
+          featuredImage: pages.featuredImage,
+          template: pages.template,
+          parentId: pages.parentId,
+          order: pages.order,
+          isPublished: pages.isPublished,
+          showInMenu: pages.showInMenu,
+          metaTitle: pages.metaTitle,
+          metaDescription: pages.metaDescription,
+          canonicalUrl: pages.canonicalUrl,
+          ogImage: pages.ogImage,
+          schemaType: pages.schemaType,
+          noIndex: pages.noIndex,
+          seoData: pages.seoData,
+          featuredImageAlt: pages.featuredImageAlt,
+          publishedAt: pages.publishedAt,
+          createdAt: pages.createdAt,
+          updatedAt: pages.updatedAt,
+          authorId: pages.authorId,
+          authorName: users.name,
+          authorEmail: users.email,
+        }).from(pages).leftJoin(users, eq(pages.authorId, users.id)).where(eq(pages.id, newId)).limit(1);
+
+        page = created;
+      }
+    }
 
     if (!page) return NextResponse.json({ error: "Page not found" }, { status: 404 });
     return NextResponse.json({ page });

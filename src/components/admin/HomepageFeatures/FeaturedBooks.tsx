@@ -68,6 +68,7 @@ function SortableBookRow({ book, onEdit, onDelete }: { book: any; onEdit: (b: an
 }
 
 export function FeaturedBooks() {
+    const [isSeoOpen, setIsSeoOpen] = useState(false);
     const [books, setBooks] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);

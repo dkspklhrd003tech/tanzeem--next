@@ -11,11 +11,12 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Save, Sparkles, CalendarSync, RefreshCw, RefreshCcw, Check, Brain, Search, Code, CheckCircle, SearchCode, Bot, ShieldAlert } from "lucide-react";
+import { ArrowLeft, Save, Sparkles, CalendarSync, RefreshCw, RefreshCcw, Check, Brain, Search, Code, CheckCircle, SearchCode, Bot, ShieldAlert, Image as ImageIcon, UploadCloud, Trash2, Plus } from "lucide-react";
 import Link from "next/link";
 import { PageSpinner } from "@/components/ui/spinner";
+import { ImageUploader } from "./ImageUploader";
 
-import { cn } from "@/lib/utils";
+import { cn, resolveMediaUrl } from "@/lib/utils";
 
 interface PageSeoManagerProps {
   pageId?: string;
@@ -100,11 +101,14 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
     extractedText = extractedText.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
 
     const title = page.title || page.name || "Page";
+    const isHomePage = pageId === "home" || page.slug === "home" || title.toLowerCase() === "home";
 
     // 1. Meta Title (Optimal: 40-60 characters)
-    let metaTitle = `${title} | Tanzeem-e-Islami Official`;
-    if (metaTitle.length > 60) metaTitle = `${title} | Tanzeem-e-Islami`;
-    if (metaTitle.length > 60) metaTitle = title.substring(0, 57) + "...";
+    let metaTitle = isHomePage
+      ? "Tanzeem-e-Islami | Movement for Khilafah & Revival"
+      : `${title} | Tanzeem-e-Islami`;
+
+    if (metaTitle.length > 60) metaTitle = metaTitle.substring(0, 57) + "...";
 
     // 2. Meta Description (Optimal: 120-155 characters)
     let metaDescription = "";
@@ -151,7 +155,14 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
 
     // 7. Canonical URL & OG Image
     const canonicalUrl = page.canonicalUrl || (page.slug ? `/${page.slug}` : "");
-    const ogImage = page.ogImage || `https://tanzeem.org/api/og?title=${encodeURIComponent(title)}`;
+    const ogImage = page.ogImage || page.featuredImage || "/images/tanzeem-logo.png";
+    const ogImageAlt = page.seoData?.ogImageAlt || `Official social share banner for ${title} at Tanzeem-e-Islami`;
+
+    // Process extra images alt texts
+    const extraImages = (page.seoData?.extraImages || []).map((img: any, idx: number) => ({
+      ...img,
+      alt: img.alt || `Visual asset #${idx + 1} illustrating ${title} on Tanzeem-e-Islami official website`,
+    }));
 
     setPage((prev: any) => ({
       ...prev,
@@ -163,6 +174,8 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
       noIndex: false,
       seoData: {
         ...(prev.seoData || {}),
+        ogImageAlt,
+        extraImages,
         geo: {
           ...(prev.seoData?.geo || {}),
           summary: geoSummary,
@@ -211,33 +224,33 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
   const seoData = page.seoData || {};
 
   return (
-    <div className="space-y-6 max-w-[1400px] mx-auto pb-24">
+    <div className="space-y-6 w-full min-w-0 pb-24">
       {/* Header (conditionally hidden if embedded) */}
       {hideHeader ? (
-        <div className="flex items-center justify-between p-4 bg-background border border-border rounded-xl mb-6 shadow-sm">
-          <div className="flex items-center gap-2">
-            <Bot className="h-5 w-5 text-primary" />
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-background border border-border rounded-xl mb-6 shadow-sm">
+          <div className="flex items-center gap-2 min-w-0">
+            <Bot className="h-5 w-5 text-primary shrink-0" />
             <span className="font-semibold text-sm">SEO Center</span>
-            <span className="text-xs text-muted-foreground">({page.title || page.name})</span>
+            <span className="text-xs text-muted-foreground truncate">({page.title || page.name})</span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0">
             <Button
               type="button"
               variant="secondary"
               size="sm"
               onClick={handleAutoGenerateAll}
               disabled={generating.all}
-              className="bg-emerald-500/10 text-primary hover:bg-emerald-500/20 border border-emerald-500/30 font-semibold"
+              className="bg-primary-light text-primary hover:bg-primary border border-primary/30 font-semibold text-xs"
             >
               {generating.all ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <CalendarSync className="w-4 h-4 mr-2" />}
               Auto Generate All
             </Button>
-            <Button variant="outline" size="sm" asChild>
+            <Button variant="outline" size="sm" asChild className="text-xs">
               <a href={`/${page.slug}`} target="_blank" rel="noopener noreferrer">
                 <SearchCode className="w-4 h-4 mr-2" /> Live Preview
               </a>
             </Button>
-            <Button type="button" onClick={handleSave} disabled={saving} className="bg-primary text-white hover:bg-primary-light hover:text-primary" size="sm">
+            <Button type="button" onClick={handleSave} disabled={saving} className="bg-primary text-white hover:bg-primary-light hover:text-primary text-xs" size="sm">
               <Save className="w-4 h-4 mr-2" />
               {saving ? "Saving..." : "Save All SEO"}
             </Button>
@@ -245,38 +258,38 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
         </div>
       ) : (
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-background p-4 rounded-xl border border-border mb-6 shadow-sm">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" asChild>
+          <div className="flex items-center gap-4 min-w-0">
+            <Button variant="ghost" size="icon" asChild className="shrink-0">
               <Link href={backHref || `/sitemanager/pages/${pageId}/edit`}>
                 <ArrowLeft className="h-5 w-5" />
               </Link>
             </Button>
-            <div>
+            <div className="min-w-0">
               <h1 className="text-xl font-bold flex items-center gap-2">
-                <Bot className="h-6 w-6 text-primary" />
+                <Bot className="h-6 w-6 text-emerald-500 shrink-0" />
                 SEO Center
               </h1>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground truncate">
                 Editing: <span className="font-medium text-foreground">{page.title || page.name}</span>
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0">
             <Button
               type="button"
               variant="secondary"
               size="sm"
               onClick={handleAutoGenerateAll}
               disabled={generating.all}
-              className="bg-primary-light text-primary hover:bg-primary/20 border border-primary/30 font-semibold"
+              className="bg-emerald-500/10 text-primary hover:bg-emerald-500/20 border border-emerald-500/30 font-semibold text-xs"
             >
               {generating.all ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <CalendarSync className="w-4 h-4 mr-2" />}
               Auto Generate All
             </Button>
-            <Button variant="outline" size="sm" onClick={() => router.push(`/${page.slug}`)}>
+            <Button variant="outline" size="sm" onClick={() => router.push(`/${page.slug}`)} className="text-xs">
               <SearchCode className="w-4 h-4 mr-2" /> Live Preview
             </Button>
-            <Button onClick={handleSave} disabled={saving} className="bg-primary text-white hover:bg-primary-light hover:text-primary">
+            <Button onClick={handleSave} disabled={saving} className="bg-primary text-white hover:bg-primary-light hover:text-primary text-xs" size="sm">
               <Save className="w-4 h-4 mr-2" />
               {saving ? "Saving..." : "Save All SEO"}
             </Button>
@@ -284,7 +297,7 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
         </div>
       )}
 
-      <div className="flex flex-col lg:flex-row gap-8">
+      <div className="flex flex-col lg:flex-row gap-6 w-full min-w-0">
         {/* Sidebar Nav (replaces tabs) */}
         {(() => {
           const isTradMissing = !page.metaTitle || page.metaTitle.length < 30 || !page.metaDescription || page.metaDescription.length < 70;
@@ -296,18 +309,18 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
           const hasAnyIssue = isTradMissing || isAltMissing || isGeoMissing || isAeoMissing || isSchemaMissing || isTechMissing;
 
           return (
-            <div className="lg:w-64 shrink-0">
+            <div className="lg:w-56 shrink-0">
               <div className="flex flex-col gap-1 p-2 bg-muted/30 rounded-xl border border-border">
                 {/* Traditional SEO */}
                 <a
                   href="#traditional-seo"
                   className={cn(
-                    "flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg transition-colors",
+                    "flex items-center justify-between px-3 py-2 text-xs font-medium rounded-lg transition-colors",
                     isTradMissing ? "text-red-600 bg-red-600/10 font-bold hover:bg-red-600/20" : "text-primary dark:text-emerald-400 hover:bg-muted"
                   )}
                 >
                   <span className="flex items-center gap-2">
-                    <Search className="h-4 w-4" /> Traditional SEO
+                    <Search className="h-3.5 w-3.5" /> Traditional SEO
                   </span>
                   {isTradMissing && (
                     <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse shrink-0" title="Needs Improvement" />
@@ -318,12 +331,12 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
                 <a
                   href="#alt-texts"
                   className={cn(
-                    "flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg transition-colors",
+                    "flex items-center justify-between px-3 py-2 text-xs font-medium rounded-lg transition-colors",
                     isAltMissing ? "text-red-600 bg-red-600/10 font-bold hover:bg-red-600/20" : "text-primary dark:text-emerald-400 hover:bg-muted"
                   )}
                 >
                   <span className="flex items-center gap-2">
-                    <SearchCode className="h-4 w-4" /> Alt Texts
+                    <SearchCode className="h-3.5 w-3.5" /> Alt Texts
                   </span>
                   {isAltMissing && (
                     <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse shrink-0" title="Needs Improvement" />
@@ -334,12 +347,12 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
                 <a
                   href="#geo"
                   className={cn(
-                    "flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg transition-colors",
+                    "flex items-center justify-between px-3 py-2 text-xs font-medium rounded-lg transition-colors",
                     isGeoMissing ? "text-red-600 bg-red-600/10 font-bold hover:bg-red-600/20" : "text-primary dark:text-emerald-400 hover:bg-muted"
                   )}
                 >
                   <span className="flex items-center gap-2">
-                    <Brain className="h-4 w-4" /> GEO
+                    <Brain className="h-3.5 w-3.5" /> GEO
                   </span>
                   {isGeoMissing && (
                     <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse shrink-0" title="Needs Improvement" />
@@ -350,12 +363,12 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
                 <a
                   href="#aeo"
                   className={cn(
-                    "flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg transition-colors",
+                    "flex items-center justify-between px-3 py-2 text-xs font-medium rounded-lg transition-colors",
                     isAeoMissing ? "text-red-600 bg-red-600/10 font-bold hover:bg-red-600/20" : "text-primary dark:text-emerald-400 hover:bg-muted"
                   )}
                 >
                   <span className="flex items-center gap-2">
-                    <Bot className="h-4 w-4" /> AEO
+                    <Bot className="h-3.5 w-3.5" /> AEO
                   </span>
                   {isAeoMissing && (
                     <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse shrink-0" title="Needs Improvement" />
@@ -366,12 +379,12 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
                 <a
                   href="#schema"
                   className={cn(
-                    "flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg transition-colors",
+                    "flex items-center justify-between px-3 py-2 text-xs font-medium rounded-lg transition-colors",
                     isSchemaMissing ? "text-red-600 bg-red-600/10 font-bold hover:bg-red-600/20" : "text-primary dark:text-emerald-400 hover:bg-muted"
                   )}
                 >
                   <span className="flex items-center gap-2">
-                    <Code className="h-4 w-4" /> JSON-LD Schema
+                    <Code className="h-3.5 w-3.5" /> JSON-LD Schema
                   </span>
                   {isSchemaMissing && (
                     <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse shrink-0" title="Needs Improvement" />
@@ -382,12 +395,12 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
                 <a
                   href="#technical"
                   className={cn(
-                    "flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg transition-colors",
+                    "flex items-center justify-between px-3 py-2 text-xs font-medium rounded-lg transition-colors",
                     isTechMissing ? "text-red-600 bg-red-600/10 font-bold hover:bg-red-600/20" : "text-primary dark:text-emerald-400 hover:bg-muted"
                   )}
                 >
                   <span className="flex items-center gap-2">
-                    <CheckCircle className="h-4 w-4" /> Technical SEO
+                    <CheckCircle className="h-3.5 w-3.5" /> Technical SEO
                   </span>
                   {isTechMissing && (
                     <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse shrink-0" title="Needs Improvement" />
@@ -398,12 +411,12 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
                 <a
                   href="#validation"
                   className={cn(
-                    "flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg transition-colors",
+                    "flex items-center justify-between px-3 py-2 text-xs font-medium rounded-lg transition-colors",
                     hasAnyIssue ? "text-red-600 bg-red-600/10 font-bold hover:bg-red-600/20" : "text-primary dark:text-emerald-400 hover:bg-muted"
                   )}
                 >
                   <span className="flex items-center gap-2">
-                    <Sparkles className="h-4 w-4" /> Validation & Score
+                    <Sparkles className="h-3.5 w-3.5" /> Validation & Score
                   </span>
                   {hasAnyIssue && (
                     <span className="w-2 h-2 rounded-full bg-red-600 animate-pulse shrink-0" title="Needs Improvement" />
@@ -415,7 +428,7 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
         })()}
 
         {/* Content Sections */}
-        <div className="flex-1 space-y-12">
+        <div className="flex-1 min-w-0 space-y-8">
           {/* 1. Traditional SEO */}
           <section id="traditional-seo" className="scroll-mt-24">
             <Card>
@@ -445,28 +458,216 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
           {/* 2. Alt Texts */}
           <section id="alt-texts" className="scroll-mt-24">
             <Card>
-              <CardHeader>
-                <CardTitle>Smart Accessibility Engine</CardTitle>
-                <CardDescription>Automatically analyze page images and generate descriptive, SEO-friendly alt text.</CardDescription>
+              <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <SearchCode className="w-5 h-5 text-emerald-600" />
+                    Smart Accessibility Engine
+                  </CardTitle>
+                  <CardDescription>
+                    Automatically analyze page images, Open Graph social cards, and generate descriptive, SEO-friendly alt text.
+                  </CardDescription>
+                </div>
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="outline"
+                  onClick={() => {
+                    const extraImages = page.seoData?.extraImages || [];
+                    const newImageObj = { id: `img_${Date.now()}`, url: "", label: `Custom Image #${extraImages.length + 1}`, alt: "" };
+                    setPage({
+                      ...page,
+                      seoData: {
+                        ...page.seoData,
+                        extraImages: [...extraImages, newImageObj],
+                      },
+                    });
+                  }}
+                  className="border-emerald-500/30 text-emerald-600 hover:bg-emerald-50 text-xs gap-1.5 shrink-0"
+                >
+                  <Plus className="w-3.5 h-3.5" /> Add Page Image / Card
+                </Button>
               </CardHeader>
-              <CardContent>
-                {/* Featured Image */}
-                {page.featuredImage ? (
-                  <div className="flex gap-6 items-start p-4 border rounded-xl bg-muted/20">
-                    <img src={page.featuredImage} alt="Featured Preview" className="w-48 h-32 object-cover rounded-lg" />
-                    <div className="flex-1 space-y-3">
-                      <div className="flex items-center justify-between">
-                        <Label className="text-sm font-semibold">Featured Image Alt Text</Label>
-                        <Badge variant={page.featuredImageAlt ? "default" : "destructive"}>{page.featuredImageAlt ? "Optimized" : "Missing"}</Badge>
+              <CardContent className="space-y-6">
+                {(() => {
+                  const imageList: Array<{ id: string; label: string; src: string; altValue: string; type: "featured" | "og" | "extra"; rawIndex?: number }> = [];
+
+                  if (page.featuredImage) {
+                    imageList.push({
+                      id: "featured",
+                      label: "Featured Hero Image",
+                      src: resolveMediaUrl(page.featuredImage),
+                      altValue: page.featuredImageAlt || "",
+                      type: "featured",
+                    });
+                  }
+
+                  const ogSrc = page.ogImage || page.featuredImage || "/images/tanzeem-logo.png";
+                  imageList.push({
+                    id: "og",
+                    label: "Open Graph Social Share Card",
+                    src: resolveMediaUrl(ogSrc),
+                    altValue: page.seoData?.ogImageAlt || page.featuredImageAlt || `Official social share banner for ${page.title || page.name} at Tanzeem-e-Islami`,
+                    type: "og",
+                  });
+
+                  // Extra Custom Images
+                  if (page.seoData?.extraImages && Array.isArray(page.seoData.extraImages)) {
+                    page.seoData.extraImages.forEach((extraImg: any, idx: number) => {
+                      imageList.push({
+                        id: extraImg.id || `extra_${idx}`,
+                        label: extraImg.label || `Custom Image #${idx + 1}`,
+                        src: resolveMediaUrl(extraImg.url),
+                        altValue: extraImg.alt || "",
+                        type: "extra",
+                        rawIndex: idx,
+                      });
+                    });
+                  }
+
+                  if (imageList.length === 0) {
+                    return (
+                      <div className="p-6 border border-dashed rounded-xl bg-muted/10 text-center space-y-4">
+                        <div className="mx-auto w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-600">
+                          <ImageIcon className="w-6 h-6" />
+                        </div>
+                        <div>
+                          <h4 className="font-semibold text-sm">No Images Currently Detected</h4>
+                          <p className="text-xs text-muted-foreground mt-1 max-w-md mx-auto">
+                            Upload a Featured Image, specify an Open Graph Share Card, or click below to add a new image card.
+                          </p>
+                        </div>
+                        <div className="max-w-md mx-auto space-y-3 pt-2">
+                          <ImageUploader
+                            value={page.featuredImage || ""}
+                            onChange={(url, alt) => setPage({ ...page, featuredImage: url, featuredImageAlt: alt || page.featuredImageAlt })}
+                            label="Upload Hero / Primary Image"
+                          />
+                        </div>
                       </div>
-                      <Input value={page.featuredImageAlt || ""} onChange={e => setPage({ ...page, featuredImageAlt: e.target.value })} placeholder="Describe the image..." />
+                    );
+                  }
+
+                  return (
+                    <div className="grid grid-cols-1 gap-4">
+                      {imageList.map((img) => (
+                        <div key={img.id} className="flex flex-col sm:flex-row gap-5 items-start p-4 border rounded-xl bg-card hover:border-emerald-500/30 transition-all shadow-sm">
+                          {/* Image Box Preview */}
+                          <div className="w-full sm:w-48 h-32 rounded-lg border border-border shrink-0 bg-muted/30 overflow-hidden flex items-center justify-center relative group">
+                            {img.src ? (
+                              <img
+                                src={img.src}
+                                alt={img.label}
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="flex flex-col items-center justify-center p-3 text-center text-muted-foreground">
+                                <UploadCloud className="w-8 h-8 mb-1 text-muted-foreground/40" />
+                                <span className="text-[11px] font-medium text-muted-foreground">No Preview Available</span>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Image Meta Controls */}
+                          <div className="flex-1 space-y-3 w-full">
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm font-bold text-foreground flex items-center gap-2">
+                                <ImageIcon className="w-4 h-4 text-emerald-600" />
+                                {img.label}
+                              </span>
+                              <div className="flex items-center gap-2">
+                                <Badge variant={img.altValue ? "default" : "destructive"}>
+                                  {img.altValue ? "Optimized" : "Missing Alt"}
+                                </Badge>
+                                {img.type === "extra" && img.rawIndex !== undefined && (
+                                  <Button
+                                    type="button"
+                                    variant="ghost"
+                                    size="icon"
+                                    className="h-7 w-7 text-muted-foreground hover:text-destructive"
+                                    onClick={() => {
+                                      const updatedExtras = [...(page.seoData?.extraImages || [])];
+                                      updatedExtras.splice(img.rawIndex!, 1);
+                                      setPage({
+                                        ...page,
+                                        seoData: {
+                                          ...page.seoData,
+                                          extraImages: updatedExtras,
+                                        },
+                                      });
+                                    }}
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </Button>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Image URL Input / Uploader */}
+                            {img.type === "extra" && img.rawIndex !== undefined ? (
+                              <ImageUploader
+                                value={img.src}
+                                onChange={(url, alt) => {
+                                  const updatedExtras = [...(page.seoData?.extraImages || [])];
+                                  updatedExtras[img.rawIndex!] = {
+                                    ...updatedExtras[img.rawIndex!],
+                                    url,
+                                    alt: alt || updatedExtras[img.rawIndex!].alt,
+                                  };
+                                  setPage({
+                                    ...page,
+                                    seoData: {
+                                      ...page.seoData,
+                                      extraImages: updatedExtras,
+                                    },
+                                  });
+                                }}
+                                altValue={img.altValue}
+                                onAltChange={(newAlt) => {
+                                  const updatedExtras = [...(page.seoData?.extraImages || [])];
+                                  updatedExtras[img.rawIndex!] = {
+                                    ...updatedExtras[img.rawIndex!],
+                                    alt: newAlt,
+                                  };
+                                  setPage({
+                                    ...page,
+                                    seoData: {
+                                      ...page.seoData,
+                                      extraImages: updatedExtras,
+                                    },
+                                  });
+                                }}
+                              />
+                            ) : (
+                              <div className="space-y-2">
+                                <Input
+                                  value={img.altValue}
+                                  onChange={(e) => {
+                                    if (img.type === "featured") {
+                                      setPage({ ...page, featuredImageAlt: e.target.value });
+                                    } else {
+                                      setPage({
+                                        ...page,
+                                        seoData: {
+                                          ...page.seoData,
+                                          ogImageAlt: e.target.value,
+                                        },
+                                      });
+                                    }
+                                  }}
+                                  placeholder={`Enter descriptive alt text for ${img.label.toLowerCase()}...`}
+                                />
+                                <p className="text-xs text-muted-foreground">
+                                  Indexed by Google Search & read aloud by accessibility screen readers.
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  </div>
-                ) : (
-                  <div className="text-center p-8 border border-dashed rounded-xl text-muted-foreground">
-                    No images found on this page.
-                  </div>
-                )}
+                  );
+                })()}
               </CardContent>
             </Card>
           </section>

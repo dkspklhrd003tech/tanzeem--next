@@ -68,6 +68,7 @@ function SortableMagazineRow({ magazine, onEdit, onDelete }: { magazine: any; on
 }
 
 export function FeaturedMagazines() {
+    const [isSeoOpen, setIsSeoOpen] = useState(false);
     const [magazines, setMagazines] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
