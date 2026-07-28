@@ -100,7 +100,7 @@ export function AudioSubCategoryClient({ subCategories, directAudios = [] }: Aud
                 </div>
                 <div className="shrink-0 flex flex-col items-center justify-center gap-1 mt-2 md:mt-0">
                   <div className="h-10 w-10 flex items-center justify-center rounded-full bg-primary text-white group-hover:bg-primary/90 transition-all scale-95 group-hover:scale-105 shadow-sm shrink-0">
-                    <AudioLines className="w-5 h-5" />
+                    <AudioLines className="w-7 h-7" />
                   </div>
                   <span className="text-[11px] text-muted-foreground font-semibold transition-opacity hidden md:block">Listen Now</span>
                 </div>
@@ -141,7 +141,7 @@ export function AudioSubCategoryClient({ subCategories, directAudios = [] }: Aud
 
                 <div className="shrink-0 flex flex-col items-center justify-center gap-1 mt-2 md:mt-0">
                   <div className="h-10 w-10 flex items-center justify-center rounded-full bg-primary text-white group-hover:bg-primary/90 transition-all scale-95 group-hover:scale-105 shadow-sm shrink-0">
-                    <Headphones className="w-5 h-5" />
+                    <Headphones className="w-7 h-7" />
                   </div>
                   <span className="text-[11px] text-muted-foreground font-semibold transition-opacity hidden md:block">
                     {sub.audios?.length || 0} Audios
