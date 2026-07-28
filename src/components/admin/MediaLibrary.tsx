@@ -289,7 +289,7 @@ export function MediaLibrary() {
           <p className="text-foreground">No media files found.</p>
         </div>
       ) : viewMode === "grid" ? (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {filteredMedia.map((item) => (
             <motion.div
               key={item.id}
@@ -373,7 +373,7 @@ export function MediaLibrary() {
           ))}
         </div>
       ) : (
-        <div className="bg-card rounded-xl border border-border overflow-hidden shadow-sm">
+        <div className="bg-card rounded-lg border border-border overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-muted/50 border-b border-border">
