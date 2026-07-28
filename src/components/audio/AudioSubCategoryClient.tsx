@@ -36,21 +36,21 @@ interface AudioSubCategoryClientProps {
 }
 
 export function AudioSubCategoryClient({ subCategories, directAudios = [] }: AudioSubCategoryClientProps) {
-  const [sortOrder, setSortOrder] = useState<"uploaded" | "oldest">("uploaded");
+  const [sortOrder, setSortOrder] = useState<"default" | "reverse">("default");
 
   const displayedSubCategories = [...subCategories].sort((a, b) => {
-    if (sortOrder === "oldest") {
-      return (a.order ?? 0) - (b.order ?? 0);
-    } else {
+    if (sortOrder === "reverse") {
       return (b.order ?? 0) - (a.order ?? 0);
+    } else {
+      return (a.order ?? 0) - (b.order ?? 0);
     }
   });
 
   const displayedDirectAudios = [...directAudios].sort((a, b) => {
-    if (sortOrder === "oldest") {
-      return (a.order ?? 0) - (b.order ?? 0);
-    } else {
+    if (sortOrder === "reverse") {
       return (b.order ?? 0) - (a.order ?? 0);
+    } else {
+      return (a.order ?? 0) - (b.order ?? 0);
     }
   });
 
@@ -70,19 +70,19 @@ export function AudioSubCategoryClient({ subCategories, directAudios = [] }: Aud
               type="button"
               variant="outline"
               size="sm"
-              onClick={() => setSortOrder(sortOrder === "uploaded" ? "oldest" : "uploaded")}
+              onClick={() => setSortOrder(sortOrder === "default" ? "reverse" : "default")}
               className="h-8 text-xs gap-1.5 bg-primary/10 text-primary border-primary/30 hover:border-primary shadow-none font-medium hover:bg-primary hover:text-white transition-all group"
-              title={sortOrder === "uploaded" ? "Currently: Newest (Click for Oldest)" : "Currently: Oldest (Click for Newest)"}
+              title={sortOrder === "default" ? "Currently: Default Order (Click to Reverse)" : "Currently: Reversed Order (Click for Default)"}
             >
-              {sortOrder === "uploaded" ? (
+              {sortOrder === "default" ? (
                 <>
                   <ArrowUp className="w-3.5 h-3.5 shrink-0 transition-colors" />
-                  <span>Newest</span>
+                  <span>Default</span>
                 </>
               ) : (
                 <>
                   <ArrowDown className="w-3.5 h-3.5 shrink-0 transition-colors" />
-                  <span>Oldest</span>
+                  <span>Reversed</span>
                 </>
               )}
             </Button>
@@ -94,30 +94,16 @@ export function AudioSubCategoryClient({ subCategories, directAudios = [] }: Aud
       {displayedDirectAudios.length > 0 && subCategories.length === 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {displayedDirectAudios.map((item) => {
-            const formattedDate = item.createdAt
-              ? new Date(item.createdAt).toLocaleDateString("en-PK", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              }).toUpperCase()
-              : "RECENT";
-
             return (
               <Link
                 href={`/audio/${item.slug || item.id}`}
                 key={item.id}
-                className="flex flex-col md:flex-row md:items-center justify-between gap-4 px-4 py-3 rounded-2xl border border-primary/30 hover:border-primary/60 bg-muted/30 hover:bg-primary/5 transition-all cursor-pointer group shadow-sm hover:shadow-md h-full"
+                className="flex flex-col md:flex-row md:items-center justify-between gap-4 px-4 py-3.5 rounded-2xl border border-primary/30 hover:border-primary/60 bg-muted/30 hover:bg-primary/5 transition-all cursor-pointer group shadow-sm hover:shadow-md h-full"
               >
                 <div className="flex-1 min-w-0">
-                  <div className="flex flex-col items-start gap-1 mb-1">
-                    <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-primary/10 text-primary text-[10px] sm:text-xs font-bold mb-1 w-fit">
-                      <Calendar className="w-3.5 h-3.5" />
-                      <span>{formattedDate}</span>
-                    </div>
-                    <h3 className="font-bold text-md group-hover:text-primary transition-colors uppercase leading-snug line-clamp-2">
-                      {item.title}
-                    </h3>
-                  </div>
+                  <h3 className="font-bold text-md group-hover:text-primary transition-colors uppercase leading-snug line-clamp-2">
+                    {item.title}
+                  </h3>
                   {item.description && (
                     <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{item.description}</p>
                   )}

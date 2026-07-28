@@ -20,14 +20,13 @@ export interface AudioCategoryGridItem {
 }
 
 export function AudioCategoryGridClient({ categories }: { categories: AudioCategoryGridItem[] }) {
-  const [sortOrder, setSortOrder] = useState<"uploaded" | "oldest">("uploaded");
+  const [sortOrder, setSortOrder] = useState<"default" | "reverse">("default");
 
   const displayedCategories = [...categories].sort((a, b) => {
-    if (sortOrder === "oldest") {
-      return (a.order ?? 0) - (b.order ?? 0);
-    } else {
-      // "uploaded" / Newest
+    if (sortOrder === "reverse") {
       return (b.order ?? 0) - (a.order ?? 0);
+    } else {
+      return (a.order ?? 0) - (b.order ?? 0);
     }
   });
 
@@ -44,19 +43,19 @@ export function AudioCategoryGridClient({ categories }: { categories: AudioCateg
             type="button"
             variant="outline"
             size="sm"
-            onClick={() => setSortOrder(sortOrder === "uploaded" ? "oldest" : "uploaded")}
+            onClick={() => setSortOrder(sortOrder === "default" ? "reverse" : "default")}
             className="h-8 text-xs gap-1.5 bg-primary/10 text-primary border-primary/30 hover:border-primary shadow-none font-medium hover:bg-primary hover:text-white transition-all group"
-            title={sortOrder === "uploaded" ? "Currently: Newest (Click for Oldest)" : "Currently: Oldest (Click for Newest)"}
+            title={sortOrder === "default" ? "Currently: Default Order (Click to Reverse)" : "Currently: Reversed Order (Click for Default)"}
           >
-            {sortOrder === "uploaded" ? (
+            {sortOrder === "default" ? (
               <>
                 <ArrowUp className="w-3.5 h-3.5 shrink-0 transition-colors" />
-                <span>Newest</span>
+                <span>Default</span>
               </>
             ) : (
               <>
                 <ArrowDown className="w-3.5 h-3.5 shrink-0 transition-colors" />
-                <span>Oldest</span>
+                <span>Reversed</span>
               </>
             )}
           </Button>
