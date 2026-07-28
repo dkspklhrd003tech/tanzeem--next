@@ -329,9 +329,8 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
         {/* Modal Body */}
         <div className="p-6 space-y-6 overflow-y-auto flex-1">
           {mediaType === "audio" ? (
-            /* Audio Drag & Drop Upload Section */
+            /* Audio Drag & Drop Upload Section (Cinematic 3D Circular Uploader) */
             <div className="space-y-4">
-              <Label className="font-semibold text-sm text-foreground">Audio File</Label>
               <div
                 onDragEnter={handleDrag}
                 onDragLeave={handleDrag}
@@ -339,10 +338,10 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
                 onDrop={handleDrop}
                 onClick={() => fileInputRef.current?.click()}
                 className={cn(
-                  "border-2 border-dashed rounded-2xl p-8 transition-all cursor-pointer flex flex-col items-center justify-center gap-3 text-center",
+                  "relative border-2 border-dashed rounded-3xl p-8 transition-all duration-300 cursor-pointer flex flex-col items-center justify-center text-center overflow-hidden group shadow-lg hover:shadow-2xl hover:shadow-primary/10",
                   dragActive
-                    ? "border-primary bg-primary/10 shadow-lg scale-[1.01]"
-                    : "border-primary/80 bg-primary-light/50 hover:border-primary hover:bg-primary-light"
+                    ? "border-primary bg-primary/10 scale-[1.01] shadow-primary/20"
+                    : "border-primary/40 bg-gradient-to-b from-card via-muted/20 to-muted/50 hover:border-primary hover:bg-primary/5"
                 )}
               >
                 <input
@@ -353,36 +352,92 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
                   className="hidden"
                   onChange={handleFileChange}
                 />
-                <div className="w-14 h-14 rounded-2xl bg-primary-light text-primary flex items-center justify-center shadow-inner">
-                  <UploadCloud className="w-7 h-7" />
+
+                {/* 3D Circular Ring Stage */}
+                <div className="relative w-44 h-44 flex items-center justify-center my-2">
+                  {/* Outer Rotating Dashed Ring */}
+                  <div
+                    className={cn(
+                      "absolute inset-0 rounded-full border-2 border-dashed border-primary/30 transition-all duration-700",
+                      isUploadingAudio ? "animate-[spin_15s_linear_infinite] border-primary" : "group-hover:rotate-45 group-hover:border-primary/60"
+                    )}
+                  />
+
+                  {/* Radial Backdrop Glow */}
+                  <div className="absolute inset-4 rounded-full bg-gradient-to-tr from-primary/20 via-primary/5 to-transparent blur-xl group-hover:scale-110 transition-transform duration-500" />
+
+                  {/* SVG Circular Progress Meter (Visible during upload) */}
+                  {isUploadingAudio ? (
+                    <svg className="absolute inset-0 w-full h-full -rotate-90 transform" viewBox="0 0 160 160">
+                      <circle
+                        cx="80"
+                        cy="80"
+                        r="68"
+                        className="text-muted/30 stroke-current"
+                        strokeWidth="6"
+                        fill="transparent"
+                      />
+                      <circle
+                        cx="80"
+                        cy="80"
+                        r="68"
+                        className="text-primary stroke-current transition-all duration-300 ease-out"
+                        strokeWidth="6"
+                        strokeDasharray={427.25}
+                        strokeDashoffset={427.25 - (427.25 * (uploadProgress || 0)) / 100}
+                        strokeLinecap="round"
+                        fill="transparent"
+                      />
+                    </svg>
+                  ) : null}
+
+                  {/* Inner 3D Orb Button */}
+                  <div className="relative z-10 w-28 h-28 rounded-full bg-card/90 backdrop-blur-md border border-primary/30 shadow-xl flex flex-col items-center justify-center group-hover:scale-105 transition-all duration-300 group-hover:border-primary">
+                    {isUploadingAudio ? (
+                      <div className="flex flex-col items-center justify-center space-y-1">
+                        <RefreshCw className="w-7 h-7 text-primary animate-spin" />
+                        <span className="text-xs font-extrabold text-primary">{uploadProgress}%</span>
+                      </div>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center space-y-1">
+                        <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors duration-300">
+                          <UploadCloud className="w-5 h-5" />
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  <p className="font-bold text-foreground text-base">
-                    Click or drag & drop to upload
-                  </p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    MP3, WAV, OGG, AAC — large files supported
-                  </p>
+
+                {/* Text Details & Live Counter */}
+                <div className="space-y-2 mt-2 max-w-md z-10">
+                  {isUploadingAudio ? (
+                    <div className="space-y-1.5 animate-pulse">
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold">
+                        <span>Uploading File {currentAudioIndex} of {totalAudioFiles}</span>
+                      </div>
+                      <p className="text-sm font-semibold text-foreground truncate max-w-xs mx-auto">
+                        {currentFileName}
+                      </p>
+                    </div>
+                  ) : (
+                    <>
+                      <p className="font-bold text-foreground text-base group-hover:text-primary transition-colors">
+                        Drop your audio files here to upload
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        MP3, WAV, OGG, AAC, M4A — large files supported
+                      </p>
+                    </>
+                  )}
+                </div>
+
+                {/* Decorative Bottom Divider */}
+                <div className="flex items-center gap-3 w-full max-w-xs mt-4 opacity-70 group-hover:opacity-100 transition-opacity">
+                  <div className="flex-1 h-px bg-border" />
+                  <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">or select files</span>
+                  <div className="flex-1 h-px bg-border" />
                 </div>
               </div>
-
-              {isUploadingAudio && (
-                <div className="space-y-2 bg-muted/40 p-4 rounded-xl border border-border">
-                  <div className="flex items-center justify-between text-xs font-semibold">
-                    <span className="flex items-center gap-2 truncate pr-2">
-                      <RefreshCw className="w-3.5 h-3.5 animate-spin text-primary shrink-0" />
-                      Uploading <span className="font-semibold text-primary">({currentAudioIndex} of {totalAudioFiles})</span>: <span className="text-primary truncate">{currentFileName}</span>...
-                    </span>
-                    <span className="font-semibold text-primary">{uploadProgress}%</span>
-                  </div>
-                  <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
-                    <div
-                      className="bg-primary h-full transition-all duration-300 rounded-full"
-                      style={{ width: `${uploadProgress}%` }}
-                    />
-                  </div>
-                </div>
-              )}
             </div>
           ) : (
             /* Video Playlist Link Section */
