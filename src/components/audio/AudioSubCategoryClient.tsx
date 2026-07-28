@@ -38,21 +38,11 @@ interface AudioSubCategoryClientProps {
 export function AudioSubCategoryClient({ subCategories, directAudios = [] }: AudioSubCategoryClientProps) {
   const [sortOrder, setSortOrder] = useState<"default" | "reverse">("default");
 
-  const displayedSubCategories = [...subCategories].sort((a, b) => {
-    if (sortOrder === "reverse") {
-      return (b.order ?? 0) - (a.order ?? 0);
-    } else {
-      return (a.order ?? 0) - (b.order ?? 0);
-    }
-  });
+  const baseSubCategories = [...subCategories].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  const displayedSubCategories = sortOrder === "reverse" ? [...baseSubCategories].reverse() : baseSubCategories;
 
-  const displayedDirectAudios = [...directAudios].sort((a, b) => {
-    if (sortOrder === "reverse") {
-      return (b.order ?? 0) - (a.order ?? 0);
-    } else {
-      return (a.order ?? 0) - (b.order ?? 0);
-    }
-  });
+  const baseDirectAudios = [...directAudios].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  const displayedDirectAudios = sortOrder === "reverse" ? [...baseDirectAudios].reverse() : baseDirectAudios;
 
   const totalItems = subCategories.length > 0 ? subCategories.length : directAudios.length;
 

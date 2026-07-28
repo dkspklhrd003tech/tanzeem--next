@@ -48,7 +48,7 @@ export default async function CategoryAudiosPage({ params }: { params: Promise<{
       })
       .from(audio)
       .where(and(inArray(audio.categoryId, subCatIds), eq(audio.isPublished, true)))
-      .orderBy(asc(audio.order), desc(audio.publishedAt), asc(audio.title));
+      .orderBy(asc(audio.order), asc(audio.createdAt), asc(audio.title));
   }
 
   // Build the hierarchical structure
@@ -83,7 +83,7 @@ export default async function CategoryAudiosPage({ params }: { params: Promise<{
     })
     .from(audio)
     .where(and(eq(audio.categoryId, mainCat.id), eq(audio.isPublished, true)))
-    .orderBy(asc(audio.order), desc(audio.publishedAt), asc(audio.title));
+    .orderBy(asc(audio.order), asc(audio.createdAt), asc(audio.title));
 
   return (
     <main className="bg-background">

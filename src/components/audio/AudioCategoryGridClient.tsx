@@ -22,13 +22,8 @@ export interface AudioCategoryGridItem {
 export function AudioCategoryGridClient({ categories }: { categories: AudioCategoryGridItem[] }) {
   const [sortOrder, setSortOrder] = useState<"default" | "reverse">("default");
 
-  const displayedCategories = [...categories].sort((a, b) => {
-    if (sortOrder === "reverse") {
-      return (b.order ?? 0) - (a.order ?? 0);
-    } else {
-      return (a.order ?? 0) - (b.order ?? 0);
-    }
-  });
+  const baseCategories = [...categories].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+  const displayedCategories = sortOrder === "reverse" ? [...baseCategories].reverse() : baseCategories;
 
   return (
     <div className="space-y-6">
