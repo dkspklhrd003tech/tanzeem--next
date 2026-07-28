@@ -3,7 +3,7 @@ import { revalidatePath } from "next/cache";
 import { db } from "@/db";
 import { audio, activityLogs } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth";
-import { eq, or, like, desc, count, and } from "drizzle-orm";
+import { eq, or, like, desc, asc, count, and } from "drizzle-orm";
 
 // GET - List all audio
 export async function GET(request: NextRequest) {
@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
           speaker: true,
           author: { columns: { id: true, name: true, email: true } },
         },
-        orderBy: [desc(audio.createdAt)],
+        orderBy: [asc(audio.order), desc(audio.createdAt)],
         limit,
         offset,
       }),

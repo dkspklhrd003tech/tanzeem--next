@@ -3,7 +3,8 @@
 import { useState, useEffect, useRef } from "react";
 import {
   X, RefreshCw, UploadCloud, CheckSquare, Square,
-  Video, Headphones, PlayCircle, ExternalLink, Sparkles, Type
+  Video, Headphones, PlayCircle, ExternalLink, Sparkles, Type,
+  ArrowUp, ArrowDown, Trash2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -124,9 +125,9 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
   };
 
   const handleAudioFiles = async (files: FileList | File[]) => {
-    const audioFiles = Array.from(files).filter(
-      (f) => f.type.startsWith("audio/") || /\.(mp3|wav|ogg|aac|m4a)$/i.test(f.name)
-    );
+    const audioFiles = Array.from(files)
+      .filter((f) => f.type.startsWith("audio/") || /\.(mp3|wav|ogg|aac|m4a)$/i.test(f.name))
+      .sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: "base" }));
 
     if (audioFiles.length === 0) {
       toast({
@@ -244,6 +245,21 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
     setFetchedVideos(
       fetchedVideos.map((v, i) => (i === index ? { ...v, title: newTitle } : v))
     );
+  };
+
+  const handleMoveVideo = (index: number, direction: "up" | "down") => {
+    if (direction === "up" && index === 0) return;
+    if (direction === "down" && index === fetchedVideos.length - 1) return;
+    const newItems = [...fetchedVideos];
+    const targetIdx = direction === "up" ? index - 1 : index + 1;
+    const temp = newItems[index];
+    newItems[index] = newItems[targetIdx];
+    newItems[targetIdx] = temp;
+    setFetchedVideos(newItems);
+  };
+
+  const handleRemoveVideo = (index: number) => {
+    setFetchedVideos(fetchedVideos.filter((_, i) => i !== index));
   };
 
   const handleExecuteImport = async () => {
@@ -456,20 +472,25 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
                   <div
                     key={idx}
                     className={cn(
-                      "p-3 rounded-xl border flex items-start gap-3 transition-all",
+                      "p-3 rounded-xl border flex items-start gap-3 transition-all relative group",
                       video.selected !== false
                         ? "bg-card border-primary/40 shadow-sm"
                         : "bg-muted/30 border-border opacity-50"
                     )}
                   >
-                    <input
-                      type="checkbox"
-                      checked={video.selected !== false}
-                      onChange={() => toggleSelectVideo(idx)}
-                      className="mt-1.5 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer shrink-0"
-                    />
+                    <div className="flex flex-col items-center gap-1 shrink-0 pt-0.5">
+                      <Badge variant="secondary" className="text-[10px] font-mono px-1.5 py-0 h-5 bg-primary/10 text-primary border border-primary/20">
+                        #{idx + 1}
+                      </Badge>
+                      <input
+                        type="checkbox"
+                        checked={video.selected !== false}
+                        onChange={() => toggleSelectVideo(idx)}
+                        className="mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
+                      />
+                    </div>
 
-                    <div className="w-24 aspect-video rounded-lg overflow-hidden bg-muted relative shrink-0 border border-border flex items-center justify-center">
+                    <div className="w-20 aspect-video rounded-lg overflow-hidden bg-muted relative shrink-0 border border-border flex items-center justify-center">
                       {video.thumbnailUrl ? (
                         <img src={video.thumbnailUrl} className="w-full h-full object-cover" alt={video.title} />
                       ) : (
@@ -486,16 +507,51 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
                         className="text-xs font-semibold h-8"
                         placeholder={mediaType === "audio" ? "Audio Title" : "Video Title"}
                       />
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center justify-between gap-2">
                         <a
                           href={video.videoUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-[10px] text-primary hover:underline flex items-center gap-1 truncate"
+                          className="text-[10px] text-primary hover:underline flex items-center gap-1 truncate max-w-[150px]"
                         >
                           <ExternalLink className="w-3 h-3 shrink-0" />
                           <span className="truncate">{video.videoUrl}</span>
                         </a>
+
+                        <div className="flex items-center gap-0.5 shrink-0">
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            disabled={idx === 0}
+                            onClick={() => handleMoveVideo(idx, "up")}
+                            className="h-6 w-6 text-muted-foreground hover:text-primary disabled:opacity-30"
+                            title="Move Up"
+                          >
+                            <ArrowUp className="w-3 h-3" />
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            disabled={idx === fetchedVideos.length - 1}
+                            onClick={() => handleMoveVideo(idx, "down")}
+                            className="h-6 w-6 text-muted-foreground hover:text-primary disabled:opacity-30"
+                            title="Move Down"
+                          >
+                            <ArrowDown className="w-3 h-3" />
+                          </Button>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleRemoveVideo(idx)}
+                            className="h-6 w-6 text-muted-foreground hover:text-destructive"
+                            title="Remove item"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   </div>

@@ -50,6 +50,7 @@ interface MediaItem {
   code?: string;
   slug?: string;
   tags?: string;
+  order?: number;
   metaTitle?: string;
   metaDescription?: string;
   isPublished?: boolean;
@@ -505,6 +506,15 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
     const targetCategoryId = bulkTargetSubId.replace("_direct", "");
     const endpoint = mediaType === "audio" ? "/api/audio" : "/api/videos";
 
+    const targetSub = activeCategory.subCategories.find(s => s.id === bulkTargetSubId);
+    let startOrder = 0;
+    if (targetSub && targetSub.mediaItems && targetSub.mediaItems.length > 0) {
+      const orders = targetSub.mediaItems.map(m => Number(m.order ?? 0)).filter(n => !isNaN(n));
+      if (orders.length > 0) {
+        startOrder = Math.max(...orders) + 1;
+      }
+    }
+
     for (let i = 0; i < items.length; i++) {
       const v = items[i];
       const payload: any = {
@@ -513,7 +523,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
         thumbnailUrl: v.thumbnailUrl || "",
         categoryId: targetCategoryId,
         isPublished: true,
-        order: i,
+        order: startOrder + i,
       };
 
       if (mediaType === "audio") {
@@ -678,8 +688,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
           slug: subCat.slug || "",
           order: subCat.order || 0,
           isPublished: subCat.isActive !== false,
-          customFields: subCat.customFields || {},
-          mediaItems: (mediaType === "audio" ? subCat.audioFiles : subCat.videos)?.map((item: any) => ({
+          mediaItems: ((mediaType === "audio" ? subCat.audioFiles : subCat.videos)?.map((item: any) => ({
             id: item.id,
             title: item.title,
             mediaUrl: mediaType === "audio" ? item.audioUrl : item.videoUrl,
@@ -690,13 +699,14 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
             code: item.code || item.episodeNumber || "",
             slug: item.slug || "",
             tags: item.tags || "",
+            order: item.order ?? 0,
             isPublished: (item.isPublished !== undefined ? item.isPublished : item.isActive) !== false,
             customFields: item.customFields || {},
             viewCount: item.viewCount || 0,
             playCount: item.playCount || 0,
             shareCount: item.shareCount || 0,
             downloadCount: item.downloadCount || 0
-          })) || []
+          })) || []).sort((a: any, b: any) => (a.order || 0) - (b.order || 0))
         })) || []).sort((a: any, b: any) => (a.order || 0) - (b.order || 0))
       })).sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
       setCategories(mapped);
