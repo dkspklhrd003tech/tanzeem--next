@@ -213,7 +213,7 @@ function SortableSubCatCard({ sub, mediaType, isSelected, onToggleSelect, onClic
       )}
       <div className="p-4 flex items-center justify-between gap-2 flex-1">
         <div className="flex-1 min-w-0 pr-1">
-          <h5 className="font-bold text-sm group-hover:text-primary transition-colors leading-snug text-left line-clamp-2" title={sub.title}>{sub.code ? `${sub.code} | ` : ""}{sub.title}</h5>
+          <h5 className="font-bold text-sm group-hover:text-primary transition-colors leading-snug text-left line-clamp-3" title={sub.title}>{sub.code ? `${sub.code} | ` : ""}{sub.title}</h5>
           <div className="mt-1">
             <Badge variant="secondary" className="text-[10px] uppercase font-semibold">
               {sub.mediaItems?.length || 0} {mediaType === "audio" ? "Audios" : "Videos"}
@@ -294,7 +294,7 @@ function SortableDirectVideoCard({ item, mediaType, isSelected, onToggleSelect, 
       )}
       <div className="p-4 flex items-center justify-between gap-2 flex-1">
         <div className="flex-1 min-w-0 pr-1">
-          <h5 className="font-bold text-sm group-hover:text-primary transition-colors leading-snug text-left line-clamp-2" title={item.title}>{item.code ? `${item.code} | ` : ""}{item.title}</h5>
+          <h5 className="font-bold text-sm group-hover:text-primary transition-colors leading-snug text-left line-clamp-3" title={item.title}>{item.code ? `${item.code} | ` : ""}{item.title}</h5>
           <div className="flex items-center gap-2 mt-1.5 flex-wrap text-[11px] font-semibold">
             <span className="flex items-center gap-1 text-blue-600 bg-blue-50 dark:bg-blue-950/40 px-1.5 py-0.5 rounded border border-blue-200 dark:border-blue-800/50" title="Plays">
               <PlayCircle className="w-3 h-3" /> {item.playCount || 0}
