@@ -298,7 +298,7 @@ function SeoCenterDashboardWidget() {
 
   pageList.forEach((p) => {
     const issues: string[] = [];
-    const seoData = p.seoData || {};
+    const seoData = typeof p.seoData === "string" ? (() => { try { return JSON.parse(p.seoData); } catch { return {}; } })() : (p.seoData || {});
 
     // 1. Traditional SEO
     let hasTradIssue = false;

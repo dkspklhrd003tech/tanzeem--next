@@ -21,6 +21,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { PdfUploader } from "@/components/admin/PdfUploader";
+import PageSeoManager from "./PageSeoManager";
 
 // DnD Kit imports
 import {
@@ -770,119 +771,8 @@ export default function PressReleasesPageEditor({ pageId, initialPageData }: Pre
 
         </TabsContent>
 
-        {/* Tab 2: SEO Settings Tab */}
-        <TabsContent value="settings" className="outline-none">
-          <form onSubmit={handlePageSave} className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-              {/* Main parameters */}
-              <div className="lg:col-span-2 space-y-6">
-                <Card className="rounded-xl border border-border">
-                  <CardHeader>
-                    <CardTitle>Page Metadata</CardTitle>
-                    <CardDescription>
-                      Configure standard page title, path, and excerpt fields.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="page-title">Page Title <span className="text-destructive">*</span></Label>
-                        <Input
-                          id="page-title"
-                          value={pageForm.title}
-                          onChange={(e) => setPageForm(prev => ({ ...prev, title: e.target.value }))}
-                          className={cn(pageErrors.title && "border-destructive")}
-                        />
-                        {pageErrors.title && <p className="text-xs text-destructive">{pageErrors.title}</p>}
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="page-slug">Url Slug <span className="text-destructive">*</span></Label>
-                        <Input
-                          id="page-slug"
-                          value={pageForm.slug}
-                          onChange={(e) => setPageForm(prev => ({ ...prev, slug: e.target.value }))}
-                          className={cn("font-mono", pageErrors.slug && "border-destructive")}
-                        />
-                        {pageErrors.slug && <p className="text-xs text-destructive">{pageErrors.slug}</p>}
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="page-excerpt">Brief Excerpt / Summary</Label>
-                      <Textarea
-                        id="page-excerpt"
-                        value={pageForm.excerpt}
-                        rows={3}
-                        onChange={(e) => setPageForm(prev => ({ ...prev, excerpt: e.target.value }))}
-                      />
-                    </div>
-                  </CardContent>
-                </Card>
-
-                <Card className="rounded-xl border border-border">
-                  <CardHeader>
-                    <CardTitle>Search Engine Optimization (SEO)</CardTitle>
-                    <CardDescription>
-                      Configure search meta keywords and descriptions.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="seo-title">Meta Title</Label>
-                      <Input
-                        id="seo-title"
-                        value={pageForm.metaTitle}
-                        onChange={(e) => setPageForm(prev => ({ ...prev, metaTitle: e.target.value }))}
-                        placeholder="Default is Page Title"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="seo-desc">Meta Description</Label>
-                      <Textarea
-                        id="seo-desc"
-                        value={pageForm.metaDescription}
-                        rows={3}
-                        onChange={(e) => setPageForm(prev => ({ ...prev, metaDescription: e.target.value }))}
-                        placeholder="Brief summary for Google search listings"
-                      />
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-
-              {/* Status and Action Column */}
-              <div className="space-y-6">
-                <Card className="rounded-xl border border-border">
-                  <CardHeader>
-                    <CardTitle>Publishing Status</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="text-sm font-medium">Page Visibility</p>
-                        <p className="text-xs text-muted-foreground mt-0.5">
-                          {pageForm.isPublished ? "Live on website" : "Saved as draft"}
-                        </p>
-                      </div>
-                      <Switch
-                        checked={pageForm.isPublished}
-                        onCheckedChange={(checked) => setPageForm(prev => ({ ...prev, isPublished: checked }))}
-                      />
-                    </div>
-                    <Button
-                      type="submit"
-                      disabled={isSavingPage}
-                      className="w-full bg-primary text-white hover:bg-primary/95"
-                    >
-                      {isSavingPage ? "Saving Configuration..." : "Save Page Settings"}
-                    </Button>
-                  </CardContent>
-                </Card>
-              </div>
-
-            </div>
-          </form>
+        <TabsContent value="settings" className="space-y-6">
+          <PageSeoManager pageId={pageId} hideHeader={true} />
         </TabsContent>
       </Tabs>
 

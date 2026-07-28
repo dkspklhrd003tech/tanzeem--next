@@ -1,11 +1,13 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Plus, Pencil, XCircle, MapPin, Search, X } from "lucide-react";
+import { Plus, Pencil, XCircle, MapPin, Search, X, Settings2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import PageSeoManager from "./PageSeoManager";
 
 interface KhitabatAddress {
     id: string;
@@ -156,84 +158,97 @@ export function KhitabatJummahManager() {
                 </Button>
             </div>
 
-            {/* Search Bar */}
-            <div className="bg-card border border-border rounded-xl p-4">
-                <div className="relative max-w-md">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                    <input
-                        type="text"
-                        placeholder="Search by city, masjid, or address..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full pl-9 pr-4 py-2 border border-border rounded-lg bg-background focus:outline-none focus:border-primary text-sm"
-                    />
-                </div>
-            </div>
+            <Tabs defaultValue="list" className="space-y-6">
+                <TabsList>
+                    <TabsTrigger value="list"><MapPin className="w-4 h-4 mr-2" /> Venues List</TabsTrigger>
+                    <TabsTrigger value="settings"><Settings2 className="w-4 h-4 mr-2" /> Page Setup & SEO</TabsTrigger>
+                </TabsList>
 
-            {/* Data Grid */}
-            <div className="bg-card rounded-xl border border-border overflow-hidden shadow-sm">
-                <div className="overflow-x-auto">
-                    <table className="w-full text-sm text-left">
-                        <thead className="bg-muted text-muted-foreground uppercase text-xs">
-                            <tr>
-                                <th className="px-6 py-4 font-medium">Masjid & City</th>
-                                <th className="px-6 py-4 font-medium">Address</th>
-                                <th className="px-6 py-4 font-medium">Time / Schedule</th>
-                                <th className="px-6 py-4 font-medium">Contact</th>
-                                <th className="px-6 py-4 font-medium">Status</th>
-                                <th className="px-6 py-4 text-right font-medium">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-border">
-                            {isLoading ? (
-                                <tr>
-                                    <td colSpan={6} className="px-6 py-8 text-center text-muted-foreground">Loading addresses...</td>
-                                </tr>
-                            ) : filteredAddresses.length === 0 ? (
-                                <tr>
-                                    <td colSpan={6} className="px-6 py-8 text-center text-muted-foreground">No venues found matching your criteria.</td>
-                                </tr>
-                            ) : (
-                                filteredAddresses.map((addr) => (
-                                    <tr key={addr.id} className="hover:bg-muted/50 transition-colors">
-                                        <td className="px-6 py-4">
-                                            <p className="font-bold text-foreground">{addr.masjid || "Masjid"}</p>
-                                            <Badge variant="outline" className="mt-1">{addr.city}</Badge>
-                                        </td>
-                                        <td className="px-6 py-4 max-w-xs">
-                                            <span className="text-muted-foreground text-xs flex items-center gap-1 truncate" title={addr.address}>
-                                                <MapPin className="w-3 h-3 shrink-0 text-primary" />
-                                                {addr.address}
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <p className="font-medium text-xs">{addr.time}</p>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <p className="font-semibold text-xs">{addr.contact || "No Contact"}</p>
-                                        </td>
-                                        <td className="px-6 py-4">
-                                            <Badge variant={addr.isPublished ? "default" : "secondary"}>
-                                                {addr.isPublished ? "Active" : "Hidden"}
-                                            </Badge>
-                                        </td>
-                                        <td className="px-6 py-4 text-right">
-                                            <div className="flex justify-end gap-2">
-                                                <Button variant="ghost" size="icon" onClick={() => handleOpenModal(addr)}>
-                                                    <Pencil className="w-4 h-4 text-blue-500" />
-                                                </Button>
-                                                <Button variant="ghost" size="icon" onClick={() => setDeletingAddressId({id: addr.id, masjid: addr.masjid})}>
-                                                    <XCircle className="w-4 h-4 text-red-500" />
-                                                </Button>
-                                            </div>
-                                        </td>
+                <TabsContent value="list" className="space-y-6">
+                    {/* Search Bar */}
+                    <div className="bg-card border border-border rounded-xl p-4">
+                        <div className="relative max-w-md">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                            <input
+                                type="text"
+                                placeholder="Search by city, masjid, or address..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="w-full pl-9 pr-4 py-2 border border-border rounded-lg bg-background focus:outline-none focus:border-primary text-sm"
+                            />
+                        </div>
+                    </div>
+
+                    {/* Data Grid */}
+                    <div className="bg-card rounded-xl border border-border overflow-hidden shadow-sm">
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-sm text-left">
+                                <thead className="bg-muted text-muted-foreground uppercase text-xs">
+                                    <tr>
+                                        <th className="px-6 py-4 font-medium">Masjid & City</th>
+                                        <th className="px-6 py-4 font-medium">Address</th>
+                                        <th className="px-6 py-4 font-medium">Time / Schedule</th>
+                                        <th className="px-6 py-4 font-medium">Contact</th>
+                                        <th className="px-6 py-4 font-medium">Status</th>
+                                        <th className="px-6 py-4 text-right font-medium">Actions</th>
                                     </tr>
-                                ))
-                            )}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+                                </thead>
+                                <tbody className="divide-y divide-border">
+                                    {isLoading ? (
+                                        <tr>
+                                            <td colSpan={6} className="px-6 py-8 text-center text-muted-foreground">Loading addresses...</td>
+                                        </tr>
+                                    ) : filteredAddresses.length === 0 ? (
+                                        <tr>
+                                            <td colSpan={6} className="px-6 py-8 text-center text-muted-foreground">No venues found matching your criteria.</td>
+                                        </tr>
+                                    ) : (
+                                        filteredAddresses.map((addr) => (
+                                            <tr key={addr.id} className="hover:bg-muted/50 transition-colors">
+                                                <td className="px-6 py-4">
+                                                    <p className="font-bold text-foreground">{addr.masjid || "Masjid"}</p>
+                                                    <Badge variant="outline" className="mt-1">{addr.city}</Badge>
+                                                </td>
+                                                <td className="px-6 py-4 max-w-xs">
+                                                    <span className="text-muted-foreground text-xs flex items-center gap-1 truncate" title={addr.address}>
+                                                        <MapPin className="w-3 h-3 shrink-0 text-primary" />
+                                                        {addr.address}
+                                                    </span>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <p className="font-medium text-xs">{addr.time}</p>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <p className="font-semibold text-xs">{addr.contact || "No Contact"}</p>
+                                                </td>
+                                                <td className="px-6 py-4">
+                                                    <Badge variant={addr.isPublished ? "default" : "secondary"}>
+                                                        {addr.isPublished ? "Active" : "Hidden"}
+                                                    </Badge>
+                                                </td>
+                                                <td className="px-6 py-4 text-right">
+                                                    <div className="flex justify-end gap-2">
+                                                        <Button variant="ghost" size="icon" onClick={() => handleOpenModal(addr)}>
+                                                            <Pencil className="w-4 h-4 text-blue-500" />
+                                                        </Button>
+                                                        <Button variant="ghost" size="icon" onClick={() => setDeletingAddressId({id: addr.id, masjid: addr.masjid})}>
+                                                            <XCircle className="w-4 h-4 text-red-500" />
+                                                        </Button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </TabsContent>
+
+                <TabsContent value="settings">
+                    <PageSeoManager pageId="jummah-venues" hideHeader={true} />
+                </TabsContent>
+            </Tabs>
 
             {/* Address Form Modal */}
             {isModalOpen && (

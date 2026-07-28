@@ -18,6 +18,7 @@ import { FormsHistory } from "./FormsHistory";
 import { FormsEmailConfigs } from "./FormsEmailConfigs";
 import { FormsEmailLogs } from "./FormsEmailLogs";
 import { FormsEmailTemplate } from "./FormsEmailTemplate";
+import PageSeoManager from "./PageSeoManager";
 import {
   DndContext,
   closestCenter,
@@ -369,186 +370,199 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column: Settings */}
-        <div className="lg:col-span-1 space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Building2 className="h-5 w-5 text-primary" /> Markaz Details
-              </CardTitle>
-              <CardDescription>Main contact details shown at the top of the contact page.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="pt-4 border-t border-border mt-4">
-                <h4 className="font-semibold mb-3">Main Header Section</h4>
-                <div className="space-y-4">
-                  <div>
-                    <Label>Top Small Heading</Label>
-                    <Input value={settings.contact_heading || ""} onChange={(e) => handleSettingChange("contact_heading", e.target.value)} placeholder="e.g. Get in touch with" />
-                  </div>
-                  <div>
-                    <Label>Main Large Heading</Label>
-                    <Input value={settings.contact_subheading || ""} onChange={(e) => handleSettingChange("contact_subheading", e.target.value)} placeholder="e.g. Muntazim Ala Halqa Majaz" />
-                  </div>
-                </div>
-              </div>
+      <Tabs defaultValue="details" className="space-y-6">
+        <TabsList>
+          <TabsTrigger value="details"><Building2 className="w-4 h-4 mr-2" /> Contact Details & Forms</TabsTrigger>
+          <TabsTrigger value="seo"><MessageSquare className="w-4 h-4 mr-2" /> Page Setup & SEO</TabsTrigger>
+        </TabsList>
 
-              <div className="pt-4 border-t border-border mt-4">
-                <h4 className="font-semibold mb-3">Contact Cards</h4>
-                <div className="space-y-4">
-                  <div className="grid grid-cols-1 gap-2 ">
-                    <div>
-                      <Label>Primary Phone</Label>
-                      <Input value={settings.contact_phone || ""} onChange={(e) => handleSettingChange("contact_phone", e.target.value)} />
-                    </div>
-                    <div>
-                      <Label>Phone Link URL (Optional)</Label>
-                      <Input value={settings.contact_phone_url || ""} onChange={(e) => handleSettingChange("contact_phone_url", e.target.value)} placeholder="e.g. tel:+923001234567" />
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 gap-2">
-                    <div>
-                      <Label>General Email</Label>
-                      <Input value={settings.contact_email || ""} onChange={(e) => handleSettingChange("contact_email", e.target.value)} />
-                    </div>
-                    <div>
-                      <Label>Email Link URL (Optional)</Label>
-                      <Input value={settings.contact_email_url || ""} onChange={(e) => handleSettingChange("contact_email_url", e.target.value)} placeholder="e.g. mailto:test@tanzeem.org" />
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 gap-2">
-                    <div>
-                      <Label>Main Address</Label>
-                      <Input value={settings.footer_address || ""} onChange={(e) => handleSettingChange("footer_address", e.target.value)} />
-                    </div>
-                    <div>
-                      <Label>Address Link URL (Optional)</Label>
-                      <Input value={settings.contact_address_url || ""} onChange={(e) => handleSettingChange("contact_address_url", e.target.value)} placeholder="e.g. https://maps.google.com/..." />
+        <TabsContent value="details" className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Left Column: Settings */}
+            <div className="lg:col-span-1 space-y-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-lg flex items-center gap-2">
+                    <Building2 className="h-5 w-5 text-primary" /> Markaz Details
+                  </CardTitle>
+                  <CardDescription>Main contact details shown at the top of the contact page.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="pt-4 border-t border-border mt-4">
+                    <h4 className="font-semibold mb-3">Main Header Section</h4>
+                    <div className="space-y-4">
+                      <div>
+                        <Label>Top Small Heading</Label>
+                        <Input value={settings.contact_heading || ""} onChange={(e) => handleSettingChange("contact_heading", e.target.value)} placeholder="e.g. Get in touch with" />
+                      </div>
+                      <div>
+                        <Label>Main Large Heading</Label>
+                        <Input value={settings.contact_subheading || ""} onChange={(e) => handleSettingChange("contact_subheading", e.target.value)} placeholder="e.g. Muntazim Ala Halqa Majaz" />
+                      </div>
                     </div>
                   </div>
-                </div>
-              </div>
-              <div className="pt-4 border-t border-border mt-4">
-                <h4 className="font-semibold mb-3">Legacy Footer Details</h4>
-                <div className="space-y-4">
-                  <div>
-                    <Label>WhatsApp Number</Label>
-                    <Input value={settings.whatsapp_number || ""} onChange={(e) => handleSettingChange("whatsapp_number", e.target.value)} />
-                  </div>
-                  <div>
-                    <Label>Office Email</Label>
-                    <Input value={settings.contact_email_office || ""} onChange={(e) => handleSettingChange("contact_email_office", e.target.value)} />
-                  </div>
-                </div>
-              </div>
-              <ConfirmDialog
-                title="Save Contact Details"
-                description="Are you sure you want to save the updated contact information?"
-                onConfirm={saveSettings}
-              >
-                <Button className="w-full mt-4" disabled={isSavingSettings}>
-                  {isSavingSettings ? <RefreshCw className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
-                  Save Details
-                </Button>
-              </ConfirmDialog>
-            </CardContent>
-          </Card>
-        </div>
 
-        {/* Right Column: Locations */}
-        <div className="lg:col-span-2 space-y-6">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-4">
-              <div>
-                <CardTitle className="text-lg flex items-center gap-2">
-                  <MapPin className="h-5 w-5 text-primary" /> Branch Locations
-                </CardTitle>
-                <CardDescription>Manage the interactive map tabs shown at the bottom.</CardDescription>
-              </div>
-              <Button onClick={() => openLocationDialog()} size="sm">
-                <Plus className="h-4 w-4 mr-1" /> Add Branch
-              </Button>
-            </CardHeader>
-            <CardContent>
-              {locations.length === 0 ? (
-                <div className="text-center py-12 border-2 border-dashed border-border rounded-xl">
-                  <p className="text-sm text-muted-foreground">No branches found. Add one to get started.</p>
-                </div>
-              ) : (
-                <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-                  <SortableContext items={locations.map(l => l.id)} strategy={rectSortingStrategy}>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {locations.map((loc) => (
-                        <SortableLocationCard
-                          key={loc.id}
-                          loc={loc}
-                          onEdit={() => openLocationDialog(loc)}
-                          onDelete={() => setDeletingLocationId(loc.id)}
-                        />
-                      ))}
+                  <div className="pt-4 border-t border-border mt-4">
+                    <h4 className="font-semibold mb-3">Contact Cards</h4>
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-1 gap-2 ">
+                        <div>
+                          <Label>Primary Phone</Label>
+                          <Input value={settings.contact_phone || ""} onChange={(e) => handleSettingChange("contact_phone", e.target.value)} />
+                        </div>
+                        <div>
+                          <Label>Phone Link URL (Optional)</Label>
+                          <Input value={settings.contact_phone_url || ""} onChange={(e) => handleSettingChange("contact_phone_url", e.target.value)} placeholder="e.g. tel:+923001234567" />
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-1 gap-2">
+                        <div>
+                          <Label>General Email</Label>
+                          <Input value={settings.contact_email || ""} onChange={(e) => handleSettingChange("contact_email", e.target.value)} />
+                        </div>
+                        <div>
+                          <Label>Email Link URL (Optional)</Label>
+                          <Input value={settings.contact_email_url || ""} onChange={(e) => handleSettingChange("contact_email_url", e.target.value)} placeholder="e.g. mailto:test@tanzeem.org" />
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-1 gap-2">
+                        <div>
+                          <Label>Main Address</Label>
+                          <Input value={settings.footer_address || ""} onChange={(e) => handleSettingChange("footer_address", e.target.value)} />
+                        </div>
+                        <div>
+                          <Label>Address Link URL (Optional)</Label>
+                          <Input value={settings.contact_address_url || ""} onChange={(e) => handleSettingChange("contact_address_url", e.target.value)} placeholder="e.g. https://maps.google.com/..." />
+                        </div>
+                      </div>
                     </div>
-                  </SortableContext>
-                </DndContext>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-
-      {/* Forms Management - Full Width */}
-      <div className="mt-8 w-full">
-        <Card className="rounded-3xl border border-slate-100 shadow-sm overflow-hidden bg-white">
-          <CardHeader className="flex flex-row items-center justify-between border-b border-border py-4 px-6 bg-slate-50/50">
-            <div className="flex items-center gap-2">
-              <MessageSquare className="w-5 h-5 text-primary" />
-              <CardTitle className="text-sm font-bold uppercase tracking-widest text-slate-700">Forms Management</CardTitle>
+                  </div>
+                  <div className="pt-4 border-t border-border mt-4">
+                    <h4 className="font-semibold mb-3">Legacy Footer Details</h4>
+                    <div className="space-y-4">
+                      <div>
+                        <Label>WhatsApp Number</Label>
+                        <Input value={settings.whatsapp_number || ""} onChange={(e) => handleSettingChange("whatsapp_number", e.target.value)} />
+                      </div>
+                      <div>
+                        <Label>Office Email</Label>
+                        <Input value={settings.contact_email_office || ""} onChange={(e) => handleSettingChange("contact_email_office", e.target.value)} />
+                      </div>
+                    </div>
+                  </div>
+                  <ConfirmDialog
+                    title="Save Contact Details"
+                    description="Are you sure you want to save the updated contact information?"
+                    onConfirm={saveSettings}
+                  >
+                    <Button className="w-full mt-4" disabled={isSavingSettings}>
+                      {isSavingSettings ? <RefreshCw className="h-4 w-4 animate-spin mr-2" /> : <Save className="h-4 w-4 mr-2" />}
+                      Save Details
+                    </Button>
+                  </ConfirmDialog>
+                </CardContent>
+              </Card>
             </div>
-            <Button onClick={saveSettings} disabled={isSavingSettings} className="bg-primary hover:bg-primary/90 text-white rounded-full px-6 font-semibold">
-              {isSavingSettings ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
-              Save Form
-            </Button>
-          </CardHeader>
-          <CardContent className="p-6 bg-slate-50/30">
-            <Tabs defaultValue="email-configs" variant="bubble" className="w-full">
-              <TabsList>
-                <TabsTrigger value="email-configs">Email Configs</TabsTrigger>
-                <TabsTrigger value="email-template">Email Template</TabsTrigger>
-                <TabsTrigger value="inbox" className="relative">
-                  Inbox
-                  {unreadCount > 0 && (
-                    <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-primary shadow-sm animate-pulse" />
+
+            {/* Right Column: Locations */}
+            <div className="lg:col-span-2 space-y-6">
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between pb-4">
+                  <div>
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <MapPin className="h-5 w-5 text-primary" /> Branch Locations
+                    </CardTitle>
+                    <CardDescription>Manage the interactive map tabs shown at the bottom.</CardDescription>
+                  </div>
+                  <Button onClick={() => openLocationDialog()} size="sm">
+                    <Plus className="h-4 w-4 mr-1" /> Add Branch
+                  </Button>
+                </CardHeader>
+                <CardContent>
+                  {locations.length === 0 ? (
+                    <div className="text-center py-12 border-2 border-dashed border-border rounded-xl">
+                      <p className="text-sm text-muted-foreground">No branches found. Add one to get started.</p>
+                    </div>
+                  ) : (
+                    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+                      <SortableContext items={locations.map(l => l.id)} strategy={rectSortingStrategy}>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {locations.map((loc) => (
+                            <SortableLocationCard
+                              key={loc.id}
+                              loc={loc}
+                              onEdit={() => openLocationDialog(loc)}
+                              onDelete={() => setDeletingLocationId(loc.id)}
+                            />
+                          ))}
+                        </div>
+                      </SortableContext>
+                    </DndContext>
                   )}
-                </TabsTrigger>
-                <TabsTrigger value="history">Sent History</TabsTrigger>
-                <TabsTrigger value="email-logs">Email Logs</TabsTrigger>
-              </TabsList>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+
+          {/* Forms Management - Full Width */}
+          <div className="mt-8 w-full">
+            <Card className="rounded-3xl border border-slate-100 shadow-sm overflow-hidden bg-white">
+              <CardHeader className="flex flex-row items-center justify-between border-b border-border py-4 px-6 bg-slate-50/50">
+                <div className="flex items-center gap-2">
+                  <MessageSquare className="w-5 h-5 text-primary" />
+                  <CardTitle className="text-sm font-bold uppercase tracking-widest text-slate-700">Forms Management</CardTitle>
+                </div>
+                <Button onClick={saveSettings} disabled={isSavingSettings} className="bg-primary hover:bg-primary/90 text-white rounded-full px-6 font-semibold">
+                  {isSavingSettings ? <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> : <Save className="w-4 h-4 mr-2" />}
+                  Save Form
+                </Button>
+              </CardHeader>
+              <CardContent className="p-6 bg-slate-50/30">
+                <Tabs defaultValue="email-configs" variant="bubble" className="w-full">
+                  <TabsList>
+                    <TabsTrigger value="email-configs">Email Configs</TabsTrigger>
+                    <TabsTrigger value="email-template">Email Template</TabsTrigger>
+                    <TabsTrigger value="inbox" className="relative">
+                      Inbox
+                      {unreadCount > 0 && (
+                        <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-primary shadow-sm animate-pulse" />
+                      )}
+                    </TabsTrigger>
+                    <TabsTrigger value="history">Sent History</TabsTrigger>
+                    <TabsTrigger value="email-logs">Email Logs</TabsTrigger>
+                  </TabsList>
 
 
-              <TabsContent value="inbox">
-                <FormsInbox />
-              </TabsContent>
+                  <TabsContent value="inbox">
+                    <FormsInbox />
+                  </TabsContent>
 
-              <TabsContent value="history">
-                <FormsHistory />
-              </TabsContent>
+                  <TabsContent value="history">
+                    <FormsHistory />
+                  </TabsContent>
 
-              <TabsContent value="email-configs">
-                <FormsEmailConfigs ref={emailConfigsRef} />
-              </TabsContent>
+                  <TabsContent value="email-configs">
+                    <FormsEmailConfigs ref={emailConfigsRef} />
+                  </TabsContent>
 
-              <TabsContent value="email-template">
-                <FormsEmailTemplate ref={emailTemplateRef} />
-              </TabsContent>
+                  <TabsContent value="email-template">
+                    <FormsEmailTemplate ref={emailTemplateRef} />
+                  </TabsContent>
 
-              <TabsContent value="email-logs">
-                <FormsEmailLogs />
-              </TabsContent>
+                  <TabsContent value="email-logs">
+                    <FormsEmailLogs />
+                  </TabsContent>
 
-            </Tabs>
-          </CardContent>
-        </Card>
-      </div>
+                </Tabs>
+              </CardContent>
+            </Card>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="seo">
+          <PageSeoManager pageId={pageId} hideHeader={true} />
+        </TabsContent>
+      </Tabs>
       <Dialog open={isLocationDialogOpen} onOpenChange={setIsLocationDialogOpen}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>

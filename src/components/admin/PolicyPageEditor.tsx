@@ -14,6 +14,7 @@ import { RichTextEditor } from "./RichTextEditor";
 import { ImageUploader } from "./ImageUploader";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { cn } from "@/lib/utils";
+import PageSeoManager from "./PageSeoManager";
 
 const PAGE_SLUG = "policy";
 
@@ -314,35 +315,8 @@ export function PolicyPageEditor() {
         </Card>
 
         {/* SEO Card */}
-        <Card>
-          <CardHeader>
-            <CardTitle>SEO Settings</CardTitle>
-            <CardDescription>Override the page title and description for search engines.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label className="text-xs font-bold uppercase">Meta Title <span className="text-muted-foreground font-normal normal-case">(max 70 chars)</span></Label>
-              <Input
-                value={form.metaTitle ?? ""}
-                onChange={(e) => setForm(prev => ({ ...prev, metaTitle: e.target.value }))}
-                placeholder="Policy | Tanzeem-e-Islami"
-                maxLength={70}
-                className="max-w-xl"
-              />
-              <p className="text-[11px] text-muted-foreground">{(form.metaTitle ?? "").length}/70 characters</p>
-            </div>
-            <div className="space-y-2">
-              <Label className="text-xs font-bold uppercase">Meta Description <span className="text-muted-foreground font-normal normal-case">(max 160 chars)</span></Label>
-              <Input
-                value={form.metaDescription ?? ""}
-                onChange={(e) => setForm(prev => ({ ...prev, metaDescription: e.target.value }))}
-                placeholder="Our policy on privacy, terms, and user rights."
-                maxLength={160}
-                className="max-w-xl"
-              />
-              <p className="text-[11px] text-muted-foreground">{(form.metaDescription ?? "").length}/160 characters</p>
-            </div>
-          </CardContent>
+        <Card className="p-6">
+          <PageSeoManager pageId={pageId || "policy"} hideHeader={true} />
         </Card>
 
         {/* Content Card */}

@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useChunkedUpload } from "@/hooks/useChunkedUpload";
 import { AudioUploader } from "@/components/admin/AudioUploader";
+import PageSeoManager from "./PageSeoManager";
 
 import {
   DndContext, closestCenter, KeyboardSensor, PointerSensor,
@@ -604,18 +605,7 @@ export default function KhitabAudiosPageEditor({ pageId, initialPageData }: { pa
         </TabsContent>
 
         <TabsContent value="settings">
-          <form onSubmit={handlePageSave} className="space-y-6 max-w-2xl">
-            <Card>
-              <CardHeader><CardTitle>Page SEO</CardTitle></CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2"><Label>Title</Label><Input value={pageForm.title} onChange={e => setPageForm({ ...pageForm, title: e.target.value })} /></div>
-                <div className="space-y-2"><Label>Slug</Label><Input value={pageForm.slug} onChange={e => setPageForm({ ...pageForm, slug: e.target.value })} /></div>
-                <div className="space-y-2"><Label>Meta Title</Label><Input value={pageForm.metaTitle || ""} onChange={e => setPageForm({ ...pageForm, metaTitle: e.target.value })} /></div>
-                <div className="space-y-2"><Label>Meta Description</Label><Textarea value={pageForm.metaDescription || ""} onChange={e => setPageForm({ ...pageForm, metaDescription: e.target.value })} /></div>
-                <Button type="submit" disabled={isSavingPage}>{isSavingPage ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : "Save Settings"}</Button>
-              </CardContent>
-            </Card>
-          </form>
+          <PageSeoManager pageId={pageId} hideHeader={true} />
         </TabsContent>
       </Tabs>
 

@@ -106,8 +106,23 @@ export async function GET(request: NextRequest) {
 
     const total = Number(countResult[0]?.count ?? 0);
 
+    const parsedRows = rows.map((row: any) => {
+      let parsedSeo = row.seoData;
+      if (typeof parsedSeo === "string") {
+        try {
+          parsedSeo = JSON.parse(parsedSeo);
+        } catch {
+          parsedSeo = {};
+        }
+      }
+      return {
+        ...row,
+        seoData: parsedSeo || {},
+      };
+    });
+
     return NextResponse.json({
-      pages: rows,
+      pages: parsedRows,
       pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
     });
   } catch (err) {

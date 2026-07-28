@@ -21,6 +21,7 @@ import {
   X,
 } from "lucide-react";
 import { PageActionBar } from "@/components/admin/PageActionBar";
+import PageSeoManager from "./PageSeoManager";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -1038,124 +1039,8 @@ export default function SocialMediaPageEditor({ pageId, initialPageData }: Socia
           </Card>
         </TabsContent>
 
-        {/* Tab 3: Standard Page Settings Tab */}
-        <TabsContent value="settings" className="outline-none">
-          <form onSubmit={handlePageSave} className="space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-              {/* Main parameters */}
-              <div className="lg:col-span-2 space-y-6">
-                <Card className="rounded-xl border border-border">
-                  <CardHeader>
-                    <CardTitle>Page Metadata</CardTitle>
-                    <CardDescription>
-                      Configure standard page title, path, and excerpt fields.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="page-title">Page Title <span className="text-destructive">*</span></Label>
-                        <Input
-                          id="page-title"
-                          value={pageForm.title}
-                          onChange={(e) => setPageForm(prev => ({ ...prev, title: e.target.value }))}
-                          className={cn(pageErrors.title && "border-destructive")}
-                        />
-                        {pageErrors.title && <p className="text-xs text-destructive">{pageErrors.title}</p>}
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="page-slug">Url Slug <span className="text-destructive">*</span></Label>
-                        <Input
-                          id="page-slug"
-                          value={pageForm.slug}
-                          onChange={(e) => setPageForm(prev => ({ ...prev, slug: e.target.value }))}
-                          className={cn("font-mono", pageErrors.slug && "border-destructive")}
-                        />
-                        {pageErrors.slug && <p className="text-xs text-destructive">{pageErrors.slug}</p>}
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="page-excerpt">Short Description (Excerpt)</Label>
-                      <Input
-                        id="page-excerpt"
-                        value={pageForm.excerpt}
-                        onChange={(e) => setPageForm(prev => ({ ...prev, excerpt: e.target.value }))}
-                      />
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-
-              {/* SEO parameters */}
-              <div className="space-y-6">
-                <Card className="rounded-xl border border-border bg-muted/10">
-                  <CardHeader>
-                    <CardTitle className="text-lg">SEO optimization</CardTitle>
-                    <CardDescription>Configure tags and canonical properties</CardDescription>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="meta-title">Meta Title</Label>
-                      <Input
-                        id="meta-title"
-                        value={pageForm.metaTitle}
-                        onChange={(e) => setPageForm(prev => ({ ...prev, metaTitle: e.target.value }))}
-                        placeholder={pageForm.title}
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="meta-desc">Meta Description</Label>
-                      <textarea
-                        id="meta-desc"
-                        rows={3}
-                        value={pageForm.metaDescription}
-                        onChange={(e) => setPageForm(prev => ({ ...prev, metaDescription: e.target.value }))}
-                        className="w-full bg-background border border-input rounded-xl p-3 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
-                      />
-                    </div>
-
-                    <div className="flex items-center justify-between p-2 pt-4 border-t border-border">
-                      <div className="space-y-0.5">
-                        <Label htmlFor="page-layout">Layout Orientation</Label>
-                        <p className="text-xs text-muted-foreground">Horizontal vs Vertical Left-Tabs</p>
-                      </div>
-                      <select
-                        id="page-layout"
-                        value={pageForm.template || "horizontal"}
-                        onChange={(e) => setPageForm(prev => ({ ...prev, template: e.target.value }))}
-                        className="bg-background border border-input rounded-xl px-3 py-1.5 text-xs font-semibold focus:outline-none"
-                      >
-                        <option value="horizontal">Horizontal View</option>
-                        <option value="vertical">Vertical View</option>
-                      </select>
-                    </div>
-
-                    <div className="flex items-center justify-between p-2 pt-4 border-t border-border">
-                      <div className="space-y-0.5">
-                        <Label htmlFor="page-status">Published status</Label>
-                        <p className="text-xs text-muted-foreground">Toggle public access</p>
-                      </div>
-                      <Switch
-                        id="page-status"
-                        checked={pageForm.isPublished}
-                        onCheckedChange={(val) => setPageForm(prev => ({ ...prev, isPublished: val }))}
-                      />
-                    </div>
-                    <Button
-                      type="submit"
-                      disabled={isSavingPage}
-                      className="w-full bg-primary text-white hover:bg-primary/95"
-                    >
-                      {isSavingPage ? "Saving Configuration..." : "Save Page Settings"}
-                    </Button>
-                  </CardContent>
-                </Card>
-              </div>
-
-            </div>
-          </form>
+        <TabsContent value="settings" className="space-y-6">
+          <PageSeoManager pageId={pageId} hideHeader={true} />
         </TabsContent>
       </Tabs>
 

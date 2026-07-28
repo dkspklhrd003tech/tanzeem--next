@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import PageSeoManager from "./PageSeoManager";
 
 export interface HistoryPageData {
   hero: {
@@ -162,6 +163,7 @@ export default function HistoryPageEditor({ pageId, initialPageData }: { pageId:
               { id: "hero", label: "Hero & History Text" },
               { id: "banner", label: "Middle Banner" },
               { id: "joinUs", label: "Join Us & Contact" },
+              { id: "seo", label: "Page Setup & SEO" },
             ].map((sec) => (
               <button
                 key={sec.id}
@@ -319,6 +321,10 @@ export default function HistoryPageEditor({ pageId, initialPageData }: { pageId:
                     />
                   </div>
                 </div>
+              )}
+
+              {activeTab === "seo" && (
+                <PageSeoManager pageId={pageId} hideHeader={true} />
               )}
             </CardContent>
           </Card>
