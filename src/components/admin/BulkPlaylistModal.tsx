@@ -457,7 +457,10 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
                     {selectedCount} of {fetchedVideos.length} selected for import
                   </p>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <Button variant="outline" size="sm" onClick={() => setFetchedVideos(prev => [...prev].reverse())} title="Invert / Reverse file order">
+                    <ArrowDown className="w-3.5 h-3.5 mr-1" /> Reverse Order
+                  </Button>
                   <Button variant="outline" size="sm" onClick={() => toggleSelectAll(true)}>
                     <CheckSquare className="w-3.5 h-3.5 mr-1" /> Select All
                   </Button>

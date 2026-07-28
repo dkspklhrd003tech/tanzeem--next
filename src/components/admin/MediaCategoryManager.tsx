@@ -1243,7 +1243,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
         <div className="space-y-6 animate-in fade-in">
           <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
             <SortableContext items={categories.map(c => c.id)} strategy={rectSortingStrategy}>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {categories.map((cat, i) => (
                   <SortableCategoryCard
                     key={`mainCat-${cat.id}-${i}`}
@@ -1343,7 +1343,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
               return (
                 <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleMediaItemDragEnd(e, sub.id)}>
                   <SortableContext items={sub.mediaItems.map(m => m.id)} strategy={rectSortingStrategy}>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                       {sub.mediaItems.map((item) => (
                         <SortableDirectVideoCard
                           key={item.id}
@@ -1469,7 +1469,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                     </div>
                     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleSubCatDragEnd}>
                       <SortableContext items={activeCategory.subCategories.filter(s => !s.id.endsWith('_direct')).map(s => s.id)} strategy={rectSortingStrategy}>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                           {activeCategory.subCategories.filter(s => !s.id.endsWith('_direct')).map((sub) => (
                             <SortableSubCatCard
                               key={sub.id}
@@ -1533,7 +1533,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                     </div>
                     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={(e) => handleMediaItemDragEnd(e, activeCategory.subCategories.find(s => s.id.endsWith('_direct'))!.id)}>
                       <SortableContext items={activeCategory.subCategories.find(s => s.id.endsWith('_direct'))!.mediaItems.map(m => m.id)} strategy={rectSortingStrategy}>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                           {activeCategory.subCategories.find(s => s.id.endsWith('_direct'))!.mediaItems.map((item) => (
                             <SortableDirectVideoCard
                               key={item.id}

@@ -10,7 +10,7 @@ import { audio } from "@/db/schema";
 export async function GET(req: NextRequest) {
   try {
     const rawCategories = await db.select().from(audioCategories).orderBy(asc(audioCategories.order), desc(audioCategories.createdAt));
-    const allAudio = await db.select().from(audio).orderBy(asc(audio.order), desc(audio.createdAt));
+    const allAudio = await db.select().from(audio).orderBy(asc(audio.order), asc(audio.createdAt));
     
     const categories = rawCategories
       .filter(cat => !cat.parentId)

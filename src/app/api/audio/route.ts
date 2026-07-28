@@ -110,6 +110,7 @@ export async function POST(request: NextRequest) {
       speakerId: data.speakerId,
       code: data.code,
       tags: data.tags,
+      order: data.order ?? 0,
       isPublished: data.isPublished ?? false,
       isFeatured: data.isFeatured ?? false,
       metaTitle: data.metaTitle,
