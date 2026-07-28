@@ -44,11 +44,32 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
 
   const url = endpoint || `/api/sitemanager/pages/${pageId}`;
 
+  const parseSeoData = (data: any) => {
+    if (!data) return {};
+    if (typeof data === "string") {
+      try {
+        return JSON.parse(data);
+      } catch {
+        return {};
+      }
+    }
+    return data;
+  };
+
+  const normalizePage = (raw: any) => {
+    if (!raw) return raw;
+    return {
+      ...raw,
+      seoData: parseSeoData(raw.seoData),
+    };
+  };
+
   useEffect(() => {
     fetch(url)
       .then(res => res.json())
       .then(data => {
-        setPage(data.page || data.item || data);
+        const raw = data.page || data.item || data;
+        setPage(normalizePage(raw));
         setLoading(false);
       });
   }, [url]);
@@ -56,15 +77,19 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
   const handleSave = async () => {
     setSaving(true);
     try {
+      const payload = {
+        ...page,
+        seoData: parseSeoData(page.seoData),
+      };
       const res = await fetch(url, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(page),
+        body: JSON.stringify(payload),
       });
       if (res.ok) {
         const data = await res.json();
         if (data.page || data.item) {
-          setPage(data.page || data.item);
+          setPage(normalizePage(data.page || data.item));
         }
         toast({ title: "SEO Settings Saved Successfully!" });
       } else {
@@ -156,41 +181,45 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
     // 7. Canonical URL & OG Image
     const canonicalUrl = page.canonicalUrl || (page.slug ? `/${page.slug}` : "");
     const ogImage = page.ogImage || page.featuredImage || "/images/tanzeem-logo.png";
-    const ogImageAlt = page.seoData?.ogImageAlt || `Official social share banner for ${title} at Tanzeem-e-Islami`;
+    const prevSeo = parseSeoData(page.seoData);
+    const ogImageAlt = prevSeo?.ogImageAlt || `Official social share banner for ${title} at Tanzeem-e-Islami`;
 
     // Process extra images alt texts
-    const extraImages = (page.seoData?.extraImages || []).map((img: any, idx: number) => ({
+    const extraImages = (prevSeo?.extraImages || []).map((img: any, idx: number) => ({
       ...img,
       alt: img.alt || `Visual asset #${idx + 1} illustrating ${title} on Tanzeem-e-Islami official website`,
     }));
 
-    setPage((prev: any) => ({
-      ...prev,
-      metaTitle,
-      metaDescription,
-      featuredImageAlt,
-      canonicalUrl,
-      ogImage,
-      noIndex: false,
-      seoData: {
-        ...(prev.seoData || {}),
-        ogImageAlt,
-        extraImages,
-        geo: {
-          ...(prev.seoData?.geo || {}),
-          summary: geoSummary,
-          entities: geoEntities,
+    setPage((prev: any) => {
+      const pSeo = parseSeoData(prev.seoData);
+      return {
+        ...prev,
+        metaTitle,
+        metaDescription,
+        featuredImageAlt,
+        canonicalUrl,
+        ogImage,
+        noIndex: false,
+        seoData: {
+          ...pSeo,
+          ogImageAlt,
+          extraImages,
+          geo: {
+            ...(pSeo?.geo || {}),
+            summary: geoSummary,
+            entities: geoEntities,
+          },
+          aeo: {
+            ...(pSeo?.aeo || {}),
+            faq: aeoFaq,
+          },
+          schema: {
+            ...(pSeo?.schema || {}),
+            json: schemaJson,
+          },
         },
-        aeo: {
-          ...(prev.seoData?.aeo || {}),
-          faq: aeoFaq,
-        },
-        schema: {
-          ...(prev.seoData?.schema || {}),
-          json: schemaJson,
-        },
-      },
-    }));
+      };
+    });
 
     setTimeout(() => {
       setGenerating({});
@@ -221,7 +250,7 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
   if (loading) return <PageSpinner />;
   if (!page) return <div>Page not found.</div>;
 
-  const seoData = page.seoData || {};
+  const seoData = parseSeoData(page.seoData);
 
   return (
     <div className="space-y-6 w-full min-w-0 pb-24">

@@ -142,6 +142,9 @@ export async function GET(request: NextRequest, { params }: Ctx) {
     }
 
     if (!page) return NextResponse.json({ error: "Page not found" }, { status: 404 });
+    if (page && typeof page.seoData === "string") {
+      try { page.seoData = JSON.parse(page.seoData); } catch (_) {}
+    }
     return NextResponse.json({ page });
   } catch (err) {
     console.error("GET /api/sitemanager/pages/[id]:", err);
@@ -255,6 +258,9 @@ export async function PUT(request: NextRequest, { params }: Ctx) {
     });
 
     const [updated] = await db.select().from(pages).where(eq(pages.id, existing.id)).limit(1);
+    if (updated && typeof updated.seoData === "string") {
+      try { updated.seoData = JSON.parse(updated.seoData); } catch (_) {}
+    }
     return NextResponse.json({ page: updated });
   } catch (err) {
     console.error("PUT /api/sitemanager/pages/[id]:", err);
