@@ -56,11 +56,11 @@ function revalidateEntityPaths(entity: string) {
         } else if (entity === "campaigns") {
             revalidatePath("/");
             revalidatePath("/campaigns");
-            revalidatePath("/campaigns/[slug]", "page");
+            revalidatePath("/[slug]", "page");
         } else if (entity === "services") {
             revalidatePath("/");
             revalidatePath("/services");
-            revalidatePath("/services/[slug]", "page");
+            revalidatePath("/[slug]", "page");
         } else if (entity === "book-categories" || entity === "books") {
             revalidatePath("/books-by-category");
             revalidatePath("/books");
@@ -218,7 +218,7 @@ export async function POST(
     try {
         const userError = await requireAuth(request);
         if (userError) return userError;
-        
+
         // Retrieve user to use for authorId
         const user = await getCurrentUser(request);
 
@@ -252,13 +252,13 @@ export async function POST(
             let baseSlug = data.slug;
             let currentSlug = baseSlug;
             let counter = 1;
-            
+
             while (true) {
                 const existing = await db.select({ id: (table as any).id })
                     .from(table)
                     .where(eq((table as any).slug, currentSlug))
                     .limit(1);
-                
+
                 if (existing.length === 0) {
                     data.slug = currentSlug;
                     break;

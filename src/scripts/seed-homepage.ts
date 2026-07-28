@@ -47,12 +47,12 @@ async function seed() {
 
     // 3. Campaigns (Spotlight)
     for (const campaign of [
-        { id: uuidv4(), title: "Free Palestine", imageUrl: "", linkUrl: "/campaigns/palestine", isActive: true, order: 1 },
-        { id: uuidv4(), title: "31 Ulama Kay 22 Nukaat", imageUrl: "", linkUrl: "/campaigns/nukaat", isActive: true, order: 2 },
-        { id: uuidv4(), title: "Insdad-e-Sood Muhim", imageUrl: "", linkUrl: "/campaigns/sood", isActive: true, order: 3 },
-        { id: uuidv4(), title: "Ithade Ummat", imageUrl: "", linkUrl: "/campaigns/ithead", isActive: true, order: 4 },
-        { id: uuidv4(), title: "Bayan ul Qur'an", imageUrl: "", linkUrl: "/campaigns/bayan", isActive: true, order: 5 },
-        { id: uuidv4(), title: "Protection of Blasphemy Law", imageUrl: "", linkUrl: "/campaigns/blasphemy", isActive: true, order: 6 }
+        { id: uuidv4(), title: "Free Palestine", imageUrl: "", linkUrl: "/palestine", isActive: true, order: 1 },
+        { id: uuidv4(), title: "31 Ulama Kay 22 Nukaat", imageUrl: "", linkUrl: "/nukaat", isActive: true, order: 2 },
+        { id: uuidv4(), title: "Insdad-e-Sood Muhim", imageUrl: "", linkUrl: "/sood", isActive: true, order: 3 },
+        { id: uuidv4(), title: "Ithade Ummat", imageUrl: "", linkUrl: "/ithead", isActive: true, order: 4 },
+        { id: uuidv4(), title: "Bayan ul Qur'an", imageUrl: "", linkUrl: "/bayan", isActive: true, order: 5 },
+        { id: uuidv4(), title: "Protection of Blasphemy Law", imageUrl: "", linkUrl: "/blasphemy", isActive: true, order: 6 }
     ]) {
         await db.insert(homeCampaigns).values(campaign).onDuplicateKeyUpdate({ set: { isActive: true } });
     }

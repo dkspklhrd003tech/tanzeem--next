@@ -263,7 +263,7 @@ export function CampaignsManager() {
             }
 
             const isEditing = !!editingCampaign;
-            const url = isEditing ? `/api/campaigns/${editingCampaign.id}` : "/api/campaigns";
+            const url = isEditing ? `/api/${editingCampaign.id}` : "/api/campaigns";
             const method = isEditing ? "PUT" : "POST";
 
             const res = await fetch(url, {
@@ -300,7 +300,7 @@ export function CampaignsManager() {
         setDeletingCampaign(null);
 
         try {
-            const res = await fetch(`/api/campaigns/${id}`, { method: "DELETE" });
+            const res = await fetch(`/api/${id}`, { method: "DELETE" });
             const data = await res.json();
 
             if (!res.ok) throw new Error(data.error || "Failed to delete campaign");

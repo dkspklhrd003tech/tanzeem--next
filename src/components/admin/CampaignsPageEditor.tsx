@@ -168,7 +168,7 @@ function SortableCard({ id, item, onEdit, onDelete }: SortableItemProps) {
               variant="ghost"
               size="icon"
               className="h-7 w-7 text-blue-500 hover:text-blue-600 hover:bg-blue-500/10"
-              onClick={() => window.open(item.slug.startsWith("http") ? item.slug : `/campaigns/${item.slug}`, '_blank')}
+              onClick={() => window.open(item.slug.startsWith("http") ? item.slug : `/${item.slug}`, '_blank')}
               title="View on Frontend"
             >
               <ExternalLink className="h-3.5 w-3.5" />
@@ -861,7 +861,7 @@ export default function CampaignsPageEditor({ pageId, initialPageData }: Campaig
 
     try {
       const isNew = !editingItem;
-      const url = isNew ? "/api/admin/campaigns" : `/api/admin/campaigns/${editingItem.id}`;
+      const url = isNew ? "/api/admin/campaigns" : `/api/admin/${editingItem.id}`;
       const method = isNew ? "POST" : "PUT";
 
       const payload: Record<string, any> = {
@@ -914,7 +914,7 @@ export default function CampaignsPageEditor({ pageId, initialPageData }: Campaig
   const handleDeleteItem = async (id: string) => {
     setDeletingItem(null);
     try {
-      const res = await fetch(`/api/admin/campaigns/${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/admin/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Failed to delete item");
 
       toast({

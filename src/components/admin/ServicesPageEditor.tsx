@@ -168,7 +168,7 @@ function SortableCard({ id, item, onEdit, onDelete }: SortableItemProps) {
               variant="ghost"
               size="icon"
               className="h-7 w-7 text-blue-500 hover:text-blue-600 hover:bg-blue-500/10"
-              onClick={() => window.open(item.slug.startsWith("http") ? item.slug : `/services/${item.slug}`, '_blank')}
+              onClick={() => window.open(item.slug.startsWith("http") ? item.slug : `/${item.slug}`, '_blank')}
               title="View on Frontend"
             >
               <ExternalLink className="h-3.5 w-3.5" />
@@ -858,7 +858,7 @@ export default function ServicesPageEditor({ pageId, initialPageData }: Services
 
     try {
       const isNew = !editingItem;
-      const url = isNew ? "/api/admin/services" : `/api/admin/services/${editingItem.id}`;
+      const url = isNew ? "/api/admin/services" : `/api/admin/${editingItem.id}`;
       const method = isNew ? "POST" : "PUT";
 
       // If creating new, assign it to the top/bottom order index
@@ -913,7 +913,7 @@ export default function ServicesPageEditor({ pageId, initialPageData }: Services
   const handleDeleteItem = async (id: string) => {
     setDeletingItem(null);
     try {
-      const res = await fetch(`/api/admin/services/${id}`, { method: "DELETE" });
+      const res = await fetch(`/api/admin/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Failed to delete item");
 
       toast({

@@ -8,7 +8,7 @@
 
 ## Executive Summary
 
-The alpha.tanzeem.org site (WordPress/Elementor staging) is **~90% healthy**. Of 60 pages crawled, **54 load successfully (200 OK)** and **6 return 404**. No redirect chains were detected. The `/services/` section is the primary problem area with 67% broken links. Two pages have broken image references pointing to `beta.tanzeem.org` (a non-existent subdomain). All other sections (Organization, Resources, Education, Magazines, Videos, Audio, Books) are fully functional with consistent navigation and content.
+The alpha.tanzeem.org site (WordPress/Elementor staging) is **~90% healthy**. Of 60 pages crawled, **54 load successfully (200 OK)** and **6 return 404**. No redirect chains were detected. The `/` section is the primary problem area with 67% broken links. Two pages have broken image references pointing to `beta.tanzeem.org` (a non-existent subdomain). All other sections (Organization, Resources, Education, Magazines, Videos, Audio, Books) are fully functional with consistent navigation and content.
 
 ---
 
@@ -24,18 +24,18 @@ The alpha.tanzeem.org site (WordPress/Elementor staging) is **~90% healthy**. Of
 
 ---
 
-## Broken Links (6 pages — all under `/services/`)
+## Broken Links (6 pages — all under `/`)
 
 | # | URL | Issue |
 |---|-----|-------|
-| 1 | `/services/our-foundation/` | 404 Not Found |
-| 2 | `/services/our-belief/` | 404 Not Found |
-| 3 | `/services/hurmat-e-masjid-e-aqsa-press-conference/` | 404 Not Found |
-| 4 | `/services/insdad-e-sood-muhim/` | 404 Not Found |
-| 5 | `/services/ithade-ummat-aur-pakistan-ki-salmiat/` | 404 Not Found |
-| 6 | `/services/quran-forum-toba/` | 404 Not Found |
+| 1 | `/our-foundation/` | 404 Not Found |
+| 2 | `/our-belief/` | 404 Not Found |
+| 3 | `/hurmat-e-masjid-e-aqsa-press-conference/` | 404 Not Found |
+| 4 | `/insdad-e-sood-muhim/` | 404 Not Found |
+| 5 | `/ithade-ummat-aur-pakistan-ki-salmiat/` | 404 Not Found |
+| 6 | `/quran-forum-toba/` | 404 Not Found |
 
-These 6 pages are **linked from the Organization landing page** as card links ("Our Foundation", "Our Belief", "Our Methodology" etc.). Only `/services/methodology/` and `/services/aazadi-e-palestine/` work.
+These 6 pages are **linked from the Organization landing page** as card links ("Our Foundation", "Our Belief", "Our Methodology" etc.). Only `/methodology/` and `/aazadi-e-palestine/` work.
 
 ---
 
@@ -138,8 +138,8 @@ The images are hardcoded to `beta.tanzeem.org` in both the HTML `<img>` tags and
 ### Services (2 working of 8 tested)
 | URL | Title | Status |
 |-----|-------|--------|
-| `/services/methodology/` | Our Methodology | ✅ 200 |
-| `/services/aazadi-e-palestine/` | Services - Aazadi e Palestine | ✅ 200 |
+| `/methodology/` | Our Methodology | ✅ 200 |
+| `/aazadi-e-palestine/` | Services - Aazadi e Palestine | ✅ 200 |
 
 ---
 
@@ -147,7 +147,7 @@ The images are hardcoded to `beta.tanzeem.org` in both the HTML `<img>` tags and
 
 | Page A | Page B | Content |
 |--------|--------|---------|
-| `/services/methodology/` | `/organization/our-ideology/methodology/` | Both display "Our Methodology" |
+| `/methodology/` | `/organization/our-ideology/methodology/` | Both display "Our Methodology" |
 | `/the-founder/` | `/organization/the-founder/` | Both display "The Founder" |
 | `/the-ameer/` | `/organization/the-ameer/` | Both display "The Ameer" |
 
@@ -171,7 +171,7 @@ All pages share the same header mega-menu and 4-column footer. Navigation struct
 
 ## Issues Found (Summary)
 
-1. **6 broken pages** (`/services/*`) returning 404 — linked from Organization landing page cards
+1. **6 broken pages** (`/*`) returning 404 — linked from Organization landing page cards
 2. **2 broken images** pointing to `beta.tanzeem.org` instead of `alpha.tanzeem.org` (Founder page, Organization landing page)
 3. **Slug inconsistency**: Background page uses `background-2` (WordPress dedup artifact)
 4. **No redirects** are configured — all broken pages return hard 404

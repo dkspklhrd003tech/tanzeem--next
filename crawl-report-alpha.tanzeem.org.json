@@ -4,22 +4,58 @@
   "totalPagesCrawled": 60,
   "totalInternalLinksChecked": 450,
   "summary": {
-    "loaded": { "count": 54, "percent": 90 },
-    "broken": { "count": 6, "percent": 10 },
+    "loaded": {
+      "count": 54,
+      "percent": 90
+    },
+    "broken": {
+      "count": 6,
+      "percent": 10
+    },
     "redirects": 0,
     "brokenImages": 2
   },
   "brokenLinks": [
-    { "url": "/services/our-foundation/", "status": 404, "linkedFrom": "/organization/" },
-    { "url": "/services/our-belief/", "status": 404, "linkedFrom": "/organization/" },
-    { "url": "/services/hurmat-e-masjid-e-aqsa-press-conference/", "status": 404, "linkedFrom": "/organization/" },
-    { "url": "/services/insdad-e-sood-muhim/", "status": 404, "linkedFrom": "/organization/" },
-    { "url": "/services/ithade-ummat-aur-pakistan-ki-salmiat/", "status": 404, "linkedFrom": "/organization/" },
-    { "url": "/services/quran-forum-toba/", "status": 404, "linkedFrom": "/organization/" }
+    {
+      "url": "/our-foundation/",
+      "status": 404,
+      "linkedFrom": "/organization/"
+    },
+    {
+      "url": "/our-belief/",
+      "status": 404,
+      "linkedFrom": "/organization/"
+    },
+    {
+      "url": "/hurmat-e-masjid-e-aqsa-press-conference/",
+      "status": 404,
+      "linkedFrom": "/organization/"
+    },
+    {
+      "url": "/insdad-e-sood-muhim/",
+      "status": 404,
+      "linkedFrom": "/organization/"
+    },
+    {
+      "url": "/ithade-ummat-aur-pakistan-ki-salmiat/",
+      "status": 404,
+      "linkedFrom": "/organization/"
+    },
+    {
+      "url": "/quran-forum-toba/",
+      "status": 404,
+      "linkedFrom": "/organization/"
+    }
   ],
   "brokenImages": [
-    { "page": "/organization/the-founder/", "imageUrl": "https://beta.tanzeem.org/wp-content/uploads/2024/02/bani.png" },
-    { "page": "/organization/", "imageUrl": "https://beta.tanzeem.org/wp-content/uploads/2024/02/bani1.png" }
+    {
+      "page": "/organization/the-founder/",
+      "imageUrl": "https://beta.tanzeem.org/wp-content/uploads/2024/02/bani.png"
+    },
+    {
+      "page": "/organization/",
+      "imageUrl": "https://beta.tanzeem.org/wp-content/uploads/2024/02/bani1.png"
+    }
   ],
   "successfulPages": [
     "/",
@@ -73,7 +109,7 @@
     "/the-founder/",
     "/the-ameer/",
     "/bayan-ul-quran-by-dr-israr-ahmad/",
-    "/services/methodology/",
-    "/services/aazadi-e-palestine/"
+    "/methodology/",
+    "/aazadi-e-palestine/"
   ]
 }

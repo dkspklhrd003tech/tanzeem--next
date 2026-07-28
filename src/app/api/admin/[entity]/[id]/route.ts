@@ -53,11 +53,11 @@ function revalidateEntityPaths(entity: string) {
         } else if (entity === "campaigns") {
             revalidatePath("/");
             revalidatePath("/campaigns");
-            revalidatePath("/campaigns/[slug]", "page");
+            revalidatePath("/[slug]", "page");
         } else if (entity === "services") {
             revalidatePath("/");
             revalidatePath("/services");
-            revalidatePath("/services/[slug]", "page");
+            revalidatePath("/[slug]", "page");
         } else if (entity === "book-categories" || entity === "books") {
             revalidatePath("/books-by-category");
         } else if (entity === "speakers") {
@@ -195,19 +195,19 @@ export async function PUT(
             let baseSlug = data.slug;
             let currentSlug = baseSlug;
             let counter = 1;
-            
+
             while (true) {
                 const dup = await db.select({ id: (table as any).id })
                     .from(table)
                     .where(eq((table as any).slug, currentSlug))
                     .limit(1);
-                
+
                 // If no duplicate found, or the duplicate is the item being edited itself
                 if (dup.length === 0 || dup[0].id === id) {
                     data.slug = currentSlug;
                     break;
                 }
-                
+
                 currentSlug = `${baseSlug}-${counter}`;
                 counter++;
             }

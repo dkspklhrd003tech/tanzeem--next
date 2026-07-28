@@ -99,7 +99,7 @@ async function HomeContent() {
         id: s.id,
         title: s.title,
         imageUrl: s.imageUrl || "",
-        linkUrl: (s.slug.startsWith("http") || s.slug.includes("/")) ? resolveMediaUrl(s.slug) : `/services/${s.slug}`,
+        linkUrl: (s.slug.startsWith("http") || s.slug.includes("/")) ? resolveMediaUrl(s.slug) : `/${s.slug}`,
         openInNewTab: fields?.openInNewTab || false,
         order: s.order,
         createdAt: s.createdAt,
@@ -112,7 +112,7 @@ async function HomeContent() {
       id: c.id,
       title: c.title,
       imageUrl: c.thumbnailUrl || "",
-      linkUrl: (c.slug.startsWith("http") || c.slug.includes("/")) ? resolveMediaUrl(c.slug) : `/campaigns/${c.slug}`,
+      linkUrl: (c.slug.startsWith("http") || c.slug.includes("/")) ? resolveMediaUrl(c.slug) : `/${c.slug}`,
       openInNewTab: false,
       order: c.orderIndex || 0,
       createdAt: c.createdAt,
@@ -143,7 +143,7 @@ async function HomeContent() {
     featuredCampaigns = featuredList.map(c => ({
       id: c.id,
       title: c.title,
-      linkUrl: (c.slug.startsWith("http") || c.slug.includes("/")) ? resolveMediaUrl(c.slug) : `/campaigns/${c.slug}`,
+      linkUrl: (c.slug.startsWith("http") || c.slug.includes("/")) ? resolveMediaUrl(c.slug) : `/${c.slug}`,
       imageUrl: c.thumbnailUrl || ""
     }));
   } catch (error) { console.error("Failed to fetch featured campaigns:", error); }

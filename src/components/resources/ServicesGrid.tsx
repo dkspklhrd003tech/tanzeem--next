@@ -117,7 +117,7 @@ export function ServicesGrid({ initialItems }: ServicesGridProps) {
                 : "Recent";
 
               return (
-                <Link href={item.slug?.startsWith("http") ? item.slug : `/services/${item.slug || item.id}`} key={item.id} className="block group" target={item.slug?.startsWith("http") ? "_blank" : undefined}>
+                <Link href={item.slug?.startsWith("http") ? item.slug : `/${item.slug || item.id}`} key={item.id} className="block group" target={item.slug?.startsWith("http") ? "_blank" : undefined}>
                   <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
