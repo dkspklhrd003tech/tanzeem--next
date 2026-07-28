@@ -852,6 +852,7 @@ export default function SocialMediaPageEditor({ pageId, initialPageData }: Socia
         lastSaved={lastSavedPage}
         previewUrl="/social-media"
         seoUrl={`/sitemanager/pages/${pageId}/edit/seo`}
+        hasSeoIssues={!pageForm.metaTitle?.trim() || !pageForm.metaDescription?.trim()}
         isPublished={pageForm.isPublished}
         saving={isSavingPage}
         onDuplicate={handleDuplicate}

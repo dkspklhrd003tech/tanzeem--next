@@ -349,7 +349,7 @@ export function PageForm({ mode, initialData, parentPages = [] }: PageFormProps)
 
 
 
-  const hasSeoIssues = !form.metaTitle || form.metaTitle.length < 40 || !form.metaDescription || form.metaDescription.length < 100;
+  const hasSeoIssues = !form.metaTitle?.trim() || !form.metaDescription?.trim();
 
   return (
     <div className="space-y-6 max-w-7xl">

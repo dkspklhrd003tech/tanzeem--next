@@ -105,7 +105,7 @@ export default async function KhitabEJumahCategoryPage({ params }: Props) {
                                         <button className="h-10 w-10 flex items-center justify-center rounded-full bg-primary text-white group-hover:bg-primary/10 group-hover:text-primary transition-all scale-95 group-hover:scale-100 shadow-sm shrink-0">
                                             <AudioLines className="w-7 h-7" />
                                         </button>
-                                        <span className="text-[11px] text-foreground font-medium transition-opacity hidden md:block">Listen Now</span>
+                                        <span className="text-[11px] text-foreground font-semibold transition-opacity hidden md:block">Listen Now</span>
                                     </div>
                                 </Link>
                             );

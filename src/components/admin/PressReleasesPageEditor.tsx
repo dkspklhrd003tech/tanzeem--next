@@ -654,6 +654,7 @@ export default function PressReleasesPageEditor({ pageId, initialPageData }: Pre
         lastSaved={lastSavedPage}
         previewUrl="/press-releases"
         seoUrl={`/sitemanager/pages/${pageId}/edit/seo`}
+        hasSeoIssues={!pageForm.metaTitle?.trim() || !pageForm.metaDescription?.trim()}
         isPublished={pageForm.isPublished}
         saving={isSavingPage}
         onDuplicate={handleDuplicate}

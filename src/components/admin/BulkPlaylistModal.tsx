@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import {
   X, RefreshCw, UploadCloud, CheckSquare, Square,
-  Video, Headphones, PlayCircle, ExternalLink, Sparkles, Type,
+  Video, AudioLines, PlayCircle, ExternalLink, Sparkles, Type,
   ArrowUp, ArrowDown, Trash2
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -315,7 +315,7 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
               <Sparkles className="w-5 h-5 text-primary" />
               {mediaType === "audio" ? "Bulk Audio Importer" : "Playlist (Bulk) Video Importer"}
             </h3>
-            <p className="text-xs text-muted-foreground mt-1">
+            <p className="text-xs text-foreground mt-1">
               {mediaType === "audio"
                 ? `Upload multiple audio files at once into ${targetName || "this section"}.`
                 : `Import multiple videos at once into ${targetName || "this section"} from YouTube, Rumble, OK.ru, or custom link lists.`}
@@ -401,7 +401,7 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
                     ) : (
                       <div className="flex flex-col items-center justify-center space-y-1">
                         <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors duration-300">
-                          <UploadCloud className="w-5 h-5" />
+                          <UploadCloud className="w-7 h-7" />
                         </div>
                       </div>
                     )}
@@ -560,8 +560,8 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
                       {video.thumbnailUrl ? (
                         <img src={video.thumbnailUrl} className="w-full h-full object-cover" alt={video.title} />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-muted-foreground">
-                          {mediaType === "audio" ? <Headphones className="w-6 h-6 opacity-40 text-primary" /> : <PlayCircle className="w-6 h-6 opacity-30" />}
+                        <div className="w-full h-full flex items-center justify-center text-foreground">
+                          {mediaType === "audio" ? <AudioLines className="w-6 h-6 text-primary" /> : <PlayCircle className="w-6 h-6 opacity-30" />}
                         </div>
                       )}
                     </div>
@@ -591,7 +591,7 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
                             size="icon"
                             disabled={idx === 0}
                             onClick={() => handleMoveVideo(idx, "up")}
-                            className="h-6 w-6 text-muted-foreground hover:text-primary disabled:opacity-30"
+                            className="h-6 w-6 text-blue-600"
                             title="Move Up"
                           >
                             <ArrowUp className="w-3 h-3" />
@@ -602,7 +602,7 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
                             size="icon"
                             disabled={idx === fetchedVideos.length - 1}
                             onClick={() => handleMoveVideo(idx, "down")}
-                            className="h-6 w-6 text-muted-foreground hover:text-primary disabled:opacity-30"
+                            className="h-6 w-6 text-blue-600"
                             title="Move Down"
                           >
                             <ArrowDown className="w-3 h-3" />
@@ -612,7 +612,7 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
                             variant="ghost"
                             size="icon"
                             onClick={() => handleRemoveVideo(idx)}
-                            className="h-6 w-6 text-muted-foreground hover:text-destructive"
+                            className="h-6 w-6 text-red-600"
                             title="Remove item"
                           >
                             <Trash2 className="w-3 h-3" />
@@ -643,7 +643,7 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
               </>
             ) : (
               <>
-                <UploadCloud className="w-4 h-4 mr-2" /> Import {selectedCount} Selected {mediaType === "audio" ? "Audio(s)" : "Video(s)"}
+                <UploadCloud className="w-7 h-7 mr-2" /> Import {selectedCount} Selected {mediaType === "audio" ? "Audio(s)" : "Video(s)"}
               </>
             )}
           </Button>

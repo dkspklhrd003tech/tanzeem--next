@@ -358,6 +358,7 @@ export default function AudiosPageEditor({ pageId, initialPageData }: { pageId: 
         updatedAt={initialPageData.updatedAt}
         previewUrl="/audios-by-category"
         seoUrl={`/sitemanager/pages/${pageId}/edit/seo`}
+        hasSeoIssues={!pageForm.metaTitle?.trim() || !pageForm.metaDescription?.trim()}
         isPublished={pageForm.isPublished}
         saving={isSavingPage}
         onDuplicate={handleDuplicate}

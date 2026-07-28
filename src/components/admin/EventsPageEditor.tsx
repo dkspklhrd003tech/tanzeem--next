@@ -625,6 +625,7 @@ export default function EventsPageEditor({ pageId, initialPageData }: EventsPage
         lastSaved={lastSavedPage}
         previewUrl="/events"
         seoUrl={`/sitemanager/pages/${pageId}/edit/seo`}
+        hasSeoIssues={!pageForm.metaTitle?.trim() || !pageForm.metaDescription?.trim()}
         isPublished={pageForm.isPublished}
         saving={isSavingPage}
         onDuplicate={handleDuplicate}

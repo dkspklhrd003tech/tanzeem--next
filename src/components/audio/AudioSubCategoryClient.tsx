@@ -88,7 +88,7 @@ export function AudioSubCategoryClient({ subCategories, directAudios = [] }: Aud
               <Link
                 href={`/audio/${item.slug || item.id}`}
                 key={item.id}
-                className="flex flex-col md:flex-row md:items-center justify-between gap-4 px-4 py-3.5 rounded-2xl border border-primary/30 hover:border-primary/60 bg-muted/30 hover:bg-primary/5 transition-all cursor-pointer group shadow-sm hover:shadow-md h-full"
+                className="flex flex-col md:flex-row md:items-center justify-between gap-4 px-4 py-3 rounded-lg border border-primary/50 hover:border-primary/80 bg-muted hover:bg-primary/5 transition-all cursor-pointer group shadow-sm hover:shadow-md h-full"
               >
                 <div className="flex-1 min-w-0">
                   <h3 className="font-bold text-md group-hover:text-primary transition-colors uppercase leading-snug line-clamp-2">
@@ -102,7 +102,7 @@ export function AudioSubCategoryClient({ subCategories, directAudios = [] }: Aud
                   <div className="h-10 w-10 flex items-center justify-center rounded-full bg-primary text-white group-hover:bg-primary/90 transition-all scale-95 group-hover:scale-105 shadow-sm shrink-0">
                     <AudioLines className="w-7 h-7" />
                   </div>
-                  <span className="text-[11px] text-muted-foreground font-semibold transition-opacity hidden md:block">Listen Now</span>
+                  <span className="text-[11px] text-foreground font-semibold transition-opacity hidden md:block">Listen Now</span>
                 </div>
               </Link>
             );
@@ -125,7 +125,7 @@ export function AudioSubCategoryClient({ subCategories, directAudios = [] }: Aud
                 href={href}
                 target={target}
                 rel={rel}
-                className="flex flex-col md:flex-row md:items-center justify-between gap-4 px-4 py-3.5 rounded-2xl border border-primary/30 hover:border-primary/60 bg-muted/30 hover:bg-primary/5 transition-all cursor-pointer group shadow-sm hover:shadow-md h-full"
+                className="flex flex-col md:flex-row md:items-center justify-between gap-4 px-4 py-3 rounded-lg border border-primary/50 hover:border-primary/80 bg-muted hover:bg-primary/5 transition-all cursor-pointer group shadow-sm hover:shadow-md h-full"
               >
                 <div className="flex-1 min-w-0">
                   <h3 className="font-bold text-base md:text-md text-foreground group-hover:text-primary transition-colors leading-snug text-left line-clamp-2">
@@ -143,7 +143,7 @@ export function AudioSubCategoryClient({ subCategories, directAudios = [] }: Aud
                   <div className="h-10 w-10 flex items-center justify-center rounded-full bg-primary text-white group-hover:bg-primary/90 transition-all scale-95 group-hover:scale-105 shadow-sm shrink-0">
                     <Headphones className="w-7 h-7" />
                   </div>
-                  <span className="text-[11px] text-muted-foreground font-semibold transition-opacity hidden md:block">
+                  <span className="text-[11px] text-foreground font-semibold transition-opacity hidden md:block">
                     {sub.audios?.length || 0} Audios
                   </span>
                 </div>
