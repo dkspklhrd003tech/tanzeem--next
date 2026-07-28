@@ -46,6 +46,8 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
   const [isUploadingAudio, setIsUploadingAudio] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [currentFileName, setCurrentFileName] = useState("");
+  const [totalAudioFiles, setTotalAudioFiles] = useState(0);
+  const [currentAudioIndex, setCurrentAudioIndex] = useState(0);
 
   const handleClose = () => {
     setPlaylistUrl("");
@@ -56,6 +58,8 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
     setIsUploadingAudio(false);
     setUploadProgress(0);
     setCurrentFileName("");
+    setTotalAudioFiles(0);
+    setCurrentAudioIndex(0);
     onClose();
   };
 
@@ -69,6 +73,8 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
       setIsUploadingAudio(false);
       setUploadProgress(0);
       setCurrentFileName("");
+      setTotalAudioFiles(0);
+      setCurrentAudioIndex(0);
     }
   }, [isOpen]);
 
@@ -139,10 +145,13 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
     }
 
     setIsUploadingAudio(true);
+    setTotalAudioFiles(audioFiles.length);
+    setCurrentAudioIndex(1);
     const newItems: ParsedVideoItem[] = [];
 
     for (let i = 0; i < audioFiles.length; i++) {
       const file = audioFiles[i];
+      setCurrentAudioIndex(i + 1);
       setCurrentFileName(file.name);
       setUploadProgress(0);
 
@@ -334,7 +343,7 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
                   "border-2 border-dashed rounded-2xl p-8 transition-all cursor-pointer flex flex-col items-center justify-center gap-3 text-center",
                   dragActive
                     ? "border-primary bg-primary/10 shadow-lg scale-[1.01]"
-                    : "border-emerald-600/40 dark:border-emerald-500/40 bg-emerald-50/30 dark:bg-emerald-950/20 hover:border-emerald-600 hover:bg-emerald-50/60"
+                    : "border-primary/80 bg-primary-light/50 hover:border-primary hover:bg-primary-light"
                 )}
               >
                 <input
@@ -345,7 +354,7 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
                   className="hidden"
                   onChange={handleFileChange}
                 />
-                <div className="w-14 h-14 rounded-2xl bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 flex items-center justify-center shadow-inner">
+                <div className="w-14 h-14 rounded-2xl bg-primary-light text-primary flex items-center justify-center shadow-inner">
                   <UploadCloud className="w-7 h-7" />
                 </div>
                 <div>
@@ -363,9 +372,9 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
                   <div className="flex items-center justify-between text-xs font-semibold">
                     <span className="flex items-center gap-2 truncate pr-2">
                       <RefreshCw className="w-3.5 h-3.5 animate-spin text-primary shrink-0" />
-                      Uploading <span className="text-primary truncate">{currentFileName}</span>...
+                      Uploading <span className="font-semibold text-primary">({currentAudioIndex} of {totalAudioFiles})</span>: <span className="text-primary truncate">{currentFileName}</span>...
                     </span>
-                    <span>{uploadProgress}%</span>
+                    <span className="font-semibold text-primary">{uploadProgress}%</span>
                   </div>
                   <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
                     <div
