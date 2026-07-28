@@ -160,10 +160,9 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
           onProgress: (pct) => setUploadProgress(pct),
         });
 
-        // Clean filename for default title
+        // Clean filename extension for default title
         const cleanTitle = file.name
           .replace(/\.[^/.]+$/, "")
-          .replace(/[-_]+/g, " ")
           .trim();
 
         newItems.push({

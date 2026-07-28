@@ -221,7 +221,7 @@ function SortableSubCatCard({ sub, mediaType, isSelected, onToggleSelect, onClic
           </div>
         </div>
         <div className="flex items-center gap-1 shrink-0">
-          <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-primary hover:text-primary z-10" onClick={(e) => { e.stopPropagation(); onEdit(); }} title="Edit Details">
+          <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-primary hover:text-white z-10" onClick={(e) => { e.stopPropagation(); onEdit(); }} title="Edit Details">
             <Edit className="w-4 h-4" />
           </Button>
           {onTogglePublish && (
@@ -313,7 +313,7 @@ function SortableDirectVideoCard({ item, mediaType, isSelected, onToggleSelect, 
               type="button"
               variant="ghost"
               size="icon"
-              className="h-8 w-8 text-primary hover:text-primary z-10"
+              className="h-8 w-8 text-primary hover:text-white z-10"
               onClick={(e) => { e.stopPropagation(); onEdit(); }}
               title="Edit Title / Details"
             >
