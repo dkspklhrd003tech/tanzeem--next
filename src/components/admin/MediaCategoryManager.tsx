@@ -149,7 +149,7 @@ function SortableCategoryCard({ cat, mediaType, isSelected, onToggleSelect, onCl
           </div>
         </div>
         <div className="flex items-center gap-1 shrink-0">
-          <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-foreground hover:text-white z-10" onClick={(e) => { e.stopPropagation(); onEdit(cat); }} title="Edit Details">
+          <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-primary hover:text-white z-10" onClick={(e) => { e.stopPropagation(); onEdit(cat); }} title="Edit Details">
             <Edit className="w-4 h-4" />
           </Button>
           <Button
@@ -160,9 +160,9 @@ function SortableCategoryCard({ cat, mediaType, isSelected, onToggleSelect, onCl
             onClick={(e) => { e.stopPropagation(); onTogglePublish(cat); }}
             title={cat.isPublished !== false ? "Hide from frontend" : "Show on frontend"}
           >
-            {cat.isPublished !== false ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-3.5 w-3.5" />}
+            {cat.isPublished !== false ? <Eye className="h-3.5 w-3.5" /> : <EyeOff className="h-4 w-4" />}
           </Button>
-          <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive z-10" onClick={(e) => { e.stopPropagation(); onDelete(cat); }} title="Delete Category">
+          <Button type="button" variant="ghost" size="icon" className="h-8 w-8 text-red-600 !hover:bg-red-100/50 z-10" onClick={(e) => { e.stopPropagation(); onDelete(cat); }} title="Delete Category">
             <XCircle className="w-4 h-4" />
           </Button>
         </div>
