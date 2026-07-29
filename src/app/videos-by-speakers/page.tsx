@@ -57,7 +57,9 @@ export default async function VideosBySpeakersPage() {
     console.warn("Could not fetch videos from DB during build. Using fallback.");
   }
 
-  const display = speakerRows.map((s) => ({ ...s, count: countMap[s.id] ?? 0 }));
+  const display = speakerRows
+    .filter((s) => !s.slug?.endsWith("-1"))
+    .map((s) => ({ ...s, count: countMap[s.id] ?? 0 }));
 
   return (
     <main className=" bg-muted/20 py-10">
