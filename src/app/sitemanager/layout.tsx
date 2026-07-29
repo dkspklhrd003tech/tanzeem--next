@@ -603,6 +603,12 @@ export default function SiteManagerLayout({
 
   // Load current user — redirect to login if not authenticated
   useEffect(() => {
+    // If we're already on the login page, don't check auth or trigger redirects
+    if (pathname === "/sitemanager/login") {
+      setIsUserLoading(false);
+      return;
+    }
+
     // Only fetch once when the layout mounts
     if (user && !isUserLoading) return;
 
@@ -622,7 +628,7 @@ export default function SiteManagerLayout({
         setUser(null);
       })
       .finally(() => setIsUserLoading(false));
-  }, []);
+  }, [pathname]);
 
   // Close mobile sidebar on route change
   useEffect(() => {
