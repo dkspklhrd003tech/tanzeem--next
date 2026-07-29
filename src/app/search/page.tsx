@@ -15,7 +15,7 @@ import {
   faqItems,
   socialAccounts,
 } from "@/db/schema";
-import { like, or, and, eq } from "drizzle-orm";
+import { like, or, and, eq, inArray } from "drizzle-orm";
 import { Search, Calendar, FileText, Music, Video, Book, Newspaper, AlertCircle, ArrowRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -60,17 +60,60 @@ export default async function SearchPage({ searchParams }: Props) {
 
   if (searchTerm && patterns.length > 0) {
     try {
+      // First find matching speakers to retrieve their IDs for cross-relational search
+      const matchingSpeakers = await db
+        .select({ id: speakers.id, name: speakers.name })
+        .from(speakers)
+        .where(or(buildLikeConditions(speakers.name), buildLikeConditions(speakers.bio)));
+      const matchingSpeakerIds = matchingSpeakers.map((s) => s.id);
+
       const [
         pagesRes, postsRes, audiosRes, videosRes, booksRes, magazinesRes, pressRes,
         speakersRes, audioCatRes, videoCatRes, faqRes, socialRes
       ] = await Promise.all([
-        db.select().from(pages).where(and(eq(pages.isPublished, true), or(buildLikeConditions(pages.title), buildLikeConditions(pages.content)))).limit(10),
-        db.select().from(posts).where(and(eq(posts.isPublished, true), or(buildLikeConditions(posts.title), buildLikeConditions(posts.content)))).limit(10),
-        db.select().from(audio).where(and(eq(audio.isPublished, true), or(buildLikeConditions(audio.title), buildLikeConditions(audio.description)))).limit(10),
-        db.select().from(videos).where(and(eq(videos.isPublished, true), or(buildLikeConditions(videos.title), or(buildLikeConditions(videos.description), buildLikeConditions(videos.videoUrl))))).limit(10),
-        db.select().from(books).where(and(eq(books.isPublished, true), or(buildLikeConditions(books.title), buildLikeConditions(books.description)))).limit(10),
-        db.select().from(magazines).where(and(eq(magazines.isPublished, true), or(buildLikeConditions(magazines.title), buildLikeConditions(magazines.description)))).limit(10),
-        db.select().from(pressReleases).where(and(eq(pressReleases.isPublished, true), or(buildLikeConditions(pressReleases.title), buildLikeConditions(pressReleases.content)))).limit(10),
+        db.select().from(pages).where(and(eq(pages.isPublished, true), or(buildLikeConditions(pages.title), buildLikeConditions(pages.content)))).limit(15),
+        db.select().from(posts).where(and(eq(posts.isPublished, true), or(buildLikeConditions(posts.title), buildLikeConditions(posts.content)))).limit(15),
+        
+        // Search Audio by title, description OR speaker match
+        db.select().from(audio).where(
+          and(
+            eq(audio.isPublished, true),
+            or(
+              buildLikeConditions(audio.title),
+              buildLikeConditions(audio.description),
+              matchingSpeakerIds.length > 0 ? inArray(audio.speakerId, matchingSpeakerIds) : undefined
+            )
+          )
+        ).limit(25),
+        
+        // Search Videos by title, description, videoUrl OR speaker match
+        db.select().from(videos).where(
+          and(
+            eq(videos.isPublished, true),
+            or(
+              buildLikeConditions(videos.title),
+              buildLikeConditions(videos.description),
+              buildLikeConditions(videos.videoUrl),
+              matchingSpeakerIds.length > 0 ? inArray(videos.speakerId, matchingSpeakerIds) : undefined
+            )
+          )
+        ).limit(25),
+
+        // Search Books by title, description OR author/speaker match
+        db.select().from(books).where(
+          and(
+            eq(books.isPublished, true),
+            or(
+              buildLikeConditions(books.title),
+              buildLikeConditions(books.description),
+              buildLikeConditions(books.authorName)
+            )
+          )
+        ).limit(15),
+
+        // Search Magazines by title, description
+        db.select().from(magazines).where(and(eq(magazines.isPublished, true), or(buildLikeConditions(magazines.title), buildLikeConditions(magazines.description)))).limit(15),
+        db.select().from(pressReleases).where(and(eq(pressReleases.isPublished, true), or(buildLikeConditions(pressReleases.title), buildLikeConditions(pressReleases.content)))).limit(15),
         db.select().from(speakers).where(or(buildLikeConditions(speakers.name), buildLikeConditions(speakers.bio))).limit(10),
         db.select().from(audioCategories).where(buildLikeConditions(audioCategories.name)).limit(10),
         db.select().from(videoCategories).where(buildLikeConditions(videoCategories.name)).limit(10),
