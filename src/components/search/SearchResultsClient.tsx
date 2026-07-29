@@ -76,7 +76,7 @@ export function SearchResultsClient({ results, searchTerm }: Props) {
   const filteredResults = results.filter((item) => {
     if (activeTab === "All") return true;
     if (activeTab === "Audios") return ["audio", "speaker", "audio_category"].includes(item.type);
-    if (activeTab === "Videos") return ["video", "speaker", "video_category"].includes(item.type);
+    if (activeTab === "Videos") return ["video", "video_category"].includes(item.type);
     if (activeTab === "Documents") {
       return ["page", "post", "book", "magazine", "press_release"].includes(item.type);
     }
@@ -113,7 +113,7 @@ export function SearchResultsClient({ results, searchTerm }: Props) {
             const count = results.filter((item) => {
               if (tab === "All") return true;
               if (tab === "Audios") return ["audio", "speaker", "audio_category"].includes(item.type);
-              if (tab === "Videos") return ["video", "speaker", "video_category"].includes(item.type);
+              if (tab === "Videos") return ["video", "video_category"].includes(item.type);
               if (tab === "Documents") {
                 return ["page", "post", "book", "magazine", "press_release"].includes(item.type);
               }
