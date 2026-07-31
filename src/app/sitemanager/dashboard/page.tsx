@@ -18,6 +18,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/ui/empty-state";
 import { cn } from "@/lib/utils";
 import { useAdminAuth } from "@/hooks/use-admin-auth";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, RadialBarChart, RadialBar, PolarAngleAxis } from "recharts";
 
 // ─── Fetcher ──────────────────────────────────────────────────────────────────
 const fetcher = async (url: string) => {
@@ -719,67 +720,309 @@ export default function DashboardPage() {
         </div>
       </motion.div>
 
-      {/* ── Global Stats ────────────────────────────────────────────── */}
-      <motion.div variants={item}>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-2">
-          <Card className="bg-gradient-to-br from-blue-500/10 to-blue-600/5 border-blue-500/20">
-            <CardContent className="p-4 flex items-center justify-between">
-              <div>
-                <p className="text-sm font-semibold text-blue-600 uppercase tracking-wide">Total Plays</p>
-                <div className="text-2xl font-bold text-foreground tabular-nums leading-tight mt-1">{statsLoading ? <Skeleton className="h-6 w-16" /> : fmt(stats?.globalPlays ?? 0)}</div>
+      {/* ── Cinematic Engagement & Resources Distribution Section ──────────────── */}
+      <motion.div variants={item} className="space-y-6">
+        {/* Top Cinematic Engagement Cards with Recharts Animated Radial Rings */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          {/* Card 1: Total Plays */}
+          <Card className="relative overflow-hidden border border-blue-500/20 bg-gradient-to-br from-card via-blue-950/5 to-blue-500/10 shadow-xl hover:shadow-blue-500/20 transition-all duration-500 rounded-2xl group">
+            <div className="absolute top-0 right-0 w-36 h-36 bg-blue-500/10 rounded-full blur-3xl group-hover:bg-blue-500/25 transition-all" />
+            <CardContent className="p-5 flex items-center justify-between relative z-10">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-blue-500 animate-ping" />
+                  <p className="text-xs font-black uppercase tracking-wider text-blue-600 dark:text-blue-400">Total Plays</p>
+                </div>
+                <div className="text-3xl font-black text-foreground tabular-nums tracking-tight">
+                  {statsLoading ? <Skeleton className="h-8 w-20" /> : fmt(stats?.globalPlays ?? 0)}
+                </div>
+                <p className="text-[11px] text-muted-foreground font-semibold">Audio & Video streaming engagement</p>
               </div>
-              <div className="h-10 w-10 rounded-full bg-blue-500/20 flex items-center justify-center">
-                <Play className="h-5 w-5 text-blue-600" />
+
+              {/* Recharts Animated Radial Gauge */}
+              <div className="relative w-24 h-24 shrink-0 flex items-center justify-center">
+                <ResponsiveContainer width="100%" height="100%">
+                  <RadialBarChart
+                    cx="50%"
+                    cy="50%"
+                    innerRadius="65%"
+                    outerRadius="100%"
+                    barSize={8}
+                    data={[{
+                      name: "Plays",
+                      value: Math.min(100, Math.round(((stats?.globalPlays ?? 0) / Math.max(1, (stats?.globalPlays ?? 0) + (stats?.globalDownloads ?? 0) + (stats?.globalShares ?? 0))) * 100)) || 100,
+                      fill: "#3b82f6",
+                    }]}
+                    startAngle={90}
+                    endAngle={-270}
+                  >
+                    <PolarAngleAxis type="number" domain={[0, 100]} angleAxisId={0} tick={false} />
+                    <RadialBar
+                      background={{ fill: "rgba(59, 130, 246, 0.1)" }}
+                      dataKey="value"
+                      cornerRadius={10}
+                      isAnimationActive={true}
+                    />
+                  </RadialBarChart>
+                </ResponsiveContainer>
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <div className="w-10 h-10 rounded-full bg-blue-500/15 text-blue-600 flex items-center justify-center shadow-inner border border-blue-500/20">
+                    <Play className="h-4.5 w-4.5 fill-blue-500/20" />
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
-          <Card className="bg-gradient-to-br from-emerald-500/10 to-emerald-600/5 border-emerald-500/20">
-            <CardContent className="p-4 flex items-center justify-between">
-              <div>
-                <p className="text-sm font-semibold text-emerald-600 uppercase tracking-wide">Total Downloads</p>
-                <div className="text-2xl font-bold text-foreground tabular-nums leading-tight mt-1">{statsLoading ? <Skeleton className="h-6 w-16" /> : fmt(stats?.globalDownloads ?? 0)}</div>
+
+          {/* Card 2: Total Downloads */}
+          <Card className="relative overflow-hidden border border-emerald-500/20 bg-gradient-to-br from-card via-emerald-950/5 to-emerald-500/10 shadow-xl hover:shadow-emerald-500/20 transition-all duration-500 rounded-2xl group">
+            <div className="absolute top-0 right-0 w-36 h-36 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/25 transition-all" />
+            <CardContent className="p-5 flex items-center justify-between relative z-10">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping" />
+                  <p className="text-xs font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Total Downloads</p>
+                </div>
+                <div className="text-3xl font-black text-foreground tabular-nums tracking-tight">
+                  {statsLoading ? <Skeleton className="h-8 w-20" /> : fmt(stats?.globalDownloads ?? 0)}
+                </div>
+                <p className="text-[11px] text-muted-foreground font-semibold">Books, magazines & offline audios</p>
               </div>
-              <div className="h-10 w-10 rounded-full bg-emerald-500/20 flex items-center justify-center">
-                <Download className="h-5 w-5 text-emerald-600" />
+
+              {/* Recharts Animated Radial Gauge */}
+              <div className="relative w-24 h-24 shrink-0 flex items-center justify-center">
+                <ResponsiveContainer width="100%" height="100%">
+                  <RadialBarChart
+                    cx="50%"
+                    cy="50%"
+                    innerRadius="65%"
+                    outerRadius="100%"
+                    barSize={8}
+                    data={[{
+                      name: "Downloads",
+                      value: Math.min(100, Math.round(((stats?.globalDownloads ?? 0) / Math.max(1, (stats?.globalPlays ?? 0) + (stats?.globalDownloads ?? 0) + (stats?.globalShares ?? 0))) * 100)) || 100,
+                      fill: "#10b981",
+                    }]}
+                    startAngle={90}
+                    endAngle={-270}
+                  >
+                    <PolarAngleAxis type="number" domain={[0, 100]} angleAxisId={0} tick={false} />
+                    <RadialBar
+                      background={{ fill: "rgba(16, 185, 129, 0.1)" }}
+                      dataKey="value"
+                      cornerRadius={10}
+                      isAnimationActive={true}
+                    />
+                  </RadialBarChart>
+                </ResponsiveContainer>
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <div className="w-10 h-10 rounded-full bg-emerald-500/15 text-emerald-600 flex items-center justify-center shadow-inner border border-emerald-500/20">
+                    <Download className="h-4.5 w-4.5" />
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
-          <Card className="bg-gradient-to-br from-purple-500/10 to-purple-600/5 border-purple-500/20">
-            <CardContent className="p-4 flex items-center justify-between">
-              <div>
-                <p className="text-sm font-semibold text-purple-600 uppercase tracking-wide">Total Shares</p>
-                <div className="text-2xl font-bold text-foreground tabular-nums leading-tight mt-1">{statsLoading ? <Skeleton className="h-6 w-16" /> : fmt(stats?.globalShares ?? 0)}</div>
+
+          {/* Card 3: Total Shares */}
+          <Card className="relative overflow-hidden border border-purple-500/20 bg-gradient-to-br from-card via-purple-950/5 to-purple-500/10 shadow-xl hover:shadow-purple-500/20 transition-all duration-500 rounded-2xl group">
+            <div className="absolute top-0 right-0 w-36 h-36 bg-purple-500/10 rounded-full blur-3xl group-hover:bg-purple-500/25 transition-all" />
+            <CardContent className="p-5 flex items-center justify-between relative z-10">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-full bg-purple-500 animate-ping" />
+                  <p className="text-xs font-black uppercase tracking-wider text-purple-600 dark:text-purple-400">Total Shares</p>
+                </div>
+                <div className="text-3xl font-black text-foreground tabular-nums tracking-tight">
+                  {statsLoading ? <Skeleton className="h-8 w-20" /> : fmt(stats?.globalShares ?? 0)}
+                </div>
+                <p className="text-[11px] text-muted-foreground font-semibold">Social outreach & link distribution</p>
               </div>
-              <div className="h-10 w-10 rounded-full bg-purple-500/20 flex items-center justify-center">
-                <Share2 className="h-5 w-5 text-purple-600" />
+
+              {/* Recharts Animated Radial Gauge */}
+              <div className="relative w-24 h-24 shrink-0 flex items-center justify-center">
+                <ResponsiveContainer width="100%" height="100%">
+                  <RadialBarChart
+                    cx="50%"
+                    cy="50%"
+                    innerRadius="65%"
+                    outerRadius="100%"
+                    barSize={8}
+                    data={[{
+                      name: "Shares",
+                      value: Math.min(100, Math.round(((stats?.globalShares ?? 0) / Math.max(1, (stats?.globalPlays ?? 0) + (stats?.globalDownloads ?? 0) + (stats?.globalShares ?? 0))) * 100)) || 100,
+                      fill: "#a855f7",
+                    }]}
+                    startAngle={90}
+                    endAngle={-270}
+                  >
+                    <PolarAngleAxis type="number" domain={[0, 100]} angleAxisId={0} tick={false} />
+                    <RadialBar
+                      background={{ fill: "rgba(168, 85, 247, 0.1)" }}
+                      dataKey="value"
+                      cornerRadius={10}
+                      isAnimationActive={true}
+                    />
+                  </RadialBarChart>
+                </ResponsiveContainer>
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                  <div className="w-10 h-10 rounded-full bg-purple-500/15 text-purple-600 flex items-center justify-center shadow-inner border border-purple-500/20">
+                    <Share2 className="h-4.5 w-4.5" />
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
         </div>
-      </motion.div>
 
-      {/* ── Top stat cards ─────────────────────────────────────────── */}
-      <motion.div variants={item}>
-        {statsLoading ? <StatsSkeleton /> : (
-          <div className="grid grid-cols-2 sm:grid-cols-6 lg:grid-cols-6 gap-3">
-            {TOP_CARDS.map((card) => {
-              if (card.key === "disclaimerViews" && !stats?.disclaimerEnabled) return null;
-              return (
-                <Link key={card.key} href={card.href} className="group block">
-                  <Card className="hover:shadow-md transition-all duration-200 hover:border-primary/30 hover:bg-primary-light/80 cursor-pointer">
-                    <CardContent className="p-4">
-                      <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center mb-2.5", card.color)}>
-                        <card.icon className="h-4 w-4" />
+        {/* 3D Animated Pie Chart & Grid Counters */}
+        {statsLoading ? <StatsSkeleton /> : (() => {
+          const categories = [
+            { key: "audio", name: "Audio Lectures", value: stats?.audio ?? 0, color: "#9333ea", class: "bg-purple-500", href: "/sitemanager/audio", icon: Headphones },
+            { key: "videos", name: "Videos", value: stats?.videos ?? 0, color: "#ef4444", class: "bg-red-500", href: "/sitemanager/videos", icon: Video },
+            { key: "books", name: "Books", value: stats?.books ?? 0, color: "#f59e0b", class: "bg-amber-500", href: "/sitemanager/books", icon: BookOpen },
+            { key: "pages", name: "Total Pages", value: stats?.pages ?? 0, color: "#3b82f6", class: "bg-blue-500", href: "/sitemanager/pages", icon: FileText },
+            { key: "magazines", name: "Magazines", value: stats?.magazines ?? 0, color: "#f97316", class: "bg-orange-500", href: "/sitemanager/magazines", icon: BookMarked },
+            { key: "sermons", name: "Sermons", value: stats?.sermons ?? 0, color: "#14b8a6", class: "bg-teal-500", href: "/sitemanager/sermons", icon: Mic2 },
+          ];
+
+          const grandTotal = categories.reduce((sum, c) => sum + c.value, 0) || 1;
+
+          return (
+            <Card className="border border-border/80 bg-gradient-to-br from-card via-card to-muted/20 shadow-2xl rounded-2xl overflow-hidden backdrop-blur-md">
+              <CardContent className="p-6">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                  
+                  {/* Left Column: Interactive 3D Donut Pie Chart with Recharts */}
+                  <div className="lg:col-span-5 flex flex-col items-center justify-center p-6 bg-muted/30 border border-border/50 rounded-2xl shadow-inner relative overflow-hidden group">
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-purple-500/5 opacity-50" />
+                    
+                    <div className="relative w-64 h-64 flex items-center justify-center">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <defs>
+                            {categories.map((cat) => (
+                              <linearGradient key={`grad-${cat.key}`} id={`grad-${cat.key}`} x1="0" y1="0" x2="1" y2="1">
+                                <stop offset="0%" stopColor={cat.color} stopOpacity={1} />
+                                <stop offset="100%" stopColor={cat.color} stopOpacity={0.75} />
+                              </linearGradient>
+                            ))}
+                            <filter id="pie3dShadow" x="-20%" y="-20%" width="140%" height="140%">
+                              <feDropShadow dx="0" dy="6" stdDeviation="6" floodOpacity="0.25" />
+                            </filter>
+                          </defs>
+                          <Tooltip
+                            content={({ active, payload }) => {
+                              if (active && payload && payload.length) {
+                                const data = payload[0].payload;
+                                const pct = Math.round((data.value / grandTotal) * 100);
+                                return (
+                                  <div className="bg-popover/95 backdrop-blur-md border border-border/80 p-3 rounded-xl shadow-2xl space-y-1 z-50">
+                                    <div className="flex items-center gap-2">
+                                      <span className="w-3 h-3 rounded-full" style={{ backgroundColor: data.color }} />
+                                      <span className="font-bold text-xs text-popover-foreground">{data.name}</span>
+                                    </div>
+                                    <p className="text-sm font-black text-foreground tabular-nums">{fmt(data.value)} items ({pct}%)</p>
+                                  </div>
+                                );
+                              }
+                              return null;
+                            }}
+                          />
+                          <Pie
+                            data={categories}
+                            cx="50%"
+                            cy="50%"
+                            innerRadius={68}
+                            outerRadius={96}
+                            paddingAngle={5}
+                            dataKey="value"
+                            isAnimationActive={true}
+                            animationDuration={1200}
+                            style={{ filter: "url(#pie3dShadow)" }}
+                          >
+                            {categories.map((entry) => (
+                              <Cell
+                                key={`cell-${entry.key}`}
+                                fill={`url(#grad-${entry.key})`}
+                                stroke="rgba(255,255,255,0.2)"
+                                strokeWidth={1.5}
+                                className="transition-all duration-300 hover:scale-105 cursor-pointer origin-center"
+                              />
+                            ))}
+                          </Pie>
+                        </PieChart>
+                      </ResponsiveContainer>
+                      
+                      {/* Interactive Center Badge */}
+                      <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                        <span className="text-3xl font-black tabular-nums tracking-tighter text-foreground drop-shadow-xs">
+                          {fmt(grandTotal)}
+                        </span>
+                        <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mt-0.5">
+                          Total Content
+                        </span>
                       </div>
-                      <p className="text-2xl font-bold text-primary tabular-nums leading-tight">{stats?.[card.key] ?? 0}</p>
-                      <p className="text-md text-muted-foreground mt-0.5 group-hover:text-primary transition-colors leading-tight">{card.label}</p>
-                    </CardContent>
-                  </Card>
-                </Link>
-              );
-            })}
-          </div>
-        )}
+                    </div>
+
+                    {/* Category Legend Grid */}
+                    <div className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 max-w-xs">
+                      {categories.map((cat) => {
+                        const pct = Math.round((cat.value / grandTotal) * 100);
+                        return (
+                          <div key={cat.key} className="flex items-center gap-1.5 text-[11px] font-bold text-foreground">
+                            <span className="w-2.5 h-2.5 rounded-full shrink-0 shadow-xs" style={{ backgroundColor: cat.color }} />
+                            <span>{cat.name}</span>
+                            <span className="text-muted-foreground font-mono text-[10px]">({pct}%)</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Right Column: Modernized Counter Cards */}
+                  <div className="lg:col-span-7 grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    {TOP_CARDS.map((card) => {
+                      if (card.key === "disclaimerViews" && !stats?.disclaimerEnabled) return null;
+                      const pieItem = categories.find(c => c.key === card.key);
+                      const percent = pieItem ? Math.round((pieItem.value / grandTotal) * 100) : null;
+
+                      return (
+                        <Link key={card.key} href={card.href} className="group block">
+                          <Card className="hover:shadow-xl transition-all duration-300 hover:border-primary/50 hover:-translate-y-1 bg-background/80 backdrop-blur-md border-border/60 rounded-2xl relative overflow-hidden">
+                            {/* Top subtle glow strip */}
+                            <div className={cn("h-1 w-full", card.color.split(" ")[0].replace("/10", ""))} />
+                            <CardContent className="p-4 space-y-2">
+                              <div className="flex items-center justify-between">
+                                <div className={cn("w-8 h-8 rounded-xl flex items-center justify-center shadow-inner border border-white/10", card.color)}>
+                                  <card.icon className="h-4 w-4" />
+                                </div>
+                                {percent !== null && (
+                                  <Badge variant="outline" className="text-[10px] font-mono px-1.5 py-0 bg-muted/50 border-border/60 text-muted-foreground font-bold">
+                                    {percent}%
+                                  </Badge>
+                                )}
+                              </div>
+                              <div>
+                                <p className="text-2xl font-black text-foreground tabular-nums tracking-tight group-hover:text-primary transition-colors">
+                                  {stats?.[card.key] ?? 0}
+                                </p>
+                                <p className="text-xs font-semibold text-muted-foreground truncate mt-0.5">
+                                  {card.label}
+                                </p>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        </Link>
+                      );
+                    })}
+                  </div>
+
+                </div>
+              </CardContent>
+            </Card>
+          );
+        })()}
       </motion.div>
 
       {/* ── SEO Center Live Audit Dashboard Widget ───────────────────── */}
