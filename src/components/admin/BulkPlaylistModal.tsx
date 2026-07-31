@@ -427,7 +427,7 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
                       <div className="flex flex-col items-center justify-center space-y-1">
                         <RefreshCw className="w-7 h-7 text-primary animate-spin" />
                         <span className="text-xs font-extrabold text-primary">{overallUploadProgress}%</span>
-                        <span className="text-[9px] text-muted-foreground font-semibold">Total</span>
+                        <span className="text-[9px] text-muted-foreground font-semibold">Progress</span>
                       </div>
                     ) : (
                       <div className="flex flex-col items-center justify-center space-y-1">
@@ -448,33 +448,33 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
                       </div>
 
                       {/* Total Overall Progress Bar */}
-                      <div className="space-y-1 bg-background/80 backdrop-blur-sm p-3 rounded-xl border border-primary/20 shadow-sm text-left">
+                      <div className="space-y-1 bg-background/90 backdrop-blur-sm p-3 rounded-xl border border-primary/20 shadow-sm text-left">
                         <div className="flex justify-between items-center text-xs font-semibold">
-                          <span className="text-foreground flex items-center gap-1">
+                          <span className="text-foreground flex items-center gap-1.5">
                             <UploadCloud className="w-3.5 h-3.5 text-primary" /> Total Progress ({currentAudioIndex}/{totalAudioFiles})
                           </span>
                           <span className="text-primary font-bold">{overallUploadProgress}%</span>
                         </div>
-                        <div className="w-full h-2.5 bg-muted rounded-full overflow-hidden border border-border p-0.5">
+                        <div className="w-full h-2.5 bg-muted/80 rounded-full overflow-hidden border border-border/60">
                           <div
                             className="h-full bg-gradient-to-r from-emerald-500 via-primary to-teal-400 rounded-full transition-all duration-300 ease-out"
-                            style={{ width: `${overallUploadProgress}%` }}
+                            style={{ width: `${Math.min(100, Math.max(0, overallUploadProgress))}%` }}
                           />
                         </div>
                       </div>
 
                       {/* Individual File-wise Progress Bar */}
-                      <div className="space-y-1 bg-background/80 backdrop-blur-sm p-3 rounded-xl border border-border shadow-sm text-left">
+                      <div className="space-y-1 bg-background/90 backdrop-blur-sm p-3 rounded-xl border border-primary/20 shadow-sm text-left">
                         <div className="flex justify-between items-center text-xs font-semibold gap-2">
-                          <span className="text-muted-foreground truncate max-w-[240px]" title={currentFileName}>
+                          <span className="text-foreground font-medium truncate max-w-[260px]" title={currentFileName}>
                             {currentFileName}
                           </span>
                           <span className="text-blue-600 font-bold shrink-0">{currentFileProgress}%</span>
                         </div>
-                        <div className="w-full h-2 bg-muted rounded-full overflow-hidden border border-border p-0.5">
+                        <div className="w-full h-2.5 bg-muted/80 rounded-full overflow-hidden border border-border/60">
                           <div
-                            className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full transition-all duration-300 ease-out"
-                            style={{ width: `${currentFileProgress}%` }}
+                            className="h-full bg-gradient-to-r from-blue-600 via-indigo-600 to-sky-500 rounded-full transition-all duration-300 ease-out"
+                            style={{ width: `${Math.min(100, Math.max(0, currentFileProgress))}%` }}
                           />
                         </div>
                       </div>
