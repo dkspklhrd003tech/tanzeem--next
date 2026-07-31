@@ -499,7 +499,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
     return text.toLowerCase().trim().replace(/[^\w\s-]/g, "").replace(/[\s_]+/g, "-").replace(/^-+|-+$/g, "");
   }
 
-  const handleBulkImport = async (items: ParsedVideoItem[]) => {
+  const handleBulkImport = async (items: ParsedVideoItem[], onProgress?: (current: number, total: number) => void) => {
     if (!activeCategory || !bulkTargetSubId) return;
 
     let successCount = 0;
@@ -516,6 +516,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
     }
 
     for (let i = 0; i < items.length; i++) {
+      if (onProgress) onProgress(i + 1, items.length);
       const v = items[i];
       const payload: any = {
         title: v.title || `${mediaType === "audio" ? "Audio" : "Video"} ${i + 1}`,

@@ -26,7 +26,7 @@ export interface ParsedVideoItem {
 interface BulkPlaylistModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onImport: (videos: ParsedVideoItem[]) => Promise<void>;
+  onImport: (videos: ParsedVideoItem[], onProgress?: (current: number, total: number) => void) => Promise<void>;
   targetName?: string;
   mediaType?: "audio" | "video";
 }
@@ -37,6 +37,8 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
   const [isFetching, setIsFetching] = useState(false);
   const [fetchedVideos, setFetchedVideos] = useState<ParsedVideoItem[]>([]);
   const [isImporting, setIsImporting] = useState(false);
+  const [importCurrentIndex, setImportCurrentIndex] = useState(0);
+  const [importTotalCount, setImportTotalCount] = useState(0);
   const { toast } = useToast();
 
   // Audio Upload States
@@ -44,7 +46,8 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
   const { uploadFile } = useChunkedUpload();
   const [dragActive, setDragActive] = useState(false);
   const [isUploadingAudio, setIsUploadingAudio] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
+  const [overallUploadProgress, setOverallUploadProgress] = useState(0);
+  const [currentFileProgress, setCurrentFileProgress] = useState(0);
   const [currentFileName, setCurrentFileName] = useState("");
   const [totalAudioFiles, setTotalAudioFiles] = useState(0);
   const [currentAudioIndex, setCurrentAudioIndex] = useState(0);
@@ -55,8 +58,11 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
     setFetchedVideos([]);
     setIsFetching(false);
     setIsImporting(false);
+    setImportCurrentIndex(0);
+    setImportTotalCount(0);
     setIsUploadingAudio(false);
-    setUploadProgress(0);
+    setOverallUploadProgress(0);
+    setCurrentFileProgress(0);
     setCurrentFileName("");
     setTotalAudioFiles(0);
     setCurrentAudioIndex(0);
@@ -70,8 +76,11 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
       setFetchedVideos([]);
       setIsFetching(false);
       setIsImporting(false);
+      setImportCurrentIndex(0);
+      setImportTotalCount(0);
       setIsUploadingAudio(false);
-      setUploadProgress(0);
+      setOverallUploadProgress(0);
+      setCurrentFileProgress(0);
       setCurrentFileName("");
       setTotalAudioFiles(0);
       setCurrentAudioIndex(0);
@@ -147,17 +156,24 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
     setIsUploadingAudio(true);
     setTotalAudioFiles(audioFiles.length);
     setCurrentAudioIndex(1);
+    setOverallUploadProgress(0);
+    setCurrentFileProgress(0);
+
     const newItems: ParsedVideoItem[] = [];
 
     for (let i = 0; i < audioFiles.length; i++) {
       const file = audioFiles[i];
       setCurrentAudioIndex(i + 1);
       setCurrentFileName(file.name);
-      setUploadProgress(0);
+      setCurrentFileProgress(0);
 
       try {
         const res = await uploadFile(file, {
-          onProgress: (pct) => setUploadProgress(pct),
+          onProgress: (pct) => {
+            setCurrentFileProgress(pct);
+            const overall = Math.min(100, Math.round(((i * 100) + pct) / audioFiles.length));
+            setOverallUploadProgress(overall);
+          },
         });
 
         // Clean filename extension for default title
@@ -172,6 +188,9 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
           thumbnailUrl: "",
           selected: true,
         });
+
+        const completedOverall = Math.min(100, Math.round(((i + 1) * 100) / audioFiles.length));
+        setOverallUploadProgress(completedOverall);
       } catch (err: any) {
         toast({
           title: "Upload Failed",
@@ -182,7 +201,8 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
     }
 
     setIsUploadingAudio(false);
-    setUploadProgress(0);
+    setOverallUploadProgress(0);
+    setCurrentFileProgress(0);
     setCurrentFileName("");
 
     if (newItems.length > 0) {
@@ -207,7 +227,7 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+    if (!isUploadingAudio && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       await handleAudioFiles(e.dataTransfer.files);
     }
   };
@@ -282,8 +302,14 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
     }
 
     setIsImporting(true);
+    setImportCurrentIndex(0);
+    setImportTotalCount(selected.length);
+
     try {
-      await onImport(selected);
+      await onImport(selected, (current, total) => {
+        setImportCurrentIndex(current);
+        setImportTotalCount(total);
+      });
       toast({
         title: "Import Successful!",
         description: `Successfully imported ${selected.length} ${mediaType === "audio" ? "audio(s)" : "video(s)"}.`,
@@ -300,6 +326,8 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
       });
     } finally {
       setIsImporting(false);
+      setImportCurrentIndex(0);
+      setImportTotalCount(0);
     }
   };
 
@@ -321,7 +349,7 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
                 : `Import multiple videos at once into ${targetName || "this section"} from YouTube, Rumble, OK.ru, or custom link lists.`}
             </p>
           </div>
-          <Button variant="ghost" size="icon" className="bg-red-600 text-white rounded-full hover:bg-red-700 hover:text-white" onClick={handleClose}>
+          <Button variant="ghost" size="icon" className="bg-red-600 text-white rounded-full hover:bg-red-700 hover:text-white" onClick={handleClose} disabled={isImporting || isUploadingAudio}>
             <X className="w-7 h-7" />
           </Button>
         </div>
@@ -336,9 +364,10 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
                 onDragLeave={handleDrag}
                 onDragOver={handleDrag}
                 onDrop={handleDrop}
-                onClick={() => fileInputRef.current?.click()}
+                onClick={() => !isUploadingAudio && fileInputRef.current?.click()}
                 className={cn(
-                  "relative border-2 border-dashed rounded-3xl p-8 transition-all duration-300 cursor-pointer flex flex-col items-center justify-center text-center overflow-hidden group shadow-lg hover:shadow-2xl hover:shadow-primary/10",
+                  "relative border-2 border-dashed rounded-3xl p-8 transition-all duration-300 flex flex-col items-center justify-center text-center overflow-hidden group shadow-lg hover:shadow-2xl hover:shadow-primary/10",
+                  isUploadingAudio ? "cursor-wait border-primary/60 bg-primary/5" : "cursor-pointer",
                   dragActive
                     ? "border-primary bg-primary/10 scale-[1.01] shadow-primary/20"
                     : "border-primary/40 bg-gradient-to-b from-card via-muted/20 to-muted/50 hover:border-primary hover:bg-primary/5"
@@ -351,6 +380,7 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
                   accept="audio/*,.mp3,.wav,.ogg,.aac,.m4a"
                   className="hidden"
                   onChange={handleFileChange}
+                  disabled={isUploadingAudio}
                 />
 
                 {/* 3D Circular Ring Stage */}
@@ -366,7 +396,7 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
                   {/* Radial Backdrop Glow */}
                   <div className="absolute inset-4 rounded-full bg-gradient-to-tr from-primary/20 via-primary/5 to-transparent blur-xl group-hover:scale-110 transition-transform duration-500" />
 
-                  {/* SVG Circular Progress Meter (Visible during upload) */}
+                  {/* SVG Circular Progress Meter (Shows Total Overall Upload Progress) */}
                   {isUploadingAudio ? (
                     <svg className="absolute inset-0 w-full h-full -rotate-90 transform" viewBox="0 0 160 160">
                       <circle
@@ -384,7 +414,7 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
                         className="text-primary stroke-current transition-all duration-300 ease-out"
                         strokeWidth="6"
                         strokeDasharray={427.25}
-                        strokeDashoffset={427.25 - (427.25 * (uploadProgress || 0)) / 100}
+                        strokeDashoffset={427.25 - (427.25 * (overallUploadProgress || 0)) / 100}
                         strokeLinecap="round"
                         fill="transparent"
                       />
@@ -396,7 +426,8 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
                     {isUploadingAudio ? (
                       <div className="flex flex-col items-center justify-center space-y-1">
                         <RefreshCw className="w-7 h-7 text-primary animate-spin" />
-                        <span className="text-xs font-extrabold text-primary">{uploadProgress}%</span>
+                        <span className="text-xs font-extrabold text-primary">{overallUploadProgress}%</span>
+                        <span className="text-[9px] text-muted-foreground font-semibold">Total</span>
                       </div>
                     ) : (
                       <div className="flex flex-col items-center justify-center space-y-1">
@@ -408,16 +439,45 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
                   </div>
                 </div>
 
-                {/* Text Details & Live Counter */}
-                <div className="space-y-2 mt-2 max-w-md z-10">
+                {/* Text Details & Dual Live Progress Bars */}
+                <div className="space-y-3 mt-2 w-full max-w-md z-10">
                   {isUploadingAudio ? (
-                    <div className="space-y-1.5 animate-pulse">
-                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold">
+                    <div className="space-y-3">
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold shadow-sm">
                         <span>Uploading File {currentAudioIndex} of {totalAudioFiles}</span>
                       </div>
-                      <p className="text-sm font-semibold text-foreground truncate max-w-xs mx-auto">
-                        {currentFileName}
-                      </p>
+
+                      {/* Total Overall Progress Bar */}
+                      <div className="space-y-1 bg-background/80 backdrop-blur-sm p-3 rounded-xl border border-primary/20 shadow-sm text-left">
+                        <div className="flex justify-between items-center text-xs font-semibold">
+                          <span className="text-foreground flex items-center gap-1">
+                            <UploadCloud className="w-3.5 h-3.5 text-primary" /> Total Progress ({currentAudioIndex}/{totalAudioFiles})
+                          </span>
+                          <span className="text-primary font-bold">{overallUploadProgress}%</span>
+                        </div>
+                        <div className="w-full h-2.5 bg-muted rounded-full overflow-hidden border border-border p-0.5">
+                          <div
+                            className="h-full bg-gradient-to-r from-emerald-500 via-primary to-teal-400 rounded-full transition-all duration-300 ease-out"
+                            style={{ width: `${overallUploadProgress}%` }}
+                          />
+                        </div>
+                      </div>
+
+                      {/* Individual File-wise Progress Bar */}
+                      <div className="space-y-1 bg-background/80 backdrop-blur-sm p-3 rounded-xl border border-border shadow-sm text-left">
+                        <div className="flex justify-between items-center text-xs font-semibold gap-2">
+                          <span className="text-muted-foreground truncate max-w-[240px]" title={currentFileName}>
+                            {currentFileName}
+                          </span>
+                          <span className="text-blue-600 font-bold shrink-0">{currentFileProgress}%</span>
+                        </div>
+                        <div className="w-full h-2 bg-muted rounded-full overflow-hidden border border-border p-0.5">
+                          <div
+                            className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full transition-all duration-300 ease-out"
+                            style={{ width: `${currentFileProgress}%` }}
+                          />
+                        </div>
+                      </div>
                     </div>
                   ) : (
                     <>
@@ -432,11 +492,13 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
                 </div>
 
                 {/* Decorative Bottom Divider */}
-                <div className="flex items-center gap-3 w-full max-w-xs mt-4 opacity-70 group-hover:opacity-100 transition-opacity">
-                  <div className="flex-1 h-px bg-border" />
-                  <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">or select files</span>
-                  <div className="flex-1 h-px bg-border" />
-                </div>
+                {!isUploadingAudio && (
+                  <div className="flex items-center gap-3 w-full max-w-xs mt-4 opacity-70 group-hover:opacity-100 transition-opacity">
+                    <div className="flex-1 h-px bg-border" />
+                    <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">or select files</span>
+                    <div className="flex-1 h-px bg-border" />
+                  </div>
+                )}
               </div>
             </div>
           ) : (
@@ -448,173 +510,140 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
                 </Label>
                 <div className="flex items-center gap-2">
                   <Badge variant="outline" className="text-[10px] text-red-600 border-red-200 bg-red-50">
-                    YouTube Playlist
+                    YouTube / Rumble / OK.ru
                   </Badge>
-                  <Badge variant="outline" className="text-[10px] text-green-600 border-green-200 bg-green-50">Rumble</Badge>
-                  <Badge variant="outline" className="text-[10px] text-orange-600 border-orange-200 bg-orange-50">OK.ru</Badge>
-                  <Badge variant="outline" className="text-[10px] text-blue-600 border-blue-200 bg-blue-50">Multi-Links</Badge>
                 </div>
               </div>
+
               <Textarea
-                placeholder={`Paste YouTube playlist link e.g.: https://www.youtube.com/playlist?list=PL...\nOr paste multiple video URLs separated by new lines:\nhttps://www.youtube.com/watch?v=...\nhttps://rumble.com/v...\nhttps://ok.ru/video/...`}
+                placeholder="Paste YouTube playlist URL, Rumble link, OK.ru video link, or multiple video URLs (one per line)..."
                 value={playlistUrl}
                 onChange={(e) => setPlaylistUrl(e.target.value)}
-                className="font-mono text-xs min-h-[90px] resize-y"
+                rows={4}
+                className="font-mono text-xs"
               />
 
-              {/* Default Title Input */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end bg-muted/30 p-3 rounded-xl border border-border/60">
-                <div className="sm:col-span-2 space-y-1.5">
-                  <Label className="text-xs font-semibold flex items-center gap-1.5 text-foreground">
-                    <Type className="w-3.5 h-3.5 text-primary" /> Default Video Title / Series Prefix (Optional)
-                  </Label>
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex-1 max-w-xs">
                   <Input
-                    placeholder="e.g. Zamana Gawah Hai 2023 (Leave blank to use original video titles)"
+                    placeholder="Optional title prefix (e.g. Series 2026)"
                     value={defaultTitlePrefix}
                     onChange={(e) => setDefaultTitlePrefix(e.target.value)}
-                    className="text-xs h-9 bg-background"
+                    className="text-xs"
                   />
                 </div>
-                <div className="flex gap-2">
-                  {fetchedVideos.length > 0 && (
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      onClick={applyDefaultTitleToAll}
-                      className="h-9 text-xs flex-1"
-                    >
-                      Apply Title to All
-                    </Button>
+                <Button
+                  onClick={handleFetchPlaylist}
+                  disabled={isFetching || !playlistUrl.trim()}
+                  className="bg-primary text-white hover:bg-primary/90"
+                >
+                  {isFetching ? (
+                    <>
+                      <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> Extracting...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-4 h-4 mr-2" /> Extract Playlist / Videos
+                    </>
                   )}
-                  <Button
-                    type="button"
-                    onClick={handleFetchPlaylist}
-                    disabled={isFetching || !playlistUrl.trim()}
-                    className="h-9 text-xs flex-1"
-                  >
-                    {isFetching ? (
-                      <>
-                        <RefreshCw className="w-3.5 h-3.5 mr-1.5 animate-spin" /> Fetching...
-                      </>
-                    ) : (
-                      <>
-                        <Video className="w-3.5 h-3.5 mr-1.5" /> Fetch Playlist
-                      </>
-                    )}
-                  </Button>
-                </div>
+                </Button>
               </div>
             </div>
           )}
 
-          {/* Preview Section */}
+          {/* Extracted/Uploaded Media List Preview */}
           {fetchedVideos.length > 0 && (
-            <div className="space-y-4 pt-2 border-t border-border">
-              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 bg-muted/40 p-3 rounded-xl">
+            <div className="space-y-4 pt-4 border-t border-border">
+              <div className="flex items-center justify-between flex-wrap gap-2">
                 <div>
-                  <h4 className="font-semibold text-sm">
-                    {mediaType === "audio" ? `Uploaded Audios (${fetchedVideos.length})` : `Extracted Videos (${fetchedVideos.length})`}
+                  <h4 className="font-bold text-sm text-foreground">
+                    Uploaded {mediaType === "audio" ? "Audios" : "Videos"} ({fetchedVideos.length})
                   </h4>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-[11px] text-muted-foreground">
                     {selectedCount} of {fetchedVideos.length} selected for import
                   </p>
                 </div>
-                <div className="flex items-center gap-2 flex-wrap">
-                  <Button variant="outline" size="sm" onClick={() => setFetchedVideos(prev => [...prev].reverse())} title="Invert / Reverse file order">
-                    <ArrowDown className="w-3.5 h-3.5 mr-1" /> Reverse Order
+
+                <div className="flex items-center gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="h-8 text-xs"
+                    onClick={() => setFetchedVideos([...fetchedVideos].reverse())}
+                  >
+                    <ArrowUp className="w-3 h-3 mr-1" /> Reverse Order
                   </Button>
-                  <Button variant="outline" size="sm" onClick={() => toggleSelectAll(true)}>
-                    <CheckSquare className="w-3.5 h-3.5 mr-1" /> Select All
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="h-8 text-xs"
+                    onClick={() => toggleSelectAll(true)}
+                  >
+                    <CheckSquare className="w-3 h-3 mr-1" /> Select All
                   </Button>
-                  <Button variant="outline" size="sm" onClick={() => toggleSelectAll(false)}>
-                    <Square className="w-3.5 h-3.5 mr-1" /> Deselect All
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="h-8 text-xs"
+                    onClick={() => toggleSelectAll(false)}
+                  >
+                    <Square className="w-3 h-3 mr-1" /> Deselect All
                   </Button>
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[350px] overflow-y-auto pr-1">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[300px] overflow-y-auto pr-1">
                 {fetchedVideos.map((video, idx) => (
                   <div
                     key={idx}
                     className={cn(
-                      "p-3 rounded-xl border flex items-start gap-3 transition-all relative group",
-                      video.selected !== false
-                        ? "bg-card border-primary/40 shadow-sm"
-                        : "bg-muted/30 border-border opacity-50"
+                      "p-3 rounded-xl border transition-all flex items-start gap-3 bg-card",
+                      video.selected !== false ? "border-primary/50 bg-primary/5" : "border-border opacity-60"
                     )}
                   >
-                    <div className="flex flex-col items-center gap-1 shrink-0 pt-0.5">
-                      <Badge variant="secondary" className="text-[10px] font-mono px-1.5 py-0 h-5 bg-primary/10 text-primary border border-primary/20">
+                    <div className="flex flex-col items-center gap-2">
+                      <Badge variant="secondary" className="text-[10px] h-5 px-1.5 font-mono">
                         #{idx + 1}
                       </Badge>
                       <input
                         type="checkbox"
                         checked={video.selected !== false}
                         onChange={() => toggleSelectVideo(idx)}
-                        className="mt-1 h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
+                        className="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary cursor-pointer"
                       />
                     </div>
 
-                    <div className="w-20 aspect-video rounded-lg overflow-hidden bg-muted relative shrink-0 border border-border flex items-center justify-center">
+                    <div className="w-16 aspect-video rounded bg-muted flex items-center justify-center shrink-0 border">
                       {video.thumbnailUrl ? (
-                        <img src={video.thumbnailUrl} className="w-full h-full object-cover" alt={video.title} />
+                        <img src={video.thumbnailUrl} className="w-full h-full object-cover rounded" />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-foreground">
-                          {mediaType === "audio" ? <AudioLines className="w-6 h-6 text-primary" /> : <PlayCircle className="w-6 h-6 opacity-30" />}
+                        <div className="text-muted-foreground">
+                          {mediaType === "audio" ? <AudioLines className="w-5 h-5" /> : <PlayCircle className="w-5 h-5" />}
                         </div>
                       )}
                     </div>
 
-                    <div className="flex-1 min-w-0 space-y-1">
+                    <div className="flex-1 min-w-0">
                       <Input
                         value={video.title}
                         onChange={(e) => handleTitleChange(idx, e.target.value)}
-                        className="text-xs font-semibold h-8"
-                        placeholder={mediaType === "audio" ? "Audio Title" : "Video Title"}
+                        className="text-xs h-7 mb-1"
                       />
-                      <div className="flex items-center justify-between gap-2">
-                        <a
-                          href={video.videoUrl}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-[10px] text-primary hover:underline flex items-center gap-1 truncate max-w-[150px]"
-                        >
-                          <ExternalLink className="w-3 h-3 shrink-0" />
-                          <span className="truncate">{video.videoUrl}</span>
+                      <div className="flex items-center justify-between">
+                        <a href={video.videoUrl} target="_blank" className="text-[10px] text-primary hover:underline truncate">
+                          {video.videoUrl}
                         </a>
-
-                        <div className="flex items-center gap-0.5 shrink-0">
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            disabled={idx === 0}
-                            onClick={() => handleMoveVideo(idx, "up")}
-                            className="h-6 w-6 text-blue-600"
-                            title="Move Up"
-                          >
+                        <div className="flex items-center gap-1">
+                          <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => handleMoveVideo(idx, "up")}>
                             <ArrowUp className="w-3 h-3" />
                           </Button>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            disabled={idx === fetchedVideos.length - 1}
-                            onClick={() => handleMoveVideo(idx, "down")}
-                            className="h-6 w-6 text-blue-600"
-                            title="Move Down"
-                          >
+                          <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => handleMoveVideo(idx, "down")}>
                             <ArrowDown className="w-3 h-3" />
                           </Button>
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleRemoveVideo(idx)}
-                            className="h-6 w-6 text-red-600"
-                            title="Remove item"
-                          >
+                          <Button variant="ghost" size="icon" className="h-6 w-6 text-red-500" onClick={() => handleRemoveVideo(idx)}>
                             <Trash2 className="w-3 h-3" />
                           </Button>
                         </div>
@@ -629,24 +658,41 @@ export function BulkPlaylistModal({ isOpen, onClose, onImport, targetName, media
 
         {/* Modal Footer */}
         <div className="p-4 border-t border-border flex items-center justify-between bg-muted/20">
-          <Button className="px-3 py-2 border border-red-600 text-red-600 bg-white hover:bg-red-600 hover:text-white" variant="ghost" onClick={handleClose} disabled={isImporting || isUploadingAudio}>
-            Cancel
-          </Button>
-          <Button
-            onClick={handleExecuteImport}
-            disabled={isImporting || isUploadingAudio || selectedCount === 0}
-            className="px-6"
-          >
-            {isImporting ? (
-              <>
-                <RefreshCw className="w-4 h-4 mr-2 animate-spin" /> {mediaType === "audio" ? "Importing Audios..." : "Importing Videos..."}
-              </>
-            ) : (
-              <>
+          {isImporting ? (
+            /* Real-Time Smooth Import Progress Bar */
+            <div className="w-full space-y-2 animate-in fade-in slide-in-from-bottom-2 duration-300">
+              <div className="flex items-center justify-between text-xs font-semibold">
+                <div className="flex items-center gap-2 text-primary">
+                  <RefreshCw className="w-4 h-4 animate-spin text-primary" />
+                  <span>
+                    Importing {mediaType === "audio" ? "Audios" : "Videos"}: <strong>{importCurrentIndex}</strong> of <strong>{importTotalCount}</strong>
+                  </span>
+                </div>
+                <span className="font-extrabold text-primary text-sm">
+                  {Math.round((importCurrentIndex / Math.max(importTotalCount, 1)) * 100)}%
+                </span>
+              </div>
+              <div className="w-full h-3 bg-muted rounded-full overflow-hidden border border-border shadow-inner p-0.5">
+                <div
+                  className="h-full bg-gradient-to-r from-emerald-500 via-primary to-teal-400 rounded-full transition-all duration-300 ease-out shadow-sm animate-pulse"
+                  style={{ width: `${Math.round((importCurrentIndex / Math.max(importTotalCount, 1)) * 100)}%` }}
+                />
+              </div>
+            </div>
+          ) : (
+            <>
+              <Button className="px-3 py-2 border border-red-600 text-red-600 bg-white hover:bg-red-600 hover:text-white" variant="ghost" onClick={handleClose} disabled={isImporting || isUploadingAudio}>
+                Cancel
+              </Button>
+              <Button
+                onClick={handleExecuteImport}
+                disabled={isImporting || isUploadingAudio || selectedCount === 0}
+                className="px-6 bg-primary text-white hover:bg-primary/90"
+              >
                 <UploadCloud className="w-7 h-7 mr-2" /> Import {selectedCount} Selected {mediaType === "audio" ? "Audio(s)" : "Video(s)"}
-              </>
-            )}
-          </Button>
+              </Button>
+            </>
+          )}
         </div>
       </div>
     </div>
