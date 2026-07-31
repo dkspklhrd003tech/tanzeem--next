@@ -443,8 +443,8 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
     const endpointBase = mediaType === 'audio' ? '/api/audio' : '/api/videos';
 
     setPendingAction({
-      title: "Delete Selected Direct Videos",
-      desc: `Are you sure you want to delete ${count} selected direct video(s)?`,
+      title: `Delete Selected Direct ${mediaType === 'audio' ? 'Audios' : 'Videos'}`,
+      desc: `Are you sure you want to delete ${count} selected direct ${mediaType === 'audio' ? 'audio' : 'video'}(s)?`,
       action: async () => {
         try {
           await Promise.all(
@@ -458,9 +458,9 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
             } : s)
           } : c));
           setSelectedDirectMediaIds([]);
-          toast.success(`Successfully deleted ${count} video(s)`);
+          toast.success(`Successfully deleted ${count} ${mediaType === 'audio' ? 'audio' : 'video'}(s)`);
         } catch (err) {
-          toast.error("Failed to delete selected videos");
+          toast.error(`Failed to delete selected ${mediaType === 'audio' ? 'audios' : 'videos'}`);
         }
       }
     });
@@ -472,8 +472,8 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
     const endpointBase = mediaType === 'audio' ? '/api/audio' : '/api/videos';
 
     setPendingAction({
-      title: "Delete Selected Videos",
-      desc: `Are you sure you want to delete ${count} selected video(s)?`,
+      title: `Delete Selected ${mediaType === 'audio' ? 'Audios' : 'Videos'}`,
+      desc: `Are you sure you want to delete ${count} selected ${mediaType === 'audio' ? 'audio' : 'video'}(s)?`,
       action: async () => {
         try {
           await Promise.all(
@@ -487,9 +487,9 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
             } : s)
           } : c));
           setSelectedMediaIds([]);
-          toast.success(`Successfully deleted ${count} video(s)`);
+          toast.success(`Successfully deleted ${count} ${mediaType === 'audio' ? 'audio' : 'video'}(s)`);
         } catch (err) {
-          toast.error("Failed to delete selected videos");
+          toast.error(`Failed to delete selected ${mediaType === 'audio' ? 'audios' : 'videos'}`);
         }
       }
     });
@@ -1274,7 +1274,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
               ← Back to {activeCategory.title}
             </Button>
             <div>
-              <h4 className="text-xl font-bold text-foreground">{activeCategory.subCategories.find(s => s.id === activeSubTab)?.title} Videos</h4>
+              <h4 className="text-xl font-bold text-foreground">{activeCategory.subCategories.find(s => s.id === activeSubTab)?.title} {mediaType === "audio" ? "Audios" : "Videos"}</h4>
               <p className="text-sm text-muted-foreground">Manage media items inside this sub-category.</p>
             </div>
           </div>
@@ -1312,14 +1312,12 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                   }
                   return null;
                 })()}
-                {mediaType === "video" && (
-                  <Button size="sm" variant="outline" onClick={() => {
-                    setBulkTargetSubId(activeSubTab);
-                    setIsBulkModalOpen(true);
-                  }}>
-                    <Sparkles className="w-4 h-4 mr-1 text-primary" /> Bulk Add Videos
-                  </Button>
-                )}
+                <Button size="sm" variant="outline" onClick={() => {
+                  setBulkTargetSubId(activeSubTab);
+                  setIsBulkModalOpen(true);
+                }}>
+                  <Sparkles className="w-4 h-4 mr-1 text-primary" /> {mediaType === "audio" ? "Bulk Add Audios" : "Bulk Add Videos"}
+                </Button>
                 <Button size="sm" variant="default" onClick={() => {
                   const sub = activeCategory.subCategories.find(s => s.id === activeSubTab);
                   if (sub) {
@@ -1329,7 +1327,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
                     });
                   }
                 }}>
-                  <Plus className="w-4 h-4 mr-1" /> Add New Video
+                  <Plus className="w-4 h-4 mr-1" /> {mediaType === "audio" ? "Add New Audio" : "Add New Video"}
                 </Button>
               </div>
             </div>
@@ -1337,7 +1335,7 @@ export function MediaCategoryManager({ mediaType }: MediaCategoryManagerProps) {
               const sub = activeCategory.subCategories.find(s => s.id === activeSubTab);
               if (!sub || sub.mediaItems.length === 0) return (
                 <div className="p-12 text-center text-muted-foreground border border-dashed rounded-xl bg-muted/20">
-                  No videos here yet. Add a new video to start.
+                  No {mediaType === "audio" ? "audios" : "videos"} here yet. Add a new {mediaType === "audio" ? "audio" : "video"} to start.
                 </div>
               );
               return (
