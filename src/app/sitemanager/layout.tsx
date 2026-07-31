@@ -164,6 +164,73 @@ function SidebarNavItem({
 
   const [isOpen, setIsOpen] = useState(isActive);
 
+  // When Collapsed and has subItems -> Flyout Dropdown Menu on the right
+  if (isCollapsed && item.subItems) {
+    return (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <button
+            className={cn(
+              "group relative flex h-9 w-9 mx-auto items-center justify-center rounded-lg transition-all duration-150 outline-none",
+              isActive
+                ? "bg-primary text-white shadow-sm"
+                : "text-sidebar-foreground/70 hover:bg-primary/10 hover:text-primary"
+            )}
+          >
+            <item.icon className="h-5 w-5 shrink-0 transition-transform group-hover:scale-105" />
+            <span className={cn("absolute top-1 right-1 w-1.5 h-1.5 rounded-full", isActive ? "bg-white" : "bg-primary/80")} />
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent side="right" align="start" className="w-52 p-1.5 shadow-xl border border-border bg-card">
+          <DropdownMenuLabel className="text-[11px] font-bold text-muted-foreground uppercase tracking-wider px-2 py-1">
+            {item.title}
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          {item.subItems.map((sub) => {
+            const isSubActive = pathname === sub.href || pathname.startsWith(sub.href + "/");
+            return (
+              <DropdownMenuItem key={sub.href} asChild>
+                <Link
+                  href={sub.href}
+                  className={cn(
+                    "flex items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-medium transition-colors cursor-pointer",
+                    isSubActive ? "bg-primary text-white font-semibold shadow-sm" : "hover:bg-primary/10 text-foreground"
+                  )}
+                >
+                  <span>{sub.title}</span>
+                </Link>
+              </DropdownMenuItem>
+            );
+          })}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
+  }
+
+  // When Collapsed and simple link -> Tooltip icon button
+  if (isCollapsed && item.href) {
+    return (
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Link
+            href={item.href}
+            className={cn(
+              "group flex h-9 w-9 mx-auto items-center justify-center rounded-lg transition-all duration-150",
+              isActive
+                ? "bg-primary text-white shadow-sm"
+                : "text-sidebar-foreground/70 hover:bg-primary/10 hover:text-primary"
+            )}
+          >
+            <item.icon className="h-5 w-5 shrink-0 transition-transform group-hover:scale-105" />
+          </Link>
+        </TooltipTrigger>
+        <TooltipContent side="right" className="font-semibold text-xs bg-popover text-popover-foreground border shadow-md">
+          {item.title}
+        </TooltipContent>
+      </Tooltip>
+    );
+  }
+
   if (item.subItems) {
     const btnContent = (
       <button
@@ -171,31 +238,25 @@ function SidebarNavItem({
         className={cn(
           "group flex w-full items-center justify-between rounded-lg px-3 py-2.5 transition-all duration-150",
           isActive
-            ? "bg-primary text-white shadow-sm"
+            ? "bg-primary text-white shadow-sm font-semibold"
             : isOpen
-              ? "bg-primary/80 text-white"
-              : "text-sidebar-foreground hover:bg-primary/80 hover:text-white active:text-white focus:text-white"
+              ? "bg-primary/80 text-white font-medium"
+              : "text-sidebar-foreground hover:bg-primary/80 hover:text-white"
         )}
       >
         <div className="flex items-center gap-3">
-          <item.icon className={cn("h-5 w-5 shrink-0 transition-colors", (isActive || isOpen) ? "text-white" : "text-sidebar-foreground group-hover:text-white group-active:text-white")} />
-          {!isCollapsed && <span className="truncate text-sm font-medium">{item.title}</span>}
+          <item.icon className={cn("h-5 w-5 shrink-0 transition-colors", (isActive || isOpen) ? "text-white" : "text-sidebar-foreground group-hover:text-white")} />
+          <span className="truncate text-sm font-medium">{item.title}</span>
         </div>
-        {!isCollapsed && <ChevronLeft className={cn("h-4 w-4 transition-transform", isOpen ? "-rotate-90" : "")} />}
+        <ChevronLeft className={cn("h-4 w-4 transition-transform duration-200", isOpen ? "-rotate-90" : "")} />
       </button>
     );
 
     return (
       <div className="space-y-1">
-        {isCollapsed ? (
-          <Tooltip>
-            <TooltipTrigger asChild>{btnContent}</TooltipTrigger>
-            <TooltipContent side="right">{item.title}</TooltipContent>
-          </Tooltip>
-        ) : btnContent}
-
-        {!isCollapsed && isOpen && (
-          <ul className="mt-1 ml-4 space-y-1 border-l border-sidebar-border/50">
+        {btnContent}
+        {isOpen && (
+          <ul className="mt-1 ml-4 space-y-1 border-l-2 border-sidebar-border/60 pl-2">
             {item.subItems.map((sub) => {
               const isSubActive = pathname === sub.href || pathname.startsWith(sub.href + "/");
               return (
@@ -203,9 +264,9 @@ function SidebarNavItem({
                   <Link
                     href={sub.href}
                     className={cn(
-                      "block rounded-lg px-3 py-2 text-sm transition-colors ml-2",
+                      "block rounded-lg px-3 py-2 text-xs transition-colors",
                       isSubActive
-                        ? "bg-primary text-white font-medium shadow-sm"
+                        ? "bg-primary text-white font-semibold shadow-sm"
                         : "text-sidebar-foreground hover:bg-primary/50 hover:text-white"
                     )}
                   >
@@ -220,45 +281,25 @@ function SidebarNavItem({
     );
   }
 
-  const linkContent = (
+  return (
     <Link
       href={item.href!}
       className={cn(
         "group flex items-center gap-3 rounded-lg px-3 py-2.5 transition-all duration-150",
         isActive
-          ? "bg-primary text-white shadow-sm"
-          : "text-sidebar-foreground hover:bg-primary/80 hover:text-white active:text-white active:bg-primary/80 focus:text-white"
+          ? "bg-primary text-white font-semibold shadow-sm"
+          : "text-sidebar-foreground hover:bg-primary/80 hover:text-white"
       )}
     >
       <item.icon
         className={cn(
           "h-5 w-5 shrink-0 transition-colors",
-          isActive
-            ? "text-white"
-            : "text-sidebar-foreground group-hover:text-white group-active:text-white"
+          isActive ? "text-white" : "text-sidebar-foreground group-hover:text-white"
         )}
       />
-
-      {!isCollapsed && (
-        <span className="truncate text-sm font-medium">
-          {item.title}
-        </span>
-      )}
+      <span className="truncate text-sm font-medium">{item.title}</span>
     </Link>
   );
-
-  if (isCollapsed) {
-    return (
-      <Tooltip>
-        <TooltipTrigger asChild>{linkContent}</TooltipTrigger>
-        <TooltipContent side="right" className="font-medium">
-          {item.title}
-        </TooltipContent>
-      </Tooltip>
-    );
-  }
-
-  return linkContent;
 }
 
 // ─── Sidebar ──────────────────────────────────────────────────────────────────
@@ -308,20 +349,19 @@ function Sidebar({
       {/* Sidebar panel */}
       <motion.aside
         initial={false}
-        animate={{ width: isCollapsed ? 72 : 260 }}
+        animate={{ width: isCollapsed ? 64 : 260 }}
         transition={{ duration: 0.2, ease: "easeInOut" }}
         className={cn(
-          "fixed left-0 top-0 h-screen z-50 flex flex-col",
+          "fixed left-0 top-0 h-screen z-50 flex flex-col overflow-x-hidden",
           "bg-primary-light border-r border-sidebar-border shadow-sm",
-          // On mobile: slide in/out as overlay
           "max-md:transition-transform max-md:duration-300",
           isMobileOpen ? "max-md:translate-x-0" : "max-md:-translate-x-full"
         )}
       >
         {/* Logo area */}
-        <div className="h-16 flex items-center justify-between px-3 border-b border-sidebar-border shrink-0">
+        <div className="h-14 flex items-center justify-between px-3 border-b border-sidebar-border shrink-0">
           <AnimatePresence mode="wait">
-            {!isCollapsed && (
+            {!isCollapsed ? (
               <motion.div
                 key="logo-full"
                 initial={{ opacity: 0, x: -10 }}
@@ -331,10 +371,10 @@ function Sidebar({
                 className="flex items-center gap-2.5 overflow-hidden"
               >
                 {siteLogo ? (
-                  <img src={siteLogo} alt="Site Logo" className="w-auto h-8 object-contain shrink-0" />
+                  <img src={resolveMediaUrl(siteLogo)} alt="Site Logo" className="max-h-8 max-w-[120px] w-auto h-auto object-contain shrink-0" />
                 ) : (
-                  <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shrink-0">
-                    <span className="text-primary-foreground font-bold text-lg leading-none">ت</span>
+                  <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center shrink-0 shadow-sm">
+                    <span className="text-primary-foreground font-bold text-base leading-none">ت</span>
                   </div>
                 )}
                 <div className="leading-tight">
@@ -342,20 +382,17 @@ function Sidebar({
                   <p className="text-[10px] text-sidebar-foreground/50 uppercase tracking-wide">Site Manager</p>
                 </div>
               </motion.div>
-            )}
-            {isCollapsed && (
+            ) : (
               <motion.div
                 key="logo-icon"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className={cn("w-auto h-8 flex items-center justify-center mx-auto overflow-visible", !siteLogo && "w-8 h-8 rounded-lg bg-primary overflow-hidden")}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.8 }}
+                className="w-full flex items-center justify-center"
               >
-                {siteLogo ? (
-                  <img src={siteLogo} alt="Site Logo" className="w-auto h-8 object-contain" />
-                ) : (
-                  <span className="text-primary-foreground font-bold text-lg leading-none">ت</span>
-                )}
+                <div className="w-8 h-8 rounded-lg bg-primary text-white flex items-center justify-center shadow-sm font-bold text-base">
+                  ت
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
@@ -363,16 +400,16 @@ function Sidebar({
           {/* Mobile close */}
           <button
             onClick={onMobileClose}
-            className="md:hidden p-1 rounded-full text-sidebar-foreground/60 hover:text-sidebar-foreground"
+            className="md:hidden p-1.5 rounded-full text-sidebar-foreground/60 hover:text-sidebar-foreground"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 overflow-y-auto py-3 px-2 scrollbar-thin">
+        <nav className="flex-1 overflow-y-auto py-3 px-1.5 scrollbar-none overflow-x-hidden">
           <TooltipProvider delayDuration={0}>
-            <ul className="space-y-0.5">
+            <ul className="space-y-1">
               {visibleItems.map((item) => (
                 <li key={item.title}>
                   <SidebarNavItem item={item} isCollapsed={isCollapsed} />
@@ -383,36 +420,47 @@ function Sidebar({
         </nav>
 
         {/* User section + collapse toggle */}
-        <div className="border-t border-sidebar-border p-2 shrink-0 space-y-1">
+        <div className="border-t border-sidebar-border p-1.5 shrink-0 space-y-1">
           {/* Collapse toggle — desktop only */}
-          <button
-            onClick={onCollapse}
-            className={cn(
-              "hidden md:flex w-full items-center gap-2 px-3 py-2 rounded-full text-xs text-sidebar-foreground/60",
-              "hover:bg-primary/10 hover:text-primary transition-colors"
-            )}
-          >
-            {isCollapsed ? (
-              <PanelLeftOpen className="h-4 w-4 shrink-0" />
-            ) : (
-              <>
-                <PanelLeftClose className="h-4 w-4 shrink-0" />
-                <span>Collapse</span>
-              </>
-            )}
-          </button>
+          <TooltipProvider delayDuration={0}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <button
+                  onClick={onCollapse}
+                  className={cn(
+                    "hidden md:flex items-center transition-colors text-sidebar-foreground/60 hover:bg-primary/10 hover:text-primary",
+                    isCollapsed
+                      ? "w-9 h-9 mx-auto justify-center rounded-lg"
+                      : "w-full gap-2 px-3 py-2 rounded-lg text-xs"
+                  )}
+                >
+                  {isCollapsed ? (
+                    <PanelLeftOpen className="h-4 w-4 shrink-0" />
+                  ) : (
+                    <>
+                      <PanelLeftClose className="h-4 w-4 shrink-0" />
+                      <span className="font-medium">Collapse</span>
+                    </>
+                  )}
+                </button>
+              </TooltipTrigger>
+              {isCollapsed && <TooltipContent side="right">Expand Sidebar</TooltipContent>}
+            </Tooltip>
+          </TooltipProvider>
 
           {/* User avatar */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button
                 className={cn(
-                  "flex items-center gap-2.5 w-full px-2 py-2 rounded-full",
-                  "hover:bg-primary/10 transition-colors group"
+                  "flex items-center transition-all duration-150 group outline-none",
+                  isCollapsed
+                    ? "w-9 h-9 mx-auto justify-center rounded-lg hover:bg-primary/10"
+                    : "gap-2.5 w-full px-2 py-1.5 rounded-lg hover:bg-primary/10"
                 )}
               >
                 <Avatar className="h-8 w-8 shrink-0">
-                  {user?.avatar && <AvatarImage src={user.avatar} alt={user.name ?? ""} />}
+                  {user?.avatar && <AvatarImage src={resolveMediaUrl(user.avatar)} alt={user.name ?? ""} />}
                   <AvatarFallback className="bg-primary/20 text-primary text-xs font-semibold">
                     {userInitials}
                   </AvatarFallback>
@@ -429,20 +477,20 @@ function Sidebar({
                 )}
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent side="top" align="start" className="w-52">
+            <DropdownMenuContent side="right" align="end" className="w-52 shadow-xl border border-border">
               <DropdownMenuLabel className="text-xs text-muted-foreground font-normal">
                 {user?.email}
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
-                <Link href="/sitemanager/profile">
-                  <User className="h-4 w-4" />
+                <Link href="/sitemanager/profile" className="cursor-pointer">
+                  <User className="h-4 w-4 mr-2" />
                   Profile
                 </Link>
               </DropdownMenuItem>
               <DropdownMenuItem asChild>
-                <Link href="/sitemanager/change-password">
-                  <KeyRound className="h-4 w-4" />
+                <Link href="/sitemanager/change-password" className="cursor-pointer">
+                  <KeyRound className="h-4 w-4 mr-2" />
                   Change Password
                 </Link>
               </DropdownMenuItem>
@@ -451,7 +499,7 @@ function Sidebar({
                 onClick={onLogout}
                 className="cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10"
               >
-                <LogOut className="h-4 w-4" />
+                <LogOut className="h-4 w-4 mr-2" />
                 Logout
               </DropdownMenuItem>
             </DropdownMenuContent>
