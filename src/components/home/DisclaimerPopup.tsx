@@ -58,7 +58,6 @@ export function DisclaimerPopup({ enabled, imageUrl }: DisclaimerPopupProps) {
             fill
             className="object-contain"
             sizes="95vw"
-            priority
           />
         </div>
       </div>

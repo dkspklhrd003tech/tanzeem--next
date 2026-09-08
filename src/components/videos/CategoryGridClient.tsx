@@ -73,6 +73,7 @@ export function CategoryGridClient({ categories }: { categories: CategoryGridIte
                   <img
                     src={cat.imageUrl}
                     alt={cat.name}
+                    loading="lazy"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                   />
                 ) : (

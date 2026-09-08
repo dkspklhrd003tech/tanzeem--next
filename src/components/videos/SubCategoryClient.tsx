@@ -152,6 +152,7 @@ export function SubCategoryClient({ subCategories, directVideos = [] }: { subCat
                     <img
                       src={sub.imageUrl}
                       alt={sub.name}
+                      loading="lazy"
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
                   ) : (
