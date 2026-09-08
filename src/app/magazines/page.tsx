@@ -165,7 +165,8 @@ export default async function MagazinesPage() {
                     {/* Issues Grid */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
                       {issues.map((mag) => {
-                        const href = mag.fileUrl || mag.url || (mag.slug ? `/magazines/${mag.slug}` : "#");
+                        const isSeriesSlug = Object.values(SERIES_CONFIG).some((c) => c.slug === mag.slug);
+                        const href = mag.fileUrl || mag.url || (mag.slug ? (isSeriesSlug ? `/${mag.slug}` : `/${mag.slug}`) : "#");
                         const isExternal = href.startsWith("http") || href.startsWith("//");
 
                         return (
