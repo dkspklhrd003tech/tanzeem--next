@@ -34,7 +34,7 @@ export function LatestContent() {
             </h2>
             <p className="text-white/60 text-base leading-relaxed">
               Following the methodology prescribed by the Quran and Sunnah,
-              and the model established by our beloved Prophet Muhammad (SAWS).
+              and the model established by our beloved Prophet Muhammad (SAW).
             </p>
           </motion.div>
         </div>
