@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { Play, Pause, Volume2, VolumeX } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
-import { resolveMediaUrl } from "@/lib/utils";
+import { resolveAudioUrl } from "@/lib/utils";
 
 interface WaveformPlayerProps {
   audioUrl: string;
@@ -62,7 +62,7 @@ export function WaveformPlayer({
   useEffect(() => {
     setIsMounted(true);
 
-    const resolvedUrl = resolveMediaUrl(audioUrl);
+    const resolvedUrl = resolveAudioUrl(audioUrl);
     if (!resolvedUrl) return;
 
     const audio = new Audio();

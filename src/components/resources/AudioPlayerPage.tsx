@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Download, Share2, Clock, Play, ArrowLeft, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { cn, resolveMediaUrl } from "@/lib/utils";
+import { cn, resolveMediaUrl, resolveAudioUrl } from "@/lib/utils";
 import { motion } from "framer-motion";
 import { WaveformPlayer } from "./WaveformPlayer";
 import { useMediaTracking } from "@/hooks/useMediaTracking";
@@ -127,7 +127,7 @@ export function AudioPlayerPage({ item, related, customFieldSchema = [] }: Audio
 
             <div className="flex flex-wrap gap-3">
               <a
-                href={resolveMediaUrl(item.audioUrl)}
+                href={resolveAudioUrl(item.audioUrl)}
                 download
                 onClick={handleDownload}
                 className={cn(

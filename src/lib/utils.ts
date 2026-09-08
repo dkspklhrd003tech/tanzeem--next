@@ -41,6 +41,47 @@ export function resolveMediaUrl(url: string | null | undefined): string {
   return path;
 }
 
+/**
+ * Resolve an audio/media URL to a full absolute URL pointing directly at the
+ * FTP media server. Use this for <audio> src and download hrefs instead of
+ * resolveMediaUrl, because Next.js standalone-output rewrites do NOT proxy
+ * client-side audio requests — the browser hits /uploads/* directly and gets
+ * a 404 on the live server.
+ */
+export function resolveAudioUrl(url: string | null | undefined): string {
+  if (!url) return "";
+  if (url.startsWith("data:")) return url;
+
+  const mediaBase = (process.env.NEXT_PUBLIC_MEDIA_URL || "https://tanzeemmedia.dks.com.pk").replace(/\/$/, "");
+
+  // Already a full URL — normalise it to the canonical media base
+  if (url.startsWith("http")) {
+    try {
+      const parsed = new URL(url);
+      const mediaDomain = new URL(mediaBase).hostname;
+      if (parsed.hostname === mediaDomain) {
+        // Ensure /public_html/ prefix is present
+        let p = parsed.pathname;
+        if (p.startsWith("/uploads/")) {
+          p = "/public_html" + p;
+        }
+        return `${mediaBase}${p}`;
+      }
+    } catch (e) {
+      // fall through — return as-is
+    }
+    return url;
+  }
+
+  // Relative path — prepend the media base
+  let path = url.startsWith("/") ? url : `/${url}`;
+  // Normalise: /uploads/ → /public_html/uploads/
+  if (path.startsWith("/uploads/")) {
+    path = "/public_html" + path;
+  }
+  return `${mediaBase}${path}`;
+}
+
 export function resolveCategoryHref(
   slug?: string | null,
   defaultPrefix: string = "/videos-by-category"

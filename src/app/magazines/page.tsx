@@ -154,7 +154,7 @@ export default async function MagazinesPage() {
 
                       {/* Page Button */}
                       <div className="flex items-center gap-2">
-                        <Button asChild size="sm" variant="outline" className="rounded-full gap-1 bg-primary text-white hover:text-primary hover:primary-light hover:border-primary/70 transition-all text-xs font-semibold">
+                        <Button asChild size="sm" variant="outline" className="rounded-full gap-1 bg-primary text-white hover:text-white hover:primary-light hover:border-primary/70 transition-all text-xs font-semibold">
                           <Link href={`/${config.slug}`}>
                             View {config.title} <ChevronRight className="h-3.5 w-3.5" />
                           </Link>
@@ -165,12 +165,17 @@ export default async function MagazinesPage() {
                     {/* Issues Grid */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
                       {issues.map((mag) => {
-                        const detailHref = mag.slug ? `/magazines/${mag.slug}` : mag.url || mag.fileUrl || "#";
+                        const href = mag.fileUrl || mag.url || (mag.slug ? `/magazines/${mag.slug}` : "#");
+                        const isExternal = href.startsWith("http") || href.startsWith("//");
 
                         return (
-                          <div
+                          <a
                             key={mag.id}
-                            className="group relative flex flex-col justify-between p-5 rounded-xl bg-card border border-border/50 shadow-sm hover:shadow-xl hover:border-primary/40 transition-all duration-300"
+                            href={href}
+                            target={isExternal ? "_blank" : "_self"}
+                            rel={isExternal ? "noopener noreferrer" : undefined}
+                            className="group relative flex flex-col justify-between p-5 rounded-xl bg-card border border-primary/50 shadow-sm hover:shadow-xl hover:border-primary/40 transition-all duration-300 cursor-pointer no-underline"
+                            aria-label={`Open ${mag.title}`}
                           >
                             <div>
                               {/* Title */}
@@ -179,23 +184,16 @@ export default async function MagazinesPage() {
                               </h3>
                             </div>
 
-                            {/* PDF Download Action */}
+                            {/* PDF badge — visual indicator only */}
                             {(mag.fileUrl || mag.url) && (
                               <div className="flex items-center justify-end">
-                                <a
-                                  href={mag.fileUrl || mag.url || ""}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  download
-                                  className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary/80 hover:text-primary border border-primary/20 rounded-full px-2.5 py-0.5 hover:bg-primary/10 transition-colors"
-                                  aria-label={`Download ${mag.title}`}
-                                >
+                                <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-primary/80 border border-primary/20 rounded-full px-2.5 py-0.5 bg-primary/5">
                                   <Download className="h-3 w-3" />
                                   PDF
-                                </a>
+                                </span>
                               </div>
                             )}
-                          </div>
+                          </a>
                         );
                       })}
                     </div>
