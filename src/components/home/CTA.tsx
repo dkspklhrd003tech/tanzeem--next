@@ -126,7 +126,7 @@ export function CTA({ platforms }: CTAProps) {
     <section
       ref={sectionRef}
       aria-labelledby="social-heading"
-      className="py-10 px-6 bg-primary"
+      className="py-10 px-6 bg-primary relative overflow-hidden"
     >
       {/* Subtle dot pattern and glow */}
 

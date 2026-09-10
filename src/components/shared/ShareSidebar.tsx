@@ -281,7 +281,7 @@ export function ShareSidebar() {
     return (
         <div
             className={cn(
-                "fixed z-50 flex flex-col transition-all duration-500",
+                "fixed z-50 hidden sm:flex flex-col transition-all duration-500",
                 visible
                     ? "opacity-100 translate-x-0"
                     : isLeft
