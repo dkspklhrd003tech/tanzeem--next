@@ -143,5 +143,3 @@ temp/
 /scripts/*.*
 *.mjs
 
-
-.npmrc
