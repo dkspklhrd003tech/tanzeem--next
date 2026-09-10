@@ -85,20 +85,20 @@ export function AboutAndLeaders({ team, settings }: AboutProps) {
     }, []);
 
     return (
-        <section ref={sectionRef} aria-labelledby="about-heading" className="relative px-6 py-8 md:py-10 overflow-hidden perspective-1000 bg-primary-light">
+        <section ref={sectionRef} aria-labelledby="about-heading" className="relative px-6 py-6 sm:py-8 md:py-10 overflow-hidden perspective-1000 bg-primary-light">
             {/* <CinematicBackground /> */}
             <div className="max-w-7xl mx-auto relative z-10">
 
                 {/* ── About Card ── */}
                 <div
                     ref={aboutRef}
-                    className="relative mb-10 flex flex-col md:flex-row gap-8 md:gap-12 items-center md:items-start overflow-hidden"
+                    className="relative mb-8 flex flex-col md:flex-row gap-8 md:gap-12 items-center md:items-start overflow-hidden"
                 >
                     <div className="absolute inset-0 opacity-20 pointer-events-none" />
                     <div className="absolute inset-0 transition-opacity duration-1000 pointer-events-none" />
                     {/* Logo Panel */}
                     <motion.div
-                        className="w-32 h-32 md:w-48 md:h-48 p-4 bg-white rounded-xl overflow-hidden flex items-center justify-center shadow-[0_0_40px_rgba(16,185,129,0.15)] relative z-10"
+                        className="hidden sm:flex w-32 h-32 md:w-48 md:h-48 p-4 bg-white rounded-xl overflow-hidden items-center justify-center shadow-[0_0_40px_rgba(16,185,129,0.15)] relative z-10"
                     >
                         <img
                             src={aboutImage}
