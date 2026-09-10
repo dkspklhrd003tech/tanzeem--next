@@ -67,7 +67,7 @@ export default async function OrganizationPage() {
     // Fallback to raw HTML
     return (
       <main className=" bg-background">
-        <div className="container mx-auto py-6 md:py-8 max-w-4xl">
+        <div className="container mx-auto py-6 md:py-8 max-w-4xl px-[10px] sm:px-4 md:px-6">
           <div
             className="prose prose-lg  max-w-none mx-auto"
             dangerouslySetInnerHTML={{ __html: getCleanContent(page.content) }}

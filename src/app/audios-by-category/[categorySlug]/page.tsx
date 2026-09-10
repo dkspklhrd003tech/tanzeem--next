@@ -87,7 +87,7 @@ export default async function CategoryAudiosPage({ params }: { params: Promise<{
 
   return (
     <main className="bg-background">
-      <div className="container mx-auto py-10 md:py-8 max-w-7xl">
+      <div className="container mx-auto py-6 md:py-8 max-w-7xl px-[10px] sm:px-4 md:px-6">
         {subCategoriesWithAudios.length === 0 && directAudios.length === 0 ? (
           <div className="text-center py-20 border border-dashed rounded-xl">
             <p className="text-foreground">No Audios Found In This Category.</p>

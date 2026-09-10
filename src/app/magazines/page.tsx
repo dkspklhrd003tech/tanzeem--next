@@ -128,7 +128,7 @@ export default async function MagazinesPage() {
 
   return (
     <main className="bg-background min-h-screen">
-      <div className="container max-w-7xl mx-auto py-10 px-4 sm:px-6">
+      <div className="container max-w-7xl mx-auto py-6 md:py-10 px-[10px] sm:px-6">
 
         {!hasAnyItems ? (
           <div className="text-center py-20 bg-card rounded-2xl border border-border">

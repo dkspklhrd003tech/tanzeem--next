@@ -82,7 +82,7 @@ export default async function MagazineDetailsPage({ params }: PageProps) {
 
     return (
         <main className=" bg-zinc-50/50">
-            <div className="container mx-auto py-10 flex flex-col items-center mt-4">
+            <div className="container mx-auto py-6 md:py-10 px-[10px] sm:px-4 md:px-6 flex flex-col items-center mt-2 sm:mt-4">
                 <div className="w-full max-w-5xl mb-6">
                     {targetLink.url?.endsWith(".pdf") ? (
                         <PdfViewerHeader

@@ -53,7 +53,7 @@ export default async function VideosByCategoryPage() {
 
   return (
     <main className=" bg-background">
-      <div className="container mx-auto py-8 md:py-12">
+      <div className="container mx-auto py-6 md:py-12 px-[10px] sm:px-4 md:px-6">
         <CategoryGridClient categories={display} />
       </div>
     </main>

@@ -78,7 +78,7 @@ export default async function SpeakerAudiosPage({ params }: { params: Promise<{ 
       <main className="bg-muted/20 py-6 md:py-10">
 
         {/* Content Section */}
-        <div className="container mx-auto px-5 md:px-4">
+        <div className="container mx-auto px-[10px] sm:px-4 md:px-6">
           <div className="max-w-7xl mx-auto">
             {/* Title + counter: stacked on mobile, inline on md+ */}
             <div className="mb-6 md:mb-8 flex flex-col items-center text-center gap-2">

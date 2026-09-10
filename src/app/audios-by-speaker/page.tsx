@@ -50,7 +50,7 @@ export default async function AudiosBySpeakersPage() {
 
   return (
     <main className="bg-muted/20 py-6 md:py-10">
-      <div className="container mx-auto">
+      <div className="container mx-auto px-[10px] sm:px-4 md:px-6">
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6 max-w-7xl mx-auto">
           {display.map((sp) => {
             // Note: If slug contains the full path "audios-by-speaker/...", we just use it directly, else prepend

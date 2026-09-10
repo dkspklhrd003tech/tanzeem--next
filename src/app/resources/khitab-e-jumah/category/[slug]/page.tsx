@@ -51,7 +51,7 @@ export default async function KhitabEJumahCategoryPage({ params }: Props) {
 
     return (
         <main className=" bg-slate-50">
-            <div className="container mx-auto py-6 md:py-12">
+            <div className="container mx-auto py-6 md:py-12 px-[10px] sm:px-4 md:px-6">
                 <div className="max-w-7xl mx-auto">
                     <Button variant="ghost" asChild className="mb-2 text-foreground">
                         <Link href="/resources/khitab-e-jumah">

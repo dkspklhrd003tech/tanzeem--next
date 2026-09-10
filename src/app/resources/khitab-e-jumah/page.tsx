@@ -33,7 +33,7 @@ export default async function KhitabEJumahCategoriesPage() {
 
     return (
         <main className="">
-            <div className="container mx-auto py-6 md:py-10">
+            <div className="container mx-auto py-6 md:py-10 px-[10px] sm:px-4 md:px-6">
                 <div className="max-w-7xl mx-auto">
 
                     <div className={

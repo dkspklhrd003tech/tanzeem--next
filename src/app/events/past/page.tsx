@@ -9,7 +9,7 @@ const pastEvents = [
 export default function PastEventsPage() {
   return (
     <main className=" bg-background">
-      <div className="container mx-auto py-6 md:py-8">
+      <div className="container mx-auto py-6 md:py-8 px-[10px] sm:px-4 md:px-6">
         <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-4">Past Events</h1>
         <p className="text-lg text-muted-foreground mb-8">Browse recordings and summaries of past events.</p>
         <div className="max-w-4xl mx-auto space-y-6">

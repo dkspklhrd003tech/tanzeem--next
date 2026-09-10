@@ -67,7 +67,7 @@ export function BooksListing({
   }
 
   return (
-    <div className="container max-w-7xl mx-auto py-10">
+    <div className="container max-w-7xl mx-auto py-6 md:py-10 px-[10px] sm:px-4 md:px-6">
       {/* Header */}
       <div className="mb-6">
         <p className="text-foreground-muted">{total} book{total !== 1 ? "s" : ""} available</p>

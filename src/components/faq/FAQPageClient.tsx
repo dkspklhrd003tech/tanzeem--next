@@ -89,7 +89,7 @@ export function FAQPageClient({ initialItems, pageTitle, pageExcerpt }: FAQPageC
       <FaqStyles />
 
       {/* Main Content Area */}
-      <div className="max-w-7xl mx-auto -mt-20 relative z-20">
+      <div className="max-w-7xl mx-auto -mt-10 sm:-mt-20 relative z-20 px-[10px] sm:px-4 md:px-6">
         {/* Search & Categories Bar */}
         <div className="bg-primary-light/80 border border-border/80 backdrop-blur-lg rounded-xl shadow-xl p-6 space-y-6">
           {/* Search Box */}
