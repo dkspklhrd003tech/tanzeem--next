@@ -78,19 +78,22 @@ export default async function SpeakerAudiosPage({ params }: { params: Promise<{ 
       <main className="bg-muted/20 py-6 md:py-10">
 
         {/* Content Section */}
-        <div className="container mx-auto">
+        <div className="container mx-auto px-5 md:px-4">
           <div className="max-w-7xl mx-auto">
-            <h2 className="text-2xl font-bold mb-8 flex justify-center items-center gap-2 text-center flex-wrap">
-              Audios by {speaker.name}
-              {speaker.bio && (
-                <span className="text-foreground font-nastaleeq text-2xl mx-1" dir="rtl">
-                  ({speaker.bio})
-                </span>
-              )}
+            {/* Title + counter: stacked on mobile, inline on md+ */}
+            <div className="mb-6 md:mb-8 flex flex-col items-center text-center gap-2">
+              <h2 className="text-xl md:text-2xl font-bold">
+                Audios by {speaker.name}
+                {speaker.bio && (
+                  <span className="text-foreground font-nastaleeq text-xl md:text-2xl mx-1" dir="rtl">
+                    ({speaker.bio})
+                  </span>
+                )}
+              </h2>
               <span className="text-sm font-normal !text-primary bg-muted px-3 py-1 rounded-full">
                 {audios.length} Audios
               </span>
-            </h2>
+            </div>
 
             <AudioListClient audios={audios} />
           </div>

@@ -21,16 +21,16 @@ export function AudioListClient({ audios }: { audios: any[] }) {
             href={a.slug.startsWith('http') ? a.slug : `/audio/${a.slug}`}
             target={a.customFields?.openInNewTab ? "_blank" : undefined}
             rel={a.customFields?.openInNewTab ? "noopener noreferrer" : undefined}
-            className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-6 rounded-lg border border-border/50 hover:border-primary/50 bg-primary-light/80 hover:bg-muted/50 transition-colors cursor-pointer group shadow-sm hover:shadow-md h-full">
-            <div>
-              <div className="flex items-center gap-2">
+            className="flex flex-row items-center justify-between gap-4 p-4 md:p-6 rounded-lg border border-border/50 hover:border-primary/50 bg-primary-light/80 hover:bg-muted/50 transition-colors cursor-pointer group shadow-sm hover:shadow-md h-full">
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
                 {a.code && <span className="text-xs font-semibold text-primary bg-primary/10 px-2 py-0.5 rounded">{a.code}</span>}
-                <h3 className="font-semibold text-lg flex items-center gap-2 group-hover:text-primary transition-colors line-clamp-2">
+                <h3 className="font-semibold text-base md:text-lg flex items-center gap-2 group-hover:text-primary transition-colors line-clamp-2">
                   {a.title}
                   {a.isNew && <span className="text-[10px] uppercase font-bold tracking-wider bg-primary text-white px-2 py-0.5 rounded-full">New</span>}
                 </h3>
               </div>
-              {a.description && <p className="text-sm text-muted-foreground line-clamp-2">{a.description}</p>}
+              {a.description && <p className="text-sm text-muted-foreground line-clamp-2 mt-1">{a.description}</p>}
             </div>
 
             <div className="shrink-0 flex flex-col items-center justify-center gap-1">
