@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: "standalone",
+  // NOTE: output: "standalone" removed — only needed for self-hosted (Docker/Node) deployments.
+  // Vercel manages its own deployment packaging; standalone mode causes ENOENT build errors on Vercel.
 
   // Allow LAN development origins for hot module reloading (HMR)
   allowedDevOrigins: [

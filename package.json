@@ -6,7 +6,7 @@
     "dev": "next dev -p 3000",
     "build": "next build",
     "build:standalone": "next build && node scripts/copy-standalone.mjs",
-    "start": "NODE_ENV=production node .next/standalone/server.js 2>&1 | tee server.log",
+    "start": "next start",
     "lint": "eslint .",
     "db:push": "cross-env DB_ENV=production drizzle-kit push",
     "db:push:local": "cross-env DB_ENV=local drizzle-kit push",
