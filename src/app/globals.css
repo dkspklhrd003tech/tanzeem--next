@@ -322,6 +322,19 @@ h6 {
 }
 
 
+/* ── Inner Page Banner — mobile height cap ─────────────────────────────── */
+/* Applied to PageBanner.tsx <section>. Cap at 150px on phones only.        */
+/* Uses !important to override any admin-configured minHeight inline style.  */
+@media (max-width: 576px) {
+  .page-banner {
+    height: 150px !important;
+    max-height: 150px !important;
+    min-height: 0 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+}
+
 div[role="dialog"] button svg,
 header svg {
   width: 24px !important;

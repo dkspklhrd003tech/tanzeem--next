@@ -116,83 +116,120 @@ export function PageBanner({ settings, titleOverride, breadcrumbsOverride, bgIma
   const bannerHeight = settings?.banner_height || "auto";
 
   return (
-    <section
-      className="relative overflow-hidden flex items-center justify-center text-center w-full py-8 md:py-24"
-      style={{
-        minHeight: bannerHeight !== "auto" ? bannerHeight : undefined,
-        backgroundColor: overlayColor, // Base background color fallback
-      }}
-    >
-      {/* Background Image - global setting or override */}
-      {bgImage && (
+    <>
+      {/* ── Banner ─────────────────────────────────────────────────────── */}
+      <section
+        className="page-banner relative overflow-hidden flex items-center justify-center text-center w-full py-4 md:py-24"
+        style={{
+          minHeight: bannerHeight !== "auto" ? bannerHeight : undefined,
+          backgroundColor: overlayColor,
+        }}
+      >
+        {/* Background Image - global setting or override */}
+        {bgImage && (
+          <div
+            className="absolute inset-0 z-0 bg-cover bg-center transition-transform"
+            style={{ backgroundImage: `url('${bgImage}')` }}
+          />
+        )}
+
+        <div className="absolute inset-0 opacity-15 mix-blend-overlay pointer-events-none" style={{ backgroundColor: overlayColor }} />
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#c8a84e]/10 rounded-full blur-[100px] -mr-64 -mt-64" />
+        <div className="absolute -bottom-24 left-1/4 w-[400px] h-[400px] bg-primary rounded-full blur-[80px]" />
+
+        {/* Arabesque geometric watermark */}
         <div
-          className="absolute inset-0 z-0 bg-cover bg-center transition-transform"
-          style={{ backgroundImage: `url('${bgImage}')` }}
+          className="absolute inset-0 opacity-[0.03] pointer-events-none"
         />
-      )}
 
-      <div className="absolute inset-0 opacity-15 mix-blend-overlay pointer-events-none" style={{ backgroundColor: overlayColor }} />
-      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#c8a84e]/10 rounded-full blur-[100px] -mr-64 -mt-64" />
-      <div className="absolute -bottom-24 left-1/4 w-[400px] h-[400px] bg-primary rounded-full blur-[80px]" />
+        {/* Content */}
+        <div className="container relative z-20 px-4">
+          <h1
+            className={cn(
+              "text-3xl md:text-5xl lg:text-6xl font-bold py-3 drop-shadow-lg line-clamp-1",
+              titleLoading && "animate-pulse"
+            )}
+            style={{ color: textColor }}
+          >
+            {displayTitle.length > 40 ? displayTitle.substring(0, 40) + "..." : displayTitle}
+          </h1>
 
-      {/* Arabesque geometric watermark */}
-      <div
-        className="absolute inset-0 opacity-[0.03] pointer-events-none"
-      />
-
-      {/* Content */}
-      <div className="container relative z-20 px-4">
-        <h1
-          className={cn(
-            "text-3xl md:text-5xl lg:text-6xl font-bold py-3 drop-shadow-lg line-clamp-1",
-            titleLoading && "animate-pulse"
+          {subtitle && (
+            <p className="text-white/80 text-base md:text-lg max-w-2xl mx-auto leading-relaxed mb-4 drop-shadow-md">
+              {subtitle}
+            </p>
           )}
-          style={{ color: textColor }}
+
+          {/* Breadcrumbs — hidden on mobile (shown in the bar below instead) */}
+          {showBreadcrumbs && finalBreadcrumbs.length > 0 && !subtitle && (
+            <nav className="hidden sm:flex items-center justify-center gap-2 text-sm md:text-base font-medium drop-shadow-md flex-wrap">
+              <Link
+                href="/"
+                className="hover:text-primary transition-colors"
+                style={{ color: textColor }}
+              >
+                Home
+              </Link>
+              {finalBreadcrumbs.map((crumb, index) => (
+                <div key={crumb.href} className="flex items-center gap-2">
+                  <span style={{ color: textColor }}>{separator}</span>
+                  {index === finalBreadcrumbs.length - 1 ? (
+                    <span
+                      className="opacity-80"
+                      style={{ color: textColor }}
+                      title={crumb.label}
+                    >
+                      {crumb.label.length > 40 ? crumb.label.substring(0, 40) + "..." : crumb.label}
+                    </span>
+                  ) : (
+                    <Link
+                      href={crumb.href}
+                      className="hover:text-primary transition-colors"
+                      style={{ color: textColor }}
+                      title={crumb.label}
+                    >
+                      {crumb.label.length > 40 ? crumb.label.substring(0, 40) + "..." : crumb.label}
+                    </Link>
+                  )}
+                </div>
+              ))}
+            </nav>
+          )}
+        </div>
+      </section>
+
+      {/* ── Mobile breadcrumb bar (≤576px only) ────────────────────────── */}
+      {showBreadcrumbs && finalBreadcrumbs.length > 0 && !subtitle && (
+        <nav
+          className="sm:hidden flex items-center gap-1.5 px-4 py-2 bg-background border-b border-border text-xs font-medium text-foreground-muted"
+          aria-label="Breadcrumb"
         >
-          {displayTitle.length > 40 ? displayTitle.substring(0, 40) + "..." : displayTitle}
-        </h1>
-
-        {subtitle && (
-          <p className="text-white/80 text-base md:text-lg max-w-2xl mx-auto leading-relaxed mb-4 drop-shadow-md">
-            {subtitle}
-          </p>
-        )}
-
-        {showBreadcrumbs && finalBreadcrumbs.length > 0 && !subtitle && (
-          <nav className="flex items-center justify-center gap-2 text-sm md:text-base font-medium drop-shadow-md flex-wrap">
-            <Link
-              href="/"
-              className="hover:text-primary transition-colors"
-              style={{ color: textColor }}
-            >
-              Home
-            </Link>
-            {finalBreadcrumbs.map((crumb, index) => (
-              <div key={crumb.href} className="flex items-center gap-2">
-                <span style={{ color: textColor }}>{separator}</span>
-                {index === finalBreadcrumbs.length - 1 ? (
-                  <span
-                    className="opacity-80"
-                    style={{ color: textColor }}
-                    title={crumb.label}
-                  >
-                    {crumb.label.length > 40 ? crumb.label.substring(0, 40) + "..." : crumb.label}
-                  </span>
-                ) : (
-                  <Link
-                    href={crumb.href}
-                    className="hover:text-primary transition-colors"
-                    style={{ color: textColor }}
-                    title={crumb.label}
-                  >
-                    {crumb.label.length > 40 ? crumb.label.substring(0, 40) + "..." : crumb.label}
-                  </Link>
-                )}
-              </div>
-            ))}
-          </nav>
-        )}
-      </div>
-    </section>
+          <Link href="/" className="shrink-0 hover:text-primary transition-colors">
+            Home
+          </Link>
+          {finalBreadcrumbs.map((crumb, index) => (
+            <div key={crumb.href} className="flex items-center gap-1.5 min-w-0">
+              <span className="shrink-0 text-foreground-muted/80">{separator}</span>
+              {index === finalBreadcrumbs.length - 1 ? (
+                <span
+                  className="line-clamp-2 text-foreground break-words"
+                  title={crumb.label}
+                >
+                  {crumb.label}
+                </span>
+              ) : (
+                <Link
+                  href={crumb.href}
+                  className="shrink-0 hover:text-primary transition-colors truncate"
+                  title={crumb.label}
+                >
+                  {crumb.label}
+                </Link>
+              )}
+            </div>
+          ))}
+        </nav>
+      )}
+    </>
   );
 }

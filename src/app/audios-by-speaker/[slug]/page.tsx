@@ -75,7 +75,7 @@ export default async function SpeakerAudiosPage({ params }: { params: Promise<{ 
         dangerouslySetInnerHTML={{ __html: JSON.stringify(bc) }}
       />
 
-      <main className=" bg-muted/20 py-10">
+      <main className="bg-muted/20 py-6 md:py-10">
 
         {/* Content Section */}
         <div className="container mx-auto">

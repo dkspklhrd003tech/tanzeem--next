@@ -94,7 +94,7 @@ export function Footer() {
           )}
 
           {/* Contact Us Column — values from settings, no inline defaults. */}
-          <div>
+          <div className="col-span-2 sm:col-span-1">
             <h3 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Contact Us</h3>
             <div className="space-y-3">
               {settings.footer_address && (

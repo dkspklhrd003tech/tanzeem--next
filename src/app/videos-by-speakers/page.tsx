@@ -49,7 +49,7 @@ export default async function VideosBySpeakersPage() {
     .map((s) => ({ ...s, count: countMap[s.id] ?? 0 }));
 
   return (
-    <main className=" bg-muted/20 py-10">
+    <main className="bg-muted/20 py-6 md:py-10">
       <div className="container mx-auto">
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6 max-w-7xl mx-auto">
           {display.map((sp) => {
