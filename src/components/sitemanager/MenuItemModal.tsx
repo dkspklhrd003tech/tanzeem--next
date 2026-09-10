@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { ExternalLink, Link as LinkIcon } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -43,6 +43,9 @@ export function MenuItemModal({ open, onClose, onSave, initial, allItems }: Prop
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>{initial?.id ? "Edit Menu Item" : "Add Menu Item"}</DialogTitle>
+          <DialogDescription className="sr-only">
+            {initial?.id ? "Edit menu item details." : "Add a new navigation menu item."}
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-1">

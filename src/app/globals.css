@@ -154,7 +154,7 @@
   /* ── Font Families ── */
   --font-heading: 'Plus Jakarta Sans', system-ui, sans-serif;
   --font-body: 'Kumbh Sans', sans-serif;
-  --font-nastaleeq: 'Jameel Noori Nastaleeq', serif;
+  --font-nastaleeq: 'Jameel Noori Nastaleeq', 'Noto Nastaliq Urdu', serif;
 }
 
 
@@ -258,7 +258,7 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: var(--font-body), 'UrduAutoFallback', sans-serif;
+    font-family: var(--font-body), 'UrduAutoFallback', var(--font-nastaleeq), sans-serif;
   }
 
   h1,
@@ -267,7 +267,7 @@
   h4,
   h5,
   h6 {
-    font-family: var(--font-heading), 'UrduAutoFallback', sans-serif;
+    font-family: var(--font-heading), 'UrduAutoFallback', var(--font-nastaleeq), sans-serif;
   }
 }
 

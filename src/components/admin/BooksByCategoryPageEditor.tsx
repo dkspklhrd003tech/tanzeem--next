@@ -53,6 +53,7 @@ interface CategoryItem {
   description?: string;
   coverImage?: string;
   order: number;
+  bookCount?: number;
 }
 
 interface BookItem {
@@ -239,7 +240,7 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
   const fetchCategories = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch("/api/admin/book-categories");
+      const res = await fetch("/api/admin/book-categories?limit=all");
       if (res.ok) {
         const data = await res.json();
         setCategories((data.items || []).sort((a: any, b: any) => a.order - b.order));
@@ -250,13 +251,30 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
 
   const fetchBooks = async () => {
     try {
-      const res = await fetch("/api/admin/books");
+      const res = await fetch("/api/admin/books?limit=all");
       if (res.ok) {
         const data = await res.json();
         setBooks((data.items || []).sort((a: any, b: any) => a.order - b.order));
       }
     } catch (e) { console.error(e); }
   };
+
+  useEffect(() => {
+    if (!activeCategory?.id) return;
+    let isMounted = true;
+    fetch(`/api/admin/books?categoryId=${activeCategory.id}&limit=all`)
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (isMounted && data?.items) {
+          setBooks(prev => {
+            const others = prev.filter(b => b.categoryId !== activeCategory.id);
+            return [...others, ...data.items];
+          });
+        }
+      })
+      .catch(console.error);
+    return () => { isMounted = false; };
+  }, [activeCategory?.id]);
 
   const handlePageSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -605,7 +623,7 @@ export default function BooksByCategoryPageEditor({ pageId, initialPageData }: {
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
                     {filteredCategories.map(cat => (
                       <SortableCategoryCard key={cat.id} id={cat.id} item={cat} onClick={setActiveCategory}
-                        bookCount={books.filter(b => b.categoryId === cat.id).length}
+                        bookCount={cat.bookCount ?? books.filter(b => b.categoryId === cat.id).length}
                         onEdit={(item: any) => { setEditingCatId(item.id); setCatFormData({ name: item.name, urduName: item.urduName || "", slug: item.slug, description: item.description || "", coverImage: item.coverImage || "" }); setCatFormErrors({}); setIsCatModalOpen(true); }}
                         onDelete={(item: CategoryItem) => setDeletingCat(item)} />
                     ))}

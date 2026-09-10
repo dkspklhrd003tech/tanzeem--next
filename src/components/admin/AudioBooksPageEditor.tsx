@@ -273,7 +273,7 @@ export default function AudioBooksPageEditor({ pageId, initialPageData }: AudioB
   const fetchItems = async () => {
     setIsLoadingItems(true);
     try {
-      const res = await fetch("/api/admin/audio-books");
+      const res = await fetch("/api/admin/audio-books?limit=all");
       if (res.ok) {
         const data = await res.json();
         // The API now returns them ordered by orderIndex

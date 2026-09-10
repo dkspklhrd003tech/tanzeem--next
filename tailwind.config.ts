@@ -76,7 +76,7 @@ const config: Config = {
 			fontFamily: {
 				heading: ["var(--font-heading)", "system-ui", "sans-serif"],
 				body: ["var(--font-body)", "sans-serif"],
-				nastaleeq: ["var(--font-nastaleeq)", "Jameel Noori Nastaleeq", "serif"],
+				nastaleeq: ["var(--font-nastaleeq)", "Jameel Noori Nastaleeq", "Noto Nastaliq Urdu", "serif"],
 				sans: ["var(--font-body)", "sans-serif"],
 			},
 

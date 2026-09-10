@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, Kumbh_Sans } from "next/font/google";
+import { Plus_Jakarta_Sans, Kumbh_Sans, Noto_Nastaliq_Urdu } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/toaster";
 import { MainLayout } from "@/components/layout";
@@ -19,6 +19,13 @@ const plusJakartaSans = Plus_Jakarta_Sans({
 const kumbhSans = Kumbh_Sans({
   variable: "--font-body",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
+
+const notoNastaliq = Noto_Nastaliq_Urdu({
+  variable: "--font-nastaleeq",
+  subsets: ["arabic"],
   weight: ["400", "500", "600", "700"],
   display: "swap",
 });
@@ -118,7 +125,7 @@ export default async function RootLayout({
         />
       </head>
       <body
-        className={`${plusJakartaSans.variable} ${kumbhSans.variable} antialiased bg-background text-foreground font-body`}
+        className={`${plusJakartaSans.variable} ${kumbhSans.variable} ${notoNastaliq.variable} antialiased bg-background text-foreground font-body`}
         suppressHydrationWarning={true}
       >
         <RecaptchaProvider>

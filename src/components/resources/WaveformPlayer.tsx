@@ -61,18 +61,29 @@ export function WaveformPlayer({
 
   useEffect(() => {
     setIsMounted(true);
+    setError(null);
 
-    const resolvedUrl = resolveAudioUrl(audioUrl);
-    if (!resolvedUrl) return;
+    const primaryUrl = resolveAudioUrl(audioUrl);
+    if (!primaryUrl) return;
+
+    // Relative proxy path as seamless fallback if direct CDN is blocked or fails
+    const rawPath = audioUrl.startsWith("/") ? audioUrl : `/${audioUrl}`;
+    const proxyPath = rawPath.startsWith("/public_html/uploads")
+      ? rawPath.replace("/public_html/uploads", "/uploads")
+      : rawPath;
+    const fallbackUrl = primaryUrl.startsWith("http") ? proxyPath : resolveAudioUrl(audioUrl);
+
+    let hasTriedFallback = false;
 
     const audio = new Audio();
     audio.preload = "metadata";
     // No crossOrigin — FTP server has no CORS headers; opaque requests play fine
-    audio.src = resolvedUrl;
+    audio.src = primaryUrl;
     audioRef.current = audio;
 
     const onLoadedMetadata = () => {
       if (isFinite(audio.duration)) setDuration(audio.duration);
+      setError(null);
     };
     const onPlay = () => {
       setIsPlaying(true);
@@ -90,11 +101,22 @@ export function WaveformPlayer({
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
     };
     const onWaiting = () => setIsLoading(true);
-    const onCanPlay = () => setIsLoading(false);
+    const onCanPlay = () => {
+      setIsLoading(false);
+      setError(null);
+    };
     const onDurationChange = () => {
       if (isFinite(audio.duration)) setDuration(audio.duration);
     };
     const onError = () => {
+      // If primary URL failed (e.g. cross-origin/network/CSP), try the alternate fallback URL
+      if (!hasTriedFallback && fallbackUrl && fallbackUrl !== audio.src) {
+        hasTriedFallback = true;
+        audio.src = fallbackUrl;
+        audio.load();
+        return;
+      }
+
       const code = audio.error?.code;
       const msg =
         code === 4

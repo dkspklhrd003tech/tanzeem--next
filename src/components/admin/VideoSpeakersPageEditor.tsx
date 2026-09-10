@@ -56,6 +56,7 @@ interface SpeakerItem {
   avatar?: string;
   type?: string;
   order?: number;
+  videoCount?: number;
   isActive?: boolean;
   customFields?: any;
 }
@@ -247,8 +248,8 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
     setIsLoading(true);
     try {
       const [spRes, viRes] = await Promise.all([
-        fetch("/api/admin/speakers?type=video"),
-        fetch("/api/admin/videos")
+        fetch("/api/admin/speakers?type=video&limit=all"),
+        fetch("/api/admin/videos?limit=all")
       ]);
       if (spRes.ok) {
         const items = (await spRes.json()).items || [];
@@ -258,6 +259,24 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
     } catch (e) { console.error(e); }
     finally { setIsLoading(false); }
   };
+
+  // When activeSpeaker is selected, ensure all videos for this speaker are freshly loaded
+  useEffect(() => {
+    if (!activeSpeaker?.id) return;
+    let isMounted = true;
+    fetch(`/api/admin/videos?speakerId=${activeSpeaker.id}&limit=all`)
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (isMounted && data?.items) {
+          setVideosList(prev => {
+            const others = prev.filter(v => v.speakerId !== activeSpeaker.id);
+            return [...others, ...data.items];
+          });
+        }
+      })
+      .catch(console.error);
+    return () => { isMounted = false; };
+  }, [activeSpeaker?.id]);
 
   const handlePageSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -487,7 +506,7 @@ export default function VideoSpeakersPageEditor({ pageId, initialPageData }: { p
                       <SortableSpeakerCard
                         key={speaker.id}
                         speaker={speaker}
-                        videoCount={videosList.filter(v => v.speakerId === speaker.id).length}
+                        videoCount={speaker.videoCount ?? videosList.filter(v => v.speakerId === speaker.id).length}
                         onClick={() => handleSetActiveSpeaker(speaker)}
                         onEdit={(s) => {
                           setEditingSpeakerId(s.id);

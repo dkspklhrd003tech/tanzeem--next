@@ -52,6 +52,7 @@ interface SpeakerItem {
   avatar?: string;
   type?: string;
   order?: number;
+  audioCount?: number;
   isActive?: boolean;
   customFields?: any;
 }
@@ -195,8 +196,8 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
     setIsLoading(true);
     try {
       const [spRes, auRes] = await Promise.all([
-        fetch("/api/admin/speakers?type=audio"),
-        fetch("/api/admin/audio")
+        fetch("/api/admin/speakers?type=audio&limit=all"),
+        fetch("/api/admin/audio?limit=all")
       ]);
       if (spRes.ok) {
         const items = (await spRes.json()).items || [];
@@ -206,6 +207,24 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
     } catch (e) { console.error(e); }
     finally { setIsLoading(false); }
   };
+
+  // When activeSpeaker is selected, ensure all audios for this speaker are freshly loaded
+  useEffect(() => {
+    if (!activeSpeaker?.id) return;
+    let isMounted = true;
+    fetch(`/api/admin/audio?speakerId=${activeSpeaker.id}&limit=all`)
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (isMounted && data?.items) {
+          setAudiosList(prev => {
+            const others = prev.filter(a => a.speakerId !== activeSpeaker.id);
+            return [...others, ...data.items];
+          });
+        }
+      })
+      .catch(console.error);
+    return () => { isMounted = false; };
+  }, [activeSpeaker?.id]);
 
   const handlePageSave = async (e?: React.FormEvent) => {
     e?.preventDefault();
@@ -389,7 +408,7 @@ export default function AudioSpeakersPageEditor({ pageId, initialPageData }: { p
                       <SortableSpeakerCard
                         key={speaker.id}
                         speaker={speaker}
-                        audioCount={audiosList.filter(a => a.speakerId === speaker.id).length}
+                        audioCount={speaker.audioCount ?? audiosList.filter(a => a.speakerId === speaker.id).length}
                         onClick={() => handleSetActiveSpeaker(speaker)}
                         onEdit={(s) => router.push(`/sitemanager/media/speaker/${s.id}`)}
                         onDelete={(s) => setDeletingSpeaker(s)}

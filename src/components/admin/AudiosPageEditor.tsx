@@ -48,6 +48,7 @@ interface CategoryItem {
   code?: string;
   description?: string;
   order: number;
+  audioCount?: number;
   isActive?: boolean;
   customFields?: any;
 }
@@ -212,9 +213,9 @@ export default function AudiosPageEditor({ pageId, initialPageData }: { pageId: 
     setIsLoading(true);
     try {
       const [catsRes, speakersRes, vidsRes] = await Promise.all([
-        fetch("/api/admin/audio-categories"),
-        fetch("/api/admin/speakers"),
-        fetch("/api/admin/audio")
+        fetch("/api/admin/audio-categories?limit=all"),
+        fetch("/api/admin/speakers?limit=all"),
+        fetch("/api/admin/audio?limit=all")
       ]);
       if (catsRes.ok) setCategories((await catsRes.json()).items || []);
       if (speakersRes.ok) setSpeakersList((await speakersRes.json()).items || []);
@@ -222,6 +223,23 @@ export default function AudiosPageEditor({ pageId, initialPageData }: { pageId: 
     } catch (e) { console.error(e); }
     finally { setIsLoading(false); }
   };
+
+  useEffect(() => {
+    if (!activeCategory?.id) return;
+    let isMounted = true;
+    fetch(`/api/admin/audio?categoryId=${activeCategory.id}&limit=all`)
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (isMounted && data?.items) {
+          setaudioList(prev => {
+            const others = prev.filter(a => a.categoryId !== activeCategory.id);
+            return [...others, ...data.items];
+          });
+        }
+      })
+      .catch(console.error);
+    return () => { isMounted = false; };
+  }, [activeCategory?.id]);
 
   const handlePageSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -411,7 +429,7 @@ export default function AudiosPageEditor({ pageId, initialPageData }: { pageId: 
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
                     {filteredCategories.map(cat => (
                       <SortableCategoryCard key={cat.id} id={cat.id} item={cat} onClick={setActiveCategory}
-                        audioCount={audioList.filter(b => b.categoryId === cat.id).length}
+                        audioCount={cat.audioCount ?? audioList.filter(b => b.categoryId === cat.id).length}
                         onEdit={(item: any) => router.push(`/sitemanager/media/category/${item.id}?type=audio-categories`)}
                         onDelete={(item: CategoryItem) => setDeletingCat(item)}
                         onTogglePublish={handleCatTogglePublish} />

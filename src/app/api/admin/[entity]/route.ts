@@ -35,7 +35,7 @@ import {
     emailLogs,
     formSubmissions,
 } from "@/db/schema";
-import { eq, desc } from "drizzle-orm";
+import { eq, desc, asc, and, count } from "drizzle-orm";
 import { getCurrentUser } from "@/lib/auth";
 import { revalidatePath } from "next/cache";
 
@@ -178,30 +178,142 @@ export async function GET(
         if (authError) return authError;
 
         const { entity } = await params;
-        const table = entityMap[entity.toLowerCase()];
+        const normalizedEntity = entity.toLowerCase();
+        const table = entityMap[normalizedEntity];
 
         if (!table) {
             return NextResponse.json({ error: "Invalid entity type" }, { status: 400 });
         }
 
-        let results;
-        if (entity === "press-releases") {
-            results = await db.select().from(table).orderBy((table as any).orderIndex || (table as any).order || (table as any).id, desc(table.publishedAt)).limit(100);
-        } else if (entity === "speakers") {
-            const type = request.nextUrl.searchParams.get("type");
-            let query = db.select().from(table);
-            if (type) {
-                query = query.where(eq((table as any).type, type)) as any;
-            }
-            results = await query.orderBy((table as any).order || (table as any).id, desc((table as any).name || (table as any).id)).limit(100);
-        } else if (entity === "services") {
-            // Return in admin-defined drag order (order asc), so grid matches frontend spotlight
-            results = await db.select().from(table).orderBy((table as any).order).limit(100);
-        } else if (entity === "campaigns") {
-            // Return in admin-defined drag order (orderIndex asc), so grid matches frontend spotlight
-            results = await db.select().from(table).orderBy((table as any).orderIndex).limit(100);
+        const searchParams = request.nextUrl.searchParams;
+        const type = searchParams.get("type");
+        const speakerId = searchParams.get("speakerId");
+        const categoryId = searchParams.get("categoryId");
+        const limitParam = searchParams.get("limit");
+
+        // Determine query limit:
+        // Media entities need high limit so admin can see, manage, search, and reorder all items
+        const mediaEntities = [
+            "audio",
+            "videos",
+            "books",
+            "magazines",
+            "audio-books",
+            "sermons",
+            "khitab-audios",
+            "speakers",
+            "book-categories",
+            "video-categories",
+            "audio-categories",
+        ];
+
+        let queryLimit: number | null = null;
+        if (limitParam === "all" || limitParam === "0" || limitParam === "-1") {
+            queryLimit = null; // No limit
+        } else if (limitParam) {
+            const parsed = parseInt(limitParam, 10);
+            queryLimit = isNaN(parsed) ? 100 : parsed;
+        } else if (mediaEntities.includes(normalizedEntity) || speakerId || categoryId) {
+            queryLimit = 10000; // Safe high ceiling for admin media lists
         } else {
-            results = await db.select().from(table).orderBy(desc((table as any).updatedAt || (table as any).createdAt || (table as any).id)).limit(100);
+            queryLimit = 100;
+        }
+
+        // Build where conditions
+        const conditions: any[] = [];
+        if (type && (table as any).type) {
+            conditions.push(eq((table as any).type, type));
+        }
+        if (speakerId && (table as any).speakerId) {
+            conditions.push(eq((table as any).speakerId, speakerId));
+        }
+        if (categoryId && (table as any).categoryId) {
+            conditions.push(eq((table as any).categoryId, categoryId));
+        }
+
+        let query = db.select().from(table);
+        if (conditions.length === 1) {
+            query = query.where(conditions[0]) as any;
+        } else if (conditions.length > 1) {
+            query = query.where(and(...conditions)) as any;
+        }
+
+        // Determine ordering
+        if (normalizedEntity === "press-releases") {
+            query = query.orderBy((table as any).orderIndex || (table as any).order || (table as any).id, desc(table.publishedAt)) as any;
+        } else if (normalizedEntity === "speakers") {
+            query = query.orderBy(asc((table as any).order || (table as any).id), asc((table as any).name || (table as any).id)) as any;
+        } else if (normalizedEntity === "services") {
+            query = query.orderBy(asc((table as any).order || (table as any).id)) as any;
+        } else if (normalizedEntity === "campaigns") {
+            query = query.orderBy(asc((table as any).orderIndex || (table as any).id)) as any;
+        } else if ((table as any).order !== undefined) {
+            query = query.orderBy(asc((table as any).order)) as any;
+        } else {
+            query = query.orderBy(desc((table as any).updatedAt || (table as any).createdAt || (table as any).id)) as any;
+        }
+
+        if (queryLimit !== null) {
+            query = query.limit(queryLimit) as any;
+        }
+
+        let results = await query;
+
+        // Augment counts for speakers
+        if (normalizedEntity === "speakers") {
+            const [audioCounts, videoCounts] = await Promise.all([
+                db.select({ speakerId: audio.speakerId, count: count() }).from(audio).groupBy(audio.speakerId),
+                db.select({ speakerId: videos.speakerId, count: count() }).from(videos).groupBy(videos.speakerId),
+            ]);
+            const audioMap: Record<string, number> = {};
+            for (const r of audioCounts) {
+                if (r.speakerId) audioMap[r.speakerId] = Number(r.count);
+            }
+            const videoMap: Record<string, number> = {};
+            for (const r of videoCounts) {
+                if (r.speakerId) videoMap[r.speakerId] = Number(r.count);
+            }
+            results = results.map((sp: any) => ({
+                ...sp,
+                audioCount: audioMap[sp.id] ?? 0,
+                videoCount: videoMap[sp.id] ?? 0,
+            }));
+        }
+
+        // Augment counts for categories
+        if (normalizedEntity === "book-categories") {
+            const bCounts = await db.select({ categoryId: books.categoryId, count: count() }).from(books).groupBy(books.categoryId);
+            const bMap: Record<string, number> = {};
+            for (const r of bCounts) {
+                if (r.categoryId) bMap[r.categoryId] = Number(r.count);
+            }
+            results = results.map((cat: any) => ({
+                ...cat,
+                bookCount: bMap[cat.id] ?? 0,
+                itemCount: bMap[cat.id] ?? 0,
+            }));
+        } else if (normalizedEntity === "video-categories") {
+            const vCounts = await db.select({ categoryId: videos.categoryId, count: count() }).from(videos).groupBy(videos.categoryId);
+            const vMap: Record<string, number> = {};
+            for (const r of vCounts) {
+                if (r.categoryId) vMap[r.categoryId] = Number(r.count);
+            }
+            results = results.map((cat: any) => ({
+                ...cat,
+                videoCount: vMap[cat.id] ?? 0,
+                itemCount: vMap[cat.id] ?? 0,
+            }));
+        } else if (normalizedEntity === "audio-categories") {
+            const aCounts = await db.select({ categoryId: audio.categoryId, count: count() }).from(audio).groupBy(audio.categoryId);
+            const aMap: Record<string, number> = {};
+            for (const r of aCounts) {
+                if (r.categoryId) aMap[r.categoryId] = Number(r.count);
+            }
+            results = results.map((cat: any) => ({
+                ...cat,
+                audioCount: aMap[cat.id] ?? 0,
+                itemCount: aMap[cat.id] ?? 0,
+            }));
         }
 
         return NextResponse.json({ items: results });

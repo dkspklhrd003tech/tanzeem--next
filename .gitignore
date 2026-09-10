@@ -139,4 +139,7 @@ temp/
 /list*.js
 /set*.js
 *.log
+/scripts/
+/scripts/*.*
+*.mjs
 

@@ -250,7 +250,7 @@ export default function SermonsPageEditor({ pageId, initialPageData }: { pageId:
   const fetchCategories = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch("/api/admin/sermon-categories");
+      const res = await fetch("/api/admin/sermon-categories?limit=all");
       if (res.ok) {
         const data = await res.json();
         setCategories((data.items || []).sort((a: any, b: any) => (a.order || 0) - (b.order || 0)));
@@ -261,13 +261,30 @@ export default function SermonsPageEditor({ pageId, initialPageData }: { pageId:
 
   const fetchSermons = async () => {
     try {
-      const res = await fetch("/api/admin/sermons");
+      const res = await fetch("/api/admin/sermons?limit=all");
       if (res.ok) {
         const data = await res.json();
         setSermons((data.items || []));
       }
     } catch (e) { console.error(e); }
   };
+
+  useEffect(() => {
+    if (!activeCategory?.id) return;
+    let isMounted = true;
+    fetch(`/api/admin/sermons?categoryId=${activeCategory.id}&limit=all`)
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (isMounted && data?.items) {
+          setSermons(prev => {
+            const others = prev.filter(s => s.categoryId !== activeCategory.id);
+            return [...others, ...data.items];
+          });
+        }
+      })
+      .catch(console.error);
+    return () => { isMounted = false; };
+  }, [activeCategory?.id]);
 
   const handlePageSave = async (e: React.FormEvent) => {
     e.preventDefault();

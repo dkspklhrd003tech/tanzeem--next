@@ -29,6 +29,8 @@ interface SpeakerItem {
   bio?: string;
   avatar?: string;
   isActive?: boolean;
+  audioCount?: number;
+  videoCount?: number;
 }
 
 interface AudioItem {
@@ -90,9 +92,9 @@ export default function SpeakersPageEditor({ pageId, initialPageData, mediaConte
     setIsLoading(true);
     try {
       const [spRes, auRes, viRes] = await Promise.all([
-        fetch("/api/admin/speakers"),
-        fetch("/api/admin/audio"),
-        fetch("/api/admin/videos")
+        fetch("/api/admin/speakers?limit=all"),
+        fetch("/api/admin/audio?limit=all"),
+        fetch("/api/admin/videos?limit=all")
       ]);
       if (spRes.ok) setSpeakersList((await spRes.json()).items || []);
       if (auRes.ok) setAudiosList((await auRes.json()).items || []);
@@ -100,6 +102,24 @@ export default function SpeakersPageEditor({ pageId, initialPageData, mediaConte
     } catch (e) { console.error(e); }
     finally { setIsLoading(false); }
   };
+
+  useEffect(() => {
+    if (!activeSpeaker?.id) return;
+    let isMounted = true;
+    Promise.all([
+      fetch(`/api/admin/audio?speakerId=${activeSpeaker.id}&limit=all`).then(r => r.ok ? r.json() : null),
+      fetch(`/api/admin/videos?speakerId=${activeSpeaker.id}&limit=all`).then(r => r.ok ? r.json() : null)
+    ]).then(([aData, vData]) => {
+      if (!isMounted) return;
+      if (aData?.items) {
+        setAudiosList(prev => [...prev.filter(a => a.speakerId !== activeSpeaker.id), ...aData.items]);
+      }
+      if (vData?.items) {
+        setVideosList(prev => [...prev.filter(v => v.speakerId !== activeSpeaker.id), ...vData.items]);
+      }
+    }).catch(console.error);
+    return () => { isMounted = false; };
+  }, [activeSpeaker?.id]);
 
   const handlePageSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -257,9 +277,9 @@ export default function SpeakersPageEditor({ pageId, initialPageData, mediaConte
                         <div>
                           <h3 className="font-bold text-base line-clamp-1 group-hover:text-primary pl-1">{speaker.name}</h3>
                           <span className="inline-block text-xs px-2 py-0.5 text-primary rounded-full border border-primary/40 bg-primary/10 mt-1 font-medium">
-                            {(mediaContext === "audio" || mediaContext === "both") && `${audiosList.filter(a => a.speakerId === speaker.id).length} Audios`}
+                            {(mediaContext === "audio" || mediaContext === "both") && `${speaker.audioCount ?? audiosList.filter(a => a.speakerId === speaker.id).length} Audios`}
                             {mediaContext === "both" && " • "}
-                            {(mediaContext === "video" || mediaContext === "both") && `${videosList.filter(v => v.speakerId === speaker.id).length} Videos`}
+                            {(mediaContext === "video" || mediaContext === "both") && `${speaker.videoCount ?? videosList.filter(v => v.speakerId === speaker.id).length} Videos`}
                           </span>
                         </div>
                         <div className="flex gap-1" onClick={e => e.stopPropagation()}>

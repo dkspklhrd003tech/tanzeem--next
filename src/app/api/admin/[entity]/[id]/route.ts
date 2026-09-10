@@ -21,6 +21,7 @@ import {
     socialPlatforms,
     socialAccounts,
     bookCategories,
+    videoCategories,
     audioCategories,
     speakers,
     campaigns,
@@ -60,6 +61,9 @@ function revalidateEntityPaths(entity: string) {
             revalidatePath("/[slug]", "page");
         } else if (entity === "book-categories" || entity === "books") {
             revalidatePath("/books-by-category");
+        } else if (entity === "video-categories" || entity === "videos") {
+            revalidatePath("/videos-by-category");
+            revalidatePath("/videos");
         } else if (entity === "speakers") {
             revalidatePath("/audios-by-speaker");
             revalidatePath("/videos-by-speakers");
@@ -94,6 +98,7 @@ const entityMap: Record<string, any> = {
     "social-platforms": socialPlatforms,
     "social-accounts": socialAccounts,
     "book-categories": bookCategories,
+    "video-categories": videoCategories,
     "audio-categories": audioCategories,
     "sermon-categories": sermonCategories,
     "khitab-audios": khitabAudios,

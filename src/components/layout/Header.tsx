@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import {
   Sheet,
   SheetContent,
+  SheetDescription,
   SheetHeader,
   SheetTitle,
   SheetTrigger,
@@ -316,6 +317,9 @@ export function Header() {
                       )}
                       <span style={{ color: '#005031' }}>Tanzeem-e-Islami</span>
                     </SheetTitle>
+                    <SheetDescription className="sr-only">
+                      Mobile navigation menu
+                    </SheetDescription>
                   </SheetHeader>
                   <MobileNavigation navigation={navigation} onClose={() => setIsMobileMenuOpen(false)} />
                   {mounted && settings.header_cta_text && (

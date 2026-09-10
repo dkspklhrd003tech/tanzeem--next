@@ -256,7 +256,7 @@ export default function KhitabAudiosPageEditor({ pageId, initialPageData }: { pa
   const fetchCategories = async () => {
     setIsLoading(true);
     try {
-      const res = await fetch("/api/admin/khitab-audio-categories");
+      const res = await fetch("/api/admin/khitab-audio-categories?limit=all");
       if (res.ok) {
         const data = await res.json();
         setCategories((data.items || []).sort((a: any, b: any) => (a.order || 0) - (b.order || 0) || new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()));
@@ -267,13 +267,30 @@ export default function KhitabAudiosPageEditor({ pageId, initialPageData }: { pa
 
   const fetchKhitabAudios = async () => {
     try {
-      const res = await fetch("/api/admin/khitab-audios");
+      const res = await fetch("/api/admin/khitab-audios?limit=all");
       if (res.ok) {
         const data = await res.json();
         setKhitabAudios((data.items || []).sort((a: any, b: any) => (a.order || 0) - (b.order || 0) || new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()));
       }
     } catch (e) { console.error(e); }
   };
+
+  useEffect(() => {
+    if (!activeCategory?.id) return;
+    let isMounted = true;
+    fetch(`/api/admin/khitab-audios?categoryId=${activeCategory.id}&limit=all`)
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (isMounted && data?.items) {
+          setKhitabAudios(prev => {
+            const others = prev.filter(k => k.categoryId !== activeCategory.id);
+            return [...others, ...data.items];
+          });
+        }
+      })
+      .catch(console.error);
+    return () => { isMounted = false; };
+  }, [activeCategory?.id]);
 
   const handlePageSave = async (e: React.FormEvent) => {
     e.preventDefault();

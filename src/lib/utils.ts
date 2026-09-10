@@ -79,6 +79,11 @@ export function resolveAudioUrl(url: string | null | undefined): string {
   if (path.startsWith("/uploads/")) {
     path = "/public_html" + path;
   }
+  try {
+    path = encodeURI(decodeURI(path));
+  } catch {
+    // Keep path as-is if decoding fails
+  }
   return `${mediaBase}${path}`;
 }
 

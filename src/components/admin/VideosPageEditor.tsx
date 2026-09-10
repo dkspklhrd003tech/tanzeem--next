@@ -49,6 +49,7 @@ interface CategoryItem {
   slug: string;
   description?: string;
   order: number;
+  videoCount?: number;
   isActive?: boolean;
 }
 
@@ -221,9 +222,9 @@ export default function VideosPageEditor({ pageId, initialPageData }: { pageId: 
     setIsLoading(true);
     try {
       const [catsRes, speakersRes, vidsRes] = await Promise.all([
-        fetch("/api/admin/video-categories"),
-        fetch("/api/admin/speakers"),
-        fetch("/api/admin/videos")
+        fetch("/api/admin/video-categories?limit=all"),
+        fetch("/api/admin/speakers?limit=all"),
+        fetch("/api/admin/videos?limit=all")
       ]);
       if (catsRes.ok) setCategories((await catsRes.json()).items || []);
       if (speakersRes.ok) setSpeakersList((await speakersRes.json()).items || []);
@@ -231,6 +232,23 @@ export default function VideosPageEditor({ pageId, initialPageData }: { pageId: 
     } catch (e) { console.error(e); }
     finally { setIsLoading(false); }
   };
+
+  useEffect(() => {
+    if (!activeCategory?.id) return;
+    let isMounted = true;
+    fetch(`/api/admin/videos?categoryId=${activeCategory.id}&limit=all`)
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (isMounted && data?.items) {
+          setVideosList(prev => {
+            const others = prev.filter(v => v.categoryId !== activeCategory.id);
+            return [...others, ...data.items];
+          });
+        }
+      })
+      .catch(console.error);
+    return () => { isMounted = false; };
+  }, [activeCategory?.id]);
 
   const handlePageSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -518,7 +536,7 @@ export default function VideosPageEditor({ pageId, initialPageData }: { pageId: 
                   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
                     {filteredCategories.map(cat => (
                       <SortableCategoryCard key={cat.id} id={cat.id} item={cat} onClick={setActiveCategory}
-                        videoCount={videosList.filter(b => b.categoryId === cat.id).length}
+                        videoCount={cat.videoCount ?? videosList.filter(b => b.categoryId === cat.id).length}
                         onEdit={(item: any) => { setEditingCatId(item.id); setCatFormData({ name: item.name, slug: item.slug, description: item.description || "" }); setCatFormErrors({}); setIsCatModalOpen(true); }}
                         onDelete={(item: CategoryItem) => setDeletingCat(item)}
                         onTogglePublish={handleCatTogglePublish} />
