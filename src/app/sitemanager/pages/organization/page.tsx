@@ -150,7 +150,7 @@ const DEFAULT_SEO: SeoState = {
   entityName: "Tanzeem-e-Islami",
   entityType: "NGO / Islamic Organization",
   speakableSelectors: "#org-ideology-heading, #history-heading",
-  preloadUrls: "/fonts/jameel-noori.woff2",
+  preloadUrls: "/fonts/jameel-noori-nastaleeq.woff2",
   preconnectOrigins: "https://fonts.gstatic.com",
   priorityHints: "high"
 };

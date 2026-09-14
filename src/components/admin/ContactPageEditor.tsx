@@ -100,7 +100,7 @@ function SortableLocationCard({ loc, onEdit, onDelete }: { loc: LocationRow, onE
                 <>
                   <span>{loc.name.split(" / ")[0]}</span>
                   <span className="text-muted-foreground font-normal">/</span>
-                  <span style={{ fontFamily: "'Jameel Noori Nastaleeq', serif", fontSize: "1.15em", transform: "translateY(2px)" }}>
+                  <span className="font-nastaleeq text-[1.2em] inline-block leading-none" dir="rtl" style={{ transform: "translateY(1px)" }}>
                     {loc.name.split(" / ").slice(1).join(" / ")}
                   </span>
                 </>
@@ -587,7 +587,7 @@ export default function ContactPageEditor({ pageId, title }: { pageId: string; t
                 <Label>Branch Name (Urdu) <span className="text-destructive">*</span></Label>
                 <Input
                   dir="rtl"
-                  style={{ fontFamily: "'Jameel Noori Nastaleeq', serif", fontSize: "20px" }}
+                  className="font-nastaleeq text-lg"
                   value={(editingLocation?.name || "").split(" / ").slice(1).join(" / ") || ""}
                   onChange={(e) => {
                     const en = (editingLocation?.name || "").split(" / ")[0] || "";

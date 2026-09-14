@@ -226,7 +226,7 @@ export function ContactSection({
                         <span className="flex items-center gap-1.5">
                           <span>{branch.name.split(" / ")[0]}</span>
                           <span className={isActive ? "text-white/60" : "text-slate-300"}>/</span>
-                          <span style={{ fontFamily: "'Jameel Noori Nastaleeq', serif", fontSize: "1.15em", transform: "translateY(2px)" }}>
+                          <span className="font-nastaleeq text-[1.2em] inline-block leading-none" dir="rtl" style={{ transform: "translateY(1px)" }}>
                             {branch.name.split(" / ").slice(1).join(" / ")}
                           </span>
                         </span>
