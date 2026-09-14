@@ -143,7 +143,7 @@ export async function POST(request: NextRequest) {
       action: "create",
       entityType: "page",
       entityId: pageId,
-      details: JSON.stringify({ title: data.title }),
+      details: `Created page "${data.title}"`,
       createdAt: new Date(),
     });
 

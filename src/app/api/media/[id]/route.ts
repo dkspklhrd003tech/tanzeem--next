@@ -91,7 +91,7 @@ export async function DELETE(
       action: "delete",
       entityType: "media",
       entityId: id,
-      details: JSON.stringify({ filename: item.filename }),
+      details: `Deleted file "${item.filename}"`,
     });
 
     return NextResponse.json({ success: true });

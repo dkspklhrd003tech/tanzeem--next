@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Edit2, XCircle, Shield, User as UserIcon, X, Eye, EyeOff, KeyRound } from "lucide-react";
+import { Plus, Edit2, Trash2, Shield, User as UserIcon, X, Eye, EyeOff, KeyRound } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -19,6 +19,44 @@ type User = {
     lastLoginAt: string | null;
     createdAt: string;
 };
+
+function getPasswordStrength(password: string) {
+    let score = 0;
+    if (!password) return score;
+    if (password.length > 5) score += 1;
+    if (password.length > 8) score += 1;
+    if (/[A-Z]/.test(password)) score += 1;
+    if (/[0-9]/.test(password)) score += 1;
+    if (/[^A-Za-z0-9]/.test(password)) score += 1;
+    return Math.min(5, score);
+}
+
+function PasswordStrengthBar({ password }: { password: string }) {
+    if (!password) return null;
+    const score = getPasswordStrength(password);
+    const percent = (score / 5) * 100;
+    const label = score === 0 ? "" : score < 3 ? "Weak" : score < 5 ? "Average" : "Strong";
+
+    return (
+        <div className="mt-3">
+            <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
+                <div
+                    className="h-full rounded-full transition-all duration-500 ease-out"
+                    style={{
+                        width: `${percent}%`,
+                        background: "linear-gradient(to right, #ff0000ff, #ff6a00ff, #ffbf00ff, #00ff5eff)",
+                        backgroundSize: "500% 100%",
+                        backgroundPosition: `${100 - percent}% 0`,
+                    }}
+                />
+            </div>
+            <p className={`text-[12px] mt-1 text-right font-medium ${score < 3 ? "text-red-500" : score < 5 ? "text-amber-500" : "text-emerald-600"
+                }`}>
+                {label}
+            </p>
+        </div>
+    );
+}
 
 export function UserManagement() {
     const [users, setUsers] = useState<User[]>([]);
@@ -148,8 +186,6 @@ export function UserManagement() {
     const [deletingUser, setDeletingUser] = useState<{ id: string, name: string | null } | null>(null);
 
     const handleDelete = async (id: string, name: string | null) => {
-        setDeletingUser(null);
-
         try {
             const res = await fetch(`/api/users/${id}`, { method: "DELETE" });
             const data = await res.json();
@@ -161,13 +197,15 @@ export function UserManagement() {
                 description: "The user has been permanently removed.",
             });
 
-            fetchUsers();
+            await fetchUsers();
         } catch (error: any) {
             toast({
                 title: "Error",
                 description: error.message || "Failed to delete user.",
                 variant: "destructive",
             });
+        } finally {
+            setDeletingUser(null);
         }
     };
 
@@ -253,17 +291,17 @@ export function UserManagement() {
                                             <div className="flex justify-end gap-2">
                                                 <button
                                                     onClick={() => handleOpenModal(user)}
-                                                    className="p-2 text-foreground-light hover:text-primary transition-colors hover:bg-primary/10 rounded-md"
+                                                    className="p-2 text-primary hover:text-primary transition-colors hover:bg-primary/10 rounded-md"
                                                     title="Edit User"
                                                 >
                                                     <Edit2 className="w-4 h-4" />
                                                 </button>
                                                 <button
                                                     onClick={() => setDeletingUser({ id: user.id, name: user.name })}
-                                                    className="p-2 text-foreground-light hover:text-destructive transition-colors hover:bg-destructive/10 rounded-md"
+                                                    className="p-2 text-red-600 hover:text-destructive transition-colors hover:bg-destructive/10 rounded-md"
                                                     title="Delete User"
                                                 >
-                                                    <XCircle className="w-4 h-4" />
+                                                    <Trash2 className="w-4 h-4" />
                                                 </button>
                                             </div>
                                         </td>
@@ -371,6 +409,7 @@ export function UserManagement() {
                                             {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                                         </button>
                                     </div>
+                                    <PasswordStrengthBar password={formData.password} />
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-4 pt-2">
@@ -484,8 +523,16 @@ export function UserManagement() {
                 open={!!deletingUser}
                 onOpenChange={(open) => !open && setDeletingUser(null)}
                 title="Delete User"
+                titleClassName="text-[#ff0000]"
+                pendingContentClassName="!bg-[#ffb3b3]"
+                pendingText="Deleting…"
                 description={`Are you sure you want to permanently delete ${deletingUser?.name || 'this user'}? This action cannot be undone.`}
-                onConfirm={() => { if (deletingUser) handleDelete(deletingUser.id, deletingUser.name); }} />
+                onConfirm={async () => {
+                    if (deletingUser) {
+                        await handleDelete(deletingUser.id, deletingUser.name);
+                    }
+                }}
+            />
         </div>
     );
 }

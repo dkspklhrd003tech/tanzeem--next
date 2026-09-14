@@ -4,6 +4,8 @@ import { db } from "@/db";
 import { activityLogs, users } from "@/db/schema";
 import { desc, eq } from "drizzle-orm";
 
+import { formatActivityDetails } from "@/lib/activity-formatter";
+
 export const dynamic = "force-dynamic";
 
 export async function GET(request: NextRequest) {
@@ -49,6 +51,7 @@ export async function GET(request: NextRequest) {
       }
       return {
         ...log,
+        details: formatActivityDetails(log.details, log.entityType, log.action),
         badgeBg,
         badgeText,
       };

@@ -243,11 +243,41 @@
   --font-family-nastaleeq: var(--font-nastaleeq);
 }
 
-/* ── Custom Urdu Font with Unicode Range ── */
+/* ── Jameel Noori Nastaleeq Calligraphic Webfonts ── */
+@font-face {
+  font-family: 'Jameel Noori Nastaleeq';
+  src: local('Jameel Noori Nastaleeq'),
+       local('JameelNooriNastaliq'),
+       local('Jameel Noori Nastaleeq Regular'),
+       url('/fonts/jameel-noori-nastaleeq.woff2') format('woff2'),
+       url('https://cdn.jsdelivr.net/npm/jameel-noori/fonts/jameel-noori-nastaleeq4.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF;
+}
+
+@font-face {
+  font-family: 'JameelNooriNastaliq';
+  src: local('Jameel Noori Nastaleeq'),
+       local('JameelNooriNastaliq'),
+       url('/fonts/jameel-noori-nastaleeq.woff2') format('woff2'),
+       url('https://cdn.jsdelivr.net/npm/jameel-noori/fonts/jameel-noori-nastaleeq4.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+  unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF;
+}
+
 @font-face {
   font-family: 'UrduAutoFallback';
-  src: local('Jameel Noori Nastaleeq');
-  /* Covers Arabic/Urdu character ranges */
+  src: local('Jameel Noori Nastaleeq'),
+       local('JameelNooriNastaliq'),
+       url('/fonts/jameel-noori-nastaleeq.woff2') format('woff2'),
+       url('https://cdn.jsdelivr.net/npm/jameel-noori/fonts/jameel-noori-nastaleeq4.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
   unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF;
 }
 
@@ -407,7 +437,7 @@ li {
 [lang="ar"],
 [lang="ar"] span,
 [lang="ar"] p {
-  font-family: 'Jameel Noori Nastaleeq', serif !important;
+  font-family: 'Jameel Noori Nastaleeq', 'JameelNooriNastaliq', 'Noto Nastaliq Urdu', serif !important;
   direction: rtl !important;
   text-align: right !important;
 }

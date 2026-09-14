@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { pages, activityLogs, users } from "@/db/schema";
-import { eq, and, not, or } from "drizzle-orm";
+import { pages, activityLogs, users, routeRedirects } from "@/db/schema";
+import { eq, and, not, or, isNull } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { validateRedirectRule } from "@/lib/redirect-engine";
 
 export const dynamic = "force-dynamic";
 
@@ -240,6 +241,46 @@ export async function PUT(request: NextRequest, { params }: Ctx) {
       if (existingSlug !== updatedSlugRaw) revalidateAllPaths(existingSlug);
     } catch (revalErr) {
       console.error("Cache revalidation failed:", revalErr);
+    }
+
+    // Auto-create 301 redirect from old slug to new slug to prevent broken links
+    if (existingSlug && updatedSlugRaw && existingSlug !== updatedSlugRaw && data.autoRedirect !== false) {
+      try {
+        const oldPath = `/${existingSlug.replace(/^\/+/, "")}`;
+        const newPath = `/${updatedSlugRaw.replace(/^\/+/, "")}`;
+
+        const existingRedirects = await db
+          .select({
+            id: routeRedirects.id,
+            sourcePath: routeRedirects.sourcePath,
+            destinationPath: routeRedirects.destinationPath,
+            status: routeRedirects.status,
+            isActive: routeRedirects.isActive,
+          })
+          .from(routeRedirects)
+          .where(isNull(routeRedirects.deletedAt));
+
+        const validation = validateRedirectRule(oldPath, newPath, existingRedirects);
+        if (validation.valid) {
+          await db.insert(routeRedirects).values({
+            id: crypto.randomUUID(),
+            sourcePath: validation.normalizedSource,
+            destinationPath: validation.normalizedDestination,
+            statusCode: 301,
+            hitCount: 0,
+            status: "active",
+            isActive: true,
+            preserveQueryString: true,
+            matchType: "exact",
+            notes: `Auto-created 301 redirect on page slug rename (${oldPath} → ${newPath})`,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            deletedAt: null,
+          });
+        }
+      } catch (redirErr) {
+        console.warn("Auto-redirect creation on slug update skipped:", redirErr);
+      }
     }
 
     // Determine action label for activity log

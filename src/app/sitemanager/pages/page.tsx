@@ -280,7 +280,7 @@ export default function PagesListPage() {
           <p className="text-xs text-muted-foreground mt-1 font-medium">
             Manage your site templates, dynamic content structures, and frontend layouts.
             <span className="ml-2 px-2 py-0.5 rounded-full bg-[#0d5844]/20 border border-[#0d5844]/30 text-primary font-bold text-[10px]">
-              {total} pages total
+              {total} Pages Total
             </span>
           </p>
         </div>

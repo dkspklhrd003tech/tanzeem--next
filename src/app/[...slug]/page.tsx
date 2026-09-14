@@ -1,7 +1,9 @@
 import { notFound, redirect, permanentRedirect } from "next/navigation";
 import { db } from "@/db";
-import { pages, pageSections, audioCategories, videoCategories, audio, videos, speakers, bookCategories, books, settings } from "@/db/schema";
-import { eq, and, desc, asc, sql } from "drizzle-orm";
+import { pages, pageSections, audioCategories, videoCategories, audio, videos, speakers, bookCategories, books, settings, routeRedirects } from "@/db/schema";
+import { eq, and, desc, asc, sql, isNull, or } from "drizzle-orm";
+import { log404Detection } from "@/app/actions/trafficActions";
+import { matchRedirectRule, applyQueryPreservation } from "@/lib/redirect-engine";
 import { Metadata } from "next";
 import crypto from "crypto";
 import { DynamicPageContent } from "@/components/shared/DynamicPageContent";
@@ -188,6 +190,7 @@ export const revalidate = 300;
 
 interface PageProps {
   params: Promise<{ slug: string[] }>;
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
 }
 
 // ── generateMetadata ──────────────────────────────────────────────────────────
@@ -238,7 +241,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   return buildMetadata({
     title: page.metaTitle || page.title,
     description: page.metaDescription || page.excerpt || undefined,
-    path: `/${slug}`,
+    path: page.canonicalUrl || `/${slug}`,
     ogImage: (page as any).ogImage || page.featuredImage || null,
     noIndex: (page as any).noIndex ?? false,
   });
@@ -246,8 +249,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 // ── Page component ────────────────────────────────────────────────────────────
 
-export default async function DynamicPage({ params }: PageProps) {
+export default async function DynamicPage({ params, searchParams }: PageProps) {
   const { slug: slugArray } = await params;
+  const currentSearchParams = searchParams ? await searchParams : {};
   const slug = slugArray.join("/");
 
   let page = await findPageBySlug(slug);
@@ -308,7 +312,52 @@ export default async function DynamicPage({ params }: PageProps) {
     const bookCatMatch = await db.query.bookCategories.findFirst({ where: eq(bookCategories.slug, slug) });
     if (bookCatMatch) permanentRedirect(`/books-by-category/${bookCatMatch.slug}`);
 
-    // If no legacy mapping is found, return 404
+    // Check Database URL Redirects (route_redirects) with Wildcard and Query Preservation
+    try {
+      const activeRedirects = await db
+        .select()
+        .from(routeRedirects)
+        .where(
+          and(
+            eq(routeRedirects.status, "active"),
+            eq(routeRedirects.isActive, true),
+            isNull(routeRedirects.deletedAt)
+          )
+        );
+
+      const matched = matchRedirectRule(`/${slug}`, activeRedirects);
+
+      if (matched) {
+        // Increment hit count asynchronously
+        if (matched.rule.id) {
+          db.update(routeRedirects)
+            .set({ hitCount: sql`${routeRedirects.hitCount} + 1` })
+            .where(eq(routeRedirects.id, matched.rule.id))
+            .catch(() => {});
+        }
+
+        const finalDestination = applyQueryPreservation(
+          matched.targetUrl,
+          currentSearchParams,
+          matched.rule.preserveQueryString ?? true
+        );
+
+        if (matched.rule.statusCode === 302) {
+          redirect(finalDestination);
+        } else {
+          permanentRedirect(finalDestination);
+        }
+      }
+    } catch (e: any) {
+      // If it's a NEXT_REDIRECT digest, rethrow it so Next.js redirects properly
+      if (e?.digest?.startsWith("NEXT_REDIRECT")) throw e;
+      console.warn("Error checking route_redirects:", e);
+    }
+
+    // Telemetry: Log unresolved 404 detection
+    log404Detection({ path: `/${slug}` }).catch(() => {});
+
+    // If no redirect or page matched, return 404
     notFound();
   }
 
@@ -599,6 +648,26 @@ export default async function DynamicPage({ params }: PageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(bc) }}
       />
+      {(() => {
+        let seoData: any = page.seoData;
+        if (typeof seoData === "string") {
+          try { seoData = JSON.parse(seoData); } catch (_) { seoData = {}; }
+        }
+        const customJson = seoData?.schema?.json;
+        if (!customJson) return null;
+        try {
+          const parsed = typeof customJson === "string" ? JSON.parse(customJson) : customJson;
+          return (
+            <script
+              id={`jsonld-custom-${ldId}`}
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{ __html: JSON.stringify(parsed) }}
+            />
+          );
+        } catch (_) {
+          return null;
+        }
+      })()}
 
       {(() => {
         const parsedSections = sections.map(s => {

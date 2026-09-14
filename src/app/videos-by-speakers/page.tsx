@@ -84,7 +84,7 @@ export default async function VideosBySpeakersPage() {
                     {sp.name}
                   </h2>
                   {sp.bio && (
-                    <p className="text-xl text-foreground hover:text-primary text-center line-clamp-1 font-nastaleeq" dir="rtl">
+                    <p className="text-lg text-foreground hover:text-primary text-center line-clamp-1 font-nastaleeq" dir="rtl">
                       {sp.bio}
                     </p>
                   )}

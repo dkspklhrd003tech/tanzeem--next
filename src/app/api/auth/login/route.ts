@@ -70,6 +70,7 @@ export async function POST(request: NextRequest) {
       action: "login",
       entityType: "user",
       entityId: user.id,
+      details: "Logged into Site Manager",
     });
 
     // Create response with session cookie

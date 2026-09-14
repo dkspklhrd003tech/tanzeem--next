@@ -71,12 +71,17 @@ export async function PUT(request: NextRequest) {
       if (updatedSetting.length) results.push(updatedSetting[0]);
     }
 
+    const updatedKeys = Object.keys(settingsToUpdate);
+    const keysSummary = updatedKeys.length <= 3
+      ? updatedKeys.map(k => k.replace(/_/g, " ")).join(", ")
+      : `${updatedKeys.slice(0, 3).map(k => k.replace(/_/g, " ")).join(", ")} +${updatedKeys.length - 3} more`;
+
     await db.insert(activityLogs).values({
       id: crypto.randomUUID(),
       userId: user.id,
       action: "update",
       entityType: "settings",
-      details: JSON.stringify({ keys: Object.keys(settingsToUpdate) }),
+      details: `Updated ${updatedKeys.length} setting(s): ${keysSummary}`,
     });
 
     revalidatePath("/", "layout");

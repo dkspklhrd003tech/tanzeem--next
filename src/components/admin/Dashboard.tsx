@@ -99,7 +99,7 @@ export function Dashboard() {
       title: "Disclaimer Views",
       value: data?.stats?.disclaimerViews || 0,
       icon: Eye,
-      color: "bg-rose-500",
+      color: "bg-red-500",
     },
   ];
 

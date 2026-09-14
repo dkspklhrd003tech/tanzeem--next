@@ -91,7 +91,7 @@ export async function PUT(
             action: "update",
             entityType: "video",
             entityId: id,
-            details: JSON.stringify({ title: data.title || current.title }),
+            details: `Updated video "${data.title || current.title}"`,
         });
 
         revalidatePath("/", "layout");
@@ -138,7 +138,7 @@ export async function DELETE(
             action: "delete",
             entityType: "video",
             entityId: id,
-            details: JSON.stringify({ title: current.title }),
+            details: `Deleted video "${current.title}"`,
         });
 
         revalidatePath("/", "layout");

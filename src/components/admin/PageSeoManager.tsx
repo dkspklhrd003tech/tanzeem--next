@@ -345,7 +345,7 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
                   href="#traditional-seo"
                   className={cn(
                     "flex items-center justify-between px-3 py-2 text-xs font-medium rounded-lg transition-colors",
-                    isTradMissing ? "text-red-600 bg-red-600/10 font-bold hover:bg-red-600/20" : "text-primary dark:text-emerald-400 hover:bg-muted"
+                    isTradMissing ? "text-red-600 bg-red-600/10 font-bold hover:bg-red-600/20" : "text-primary hover:bg-muted"
                   )}
                 >
                   <span className="flex items-center gap-2">
@@ -361,7 +361,7 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
                   href="#alt-texts"
                   className={cn(
                     "flex items-center justify-between px-3 py-2 text-xs font-medium rounded-lg transition-colors",
-                    isAltMissing ? "text-red-600 bg-red-600/10 font-bold hover:bg-red-600/20" : "text-primary dark:text-emerald-400 hover:bg-muted"
+                    isAltMissing ? "text-red-600 bg-red-600/10 font-bold hover:bg-red-600/20" : "text-primary hover:bg-muted"
                   )}
                 >
                   <span className="flex items-center gap-2">
@@ -377,7 +377,7 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
                   href="#geo"
                   className={cn(
                     "flex items-center justify-between px-3 py-2 text-xs font-medium rounded-lg transition-colors",
-                    isGeoMissing ? "text-red-600 bg-red-600/10 font-bold hover:bg-red-600/20" : "text-primary dark:text-emerald-400 hover:bg-muted"
+                    isGeoMissing ? "text-red-600 bg-red-600/10 font-bold hover:bg-red-600/20" : "text-primary hover:bg-muted"
                   )}
                 >
                   <span className="flex items-center gap-2">
@@ -393,7 +393,7 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
                   href="#aeo"
                   className={cn(
                     "flex items-center justify-between px-3 py-2 text-xs font-medium rounded-lg transition-colors",
-                    isAeoMissing ? "text-red-600 bg-red-600/10 font-bold hover:bg-red-600/20" : "text-primary dark:text-emerald-400 hover:bg-muted"
+                    isAeoMissing ? "text-red-600 bg-red-600/10 font-bold hover:bg-red-600/20" : "text-primary hover:bg-muted"
                   )}
                 >
                   <span className="flex items-center gap-2">
@@ -409,7 +409,7 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
                   href="#schema"
                   className={cn(
                     "flex items-center justify-between px-3 py-2 text-xs font-medium rounded-lg transition-colors",
-                    isSchemaMissing ? "text-red-600 bg-red-600/10 font-bold hover:bg-red-600/20" : "text-primary dark:text-emerald-400 hover:bg-muted"
+                    isSchemaMissing ? "text-red-600 bg-red-600/10 font-bold hover:bg-red-600/20" : "text-primary hover:bg-muted"
                   )}
                 >
                   <span className="flex items-center gap-2">
@@ -425,7 +425,7 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
                   href="#technical"
                   className={cn(
                     "flex items-center justify-between px-3 py-2 text-xs font-medium rounded-lg transition-colors",
-                    isTechMissing ? "text-red-600 bg-red-600/10 font-bold hover:bg-red-600/20" : "text-primary dark:text-emerald-400 hover:bg-muted"
+                    isTechMissing ? "text-red-600 bg-red-600/10 font-bold hover:bg-red-600/20" : "text-primary hover:bg-muted"
                   )}
                 >
                   <span className="flex items-center gap-2">
@@ -441,7 +441,7 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
                   href="#validation"
                   className={cn(
                     "flex items-center justify-between px-3 py-2 text-xs font-medium rounded-lg transition-colors",
-                    hasAnyIssue ? "text-red-600 bg-red-600/10 font-bold hover:bg-red-600/20" : "text-primary dark:text-emerald-400 hover:bg-muted"
+                    hasAnyIssue ? "text-red-600 bg-red-600/10 font-bold hover:bg-red-600/20" : "text-primary hover:bg-muted"
                   )}
                 >
                   <span className="flex items-center gap-2">
@@ -964,12 +964,12 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
                           <span className="text-[10px] font-mono text-muted-foreground px-2 py-0.5 rounded bg-muted">Desktop / Mobile View</span>
                         </div>
                         <div className="p-4 rounded-xl bg-background border border-border/60 space-y-1">
-                          <div className="flex items-center gap-1.5 text-xs text-emerald-700 dark:text-emerald-400 font-mono truncate">
+                          <div className="flex items-center gap-1.5 text-xs text-emerald-700 font-mono truncate">
                             <span>https://tanzeem.org</span>
                             <span>›</span>
                             <span>{page.slug || "our-obligations"}</span>
                           </div>
-                          <h3 className="text-lg font-medium text-blue-600 dark:text-blue-400 hover:underline cursor-pointer truncate">
+                          <h3 className="text-lg font-medium text-blue-600 hover:underline cursor-pointer truncate">
                             {page.metaTitle || page.title || "Untitled Page | Tanzeem-e-Islami"}
                           </h3>
                           <p className="text-xs text-foreground/80 leading-relaxed line-clamp-2">
@@ -985,7 +985,7 @@ export default function PageSeoManager({ pageId, endpoint, backHref, hideHeader 
                             <span className="w-2.5 h-2.5 rounded-full bg-destructive" />
                             {errorsCount} {errorsCount === 1 ? "Critical Fix" : "Critical Fixes"}
                           </span>
-                          <span className="flex items-center gap-1.5 text-amber-600 dark:text-amber-400 font-bold">
+                          <span className="flex items-center gap-1.5 text-amber-600 font-bold">
                             <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
                             {warningsCount} {warningsCount === 1 ? "Warning" : "Warnings"}
                           </span>

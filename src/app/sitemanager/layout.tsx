@@ -38,6 +38,8 @@ import {
   Home,
   Mic,
   Sparkles,
+  ShieldCheck,
+  CornerDownRight,
   Sun,
   Moon,
 } from "lucide-react";
@@ -117,6 +119,9 @@ const NAV_ITEMS: NavItem[] = [
   { title: "Events", href: "/sitemanager/pages/events/edit", icon: Calendar },
   { title: "Jummah Venues", href: "/sitemanager/khitabat-addresses", icon: MapPin },
   { title: "Sermons / Khitab-e-Jum'ah (Audio)", href: "/sitemanager/sermons", icon: Mic },
+  // ── Optimization & Traffic ───────────────────────────────────────────────
+  { title: "SEO Center", href: "/sitemanager/seo", icon: ShieldCheck },
+  { title: "404 & Redirects", href: "/sitemanager/redirects", icon: CornerDownRight },
   // ── System ───────────────────────────────────────────────────────────────
   { title: "Settings", href: "/sitemanager/settings", icon: Settings },
   { title: "Activity Log", href: "/sitemanager/activity", icon: History, superAdminOnly: true },
@@ -133,6 +138,13 @@ function useBreadcrumbs() {
     isLast: i === segments.length - 1,
   }));
 }
+
+const isRealAvatarUrl = (url?: string | null): boolean => {
+  if (!url || typeof url !== "string") return false;
+  const trimmed = url.trim();
+  if (trimmed.startsWith("{") || trimmed.startsWith("%7B") || trimmed.includes("badgeBg")) return false;
+  return trimmed.startsWith("http://") || trimmed.startsWith("https://") || trimmed.startsWith("/") || trimmed.includes(".");
+};
 
 // ─── Sidebar Nav Item ─────────────────────────────────────────────────────────
 
@@ -460,7 +472,7 @@ function Sidebar({
                 )}
               >
                 <Avatar className="h-8 w-8 shrink-0">
-                  {user?.avatar && <AvatarImage src={resolveMediaUrl(user.avatar)} alt={user.name ?? ""} />}
+                  {isRealAvatarUrl(user?.avatar) && <AvatarImage src={resolveMediaUrl(user!.avatar!)} alt={user?.name ?? ""} />}
                   <AvatarFallback className="bg-primary/20 text-primary text-xs font-semibold">
                     {userInitials}
                   </AvatarFallback>
@@ -576,7 +588,7 @@ function TopHeader({
             <DropdownMenuTrigger asChild>
               <button className="flex items-center gap-2 pl-1 pr-2 py-1 rounded-full hover:bg-muted transition-colors">
                 <Avatar className="h-8 w-8">
-                  {user?.avatar && <AvatarImage src={user.avatar} />}
+                  {isRealAvatarUrl(user?.avatar) && <AvatarImage src={resolveMediaUrl(user!.avatar!)} alt={user?.name ?? ""} />}
                   <AvatarFallback className="bg-primary/20 text-primary text-xs font-semibold">
                     {userInitials}
                   </AvatarFallback>

@@ -9,7 +9,8 @@ import {
   Image, Mail, Database, TrendingUp, Plus, Upload, Menu,
   Clock, Globe, Globe2, EyeOff, Activity, ArrowRight, RefreshCw,
   ChevronDown, ChevronUp, Play, Download, Eye as EyeIcon,
-  HardDrive, Layers, Share2, ShieldAlert,
+  HardDrive, Layers, Share2, ShieldAlert, ShieldCheck, Zap,
+  AlertTriangle, CornerDownRight,
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -19,6 +20,9 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { cn } from "@/lib/utils";
 import { useAdminAuth } from "@/hooks/use-admin-auth";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, RadialBarChart, RadialBar, PolarAngleAxis } from "recharts";
+import { ProjectVisualsCommandCenter } from "@/components/admin/ProjectVisualsCommandCenter";
+import { MonthlySeoAreaChart } from "@/components/admin/MonthlySeoAreaChart";
+import { formatActivityDetails } from "@/lib/activity-formatter";
 
 // ─── Fetcher ──────────────────────────────────────────────────────────────────
 const fetcher = async (url: string) => {
@@ -86,7 +90,7 @@ const USER_PALETTES = [
   "bg-blue-600 text-white",
   "bg-purple-600 text-white",
   "bg-amber-600 text-white",
-  "bg-rose-600 text-white",
+  "bg-red-600 text-white",
   "bg-indigo-600 text-white",
   "bg-teal-600 text-white",
   "bg-cyan-600 text-white",
@@ -167,14 +171,96 @@ function RecentPagesSkeleton() {
 
 // ─── Top-level stat cards config ─────────────────────────────────────────────
 const TOP_CARDS = [
-  { key: "pages" as keyof StatsData, label: "Total Pages", icon: FileText, color: "bg-blue-500/10 text-blue-600", href: "/sitemanager/pages" },
-  { key: "audio" as keyof StatsData, label: "Audio Lectures", icon: Headphones, color: "bg-purple-500/10 text-purple-600", href: "/sitemanager/audio" },
-  { key: "videos" as keyof StatsData, label: "Videos", icon: Video, color: "bg-red-500/10 text-red-600", href: "/sitemanager/videos" },
-  { key: "books" as keyof StatsData, label: "Books", icon: BookOpen, color: "bg-amber-500/10 text-amber-600", href: "/sitemanager/books" },
-  { key: "magazines" as keyof StatsData, label: "Magazines", icon: BookMarked, color: "bg-orange-500/10 text-orange-600", href: "/sitemanager/magazines" },
-  { key: "sermons" as keyof StatsData, label: "Sermons", icon: Mic2, color: "bg-teal-500/10 text-teal-600", href: "/sitemanager/sermons" },
-  { key: "unreadMessages" as keyof StatsData, label: "Unread Messages", icon: Mail, color: "bg-rose-500/10 text-rose-600", href: "/sitemanager/settings" },
-  { key: "disclaimerViews" as keyof StatsData, label: "Disclaimer Views", icon: EyeIcon, color: "bg-emerald-500/10 text-emerald-600", href: "/sitemanager/settings" },
+  {
+    key: "pages" as any,
+    label: "Total Pages",
+    icon: FileText,
+    color: "bg-blue-500/10 text-blue-600",
+    hoverStyle: "hover:border-blue-500/50 hover:bg-blue-500/5 hover:shadow-blue-500/10",
+    badgeStyle: "bg-blue-500/10 text-blue-700 border-blue-500/30",
+    stripColor: "bg-blue-500",
+    href: "/sitemanager/pages",
+  },
+  {
+    key: "audio" as any,
+    label: "Audio Lectures",
+    icon: Headphones,
+    color: "bg-purple-500/10 text-purple-600",
+    hoverStyle: "hover:border-purple-500/50 hover:bg-purple-500/5 hover:shadow-purple-500/10",
+    badgeStyle: "bg-purple-500/10 text-purple-700 border-purple-500/30",
+    stripColor: "bg-purple-500",
+    href: "/sitemanager/audio",
+  },
+  {
+    key: "videos" as any,
+    label: "Videos",
+    icon: Video,
+    color: "bg-red-500/10 text-red-600",
+    hoverStyle: "hover:border-red-500/50 hover:bg-red-500/5 hover:shadow-red-500/10",
+    badgeStyle: "bg-red-500/10 text-red-700 border-red-500/30",
+    stripColor: "bg-red-500",
+    href: "/sitemanager/videos",
+  },
+  {
+    key: "books" as any,
+    label: "Books",
+    icon: BookOpen,
+    color: "bg-amber-500/10 text-amber-600",
+    hoverStyle: "hover:border-amber-500/50 hover:bg-amber-500/5 hover:shadow-amber-500/10",
+    badgeStyle: "bg-amber-500/10 text-amber-700 border-amber-500/30",
+    stripColor: "bg-amber-500",
+    href: "/sitemanager/books",
+  },
+  {
+    key: "magazines" as any,
+    label: "Magazines",
+    icon: BookMarked,
+    color: "bg-orange-500/10 text-orange-600",
+    hoverStyle: "hover:border-orange-500/50 hover:bg-orange-500/5 hover:shadow-orange-500/10",
+    badgeStyle: "bg-orange-500/10 text-orange-700 border-orange-500/30",
+    stripColor: "bg-orange-500",
+    href: "/sitemanager/magazines",
+  },
+  {
+    key: "sermons" as any,
+    label: "Sermons",
+    icon: Mic2,
+    color: "bg-teal-500/10 text-teal-600",
+    hoverStyle: "hover:border-teal-500/50 hover:bg-teal-500/5 hover:shadow-teal-500/10",
+    badgeStyle: "bg-teal-500/10 text-teal-700 border-teal-500/30",
+    stripColor: "bg-teal-500",
+    href: "/sitemanager/sermons",
+  },
+  {
+    key: "unreadMessages" as any,
+    label: "Unread Messages",
+    icon: Mail,
+    color: "bg-blue-500/10 text-blue-600",
+    hoverStyle: "hover:border-blue-500/50 hover:bg-blue-500/5 hover:shadow-blue-500/10",
+    badgeStyle: "bg-blue-500/10 text-blue-700 border-blue-500/30",
+    stripColor: "bg-blue-500",
+    href: "/sitemanager/forms",
+  },
+  {
+    key: "errors404" as any,
+    label: "404 Detections",
+    icon: AlertTriangle,
+    color: "bg-red-500/10 text-red-600",
+    hoverStyle: "hover:border-red-500/50 hover:bg-red-500/5 hover:shadow-red-500/10",
+    badgeStyle: "bg-red-500/10 text-red-700 border-red-500/30",
+    stripColor: "bg-red-500",
+    href: "/sitemanager/redirects?tab=404",
+  },
+  {
+    key: "redirects" as any,
+    label: "URL Redirects",
+    icon: CornerDownRight,
+    color: "bg-teal-500/10 text-teal-600",
+    hoverStyle: "hover:border-teal-500/50 hover:bg-teal-500/5 hover:shadow-teal-500/10",
+    badgeStyle: "bg-teal-500/10 text-teal-700 border-teal-500/30",
+    stripColor: "bg-teal-500",
+    href: "/sitemanager/redirects?tab=redirects",
+  },
 ];
 
 // ─── Sub-bar: shows a percentage bar relative to max ─────────────────────────
@@ -420,14 +506,14 @@ function SeoCenterDashboardWidget() {
                   strokeLinecap="round"
                   className={cn(
                     "transition-all duration-1000 ease-out",
-                    overallScore >= 80 ? "text-emerald-500" : overallScore >= 50 ? "text-amber-500" : "text-rose-500"
+                    overallScore >= 80 ? "text-emerald-500" : overallScore >= 50 ? "text-amber-500" : "text-red-500"
                   )}
                   fill="transparent"
                 />
               </svg>
               <div className="absolute flex flex-col items-center justify-center">
                 <span className="text-2xl font-black tabular-nums tracking-tighter text-primary">{overallScore}%</span>
-                <span className="text-[9px] uppercase font-bold text-muted-foreground tracking-wider">Health Rating</span>
+                <span className="text-[9px] uppercase font-bold text-muted-foreground tracking-wider">Health</span>
               </div>
             </div>
             <p className="text-xs font-semibold text-center mt-2 text-foreground">
@@ -521,17 +607,17 @@ function SeoCenterDashboardWidget() {
           {/* 4. Actionable Diagnostics Summary */}
           <div className="bg-background/80 backdrop-blur-md border border-border/60 rounded-2xl p-5 shadow-inner flex flex-col justify-between">
             <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-1.5">
-              <ShieldAlert className="w-3.5 h-3.5 text-rose-500" /> Diagnostics Summary
+              <ShieldAlert className="w-3.5 h-3.5 text-red-500" /> Diagnostics Summary
             </h4>
 
             <div className="grid grid-cols-2 gap-2 my-1">
-              <div className="p-2.5 bg-rose-500/10 border border-rose-500/20 rounded-xl text-center">
-                <span className="text-xl font-black text-rose-600 tabular-nums">{pagesWithErrors}</span>
-                <p className="text-[10px] font-semibold text-rose-700 dark:text-rose-400">Pages Needing Fixes</p>
+              <div className="p-2.5 bg-red-500/10 border border-red-500/20 rounded-xl text-center">
+                <span className="text-xl font-black text-red-600 tabular-nums">{pagesWithErrors}</span>
+                <p className="text-[10px] font-semibold text-red-700">Pages Needing Fixes</p>
               </div>
               <div className="p-2.5 bg-amber-500/10 border border-amber-500/20 rounded-xl text-center">
                 <span className="text-xl font-black text-amber-600 tabular-nums">{totalIssues}</span>
-                <p className="text-[10px] font-semibold text-amber-700 dark:text-amber-400">Total Action Items</p>
+                <p className="text-[10px] font-semibold text-amber-700">Total Action Items</p>
               </div>
             </div>
 
@@ -548,7 +634,7 @@ function SeoCenterDashboardWidget() {
             <div className="space-y-3 pt-2">
               <div className="flex items-center justify-between">
                 <h4 className="text-sm font-bold text-foreground flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-rose-600 animate-pulse" />
+                  <span className="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse" />
                   Pages Requiring SEO Attention ({issueSources.length})
                 </h4>
                 <span className="text-xs text-muted-foreground">Exact source locations listed below</span>
@@ -556,7 +642,7 @@ function SeoCenterDashboardWidget() {
 
               <div className="divide-y divide-border/40 border border-border/60 rounded-2xl bg-background/50 overflow-hidden max-h-72 overflow-y-auto">
                 {issueSources.map((item) => (
-                  <div key={item.pageId} className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-rose-500/5 transition-colors">
+                  <div key={item.pageId} className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:bg-red-500/5 transition-colors">
                     <div className="min-w-0 space-y-1">
                       <div className="flex items-center gap-2">
                         <span className="font-bold text-sm text-foreground truncate">{item.title}</span>
@@ -567,7 +653,7 @@ function SeoCenterDashboardWidget() {
                           {item.score}% Score
                         </Badge>
                       </div>
-                      <ul className="text-xs text-rose-600 dark:text-rose-400 space-y-0.5 list-disc list-inside">
+                      <ul className="text-xs text-red-600 space-y-0.5 list-disc list-inside">
                         {item.issues.slice(0, 2).map((iss, i) => (
                           <li key={i} className="truncate">{iss}</li>
                         ))}
@@ -599,6 +685,7 @@ export default function DashboardPage() {
   const { user } = useAdminAuth();
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [displayDate, setDisplayDate] = useState<{ greg: string; hijri: string } | null>(null);
+  const [stationTab, setStationTab] = useState<"content" | "seo" | "activity" | "actions">("content");
 
   // 1. Fetch site settings for Hijri offset calculation
   const { data: settingsRes } = useSWR("/api/settings", fetcher, { revalidateOnFocus: false });
@@ -664,10 +751,20 @@ export default function DashboardPage() {
     fetcher,
     { revalidateOnFocus: true, refreshInterval: 10000, revalidateOnReconnect: true, dedupingInterval: 2000 }
   );
+  const { data: trafficData, mutate: refreshTraffic } = useSWR(
+    "/api/sitemanager/traffic/stats",
+    fetcher,
+    { revalidateOnFocus: true, refreshInterval: 10000, revalidateOnReconnect: true, dedupingInterval: 2000 }
+  );
+  const { data: pagesData, mutate: refreshPages } = useSWR(
+    "/api/sitemanager/pages",
+    fetcher,
+    { revalidateOnFocus: true, refreshInterval: 20000, dedupingInterval: 5000 }
+  );
 
   const handleManualRefresh = async () => {
     setIsRefreshing(true);
-    await Promise.all([refreshStats(), refreshActivity()]);
+    await Promise.all([refreshStats(), refreshActivity(), refreshTraffic(), refreshPages()]);
     setTimeout(() => setIsRefreshing(false), 600);
   };
 
@@ -680,6 +777,15 @@ export default function DashboardPage() {
   const sermonsByCategory: any[] = statsData?.sermonsByCategory ?? [];
   const magazinesByYear: MagazineYear[] = statsData?.magazinesByYear ?? [];
   const mediaByType: MediaType[] = statsData?.mediaByType ?? [];
+
+  const totalContent = (stats?.audio ?? 0) + (stats?.videos ?? 0) + (stats?.books ?? 0) + (stats?.pages ?? 0) + (stats?.magazines ?? 0) + (stats?.sermons ?? 0);
+  const totalPlays = stats?.globalPlays ?? 0;
+  const totalDownloads = stats?.globalDownloads ?? 0;
+  const seoHealthPct = pagesData?.pages ? Math.round((pagesData.pages.filter((p: any) => !p.seoData || p.metaTitle).length / Math.max(1, pagesData.pages.length)) * 100) : 92;
+  const activeRedirects = trafficData?.redirects?.active ?? 0;
+  const totalRedirects = trafficData?.redirects?.total ?? 0;
+  const unresolved404 = trafficData?.errors404?.unresolved ?? 0;
+  const unreadMessages = stats?.unreadMessages ?? 0;
 
   const greeting = "Welcome To Tanzeem-e-Islami";
 
@@ -720,339 +826,152 @@ export default function DashboardPage() {
         </div>
       </motion.div>
 
-      {/* ── Cinematic Engagement & Resources Distribution Section ──────────────── */}
-      <motion.div variants={item} className="space-y-6">
-        {/* Top Cinematic Engagement Cards with Recharts Animated Radial Rings */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {/* Card 1: Total Plays */}
-          <Card className="relative overflow-hidden border border-blue-500/20 bg-gradient-to-br from-card via-blue-950/5 to-blue-500/10 shadow-xl hover:shadow-blue-500/20 transition-all duration-500 rounded-2xl group">
-            <div className="absolute top-0 right-0 w-36 h-36 bg-blue-500/10 rounded-full blur-3xl group-hover:bg-blue-500/25 transition-all" />
-            <CardContent className="p-5 flex items-center justify-between relative z-10">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-blue-500 animate-ping" />
-                  <p className="text-xs font-black uppercase tracking-wider text-blue-600 dark:text-blue-400">Total Plays</p>
-                </div>
-                <div className="text-3xl font-black text-foreground tabular-nums tracking-tight">
-                  {statsLoading ? <Skeleton className="h-8 w-20" /> : fmt(stats?.globalPlays ?? 0)}
-                </div>
-                <p className="text-[11px] text-muted-foreground font-semibold">Audio & Video streaming engagement</p>
-              </div>
-
-              {/* Recharts Animated Radial Gauge */}
-              <div className="relative w-24 h-24 shrink-0 flex items-center justify-center">
-                <ResponsiveContainer width="100%" height="100%">
-                  <RadialBarChart
-                    cx="50%"
-                    cy="50%"
-                    innerRadius="65%"
-                    outerRadius="100%"
-                    barSize={8}
-                    data={[{
-                      name: "Plays",
-                      value: Math.min(100, Math.round(((stats?.globalPlays ?? 0) / Math.max(1, (stats?.globalPlays ?? 0) + (stats?.globalDownloads ?? 0) + (stats?.globalShares ?? 0))) * 100)) || 100,
-                      fill: "#3b82f6",
-                    }]}
-                    startAngle={90}
-                    endAngle={-270}
-                  >
-                    <PolarAngleAxis type="number" domain={[0, 100]} angleAxisId={0} tick={false} />
-                    <RadialBar
-                      background={{ fill: "rgba(59, 130, 246, 0.1)" }}
-                      dataKey="value"
-                      cornerRadius={10}
-                      isAnimationActive={true}
-                    />
-                  </RadialBarChart>
-                </ResponsiveContainer>
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                  <div className="w-10 h-10 rounded-full bg-blue-500/15 text-blue-600 flex items-center justify-center shadow-inner border border-blue-500/20">
-                    <Play className="h-4.5 w-4.5 fill-blue-500/20" />
-                  </div>
-                </div>
-              </div>
-            </CardContent>
+      {/* ── Top Executive KPI Metric Strip ───────────────────────── */}
+      <motion.div variants={item}>
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+          {/* Card 1: Total Content */}
+          <Card className="p-3.5 rounded-2xl border border-purple-500/20 bg-purple-500/5 hover:bg-purple-500/10 hover:border-purple-500/40 transition-all shadow-2xs hover:shadow-md group">
+            <div className="flex items-center justify-between text-xs font-semibold text-purple-600 mb-1">
+              <span className="flex items-center gap-1.5"><Layers className="w-3.5 h-3.5" /> Total Content</span>
+              <Badge variant="outline" className="text-[9px] px-1.5 py-0 h-4 bg-purple-500/10 text-purple-600 border-purple-500/30">6 Hubs</Badge>
+            </div>
+            <div className="text-2xl font-black text-foreground tabular-nums group-hover:text-purple-600 transition-colors">
+              {statsLoading ? <Skeleton className="h-7 w-16" /> : fmt(totalContent)}
+            </div>
+            <p className="text-[10px] text-muted-foreground truncate mt-0.5">Audios, Videos, Books...</p>
           </Card>
 
-          {/* Card 2: Total Downloads */}
-          <Card className="relative overflow-hidden border border-emerald-500/20 bg-gradient-to-br from-card via-emerald-950/5 to-emerald-500/10 shadow-xl hover:shadow-emerald-500/20 transition-all duration-500 rounded-2xl group">
-            <div className="absolute top-0 right-0 w-36 h-36 bg-emerald-500/10 rounded-full blur-3xl group-hover:bg-emerald-500/25 transition-all" />
-            <CardContent className="p-5 flex items-center justify-between relative z-10">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping" />
-                  <p className="text-xs font-black uppercase tracking-wider text-emerald-600 dark:text-emerald-400">Total Downloads</p>
-                </div>
-                <div className="text-3xl font-black text-foreground tabular-nums tracking-tight">
-                  {statsLoading ? <Skeleton className="h-8 w-20" /> : fmt(stats?.globalDownloads ?? 0)}
-                </div>
-                <p className="text-[11px] text-muted-foreground font-semibold">Books, magazines & offline audios</p>
-              </div>
-
-              {/* Recharts Animated Radial Gauge */}
-              <div className="relative w-24 h-24 shrink-0 flex items-center justify-center">
-                <ResponsiveContainer width="100%" height="100%">
-                  <RadialBarChart
-                    cx="50%"
-                    cy="50%"
-                    innerRadius="65%"
-                    outerRadius="100%"
-                    barSize={8}
-                    data={[{
-                      name: "Downloads",
-                      value: Math.min(100, Math.round(((stats?.globalDownloads ?? 0) / Math.max(1, (stats?.globalPlays ?? 0) + (stats?.globalDownloads ?? 0) + (stats?.globalShares ?? 0))) * 100)) || 100,
-                      fill: "#10b981",
-                    }]}
-                    startAngle={90}
-                    endAngle={-270}
-                  >
-                    <PolarAngleAxis type="number" domain={[0, 100]} angleAxisId={0} tick={false} />
-                    <RadialBar
-                      background={{ fill: "rgba(16, 185, 129, 0.1)" }}
-                      dataKey="value"
-                      cornerRadius={10}
-                      isAnimationActive={true}
-                    />
-                  </RadialBarChart>
-                </ResponsiveContainer>
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                  <div className="w-10 h-10 rounded-full bg-emerald-500/15 text-emerald-600 flex items-center justify-center shadow-inner border border-emerald-500/20">
-                    <Download className="h-4.5 w-4.5" />
-                  </div>
-                </div>
-              </div>
-            </CardContent>
+          {/* Card 2: Total Plays */}
+          <Card className="p-3.5 rounded-2xl border border-blue-500/20 bg-blue-500/5 hover:bg-blue-500/10 hover:border-blue-500/40 transition-all shadow-2xs hover:shadow-md group">
+            <div className="flex items-center justify-between text-xs font-semibold text-blue-600 mb-1">
+              <span className="flex items-center gap-1.5"><Play className="w-3.5 h-3.5" /> Total Plays</span>
+              <Badge variant="outline" className="text-[9px] px-1.5 py-0 h-4 bg-blue-500/10 text-blue-600 border-blue-500/30">Stream</Badge>
+            </div>
+            <div className="text-2xl font-black text-foreground tabular-nums group-hover:text-blue-600 transition-colors">
+              {statsLoading ? <Skeleton className="h-7 w-16" /> : fmt(totalPlays)}
+            </div>
+            <p className="text-[10px] text-muted-foreground truncate mt-0.5">Media playback interactions</p>
           </Card>
 
-          {/* Card 3: Total Shares */}
-          <Card className="relative overflow-hidden border border-purple-500/20 bg-gradient-to-br from-card via-purple-950/5 to-purple-500/10 shadow-xl hover:shadow-purple-500/20 transition-all duration-500 rounded-2xl group">
-            <div className="absolute top-0 right-0 w-36 h-36 bg-purple-500/10 rounded-full blur-3xl group-hover:bg-purple-500/25 transition-all" />
-            <CardContent className="p-5 flex items-center justify-between relative z-10">
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full bg-purple-500 animate-ping" />
-                  <p className="text-xs font-black uppercase tracking-wider text-purple-600 dark:text-purple-400">Total Shares</p>
-                </div>
-                <div className="text-3xl font-black text-foreground tabular-nums tracking-tight">
-                  {statsLoading ? <Skeleton className="h-8 w-20" /> : fmt(stats?.globalShares ?? 0)}
-                </div>
-                <p className="text-[11px] text-muted-foreground font-semibold">Social outreach & link distribution</p>
-              </div>
-
-              {/* Recharts Animated Radial Gauge */}
-              <div className="relative w-24 h-24 shrink-0 flex items-center justify-center">
-                <ResponsiveContainer width="100%" height="100%">
-                  <RadialBarChart
-                    cx="50%"
-                    cy="50%"
-                    innerRadius="65%"
-                    outerRadius="100%"
-                    barSize={8}
-                    data={[{
-                      name: "Shares",
-                      value: Math.min(100, Math.round(((stats?.globalShares ?? 0) / Math.max(1, (stats?.globalPlays ?? 0) + (stats?.globalDownloads ?? 0) + (stats?.globalShares ?? 0))) * 100)) || 100,
-                      fill: "#a855f7",
-                    }]}
-                    startAngle={90}
-                    endAngle={-270}
-                  >
-                    <PolarAngleAxis type="number" domain={[0, 100]} angleAxisId={0} tick={false} />
-                    <RadialBar
-                      background={{ fill: "rgba(168, 85, 247, 0.1)" }}
-                      dataKey="value"
-                      cornerRadius={10}
-                      isAnimationActive={true}
-                    />
-                  </RadialBarChart>
-                </ResponsiveContainer>
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                  <div className="w-10 h-10 rounded-full bg-purple-500/15 text-purple-600 flex items-center justify-center shadow-inner border border-purple-500/20">
-                    <Share2 className="h-4.5 w-4.5" />
-                  </div>
-                </div>
-              </div>
-            </CardContent>
+          {/* Card 3: Downloads */}
+          <Card className="p-3.5 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 hover:bg-emerald-500/10 hover:border-emerald-500/40 transition-all shadow-2xs hover:shadow-md group">
+            <div className="flex items-center justify-between text-xs font-semibold text-emerald-600 mb-1">
+              <span className="flex items-center gap-1.5"><Download className="w-3.5 h-3.5" /> Downloads</span>
+              <Badge variant="outline" className="text-[9px] px-1.5 py-0 h-4 bg-emerald-500/10 text-emerald-600 border-emerald-500/30">Offline</Badge>
+            </div>
+            <div className="text-2xl font-black text-foreground tabular-nums group-hover:text-emerald-600 transition-colors">
+              {statsLoading ? <Skeleton className="h-7 w-16" /> : fmt(totalDownloads)}
+            </div>
+            <p className="text-[10px] text-muted-foreground truncate mt-0.5">Books & magazine files</p>
           </Card>
-        </div>
 
-        {/* 3D Animated Pie Chart & Grid Counters */}
-        {statsLoading ? <StatsSkeleton /> : (() => {
-          const categories = [
-            { key: "audio", name: "Audio Lectures", value: stats?.audio ?? 0, color: "#9333ea", class: "bg-purple-500", href: "/sitemanager/audio", icon: Headphones },
-            { key: "videos", name: "Videos", value: stats?.videos ?? 0, color: "#ef4444", class: "bg-red-500", href: "/sitemanager/videos", icon: Video },
-            { key: "books", name: "Books", value: stats?.books ?? 0, color: "#f59e0b", class: "bg-amber-500", href: "/sitemanager/books", icon: BookOpen },
-            { key: "pages", name: "Total Pages", value: stats?.pages ?? 0, color: "#3b82f6", class: "bg-blue-500", href: "/sitemanager/pages", icon: FileText },
-            { key: "magazines", name: "Magazines", value: stats?.magazines ?? 0, color: "#f97316", class: "bg-orange-500", href: "/sitemanager/magazines", icon: BookMarked },
-            { key: "sermons", name: "Sermons", value: stats?.sermons ?? 0, color: "#14b8a6", class: "bg-teal-500", href: "/sitemanager/sermons", icon: Mic2 },
-          ];
-
-          const grandTotal = categories.reduce((sum, c) => sum + c.value, 0) || 1;
-
-          return (
-            <Card className="border border-border/80 bg-gradient-to-br from-card via-card to-muted/20 shadow-2xl rounded-2xl overflow-hidden backdrop-blur-md">
-              <CardContent className="p-6">
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                  
-                  {/* Left Column: Interactive 3D Donut Pie Chart with Recharts */}
-                  <div className="lg:col-span-5 flex flex-col items-center justify-center p-6 bg-muted/30 border border-border/50 rounded-2xl shadow-inner relative overflow-hidden group">
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-purple-500/5 opacity-50" />
-                    
-                    <div className="relative w-64 h-64 flex items-center justify-center">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <PieChart>
-                          <defs>
-                            {categories.map((cat) => (
-                              <linearGradient key={`grad-${cat.key}`} id={`grad-${cat.key}`} x1="0" y1="0" x2="1" y2="1">
-                                <stop offset="0%" stopColor={cat.color} stopOpacity={1} />
-                                <stop offset="100%" stopColor={cat.color} stopOpacity={0.75} />
-                              </linearGradient>
-                            ))}
-                            <filter id="pie3dShadow" x="-20%" y="-20%" width="140%" height="140%">
-                              <feDropShadow dx="0" dy="6" stdDeviation="6" floodOpacity="0.25" />
-                            </filter>
-                          </defs>
-                          <Tooltip
-                            content={({ active, payload }) => {
-                              if (active && payload && payload.length) {
-                                const data = payload[0].payload;
-                                const pct = Math.round((data.value / grandTotal) * 100);
-                                return (
-                                  <div className="bg-popover/95 backdrop-blur-md border border-border/80 p-3 rounded-xl shadow-2xl space-y-1 z-50">
-                                    <div className="flex items-center gap-2">
-                                      <span className="w-3 h-3 rounded-full" style={{ backgroundColor: data.color }} />
-                                      <span className="font-bold text-xs text-popover-foreground">{data.name}</span>
-                                    </div>
-                                    <p className="text-sm font-black text-foreground tabular-nums">{fmt(data.value)} items ({pct}%)</p>
-                                  </div>
-                                );
-                              }
-                              return null;
-                            }}
-                          />
-                          <Pie
-                            data={categories}
-                            cx="50%"
-                            cy="50%"
-                            innerRadius={68}
-                            outerRadius={96}
-                            paddingAngle={5}
-                            dataKey="value"
-                            isAnimationActive={true}
-                            animationDuration={1200}
-                            style={{ filter: "url(#pie3dShadow)" }}
-                          >
-                            {categories.map((entry) => (
-                              <Cell
-                                key={`cell-${entry.key}`}
-                                fill={`url(#grad-${entry.key})`}
-                                stroke="rgba(255,255,255,0.2)"
-                                strokeWidth={1.5}
-                                className="transition-all duration-300 hover:scale-105 cursor-pointer origin-center"
-                              />
-                            ))}
-                          </Pie>
-                        </PieChart>
-                      </ResponsiveContainer>
-                      
-                      {/* Interactive Center Badge */}
-                      <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-                        <span className="text-3xl font-black tabular-nums tracking-tighter text-foreground drop-shadow-xs">
-                          {fmt(grandTotal)}
-                        </span>
-                        <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground mt-0.5">
-                          Total Content
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Category Legend Grid */}
-                    <div className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 max-w-xs">
-                      {categories.map((cat) => {
-                        const pct = Math.round((cat.value / grandTotal) * 100);
-                        return (
-                          <div key={cat.key} className="flex items-center gap-1.5 text-[11px] font-bold text-foreground">
-                            <span className="w-2.5 h-2.5 rounded-full shrink-0 shadow-xs" style={{ backgroundColor: cat.color }} />
-                            <span>{cat.name}</span>
-                            <span className="text-muted-foreground font-mono text-[10px]">({pct}%)</span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Right Column: Modernized Counter Cards */}
-                  <div className="lg:col-span-7 grid grid-cols-2 sm:grid-cols-3 gap-3">
-                    {TOP_CARDS.map((card) => {
-                      if (card.key === "disclaimerViews" && !stats?.disclaimerEnabled) return null;
-                      const pieItem = categories.find(c => c.key === card.key);
-                      const percent = pieItem ? Math.round((pieItem.value / grandTotal) * 100) : null;
-
-                      return (
-                        <Link key={card.key} href={card.href} className="group block">
-                          <Card className="hover:shadow-xl transition-all duration-300 hover:border-primary/50 hover:-translate-y-1 bg-background/80 backdrop-blur-md border-border/60 rounded-2xl relative overflow-hidden">
-                            {/* Top subtle glow strip */}
-                            <div className={cn("h-1 w-full", card.color.split(" ")[0].replace("/10", ""))} />
-                            <CardContent className="p-4 space-y-2">
-                              <div className="flex items-center justify-between">
-                                <div className={cn("w-8 h-8 rounded-xl flex items-center justify-center shadow-inner border border-white/10", card.color)}>
-                                  <card.icon className="h-4 w-4" />
-                                </div>
-                                {percent !== null && (
-                                  <Badge variant="outline" className="text-[10px] font-mono px-1.5 py-0 bg-muted/50 border-border/60 text-muted-foreground font-bold">
-                                    {percent}%
-                                  </Badge>
-                                )}
-                              </div>
-                              <div>
-                                <p className="text-2xl font-black text-foreground tabular-nums tracking-tight group-hover:text-primary transition-colors">
-                                  {stats?.[card.key] ?? 0}
-                                </p>
-                                <p className="text-xs font-semibold text-muted-foreground truncate mt-0.5">
-                                  {card.label}
-                                </p>
-                              </div>
-                            </CardContent>
-                          </Card>
-                        </Link>
-                      );
-                    })}
-                  </div>
-
-                </div>
-              </CardContent>
+          {/* Card 4: SEO Index */}
+          <Link href="/sitemanager/seo" className="group block">
+            <Card className="p-3.5 rounded-2xl border border-amber-500/20 bg-amber-500/5 hover:bg-amber-500/10 hover:border-amber-500/40 transition-all shadow-2xs hover:shadow-md h-full">
+              <div className="flex items-center justify-between text-xs font-semibold text-amber-600 mb-1">
+                <span className="flex items-center gap-1.5"><ShieldCheck className="w-3.5 h-3.5" /> SEO Index</span>
+                <Badge variant="outline" className="text-[9px] px-1.5 py-0 h-4 bg-amber-500/10 text-amber-600 border-amber-500/30">{seoHealthPct}%</Badge>
+              </div>
+              <div className="text-2xl font-black text-foreground tabular-nums group-hover:text-amber-600 transition-colors">
+                {seoHealthPct}%
+              </div>
+              <p className="text-[10px] text-muted-foreground truncate mt-0.5">Audit compliance score</p>
             </Card>
-          );
-        })()}
-      </motion.div>
+          </Link>
 
-      {/* ── SEO Center Live Audit Dashboard Widget ───────────────────── */}
-      <motion.div variants={item}>
-        <SeoCenterDashboardWidget />
-      </motion.div>
+          {/* Card 5: 404 & Redirects */}
+          <Link href="/sitemanager/redirects" className="group block">
+            <Card className="p-3.5 rounded-2xl border border-teal-500/20 bg-teal-500/5 hover:bg-teal-500/10 hover:border-teal-500/40 transition-all shadow-2xs hover:shadow-md h-full">
+              <div className="flex items-center justify-between text-xs font-semibold text-teal-600 mb-1">
+                <span className="flex items-center gap-1.5"><CornerDownRight className="w-3.5 h-3.5" /> Traffic Hub</span>
+                <Badge variant="outline" className="text-[9px] px-1.5 py-0 h-4 bg-teal-500/10 text-teal-600 border-teal-500/30">{activeRedirects} Act</Badge>
+              </div>
+              <div className="text-2xl font-black text-foreground tabular-nums group-hover:text-teal-600 transition-colors">
+                {totalRedirects} <span className="text-xs font-bold text-red-500 ml-1">({unresolved404} err)</span>
+              </div>
+              <p className="text-[10px] text-muted-foreground truncate mt-0.5">301 rules & error monitor</p>
+            </Card>
+          </Link>
 
-      {/* ── Quick Actions ──────────────────────────────────────────── */}
-      <motion.div variants={item}>
-        <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-3">Quick Actions</h2>
-        <div className="flex flex-wrap gap-2">
-          <Button asChild size="sm"><Link href="/sitemanager/pages"><Plus className="h-4 w-4" />Create New Page</Link></Button>
-          <Button asChild variant="outline" size="sm"><Link href="/sitemanager/header"><Menu className="h-4 w-4" />Manage Menu</Link></Button>
-          <Button asChild variant="outline" size="sm"><Link href="/" target="_blank" rel="noopener noreferrer"><Globe className="h-4 w-4" />View Website</Link></Button>
+          {/* Card 6: Form Inquiries */}
+          <Link href="/sitemanager/forms" className="group block">
+            <Card className="p-3.5 rounded-2xl border border-indigo-500/20 bg-indigo-500/5 hover:bg-indigo-500/10 hover:border-indigo-500/40 transition-all shadow-2xs hover:shadow-md h-full">
+              <div className="flex items-center justify-between text-xs font-semibold text-indigo-600 mb-1">
+                <span className="flex items-center gap-1.5"><Mail className="w-3.5 h-3.5" /> Inquiries</span>
+                <Badge variant="outline" className="text-[9px] px-1.5 py-0 h-4 bg-indigo-500/10 text-indigo-600 border-indigo-500/30">{unreadMessages} New</Badge>
+              </div>
+              <div className="text-2xl font-black text-foreground tabular-nums group-hover:text-indigo-600 transition-colors">
+                {unreadMessages}
+              </div>
+              <p className="text-[10px] text-muted-foreground truncate mt-0.5">Contact submissions</p>
+            </Card>
+          </Link>
         </div>
       </motion.div>
 
-      {/* ── Content KPIs ───────────────────────────────────────────── */}
+      {/* ── Project Visuals Command Center (Single Pane of Glass Visual Cockpit) ─── */}
       <motion.div variants={item}>
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">Content KPIs</h2>
-          <span className="text-[11px] text-muted-foreground/60 flex items-center gap-1">
-            <Activity className="h-3 w-3" /> Auto-refreshes every 10s
-          </span>
+        <ProjectVisualsCommandCenter
+          stats={stats}
+          trafficStats={trafficData}
+          activityLogs={activity}
+          seoPages={pagesData?.pages || []}
+          onRefresh={handleManualRefresh}
+          isRefreshing={isRefreshing}
+        />
+      </motion.div>
+
+      {/* ── Consolidated Dashboard Station (Zero Wandering, Zero Scrolling) ── */}
+      <motion.div variants={item} className="space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 bg-muted/40 rounded-2xl border border-border/70">
+          <div className="flex items-center gap-1.5 overflow-x-auto p-0.5">
+            <button
+              onClick={() => setStationTab("content")}
+              className={cn(
+                "flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap",
+                stationTab === "content" ? "bg-background text-primary shadow-xs border border-border/80" : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <Layers className="w-3.5 h-3.5" /> Content Collections (5)
+            </button>
+            <button
+              onClick={() => setStationTab("seo")}
+              className={cn(
+                "flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap",
+                stationTab === "seo" ? "bg-background text-primary shadow-xs border border-border/80" : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <ShieldCheck className="w-3.5 h-3.5" /> SEO Audit & Diagnostics
+            </button>
+            <button
+              onClick={() => setStationTab("activity")}
+              className={cn(
+                "flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap",
+                stationTab === "activity" ? "bg-background text-primary shadow-xs border border-border/80" : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <Activity className="w-3.5 h-3.5" /> Activity & Pages
+            </button>
+            <button
+              onClick={() => setStationTab("actions")}
+              className={cn(
+                "flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap",
+                stationTab === "actions" ? "bg-background text-primary shadow-xs border border-border/80" : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              <Zap className="w-3.5 h-3.5" /> Quick Actions
+            </button>
+          </div>
+
+          <div className="flex items-center gap-2 text-xs text-muted-foreground font-medium pr-2">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            <span>Interactive Station Control</span>
+          </div>
         </div>
 
-        {statsLoading ? <KpiSkeleton /> : (
+        {/* TAB 1: CONTENT COLLECTIONS */}
+        {stationTab === "content" && (
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-
-            {/* Audio */}
             <KpiCard
               title="Audio Lectures"
               icon={Headphones}
@@ -1069,8 +988,6 @@ export default function DashboardPage() {
                 { key: "downloads", label: "DL" },
               ]}
             />
-
-            {/* Videos */}
             <KpiCard
               title="Videos"
               icon={Video}
@@ -1087,8 +1004,6 @@ export default function DashboardPage() {
                 { key: "views", label: "Views" },
               ]}
             />
-
-            {/* Books */}
             <KpiCard
               title="Books"
               icon={BookOpen}
@@ -1105,8 +1020,6 @@ export default function DashboardPage() {
                 { key: "downloads", label: "DL" },
               ]}
             />
-
-            {/* Magazines */}
             <KpiCard
               title="Magazines"
               icon={BookMarked}
@@ -1123,8 +1036,6 @@ export default function DashboardPage() {
                 { key: "downloads", label: "DL" },
               ]}
             />
-
-            {/* Sermons */}
             <KpiCard
               title="Sermons"
               icon={Mic2}
@@ -1141,155 +1052,132 @@ export default function DashboardPage() {
                 { key: "plays", label: "Plays" },
               ]}
             />
-
-
           </div>
         )}
-      </motion.div>
 
-      {/* ── Activity + Recent Pages ────────────────────────────────── */}
-      <div className="grid lg:grid-cols-2 gap-6">
+        {/* TAB 2: SEO AUDIT & DIAGNOSTICS */}
+        {stationTab === "seo" && (
+          <div className="space-y-6">
+            <SeoCenterDashboardWidget />
+            <MonthlySeoAreaChart
+              currentScore={pagesData?.pages ? Math.round((pagesData.pages.filter((p: any) => !p.seoData || p.metaTitle).length / Math.max(1, pagesData.pages.length)) * 100) : 92}
+              totalPages={pagesData?.pages?.length || stats?.pages || 24}
+            />
+          </div>
+        )}
 
-        {/* Recent Activity */}
-        <motion.div variants={item}>
-          <Card className="h-full">
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="text-base flex items-center gap-2"><Activity className="h-4 w-4 text-primary" />Recent Activity</CardTitle>
-                  <CardDescription className="text-xs mt-0.5">Last 10 admin actions — real-time feed</CardDescription>
+        {/* TAB 3: ACTIVITY & RECENT PAGES */}
+        {stationTab === "activity" && (
+          <div className="grid lg:grid-cols-2 gap-6">
+            <Card className="h-full">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="text-base flex items-center gap-2"><Activity className="h-4 w-4 text-primary" />Recent Activity</CardTitle>
+                    <CardDescription className="text-xs mt-0.5">Last 10 admin actions — real-time feed</CardDescription>
+                  </div>
+                  <Link href="/sitemanager/activity" className="text-sm px-3 py-2 font-semibold bg-primary text-white hover:bg-primary-light hover:text-primary hover:border hover:border-primary/70 rounded-full flex items-center gap-0.5">
+                    View all <ArrowRight className="h-3 w-3" />
+                  </Link>
                 </div>
-                <Link href="/sitemanager/activity" className="text-sm px-3 py-2 font-semibold bg-primary text-white hover:bg-primary-light hover:text-primary hover:border hover:border-primary/70 rounded-full flex items-center gap-0.5">
-                  View all <ArrowRight className="h-3 w-3" />
-                </Link>
-              </div>
-
-              {/* Color legend guide */}
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-1 pt-2 border-t border-border/40 text-[12px] text-foreground">
-                <span className="font-medium text-foreground/70">Legend:</span>
-                <span className="flex items-center gap-1" title="Pages"><span className="w-2 h-2 rounded-full bg-blue-500" />Pages</span>
-                <span className="flex items-center gap-1" title="Audios"><span className="w-2 h-2 rounded-full bg-purple-500" />Audios</span>
-                <span className="flex items-center gap-1" title="Videos"><span className="w-2 h-2 rounded-full bg-red-500" />Videos</span>
-                <span className="flex items-center gap-1" title="Books"><span className="w-2 h-2 rounded-full bg-amber-500" />Books</span>
-                <span className="flex items-center gap-1" title="Magazines"><span className="w-2 h-2 rounded-full bg-orange-500" />Magazines</span>
-                <span className="flex items-center gap-1" title="Users / Login"><span className="w-2 h-2 rounded-full bg-emerald-500" />Users</span>
-                <span className="flex items-center gap-1" title="Menus"><span className="w-2 h-2 rounded-full bg-teal-500" />Menus</span>
-              </div>
-            </CardHeader>
-            <CardContent>
-              {activityLoading ? <ActivitySkeleton /> : activity.length === 0 ? (
-                <EmptyState icon={Activity} title="No activity yet" description="Admin actions will appear here." className="py-8" />
-              ) : (
-                <ul className="space-y-3 max-h-[380px] overflow-y-auto pr-1">
-                  {activity.map((log: any) => (
-                    <li key={log.id} className="flex items-start gap-3 p-1.5 rounded-lg hover:bg-muted/40 transition-colors">
-                      <span
-                        className={cn("w-2.5 h-2.5 rounded-full mt-1.5 shrink-0 ring-2 ring-background shadow-sm", getEntityColor(log.entityType))}
-                        title={`Entity Type: ${getEntityLabel(log.entityType)}`}
-                      />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm text-foreground font-medium capitalize flex items-center gap-2">
-                          <span>{log.action.replace(/_/g, " ")} {log.entityType}</span>
-                          <span className={cn("text-[10px] font-mono px-1.5 py-0.2 rounded text-white font-semibold", getEntityColor(log.entityType))}>
-                            {getEntityLabel(log.entityType)}
-                          </span>
-                        </p>
-                        {log.details && <p className="text-xs text-foreground truncate mt-0.5">{log.details}</p>}
-                        <div className="flex items-center gap-2 mt-1">
-                          <span className="text-[11px] text-foreground capitalize flex items-center gap-1"><Clock className="h-3 w-3 text-foreground" />{timeAgo(log.createdAt)}</span>
-                          {log.userName && (
-                            <span className="text-[12px] text-muted-foreground font-medium flex items-center gap-1">
-                              By{" "}
-                              <span
-                                style={getUserColor(log).style}
-                                className={cn("px-1.5 py-0.5 rounded text-[11px] font-semibold shadow-xs", getUserColor(log).className)}
-                              >
-                                {log.userName}
-                              </span>
+              </CardHeader>
+              <CardContent>
+                {activityLoading ? <ActivitySkeleton /> : activity.length === 0 ? (
+                  <EmptyState icon={Activity} title="No activity yet" description="Admin actions will appear here." className="py-8" />
+                ) : (
+                  <ul className="space-y-3 max-h-[380px] overflow-y-auto pr-1">
+                    {activity.map((log: any) => (
+                      <li key={log.id} className="flex items-start gap-3 p-1.5 rounded-lg hover:bg-muted/40 transition-colors">
+                        <span
+                          className={cn("w-2.5 h-2.5 rounded-full mt-1.5 shrink-0 ring-2 ring-background shadow-sm", getEntityColor(log.entityType))}
+                          title={`Entity Type: ${getEntityLabel(log.entityType)}`}
+                        />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm text-foreground font-medium capitalize flex items-center gap-2">
+                            <span>{log.action?.replace(/_/g, " ")} {log.entityType}</span>
+                            <span className={cn("text-[10px] font-mono px-1.5 py-0.2 rounded text-white font-semibold", getEntityColor(log.entityType))}>
+                              {getEntityLabel(log.entityType)}
                             </span>
+                          </p>
+                          {log.details && (
+                            <p className="text-xs text-foreground truncate mt-0.5">
+                              {formatActivityDetails(log.details, log.entityType, log.action)}
+                            </p>
                           )}
+                          <div className="flex items-center gap-2 mt-1">
+                            <span className="text-[11px] text-foreground capitalize flex items-center gap-1"><Clock className="h-3 w-3 text-foreground" />{timeAgo(log.createdAt)}</span>
+                            {log.userName && (
+                              <span className="text-[12px] text-muted-foreground font-medium flex items-center gap-1">
+                                By{" "}
+                                <span
+                                  style={getUserColor(log).style}
+                                  className={cn("px-1.5 py-0.5 rounded text-[11px] font-semibold shadow-xs", getUserColor(log).className)}
+                                >
+                                  {log.userName}
+                                </span>
+                              </span>
+                            )}
+                          </div>
                         </div>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </CardContent>
-          </Card>
-        </motion.div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </CardContent>
+            </Card>
 
-        {/* Recent Pages */}
-        <motion.div variants={item}>
-          <Card className="h-full">
-            <CardHeader className="pb-3">
-              <div className="flex items-center justify-between">
-                <div>
-                  <CardTitle className="text-base flex items-center gap-2"><FileText className="h-4 w-4 text-primary" />Recent Pages</CardTitle>
-                  <CardDescription className="text-xs mt-0.5">Last 5 edited pages</CardDescription>
+            {/* Recent Pages */}
+            <Card className="h-full">
+              <CardHeader className="pb-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="text-base flex items-center gap-2"><FileText className="h-4 w-4 text-primary" />Recent Pages</CardTitle>
+                    <CardDescription className="text-xs mt-0.5">Last 5 edited pages</CardDescription>
+                  </div>
+                  <Link href="/sitemanager/pages" className="text-xs text-primary hover:underline flex items-center gap-0.5">
+                    All pages <ArrowRight className="h-3 w-3" />
+                  </Link>
                 </div>
-                <Link href="/sitemanager/pages" className="text-xs text-primary hover:underline flex items-center gap-0.5">
-                  All pages <ArrowRight className="h-3 w-3" />
-                </Link>
-              </div>
-            </CardHeader>
-            <CardContent>
-              {statsLoading ? <RecentPagesSkeleton /> : recentPages.length === 0 ? (
-                <EmptyState icon={FileText} title="No pages yet" description="Create your first page to get started." actionLabel="Create Page" actionHref="/sitemanager/pages" className="py-8" />
-              ) : (
-                <ul className="divide-y divide-border">
-                  {recentPages.map((page: any) => (
-                    <li key={page.id} className="py-3 flex items-center gap-3">
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-foreground truncate">{page.title}</p>
-                        <p className="text-[11px] text-muted-foreground/70 font-mono truncate">/{page.slug}</p>
-                      </div>
-                      <Badge variant={page.isPublished ? "default" : "outline"} className={cn("shrink-0 text-[10px] gap-1", page.isPublished ? "bg-emerald-100 text-emerald-700 border-emerald-200 hover:bg-emerald-100" : "text-muted-foreground")}>
-                        {page.isPublished ? <><Globe2 className="h-2.5 w-2.5" />Published</> : <><EyeOff className="h-2.5 w-2.5" />Draft</>}
-                      </Badge>
-                      <span className="text-[11px] text-muted-foreground/70 shrink-0 hidden sm:inline">{formatDate(page.updatedAt)}</span>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </CardContent>
-          </Card>
-        </motion.div>
-      </div>
+              </CardHeader>
+              <CardContent>
+                {statsLoading ? <RecentPagesSkeleton /> : recentPages.length === 0 ? (
+                  <EmptyState icon={FileText} title="No pages yet" description="Create your first page to get started." actionLabel="Create Page" actionHref="/sitemanager/pages" className="py-8" />
+                ) : (
+                  <ul className="divide-y divide-border">
+                    {recentPages.map((page: any) => (
+                      <li key={page.id} className="py-3 flex items-center gap-3">
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-foreground truncate">{page.title}</p>
+                          <p className="text-[11px] text-muted-foreground/70 font-mono truncate">/{page.slug}</p>
+                        </div>
+                        <Badge variant={page.isPublished ? "default" : "outline"} className={cn("shrink-0 text-[10px] gap-1", page.isPublished ? "bg-emerald-100 text-emerald-700 border-emerald-200 hover:bg-emerald-100" : "text-muted-foreground")}>
+                          {page.isPublished ? <><Globe2 className="h-2.5 w-2.5" />Published</> : <><EyeOff className="h-2.5 w-2.5" />Draft</>}
+                        </Badge>
+                        <span className="text-[11px] text-muted-foreground/70 shrink-0 hidden sm:inline">{formatDate(page.updatedAt)}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
-      {/* ── Charts placeholder ─────────────────────────────────────── */}
-      <motion.div variants={item}>
-        <div className="grid md:grid-cols-2 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base flex items-center gap-2"><TrendingUp className="h-4 w-4 text-primary" />Page Views</CardTitle>
-              <CardDescription className="text-xs">Overview — last 30 days</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="h-40 flex items-center justify-center bg-muted/40 rounded-lg border border-dashed border-border">
-                <div className="text-center">
-                  <TrendingUp className="h-8 w-8 text-muted-foreground/40 mx-auto mb-2" />
-                  <p className="text-sm text-muted-foreground">Analytics chart</p>
-                  <p className="text-xs text-muted-foreground/60">Connect an analytics provider</p>
-                </div>
-              </div>
-            </CardContent>
+        {/* TAB 4: QUICK ACTIONS */}
+        {stationTab === "actions" && (
+          <Card className="p-6 rounded-2xl border border-border/70 bg-gradient-to-br from-card via-card to-muted/30">
+            <h3 className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
+              <Zap className="h-4 w-4 text-primary" /> Site Manager Shortcuts & Tooling
+            </h3>
+            <div className="flex flex-wrap gap-2.5">
+              <Button asChild size="sm"><Link href="/sitemanager/pages"><Plus className="h-4 w-4 mr-1" />Create New Page</Link></Button>
+              <Button asChild variant="outline" size="sm"><Link href="/sitemanager/header"><Menu className="h-4 w-4 mr-1" />Manage Menu</Link></Button>
+              <Button asChild variant="outline" size="sm"><Link href="/sitemanager/seo"><ShieldCheck className="h-4 w-4 mr-1" />Open SEO Center</Link></Button>
+              <Button asChild variant="outline" size="sm"><Link href="/sitemanager/redirects"><CornerDownRight className="h-4 w-4 mr-1" />Manage 404 & Redirects</Link></Button>
+              <Button asChild variant="outline" size="sm"><Link href="/" target="_blank" rel="noopener noreferrer"><Globe className="h-4 w-4 mr-1" />View Live Website</Link></Button>
+            </div>
           </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base flex items-center gap-2"><HardDrive className="h-4 w-4 text-primary" />Resource Downloads</CardTitle>
-              <CardDescription className="text-xs">Audio, videos, books — last 30 days</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="h-40 flex items-center justify-center bg-muted/40 rounded-lg border border-dashed border-border">
-                <div className="text-center">
-                  <Download className="h-8 w-8 text-muted-foreground/40 mx-auto mb-2" />
-                  <p className="text-sm text-muted-foreground">Download stats chart</p>
-                  <p className="text-xs text-muted-foreground/60">Connect an analytics provider</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        )}
       </motion.div>
 
     </motion.div>

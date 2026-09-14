@@ -134,7 +134,7 @@ export async function POST(request: NextRequest) {
       action: "create",
       entityType: "audio",
       entityId: audioId,
-      details: JSON.stringify({ title: data.title }),
+      details: `Created audio "${data.title}"`,
     });
 
     revalidatePath("/", "layout");

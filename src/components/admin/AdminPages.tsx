@@ -457,7 +457,7 @@ export function AdminPages({ section }: AdminPagesProps) {
                   className="group relative bg-card border border-border rounded-xl overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-lg hover:shadow-[#0d5844]/8 hover:border-[#0d5844]/30 hover:-translate-y-1"
                 >
                   {/* Top accent bar */}
-                  <div className={`h-1.5 w-full bg-gradient-to-r ${hasMedia ? (isAudioBooks ? 'from-fuchsia-500 to-purple-600' : 'from-red-500 to-rose-600') : 'from-emerald-600 to-teal-500'}`} />
+                  <div className={`h-1.5 w-full bg-gradient-to-r ${hasMedia ? (isAudioBooks ? 'from-fuchsia-500 to-purple-600' : 'from-red-500 to-red-600') : 'from-emerald-600 to-teal-500'}`} />
 
                   <div className="p-5 flex flex-col justify-between h-[200px]">
                     <div>

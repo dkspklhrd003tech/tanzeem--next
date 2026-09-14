@@ -50,7 +50,7 @@ export async function PUT(
             action: "update",
             entityType: "menu_item",
             entityId: id,
-            details: JSON.stringify({ label: updatedMenu?.label }),
+            details: `Updated menu item "${updatedMenu?.label || "Menu Item"}"`,
         });
 
         return NextResponse.json({ menu: updatedMenu });
@@ -95,7 +95,7 @@ export async function DELETE(
             action: "delete",
             entityType: "menu_item",
             entityId: id,
-            details: JSON.stringify({ label: existingMenu.label }),
+            details: `Deleted menu item "${existingMenu.label}"`,
         });
 
         return NextResponse.json({ success: true, message: "Menu item deleted successfully" });

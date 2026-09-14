@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
             action: "create",
             entityType: "menu_item",
             entityId: mId,
-            details: JSON.stringify({ label: data.label }),
+            details: `Created menu item "${data.label}"`,
         });
 
         return NextResponse.json({ menu: newItem }, { status: 201 });

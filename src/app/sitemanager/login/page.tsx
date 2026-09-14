@@ -383,7 +383,6 @@ function LoginForm() {
                         {showPassword ? <EyeOff className="h-5 w-5 text-primary" /> : <Eye className="h-5 w-5 text-primary" />}
                       </button>
                     </div>
-                    <PasswordStrengthBar password={password} />
                   </div>
 
                   <div

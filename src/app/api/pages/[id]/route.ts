@@ -159,7 +159,7 @@ export async function PUT(
       action: "update",
       entityType: "page",
       entityId: updatedPage?.id,
-      details: JSON.stringify({ title: updatedPage?.title }),
+      details: `Updated page "${updatedPage?.title || "Page"}"`,
     });
 
     return NextResponse.json({ page: updatedPage });
@@ -198,7 +198,7 @@ export async function DELETE(
       action: "delete",
       entityType: "page",
       entityId: id,
-      details: JSON.stringify({ title: existingPage.title }),
+      details: `Deleted page "${existingPage.title}"`,
     });
 
     return NextResponse.json({ success: true });

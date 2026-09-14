@@ -38,6 +38,8 @@ export async function GET(req: NextRequest) {
             customFields: null,
             createdAt: mainCat.createdAt,
             updatedAt: mainCat.updatedAt,
+            status: "active",
+            deletedAt: null,
             videos: directMedia
           });
         }

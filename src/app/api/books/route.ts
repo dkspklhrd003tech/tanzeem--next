@@ -102,7 +102,7 @@ export async function POST(request: NextRequest) {
       action: "create",
       entityType: "book",
       entityId: bookId,
-      details: JSON.stringify({ title: data.title }),
+      details: `Created book "${data.title}"`,
     });
 
     return NextResponse.json({ book: newBook }, { status: 201 });

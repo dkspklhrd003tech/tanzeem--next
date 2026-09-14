@@ -140,7 +140,7 @@ export function Toaster() {
               "absolute right-2 top-2 rounded-md p-1 transition-opacity opacity-0 group-hover:opacity-100 focus:opacity-100",
               variant === 'destructive'
                 ? 'text-red-400 hover:bg-red-500/10 hover:text-red-300'
-                : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200'
+                : 'text-white hover:bg-white/50 hover:text-black'
             )} />
           </Toast>
         )

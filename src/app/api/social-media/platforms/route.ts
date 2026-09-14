@@ -64,7 +64,7 @@ export async function POST(request: NextRequest) {
       userId: user.id,
       action: "update",
       entityType: "social_platforms",
-      details: JSON.stringify({ count: platforms.length }),
+      details: `Saved ${platforms.length} social media platform(s)`,
     });
 
     return NextResponse.json({ success: true, platforms: results });

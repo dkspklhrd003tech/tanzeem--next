@@ -11,8 +11,10 @@ import {
 import { relations } from 'drizzle-orm';
 
 const timestamps = {
+    status: varchar("status", { length: 50 }).default("active").notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
+    deletedAt: timestamp("deleted_at"),
 };
 
 const longblob = customType<{ data: Buffer; driverData: Buffer }>({
@@ -63,7 +65,7 @@ export const activityLogs = mysqlTable("activity_logs", {
     details: text("details"),
     ipAddress: varchar("ip_address", { length: 64 }),
     userAgent: text("user_agent"),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
+    ...timestamps,
 });
 
 export const activityLogsRelations = relations(activityLogs, ({ one }) => ({
@@ -723,7 +725,7 @@ export const formSubmissions = mysqlTable("form_submissions", {
     isRead: boolean("is_read").default(false).notNull(),
     isReplied: boolean("is_replied").default(false).notNull(),
     repliedAt: timestamp("replied_at"),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
+    ...timestamps,
 });
 
 // ============================================
@@ -742,7 +744,7 @@ export const media = mysqlTable("media", {
     caption: text("caption"),
     fileData: longblob("file_data"), // DEPRECATED: Files are now stored on FTP/Local FS
     uploadedBy: varchar("uploaded_by", { length: 191 }),
-    createdAt: timestamp("created_at").defaultNow().notNull(),
+    ...timestamps,
 });
 
 // ============================================
@@ -1101,7 +1103,6 @@ export const emailLogs = mysqlTable("email_logs", {
     id: varchar("id", { length: 191 }).primaryKey(),
     formId: varchar("form_id", { length: 191 }).notNull(),
     sentTo: varchar("sent_to", { length: 255 }).notNull(),
-    status: varchar("status", { length: 50 }).notNull(), // SUCCESS, FAILED
     details: text("details"),
     ...timestamps,
 });
@@ -1122,3 +1123,37 @@ export const formEmailConfigsRelations = relations(formEmailConfigs, ({ one }) =
 export const emailLogsRelations = relations(emailLogs, ({ one }) => ({
     form: one(forms, { fields: [emailLogs.formId], references: [forms.id] })
 }));
+
+// ============================================
+// 404 LOGS & ROUTE REDIRECTS (TRAFFIC AUDIT)
+// ============================================
+
+export const routeRedirects = mysqlTable("route_redirects", {
+    id: varchar("id", { length: 191 }).primaryKey(),
+    sourcePath: varchar("source_path", { length: 500 }).notNull(),
+    destinationPath: varchar("destination_path", { length: 500 }).notNull(),
+    statusCode: int("status_code").default(301).notNull(),
+    hitCount: int("hit_count").default(0).notNull(),
+    status: varchar("status", { length: 50 }).default("active").notNull(),
+    isActive: boolean("is_active").default(true).notNull(),
+    preserveQueryString: boolean("preserve_query_string").default(true).notNull(),
+    matchType: varchar("match_type", { length: 20 }).default("exact").notNull(), // 'exact' | 'wildcard'
+    notes: text("notes"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
+    deletedAt: timestamp("deleted_at"),
+});
+
+export const error404Logs = mysqlTable("error_404_logs", {
+    id: varchar("id", { length: 191 }).primaryKey(),
+    path: varchar("path", { length: 500 }).notNull(),
+    referer: text("referer"),
+    userAgent: text("user_agent"),
+    ipAddress: varchar("ip_address", { length: 45 }),
+    hitCount: int("hit_count").default(1).notNull(),
+    status: varchar("status", { length: 50 }).default("unresolved").notNull(), // 'unresolved' | 'resolved' | 'redirected' | 'ignored'
+    redirectTo: varchar("redirect_to", { length: 500 }),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().onUpdateNow().notNull(),
+    deletedAt: timestamp("deleted_at"),
+});

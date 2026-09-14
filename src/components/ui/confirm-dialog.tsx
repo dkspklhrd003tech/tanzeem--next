@@ -10,6 +10,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
+import { cn } from "@/lib/utils"
 
 interface ConfirmDialogProps {
   title?: string
@@ -18,6 +19,12 @@ interface ConfirmDialogProps {
   open?: boolean
   onOpenChange?: (open: boolean) => void
   children?: React.ReactNode
+  titleClassName?: string
+  contentClassName?: string
+  pendingContentClassName?: string
+  confirmText?: string
+  pendingText?: string
+  isDestructive?: boolean
 }
 
 export function ConfirmDialog({
@@ -27,6 +34,12 @@ export function ConfirmDialog({
   open,
   onOpenChange,
   children,
+  titleClassName,
+  contentClassName,
+  pendingContentClassName,
+  confirmText = "Confirm",
+  pendingText,
+  isDestructive,
 }: ConfirmDialogProps) {
   const [internalOpen, setInternalOpen] = React.useState(false)
   const [isPending, setIsPending] = React.useState(false)
@@ -51,6 +64,13 @@ export function ConfirmDialog({
     }
   }
 
+  const isDeleteAction = isDestructive || title?.toLowerCase().includes("delete")
+  const resolvedTitleClassName = cn(
+    titleClassName || (title === "Delete User" || isDeleteAction ? "text-[#ff0000]" : "")
+  )
+  const resolvedPendingText = pendingText || (isDeleteAction ? "Deleting…" : "Saving…")
+  const resolvedPendingContentClass = pendingContentClassName || (isDeleteAction ? "!bg-[#ffb3b3] !border-red-300" : "")
+
   return (
     <AlertDialog open={isOpen} onOpenChange={handleOpenChange}>
       {children && (
@@ -58,9 +78,20 @@ export function ConfirmDialog({
           {children}
         </AlertDialogTrigger>
       )}
-      <AlertDialogContent>
+      <AlertDialogContent
+        style={
+          isPending && (isDeleteAction || pendingContentClassName)
+            ? { backgroundColor: "#ffb3b3" }
+            : undefined
+        }
+        className={cn(
+          "transition-colors duration-200",
+          contentClassName,
+          isPending && resolvedPendingContentClass
+        )}
+      >
         <AlertDialogHeader>
-          <AlertDialogTitle>{title}</AlertDialogTitle>
+          <AlertDialogTitle className={resolvedTitleClassName}>{title}</AlertDialogTitle>
           <AlertDialogDescription>
             {description}
           </AlertDialogDescription>
@@ -68,22 +99,22 @@ export function ConfirmDialog({
         <AlertDialogFooter>
           <AlertDialogCancel
             disabled={isPending}
-            className="cursor-pointer bg-red-600 hover:bg-red-700 text-white"
+            className="cursor-pointer border-transparent bg-red-600 hover:bg-red-700 active:bg-red-800 focus:bg-red-700 focus-visible:bg-red-700 focus-visible:ring-red-500 text-white hover:text-white active:text-white focus-visible:text-white"
           >
             Cancel
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={handleConfirm}
             disabled={isPending}
-            className="cursor-pointer bg-primary hover:bg-primary/80 text-white"
+            className="cursor-pointer bg-primary hover:bg-primary/80 active:bg-primary/90 text-white"
           >
             {isPending ? (
               <span className="flex items-center gap-2">
                 <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin inline-block" />
-                Saving…
+                {resolvedPendingText}
               </span>
             ) : (
-              "Confirm"
+              confirmText
             )}
           </AlertDialogAction>
         </AlertDialogFooter>

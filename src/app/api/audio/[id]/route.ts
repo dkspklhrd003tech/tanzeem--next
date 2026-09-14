@@ -117,7 +117,7 @@ export async function PUT(
       action: "update",
       entityType: "audio",
       entityId: id,
-      details: JSON.stringify({ title: updatedAudio?.title }),
+      details: `Updated audio "${updatedAudio?.title || "Audio"}"`,
     });
 
     revalidatePath("/", "layout");
@@ -164,7 +164,7 @@ export async function DELETE(
       action: "delete",
       entityType: "audio",
       entityId: id,
-      details: JSON.stringify({ title: existingAudio.title }),
+      details: `Deleted audio "${existingAudio.title}"`,
     });
 
     revalidatePath("/", "layout");

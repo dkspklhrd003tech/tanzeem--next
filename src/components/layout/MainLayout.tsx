@@ -49,7 +49,11 @@ export function MainLayout({ children }: MainLayoutProps) {
             </div>
           )}
           <h1 className="text-4xl font-bold text-muted text-[#0d5844]">Under Maintenance</h1>
-          <p className="text-muted text-base">We are currently performing scheduled maintenance on the website. Please check back shortly. Jazakallah Khair for your patience.</p>
+          <p className="text-muted text-base">
+            We are currently performing scheduled maintenance on the website. Please check back shortly.
+            <br />
+            Jazakallah Khair for your patience.
+          </p>
         </div>
       </div>
     );

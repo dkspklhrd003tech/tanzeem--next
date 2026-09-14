@@ -17,6 +17,24 @@ export default function NotFound() {
 
   useEffect(() => {
     setIsMounted(true);
+
+    // Report 404 detection to backend telemetry
+    try {
+      const currentPath = window.location.pathname;
+      if (currentPath && currentPath !== "/") {
+        fetch("/api/traffic/log-404", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            path: currentPath,
+            referer: document.referrer || null,
+          }),
+        }).catch(() => {});
+      }
+    } catch {
+      // Ignore telemetry errors
+    }
+
     const handleMouseMove = (e: MouseEvent) => {
       const width = window.innerWidth;
       const height = window.innerHeight;

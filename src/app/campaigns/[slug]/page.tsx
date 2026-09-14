@@ -62,7 +62,7 @@ export default async function CampaignDetailsPage({ params }: { params: Promise<
                                         <div key={idx} className="space-y-">
                                             {block.title && <h2 className="text-3xl text-center mx-auto font-bold text-foreground">{block.title}</h2>}
                                             <div
-                                                className="prose prose-lg dark:prose-invert max-w-none prose-p:text-muted-foreground prose-a:text-primary"
+                                                className="prose prose-lg max-w-none prose-p:text-muted-foreground prose-a:text-primary"
                                                 dangerouslySetInnerHTML={{ __html: block.value }}
                                             />
                                         </div>

@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
       userId: user.id,
       action: "update",
       entityType: "social_accounts",
-      details: JSON.stringify({ count: accounts.length }),
+      details: `Saved ${accounts.length} social media account(s)`,
     });
 
     return NextResponse.json({ success: true, accounts: results });

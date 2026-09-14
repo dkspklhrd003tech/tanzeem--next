@@ -92,8 +92,8 @@ export function PageActionBar({
             className={cn(
               "transition-all duration-300 font-semibold shadow-xs relative",
               hasSeoIssues
-                ? "text-red-600 border-red-600/50 dark:border-red-500/50 bg-red-500/10 hover:bg-red-500/20 hover:text-red-700"
-                : "text-emerald-600 dark:text-emerald-400 border-emerald-600/40 dark:border-emerald-500/40 bg-emerald-500/10 hover:bg-emerald-500/20 hover:text-emerald-700"
+                ? "text-red-600 border-red-600/50 bg-red-500/10 hover:bg-red-500/20 hover:text-red-700"
+                : "text-emerald-600 border-emerald-600/40 bg-emerald-500/10 hover:bg-emerald-500/20 hover:text-emerald-700"
             )}
           >
             <Link href={seoUrl} className="flex items-center gap-1.5">

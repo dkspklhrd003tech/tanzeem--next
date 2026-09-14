@@ -41,7 +41,7 @@ export function PageBanner({ settings, titleOverride, breadcrumbsOverride, bgIma
   useEffect(() => {
     if (!slug || titleOverride) return;
 
-    // Skip fetching page data for dynamic resource detail routes to avoid unnecessary 404s
+    // Skip fetching page data for dynamic resource detail routes to avoid unnecessary 404
     const skipPrefixes = [
       "audio/", "videos/", "books/", "audio-books/",
       "magazines/", "campaigns/", "services/", "press-releases/",

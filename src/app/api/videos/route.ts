@@ -142,7 +142,7 @@ export async function POST(request: NextRequest) {
       action: "create",
       entityType: "video",
       entityId: videoId,
-      details: JSON.stringify({ title: data.title }),
+      details: `Created video "${data.title}"`,
     });
 
     revalidatePath("/", "layout");

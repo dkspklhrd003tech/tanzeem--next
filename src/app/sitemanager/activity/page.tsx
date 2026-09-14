@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/ui/empty-state";
 import { cn, resolveMediaUrl } from "@/lib/utils";
+import { formatActivityDetails } from "@/lib/activity-formatter";
 
 const fetcher = (url: string) => fetch(url).then(r => r.json());
 
@@ -48,12 +49,17 @@ export default function ActivityLogsPage() {
     revalidateOnFocus: true,
   });
 
-  const logs: any[] = data?.activity ?? [];
+  const logs: any[] = useMemo(() => {
+    return (data?.activity ?? []).map((log: any) => ({
+      ...log,
+      cleanDetails: formatActivityDetails(log.details, log.entityType, log.action),
+    }));
+  }, [data?.activity]);
 
   const filteredLogs = useMemo(() => {
     return logs.filter(log => {
       const matchSearch = search.toLowerCase() === "" ||
-        log.details?.toLowerCase().includes(search.toLowerCase()) ||
+        log.cleanDetails?.toLowerCase().includes(search.toLowerCase()) ||
         log.userName?.toLowerCase().includes(search.toLowerCase()) ||
         log.action?.toLowerCase().includes(search.toLowerCase());
 
@@ -79,7 +85,7 @@ export default function ActivityLogsPage() {
           <p className="text-xs text-muted-foreground mt-1 font-medium">
             Detailed chronological record of all administrative actions and system events.
             <span className="ml-2 px-2 py-0.5 rounded-full bg-[#0d5844]/20 border border-[#0d5844]/30 text-primary font-bold text-[10px]">
-              {logs.length} entries
+              {logs.length} Entries
             </span>
           </p>
         </div>
@@ -199,15 +205,15 @@ export default function ActivityLogsPage() {
                           <span
                             className={cn(
                               "text-[10px] px-2 py-0.5 rounded-full font-semibold border flex items-center gap-1.5 capitalize shadow-xs",
-                              log.entityType?.toLowerCase() === "page" && "bg-blue-500/10 border-blue-500/30 text-blue-600 dark:text-blue-400",
-                              log.entityType?.toLowerCase() === "audio" && "bg-purple-500/10 border-purple-500/30 text-purple-600 dark:text-purple-400",
-                              log.entityType?.toLowerCase() === "video" && "bg-red-500/10 border-red-500/30 text-red-600 dark:text-red-400",
-                              log.entityType?.toLowerCase() === "book" && "bg-amber-500/10 border-amber-500/30 text-amber-600 dark:text-amber-400",
-                              log.entityType?.toLowerCase() === "magazine" && "bg-orange-500/10 border-orange-500/30 text-orange-600 dark:text-orange-400",
-                              (log.entityType?.toLowerCase() === "user" || log.entityType?.toLowerCase() === "auth") && "bg-emerald-500/10 border-emerald-500/30 text-emerald-600 dark:text-emerald-400",
-                              (log.entityType?.toLowerCase() === "menu" || log.entityType?.toLowerCase() === "menu_item") && "bg-teal-500/10 border-teal-500/30 text-teal-600 dark:text-teal-400",
-                              log.entityType?.toLowerCase() === "media" && "bg-violet-500/10 border-violet-500/30 text-violet-600 dark:text-violet-400",
-                              (log.entityType?.toLowerCase() === "setting" || log.entityType?.toLowerCase() === "settings") && "bg-indigo-500/10 border-indigo-500/30 text-indigo-600 dark:text-indigo-400"
+                              log.entityType?.toLowerCase() === "page" && "bg-blue-500/10 border-blue-500/30 text-blue-600",
+                              log.entityType?.toLowerCase() === "audio" && "bg-purple-500/10 border-purple-500/30 text-purple-600",
+                              log.entityType?.toLowerCase() === "video" && "bg-red-500/10 border-red-500/30 text-red-600",
+                              log.entityType?.toLowerCase() === "book" && "bg-amber-500/10 border-amber-500/30 text-amber-600",
+                              log.entityType?.toLowerCase() === "magazine" && "bg-orange-500/10 border-orange-500/30 text-orange-600",
+                              (log.entityType?.toLowerCase() === "user" || log.entityType?.toLowerCase() === "auth") && "bg-emerald-500/10 border-emerald-500/30 text-emerald-600",
+                              (log.entityType?.toLowerCase() === "menu" || log.entityType?.toLowerCase() === "menu_item") && "bg-teal-500/10 border-teal-500/30 text-teal-600",
+                              log.entityType?.toLowerCase() === "media" && "bg-violet-500/10 border-violet-500/30 text-violet-600",
+                              (log.entityType?.toLowerCase() === "setting" || log.entityType?.toLowerCase() === "settings") && "bg-indigo-500/10 border-indigo-500/30 text-indigo-600"
                             )}
                           >
                             <span className={cn("w-1.5 h-1.5 rounded-full", getEntityColor(log.entityType))} />
@@ -245,8 +251,8 @@ export default function ActivityLogsPage() {
 
                     {/* Details */}
                     <div className="flex-1 min-w-0 pr-4">
-                      <p className="text-xs text-foreground/80 leading-relaxed font-medium break-words max-w-[400px]">
-                        {log.details || "—"}
+                      <p className="text-xs text-foreground/80 leading-relaxed font-medium break-words max-w-[460px]">
+                        {log.cleanDetails || "—"}
                       </p>
                     </div>
 

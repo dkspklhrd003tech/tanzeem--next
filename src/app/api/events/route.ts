@@ -96,7 +96,7 @@ export async function POST(request: NextRequest) {
       action: "create",
       entityType: "event",
       entityId: eventId,
-      details: JSON.stringify({ title: data.title }),
+      details: `Created event "${data.title}"`,
     });
 
     return NextResponse.json({ event: newEvent }, { status: 201 });
